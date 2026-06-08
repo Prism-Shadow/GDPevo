@@ -20,7 +20,7 @@ generated skill packages, and a reusable evaluation workspace.
 | --- | --- |
 | `data/task_groups/` | Released task groups with shared environments, train tasks, test tasks, answers, evaluators, and data notes. |
 | `experiments/` | Released evaluation protocol, evaluation workspaces, result reports, generated skills, and experiment board. |
-| `site/` | Placeholder for future website or blog content. |
+| `site/` | Static website and blog content for GitHub Pages. |
 | `assets/` | Placeholder for future figures, logos, and visual assets. |
 
 ## Data
