@@ -1,0 +1,119 @@
+{
+  "description": "Required JSON output shape for the PF-INT-NEXVEN international equity correlation review.",
+  "type": "object",
+  "required_top_level_keys": [
+    "portfolio_id",
+    "review_window",
+    "index_set",
+    "extreme_pairs",
+    "concentration",
+    "diversification_candidates",
+    "sleeve_actions"
+  ],
+  "fields": {
+    "portfolio_id": {
+      "type": "string",
+      "required_value": "PF-INT-NEXVEN"
+    },
+    "review_window": {
+      "type": "object",
+      "required_keys": [
+        "level_start_date",
+        "level_end_date",
+        "return_observations"
+      ],
+      "field_types": {
+        "level_start_date": "string date YYYY-MM-DD",
+        "level_end_date": "string date YYYY-MM-DD",
+        "return_observations": "integer"
+      }
+    },
+    "index_set": {
+      "type": "list[string]",
+      "ordering": "ascending alphabetical by index id",
+      "allowed_values": [
+        "IDX_ACWI_IMI",
+        "IDX_AC_ASIA_PAC_EX_JP",
+        "IDX_CHINA",
+        "IDX_EAFE",
+        "IDX_EM",
+        "IDX_EM_EX_CHINA",
+        "IDX_INDIA",
+        "IDX_LATAM",
+        "IDX_WORLD"
+      ]
+    },
+    "extreme_pairs": {
+      "type": "object",
+      "required_keys": [
+        "highest_positive",
+        "lowest"
+      ],
+      "pair_object": {
+        "required_keys": [
+          "pair_id",
+          "correlation"
+        ],
+        "pair_id": {
+          "type": "list[string]",
+          "length": 2,
+          "ordering": "ascending alphabetical by index id"
+        },
+        "correlation": {
+          "type": "number",
+          "precision": "three decimals"
+        }
+      }
+    },
+    "concentration": {
+      "type": "object",
+      "required_keys": [
+        "china_asia_dependence_flag",
+        "primary_code",
+        "high_threshold_breached"
+      ],
+      "field_types": {
+        "china_asia_dependence_flag": "boolean",
+        "primary_code": "enum",
+        "high_threshold_breached": "boolean"
+      },
+      "primary_code_allowed_values": [
+        "CHINA_ASIA_DEPENDENCE",
+        "GLOBAL_DEVELOPED_OVERLAP",
+        "NO_MATERIAL_CONCENTRATION"
+      ]
+    },
+    "diversification_candidates": {
+      "type": "list[string]",
+      "ordering": "ascending alphabetical by index id",
+      "allowed_values": [
+        "IDX_EM_EX_CHINA",
+        "IDX_INDIA",
+        "IDX_LATAM"
+      ]
+    },
+    "sleeve_actions": {
+      "type": "list[object]",
+      "length": 2,
+      "ordering": "ascending by sleeve",
+      "object_required_keys": [
+        "sleeve",
+        "action",
+        "target_index_id"
+      ],
+      "action_allowed_values": [
+        "trim",
+        "add",
+        "hold",
+        "hedge",
+        "monitor",
+        "rotate"
+      ],
+      "target_index_allowed_values": [
+        "IDX_CHINA",
+        "IDX_EM_EX_CHINA",
+        "IDX_LATAM"
+      ]
+    }
+  }
+}

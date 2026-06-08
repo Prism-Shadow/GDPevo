@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "client_id",
+    "analysis_type",
+    "recommendation",
+    "gift_plan",
+    "administration",
+    "estate_result",
+    "source_resolution"
+  ],
+  "fields": {
+    "client_id": "string; stable client identifier",
+    "analysis_type": "enum: ilit_crummey_implementation",
+    "recommendation.primary_action": "enum: FUND_WITH_CRUMMEY_NOTICES, USE_LIFETIME_EXEMPTION_FOR_SHORTFALL, USE_NEW_POLICY_OR_ACCEPT_LOOKBACK, DISCLOSE_LOOKBACK_AND_USE_EXEMPTION",
+    "recommendation.suitability": "enum: SUITABLE_WITH_ADMINISTRATION, BORDERLINE, NOT_SUITABLE",
+    "recommendation.risk_flag": "enum: LOW_IF_FORMALITIES_MET, EXCLUSION_SHORTFALL, THREE_YEAR_LOOKBACK, THREE_YEAR_LOOKBACK_AND_EXCLUSION_SHORTFALL",
+    "gift_plan.planning_year": "integer year",
+    "gift_plan.annual_exclusion_per_beneficiary": "number, USD, rounded to cents",
+    "gift_plan.beneficiary_count": "integer",
+    "gift_plan.annual_exclusion_capacity": "number, USD, rounded to cents",
+    "gift_plan.annual_premium": "number, USD, rounded to cents",
+    "gift_plan.premium_gap": "number, USD, rounded to cents",
+    "administration.notices_required": "integer",
+    "administration.contribution_date": "ISO date string",
+    "administration.notice_due_date": "ISO date string",
+    "administration.withdrawal_window_end": "ISO date string",
+    "administration.earliest_premium_payment_date": "ISO date string",
+    "administration.dedicated_bank_account_required": "boolean",
+    "estate_result.death_benefit": "number, USD, rounded to cents",
+    "estate_result.estate_inclusion_risk": "same enum as recommendation.risk_flag",
+    "estate_result.projected_outside_estate_if_implemented": "number, USD, rounded to cents",
+    "estate_result.tax_liquidity_support": "number, USD, rounded to cents",
+    "source_resolution.controlling_beneficiary_source": "enum: SIGNED_PROFILE, ATTORNEY_MEMO, CUSTODIAN_EXPORT, CRM_NOTE, STALE_MARKETING_INTAKE",
+    "source_resolution.controlling_policy_source": "enum: SIGNED_PROFILE, ATTORNEY_MEMO, CUSTODIAN_EXPORT, CRM_NOTE",
+    "task_id": "string; stable task identifier such as train_001 or test_001"
+  },
+  "ordering": "No ordering constraints beyond object keys. Dates must be ISO YYYY-MM-DD."
+}

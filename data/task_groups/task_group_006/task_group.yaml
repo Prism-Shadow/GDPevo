@@ -1,0 +1,342 @@
+task_group:
+  task_group_id: task_group_006
+  scenario_id: SCN_006_erp_procurement_supplier_receiving
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: ERP Procurement Supplier and Receiving Control
+  description: |
+    Train-predict benchmark for ERP procurement operations. The shared ProcureOps
+    environment contains supplier sourcing, purchase order, receiving, AP invoice,
+    payment, approval, budget, and vendor-risk records. Tasks require reconciling
+    sourcing nomination gates, inbound receiving controls, and AP release decisions
+    across shared workplace systems and task-local office payloads.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/generate_data.py
+    - env/server.py
+    - env/data/procureops_data.json
+    - env/data/manifest.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/ax17_nomination_memo.md
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluator.py
+      rubric:
+        - goal: Correct scope and as-of date.
+          weight: 1
+        - goal: Correct program budget and overall readiness.
+          weight: 2
+        - goal: Correct LMP supplier commercial decision.
+          weight: 2
+        - goal: Correct DRV supplier commercial decision.
+          weight: 2
+        - goal: Correct LMP evidence and blocker set.
+          weight: 2
+        - goal: Correct DRV evidence and blocker set.
+          weight: 2
+        - goal: Correct committee action.
+          weight: 1
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+      - train_tasks/002/input/payloads/receiving_memo.md
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/evaluator.py
+      rubric:
+        - goal: Correct batch identity.
+          weight: 2
+        - goal: Correct line quantity reconciliation.
+          weight: 3
+        - goal: Correct invoice hold status.
+          weight: 2
+        - goal: Correct financial variance.
+          weight: 2
+        - goal: Correct business disposition.
+          weight: 3
+        - goal: Correct supplier risk context.
+          weight: 1
+        - goal: Correct source record set.
+          weight: 2
+        - goal: Correct contract price consistency.
+          weight: 2
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+      - train_tasks/003/input/payloads/ap_close_memo.md
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/evaluator.py
+      rubric:
+        - goal: Correct task identity, close date, and target invoice set.
+          weight: 2
+        - goal: Correct invoice-level hold and release decisions.
+          weight: 3
+        - goal: Correct receipt quantity reconciliation and variance percentages.
+          weight: 2
+        - goal: Correct invoice totals, scheduled payments, and net balance impacts.
+          weight: 2
+        - goal: Correct supplier names and vendor-balance rows.
+          weight: 2
+        - goal: Correct controlled reason-code sets.
+          weight: 1
+        - goal: Correct AX17 and NOVA program close totals.
+          weight: 3
+        - goal: Correct payment hold/release queues and total close balance.
+          weight: 2
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+      - train_tasks/004/input/payloads/change_memo.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/evaluator.py
+      rubric:
+        - goal: Correct identity and final decision.
+          weight: 2
+        - goal: Correct contract status, price, and quantity.
+          weight: 2
+        - goal: Correct contract usage and headroom.
+          weight: 3
+        - goal: Correct program budget exposure.
+          weight: 3
+        - goal: Correct requisition approval state.
+          weight: 2
+        - goal: Correct supplier risk context and supporting IDs.
+          weight: 1
+        - goal: Correct hold actions and summary.
+          weight: 2
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+      - train_tasks/005/input/payloads/ap_release_packet.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/evaluator.py
+      rubric:
+        - goal: Correct target IDs and review date.
+          weight: 3
+        - goal: Correct invoice release decisions and reasons.
+          weight: 3
+        - goal: Correct in-scope and excluded receipt IDs.
+          weight: 2
+        - goal: Correct per-invoice chargeback and net release amounts.
+          weight: 2
+        - goal: Correct release and hold invoice sets plus financial totals.
+          weight: 3
+        - goal: Correct receiving exceptions and chargeback statuses.
+          weight: 2
+        - goal: Correct source precedence classifications.
+          weight: 2
+        - goal: Correct follow-up action set.
+          weight: 1
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+      - test_tasks/001/input/payloads/dock_memo.md
+      - test_tasks/001/input/payloads/wh_gold_dock_export.csv
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/evaluator.py
+      rubric:
+        - goal: Correct target IDs and review date.
+          weight: 3
+        - goal: Correct receipt inclusion and exclusion controls.
+          weight: 3
+        - goal: Correct quantity and contract-price reconciliation.
+          weight: 2
+        - goal: Correct invoice decisions and primary reasons.
+          weight: 2
+        - goal: Correct financial release, duplicate exposure, and payment totals.
+          weight: 3
+        - goal: Correct invoice receipt scope and exclusions.
+          weight: 2
+        - goal: Correct source precedence and supplier risk context.
+          weight: 2
+        - goal: Correct follow-up action set.
+          weight: 1
+        - goal: Correct AP release and duplicate-invoice transfer controls.
+          weight: 3
+        - goal: Correct receipt scope and supplier-risk transfer controls.
+          weight: 3
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+      - test_tasks/002/input/payloads/month_end_release_memo.md
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/evaluator.py
+      rubric:
+        - goal: Correct package identity, cutoff date, and target invoice set.
+          weight: 3
+        - goal: Correct invoice supplier, program, PO, and AP status fields.
+          weight: 3
+        - goal: Correct receipt cutoff matching and quantity reconciliation.
+          weight: 2
+        - goal: Correct payment linkage, statuses, dates, and bank actions.
+          weight: 2
+        - goal: Correct release and hold decisions, queues, and package totals.
+          weight: 3
+        - goal: Correct supplier release summary.
+          weight: 2
+        - goal: Correct program summary.
+          weight: 2
+        - goal: Correct payment ID buckets and source precedence.
+          weight: 1
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+      - test_tasks/003/input/payloads/sourcing_memo.md
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/evaluator.py
+      rubric:
+        - goal: Correct scope and requirement.
+          weight: 1
+        - goal: Correct program budget and shortlist sets.
+          weight: 2
+        - goal: Correct candidate API status and risk.
+          weight: 2
+        - goal: Correct candidate sourcing decisions.
+          weight: 2
+        - goal: Correct selected supplier commercial support.
+          weight: 2
+        - goal: Correct nomination gate signoffs and decision.
+          weight: 2
+        - goal: Correct actions and source records.
+          weight: 1
+        - goal: Correct sourcing gate transfer controls.
+          weight: 3
+        - goal: Correct commercial and backup transfer controls.
+          weight: 3
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+      - test_tasks/004/input/payloads/regional_receiving_dashboard_export.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/evaluator.py
+      rubric:
+        - goal: Correct scope, review date, and target receipt set.
+          weight: 3
+        - goal: Correct dashboard row identities and operational statuses.
+          weight: 3
+        - goal: Correct AP hold, release, and not-invoiced control sets.
+          weight: 2
+        - goal: Correct corrected dashboard statuses and action owners.
+          weight: 2
+        - goal: Correct quantity variances and financial totals.
+          weight: 3
+        - goal: Correct supplier risk overlay.
+          weight: 2
+        - goal: Correct source precedence and stale export corrections.
+          weight: 2
+        - goal: Correct follow-up action set.
+          weight: 1
+        - goal: Correct transfer source-precedence and AP release policies.
+          weight: 3
+        - goal: Correct chargeback, payment, and no-receipt transfer policies.
+          weight: 3
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+      - test_tasks/005/input/payloads/headlamp_price_change_memo.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/evaluator.py
+      rubric:
+        - goal: Correct identity and final decision.
+          weight: 2
+        - goal: Correct contract price and change basis.
+          weight: 2
+        - goal: Correct contract usage and ceiling.
+          weight: 3
+        - goal: Correct budget incremental exposure.
+          weight: 3
+        - goal: Correct nomination and approval evidence.
+          weight: 2
+        - goal: Correct supplier risk and invoice control.
+          weight: 1
+        - goal: Correct actions and summary.
+          weight: 2

@@ -1,0 +1,78 @@
+{
+  "task_id": "train_002",
+  "batch_id": "RCV-BLUE-14",
+  "inspection_summary": {
+    "po_id": "PO-AX17-4481",
+    "program_id": "PRG-AX17",
+    "supplier_id": "SUP-LUMA",
+    "supplier_name": "LumaPro Industrial",
+    "warehouse_id": "WH-BLUE",
+    "receipt_date": "2026-05-30",
+    "packing_slip": "PK-LUMA-5831",
+    "receiver": "M. Webb"
+  },
+  "line_reconciliation": [
+    {
+      "po_line_id": 1,
+      "sku": "LMP-228",
+      "ordered_qty": 240,
+      "received_qty": 216,
+      "rejected_qty": 0,
+      "billed_qty": 240,
+      "short_qty_vs_po": 24,
+      "unreceived_billed_qty": 24,
+      "receipt_completion_ratio": 0.9,
+      "po_unit_price": 84.5,
+      "contract_unit_price": 84.5,
+      "invoice_unit_price": 84.5,
+      "contract_price_match": true
+    }
+  ],
+  "invoice_review": {
+    "invoice_id": "AP-LUMA-7714",
+    "invoice_status": "on_hold",
+    "hold_code": "QTY_VARIANCE",
+    "receipt_status": "accepted",
+    "po_status": "partial_receipt",
+    "exception_codes": [
+      "INVOICE_QTY_EXCEEDS_RECEIPT",
+      "PARTIAL_RECEIPT",
+      "SUPPLIER_WATCH_RISK"
+    ]
+  },
+  "financials": {
+    "received_goods_value": 18252.0,
+    "unreceived_goods_value": 2028.0,
+    "invoice_subtotal": 20280.0,
+    "invoice_freight": 320.0,
+    "invoice_tax": 1470.3,
+    "invoice_total": 22070.3
+  },
+  "decision": {
+    "batch_disposition": "accept_partial_hold_variance",
+    "ap_action": "keep_invoice_on_hold",
+    "receiving_action": "record_shortage_follow_up",
+    "supplier_action": "request_credit_or_remaining_delivery"
+  },
+  "supplier_risk_context": {
+    "supplier_risk_rating": "watch",
+    "has_open_supplier_risk": true,
+    "open_supplier_risk_event_ids": [
+      "VRE-00005"
+    ]
+  },
+  "evidence": {
+    "endpoint_record_ids": [
+      "AP-LUMA-7714",
+      "CR-LMP-228",
+      "LMP-228",
+      "PO-AX17-4481",
+      "RCV-BLUE-14",
+      "SUP-LUMA",
+      "VRE-00005"
+    ],
+    "task_payloads_reviewed": [
+      "input/payloads/receiving_memo.md"
+    ]
+  }
+}

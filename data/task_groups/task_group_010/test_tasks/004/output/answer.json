@@ -1,0 +1,114 @@
+{
+  "task_id": "test_004",
+  "portfolio_id": "PF-MA-CYGNUS",
+  "as_of_date": "2026-05-29",
+  "review_window": {
+    "level_start_date": "2025-05-30",
+    "level_end_date": "2026-04-30",
+    "return_observations": 11
+  },
+  "source_reconciliation": {
+    "authoritative_source": "current_environment_records",
+    "local_packet_status": "context_only_current_records_override",
+    "quantity_overrides": [
+      {
+        "instrument_id": "BND_DRIFTWOOD_2028",
+        "local_quantity_usd_m": 7.0,
+        "current_quantity_usd_m": 9.0,
+        "override_applied": true
+      }
+    ],
+    "correlation_window_override": true
+  },
+  "ranked_exceptions": [
+    {
+      "rank": 1,
+      "exception_code": "watchlist_hy_cap_pressure",
+      "primary_driver": "fixed_income",
+      "materiality": "HIGH",
+      "severity_metric": "hy_cap_excess_pct_points",
+      "severity_value": 2.973
+    },
+    {
+      "rank": 2,
+      "exception_code": "equity_correlation_concentration",
+      "primary_driver": "international_equity",
+      "materiality": "HIGH",
+      "severity_metric": "correlation_threshold_excess",
+      "severity_value": 0.137
+    }
+  ],
+  "credit_metrics": {
+    "current_hy_allocation_pct": 22.97,
+    "post_trade_hy_allocation_pct": 0.00,
+    "current_duration_years": 3.70,
+    "post_trade_duration_years": 4.37,
+    "hy_reduction_pct_points": 22.97,
+    "current_watchlist_exposure_usd_m": 17.0,
+    "post_trade_watchlist_exposure_usd_m": 0.0
+  },
+  "correlation_concentration": {
+    "pair_role": "highest_concentration",
+    "pair": [
+      "IDX_AC_ASIA_PAC_EX_JP",
+      "IDX_EM"
+    ],
+    "correlation": 0.937,
+    "high_threshold_breached": true,
+    "threshold_excess": 0.137,
+    "paired_sleeve_exposure_usd_m": 21.0,
+    "diversifier_index_id": "IDX_LATAM",
+    "diversifier_pair_correlation": -0.743
+  },
+  "rebalance_package": {
+    "fixed_income_trades": [
+      {
+        "action": "SELL",
+        "instrument_id": "BND_DRIFTWOOD_2028",
+        "quantity_usd_m": 9.0
+      },
+      {
+        "action": "SELL",
+        "instrument_id": "BND_PACREF_2028",
+        "quantity_usd_m": 8.0
+      },
+      {
+        "action": "BUY",
+        "instrument_id": "BND_BLUEGAS_2030",
+        "quantity_usd_m": 8.0
+      },
+      {
+        "action": "BUY",
+        "instrument_id": "BND_QUARTZ_2031",
+        "quantity_usd_m": 9.0
+      }
+    ],
+    "equity_actions": [
+      {
+        "action": "trim",
+        "index_id": "IDX_AC_ASIA_PAC_EX_JP",
+        "quantity_usd_m": 4.0
+      },
+      {
+        "action": "add",
+        "index_id": "IDX_LATAM",
+        "quantity_usd_m": 4.0
+      }
+    ],
+    "rebalance_trigger": "committee_review"
+  },
+  "constraint_flags": {
+    "current_hy_cap_pass": false,
+    "post_trade_hy_cap_pass": true,
+    "current_duration_band_pass": true,
+    "post_trade_duration_band_pass": true,
+    "watchlist_exposure_cleared": true,
+    "correlation_threshold_breached": true
+  },
+  "board_decision": {
+    "dominant_exception_code": "watchlist_hy_cap_pressure",
+    "secondary_exception_code": "equity_correlation_concentration",
+    "combined_judgement": "approve_credit_rotation_with_equity_trim",
+    "committee_escalation": "committee_review"
+  }
+}

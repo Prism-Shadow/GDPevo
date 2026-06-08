@@ -1,0 +1,174 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "Top-three ranked records, account IDs, and reason codes are correct.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "ranked_accounts[0].rank"
+        },
+        {
+          "path": "ranked_accounts[0].record_type"
+        },
+        {
+          "path": "ranked_accounts[0].account_id"
+        },
+        {
+          "path": "ranked_accounts[0].record_id"
+        },
+        {
+          "path": "ranked_accounts[0].reason_code"
+        },
+        {
+          "path": "ranked_accounts[1].rank"
+        },
+        {
+          "path": "ranked_accounts[1].account_id"
+        },
+        {
+          "path": "ranked_accounts[1].record_id"
+        },
+        {
+          "path": "ranked_accounts[1].reason_code"
+        },
+        {
+          "path": "ranked_accounts[2].rank"
+        },
+        {
+          "path": "ranked_accounts[2].account_id"
+        },
+        {
+          "path": "ranked_accounts[2].record_id"
+        },
+        {
+          "path": "ranked_accounts[2].reason_code"
+        }
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "Priority scores are correct for the ranked board.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "ranked_accounts[0].priority_score"
+        },
+        {
+          "path": "ranked_accounts[1].priority_score"
+        },
+        {
+          "path": "ranked_accounts[2].priority_score"
+        }
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "Credit-review accounts and owner notification list are correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "credit_review_accounts",
+          "sort_list": true
+        },
+        {
+          "path": "owner_notifications"
+        }
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "Board summary and business risk audit are correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "board_summary.service_PENDING_ACTION"
+        },
+        {
+          "path": "board_summary.service_ESCALATED"
+        },
+        {
+          "path": "board_summary.service_RESOLVED"
+        },
+        {
+          "path": "board_summary.service_FAILED"
+        },
+        {
+          "path": "board_summary.enterprise_Critical"
+        },
+        {
+          "path": "board_summary.enterprise_High"
+        },
+        {
+          "path": "board_summary.credit_review_count"
+        },
+        {
+          "path": "risk_audit.candidate_records_reviewed"
+        },
+        {
+          "path": "risk_audit.service_escalation_accounts",
+          "sort_list": true
+        },
+        {
+          "path": "risk_audit.enterprise_credit_accounts",
+          "sort_list": true
+        },
+        {
+          "path": "risk_audit.credit_review_incident_not_ranked_top3"
+        },
+        {
+          "path": "risk_audit.service_escalation_teams",
+          "sort_list": true
+        },
+        {
+          "path": "risk_audit.critical_incidents_reviewed"
+        },
+        {
+          "path": "risk_audit.not_ranked_credit_percent"
+        }
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "Candidate-record board audits are correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "board_candidate_audit.candidate_service_records_with_active_outage_match",
+          "sort_list": true
+        },
+        {
+          "path": "board_candidate_audit.candidate_service_records_with_post_troubleshooting_failure",
+          "sort_list": true
+        },
+        {
+          "path": "board_candidate_audit.candidate_enterprise_incidents_with_failed_runs",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "Environment credit and enterprise incident audit is correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "environment_credit_audit.failed_export_runs_for_credit_review_accounts"
+        },
+        {
+          "path": "environment_credit_audit.critical_incidents_outside_candidate_set"
+        },
+        {
+          "path": "board_full_environment_audit.critical_monthly_export_incident_ids",
+          "sort_list": true
+        },
+        {
+          "path": "board_full_environment_audit.failed_runs_for_critical_monthly_export_incidents"
+        },
+        {
+          "path": "board_full_environment_audit.enterprise_accounts_with_sla_credit"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "ticket_decisions": [
+    {
+      "ticket_id": "string; preserve payload order",
+      "account_id": "string",
+      "final_resolution_status": "enum: RESOLVED | PENDING_ACTION | ESCALATED | FAILED",
+      "diagnostic_needed": "boolean",
+      "latency_issue": "boolean",
+      "stability_issue": "boolean",
+      "bandwidth_issue": "boolean",
+      "outage_id": "string; empty string when none applies",
+      "escalation_team": "enum: NONE | TIER2_SUPPORT | FIELD_OPS | NETWORK_ENGINEERING | ACCOUNTS_PAYABLE",
+      "resolution_route": "enum: AUTO_TROUBLESHOOTING | OUTAGE_WAIT | ESCALATION | INELIGIBLE_ACCOUNT | AUTH_FAILED | INVALID_ACCOUNT"
+    }
+  ],
+  "batch_summary": {
+    "RESOLVED": "integer",
+    "PENDING_ACTION": "integer",
+    "ESCALATED": "integer",
+    "FAILED": "integer",
+    "tickets_requiring_customer_wait": "integer"
+  },
+  "evidence_audit": {
+    "tickets_with_active_outage_match": "integer",
+    "unique_escalation_teams": "list of enum values sorted alphabetically; allowed values FIELD_OPS | NETWORK_ENGINEERING | TIER2_SUPPORT",
+    "pre_troubleshooting_bandwidth_gap_total_mbps": "number with one decimal; sum of support-convention pre-diagnostic bandwidth shortfalls for tickets where diagnostics are used",
+    "post_troubleshooting_remaining_issue_flags": "integer; total latency/stability/bandwidth flags still failing after troubleshooting across escalated tickets",
+    "tickets_using_post_troubleshooting_records": "integer"
+  },
+  "deep_environment_audit": {
+    "target_service_area_active_outages": "integer",
+    "target_ticket_diagnostic_records_available": "integer",
+    "target_ticket_troubleshooting_records_available": "integer"
+  },
+  "metric_threshold_audit": {
+    "diagnostic_records_skipped_by_gate": "integer; target tickets with diagnostic records present but skipped because an earlier account/outage gate decides the outcome",
+    "tickets_below_pre_bandwidth_threshold": "list of target ticket IDs sorted ascending that fail the support bandwidth convention before troubleshooting and are not skipped by an earlier gate",
+    "post_troubleshooting_success_ticket_ids": "list of target ticket IDs sorted ascending that pass all support diagnostic conventions after troubleshooting",
+    "post_troubleshooting_failure_ticket_ids": "list of target ticket IDs sorted ascending that still fail any support diagnostic convention after troubleshooting",
+    "root_cause_escalation_ticket_ids": {
+      "FIELD_OPS": "list of target ticket IDs sorted ascending whose root cause maps to field operations",
+      "NETWORK_ENGINEERING": "list of target ticket IDs sorted ascending whose root cause maps to network engineering",
+      "TIER2_SUPPORT": "list of target ticket IDs sorted ascending whose root cause maps to tier-2 support"
+    },
+    "diagnostic_bandwidth_floor_mbps_by_ticket": "list of objects sorted by ticket_id for diagnostics-used target tickets; each object has ticket_id and floor_mbps under the learned support convention",
+    "pre_bandwidth_shortfall_mbps_by_ticket": "list of objects sorted by ticket_id for diagnostics-used target tickets below the support bandwidth floor; each object has ticket_id and shortfall_mbps to one decimal",
+    "post_remaining_issue_flags_by_ticket": "list of objects sorted by ticket_id for diagnostics-used target tickets; each object has ticket_id and remaining_issue_flags after troubleshooting",
+    "post_threshold_excess_totals": {
+      "latency_ms": "number with one decimal; total post-troubleshooting latency excess above the support convention across unresolved diagnostic tickets",
+      "jitter_ms": "number with one decimal; total post-troubleshooting jitter excess above the support convention across unresolved diagnostic tickets",
+      "bandwidth_mbps": "number with one decimal; total post-troubleshooting bandwidth shortfall below the support convention across unresolved diagnostic tickets"
+    }
+  }
+}

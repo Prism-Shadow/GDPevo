@@ -1,0 +1,282 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "All five case decisions have correct action, route, and reason code.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "case_decisions[0].primary_action"
+        },
+        {
+          "path": "case_decisions[1].primary_action"
+        },
+        {
+          "path": "case_decisions[2].primary_action"
+        },
+        {
+          "path": "case_decisions[3].primary_action"
+        },
+        {
+          "path": "case_decisions[4].primary_action"
+        },
+        {
+          "path": "case_decisions[0].final_route"
+        },
+        {
+          "path": "case_decisions[1].final_route"
+        },
+        {
+          "path": "case_decisions[2].final_route"
+        },
+        {
+          "path": "case_decisions[3].final_route"
+        },
+        {
+          "path": "case_decisions[4].final_route"
+        },
+        {
+          "path": "case_decisions[0].reason_code"
+        },
+        {
+          "path": "case_decisions[1].reason_code"
+        },
+        {
+          "path": "case_decisions[2].reason_code"
+        },
+        {
+          "path": "case_decisions[3].reason_code"
+        },
+        {
+          "path": "case_decisions[4].reason_code"
+        }
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "Refuel amount and customer charge for the target data-limit case are correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "case_decisions[3].data_refuel_gb",
+          "precision": 1
+        },
+        {
+          "path": "case_decisions[3].charge_amount_usd",
+          "precision": 2
+        },
+        {
+          "path": "queue_summary.total_estimated_customer_charge_usd",
+          "precision": 2
+        }
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "Queue route counts and secondary actions are correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "case_decisions[0].secondary_action"
+        },
+        {
+          "path": "case_decisions[1].secondary_action"
+        },
+        {
+          "path": "case_decisions[2].secondary_action"
+        },
+        {
+          "path": "case_decisions[3].secondary_action"
+        },
+        {
+          "path": "case_decisions[4].secondary_action"
+        },
+        {
+          "path": "queue_summary.self_service_fixes"
+        },
+        {
+          "path": "queue_summary.data_recoveries"
+        },
+        {
+          "path": "queue_summary.billing_recoveries"
+        },
+        {
+          "path": "queue_summary.carrier_updates"
+        },
+        {
+          "path": "queue_summary.human_transfers"
+        }
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "Transfer, carrier update, and human-transfer reason sets are correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "triage_audit.transfer_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "triage_audit.carrier_update_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "triage_audit.human_transfer_reason_codes",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "Device-configuration versus carrier-line source families are correctly separated.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "source_family_audit.device_configuration_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "source_family_audit.carrier_line_state_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "triage_audit.device_state_issue_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "triage_audit.line_state_issue_case_ids",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "Plan allowance, billing recovery, and human handoff source families are correct.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "source_family_audit.plan_allowance_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "source_family_audit.billing_recovery_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "source_family_audit.human_handoff_case_ids",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Plan-usage audit for data-limit cases and refuel totals is correct.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "mobile_plan_usage_audit.data_limit_exceeded_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "mobile_plan_usage_audit.target_refuel_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "mobile_plan_usage_audit.target_refuel_gb_total",
+          "precision": 1
+        },
+        {
+          "path": "mobile_plan_usage_audit.target_refuel_charge_total_usd",
+          "precision": 2
+        }
+      ]
+    },
+    {
+      "id": "SP008",
+      "goal": "Same-issue distribution and available case count are correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "environment_issue_distribution.non_target_same_issue_case_counts.MMS"
+        },
+        {
+          "path": "environment_issue_distribution.non_target_same_issue_case_counts.MOBILE_DATA"
+        },
+        {
+          "path": "environment_issue_distribution.non_target_same_issue_case_counts.NO_SERVICE"
+        },
+        {
+          "path": "environment_issue_distribution.non_target_same_issue_case_counts.SLOW_DATA"
+        },
+        {
+          "path": "environment_issue_distribution.all_case_records_available"
+        }
+      ]
+    },
+    {
+      "id": "SP009",
+      "goal": "Mobile inventory audit is correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "mobile_inventory_audit.all_case_issue_counts.MMS"
+        },
+        {
+          "path": "mobile_inventory_audit.all_case_issue_counts.MOBILE_DATA"
+        },
+        {
+          "path": "mobile_inventory_audit.all_case_issue_counts.NO_SERVICE"
+        },
+        {
+          "path": "mobile_inventory_audit.all_case_issue_counts.SLOW_DATA"
+        },
+        {
+          "path": "mobile_inventory_audit.locked_or_missing_sim_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "mobile_inventory_audit.mmsc_missing_case_ids",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP010",
+      "goal": "Mobile line-state and device-setting audits are correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "mobile_line_state_audit.suspended_line_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "mobile_line_state_audit.suspension_reason_counts.CONTRACT_ENDED"
+        },
+        {
+          "path": "mobile_line_state_audit.suspension_reason_counts.OVERDUE_BILL"
+        },
+        {
+          "path": "mobile_line_state_audit.line_roaming_disabled_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "mobile_device_setting_audit.data_saver_on_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "mobile_device_setting_audit.vpn_connected_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "mobile_device_setting_audit.old_network_mode_case_ids",
+          "sort_list": true
+        },
+        {
+          "path": "mobile_device_setting_audit.mobile_data_disabled_case_ids",
+          "sort_list": true
+        }
+      ]
+    }
+  ]
+}

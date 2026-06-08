@@ -1,0 +1,29 @@
+Q3 Receivables And Pipeline Operations Review
+
+Revenue Operations is preparing a structured Q3 operations review for ApexCloud. Build the review from the public ApexCloud Retention Operations API at http://127.0.0.1:8074.
+
+Use these parameters:
+- Quarter: 2026-Q3
+- Date range: 2026-07-01 through 2026-09-30
+- A/R as-of date: 2026-09-30
+- Region: all regions
+- HR context: all regions for 2026-Q3
+- Event context: apex_connect for 2026-Q3
+- Follow-up due date for every overdue receivables action: 2026-10-15
+
+Relevant endpoint families include:
+- /api/finance/ar-aging
+- /api/accounts
+- /api/opportunities
+- /api/hr/summary
+- /api/events/performance
+
+Return one JSON object only, using the shape shown in input/payloads/answer_template.json. Start from A/R customers that have overdue balances in the older aging buckets, link them to CRM accounts where the customer is a CRM account, then summarize Q3 CRM pipeline and the requested HR/event operations context.
+
+Use these output conventions:
+- Currency values use 2 decimal places.
+- Percentage values use 1 decimal place.
+- Counts are integers.
+- Link status must be "linked" or "unlinked".
+- The primary action for receivables follow-ups should use the controlled action label that best fits overdue receivables work.
+- Sort overdue_followups by customer_name ascending.

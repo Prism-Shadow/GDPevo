@@ -1,0 +1,152 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "as_of_date",
+    "target_quarter",
+    "prior_quarter",
+    "policy_id",
+    "allocation_views",
+    "risk_overlay"
+  ],
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "train_003"
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "target_quarter": {
+      "type": "string",
+      "required_value": "Q2_2026"
+    },
+    "prior_quarter": {
+      "type": "string",
+      "required_value": "Q1_2026"
+    },
+    "policy_id": {
+      "type": "string"
+    },
+    "allocation_views": {
+      "type": "list",
+      "ordering": "Sort rows by the request payload's focus_opportunity_sets order.",
+      "required_length": 8,
+      "row_schema": {
+        "opportunity_set": {
+          "type": "enum",
+          "allowed_values": [
+            "Europe",
+            "Japan",
+            "Emerging Markets",
+            "India",
+            "Latin America",
+            "U.S. Treasuries",
+            "Corporate High Yield",
+            "EUR"
+          ]
+        },
+        "asset_class": {
+          "type": "enum",
+          "allowed_values": [
+            "Equities",
+            "Duration",
+            "Credit",
+            "Currency"
+          ]
+        },
+        "view": {
+          "type": "enum",
+          "allowed_values": [
+            "UW",
+            "N",
+            "OW"
+          ]
+        },
+        "change": {
+          "type": "enum",
+          "allowed_values": [
+            "UP",
+            "DOWN",
+            "UNCHANGED"
+          ]
+        },
+        "conviction": {
+          "type": "enum",
+          "allowed_values": [
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ]
+        },
+        "rationale_code": {
+          "type": "enum",
+          "allowed_values": [
+            "GROWTH_IMPROVES",
+            "RATE_CUT_SUPPORT",
+            "CREDIT_SPREAD_RISK",
+            "DOLLAR_DEFENSIVE",
+            "CHINA_DEPENDENCE",
+            "LATAM_DIVERSIFIER",
+            "INDIA_OFFSET",
+            "DURATION_SUPPORT",
+            "HY_VALUATION_RISK",
+            "EUROPE_RECOVERY",
+            "JAPAN_POLICY_RISK",
+            "NEUTRAL_BALANCE"
+          ]
+        }
+      }
+    },
+    "risk_overlay": {
+      "type": "object",
+      "required_keys": [
+        "overlay_code",
+        "primary_action",
+        "rationale_codes"
+      ],
+      "fields": {
+        "overlay_code": {
+          "type": "enum",
+          "allowed_values": [
+            "DURATION_QUALITY_TILT",
+            "CREDIT_RISK_REDUCTION",
+            "EQUITY_BETA_EXTENSION",
+            "CURRENCY_DEFENSIVE_HEDGE",
+            "NO_OVERLAY"
+          ]
+        },
+        "primary_action": {
+          "type": "enum",
+          "allowed_values": [
+            "tilt_to_duration_quality",
+            "trim_credit_beta",
+            "add_cyclical_equity_beta",
+            "add_currency_hedge",
+            "hold_policy_weights"
+          ]
+        },
+        "rationale_codes": {
+          "type": "list",
+          "item_type": "enum",
+          "allowed_values": [
+            "GROWTH_IMPROVES",
+            "RATE_CUT_SUPPORT",
+            "CREDIT_SPREAD_RISK",
+            "DOLLAR_DEFENSIVE",
+            "CHINA_DEPENDENCE",
+            "LATAM_DIVERSIFIER",
+            "INDIA_OFFSET",
+            "DURATION_SUPPORT",
+            "HY_VALUATION_RISK",
+            "EUROPE_RECOVERY",
+            "JAPAN_POLICY_RISK",
+            "NEUTRAL_BALANCE"
+          ],
+          "ordering": "Business priority order, highest priority first."
+        }
+      }
+    }
+  }
+}

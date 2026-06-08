@@ -1,0 +1,68 @@
+{
+  "engagement_reconciliation": {
+    "as_of_date": "YYYY-MM-DD",
+    "opportunity_id": "string",
+    "customer_id": "string",
+    "customer_name": "string",
+    "stage": "enum: WON | OPEN | LOST",
+    "won_amount": "number, USD, two decimals",
+    "phase_total_amount": "number, USD, two decimals",
+    "opportunity_matches_phase_total": "boolean",
+    "total_paid_amount": "number, USD, two decimals",
+    "outstanding_balance": "number, USD, two decimals",
+    "primary_contact": {
+      "contact_name": "string",
+      "customer_id": "string"
+    },
+    "milestones": [
+      {
+        "milestone_id": "enum: MS1 | MS2 | MS3; order ascending by milestone_id",
+        "amount": "number, USD, two decimals",
+        "invoice_state": "enum: PAID | OPEN | VOID | UNKNOWN",
+        "payment_state": "enum: PAID | PARTIAL | UNPAID | UNKNOWN",
+        "paid_amount": "number, USD, two decimals",
+        "due_date": "YYYY-MM-DD or null",
+        "recognition_status": "enum: RECOGNIZED | MISSING_REVENUE_JOURNAL | NOT_REQUIRED_UNPAID | UNKNOWN"
+      }
+    ]
+  },
+  "invoice_actions": {
+    "primary_accounting_action": "enum: RECORD_REVENUE_MS2 | VERIFY_REVENUE_ONLY | NO_ACCOUNTING_ACTION",
+    "collection_action": "enum: MONITOR_UNPAID_NOT_DUE | SEND_COLLECTION_NOTICE | NO_COLLECTION_ACTION",
+    "accounting_action": {
+      "action": "enum: RECORD_REVENUE_MS2 | VERIFY_REVENUE_ONLY | NO_ACCOUNTING_ACTION",
+      "milestone_id": "enum: MS1 | MS2 | MS3 | NONE",
+      "amount": "number, USD, two decimals",
+      "debit_account": "enum: DEFERRED_REVENUE | ACCOUNTS_RECEIVABLE | CASH | NONE",
+      "credit_account": "enum: IMPLEMENTATION_SERVICES_REVENUE | DEFERRED_REVENUE | ACCOUNTS_RECEIVABLE | NONE",
+      "owner_queue": "enum: ACCOUNTING | ACCOUNT_MANAGEMENT | NONE"
+    },
+    "collection_task": {
+      "action": "enum: MONITOR_UNPAID_NOT_DUE | SEND_COLLECTION_NOTICE | NO_COLLECTION_ACTION",
+      "milestone_id": "enum: MS1 | MS2 | MS3 | NONE",
+      "amount": "number, USD, two decimals",
+      "due_date": "YYYY-MM-DD or null",
+      "owner_queue": "enum: ACCOUNT_MANAGEMENT | COLLECTIONS | NONE",
+      "contact_name": "string"
+    }
+  },
+  "event_actions": {
+    "event_id": "string",
+    "event_status": "enum: SCHEDULED | ACTIVE | COMPLETED | CANCELLED | UNKNOWN",
+    "voucher": {
+      "voucher_code": "string",
+      "voucher_status": "enum: ACTIVE | DRAFT | EXPIRED | DISABLED | UNKNOWN",
+      "discount_amount": "number, USD, two decimals",
+      "max_uses": "integer"
+    },
+    "invite_action": "enum: SEND_BRIEFING_INVITE | VERIFY_INVITE_SENT | NO_INVITE_ACTION",
+    "invite_task": {
+      "action": "enum: SEND_BRIEFING_INVITE | VERIFY_INVITE_SENT | NO_INVITE_ACTION",
+      "event_id": "string",
+      "voucher_code": "string",
+      "owner_queue": "enum: ACCOUNT_MANAGEMENT | EVENTS | NONE",
+      "contact_name": "string",
+      "customer_id": "string"
+    }
+  }
+}

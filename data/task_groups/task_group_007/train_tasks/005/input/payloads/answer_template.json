@@ -1,0 +1,53 @@
+{
+  "required_top_level_keys": [
+    "analysis_window",
+    "supplier_decisions",
+    "held_po_ids",
+    "release_supplier_ids",
+    "summary"
+  ],
+  "analysis_window": {
+    "start": {"type": "string", "format": "YYYY-MM-DD"},
+    "end": {"type": "string", "format": "YYYY-MM-DD"}
+  },
+  "supplier_decisions": {
+    "type": "list",
+    "ordering": "sort by supplier_id ascending",
+    "item_required_keys": [
+      "supplier_id",
+      "supplier_name",
+      "quality_status",
+      "recent_incident_count",
+      "recent_rma_count",
+      "severe_or_critical_count",
+      "open_incident_count",
+      "affected_skus",
+      "sample_incident_ids",
+      "decision",
+      "held_po_ids"
+    ],
+    "field_types": {
+      "supplier_id": "string",
+      "supplier_name": "string",
+      "quality_status": {"type": "enum", "allowed": ["approved", "watch", "quality_hold"]},
+      "recent_incident_count": "integer",
+      "recent_rma_count": "integer",
+      "severe_or_critical_count": "integer",
+      "open_incident_count": "integer",
+      "affected_skus": "sorted list of SKU strings",
+      "sample_incident_ids": "sorted list of incident id strings, maximum 5",
+      "decision": {"type": "enum", "allowed": ["freeze_new_replenishment", "buyer_review_required", "monitor_only"]},
+      "held_po_ids": "sorted list of open or confirmed purchase order ids"
+    }
+  },
+  "held_po_ids": "sorted unique list of all held purchase order ids",
+  "release_supplier_ids": "sorted list of supplier ids whose decision is monitor_only",
+  "summary": {
+    "suppliers_reviewed": "integer",
+    "freeze_count": "integer",
+    "buyer_review_count": "integer",
+    "monitor_count": "integer",
+    "held_po_count": "integer",
+    "total_recent_incidents": "integer"
+  }
+}

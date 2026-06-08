@@ -1,0 +1,99 @@
+{
+  "description": "Required JSON output shape for the Summit watch-list stress and workout action review.",
+  "required_top_level_keys": [
+    "branch_id",
+    "watch_list_summary",
+    "stress_results",
+    "workout_queue",
+    "severe_bucket_counts"
+  ],
+  "fields": {
+    "branch_id": {"type": "string", "required": true},
+    "watch_list_summary": {
+      "type": "object",
+      "required_keys": [
+        "adverse_rating_min",
+        "adverse_loan_count",
+        "adverse_balance",
+        "risk_classes",
+        "monitoring_cadence"
+      ],
+      "fields": {
+        "adverse_rating_min": {"type": "integer"},
+        "adverse_loan_count": {"type": "integer"},
+        "adverse_balance": {"type": "number", "precision": 2, "units": "USD"},
+        "risk_classes": {
+          "type": "list",
+          "ordering": "ascending loan_id",
+          "item_required_keys": ["loan_id", "risk_class", "factor_score"],
+          "item_fields": {
+            "loan_id": {"type": "string"},
+            "risk_class": {
+              "type": "enum",
+              "allowed_values": ["Prime", "Desirable", "Satisfactory", "Watch", "Doubtful", "Projected Loss"]
+            },
+            "factor_score": {"type": "integer"}
+          }
+        },
+        "monitoring_cadence": {
+          "type": "enum",
+          "allowed_values": ["monthly", "quarterly", "semiannual"]
+        }
+      }
+    },
+    "stress_results": {
+      "type": "object",
+      "required_keys": ["shock_label", "breach_threshold", "results", "breach_loan_ids"],
+      "fields": {
+        "shock_label": {"type": "string"},
+        "breach_threshold": {"type": "number", "precision": 2},
+        "results": {
+          "type": "list",
+          "ordering": "ascending loan_id for loans with DSCR available",
+          "item_required_keys": ["loan_id", "base_dscr", "stressed_dscr", "breaches_threshold"],
+          "item_fields": {
+            "loan_id": {"type": "string"},
+            "base_dscr": {"type": "number", "precision": 2},
+            "stressed_dscr": {"type": "number", "precision": 2},
+            "breaches_threshold": {"type": "boolean"}
+          }
+        },
+        "breach_loan_ids": {"type": "list", "items": "string", "ordering": "ascending loan_id"}
+      }
+    },
+    "workout_queue": {
+      "type": "list",
+      "ordering": "descending exposure, then ascending loan_id",
+      "item_required_keys": [
+        "loan_id",
+        "exposure",
+        "risk_class",
+        "payment_status",
+        "recommended_action",
+        "projected_loss"
+      ],
+      "item_fields": {
+        "loan_id": {"type": "string"},
+        "exposure": {"type": "number", "precision": 2, "units": "USD"},
+        "risk_class": {"type": "enum", "allowed_values": ["Prime", "Desirable", "Satisfactory", "Watch", "Doubtful", "Projected Loss"]},
+        "payment_status": {"type": "enum", "allowed_values": ["Current", "30 Days Past Due", "60 Days Past Due", "90+ Days Past Due", "Nonaccrual"]},
+        "recommended_action": {
+          "type": "enum",
+          "allowed_values": ["monitor", "watchlist", "special_assets", "workout", "partial_chargeoff_review", "legal_referral"]
+        },
+        "projected_loss": {"type": "boolean"}
+      }
+    },
+    "severe_bucket_counts": {
+      "type": "list",
+      "ordering": "ascending current_rating, then payment_status",
+      "item_required_keys": ["current_rating", "payment_status", "loan_count", "exposure"],
+      "item_fields": {
+        "current_rating": {"type": "integer"},
+        "payment_status": {"type": "enum", "allowed_values": ["Current", "30 Days Past Due", "60 Days Past Due", "90+ Days Past Due", "Nonaccrual"]},
+        "loan_count": {"type": "integer"},
+        "exposure": {"type": "number", "precision": 2, "units": "USD"}
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "batch_id",
+    "as_of_date",
+    "target_business_ids",
+    "decisions",
+    "bank_mismatch_ids",
+    "invalid_tax_ids",
+    "expired_license_ids",
+    "review_queue_ids",
+    "risk_score_override_flags"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "required_value": "train_005"
+    },
+    "batch_id": {
+      "type": "string",
+      "required_value": "ACR-TRAIN-005"
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD",
+      "required_value": "2025-06-01"
+    },
+    "target_business_ids": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "ascending business_id",
+      "required_members": [
+        "BUS-2025-0006",
+        "BUS-2025-0009",
+        "BUS-2025-0018",
+        "BUS-2025-0041",
+        "BUS-2025-0056"
+      ]
+    },
+    "decisions": {
+      "type": "object",
+      "keys": "business_id",
+      "values": {
+        "type": "enum",
+        "allowed_values": [
+          "release",
+          "hold",
+          "escalate"
+        ]
+      },
+      "required_business_ids": [
+        "BUS-2025-0006",
+        "BUS-2025-0009",
+        "BUS-2025-0018",
+        "BUS-2025-0041",
+        "BUS-2025-0056"
+      ]
+    },
+    "bank_mismatch_ids": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "ascending business_id",
+      "description": "Business IDs whose compliance bank_account_status is name_mismatch."
+    },
+    "invalid_tax_ids": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "ascending business_id"
+    },
+    "expired_license_ids": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "ascending business_id",
+      "comparison_date": "as_of_date"
+    },
+    "review_queue_ids": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "ascending business_id",
+      "description": "Business IDs that require compliance/AP review before release."
+    },
+    "risk_score_override_flags": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "ascending business_id",
+      "description": "Business IDs with risk_score >= 70 in the account-change release batch."
+    }
+  },
+  "additional_properties_allowed": false
+}

@@ -1,0 +1,83 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "CASE-2501 uses data refuel with correct amount and charge.",
+      "weight": 3,
+      "checks": [
+        {"path": "case_decisions[0].primary_action"},
+        {"path": "case_decisions[0].data_refuel_gb", "precision": 1},
+        {"path": "case_decisions[0].charge_amount_usd", "precision": 2},
+        {"path": "case_decisions[0].final_route"}
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "CASE-2502 uses carrier-side line roaming enablement.",
+      "weight": 3,
+      "checks": [
+        {"path": "case_decisions[1].primary_action"},
+        {"path": "case_decisions[1].carrier_update_required"},
+        {"path": "case_decisions[1].final_route"}
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "CASE-2503 uses data saver toggle.",
+      "weight": 2,
+      "checks": [
+        {"path": "case_decisions[2].primary_action"},
+        {"path": "case_decisions[2].final_route"}
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "CASE-2504 uses network mode update.",
+      "weight": 2,
+      "checks": [
+        {"path": "case_decisions[3].primary_action"},
+        {"path": "case_decisions[3].final_route"}
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "CASE-2505 uses mobile data toggle.",
+      "weight": 2,
+      "checks": [
+        {"path": "case_decisions[4].primary_action"},
+        {"path": "case_decisions[4].final_route"}
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "No unnecessary secondary actions are proposed.",
+      "weight": 1,
+      "checks": [
+        {"path": "case_decisions[0].secondary_action"},
+        {"path": "case_decisions[1].secondary_action"},
+        {"path": "case_decisions[2].secondary_action"},
+        {"path": "case_decisions[3].secondary_action"},
+        {"path": "case_decisions[4].secondary_action"}
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Worklist action-family counts are correct.",
+      "weight": 2,
+      "checks": [
+        {"path": "worklist_summary.data_refuel_cases"},
+        {"path": "worklist_summary.carrier_updates"},
+        {"path": "worklist_summary.device_setting_fixes"},
+        {"path": "worklist_summary.human_transfers"}
+      ]
+    },
+    {
+      "id": "SP008",
+      "goal": "Total estimated customer charge is correct.",
+      "weight": 2,
+      "checks": [
+        {"path": "worklist_summary.total_estimated_customer_charge_usd", "precision": 2}
+      ]
+    }
+  ]
+}

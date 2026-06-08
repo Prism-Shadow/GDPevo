@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "client_id",
+    "analysis_type",
+    "recommendation",
+    "estate_context",
+    "grat",
+    "crat",
+    "source_resolution"
+  ],
+  "fields": {
+    "client_id": "string; stable client identifier",
+    "analysis_type": "enum: trust_comparison",
+    "recommendation.preferred_strategy": "enum: GRAT, CRAT",
+    "recommendation.rationale_code": "enum: CHILDREN_TRANSFER_PRIORITY, PHILANTHROPIC_PRIORITY",
+    "recommendation.alternate_role": "enum: SECONDARY_CHARITABLE_TOOL, SECONDARY_FAMILY_TRANSFER_TOOL",
+    "estate_context.taxable_estate": "number, USD, rounded to cents",
+    "estate_context.estate_tax_exposure": "number, USD, rounded to cents",
+    "estate_context.liquidity_gap_before_planning": "number, USD, rounded to cents",
+    "grat.term_years": "integer",
+    "grat.projected_remainder_to_heirs": "number, USD, rounded to cents",
+    "grat.estimated_estate_tax_reduction": "number, USD, rounded to cents",
+    "grat.mortality_inclusion_risk": "enum: TERM_SURVIVAL_REQUIRED",
+    "crat.term_years": "integer",
+    "crat.projected_charitable_remainder": "number, USD, rounded to cents",
+    "crat.estimated_income_tax_deduction": "number, USD, rounded to cents",
+    "crat.family_transfer_fit": "enum: LOW, MODERATE, HIGH",
+    "source_resolution.controlling_goal_source": "enum: SIGNED_PROFILE, ATTORNEY_MEMO, CUSTODIAN_EXPORT, CRM_NOTE, STALE_MARKETING_INTAKE",
+    "source_resolution.controlling_asset_source": "enum: ATTORNEY_MEMO, SIGNED_PROFILE, CRM_NOTE",
+    "task_id": "string; stable task identifier such as train_001 or test_001"
+  },
+  "ordering": "No ordering constraints beyond object keys."
+}

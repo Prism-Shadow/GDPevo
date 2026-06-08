@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "client_id",
+    "analysis_type",
+    "recommendation",
+    "conversion_plan",
+    "rmd_projection",
+    "legacy_projection",
+    "source_resolution"
+  ],
+  "fields": {
+    "client_id": "string; stable client identifier",
+    "analysis_type": "enum: roth_conversion_rmd",
+    "recommendation.primary_action": "enum: STAGED_ROTH_CONVERSION, DEFER, NO_CONVERSION",
+    "recommendation.suitability": "enum: SUITABLE, BORDERLINE, DEFER",
+    "recommendation.risk_flag": "enum: TAX_BRACKET_MANAGEMENT, LIQUIDITY_CONSTRAINT, RMD_NEAR_TERM",
+    "conversion_plan.first_conversion_year": "integer year",
+    "conversion_plan.conversion_years": "integer",
+    "conversion_plan.conversion_years_positive": "integer",
+    "conversion_plan.annual_conversion_amount": "number, USD, rounded to cents",
+    "conversion_plan.total_converted": "number, USD, rounded to cents",
+    "conversion_plan.total_conversion_tax": "number, USD, rounded to cents",
+    "rmd_projection.horizon_year": "integer year",
+    "rmd_projection.first_rmd_year": "integer year",
+    "rmd_projection.baseline_rmd_tax_through_horizon": "number, USD, rounded to cents",
+    "rmd_projection.conversion_rmd_tax_through_horizon": "number, USD, rounded to cents",
+    "rmd_projection.rmd_tax_savings_through_horizon": "number, USD, rounded to cents",
+    "legacy_projection.projected_roth_balance_horizon": "number, USD, rounded to cents",
+    "legacy_projection.projected_traditional_balance_horizon": "number, USD, rounded to cents",
+    "legacy_projection.heir_tax_profile": "enum: MOSTLY_TAX_FREE, MIXED_TAXABLE_AND_TAX_FREE, MOSTLY_TAXABLE",
+    "source_resolution.controlling_profile_source": "enum: SIGNED_PROFILE, ATTORNEY_MEMO, CUSTODIAN_EXPORT, CRM_NOTE, STALE_MARKETING_INTAKE",
+    "source_resolution.controlling_account_source": "enum: CUSTODIAN_EXPORT, SIGNED_PROFILE, CRM_NOTE",
+    "task_id": "string; stable task identifier such as train_001 or test_001"
+  },
+  "ordering": "No ordering constraints beyond object keys. Numbers must be JSON numbers, not strings."
+}

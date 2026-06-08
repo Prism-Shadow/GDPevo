@@ -1,0 +1,78 @@
+{
+  "description": "April 2025 reimbursement close output. Return only this JSON shape.",
+  "type": "object",
+  "required": [
+    "payable_claim_ids",
+    "blocked_claim_ids",
+    "paid_claim_ids",
+    "ap_open_balance_total",
+    "crm_close_claim_ids",
+    "exception_reason_by_claim",
+    "batch_status"
+  ],
+  "properties": {
+    "payable_claim_ids": {
+      "type": "array",
+      "description": "Claim IDs that are approved and unpaid as of 2025-04-30. Sort ascending by claim_id.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blocked_claim_ids": {
+      "type": "array",
+      "description": "Candidate claim IDs that must not be paid or closed in the April reimbursement batch. Sort ascending by claim_id.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "paid_claim_ids": {
+      "type": "array",
+      "description": "Candidate claim IDs already paid as of the reconciled AP/payment state. Sort ascending by claim_id.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ap_open_balance_total": {
+      "type": "number",
+      "description": "USD total of payable approved-unpaid candidate claims for April close, rounded to 2 decimals."
+    },
+    "crm_close_claim_ids": {
+      "type": "array",
+      "description": "Candidate claim IDs safe to mark closed in the downstream close tracker because payment is already completed. Sort ascending by claim_id.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "exception_reason_by_claim": {
+      "type": "object",
+      "description": "One controlled reason for each candidate claim ID.",
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "payable_approved_unpaid",
+          "blocked_not_approved",
+          "blocked_missing_receipt",
+          "paid_confirmed",
+          "paid_stale_snapshot_conflict"
+        ]
+      }
+    },
+    "batch_status": {
+      "type": "string",
+      "enum": [
+        "ready_to_pay_with_blocks",
+        "ready_to_close",
+        "blocked",
+        "needs_reconciliation"
+      ],
+      "description": "Overall batch disposition after reconciling all candidate claims."
+    }
+  },
+  "ordering_rules": {
+    "all_claim_id_lists": "Sort claim IDs lexicographically ascending.",
+    "exception_reason_by_claim": "Include exactly the six candidate claim IDs as keys."
+  },
+  "numeric_precision": {
+    "ap_open_balance_total": "USD, 2 decimal places"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "task_id": {
+    "type": "string",
+    "required_value": "train_005"
+  },
+  "review_as_of": {
+    "type": "string",
+    "format": "YYYY-MM-DD"
+  },
+  "target_ids": {
+    "type": "object",
+    "required_keys": ["program_id", "po_ids", "receipt_ids", "invoice_ids"],
+    "list_ordering": "Sort ID lists ascending."
+  },
+  "release_decisions": [
+    {
+      "invoice_id": "string",
+      "po_id": "string",
+      "receipt_ids_in_scope": ["string"],
+      "excluded_same_po_receipt_ids": ["string"],
+      "decision": "One of: release_net_after_approved_chargeback, hold_missing_receipt, hold_pending_quality_chargeback",
+      "primary_reason": "One of: approved_qty_chargeback, approved_ap_quantity_variance, no_receipt_on_po, inspection_hold_pending_chargeback",
+      "invoice_total": "number, USD, rounded to cents",
+      "approved_chargeback_amount": "number, USD, rounded to cents",
+      "pending_chargeback_amount": "number, USD, rounded to cents",
+      "net_release_amount": "number, USD, rounded to cents"
+    }
+  ],
+  "receiving_exceptions": [
+    {
+      "receipt_id": "string",
+      "po_id": "string",
+      "exception_codes": [
+        "Zero or more of: Underage Quantity, Severe Unmatched Quantity, Inspection Hold, AP Quantity Variance"
+      ],
+      "chargeback_status": "One of: approved, pending_quality_review, not_applicable",
+      "resolution_status": "One of: net_release_ready, hold_for_quality_review, accepted_no_receiving_exception, missing_receipt"
+    }
+  ],
+  "summary": {
+    "release_invoice_ids": ["string"],
+    "hold_invoice_ids": ["string"],
+    "approved_chargeback_total": "number, USD, rounded to cents",
+    "pending_chargeback_total": "number, USD, rounded to cents",
+    "net_release_total": "number, USD, rounded to cents",
+    "authoritative_sources": [
+      "One or more of: procureops_po_records, procureops_receipt_records, procureops_ap_records, local_chargeback_register"
+    ],
+    "supporting_only_sources": [
+      "One or more of: ap_release_request_note, stale_po73xx_alias_note"
+    ],
+    "followup_actions": [
+      "One or more of: ask_receiving_for_vantix_receipt, hold_luma_duplicate_receipt_for_separate_invoice, route_po00031_quality_review, post_approved_chargeback_netting"
+    ]
+  }
+}

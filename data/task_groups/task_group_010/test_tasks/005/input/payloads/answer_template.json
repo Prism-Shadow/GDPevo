@@ -1,0 +1,364 @@
+{
+  "schema_name": "pf_ma_vega_cio_composite_decision",
+  "schema_version": "1.0",
+  "required_top_level_keys": [
+    "task_id",
+    "portfolio_id",
+    "as_of_date",
+    "review_quarter",
+    "policy_id",
+    "allocation_views",
+    "energy_credit_action",
+    "international_diversification",
+    "committee_decision",
+    "risk_flags"
+  ],
+  "field_definitions": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_005"
+    },
+    "portfolio_id": {
+      "type": "string",
+      "required_value": "PF-MA-VEGA"
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "review_quarter": {
+      "type": "string",
+      "required_value": "Q3_2026"
+    },
+    "policy_id": {
+      "type": "string"
+    },
+    "allocation_views": {
+      "type": "list",
+      "required_length": 6,
+      "ordering": "Sort rows by the committee packet's allocation_focus_opportunity_sets order.",
+      "row_schema": {
+        "opportunity_set": {
+          "type": "enum",
+          "allowed_values": [
+            "Emerging Markets",
+            "India",
+            "Latin America",
+            "Corporate Investment Grade",
+            "Corporate High Yield",
+            "USD"
+          ]
+        },
+        "asset_class": {
+          "type": "enum",
+          "allowed_values": [
+            "Equities",
+            "Credit",
+            "Currency"
+          ]
+        },
+        "prior_view": {
+          "type": "enum",
+          "allowed_values": [
+            "UW",
+            "N",
+            "OW"
+          ]
+        },
+        "signal_score": {
+          "type": "number",
+          "precision": 3
+        },
+        "view": {
+          "type": "enum",
+          "allowed_values": [
+            "UW",
+            "N",
+            "OW"
+          ]
+        },
+        "change": {
+          "type": "enum",
+          "allowed_values": [
+            "UP",
+            "DOWN",
+            "UNCHANGED"
+          ]
+        },
+        "conviction": {
+          "type": "enum",
+          "allowed_values": [
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ]
+        },
+        "rationale_code": {
+          "type": "enum",
+          "allowed_values": [
+            "GROWTH_IMPROVES",
+            "RATE_CUT_SUPPORT",
+            "CREDIT_SPREAD_RISK",
+            "DOLLAR_DEFENSIVE",
+            "CHINA_DEPENDENCE",
+            "LATAM_DIVERSIFIER",
+            "INDIA_OFFSET",
+            "DURATION_SUPPORT",
+            "HY_VALUATION_RISK",
+            "EUROPE_RECOVERY",
+            "JAPAN_POLICY_RISK",
+            "NEUTRAL_BALANCE"
+          ]
+        }
+      }
+    },
+    "energy_credit_action": {
+      "type": "object",
+      "required_keys": [
+        "action_type",
+        "theme",
+        "trades",
+        "metrics",
+        "constraint_flags"
+      ],
+      "fields": {
+        "action_type": {
+          "type": "enum",
+          "allowed_values": [
+            "trim",
+            "add",
+            "hold",
+            "hedge",
+            "monitor",
+            "rotate"
+          ]
+        },
+        "theme": {
+          "type": "enum",
+          "allowed_values": [
+            "lng_export_tailwind",
+            "oil_oversupply_caution",
+            "midstream_stability",
+            "transition_bond_selectivity",
+            "avoid_watchlist_yield_trap"
+          ]
+        },
+        "trades": {
+          "type": "list",
+          "ordering": "Sort by action with SELL before BUY, then by instrument_id ascending within each action.",
+          "row_schema": {
+            "action": {
+              "type": "enum",
+              "allowed_values": [
+                "BUY",
+                "SELL",
+                "HOLD",
+                "NO_TRADE"
+              ]
+            },
+            "instrument_id": {
+              "type": "string"
+            },
+            "notional_usd_m": {
+              "type": "number",
+              "precision": 1,
+              "units": "USD millions"
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "fields": {
+            "current_hy_allocation_pct": {
+              "type": "number",
+              "precision": 2,
+              "units": "percent of total portfolio market value"
+            },
+            "post_trade_hy_allocation_pct": {
+              "type": "number",
+              "precision": 2,
+              "units": "percent of total portfolio market value"
+            },
+            "current_weighted_duration_years": {
+              "type": "number",
+              "precision": 2,
+              "units": "years"
+            },
+            "post_trade_weighted_duration_years": {
+              "type": "number",
+              "precision": 2,
+              "units": "years"
+            },
+            "current_max_issuer_concentration_pct": {
+              "type": "number",
+              "precision": 2,
+              "units": "percent of total portfolio market value"
+            },
+            "post_trade_max_issuer_concentration_pct": {
+              "type": "number",
+              "precision": 2,
+              "units": "percent of total portfolio market value"
+            }
+          }
+        },
+        "constraint_flags": {
+          "type": "object",
+          "fields": {
+            "post_trade_hy_cap_pass": {
+              "type": "boolean"
+            },
+            "post_trade_duration_band_pass": {
+              "type": "boolean"
+            },
+            "post_trade_issuer_concentration_pass": {
+              "type": "boolean"
+            },
+            "watchlist_avoidance_pass": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "international_diversification": {
+      "type": "object",
+      "required_keys": [
+        "correlation_summary",
+        "action"
+      ],
+      "fields": {
+        "correlation_summary": {
+          "type": "list",
+          "required_length": 2,
+          "ordering": "Use pair_role order highest_concentration, then best_diversifier. Index ids inside each pair must be sorted alphabetically.",
+          "row_schema": {
+            "pair_role": {
+              "type": "enum",
+              "allowed_values": [
+                "highest_concentration",
+                "best_diversifier"
+              ]
+            },
+            "pair": {
+              "type": "list",
+              "length": 2,
+              "item_type": "string"
+            },
+            "correlation": {
+              "type": "number",
+              "precision": 3,
+              "calculation": "Pearson correlation of monthly simple returns from consecutive index levels."
+            },
+            "threshold_breached": {
+              "type": "boolean"
+            }
+          }
+        },
+        "action": {
+          "type": "object",
+          "fields": {
+            "action_type": {
+              "type": "enum",
+              "allowed_values": [
+                "trim",
+                "add",
+                "hold",
+                "hedge",
+                "monitor",
+                "rotate"
+              ]
+            },
+            "trim_index_id": {
+              "type": "string"
+            },
+            "add_index_id": {
+              "type": "string"
+            },
+            "rationale_code": {
+              "type": "enum",
+              "allowed_values": [
+                "CHINA_DEPENDENCE",
+                "LATAM_DIVERSIFIER",
+                "INDIA_OFFSET",
+                "NEUTRAL_BALANCE"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "committee_decision": {
+      "type": "object",
+      "required_keys": [
+        "decision",
+        "rebalance_trigger",
+        "priority_order"
+      ],
+      "fields": {
+        "decision": {
+          "type": "enum",
+          "allowed_values": [
+            "approve_rotation",
+            "defer_pending_risk_review",
+            "approve_with_monitoring",
+            "reject_constraint_breach"
+          ]
+        },
+        "rebalance_trigger": {
+          "type": "enum",
+          "allowed_values": [
+            "correlation_cap_breach",
+            "hy_cap_pressure",
+            "duration_drift",
+            "watchlist_concentration",
+            "committee_review"
+          ]
+        },
+        "priority_order": {
+          "type": "list",
+          "length": 3,
+          "allowed_values": [
+            "international_diversification",
+            "energy_credit_rotation",
+            "allocation_view_update"
+          ]
+        }
+      }
+    },
+    "risk_flags": {
+      "type": "object",
+      "required_keys": [
+        "correlation_threshold_breached",
+        "china_dependence_flag",
+        "current_issuer_concentration_breach",
+        "post_trade_issuer_concentration_breach",
+        "hy_cap_pressure",
+        "duration_drift",
+        "high_yield_underweight_signal"
+      ],
+      "fields": {
+        "correlation_threshold_breached": {
+          "type": "boolean"
+        },
+        "china_dependence_flag": {
+          "type": "boolean"
+        },
+        "current_issuer_concentration_breach": {
+          "type": "boolean"
+        },
+        "post_trade_issuer_concentration_breach": {
+          "type": "boolean"
+        },
+        "hy_cap_pressure": {
+          "type": "boolean"
+        },
+        "duration_drift": {
+          "type": "boolean"
+        },
+        "high_yield_underweight_signal": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

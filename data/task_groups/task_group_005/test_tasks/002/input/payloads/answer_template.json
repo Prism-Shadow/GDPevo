@@ -1,0 +1,107 @@
+{
+  "description": "Vendor intake exception-board answer schema. Return JSON only.",
+  "type": "object",
+  "required_top_level_keys": [
+    "batch_id",
+    "review_date",
+    "per_business",
+    "follow_up_business_ids",
+    "intake_ready_count",
+    "batch_status"
+  ],
+  "properties": {
+    "batch_id": {
+      "type": "string",
+      "required_value": "grant_supplier_intake_april_2025"
+    },
+    "review_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD",
+      "required_value": "2025-04-30"
+    },
+    "per_business": {
+      "type": "object",
+      "required_business_ids": [
+        "BUS-2025-0025",
+        "BUS-2025-0027",
+        "BUS-2025-0034",
+        "BUS-2025-0042",
+        "BUS-2025-0052"
+      ],
+      "value_schema": {
+        "decision": {
+          "type": "enum",
+          "allowed_values": [
+            "approve",
+            "awaiting_information",
+            "escalate"
+          ]
+        },
+        "risk_level": {
+          "type": "enum",
+          "allowed_values": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "reportable_ubo_count": {
+          "type": "integer",
+          "minimum": 0,
+          "precision": "whole number"
+        },
+        "hard_stop_codes": {
+          "type": "list",
+          "ordering": "Alphabetical by enum value. Use an empty list when none apply.",
+          "items": {
+            "type": "enum",
+            "allowed_values": [
+              "bank_not_verified",
+              "invalid_tax_id",
+              "license_expired_over_42_days",
+              "missing_required_information",
+              "possible_pep",
+              "shell_company_suspected"
+            ]
+          }
+        },
+        "required_action": {
+          "type": "enum",
+          "allowed_values": [
+            "approve_for_intake",
+            "collect_missing_information",
+            "escalate_to_finance_risk"
+          ]
+        }
+      }
+    },
+    "follow_up_business_ids": {
+      "type": "list",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "BUS-2025-0025",
+          "BUS-2025-0027",
+          "BUS-2025-0034",
+          "BUS-2025-0042",
+          "BUS-2025-0052"
+        ]
+      },
+      "ordering": "Ascending by business_id."
+    },
+    "intake_ready_count": {
+      "type": "integer",
+      "minimum": 0,
+      "precision": "whole number"
+    },
+    "batch_status": {
+      "type": "enum",
+      "allowed_values": [
+        "ready",
+        "ready_with_follow_up",
+        "blocked"
+      ]
+    }
+  },
+  "additional_properties_allowed": false
+}

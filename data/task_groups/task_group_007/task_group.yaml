@@ -1,0 +1,344 @@
+task_group:
+  task_group_id: task_group_007
+  scenario_id: SCN_007_erp_inventory_order_fulfillment
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: ERP
+  description: |
+    Train-predict benchmark for ERP inventory, order fulfillment, replenishment,
+    and warehouse incident operations in a shared Northwind Components office environment.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/data/boms.json
+    - env/data/customers.json
+    - env/data/incidents.json
+    - env/data/inventory.json
+    - env/data/manifest.json
+    - env/data/orders.json
+    - env/data/products.json
+    - env/data/purchase_orders.json
+    - env/data/suppliers.json
+    - env/data/warehouses.json
+    - env/generate_data.py
+    - env/README.md
+    - env/server.py
+    - env/setup.sh
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/expedite_queue_memo.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: "SP001_order_set_and_count"
+          weight: 1
+        - goal: "SP002_inventory_statuses_and_shortages"
+          weight: 3
+        - goal: "SP003_inactive_and_low_stock_sku_sets"
+          weight: 2
+        - goal: "SP004_customer_exceptions"
+          weight: 2
+        - goal: "SP005_final_decisions"
+          weight: 3
+        - goal: "SP006_next_actions"
+          weight: 2
+        - goal: "SP007_shipping_quotes"
+          weight: 2
+        - goal: "SP008_summary_rollups"
+          weight: 2
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+      - train_tasks/002/input/payloads/production_memo.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: "Correct kit targets, build quantities, build dates, and WH_WEST site."
+          weight: 2
+        - goal: "Correct component demand and WH_WEST effective availability for all BOM components."
+          weight: 2
+        - goal: "Correct purchase requisition SKU set, suppliers, quantities, need dates, and extended costs."
+          weight: 3
+        - goal: "Correct inter-warehouse transfer requests and quantities."
+          weight: 3
+        - goal: "Correct timely PO coverage for NW-1005 and exclusion of late or ineligible POs."
+          weight: 2
+        - goal: "Correct overstock exclusion for NW-1039 and excluded component list."
+          weight: 2
+        - goal: "Correct component final actions and purchase/transfer quantities across all six SKUs."
+          weight: 3
+        - goal: "Correct aggregate purchase, transfer, PO-covered, and component-count totals."
+          weight: 1
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+      - train_tasks/003/input/payloads/q1_scorecard_request.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: "Correct analysis window and filtered summary totals."
+          weight: 2
+        - goal: "Correct supplier set, names, counts, and percentages."
+          weight: 3
+        - goal: "Correct supplier total costs and highest-cost supplier."
+          weight: 2
+        - goal: "Correct supplier average duration in days."
+          weight: 2
+        - goal: "Correct RMA and WORK_ORDER split by supplier."
+          weight: 2
+        - goal: "Correct open and severe incident counts by supplier."
+          weight: 1
+        - goal: "Correct controlled recommendation code by supplier."
+          weight: 3
+        - goal: "Correct escalation supplier ordering and highest-share supplier."
+          weight: 2
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/allocation_memo.md
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: "SP1_wave_and_line_action_set"
+          weight: 2
+        - goal: "SP2_manual_review_reason_set"
+          weight: 3
+        - goal: "SP3_direct_ship_quantities"
+          weight: 2
+        - goal: "SP4_transfer_request_set"
+          weight: 3
+        - goal: "SP5_backorder_quantities"
+          weight: 2
+        - goal: "SP6_requested_effective_available_values"
+          weight: 2
+        - goal: "SP7_order_rollup_and_blocked_orders"
+          weight: 2
+        - goal: "SP8_summary_counts"
+          weight: 1
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+      - train_tasks/005/input/payloads/quality_hold_review_memo.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: "Correct analysis window."
+          weight: 1
+        - goal: "Correct reviewed supplier identities."
+          weight: 2
+        - goal: "Correct recent incident/RMA/severity/open counts."
+          weight: 3
+        - goal: "Correct supplier quality statuses."
+          weight: 2
+        - goal: "Correct affected SKU and sample incident sets."
+          weight: 2
+        - goal: "Correct controlled replenishment decisions."
+          weight: 3
+        - goal: "Correct held PO ids."
+          weight: 3
+        - goal: "Correct release suppliers and summary rollups."
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+      - test_tasks/001/input/payloads/priority_wave_memo.md
+      - test_tasks/001/input/payloads/priority_wave_TEST_PRIORITY_D_inventory_extract.csv
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: "Correct final_decision for every TEST_PRIORITY_D order."
+          weight: 3
+        - goal: "Correct live inventory_status for every order."
+          weight: 2
+        - goal: "Correct controlled exception reason set for every order."
+          weight: 3
+        - goal: "Correct live shortage SKU set for every order."
+          weight: 2
+        - goal: "Correct shipping cost and service days for every order."
+          weight: 1
+        - goal: "Correct total order count, decision counts, and inventory-status counts."
+          weight: 1
+        - goal: "Correct manual-review, backorder, and rejected order id sets."
+          weight: 2
+        - goal: "Correct aggregate exception reason counts."
+          weight: 2
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+      - test_tasks/002/input/payloads/service_parts_campaign_memo.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: "Correct campaign target BOMs, target warehouses, build quantities, kit names, and needed-by dates."
+          weight: 2
+        - goal: "Correct component demand and target effective availability for all component/warehouse rows."
+          weight: 2
+        - goal: "Correct purchase requisition SKU/warehouse set, suppliers, quantities, need dates, and extended costs."
+          weight: 3
+        - goal: "Correct inter-warehouse transfer requests and quantities."
+          weight: 3
+        - goal: "Correct timely PO coverage and late-PO exclusion for eligible component rows."
+          weight: 2
+        - goal: "Correct excluded component set and controlled exclusion reasons."
+          weight: 2
+        - goal: "Correct final action plus purchase and transfer quantities for every component/warehouse row."
+          weight: 3
+        - goal: "Correct aggregate purchase cost, purchase units, transfer units, PO-covered units, and warehouse unit totals."
+          weight: 2
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+      - test_tasks/003/input/payloads/full_year_supplier_incident_request.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: "Correct analysis window and full-year summary totals."
+          weight: 2
+        - goal: "Correct supplier set, names, quality statuses, incident counts, and incident percentages."
+          weight: 3
+        - goal: "Correct supplier ranking, top-five ranking, and highest-share supplier."
+          weight: 2
+        - goal: "Correct supplier total costs, cost percentages, and highest-cost supplier."
+          weight: 2
+        - goal: "Correct overall and supplier RMA/work-order duration averages."
+          weight: 3
+        - goal: "Correct RMA, work-order, open, severe, and critical-RMA counts by supplier."
+          weight: 2
+        - goal: "Correct controlled management recommendation code by supplier."
+          weight: 3
+        - goal: "Correct controlled management action supplier sets."
+          weight: 2
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+      - test_tasks/004/input/payloads/release_control_memo.md
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: "Correct release_decision for every TEST_QUALITY_E order."
+          weight: 3
+        - goal: "Correct inventory_status and blocked_skus for every order."
+          weight: 2
+        - goal: "Correct controlled reason code set for every order."
+          weight: 3
+        - goal: "Correct per-order quality-hold supplier mapping."
+          weight: 2
+        - goal: "Correct per-order active severe incident IDs and risk supplier IDs."
+          weight: 2
+        - goal: "Correct risk supplier rollup with risk type, affected SKUs, incident IDs, and orders."
+          weight: 3
+        - goal: "Correct next action for every order."
+          weight: 1
+        - goal: "Correct decision counts, inventory counts, order-id sets, and risk totals."
+          weight: 1
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+      - test_tasks/005/input/payloads/daily_board_memo.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: "Correct board date and wave."
+          weight: 1
+        - goal: "Correct per-order decisions."
+          weight: 3
+        - goal: "Correct reason codes and risk suppliers."
+          weight: 3
+        - goal: "Correct replenishment gap lines."
+          weight: 3
+        - goal: "Correct incident escalation suppliers."
+          weight: 2
+        - goal: "Correct ranked priority actions."
+          weight: 2
+        - goal: "Correct summary counts."
+          weight: 2
+        - goal: "Correct integrated decision, shortage, and incident sets."
+          weight: 2

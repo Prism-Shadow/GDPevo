@@ -1,0 +1,198 @@
+{
+  "capacity_concentration": {
+    "allowed_mitigations": [
+      "participation_required",
+      "reduced_amount",
+      "board_exception"
+    ],
+    "branch_sector_override_table": "sector_exposures",
+    "grandfathering_note": "Existing over-ceiling exposure may be grandfathered, but new approvals may not worsen that sector without mitigation.",
+    "lending_capacity_field": "branches.lending_capacity_q1",
+    "single_sector_default_field": "branches.sector_ceiling_pct"
+  },
+  "cdfi_factor_scores": {
+    "classes": [
+      {
+        "class": "Prime",
+        "score_range": "0-5"
+      },
+      {
+        "class": "Desirable",
+        "score_range": "6-9"
+      },
+      {
+        "class": "Satisfactory",
+        "score_range": "10-13"
+      },
+      {
+        "class": "Watch",
+        "score_range": "14-18"
+      },
+      {
+        "class": "Doubtful",
+        "score_range": ">=19"
+      },
+      {
+        "class": "Projected Loss",
+        "score_range": ">=19 and ltv>1.0"
+      }
+    ],
+    "debt_to_asset": [
+      {
+        "range": "<0.40",
+        "score": 0
+      },
+      {
+        "range": "0.40-0.60",
+        "score": 2
+      },
+      {
+        "range": "0.60-0.80",
+        "score": 4
+      },
+      {
+        "range": ">0.80",
+        "score": 6
+      }
+    ],
+    "fico": [
+      {
+        "range": ">720",
+        "score": 0
+      },
+      {
+        "range": "680-720",
+        "score": 1
+      },
+      {
+        "range": "580-679",
+        "score": 3
+      },
+      {
+        "range": "<580",
+        "score": 5
+      }
+    ],
+    "liquidity_months": [
+      {
+        "range": ">12",
+        "score": 0
+      },
+      {
+        "range": "6-12",
+        "score": 1
+      },
+      {
+        "range": "3-6",
+        "score": 3
+      },
+      {
+        "range": "<3",
+        "score": 5
+      }
+    ],
+    "ltv": [
+      {
+        "range": "<0.40",
+        "score": 0
+      },
+      {
+        "range": "0.40-0.60",
+        "score": 2
+      },
+      {
+        "range": "0.60-0.80",
+        "score": 4
+      },
+      {
+        "range": ">0.80",
+        "score": 6
+      }
+    ]
+  },
+  "cre_weighted_score": {
+    "classes": [
+      {
+        "class": "approve_quality",
+        "max": 2.0
+      },
+      {
+        "class": "conditional",
+        "max": 3.0
+      },
+      {
+        "class": "weak",
+        "min_above": 3.0
+      }
+    ],
+    "weights": {
+      "capacity": 0.45,
+      "capital": 0.03,
+      "character": 0.05,
+      "collateral_exposure": 0.36,
+      "conditions": 0.11
+    }
+  },
+  "policy_version": "credit_policy_v2025Q1",
+  "risk_rating": {
+    "delinquency_minimums": {
+      "30 Days Past Due": 4,
+      "60 Days Past Due": 5,
+      "90+ Days Past Due": 7,
+      "Current": null,
+      "Nonaccrual": 8
+    },
+    "dominant_factor_rule": "Final re-derived rating is the worst numeric rating from available DSCR, LTV or collateral, and delinquency factors.",
+    "dscr_thresholds": [
+      {
+        "min": 1.5,
+        "rating": 3
+      },
+      {
+        "min": 1.25,
+        "rating": 4
+      },
+      {
+        "min": 1.05,
+        "rating": 5
+      },
+      {
+        "min": 1.0,
+        "rating": 6
+      },
+      {
+        "max_below": 1.0,
+        "rating": 7
+      }
+    ],
+    "ltv_thresholds": [
+      {
+        "max": 0.65,
+        "rating": 3
+      },
+      {
+        "max": 0.75,
+        "rating": 4
+      },
+      {
+        "max": 0.85,
+        "rating": 5
+      },
+      {
+        "max": 1.0,
+        "rating": 6
+      },
+      {
+        "min_above": 1.0,
+        "rating": 7
+      }
+    ],
+    "material_downgrade_notches": 2
+  },
+  "stress": {
+    "coverage_breach_threshold": 1.0,
+    "cre_dual_stress_formula": "stressed_dscr = dscr * 0.85 / (1 + 0.18)",
+    "watch_list_formula": "stressed_dscr = dscr / (1 + 0.18)",
+    "watch_list_parallel_shock": "+200bp"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "ranked_accounts": [
+    {
+      "rank": 1,
+      "record_type": "enterprise_incident",
+      "account_id": "ENT-4001",
+      "record_id": "INC-8301",
+      "priority_score": 95,
+      "reason_code": "CRITICAL_SLA_CREDIT"
+    },
+    {
+      "rank": 2,
+      "record_type": "service_ticket",
+      "account_id": "ACC-6104",
+      "record_id": "TCK-6104",
+      "priority_score": 88,
+      "reason_code": "NETWORK_ENGINEERING_ESCALATION"
+    },
+    {
+      "rank": 3,
+      "record_type": "service_ticket",
+      "account_id": "ACC-6105",
+      "record_id": "TCK-6105",
+      "priority_score": 84,
+      "reason_code": "FIELD_REPAIR_ESCALATION"
+    }
+  ],
+  "credit_review_accounts": [
+    "ENT-3001",
+    "ENT-4001"
+  ],
+  "owner_notifications": [
+    "priya.shah",
+    "omar.chen",
+    "network.ops",
+    "field.ops",
+    "delana.rao",
+    "stephany.lo"
+  ],
+  "board_summary": {
+    "service_PENDING_ACTION": 1,
+    "service_ESCALATED": 2,
+    "service_RESOLVED": 1,
+    "service_FAILED": 1,
+    "enterprise_Critical": 2,
+    "enterprise_High": 1,
+    "credit_review_count": 2
+  },
+  "risk_audit": {
+    "candidate_records_reviewed": 8,
+    "service_escalation_accounts": [
+      "ACC-6104",
+      "ACC-6105"
+    ],
+    "enterprise_credit_accounts": [
+      "ENT-3001",
+      "ENT-4001"
+    ],
+    "credit_review_incident_not_ranked_top3": "INC-7301",
+    "critical_incidents_reviewed": 2,
+    "not_ranked_credit_percent": 15,
+    "service_escalation_teams": [
+      "FIELD_OPS",
+      "NETWORK_ENGINEERING"
+    ]
+  },
+  "environment_credit_audit": {
+    "failed_export_runs_for_credit_review_accounts": 12,
+    "critical_incidents_outside_candidate_set": 0
+  },
+  "board_candidate_audit": {
+    "candidate_service_records_with_active_outage_match": [
+      "TCK-6101"
+    ],
+    "candidate_service_records_with_post_troubleshooting_failure": [
+      "TCK-6102",
+      "TCK-6104",
+      "TCK-6105"
+    ],
+    "candidate_enterprise_incidents_with_failed_runs": [
+      "INC-7301",
+      "INC-8301"
+    ]
+  },
+  "board_full_environment_audit": {
+    "critical_monthly_export_incident_ids": [
+      "INC-7301",
+      "INC-8301"
+    ],
+    "failed_runs_for_critical_monthly_export_incidents": 7,
+    "enterprise_accounts_with_sla_credit": 11
+  }
+}

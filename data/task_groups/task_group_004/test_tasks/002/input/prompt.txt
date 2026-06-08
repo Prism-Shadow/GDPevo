@@ -1,0 +1,70 @@
+Title: Lumen Rail Q3 QBR Readiness Packet
+
+Customer Success needs a structured QBR readiness packet for Lumen Rail covering Q3 2026. The packet will be used for an internal readiness review and a client meeting plan.
+
+Use the ApexCloud Retention Operations API at http://127.0.0.1:8074. If the service is not already running, it can be started from the task group environment with:
+
+PORT=8074 task_factory/task_group/task_group_004/env/setup.sh
+
+Account and period:
+- Account ID: acct_lumen_rail
+- Legal name: Lumen Rail Systems Ltd.
+- Quarter: 2026-Q3
+- Months: 2026-07, 2026-08, 2026-09
+- Date range: 2026-07-01 through 2026-09-30
+
+Useful endpoint families include:
+- /api/accounts/<account_id>
+- /api/accounts/<account_id>/metrics?start=YYYY-MM&end=YYYY-MM
+- /api/accounts/<account_id>/tickets?start=YYYY-MM-DD&end=YYYY-MM-DD
+- /api/accounts/<account_id>/nps?start=YYYY-MM-DD&end=YYYY-MM-DD
+
+Return only valid JSON following this shape:
+
+{
+  "qbr_packet": {
+    "account_id": "acct_lumen_rail",
+    "quarter": "2026-Q3",
+    "monthly_metrics": [
+      {
+        "month": "YYYY-MM",
+        "revenue": 0.00,
+        "support_tickets": 0,
+        "sla_compliance_pct": 0.0,
+        "nps_score": 0
+      }
+    ],
+    "highlights": {
+      "average_revenue": 0.00,
+      "peak_revenue_month": "YYYY-MM",
+      "peak_revenue": 0.00,
+      "max_sla_month": "YYYY-MM",
+      "max_sla_pct": 0.0,
+      "peak_nps_month": "YYYY-MM",
+      "peak_nps_score": 0,
+      "average_sla_pct": 0.0,
+      "total_support_tickets": 0
+    }
+  },
+  "metric_sources": {
+    "revenue": "source_enum",
+    "support_tickets": "source_enum",
+    "sla_compliance": "source_enum",
+    "nps": "source_enum"
+  },
+  "review_route": {
+    "review_owner": "owner_enum",
+    "review_due_date": "2026-10-20",
+    "needs_technical_signoff": true,
+    "internal_channel_slug": "lumen-rail-q3-qbr-review"
+  },
+  "client_meeting": {
+    "proposed_date": "2026-10-29",
+    "agenda_topics": [
+      "agenda_topic_enum"
+    ],
+    "primary_risk_theme": "risk_theme_enum"
+  }
+}
+
+Use currency values to 2 decimals, percentage values to 1 decimal, and counts as integers. For metric sources, choose from: `crm_closed_won`, `support_export`, `sla_report`, `nps_survey`, `billing_snapshot`, `ar_aging`, `pipeline_crm`, `event_dashboard`, `hr_report`. For `review_owner`, choose one of `solutions_engineering`, `customer_success`, or `finance_ops`. For agenda topics, return exactly four ordered enum strings from: `q3_metrics_review`, `service_reliability_review`, `relationship_review`, `adoption_recovery`, `commercial_growth`, `q4_success_plan`. For `primary_risk_theme`, choose one of: `service_reliability`, `commercial_growth`, `adoption_recovery`, `relationship_review`.

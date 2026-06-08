@@ -1,0 +1,55 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "analysis_window",
+    "summary",
+    "supplier_scorecard",
+    "top_escalation_suppliers",
+    "highest_cost_supplier_id",
+    "highest_share_supplier_id"
+  ],
+  "analysis_window": {
+    "start_date": "string, YYYY-MM-DD",
+    "end_date": "string, YYYY-MM-DD",
+    "analysis_date": "string, YYYY-MM-DD"
+  },
+  "summary": {
+    "filtered_incident_count": "integer",
+    "supplier_count": "integer count of suppliers with at least one filtered incident",
+    "total_resolution_cost": "number, USD, rounded to 2 decimals",
+    "overall_rma_count": "integer",
+    "overall_work_order_count": "integer"
+  },
+  "supplier_scorecard": {
+    "type": "list",
+    "ordering": "supplier_id ascending",
+    "row_keys": {
+      "supplier_id": "string",
+      "supplier_name": "string",
+      "incident_count": "integer",
+      "incident_percentage": "number, percent of filtered incident population, rounded to 1 decimal",
+      "total_resolution_cost": "number, USD, rounded to 2 decimals",
+      "avg_duration_days": "number, rounded to 2 decimals",
+      "rma_count": "integer",
+      "work_order_count": "integer",
+      "open_incident_count": "integer",
+      "severe_incident_count": "integer, severity in high or critical",
+      "recommendation_code": {
+        "type": "enum",
+        "allowed_values": [
+          "ESCALATE_SUPPLIER",
+          "PROCESS_REVIEW",
+          "WATCHLIST",
+          "MONITOR"
+        ]
+      }
+    }
+  },
+  "top_escalation_suppliers": {
+    "type": "list of supplier_id strings",
+    "contents": "only suppliers whose recommendation_code is ESCALATE_SUPPLIER",
+    "ordering": "incident_count descending, then total_resolution_cost descending, then supplier_id ascending"
+  },
+  "highest_cost_supplier_id": "string supplier_id",
+  "highest_share_supplier_id": "string supplier_id"
+}

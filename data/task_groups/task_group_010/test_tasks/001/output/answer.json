@@ -1,0 +1,127 @@
+{
+  "portfolio_id": "PF-EN-BOREAL",
+  "as_of_date": "2026-05-29",
+  "recommendation": {
+    "package_type": "balanced_rotation_with_net_add",
+    "primary_action": "rotate",
+    "selected_route_id": "R_BALANCED_GAS_MIDSTREAM_ROTATION",
+    "primary_constraint_conflict": "gas_lng_issuer_concentration"
+  },
+  "ranked_package_shortlist": [
+    {
+      "rank": 1,
+      "route_id": "R_BALANCED_GAS_MIDSTREAM_ROTATION",
+      "decision": "recommend",
+      "route_reason": "clears_issuer_and_preserves_lng_income"
+    },
+    {
+      "rank": 2,
+      "route_id": "R_LNG_ONLY_BLUEGAS_TRIM",
+      "decision": "reject",
+      "route_reason": "issuer_concentration_still_breaches"
+    },
+    {
+      "rank": 3,
+      "route_id": "R_CASH_ADD_LNG_ONLY",
+      "decision": "reject",
+      "route_reason": "cash_add_leaves_concentration_exception"
+    },
+    {
+      "rank": 4,
+      "route_id": "R_STALE_HIGH_CARRY_ADD",
+      "decision": "reject",
+      "route_reason": "stale_marks_and_watchlist_conflicts"
+    }
+  ],
+  "selected_trade_package": [
+    {
+      "action": "BUY",
+      "instrument_id": "BND_EASTERN_LNG_2029",
+      "notional_usd_m": 5.0
+    },
+    {
+      "action": "BUY",
+      "instrument_id": "BND_GRANITE_2030",
+      "notional_usd_m": 5.0
+    },
+    {
+      "action": "SELL",
+      "instrument_id": "BND_BLUEGAS_2030",
+      "notional_usd_m": 5.0
+    }
+  ],
+  "post_trade_metrics": {
+    "total_market_value_usd_m": 60.0,
+    "gross_trade_notional_usd_m": 15.0,
+    "net_new_cash_usd_m": 5.0,
+    "hy_allocation_pct": 18.33,
+    "weighted_modified_duration_years": 4.02,
+    "weighted_yield_to_maturity_pct": 6.04,
+    "bluegas_issuer_concentration_pct": 11.67
+  },
+  "constraint_checks": {
+    "hy_cap_pass": true,
+    "duration_band_pass": true,
+    "bluegas_issuer_concentration_pass": true,
+    "selected_subsector_diversification_pass": true,
+    "watchlist_avoidance_pass": true,
+    "current_data_override_pass": true
+  },
+  "source_precedence": {
+    "decision": "current_environment_over_stale_payload",
+    "conflict_details": [
+      {
+        "instrument_id": "BND_BLUEGAS_2034",
+        "conflict_type": "duration_stale_vs_current"
+      },
+      {
+        "instrument_id": "BND_DRIFTWOOD_2031",
+        "conflict_type": "rating_stale_vs_current"
+      },
+      {
+        "instrument_id": "BND_DRIFTWOOD_2031",
+        "conflict_type": "watchlist_missing_in_payload"
+      },
+      {
+        "instrument_id": "BND_EASTERN_LNG_2032",
+        "conflict_type": "duration_stale_vs_current"
+      },
+      {
+        "instrument_id": "BND_PACREF_2030",
+        "conflict_type": "yield_stale_vs_current"
+      },
+      {
+        "instrument_id": "BND_PACREF_2030",
+        "conflict_type": "watchlist_missing_in_payload"
+      }
+    ]
+  },
+  "candidate_rejection_reasons": {
+    "BND_BLUEGAS_2034": [
+      "duration_band_fail",
+      "issuer_concentration_breach",
+      "stale_mark_conflict"
+    ],
+    "BND_DRIFTWOOD_2031": [
+      "watchlist_yield_trap"
+    ],
+    "BND_EASTERN_LNG_2032": [
+      "duration_band_fail",
+      "stale_mark_conflict"
+    ],
+    "BND_PACREF_2030": [
+      "not_gas_lng_theme",
+      "watchlist_yield_trap"
+    ]
+  },
+  "client_suitability": {
+    "client_segment": "private_bank_income",
+    "suitability_decision": "suitable_with_monitoring",
+    "income_profile": "balanced_lng_hy_and_ig_midstream",
+    "monitoring_trigger": "hy_headroom_narrow"
+  },
+  "sales_positioning": {
+    "target_segment": "private_bank_income",
+    "theme": "lng_export_tailwind"
+  }
+}

@@ -1,0 +1,350 @@
+task_group:
+  task_group_id: task_group_004
+  scenario_id: SCN_004_crm_retention_churn_analytics
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: CRM
+  description: |
+    ApexCloud Retention Operations is a shared CRM analytics benchmark for
+    retention risk triage, QBR metric preparation, churn model validation,
+    receivables-driven follow-up, and quarter-end operations review. Train
+    and test tasks use the same generated business environment and require
+    agents to transfer source precedence, clean-data conventions, pipeline
+    aggregation habits, and controlled business-action labels.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/generate_data.py
+    - env/server.py
+    - env/manifest.json
+    - env/data/accounts.json
+    - env/data/account_metrics.json
+    - env/data/support_tickets.json
+    - env/data/nps_responses.json
+    - env/data/billing_snapshots.json
+    - env/data/ar_aging.json
+    - env/data/opportunities.json
+    - env/data/hr_summary.json
+    - env/data/event_performance.json
+    - env/data/churn_train.csv
+    - env/data/churn_validation.csv
+    - env/data/churn_candidates.csv
+    - env/data/account_metric_extract.csv
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+      rubric:
+        - goal: Correct ordered top-5 renewal-risk account ids.
+          weight: 3
+        - goal: Correct risk scores and risk levels for the top-5 accounts.
+          weight: 3
+        - goal: Correct primary retention action for each top-5 account.
+          weight: 2
+        - goal: Correct current ARR values using the proper revenue source.
+          weight: 2
+        - goal: Correct clean ticket counts and latest NPS handling.
+          weight: 2
+        - goal: Correct overdue balances and collections count.
+          weight: 2
+        - goal: Correct portfolio counts and ARR at risk.
+          weight: 2
+        - goal: Correct model check fields.
+          weight: 1
+        - goal: Correct retention policy code fields.
+          weight: 3
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+      rubric:
+        - goal: Correct monthly QBR revenue values.
+          weight: 2
+        - goal: Correct clean support ticket counts.
+          weight: 2
+        - goal: Correct monthly SLA percentages and NPS values.
+          weight: 3
+        - goal: Correct average and peak revenue highlights.
+          weight: 2
+        - goal: Correct max SLA, peak NPS, and ticket trend.
+          weight: 2
+        - goal: Correct metric source enums.
+          weight: 2
+        - goal: Correct review owner, due date, and signoff flag.
+          weight: 2
+        - goal: Correct ordered agenda topics.
+          weight: 1
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+      rubric:
+        - goal: Correct overdue customer set.
+          weight: 3
+        - goal: Correct linked or unlinked decisions and account ids.
+          weight: 3
+        - goal: Correct overdue balances and totals.
+          weight: 2
+        - goal: Correct follow-up due dates and action labels.
+          weight: 2
+        - goal: Correct won and lost pipeline counts and won revenue.
+          weight: 2
+        - goal: Correct open pipeline count, total, and top product line.
+          weight: 2
+        - goal: Correct win rate.
+          weight: 1
+        - goal: Correct HR and event operations context.
+          weight: 2
+        - goal: Correct operations-review policy code fields.
+          weight: 3
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+      rubric:
+        - goal: Correct churn export row counts and feature count.
+          weight: 1
+        - goal: Correct validation accuracy percentage and band.
+          weight: 2
+        - goal: Correct tenure coefficient direction.
+          weight: 2
+        - goal: Correct top-5 churn candidate order.
+          weight: 3
+        - goal: Correct predicted churn probabilities.
+          weight: 3
+        - goal: Correct outreach actions and reason codes.
+          weight: 2
+        - goal: Correct cohort checks.
+          weight: 2
+        - goal: Correct churn model policy code fields.
+          weight: 3
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+      rubric:
+        - goal: Correct retention board account order.
+          weight: 3
+        - goal: Correct risk levels and primary actions.
+          weight: 3
+        - goal: Correct ARR and overdue balances.
+          weight: 2
+        - goal: Correct expansion pipeline per account.
+          weight: 2
+        - goal: Correct next-touch due dates.
+          weight: 2
+        - goal: Correct reason-code sets.
+          weight: 2
+        - goal: Correct segment summary counts and ARR at risk.
+          weight: 2
+        - goal: Correct open expansion and net exposure.
+          weight: 2
+        - goal: Correct retention board policy code fields.
+          weight: 3
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+      rubric:
+        - goal: Correct ordered top-6 strategic save-plan account ids.
+          weight: 3
+        - goal: Correct risk scores and levels.
+          weight: 3
+        - goal: Correct primary actions.
+          weight: 2
+        - goal: Correct current ARR and ARR-at-risk summary.
+          weight: 2
+        - goal: Correct clean ticket counts and latest NPS.
+          weight: 2
+        - goal: Correct overdue balances and collections count.
+          weight: 2
+        - goal: Correct recovery and QBR summary counts.
+          weight: 1
+        - goal: Correct quality checks.
+          weight: 1
+        - goal: Correct core retention policy code fields.
+          weight: 3
+        - goal: Correct complete retention policy code set.
+          weight: 3
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+      rubric:
+        - goal: Correct monthly QBR revenue values.
+          weight: 2
+        - goal: Correct clean support ticket counts.
+          weight: 2
+        - goal: Correct monthly SLA and NPS values.
+          weight: 3
+        - goal: Correct QBR highlights.
+          weight: 2
+        - goal: Correct metric source mapping.
+          weight: 2
+        - goal: Correct review route.
+          weight: 2
+        - goal: Correct client meeting agenda and primary theme.
+          weight: 2
+        - goal: Correct account, quarter, and month ordering.
+          weight: 1
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+      rubric:
+        - goal: Correct regional overdue client set.
+          weight: 1
+        - goal: Correct link status and account ids.
+          weight: 2
+        - goal: Correct overdue balances and total.
+          weight: 1
+        - goal: Correct receivable actions and due dates.
+          weight: 1
+        - goal: Correct won and lost pipeline counts and won revenue.
+          weight: 1
+        - goal: Correct open pipeline and dominant product line.
+          weight: 1
+        - goal: Correct HR and event leadership flags.
+          weight: 1
+        - goal: Correct receivable trigger policy code.
+          weight: 3
+        - goal: Correct CRM matching and follow-up scope policy codes.
+          weight: 3
+        - goal: Correct pipeline and complete operations-review policy code set.
+          weight: 3
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+      rubric:
+        - goal: Correct churn export row counts and feature count.
+          weight: 1
+        - goal: Correct validation accuracy and band.
+          weight: 2
+        - goal: Correct tenure direction and deployment recommendation.
+          weight: 2
+        - goal: Correct top-6 shortlist order.
+          weight: 3
+        - goal: Correct probabilities and risk levels.
+          weight: 3
+        - goal: Correct outreach actions and reason codes.
+          weight: 2
+        - goal: Correct cohort checks.
+          weight: 2
+        - goal: Correct core churn model policy code fields.
+          weight: 3
+        - goal: Correct complete churn model policy code set.
+          weight: 3
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+      rubric:
+        - goal: Correct ordered executive watchlist account ids.
+          weight: 3
+        - goal: Correct risk scores, levels, and actions.
+          weight: 3
+        - goal: Correct current ARR and overdue balances.
+          weight: 2
+        - goal: Correct pipeline and net exposure per account.
+          weight: 2
+        - goal: Correct reason-code sets.
+          weight: 2
+        - goal: Correct next-touch due dates and action map.
+          weight: 2
+        - goal: Correct finance and pipeline summary totals and action counts.
+          weight: 3
+        - goal: Correct core retention policy code fields.
+          weight: 3
+        - goal: Correct board-specific policy code fields.
+          weight: 3
+        - goal: Correct complete retention board policy code set.
+          weight: 3

@@ -1,0 +1,357 @@
+{
+  "description": "Required JSON output shape for the Northstar branch portfolio migration package.",
+  "required_top_level_keys": [
+    "branch_id",
+    "review_date",
+    "portfolio_regrade",
+    "npa_benchmark",
+    "material_downgrades",
+    "top_problem_credit"
+  ],
+  "fields": {
+    "branch_id": {
+      "type": "string",
+      "required": true,
+      "description": "Target branch identifier."
+    },
+    "review_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD",
+      "required": true
+    },
+    "portfolio_regrade": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "target_current_rating_min",
+        "target_loan_count",
+        "target_exposure",
+        "final_rating_exposure_totals",
+        "migration_by_current_rating",
+        "severe_delinquency_override_loan",
+        "watch_list_action_coverage"
+      ],
+      "fields": {
+        "target_current_rating_min": {
+          "type": "integer",
+          "description": "Minimum current rating included in the regrade population."
+        },
+        "target_loan_count": {
+          "type": "integer"
+        },
+        "target_exposure": {
+          "type": "number",
+          "precision": 2,
+          "units": "USD"
+        },
+        "final_rating_exposure_totals": {
+          "type": "list",
+          "ordering": "ascending by final_rating",
+          "item_required_keys": [
+            "final_rating",
+            "loan_count",
+            "exposure"
+          ],
+          "item_fields": {
+            "final_rating": {
+              "type": "integer"
+            },
+            "loan_count": {
+              "type": "integer"
+            },
+            "exposure": {
+              "type": "number",
+              "precision": 2,
+              "units": "USD"
+            }
+          }
+        },
+        "migration_by_current_rating": {
+          "type": "list",
+          "ordering": "ascending by current_rating, then final_rating",
+          "item_required_keys": [
+            "current_rating",
+            "final_rating",
+            "loan_count",
+            "exposure",
+            "loan_ids"
+          ],
+          "item_fields": {
+            "current_rating": {
+              "type": "integer"
+            },
+            "final_rating": {
+              "type": "integer"
+            },
+            "loan_count": {
+              "type": "integer"
+            },
+            "exposure": {
+              "type": "number",
+              "precision": 2,
+              "units": "USD"
+            },
+            "loan_ids": {
+              "type": "list",
+              "items": "string",
+              "ordering": "ascending loan_id"
+            }
+          }
+        },
+        "severe_delinquency_override_loan": {
+          "type": "object",
+          "required_keys": [
+            "loan_id",
+            "borrower_name",
+            "exposure",
+            "current_rating",
+            "final_rating",
+            "payment_status",
+            "dscr",
+            "ltv",
+            "recommended_action"
+          ],
+          "fields": {
+            "loan_id": {
+              "type": "string"
+            },
+            "borrower_name": {
+              "type": "string"
+            },
+            "exposure": {
+              "type": "number",
+              "precision": 2,
+              "units": "USD"
+            },
+            "current_rating": {
+              "type": "integer"
+            },
+            "final_rating": {
+              "type": "integer"
+            },
+            "payment_status": {
+              "type": "enum",
+              "allowed_values": [
+                "Current",
+                "30 Days Past Due",
+                "60 Days Past Due",
+                "90+ Days Past Due",
+                "Nonaccrual"
+              ]
+            },
+            "dscr": {
+              "type": "number",
+              "precision": 2
+            },
+            "ltv": {
+              "type": "number",
+              "precision": 4
+            },
+            "recommended_action": {
+              "type": "enum",
+              "allowed_values": [
+                "monitor",
+                "watchlist",
+                "special_assets",
+                "workout",
+                "partial_chargeoff_review",
+                "legal_referral"
+              ]
+            }
+          }
+        },
+        "watch_list_action_coverage": {
+          "type": "object",
+          "required_keys": [
+            "covered_loan_count",
+            "covered_exposure",
+            "by_action"
+          ],
+          "fields": {
+            "covered_loan_count": {
+              "type": "integer"
+            },
+            "covered_exposure": {
+              "type": "number",
+              "precision": 2,
+              "units": "USD"
+            },
+            "by_action": {
+              "type": "list",
+              "ordering": "ascending by action",
+              "item_required_keys": [
+                "action",
+                "loan_count",
+                "exposure",
+                "loan_ids"
+              ],
+              "item_fields": {
+                "action": {
+                  "type": "enum",
+                  "allowed_values": [
+                    "monitor",
+                    "watchlist",
+                    "special_assets",
+                    "workout",
+                    "partial_chargeoff_review",
+                    "legal_referral"
+                  ]
+                },
+                "loan_count": {
+                  "type": "integer"
+                },
+                "exposure": {
+                  "type": "number",
+                  "precision": 2,
+                  "units": "USD"
+                },
+                "loan_ids": {
+                  "type": "list",
+                  "items": "string",
+                  "ordering": "ascending loan_id"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "npa_benchmark": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "benchmark_version",
+        "benchmark_metric",
+        "branch_npa_exposure",
+        "branch_total_loans",
+        "branch_npa_ratio",
+        "fdic_benchmark_ratio",
+        "variance_ratio",
+        "variance_bps"
+      ],
+      "fields": {
+        "benchmark_version": {
+          "type": "string"
+        },
+        "benchmark_metric": {
+          "type": "enum",
+          "allowed_values": [
+            "total_loans_noncurrent_pct",
+            "total_real_estate_noncurrent_pct",
+            "construction_development_noncurrent_pct"
+          ]
+        },
+        "branch_npa_exposure": {
+          "type": "number",
+          "precision": 2,
+          "units": "USD"
+        },
+        "branch_total_loans": {
+          "type": "number",
+          "precision": 2,
+          "units": "USD"
+        },
+        "branch_npa_ratio": {
+          "type": "number",
+          "precision": 4
+        },
+        "fdic_benchmark_ratio": {
+          "type": "number",
+          "precision": 4
+        },
+        "variance_ratio": {
+          "type": "number",
+          "precision": 4
+        },
+        "variance_bps": {
+          "type": "number",
+          "precision": 2
+        }
+      }
+    },
+    "material_downgrades": {
+      "type": "list",
+      "required": true,
+      "ordering": "ascending loan_id",
+      "item_required_keys": [
+        "loan_id",
+        "current_rating",
+        "final_rating",
+        "downgrade_notches",
+        "exposure"
+      ],
+      "item_fields": {
+        "loan_id": {
+          "type": "string"
+        },
+        "current_rating": {
+          "type": "integer"
+        },
+        "final_rating": {
+          "type": "integer"
+        },
+        "downgrade_notches": {
+          "type": "integer"
+        },
+        "exposure": {
+          "type": "number",
+          "precision": 2,
+          "units": "USD"
+        }
+      }
+    },
+    "top_problem_credit": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "loan_id",
+        "borrower_name",
+        "exposure",
+        "current_rating",
+        "final_rating",
+        "payment_status",
+        "recommended_action"
+      ],
+      "fields": {
+        "loan_id": {
+          "type": "string"
+        },
+        "borrower_name": {
+          "type": "string"
+        },
+        "exposure": {
+          "type": "number",
+          "precision": 2,
+          "units": "USD"
+        },
+        "current_rating": {
+          "type": "integer"
+        },
+        "final_rating": {
+          "type": "integer"
+        },
+        "payment_status": {
+          "type": "enum",
+          "allowed_values": [
+            "Current",
+            "30 Days Past Due",
+            "60 Days Past Due",
+            "90+ Days Past Due",
+            "Nonaccrual"
+          ]
+        },
+        "recommended_action": {
+          "type": "enum",
+          "allowed_values": [
+            "monitor",
+            "watchlist",
+            "special_assets",
+            "workout",
+            "partial_chargeoff_review",
+            "legal_referral"
+          ]
+        }
+      }
+    }
+  }
+}

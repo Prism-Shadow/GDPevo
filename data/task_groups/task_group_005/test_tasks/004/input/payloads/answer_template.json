@@ -1,0 +1,83 @@
+{
+  "description": "Payment release board output for PAYREL-TEST-004. Return only this JSON shape.",
+  "type": "object",
+  "required": [
+    "release_bill_ids",
+    "hold_bill_ids",
+    "hold_reason_by_bill",
+    "compliance_blocked_business_ids",
+    "payment_priority_ranking",
+    "ap_balance_released_total",
+    "board_status"
+  ],
+  "properties": {
+    "release_bill_ids": {
+      "type": "array",
+      "description": "Candidate AP bill IDs that can be released after AP and entity gate review. Sort bill IDs lexicographically ascending.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hold_bill_ids": {
+      "type": "array",
+      "description": "Candidate AP bill IDs that must remain on hold. Sort bill IDs lexicographically ascending.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hold_reason_by_bill": {
+      "type": "object",
+      "description": "One controlled release outcome or primary hold reason for each candidate bill ID.",
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "released",
+          "ap_claim_not_approved",
+          "ap_claim_amount_mismatch",
+          "ap_already_paid_or_void",
+          "compliance_escalation",
+          "compliance_hold",
+          "missing_business_profile"
+        ]
+      }
+    },
+    "compliance_blocked_business_ids": {
+      "type": "array",
+      "description": "Business IDs in the board that fail the entity gate as of 2025-06-01. Sort business IDs lexicographically ascending.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "payment_priority_ranking": {
+      "type": "array",
+      "description": "Released bill IDs in payment priority order: oldest due date first, then bill ID.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ap_balance_released_total": {
+      "type": "number",
+      "description": "USD total amount of released candidate AP bills, rounded to 2 decimals."
+    },
+    "board_status": {
+      "type": "string",
+      "enum": [
+        "all_released",
+        "release_with_holds",
+        "all_held",
+        "needs_reconciliation"
+      ],
+      "description": "Overall board disposition after reviewing all candidate bills."
+    }
+  },
+  "ordering_rules": {
+    "release_bill_ids": "Sort bill IDs lexicographically ascending.",
+    "hold_bill_ids": "Sort bill IDs lexicographically ascending.",
+    "compliance_blocked_business_ids": "Sort business IDs lexicographically ascending.",
+    "payment_priority_ranking": "Sort released bill IDs by due_date ascending, then bill_id ascending.",
+    "hold_reason_by_bill": "Include exactly the five candidate AP bill IDs as keys."
+  },
+  "numeric_precision": {
+    "ap_balance_released_total": "USD, 2 decimal places"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "case_decisions": [
+    {
+      "case_id": "string; preserve ascending case_id order",
+      "customer_id": "string",
+      "line_id": "string",
+      "primary_action": "enum: TOGGLE_AIRPLANE_MODE | RESEAT_SIM | RESET_APN_REBOOT | SEND_PAYMENT_REQUEST | RESUME_LINE_REBOOT | TRANSFER_HUMAN | TOGGLE_MOBILE_DATA | TOGGLE_ROAMING | ENABLE_LINE_ROAMING | REFUEL_DATA | TOGGLE_DATA_SAVER | SET_NETWORK_MODE | DISCONNECT_VPN | GRANT_MESSAGING_PERMISSION | TOGGLE_WIFI_CALLING | NO_ACTION",
+      "secondary_action": "same enum as primary_action",
+      "permission": "enum: NONE | sms | storage | sms_and_storage",
+      "bill_id": "string; empty when not applicable",
+      "charge_amount_usd": "number with two decimals",
+      "final_route": "enum: SELF_SERVICE | BILLING_RECOVERY | CARRIER_UPDATE | HUMAN_TRANSFER"
+    }
+  ],
+  "queue_summary": {
+    "self_service_fixes": "integer",
+    "billing_recoveries": "integer",
+    "carrier_updates": "integer",
+    "human_transfers": "integer"
+  }
+}

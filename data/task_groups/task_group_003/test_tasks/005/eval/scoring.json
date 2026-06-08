@@ -1,0 +1,359 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "Service-ticket proposals have correct accept/reject decisions and corrected fields.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "proposal_reviews[0].is_accepted"
+        },
+        {
+          "path": "proposal_reviews[0].corrected_status_or_action"
+        },
+        {
+          "path": "proposal_reviews[0].correction_reason_code"
+        },
+        {
+          "path": "proposal_reviews[1].is_accepted"
+        },
+        {
+          "path": "proposal_reviews[1].corrected_team"
+        },
+        {
+          "path": "proposal_reviews[1].correction_reason_code"
+        },
+        {
+          "path": "proposal_reviews[5].is_accepted"
+        },
+        {
+          "path": "proposal_reviews[5].correction_reason_code"
+        },
+        {
+          "path": "proposal_reviews[8].is_accepted"
+        },
+        {
+          "path": "proposal_reviews[8].corrected_status_or_action"
+        },
+        {
+          "path": "proposal_reviews[8].corrected_team"
+        },
+        {
+          "path": "proposal_reviews[8].correction_reason_code"
+        }
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "Contact-case proposals have correct decisions, corrected actions, and refuel charge fields.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "proposal_reviews[2].is_accepted"
+        },
+        {
+          "path": "proposal_reviews[2].corrected_status_or_action"
+        },
+        {
+          "path": "proposal_reviews[2].correction_reason_code"
+        },
+        {
+          "path": "proposal_reviews[3].is_accepted"
+        },
+        {
+          "path": "proposal_reviews[3].corrected_status_or_action"
+        },
+        {
+          "path": "proposal_reviews[3].correction_reason_code"
+        },
+        {
+          "path": "proposal_reviews[6].is_accepted"
+        },
+        {
+          "path": "proposal_reviews[6].corrected_status_or_action"
+        },
+        {
+          "path": "proposal_reviews[6].correction_reason_code"
+        },
+        {
+          "path": "proposal_reviews[6].corrected_refuel_gb",
+          "precision": 1
+        },
+        {
+          "path": "proposal_reviews[6].corrected_charge_amount_usd",
+          "precision": 2
+        }
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "Enterprise proposals have correct decisions, credit values, and teams.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "proposal_reviews[4].is_accepted"
+        },
+        {
+          "path": "proposal_reviews[4].corrected_status_or_action"
+        },
+        {
+          "path": "proposal_reviews[4].corrected_team"
+        },
+        {
+          "path": "proposal_reviews[4].corrected_credit_percent"
+        },
+        {
+          "path": "proposal_reviews[4].correction_reason_code"
+        },
+        {
+          "path": "proposal_reviews[7].is_accepted"
+        },
+        {
+          "path": "proposal_reviews[7].correction_reason_code"
+        },
+        {
+          "path": "proposal_reviews[7].corrected_credit_percent"
+        }
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "Audit summary and accept/reject proposal sets are correct.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "audit_summary.accepted"
+        },
+        {
+          "path": "audit_summary.rejected"
+        },
+        {
+          "path": "audit_summary.status_defects"
+        },
+        {
+          "path": "audit_summary.action_defects"
+        },
+        {
+          "path": "audit_summary.team_defects"
+        },
+        {
+          "path": "audit_summary.credit_defects"
+        },
+        {
+          "path": "audit_summary.no_defect"
+        },
+        {
+          "path": "defect_breakdown_audit.accepted_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "defect_breakdown_audit.rejected_proposal_ids",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "Defect reason-code proposal sets are correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "defect_breakdown_audit.proposal_ids_by_reason_code.NO_DEFECT",
+          "sort_list": true
+        },
+        {
+          "path": "defect_breakdown_audit.proposal_ids_by_reason_code.OUTAGE_PENDING",
+          "sort_list": true
+        },
+        {
+          "path": "defect_breakdown_audit.proposal_ids_by_reason_code.WRONG_ESCALATION_TEAM",
+          "sort_list": true
+        },
+        {
+          "path": "defect_breakdown_audit.proposal_ids_by_reason_code.SIM_LOCKED_TRANSFER",
+          "sort_list": true
+        },
+        {
+          "path": "defect_breakdown_audit.proposal_ids_by_reason_code.MMSC_APN_FAILURE",
+          "sort_list": true
+        },
+        {
+          "path": "defect_breakdown_audit.proposal_ids_by_reason_code.SLA_CREDIT_MISMATCH",
+          "sort_list": true
+        },
+        {
+          "path": "defect_breakdown_audit.proposal_ids_by_reason_code.AUTH_FAILED",
+          "sort_list": true
+        },
+        {
+          "path": "defect_breakdown_audit.proposal_ids_by_reason_code.DATA_LIMIT_EXCEEDED",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "Service-ticket source evidence audit is correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "service_evidence_audit.active_outage_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "service_evidence_audit.diagnostics_used_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "service_evidence_audit.network_engineering_root_cause_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "service_evidence_audit.auto_resolved_service_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "service_evidence_audit.auth_failure_proposal_ids",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Contact-case evidence and refuel totals are correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "contact_evidence_audit.device_state_defect_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "contact_evidence_audit.plan_usage_defect_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "contact_evidence_audit.line_state_defect_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "contact_evidence_audit.total_refuel_gb",
+          "precision": 1
+        },
+        {
+          "path": "contact_evidence_audit.total_refuel_charge_usd",
+          "precision": 2
+        }
+      ]
+    },
+    {
+      "id": "SP008",
+      "goal": "Enterprise credit evidence, package review permissions, and QA reconciliation type counts are correct.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "enterprise_evidence_audit.finance_review_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "enterprise_evidence_audit.credit_mismatch_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "enterprise_evidence_audit.accepted_credit_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "enterprise_evidence_audit.total_credit_delta_percent"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[0].proposal_id"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[0].incident_id"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[0].finance_review_user"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[0].document_editor_user"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[0].response_status"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[1].proposal_id"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[1].incident_id"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[1].finance_review_user"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[1].document_editor_user"
+        },
+        {
+          "path": "enterprise_package_audit.package_reviews[1].response_status"
+        },
+        {
+          "path": "qa_reconciliation_audit.proposal_record_type_counts.service_ticket"
+        },
+        {
+          "path": "qa_reconciliation_audit.proposal_record_type_counts.contact_case"
+        },
+        {
+          "path": "qa_reconciliation_audit.proposal_record_type_counts.enterprise_incident"
+        }
+      ]
+    },
+    {
+      "id": "SP009",
+      "goal": "Service proposal gate and troubleshooting outcome audit is correct.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "service_metric_audit.diagnostics_skipped_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "service_metric_audit.diagnostics_used_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "service_metric_audit.post_troubleshooting_success_proposal_ids",
+          "sort_list": true
+        },
+        {
+          "path": "service_metric_audit.post_troubleshooting_failure_proposal_ids",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP010",
+      "goal": "Service proposal diagnostic metric totals are correct.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "service_metric_audit.pre_bandwidth_shortfall_total_mbps",
+          "precision": 1
+        },
+        {
+          "path": "service_metric_audit.post_remaining_issue_flags_total"
+        },
+        {
+          "path": "service_metric_audit.post_threshold_excess_totals.latency_ms",
+          "precision": 1
+        },
+        {
+          "path": "service_metric_audit.post_threshold_excess_totals.jitter_ms",
+          "precision": 1
+        },
+        {
+          "path": "service_metric_audit.post_threshold_excess_totals.bandwidth_mbps",
+          "precision": 1
+        }
+      ]
+    }
+  ]
+}

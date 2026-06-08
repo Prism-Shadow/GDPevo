@@ -1,0 +1,151 @@
+{
+  "description": "Required JSON output shape for the PF-EN-ALTA energy-credit trade strategy.",
+  "type": "object",
+  "required": [
+    "portfolio_id",
+    "as_of_date",
+    "trade_package",
+    "post_trade_metrics",
+    "constraint_checks",
+    "sales_positioning",
+    "data_precedence"
+  ],
+  "properties": {
+    "portfolio_id": {
+      "type": "string",
+      "required_value": "PF-EN-ALTA"
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD",
+      "description": "Current environment as-of date used for the recommendation."
+    },
+    "trade_package": {
+      "type": "list",
+      "length": 2,
+      "ordering": "Sort ascending by instrument_id.",
+      "items": {
+        "type": "object",
+        "required": [
+          "action",
+          "instrument_id",
+          "notional_usd_m"
+        ],
+        "properties": {
+          "action": {
+            "type": "enum",
+            "allowed_values": [
+              "BUY",
+              "SELL",
+              "HOLD",
+              "NO_TRADE"
+            ]
+          },
+          "instrument_id": {
+            "type": "string"
+          },
+          "notional_usd_m": {
+            "type": "number",
+            "precision": 1,
+            "unit": "USD millions"
+          }
+        }
+      }
+    },
+    "post_trade_metrics": {
+      "type": "object",
+      "required": [
+        "total_market_value_usd_m",
+        "hy_allocation_pct",
+        "weighted_modified_duration_years",
+        "weighted_yield_to_maturity_pct"
+      ],
+      "properties": {
+        "total_market_value_usd_m": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD millions"
+        },
+        "hy_allocation_pct": {
+          "type": "number",
+          "precision": 2,
+          "unit": "percent of post-trade market value"
+        },
+        "weighted_modified_duration_years": {
+          "type": "number",
+          "precision": 2,
+          "unit": "years"
+        },
+        "weighted_yield_to_maturity_pct": {
+          "type": "number",
+          "precision": 2,
+          "unit": "percent"
+        }
+      }
+    },
+    "constraint_checks": {
+      "type": "object",
+      "required": [
+        "hy_cap_pass",
+        "duration_band_pass",
+        "selected_issuer_diversification_pass",
+        "selected_subsector_diversification_pass",
+        "watchlist_avoidance_pass"
+      ],
+      "properties": {
+        "hy_cap_pass": {
+          "type": "boolean"
+        },
+        "duration_band_pass": {
+          "type": "boolean"
+        },
+        "selected_issuer_diversification_pass": {
+          "type": "boolean"
+        },
+        "selected_subsector_diversification_pass": {
+          "type": "boolean"
+        },
+        "watchlist_avoidance_pass": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sales_positioning": {
+      "type": "object",
+      "required": [
+        "target_segment",
+        "theme"
+      ],
+      "properties": {
+        "target_segment": {
+          "type": "enum",
+          "allowed_values": [
+            "insurance_general_account",
+            "pension_liability_matching",
+            "multi_asset_income",
+            "private_bank_income",
+            "endowment_opportunistic"
+          ]
+        },
+        "theme": {
+          "type": "enum",
+          "allowed_values": [
+            "lng_export_tailwind",
+            "oil_oversupply_caution",
+            "midstream_stability",
+            "transition_bond_selectivity",
+            "avoid_watchlist_yield_trap"
+          ]
+        }
+      }
+    },
+    "data_precedence": {
+      "type": "enum",
+      "allowed_values": [
+        "current_environment_over_stale_payload",
+        "local_payload_over_current_environment",
+        "no_conflict_found"
+      ]
+    }
+  }
+}

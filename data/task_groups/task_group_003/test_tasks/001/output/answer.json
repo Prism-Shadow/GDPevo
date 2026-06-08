@@ -1,0 +1,157 @@
+{
+  "ticket_decisions": [
+    {
+      "ticket_id": "TCK-6101",
+      "account_id": "ACC-6101",
+      "final_resolution_status": "PENDING_ACTION",
+      "diagnostic_needed": false,
+      "latency_issue": false,
+      "stability_issue": false,
+      "bandwidth_issue": false,
+      "outage_id": "OUT-9601",
+      "escalation_team": "NONE",
+      "resolution_route": "OUTAGE_WAIT"
+    },
+    {
+      "ticket_id": "TCK-6102",
+      "account_id": "ACC-6102",
+      "final_resolution_status": "FAILED",
+      "diagnostic_needed": false,
+      "latency_issue": false,
+      "stability_issue": false,
+      "bandwidth_issue": false,
+      "outage_id": "",
+      "escalation_team": "NONE",
+      "resolution_route": "AUTH_FAILED"
+    },
+    {
+      "ticket_id": "TCK-6103",
+      "account_id": "ACC-6103",
+      "final_resolution_status": "RESOLVED",
+      "diagnostic_needed": true,
+      "latency_issue": false,
+      "stability_issue": false,
+      "bandwidth_issue": true,
+      "outage_id": "",
+      "escalation_team": "NONE",
+      "resolution_route": "AUTO_TROUBLESHOOTING"
+    },
+    {
+      "ticket_id": "TCK-6104",
+      "account_id": "ACC-6104",
+      "final_resolution_status": "ESCALATED",
+      "diagnostic_needed": true,
+      "latency_issue": true,
+      "stability_issue": true,
+      "bandwidth_issue": true,
+      "outage_id": "",
+      "escalation_team": "NETWORK_ENGINEERING",
+      "resolution_route": "ESCALATION"
+    },
+    {
+      "ticket_id": "TCK-6105",
+      "account_id": "ACC-6105",
+      "final_resolution_status": "ESCALATED",
+      "diagnostic_needed": true,
+      "latency_issue": true,
+      "stability_issue": true,
+      "bandwidth_issue": true,
+      "outage_id": "",
+      "escalation_team": "FIELD_OPS",
+      "resolution_route": "ESCALATION"
+    }
+  ],
+  "batch_summary": {
+    "RESOLVED": 1,
+    "PENDING_ACTION": 1,
+    "ESCALATED": 2,
+    "FAILED": 1,
+    "tickets_requiring_customer_wait": 1
+  },
+  "evidence_audit": {
+    "tickets_with_active_outage_match": 1,
+    "unique_escalation_teams": [
+      "FIELD_OPS",
+      "NETWORK_ENGINEERING"
+    ],
+    "pre_troubleshooting_bandwidth_gap_total_mbps": 252.0,
+    "post_troubleshooting_remaining_issue_flags": 6,
+    "tickets_using_post_troubleshooting_records": 3
+  },
+  "deep_environment_audit": {
+    "target_service_area_active_outages": 1,
+    "target_ticket_diagnostic_records_available": 5,
+    "target_ticket_troubleshooting_records_available": 5
+  },
+  "metric_threshold_audit": {
+    "diagnostic_records_skipped_by_gate": 2,
+    "tickets_below_pre_bandwidth_threshold": [
+      "TCK-6103",
+      "TCK-6104",
+      "TCK-6105"
+    ],
+    "post_troubleshooting_success_ticket_ids": [
+      "TCK-6103"
+    ],
+    "post_troubleshooting_failure_ticket_ids": [
+      "TCK-6104",
+      "TCK-6105"
+    ],
+    "root_cause_escalation_ticket_ids": {
+      "FIELD_OPS": [
+        "TCK-6105"
+      ],
+      "NETWORK_ENGINEERING": [
+        "TCK-6104"
+      ],
+      "TIER2_SUPPORT": []
+    },
+    "diagnostic_bandwidth_floor_mbps_by_ticket": [
+      {
+        "ticket_id": "TCK-6103",
+        "floor_mbps": 80.0
+      },
+      {
+        "ticket_id": "TCK-6104",
+        "floor_mbps": 400.0
+      },
+      {
+        "ticket_id": "TCK-6105",
+        "floor_mbps": 400.0
+      }
+    ],
+    "pre_bandwidth_shortfall_mbps_by_ticket": [
+      {
+        "ticket_id": "TCK-6103",
+        "shortfall_mbps": 22.0
+      },
+      {
+        "ticket_id": "TCK-6104",
+        "shortfall_mbps": 140.0
+      },
+      {
+        "ticket_id": "TCK-6105",
+        "shortfall_mbps": 90.0
+      }
+    ],
+    "post_remaining_issue_flags_by_ticket": [
+      {
+        "ticket_id": "TCK-6103",
+        "remaining_issue_flags": 0
+      },
+      {
+        "ticket_id": "TCK-6104",
+        "remaining_issue_flags": 3
+      },
+      {
+        "ticket_id": "TCK-6105",
+        "remaining_issue_flags": 3
+      }
+    ],
+    "post_threshold_excess_totals": {
+      "latency_ms": 177.0,
+      "jitter_ms": 26.0,
+      "bandwidth_mbps": 194.0
+    }
+  }
+}

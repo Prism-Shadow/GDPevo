@@ -1,0 +1,41 @@
+{
+  "task_id": "train_003",
+  "scorecard_name": "Q1 2026 supplier incident scorecard",
+  "incident_date_filter": {
+    "field": "open_date",
+    "start_date": "2026-01-01",
+    "end_date": "2026-03-31",
+    "inclusive": true
+  },
+  "analysis_date": "2026-03-31",
+  "duration_rule": {
+    "closed_incidents": "calendar days from open_date to close_date",
+    "open_incidents": "calendar days from open_date to analysis_date"
+  },
+  "percentage_rule": {
+    "denominator": "all incidents in the filtered Q1 population",
+    "precision": "one decimal place"
+  },
+  "currency_precision": "two decimal places",
+  "duration_precision": "two decimal places",
+  "scorecard_row_order": "supplier_id ascending",
+  "top_escalation_order": "incident_count descending, then total_resolution_cost descending, then supplier_id ascending",
+  "severe_severity_values": [
+    "high",
+    "critical"
+  ],
+  "recommendation_policy": {
+    "precedence": [
+      "ESCALATE_SUPPLIER",
+      "PROCESS_REVIEW",
+      "WATCHLIST",
+      "MONITOR"
+    ],
+    "codes": {
+      "ESCALATE_SUPPLIER": "Use when the supplier is on quality_hold with at least 3 filtered incidents, or has any critical RMA, or has at least 3 RMAs and at least 15000.00 total filtered resolution cost.",
+      "PROCESS_REVIEW": "Use when WORK_ORDER incidents are at least 3 and exceed RMA incidents.",
+      "WATCHLIST": "Use when the supplier quality_status is watch or quality_hold, or filtered incident_count is at least 4, or total filtered resolution cost is at least 12000.00, or severe_incident_count is at least 2.",
+      "MONITOR": "Use when none of the higher-precedence conditions apply."
+    }
+  }
+}

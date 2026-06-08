@@ -1,0 +1,45 @@
+{
+  "payable_claim_ids": {
+    "type": "list[string]",
+    "description": "Approved batch claims that can remain in the AP reimbursement queue.",
+    "ordering": "ascending by claim_id",
+    "items": "claim_id"
+  },
+  "blocked_claim_ids": {
+    "type": "list[string]",
+    "description": "Batch claims that are not paid and should not be released to AP until the expense case or AP link is corrected.",
+    "ordering": "ascending by claim_id",
+    "items": "claim_id"
+  },
+  "paid_claim_ids": {
+    "type": "list[string]",
+    "description": "Batch claims with a matching paid AP bill and cleared payment for the claim amount.",
+    "ordering": "ascending by claim_id",
+    "items": "claim_id"
+  },
+  "ap_open_balance_total": {
+    "type": "number",
+    "unit": "USD",
+    "precision": 2,
+    "description": "Total amount of valid open AP reimbursement bills for payable batch claims only."
+  },
+  "crm_required_claim_ids": {
+    "type": "list[string]",
+    "description": "Blocked batch claims requiring expense-case owner cleanup or AP-link remediation.",
+    "ordering": "ascending by claim_id",
+    "items": "claim_id"
+  },
+  "batch_status": {
+    "type": "enum",
+    "allowed_values": [
+      "ready_to_close",
+      "open_payables",
+      "blocked"
+    ],
+    "description": "Overall batch close status. Use blocked when any batch item is blocked; otherwise use open_payables when valid unpaid AP reimbursement bills remain; otherwise ready_to_close."
+  },
+  "reviewed_claim_count": {
+    "type": "integer",
+    "description": "Number of claim IDs reviewed in the requested batch."
+  }
+}

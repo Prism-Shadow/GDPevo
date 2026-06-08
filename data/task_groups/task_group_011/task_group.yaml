@@ -1,0 +1,319 @@
+task_group:
+  task_group_id: task_group_011
+  scenario_id: SCN_011_bank_branch_credit_risk_lending_committee
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Finance
+  description: |
+    A train-predict task group for branch credit-risk and lending-committee
+    work. Agents use a shared generated credit-office environment to analyze
+    loan portfolios, risk ratings, FDIC and NCUA benchmarks, application
+    queues, concentration limits, stress tests, and committee controls.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/generate_data.py
+    - env/server.py
+    - env/data/credit_office.db
+    - env/data/public_manifest.json
+    - env/data/branches.json
+    - env/data/policies.json
+    - env/data/fdic_q4_2024.json
+    - env/data/ncua_q1_2025.csv
+    - env/data/credit_union_segments.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct target regrade loan count and exposure.
+          weight: 2
+        - goal: Correct final-rating exposure totals.
+          weight: 3
+        - goal: Correct material-downgrade loan set.
+          weight: 3
+        - goal: Correct NPA ratio and FDIC benchmark variance.
+          weight: 2
+        - goal: Correct top problem credit and action.
+          weight: 2
+        - goal: Correct migration distribution for current rating 3 loans.
+          weight: 2
+        - goal: Correct watch-list action coverage.
+          weight: 1
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct application decision sets.
+          weight: 3
+        - goal: Correct committed and remaining capacity.
+          weight: 2
+        - goal: Correct concentration-breach handling for the strong healthcare applicant.
+          weight: 3
+        - goal: Correct high-risk consumer decline reason codes.
+          weight: 2
+        - goal: Correct startup SBA conditional structure.
+          weight: 2
+        - goal: Correct post-approval concentration metrics.
+          weight: 2
+        - goal: Correct priority ranking.
+          weight: 1
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct segment posture.
+          weight: 3
+        - goal: Correct state benchmark metrics.
+          weight: 2
+        - goal: Correct peer-state comparison directions.
+          weight: 2
+        - goal: Correct capacity and risk-tolerance interpretation.
+          weight: 2
+        - goal: Correct required checklist gate set.
+          weight: 2
+        - goal: Correct added operating controls.
+          weight: 2
+        - goal: Correct escalation triggers and owners.
+          weight: 1
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct adverse-rated loan count and balance.
+          weight: 2
+        - goal: Correct watch-list risk classes.
+          weight: 3
+        - goal: Correct stressed DSCR breach set.
+          weight: 3
+        - goal: Correct largest problem exposure and action.
+          weight: 2
+        - goal: Correct underwater projected-loss classification.
+          weight: 2
+        - goal: Correct severe payment-status by rating bucket counts.
+          weight: 2
+        - goal: Correct monitoring cadence.
+          weight: 1
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct weighted CDFI scores for both CRE applications.
+          weight: 2
+        - goal: Correct stressed DSCR values and breach flags.
+          weight: 2
+        - goal: Correct selected application and path enum.
+          weight: 3
+        - goal: Correct post-approval CRE concentration.
+          weight: 2
+        - goal: Correct FDIC delinquency benchmark variance.
+          weight: 2
+        - goal: Correct condition set for the selected credit.
+          weight: 2
+        - goal: Correct deferral reason set for the unselected credit.
+          weight: 1
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct target regrade loan count and exposure.
+          weight: 2
+        - goal: Correct final-rating exposure totals.
+          weight: 3
+        - goal: Correct material-downgrade loan set.
+          weight: 3
+        - goal: Correct NPA ratio and FDIC benchmark variance.
+          weight: 2
+        - goal: Correct top problem credit and action.
+          weight: 2
+        - goal: Correct severe delinquency override loan.
+          weight: 2
+        - goal: Correct current-rating migration distribution.
+          weight: 2
+        - goal: Correct watch-list action coverage.
+          weight: 1
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct application decision sets.
+          weight: 3
+        - goal: Correct capacity allocation.
+          weight: 2
+        - goal: Correct sector-breach and participation handling.
+          weight: 3
+        - goal: Correct startup SBA net-exposure structure.
+          weight: 2
+        - goal: Correct post-approval concentration metrics.
+          weight: 2
+        - goal: Correct priority ranking.
+          weight: 1
+        - goal: Correct low-quality decline reason codes.
+          weight: 2
+        - goal: Correct capacity-driven decline.
+          weight: 1
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct segment posture.
+          weight: 3
+        - goal: Correct Georgia benchmark metrics.
+          weight: 2
+        - goal: Correct peer-state comparison with Alabama, Florida, and Tennessee.
+          weight: 2
+        - goal: Correct capacity and risk interpretation.
+          weight: 2
+        - goal: Correct required checklist gates.
+          weight: 2
+        - goal: Correct added operating controls.
+          weight: 2
+        - goal: Correct escalation triggers.
+          weight: 1
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct adverse-rated loan count and balance.
+          weight: 2
+        - goal: Correct risk-class and projected-loss mapping.
+          weight: 3
+        - goal: Correct stressed DSCR breach set.
+          weight: 3
+        - goal: Correct top problem exposure and action.
+          weight: 2
+        - goal: Correct severe bucket counts.
+          weight: 2
+        - goal: Correct NPA ratio and FDIC variance.
+          weight: 2
+        - goal: Correct monitoring cadence.
+          weight: 1
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct CRE recommendation and participation requirement.
+          weight: 3
+        - goal: Correct stressed DSCR and post-participation concentration.
+          weight: 2
+        - goal: Correct approved application set.
+          weight: 2
+        - goal: Correct conditional approval application set.
+          weight: 2
+        - goal: Correct declined application set.
+          weight: 2
+        - goal: Correct framework assignment by loan type.
+          weight: 2
+        - goal: Correct committed and remaining capacity.
+          weight: 2
+        - goal: Correct low-FICO consumer decline reason.
+          weight: 1
+        - goal: Correct C&I approval conditions.
+          weight: 2

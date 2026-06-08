@@ -1,0 +1,26 @@
+Title: Churn Model Deployment Shortlist
+
+Analytics Ops needs a deployment-ready churn validation report and an outreach shortlist for the enterprise renewal team.
+
+Use the ApexCloud Retention Operations API at http://127.0.0.1:8074. The relevant exports are:
+
+- /exports/churn/train.csv
+- /exports/churn/validation.csv
+- /exports/churn/candidates.csv
+
+Validate the churn model export, then rank only these candidate accounts:
+
+- acct_quartz_insure
+- acct_valence
+- acct_solstice
+- acct_bayside_bio
+- acct_brightharbor
+- acct_westport
+- acct_metrobyte
+- acct_peakstone
+- acct_apexia
+- acct_helios
+- acct_southridge
+- acct_aurora_textiles
+
+Return the top 6 candidates by predicted churn probability. Follow the JSON structure in input/payloads/answer_template.json. Use deterministic precision: percentages to 1 decimal and churn probabilities to 3 decimals.

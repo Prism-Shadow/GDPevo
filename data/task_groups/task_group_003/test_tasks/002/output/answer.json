@@ -1,0 +1,171 @@
+{
+  "case_decisions": [
+    {
+      "case_id": "CASE-3101",
+      "customer_id": "CUST-3101",
+      "line_id": "LINE-3101",
+      "primary_action": "TRANSFER_HUMAN",
+      "secondary_action": "NO_ACTION",
+      "final_route": "HUMAN_TRANSFER",
+      "reason_code": "SIM_LOCKED",
+      "data_refuel_gb": 0.0,
+      "charge_amount_usd": 0.0
+    },
+    {
+      "case_id": "CASE-3102",
+      "customer_id": "CUST-3102",
+      "line_id": "LINE-3102",
+      "primary_action": "TRANSFER_HUMAN",
+      "secondary_action": "NO_ACTION",
+      "final_route": "HUMAN_TRANSFER",
+      "reason_code": "CONTRACT_ENDED",
+      "data_refuel_gb": 0.0,
+      "charge_amount_usd": 0.0
+    },
+    {
+      "case_id": "CASE-3103",
+      "customer_id": "CUST-3103",
+      "line_id": "LINE-3103",
+      "primary_action": "RESET_APN_REBOOT",
+      "secondary_action": "NO_ACTION",
+      "final_route": "SELF_SERVICE",
+      "reason_code": "MMSC_MISSING",
+      "data_refuel_gb": 0.0,
+      "charge_amount_usd": 0.0
+    },
+    {
+      "case_id": "CASE-3104",
+      "customer_id": "CUST-3104",
+      "line_id": "LINE-3104",
+      "primary_action": "REFUEL_DATA",
+      "secondary_action": "NO_ACTION",
+      "final_route": "DATA_RECOVERY",
+      "reason_code": "DATA_LIMIT_EXCEEDED",
+      "data_refuel_gb": 2.0,
+      "charge_amount_usd": 4.0
+    },
+    {
+      "case_id": "CASE-3105",
+      "customer_id": "CUST-3105",
+      "line_id": "LINE-3105",
+      "primary_action": "ENABLE_LINE_ROAMING",
+      "secondary_action": "NO_ACTION",
+      "final_route": "CARRIER_UPDATE",
+      "reason_code": "LINE_ROAMING_DISABLED",
+      "data_refuel_gb": 0.0,
+      "charge_amount_usd": 0.0
+    }
+  ],
+  "queue_summary": {
+    "self_service_fixes": 1,
+    "data_recoveries": 1,
+    "billing_recoveries": 0,
+    "carrier_updates": 1,
+    "human_transfers": 2,
+    "total_estimated_customer_charge_usd": 4.0
+  },
+  "triage_audit": {
+    "device_records_checked": 5,
+    "line_records_checked": 5,
+    "transfer_case_ids": [
+      "CASE-3101",
+      "CASE-3102"
+    ],
+    "carrier_update_case_ids": [
+      "CASE-3105"
+    ],
+    "device_state_issue_case_ids": [
+      "CASE-3101",
+      "CASE-3103"
+    ],
+    "line_state_issue_case_ids": [
+      "CASE-3102",
+      "CASE-3105"
+    ],
+    "human_transfer_reason_codes": [
+      "CONTRACT_ENDED",
+      "SIM_LOCKED"
+    ]
+  },
+  "environment_issue_distribution": {
+    "non_target_same_issue_case_counts": {
+      "MMS": 1,
+      "MOBILE_DATA": 4,
+      "NO_SERVICE": 2,
+      "SLOW_DATA": 3
+    },
+    "all_case_records_available": 15
+  },
+  "mobile_inventory_audit": {
+    "all_case_issue_counts": {
+      "MMS": 2,
+      "MOBILE_DATA": 6,
+      "NO_SERVICE": 4,
+      "SLOW_DATA": 3
+    },
+    "locked_or_missing_sim_case_ids": [
+      "CASE-2101",
+      "CASE-3101"
+    ],
+    "mmsc_missing_case_ids": [
+      "CASE-3103"
+    ]
+  },
+  "mobile_line_state_audit": {
+    "suspended_line_case_ids": [
+      "CASE-2102",
+      "CASE-3102"
+    ],
+    "suspension_reason_counts": {
+      "CONTRACT_ENDED": 1,
+      "OVERDUE_BILL": 1
+    },
+    "line_roaming_disabled_case_ids": [
+      "CASE-2502",
+      "CASE-3105"
+    ]
+  },
+  "mobile_device_setting_audit": {
+    "data_saver_on_case_ids": [
+      "CASE-2503"
+    ],
+    "vpn_connected_case_ids": [
+      "CASE-2105"
+    ],
+    "old_network_mode_case_ids": [
+      "CASE-2504"
+    ],
+    "mobile_data_disabled_case_ids": [
+      "CASE-2505"
+    ]
+  },
+  "mobile_plan_usage_audit": {
+    "data_limit_exceeded_case_ids": [
+      "CASE-2501",
+      "CASE-3104"
+    ],
+    "target_refuel_case_ids": [
+      "CASE-3104"
+    ],
+    "target_refuel_gb_total": 2.0,
+    "target_refuel_charge_total_usd": 4.0
+  },
+  "source_family_audit": {
+    "device_configuration_case_ids": [
+      "CASE-3101",
+      "CASE-3103"
+    ],
+    "carrier_line_state_case_ids": [
+      "CASE-3102",
+      "CASE-3105"
+    ],
+    "plan_allowance_case_ids": [
+      "CASE-3104"
+    ],
+    "billing_recovery_case_ids": [],
+    "human_handoff_case_ids": [
+      "CASE-3101",
+      "CASE-3102"
+    ]
+  }
+}

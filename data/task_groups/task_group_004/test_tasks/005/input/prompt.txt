@@ -1,0 +1,32 @@
+Executive Retention Watchlist
+
+The CEO staff needs a leadership watchlist for the Q3 2026 retention review. Use the ApexCloud Retention Operations API at http://127.0.0.1:8074 to combine retention risk, receivables, open expansion pipeline, and next actions for the selected accounts.
+
+Build the watchlist as of 2026-09-30 for activity from 2026-07-01 through 2026-09-30, using the months 2026-07, 2026-08, and 2026-09. Use A/R aging as of 2026-09-30 and open expansion opportunities whose close dates fall from 2026-07-01 through 2026-09-30.
+
+Include these account_ids:
+
+- acct_globex_north
+- acct_northstar_finance
+- acct_lumen_rail
+- acct_quartz_insure
+- acct_valence
+- acct_solstice
+- acct_bayside_bio
+- acct_southridge
+- acct_polaris_health
+- acct_tandemworks
+
+Return the top 7 accounts by the standard retention risk score order. The response must be JSON only and must follow the structure in input/payloads/answer_template.json.
+
+For each account, net_revenue_exposure is current ARR plus overdue balance minus open expansion pipeline. For the summary, use the same formula over the watchlist totals.
+
+Use these next-touch due dates by action:
+
+- collections_followup: 2026-10-15
+- technical_recovery: 2026-10-18
+- renewal_save: 2026-10-22
+- executive_qbr: 2026-10-29
+- nurture_monitor: 2026-11-05
+
+Use deterministic precision: currency values to 2 decimals, percentages to 1 decimal if any are included, counts as integers, and controlled enum values for risk levels, actions, and reason codes.

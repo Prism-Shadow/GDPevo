@@ -1,0 +1,27 @@
+{
+  "close_period": "2025-04",
+  "prepaid_variance_period": "2025-03",
+  "entity": "Aurisic US",
+  "reimbursement_claim_ids": [
+    "CLM-2025-OPS-017",
+    "CLM-2025-0085",
+    "CLM-2025-FIN-042",
+    "CLM-2025-0011",
+    "CLM-2025-0064"
+  ],
+  "prepaid_accounts": [
+    "1250",
+    "1251"
+  ],
+  "materiality_thresholds_usd": {
+    "low_max_abs": 4999.99,
+    "medium_min_abs": 5000.00,
+    "medium_max_abs": 49999.99,
+    "high_min_abs": 50000.00
+  },
+  "exception_id_rules": {
+    "reimbursement": "Use the claim_id for unreconciled approved reimbursement exposure.",
+    "prepaid_variance": "Use PREPAID-<account> for prepaid account variance exceptions."
+  },
+  "ranking_rule": "Order top_priority_exception_ids by absolute close impact descending, then by exception ID ascending for ties."
+}

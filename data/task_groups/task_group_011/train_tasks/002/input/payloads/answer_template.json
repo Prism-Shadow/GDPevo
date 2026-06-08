@@ -1,0 +1,106 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "branch_id",
+    "allocation",
+    "decisions",
+    "concentration_flags",
+    "decline_reasons",
+    "post_approval_concentrations"
+  ],
+  "field_rules": {
+    "branch_id": {
+      "type": "string",
+      "description": "Stable branch identifier."
+    },
+    "allocation": {
+      "type": "object",
+      "required_keys": [
+        "lending_capacity_q1",
+        "gross_approved_amount",
+        "committed_capacity_amount",
+        "remaining_capacity",
+        "priority_ranking"
+      ],
+      "numeric_precision": "currency fields rounded to 2 decimals",
+      "priority_ranking": "ordered list of application_id values, highest priority first, including approved and conditionally approved applications only"
+    },
+    "decisions": {
+      "type": "list",
+      "ordering": "sort by application_id ascending",
+      "item_required_keys": [
+        "application_id",
+        "decision",
+        "approved_amount",
+        "bank_capacity_used",
+        "conditions"
+      ],
+      "decision_enum": [
+        "approve",
+        "conditional_approve",
+        "decline",
+        "defer",
+        "participation_required"
+      ],
+      "conditions_enum": [
+        "participation_required",
+        "reduced_amount",
+        "board_exception",
+        "sba_guaranty_required",
+        "startup_monitoring",
+        "none"
+      ],
+      "numeric_precision": "approved_amount and bank_capacity_used rounded to 2 decimals"
+    },
+    "concentration_flags": {
+      "type": "list",
+      "ordering": "sort by sector then application_id",
+      "item_required_keys": [
+        "sector",
+        "application_id",
+        "limit_pct",
+        "post_approval_pct",
+        "flag",
+        "handling"
+      ],
+      "handling_enum": [
+        "approve",
+        "conditional_approve",
+        "decline",
+        "participation_required",
+        "none"
+      ],
+      "numeric_precision": "percentages as ratios rounded to 4 decimals"
+    },
+    "decline_reasons": {
+      "type": "object",
+      "description": "Map each declined application_id to a sorted list of controlled reason codes.",
+      "reason_code_enum": [
+        "capacity_limit",
+        "sector_breach",
+        "weak_dscr",
+        "high_ltv",
+        "low_fico",
+        "recent_bankruptcy",
+        "startup_risk",
+        "underwater_collateral",
+        "policy_floor_missing",
+        "documentation_gap",
+        "fdic_adverse_variance",
+        "ncua_peer_weakness"
+      ]
+    },
+    "post_approval_concentrations": {
+      "type": "list",
+      "ordering": "sort by sector ascending",
+      "item_required_keys": [
+        "sector",
+        "exposure_after_approval",
+        "post_approval_pct",
+        "limit_pct",
+        "over_limit"
+      ],
+      "numeric_precision": "currency rounded to 2 decimals; percentages as ratios rounded to 4 decimals"
+    }
+  }
+}

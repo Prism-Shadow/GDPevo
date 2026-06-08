@@ -1,0 +1,53 @@
+{
+  "description": "Required JSON output shape for the Southport CRE and mixed decision matrix.",
+  "required_top_level_keys": [
+    "branch_id",
+    "recommended_path",
+    "stress",
+    "concentration",
+    "allocation",
+    "decisions",
+    "framework_assignments",
+    "conditions"
+  ],
+  "field_rules": {
+    "branch_id": {"type": "string"},
+    "recommended_path": {
+      "type": "object",
+      "required_keys": ["selected_application_id", "path", "reason_codes"],
+      "path_enum": ["approve", "conditional_approve", "decline", "defer", "participation_required"],
+      "reason_code_enum": ["capacity_limit", "sector_breach", "weak_dscr", "high_ltv", "low_fico", "recent_bankruptcy", "startup_risk", "underwater_collateral", "policy_floor_missing", "documentation_gap", "fdic_adverse_variance", "ncua_peer_weakness"]
+    },
+    "stress": {
+      "type": "object",
+      "required_keys": ["cre_application_id", "base_dscr", "stressed_dscr", "breaches_threshold"],
+      "numeric_precision": "DSCR values rounded to 2 decimals"
+    },
+    "concentration": {
+      "type": "object",
+      "required_keys": ["cre_policy_limit_pct", "existing_cre_exposure", "existing_cre_concentration", "retained_cre_amount", "post_participation_cre_concentration", "full_booking_cre_concentration", "full_booking_policy_variance_bps"],
+      "numeric_precision": "currency rounded to 2 decimals; ratios rounded to 4 decimals; bps rounded to 2 decimals"
+    },
+    "allocation": {
+      "type": "object",
+      "required_keys": ["lending_capacity_q1", "gross_approved_amount", "committed_capacity_amount", "remaining_capacity"],
+      "numeric_precision": "currency rounded to 2 decimals"
+    },
+    "decisions": {
+      "type": "object",
+      "required_keys": ["approved", "conditional_approved", "declined"],
+      "description": "Each value is an alphabetically sorted list of application_id values."
+    },
+    "framework_assignments": {
+      "type": "object",
+      "description": "Map each application_id to one of the controlled framework labels.",
+      "framework_enum": ["cre_weighted_score", "business_cdfi", "business_cdfi_sba_net_exposure", "nesdcap"]
+    },
+    "conditions": {
+      "type": "object",
+      "required_keys": ["by_application", "decline_reasons"],
+      "condition_enum": ["participation_required", "bank_retained_exposure_cap", "committee_cre_exception", "updated_appraisal_before_close", "tenant_roll_and_lease_review", "minimum_dscr_covenant_1_25", "quarterly_financial_reporting", "no_additional_cre_without_committee_review", "sba_guaranty_required", "startup_monitoring", "borrowing_base_certificate", "equipment_lien_perfection", "guarantor_support", "none"],
+      "reason_code_enum": ["capacity_limit", "sector_breach", "weak_dscr", "high_ltv", "low_fico", "recent_bankruptcy", "startup_risk", "underwater_collateral", "policy_floor_missing", "documentation_gap", "fdic_adverse_variance", "ncua_peer_weakness"]
+    }
+  }
+}

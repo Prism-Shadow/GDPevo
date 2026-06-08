@@ -1,0 +1,36 @@
+{
+  "incident_id": "string",
+  "enterprise_account_id": "string",
+  "root_cause_category": "string; concise root-cause category inferred from export-run and message evidence",
+  "failure_window": {
+    "start_date": "YYYY-MM-DD",
+    "end_date": "YYYY-MM-DD",
+    "failed_days": "integer"
+  },
+  "backfill_days": "integer",
+  "sla_credit_percent": "integer percent",
+  "severity": "enum: Critical | High | Medium | Low",
+  "engineering_owner": "string user id",
+  "account_owner": "string user id",
+  "channel_name": "string",
+  "evidence_folder": "string",
+  "report_title": "string",
+  "share_permissions": [
+    {
+      "user": "string; order by user as listed in requirements",
+      "permission": "enum: view | edit | upload_only"
+    }
+  ],
+  "response_status": "enum: READY_TO_SEND | NEEDS_FINANCE_REVIEW | NEEDS_ENGINEERING_REVIEW | UNDER_INVESTIGATION",
+  "enterprise_evidence_audit": {
+    "target_failed_run_ids": "list of target incident failed export-run IDs ordered by run_date ascending",
+    "recovery_run_id": "first successful target incident run ID after the failure window",
+    "quanta_message_ids": "list of message IDs sorted ascending that mention Quanta in the full console message history"
+  },
+  "enterprise_environment_audit": {
+    "critical_monthly_export_incident_ids": "list of Critical monthly_export incident IDs sorted ascending across the full console",
+    "target_incident_failed_runs": "integer failed export-run count for the target incident across the full console",
+    "other_critical_monthly_export_failed_runs": "integer failed export-run count for other Critical monthly_export incidents across the full console",
+    "critical_monthly_export_failed_runs": "integer failed export-run count for Critical monthly_export incidents across the full console"
+  }
+}

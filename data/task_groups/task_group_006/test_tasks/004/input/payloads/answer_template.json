@@ -1,0 +1,68 @@
+{
+  "task_id": {
+    "type": "string",
+    "required_value": "test_004"
+  },
+  "review": {
+    "type": "object",
+    "required_keys": ["region", "warehouse_id", "as_of_date", "target_receipt_ids"],
+    "list_ordering": "Sort target_receipt_ids ascending."
+  },
+  "dashboard_rows": [
+    {
+      "receipt_id": "string",
+      "po_id": "string",
+      "invoice_id": "string or null when no invoice is current as of the review date",
+      "supplier_id": "string",
+      "program_id": "string",
+      "sku": "string",
+      "receipt_status": "string from receipt record",
+      "po_status": "string from purchase order record",
+      "ap_status": "string; use not_invoiced_as_of when no invoice is current as of the review date",
+      "hold_code": "string or null",
+      "quantity_received": "number",
+      "quantity_billed": "number",
+      "variance_quantity": "number; billed quantity minus received quantity for current invoices, otherwise 0",
+      "variance_amount_usd": "number, USD, rounded to cents",
+      "open_risk_event_ids": ["string"],
+      "corrected_dashboard_status": "One of: ap_hold_quantity_variance, ap_hold_price_variance, ap_hold_no_receipt_code, release_candidate_with_open_risk, not_invoiced_as_of",
+      "action_owner": "One of: ap_team, receiving_control",
+      "include_in_release_queue": "boolean"
+    }
+  ],
+  "control_sets": {
+    "ap_hold_receipt_ids": ["string"],
+    "release_candidate_receipt_ids": ["string"],
+    "not_invoiced_as_of_receipt_ids": ["string"],
+    "risk_supplier_ids": ["string"],
+    "open_risk_event_ids": ["string"]
+  },
+  "totals": {
+    "receipt_count": "number",
+    "ap_hold_count": "number",
+    "release_candidate_count": "number",
+    "pending_invoice_count": "number",
+    "total_billed_over_received_qty": "number",
+    "total_billed_over_received_amount_usd": "number, USD, rounded to cents",
+    "unbilled_receipt_value_usd": "number, USD, rounded to cents"
+  },
+  "source_decisions": {
+    "authoritative_sources": [
+      "One or more of: procureops_receipt_records, procureops_po_records, procureops_ap_records, procureops_vendor_risk_records"
+    ],
+    "transfer_precedence_policy": "One of: stale_export_overrides_live_api, newest_payload_wins_without_api_check, live_procureops_overrides_stale_dashboard_export",
+    "release_policy": "One of: open_risk_blocks_every_release, release_all_approved_ap_rows, ap_hold_blocks_release_but_open_risk_note_does_not",
+    "chargeback_policy": "One of: create_chargeback_for_any_quantity_gap, use_stale_dashboard_chargeback, do_not_create_chargeback_from_dashboard_without_quality_basis",
+    "payment_policy": "One of: release_every_approved_invoice, release_when_supplier_risk_is_low, do_not_release_payment_from_approved_status_when_receipt_scope_conflicts",
+    "no_receipt_policy": "One of: convert_no_receipt_hold_to_vendor_chargeback, ignore_no_receipt_hold_when_receipt_exists, no_receipt_hold_is_ap_control_not_receiving_chargeback",
+    "stale_export_fields_corrected": [
+      "One or more of: export_invoice_status, export_hold_code, export_quantity_variance, export_dashboard_status, export_risk_flag, stale_summary"
+    ],
+    "supporting_payloads": [
+      "One or more of: regional_receiving_dashboard_export"
+    ]
+  },
+  "followup_actions": [
+    "One or more of: keep_luma_receipts_on_ap_hold, release_po00009_after_risk_note, keep_po00014_open_for_current_invoice, keep_vantix_receipt_on_ap_hold, refresh_regional_dashboard_cache"
+  ]
+}

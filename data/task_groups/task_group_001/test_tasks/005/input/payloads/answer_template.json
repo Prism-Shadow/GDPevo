@@ -1,0 +1,231 @@
+{
+  "schema_name": "test_005_bluetech_demo_target_account_plan",
+  "schema_version": "1.0",
+  "required_top_level_keys": [
+    "show_id",
+    "summary",
+    "ranked_target_accounts",
+    "excluded_exhibitors"
+  ],
+  "field_spec": {
+    "show_id": {
+      "type": "string",
+      "required_value": "bluetech_demo_2027"
+    },
+    "summary": {
+      "type": "object",
+      "required_keys": [
+        "target_account_count",
+        "excluded_count",
+        "meeting_interest_records_count",
+        "qualified_meeting_count",
+        "excluded_meeting_count",
+        "existing_crm_overlap_count",
+        "existing_crm_overlap_account_ids",
+        "create_account_count",
+        "update_existing_count",
+        "total_estimated_pipeline_usd",
+        "platform_coverage_counts",
+        "product_fit_counts"
+      ],
+      "fields": {
+        "target_account_count": {
+          "type": "integer",
+          "units": "exhibitors"
+        },
+        "excluded_count": {
+          "type": "integer",
+          "units": "exhibitors"
+        },
+        "meeting_interest_records_count": {
+          "type": "integer",
+          "units": "meeting-interest records for the show"
+        },
+        "qualified_meeting_count": {
+          "type": "integer",
+          "units": "meeting-interest records attached to qualified target accounts"
+        },
+        "excluded_meeting_count": {
+          "type": "integer",
+          "units": "meeting-interest records attached to excluded exhibitors"
+        },
+        "existing_crm_overlap_count": {
+          "type": "integer",
+          "units": "CRM accounts"
+        },
+        "existing_crm_overlap_account_ids": {
+          "type": "list[string]",
+          "ordering": "CRM account IDs ascending"
+        },
+        "create_account_count": {
+          "type": "integer",
+          "units": "target accounts"
+        },
+        "update_existing_count": {
+          "type": "integer",
+          "units": "target accounts"
+        },
+        "total_estimated_pipeline_usd": {
+          "type": "integer",
+          "units": "USD"
+        },
+        "platform_coverage_counts": {
+          "type": "object",
+          "required_keys": [
+            "AUV",
+            "ROV",
+            "Underwater Camera"
+          ],
+          "value_type": "integer"
+        },
+        "product_fit_counts": {
+          "type": "object",
+          "required_keys": [
+            "auv_rov_manufacturer",
+            "rov_camera_manufacturer",
+            "underwater_camera_oem"
+          ],
+          "value_type": "integer"
+        }
+      }
+    },
+    "ranked_target_accounts": {
+      "type": "list[object]",
+      "ordering": "rank ascending",
+      "required_object_keys": [
+        "rank",
+        "company_id",
+        "company_name",
+        "booth",
+        "country",
+        "website",
+        "platforms",
+        "product_fit",
+        "crm_account_id",
+        "crm_action",
+        "requested_demo",
+        "interest_score",
+        "priority_tier",
+        "pipeline_estimate_usd"
+      ],
+      "fields": {
+        "rank": {
+          "type": "integer",
+          "range": "1-based contiguous rank"
+        },
+        "company_id": {
+          "type": "string"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "booth": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "platforms": {
+          "type": "list[enum]",
+          "allowed_values": [
+            "AUV",
+            "ROV",
+            "Underwater Camera"
+          ],
+          "ordering": "AUV, ROV, Underwater Camera"
+        },
+        "product_fit": {
+          "type": "enum",
+          "allowed_values": [
+            "auv_rov_manufacturer",
+            "rov_camera_manufacturer",
+            "underwater_camera_oem"
+          ]
+        },
+        "crm_account_id": {
+          "type": "string or null"
+        },
+        "crm_action": {
+          "type": "enum",
+          "allowed_values": [
+            "create_account",
+            "update_existing",
+            "no_import"
+          ]
+        },
+        "requested_demo": {
+          "type": "boolean"
+        },
+        "interest_score": {
+          "type": "integer"
+        },
+        "priority_tier": {
+          "type": "enum",
+          "allowed_values": [
+            "A",
+            "B",
+            "C"
+          ]
+        },
+        "pipeline_estimate_usd": {
+          "type": "integer",
+          "units": "USD"
+        }
+      }
+    },
+    "excluded_exhibitors": {
+      "type": "list[object]",
+      "ordering": "company_name ascending",
+      "required_object_keys": [
+        "company_id",
+        "company_name",
+        "relationship_type",
+        "exclusion_reason",
+        "requested_demo",
+        "interest_score",
+        "crm_action"
+      ],
+      "fields": {
+        "company_id": {
+          "type": "string"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "relationship_type": {
+          "type": "enum",
+          "allowed_values": [
+            "distributor",
+            "service_provider",
+            "sensor_vendor",
+            "research"
+          ]
+        },
+        "exclusion_reason": {
+          "type": "enum",
+          "allowed_values": [
+            "distributor_only",
+            "service_only",
+            "sensor_only",
+            "research_only"
+          ]
+        },
+        "requested_demo": {
+          "type": "boolean"
+        },
+        "interest_score": {
+          "type": "integer or null"
+        },
+        "crm_action": {
+          "type": "enum",
+          "allowed_values": [
+            "no_import"
+          ]
+        }
+      }
+    }
+  }
+}

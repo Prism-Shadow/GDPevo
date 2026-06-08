@@ -1,0 +1,356 @@
+task_group:
+  task_group_id: task_group_008
+  scenario_id: SCN_008_personal_financial_advisory_tax_estate_planning
+  source_examples:
+  - E001
+  - E002
+  - E003
+  domain: Personal financial advisory tax and estate planning
+  description: A train-predict benchmark for private wealth advisory work. Agents
+    use a shared advisory office API with client profiles, source documents, retirement
+    accounts, life-insurance records, trust candidates, tax policy constants, and
+    RMD factors to produce structured recommendations and calculations for Roth conversion,
+    ILIT Crummey administration, GRAT/CRAT comparison, and estate-liquidity planning.
+env:
+  setup: env/setup.sh
+  files:
+  - env/setup.sh
+  - env/server.py
+  - env/generate_data.py
+  - env/advisory_rules.py
+  - env/data/manifest.json
+  - env/data/clients.json
+  - env/data/source_documents.json
+  - env/data/retirement_accounts.json
+  - env/data/life_insurance.json
+  - env/data/trust_candidates.json
+  - env/data/tax_policy.json
+  - env/data/rmd_factors.json
+train_tasks:
+- task_id: train_001
+  input: train_tasks/001/input/
+  prompt_txt: train_tasks/001/input/prompt.txt
+  payloads:
+  - train_tasks/001/input/payloads/answer_template.json
+  - train_tasks/001/input/payloads/request_memo.md
+  notes: train_tasks/001/notes/notes.md
+  output: train_tasks/001/output/
+  answer_json: train_tasks/001/output/answer.json
+  eval:
+    script: train_tasks/001/eval/eval.sh
+    files:
+    - train_tasks/001/eval/eval.sh
+    - train_tasks/001/eval/evaluate.py
+    - train_tasks/001/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, and Roth conversion recommendation.
+      weight: 1
+    - goal: Correct conversion window and annual conversion amount from the controlling
+        profile and bracket target.
+      weight: 3
+    - goal: Correct total converted and conversion tax.
+      weight: 2
+    - goal: Correct first RMD year using client age and RMD start age.
+      weight: 2
+    - goal: Correct baseline RMD tax through the task horizon.
+      weight: 3
+    - goal: Correct conversion-case RMD tax and tax savings through the task horizon.
+      weight: 3
+    - goal: Correct projected Roth and traditional balances at the horizon.
+      weight: 2
+    - goal: Correct source-resolution fields for profile and account evidence.
+      weight: 2
+- task_id: train_002
+  input: train_tasks/002/input/
+  prompt_txt: train_tasks/002/input/prompt.txt
+  payloads:
+  - train_tasks/002/input/payloads/answer_template.json
+  - train_tasks/002/input/payloads/request_memo.md
+  notes: train_tasks/002/notes/notes.md
+  output: train_tasks/002/output/
+  answer_json: train_tasks/002/output/answer.json
+  eval:
+    script: train_tasks/002/eval/eval.sh
+    files:
+    - train_tasks/002/eval/eval.sh
+    - train_tasks/002/eval/evaluate.py
+    - train_tasks/002/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, and implementation recommendation.
+      weight: 1
+    - goal: Correct annual exclusion per beneficiary and beneficiary count.
+      weight: 2
+    - goal: Correct annual exclusion capacity, premium, and premium gap.
+      weight: 3
+    - goal: Correct Crummey notice count and contribution date.
+      weight: 1
+    - goal: Correct notice due date, withdrawal end date, and earliest premium payment
+        date.
+      weight: 3
+    - goal: Correct dedicated bank account requirement.
+      weight: 1
+    - goal: Correct death benefit, estate inclusion risk, and outside-estate projection.
+      weight: 3
+    - goal: Correct source-resolution fields for beneficiaries and policy evidence.
+      weight: 2
+- task_id: train_003
+  input: train_tasks/003/input/
+  prompt_txt: train_tasks/003/input/prompt.txt
+  payloads:
+  - train_tasks/003/input/payloads/answer_template.json
+  - train_tasks/003/input/payloads/request_memo.md
+  notes: train_tasks/003/notes/notes.md
+  output: train_tasks/003/output/
+  answer_json: train_tasks/003/output/answer.json
+  eval:
+    script: train_tasks/003/eval/eval.sh
+    files:
+    - train_tasks/003/eval/eval.sh
+    - train_tasks/003/eval/evaluate.py
+    - train_tasks/003/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, and preferred trust strategy.
+      weight: 2
+    - goal: Correct recommendation rationale and role for the alternate trust.
+      weight: 2
+    - goal: Correct taxable estate and estate-tax exposure.
+      weight: 3
+    - goal: Correct liquidity gap before planning.
+      weight: 1
+    - goal: Correct GRAT term, projected heir remainder, and estate-tax reduction.
+      weight: 3
+    - goal: Correct GRAT mortality inclusion risk.
+      weight: 1
+    - goal: Correct CRAT term, charitable remainder, and income-tax deduction.
+      weight: 3
+    - goal: Correct source-resolution fields for goal and asset evidence.
+      weight: 2
+- task_id: train_004
+  input: train_tasks/004/input/
+  prompt_txt: train_tasks/004/input/prompt.txt
+  payloads:
+  - train_tasks/004/input/payloads/answer_template.json
+  - train_tasks/004/input/payloads/request_memo.md
+  notes: train_tasks/004/notes/notes.md
+  output: train_tasks/004/output/
+  answer_json: train_tasks/004/output/answer.json
+  eval:
+    script: train_tasks/004/eval/eval.sh
+    files:
+    - train_tasks/004/eval/eval.sh
+    - train_tasks/004/eval/evaluate.py
+    - train_tasks/004/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, primary action, and sequencing.
+      weight: 2
+    - goal: Correct estate taxable amount and estate-tax exposure.
+      weight: 3
+    - goal: Correct liquidity gap before planning.
+      weight: 2
+    - goal: Correct ILIT annual exclusion capacity and premium gap.
+      weight: 3
+    - goal: Correct ILIT estate-inclusion risk and outside-estate projection.
+      weight: 3
+    - goal: Correct trust strategy and projected heir remainder.
+      weight: 2
+    - goal: Correct estimated estate-tax reduction and charitable remainder context.
+      weight: 2
+    - goal: Correct sorted action set and source-resolution fields.
+      weight: 2
+- task_id: train_005
+  input: train_tasks/005/input/
+  prompt_txt: train_tasks/005/input/prompt.txt
+  payloads:
+  - train_tasks/005/input/payloads/answer_template.json
+  - train_tasks/005/input/payloads/request_memo.md
+  notes: train_tasks/005/notes/notes.md
+  output: train_tasks/005/output/
+  answer_json: train_tasks/005/output/answer.json
+  eval:
+    script: train_tasks/005/eval/eval.sh
+    files:
+    - train_tasks/005/eval/eval.sh
+    - train_tasks/005/eval/evaluate.py
+    - train_tasks/005/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, and Roth conversion recommendation.
+      weight: 1
+    - goal: Correct conversion window and annual conversion amount from the controlling
+        profile and bracket target.
+      weight: 3
+    - goal: Correct total converted and conversion tax.
+      weight: 2
+    - goal: Correct first RMD year using client age and RMD start age.
+      weight: 2
+    - goal: Correct baseline RMD tax through the task horizon.
+      weight: 3
+    - goal: Correct conversion-case RMD tax and tax savings through the task horizon.
+      weight: 3
+    - goal: Correct projected Roth and traditional balances at the horizon.
+      weight: 2
+    - goal: Correct source-resolution fields for profile and account evidence.
+      weight: 2
+test_tasks:
+- task_id: test_001
+  input: test_tasks/001/input/
+  prompt_txt: test_tasks/001/input/prompt.txt
+  payloads:
+  - test_tasks/001/input/payloads/answer_template.json
+  - test_tasks/001/input/payloads/request_memo.md
+  notes: test_tasks/001/notes/notes.md
+  output: test_tasks/001/output/
+  answer_json: test_tasks/001/output/answer.json
+  eval:
+    script: test_tasks/001/eval/eval.sh
+    files:
+    - test_tasks/001/eval/eval.sh
+    - test_tasks/001/eval/evaluate.py
+    - test_tasks/001/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, and Roth conversion recommendation.
+      weight: 1
+    - goal: Correct conversion window and annual conversion amount from the controlling
+        profile and bracket target.
+      weight: 3
+    - goal: Correct total converted and conversion tax.
+      weight: 2
+    - goal: Correct first RMD year using client age and RMD start age.
+      weight: 2
+    - goal: Correct baseline RMD tax through the task horizon.
+      weight: 3
+    - goal: Correct conversion-case RMD tax and tax savings through the task horizon.
+      weight: 3
+    - goal: Correct projected Roth and traditional balances at the horizon.
+      weight: 2
+    - goal: Correct source-resolution fields for profile and account evidence.
+      weight: 2
+- task_id: test_002
+  input: test_tasks/002/input/
+  prompt_txt: test_tasks/002/input/prompt.txt
+  payloads:
+  - test_tasks/002/input/payloads/answer_template.json
+  - test_tasks/002/input/payloads/request_memo.md
+  notes: test_tasks/002/notes/notes.md
+  output: test_tasks/002/output/
+  answer_json: test_tasks/002/output/answer.json
+  eval:
+    script: test_tasks/002/eval/eval.sh
+    files:
+    - test_tasks/002/eval/eval.sh
+    - test_tasks/002/eval/evaluate.py
+    - test_tasks/002/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, and implementation recommendation.
+      weight: 1
+    - goal: Correct annual exclusion per beneficiary and beneficiary count.
+      weight: 2
+    - goal: Correct annual exclusion capacity, premium, and premium gap.
+      weight: 3
+    - goal: Correct Crummey notice count and contribution date.
+      weight: 1
+    - goal: Correct notice due date, withdrawal end date, and earliest premium payment
+        date.
+      weight: 3
+    - goal: Correct dedicated bank account requirement.
+      weight: 1
+    - goal: Correct death benefit, estate inclusion risk, and outside-estate projection.
+      weight: 3
+    - goal: Correct source-resolution fields for beneficiaries and policy evidence.
+      weight: 2
+- task_id: test_003
+  input: test_tasks/003/input/
+  prompt_txt: test_tasks/003/input/prompt.txt
+  payloads:
+  - test_tasks/003/input/payloads/answer_template.json
+  - test_tasks/003/input/payloads/request_memo.md
+  notes: test_tasks/003/notes/notes.md
+  output: test_tasks/003/output/
+  answer_json: test_tasks/003/output/answer.json
+  eval:
+    script: test_tasks/003/eval/eval.sh
+    files:
+    - test_tasks/003/eval/eval.sh
+    - test_tasks/003/eval/evaluate.py
+    - test_tasks/003/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, and preferred trust strategy.
+      weight: 2
+    - goal: Correct recommendation rationale and role for the alternate trust.
+      weight: 2
+    - goal: Correct taxable estate and estate-tax exposure.
+      weight: 3
+    - goal: Correct liquidity gap before planning.
+      weight: 1
+    - goal: Correct GRAT term, projected heir remainder, and estate-tax reduction.
+      weight: 3
+    - goal: Correct GRAT mortality inclusion risk.
+      weight: 1
+    - goal: Correct CRAT term, charitable remainder, and income-tax deduction.
+      weight: 3
+    - goal: Correct source-resolution fields for goal and asset evidence.
+      weight: 2
+- task_id: test_004
+  input: test_tasks/004/input/
+  prompt_txt: test_tasks/004/input/prompt.txt
+  payloads:
+  - test_tasks/004/input/payloads/answer_template.json
+  - test_tasks/004/input/payloads/request_memo.md
+  notes: test_tasks/004/notes/notes.md
+  output: test_tasks/004/output/
+  answer_json: test_tasks/004/output/answer.json
+  eval:
+    script: test_tasks/004/eval/eval.sh
+    files:
+    - test_tasks/004/eval/eval.sh
+    - test_tasks/004/eval/evaluate.py
+    - test_tasks/004/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, primary action, and sequencing.
+      weight: 2
+    - goal: Correct estate taxable amount and estate-tax exposure.
+      weight: 3
+    - goal: Correct liquidity gap before planning.
+      weight: 2
+    - goal: Correct ILIT annual exclusion capacity and premium gap.
+      weight: 3
+    - goal: Correct ILIT estate-inclusion risk and outside-estate projection.
+      weight: 3
+    - goal: Correct trust strategy and projected heir remainder.
+      weight: 2
+    - goal: Correct estimated estate-tax reduction and charitable remainder context.
+      weight: 2
+    - goal: Correct sorted action set and source-resolution fields.
+      weight: 2
+- task_id: test_005
+  input: test_tasks/005/input/
+  prompt_txt: test_tasks/005/input/prompt.txt
+  payloads:
+  - test_tasks/005/input/payloads/answer_template.json
+  - test_tasks/005/input/payloads/request_memo.md
+  notes: test_tasks/005/notes/notes.md
+  output: test_tasks/005/output/
+  answer_json: test_tasks/005/output/answer.json
+  eval:
+    script: test_tasks/005/eval/eval.sh
+    files:
+    - test_tasks/005/eval/eval.sh
+    - test_tasks/005/eval/evaluate.py
+    - test_tasks/005/eval/rubric.json
+    rubric:
+    - goal: Correct client, analysis type, and Roth conversion recommendation.
+      weight: 1
+    - goal: Correct conversion window and annual conversion amount from the controlling
+        profile and bracket target.
+      weight: 3
+    - goal: Correct total converted and conversion tax.
+      weight: 2
+    - goal: Correct first RMD year using client age and RMD start age.
+      weight: 2
+    - goal: Correct baseline RMD tax through the task horizon.
+      weight: 3
+    - goal: Correct conversion-case RMD tax and tax savings through the task horizon.
+      weight: 3
+    - goal: Correct projected Roth and traditional balances at the horizon.
+      weight: 2
+    - goal: Correct source-resolution fields for profile and account evidence.
+      weight: 2

@@ -1,0 +1,263 @@
+{
+  "task_id": "test_001",
+  "wave": "TEST_PRIORITY_D",
+  "api_base_url": "http://127.0.0.1:8007",
+  "orders": [
+    {
+      "order_id": "SO-70003",
+      "customer_id": "CUST-2008",
+      "warehouse_id": "WH_CENTRAL",
+      "inventory_status": "SHORTAGE",
+      "final_decision": "REJECT_ACCOUNT_HOLD",
+      "exception_reasons": [
+        "ACCOUNT_BLOCKED",
+        "CREDIT_WATCH",
+        "INVENTORY_SHORTAGE"
+      ],
+      "blocking_skus": [
+        "NW-1043"
+      ],
+      "shipping_cost": 1064.1,
+      "service_days": 1,
+      "next_action": "do_not_ship_notify_credit"
+    },
+    {
+      "order_id": "SO-70010",
+      "customer_id": "CUST-2026",
+      "warehouse_id": "WH_WEST",
+      "inventory_status": "AVAILABLE",
+      "final_decision": "MANUAL_REVIEW",
+      "exception_reasons": [
+        "HIGH_SHIPPING_COST_LOW_MARGIN"
+      ],
+      "blocking_skus": [],
+      "shipping_cost": 1572.2,
+      "service_days": 1,
+      "next_action": "route_to_margin_review"
+    },
+    {
+      "order_id": "SO-70017",
+      "customer_id": "CUST-2010",
+      "warehouse_id": "WH_CENTRAL",
+      "inventory_status": "AVAILABLE",
+      "final_decision": "MANUAL_REVIEW",
+      "exception_reasons": [
+        "ACCOUNT_REVIEW_REQUIRED"
+      ],
+      "blocking_skus": [],
+      "shipping_cost": 468.24,
+      "service_days": 5,
+      "next_action": "route_to_account_review"
+    },
+    {
+      "order_id": "SO-70024",
+      "customer_id": "CUST-2015",
+      "warehouse_id": "WH_WEST",
+      "inventory_status": "SHORTAGE",
+      "final_decision": "REJECT_ACCOUNT_HOLD",
+      "exception_reasons": [
+        "ACCOUNT_BLOCKED",
+        "FRAUD_WATCH",
+        "INVENTORY_SHORTAGE"
+      ],
+      "blocking_skus": [
+        "NW-1028",
+        "NW-1034"
+      ],
+      "shipping_cost": 1720.24,
+      "service_days": 2,
+      "next_action": "do_not_ship_notify_credit"
+    },
+    {
+      "order_id": "SO-70031",
+      "customer_id": "CUST-2022",
+      "warehouse_id": "WH_WEST",
+      "inventory_status": "LOW_STOCK_COVERED",
+      "final_decision": "DELAY_STOCK_WATCH",
+      "exception_reasons": [
+        "LOW_STOCK_AFTER_ALLOCATION"
+      ],
+      "blocking_skus": [],
+      "shipping_cost": 1188.11,
+      "service_days": 2,
+      "next_action": "hold_for_allocation_review"
+    },
+    {
+      "order_id": "SO-70038",
+      "customer_id": "CUST-2031",
+      "warehouse_id": "WH_WEST",
+      "inventory_status": "SHORTAGE",
+      "final_decision": "MANUAL_REVIEW",
+      "exception_reasons": [
+        "FRAUD_WATCH",
+        "INVENTORY_SHORTAGE"
+      ],
+      "blocking_skus": [
+        "NW-1000"
+      ],
+      "shipping_cost": 2264.51,
+      "service_days": 2,
+      "next_action": "route_to_account_review"
+    },
+    {
+      "order_id": "SO-70045",
+      "customer_id": "CUST-2017",
+      "warehouse_id": "WH_WEST",
+      "inventory_status": "SHORTAGE",
+      "final_decision": "BACKORDER_INVENTORY",
+      "exception_reasons": [
+        "INVENTORY_SHORTAGE"
+      ],
+      "blocking_skus": [
+        "NW-1017",
+        "NW-1028",
+        "NW-1029",
+        "NW-1050"
+      ],
+      "shipping_cost": 1294.3,
+      "service_days": 3,
+      "next_action": "create_backorder_and_replenishment_check"
+    },
+    {
+      "order_id": "SO-70052",
+      "customer_id": "CUST-2018",
+      "warehouse_id": "WH_NORTH",
+      "inventory_status": "SHORTAGE",
+      "final_decision": "MANUAL_REVIEW",
+      "exception_reasons": [
+        "HIGH_SHIPPING_COST_LOW_MARGIN",
+        "INVENTORY_SHORTAGE"
+      ],
+      "blocking_skus": [
+        "NW-1013"
+      ],
+      "shipping_cost": 1309.84,
+      "service_days": 2,
+      "next_action": "route_to_margin_review"
+    },
+    {
+      "order_id": "SO-70059",
+      "customer_id": "CUST-2020",
+      "warehouse_id": "WH_CENTRAL",
+      "inventory_status": "AVAILABLE",
+      "final_decision": "MANUAL_REVIEW",
+      "exception_reasons": [
+        "CREDIT_WATCH"
+      ],
+      "blocking_skus": [],
+      "shipping_cost": 647.93,
+      "service_days": 2,
+      "next_action": "route_to_account_review"
+    },
+    {
+      "order_id": "SO-70066",
+      "customer_id": "CUST-2028",
+      "warehouse_id": "WH_WEST",
+      "inventory_status": "SHORTAGE",
+      "final_decision": "BACKORDER_INVENTORY",
+      "exception_reasons": [
+        "INVENTORY_SHORTAGE"
+      ],
+      "blocking_skus": [
+        "NW-1003",
+        "NW-1014"
+      ],
+      "shipping_cost": 1453.23,
+      "service_days": 4,
+      "next_action": "create_backorder_and_replenishment_check"
+    },
+    {
+      "order_id": "SO-70073",
+      "customer_id": "CUST-2026",
+      "warehouse_id": "WH_NORTH",
+      "inventory_status": "SHORTAGE",
+      "final_decision": "BACKORDER_INVENTORY",
+      "exception_reasons": [
+        "INVENTORY_SHORTAGE"
+      ],
+      "blocking_skus": [
+        "NW-1004",
+        "NW-1013",
+        "NW-1041"
+      ],
+      "shipping_cost": 1845.99,
+      "service_days": 5,
+      "next_action": "create_backorder_and_replenishment_check"
+    },
+    {
+      "order_id": "SO-70080",
+      "customer_id": "CUST-2018",
+      "warehouse_id": "WH_CENTRAL",
+      "inventory_status": "SHORTAGE",
+      "final_decision": "BACKORDER_INVENTORY",
+      "exception_reasons": [
+        "INVENTORY_SHORTAGE"
+      ],
+      "blocking_skus": [
+        "NW-1016",
+        "NW-1048"
+      ],
+      "shipping_cost": 372.91,
+      "service_days": 2,
+      "next_action": "create_backorder_and_replenishment_check"
+    },
+    {
+      "order_id": "SO-70087",
+      "customer_id": "CUST-2023",
+      "warehouse_id": "WH_CENTRAL",
+      "inventory_status": "SHORTAGE",
+      "final_decision": "MANUAL_REVIEW",
+      "exception_reasons": [
+        "ACCOUNT_REVIEW_REQUIRED",
+        "INVENTORY_SHORTAGE"
+      ],
+      "blocking_skus": [
+        "NW-1032"
+      ],
+      "shipping_cost": 5096.16,
+      "service_days": 1,
+      "next_action": "route_to_account_review"
+    }
+  ],
+  "summary": {
+    "order_count": 13,
+    "final_decision_counts": {
+      "BACKORDER_INVENTORY": 4,
+      "DELAY_STOCK_WATCH": 1,
+      "MANUAL_REVIEW": 6,
+      "REJECT_ACCOUNT_HOLD": 2
+    },
+    "inventory_status_counts": {
+      "AVAILABLE": 3,
+      "LOW_STOCK_COVERED": 1,
+      "SHORTAGE": 9
+    },
+    "exception_reason_counts": {
+      "ACCOUNT_BLOCKED": 2,
+      "ACCOUNT_REVIEW_REQUIRED": 2,
+      "CREDIT_WATCH": 2,
+      "FRAUD_WATCH": 2,
+      "HIGH_SHIPPING_COST_LOW_MARGIN": 2,
+      "INVENTORY_SHORTAGE": 9,
+      "LOW_STOCK_AFTER_ALLOCATION": 1
+    },
+    "manual_review_order_ids": [
+      "SO-70010",
+      "SO-70017",
+      "SO-70038",
+      "SO-70052",
+      "SO-70059",
+      "SO-70087"
+    ],
+    "backorder_order_ids": [
+      "SO-70045",
+      "SO-70066",
+      "SO-70073",
+      "SO-70080"
+    ],
+    "rejected_order_ids": [
+      "SO-70003",
+      "SO-70024"
+    ]
+  }
+}

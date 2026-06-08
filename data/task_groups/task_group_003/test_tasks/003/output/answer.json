@@ -1,0 +1,51 @@
+{
+  "incident_id": "INC-8301",
+  "enterprise_account_id": "ENT-4001",
+  "root_cause_category": "staging storage quota",
+  "failure_window": {
+    "start_date": "2026-05-25",
+    "end_date": "2026-05-28",
+    "failed_days": 4
+  },
+  "backfill_days": 4,
+  "sla_credit_percent": 20,
+  "severity": "Critical",
+  "engineering_owner": "priya.shah",
+  "account_owner": "omar.chen",
+  "channel_name": "quanta-ledger-group",
+  "evidence_folder": "Quanta Ledger Group May 2026 Investigation",
+  "report_title": "Quanta Ledger Group Export Failure - Resolution Report",
+  "share_permissions": [
+    {
+      "user": "maya.patel",
+      "permission": "view"
+    },
+    {
+      "user": "jun.chen",
+      "permission": "edit"
+    }
+  ],
+  "response_status": "NEEDS_FINANCE_REVIEW",
+  "enterprise_evidence_audit": {
+    "target_failed_run_ids": [
+      "RUN-QUA-0",
+      "RUN-QUA-1",
+      "RUN-QUA-2",
+      "RUN-QUA-3"
+    ],
+    "recovery_run_id": "RUN-QUA-4",
+    "quanta_message_ids": [
+      "MSG-8301-A",
+      "MSG-8301-B"
+    ]
+  },
+  "enterprise_environment_audit": {
+    "critical_monthly_export_incident_ids": [
+      "INC-7301",
+      "INC-8301"
+    ],
+    "target_incident_failed_runs": 4,
+    "other_critical_monthly_export_failed_runs": 3,
+    "critical_monthly_export_failed_runs": 7
+  }
+}

@@ -1,0 +1,31 @@
+Strategic Renewal Save Plan
+
+The CRO needs a strategic-account save plan for accounts entering the second-half renewal cycle. Use the ApexCloud Retention Operations API at http://127.0.0.1:8074 to review the named accounts and return the top 6 accounts by the company retention-risk policy used for renewal and save-plan triage.
+
+Use this analysis window:
+- Assessment date: 2026-09-30
+- Period: 2026-07-01 through 2026-09-30
+- Months: 2026-07, 2026-08, and 2026-09
+- A/R as-of date: 2026-09-30
+
+Review only these account_ids:
+- acct_quartz_insure
+- acct_valence
+- acct_solstice
+- acct_bayside_bio
+- acct_brightharbor
+- acct_westport
+- acct_metrobyte
+- acct_peakstone
+- acct_apexia
+- acct_helios
+
+Return JSON only, following input/payloads/answer_template.json. Use the company's standard revenue, support-health, and sentiment data policies when calculating the queue. The quality_checks booleans should indicate whether the relevant current-value and data-hygiene policies were applied.
+
+Precision and labels:
+- Currency: 2 decimals
+- Percentages, if any are included: 1 decimal
+- Counts and risk scores: integers
+- risk_level must be one of: critical, high, medium, low
+- primary_action must be one of: executive_qbr, collections_followup, technical_recovery, renewal_save, nurture_monitor, no_action
+- reason_codes must use only: overdue_receivable, low_tenure_high_churn, sla_degradation, nps_drop, usage_decline, renewal_window, expansion_offset, clean_billings

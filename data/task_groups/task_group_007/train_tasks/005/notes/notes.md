@@ -1,0 +1,16 @@
+# train_005 Notes
+
+## English
+
+This hidden construction note documents `train_005`, a supplier quality-hold and replenishment-freeze task for `task_group_007` under scenario `SCN_007_erp_inventory_order_fulfillment`. It is derived from source examples `E002` and `E003`: the task combines ERP decision controls with supplier incident analysis. The solver-visible materials are `input/prompt.txt`, `input/payloads/quality_hold_review_memo.json`, `input/payloads/answer_template.json`, and the shared ERP API. The solver must not inspect `env/` files directly.
+
+The business task is to review selected suppliers over the window `2026-03-01` through `2026-06-30`, identify recent RMA/work-order quality risk, connect risky suppliers to open or confirmed purchase orders, and output controlled replenishment decisions. The required output includes the analysis window, supplier-level incident metrics, quality status, affected SKUs, sample incident IDs, held PO IDs, release supplier IDs, and summary rollups. The gold answer reviews `SUP-003`, `SUP-006`, and `SUP-010`: `SUP-003` is on `quality_hold` and freezes new replenishment; `SUP-006` is a watch supplier with severe recent evidence requiring buyer review; `SUP-010` remains monitor-only despite recent incidents because its current quality status and incident mix do not justify a replenishment freeze.
+
+Material map: `/incidents` provides incident type, supplier, SKU, status, severity, and open dates; `/suppliers` provides supplier names and quality status; `/purchase_orders` provides open and confirmed POs that may need a hold; `/products` provides SKU-to-supplier linkage when needed. The task-local memo fixes the review window and target suppliers but does not reveal the answer. Incidents outside the date window are excluded before counting; sample incident IDs are sorted and capped at five. Held PO IDs are limited to current open or confirmed POs for suppliers whose decision is `freeze_new_replenishment` or `buyer_review_required`.
+
+Evaluation uses eight exact-match scoring points with total raw weight 18: analysis window (1), supplier identities (2), incident/RMA/severity/open counts (3), quality statuses (2), affected SKU and sample incident sets (2), controlled replenishment decisions (3), held PO IDs globally and by supplier (3), and release suppliers plus summary rollups (2). The evaluator compares only the fields relevant to each scoring point and returns a structured zero-score JSON for malformed or incomplete predictions instead of crashing. Common pitfalls are using the wrong date window, mixing supplier IDs with similar names, treating all POs as hold candidates, ignoring supplier quality status, counting closed/cancelled POs as hold candidates, including more than five sample incidents, or producing free-form decisions outside the allowed enum.
+
+Transfer design: this train task anchors supplier-quality controls for later tests. A solver comparing a blind attempt to the answer should infer that quality holds and recent severe RMA patterns can override normal replenishment, that incident filtering precedes aggregation, and that PO hold decisions should be tied to open or confirmed supplier POs.
+
+Construction record: authored as a task-builder rework for `train_005`; created and updated on 2026-06-01.
+

@@ -1,0 +1,65 @@
+{
+  "case_decisions": [
+    {
+      "case_id": "string; preserve ascending case_id order",
+      "customer_id": "string",
+      "line_id": "string",
+      "primary_action": "enum: TOGGLE_AIRPLANE_MODE | RESEAT_SIM | RESET_APN_REBOOT | SEND_PAYMENT_REQUEST | RESUME_LINE_REBOOT | TRANSFER_HUMAN | TOGGLE_MOBILE_DATA | TOGGLE_ROAMING | ENABLE_LINE_ROAMING | REFUEL_DATA | TOGGLE_DATA_SAVER | SET_NETWORK_MODE | DISCONNECT_VPN | GRANT_MESSAGING_PERMISSION | TOGGLE_WIFI_CALLING | NO_ACTION",
+      "secondary_action": "same enum as primary_action",
+      "final_route": "enum: SELF_SERVICE | DATA_RECOVERY | BILLING_RECOVERY | CARRIER_UPDATE | HUMAN_TRANSFER",
+      "reason_code": "enum: SIM_LOCKED | CONTRACT_ENDED | MMSC_MISSING | DATA_LIMIT_EXCEEDED | LINE_ROAMING_DISABLED | NONE",
+      "data_refuel_gb": "number with one decimal; 0.0 when no refuel is needed",
+      "charge_amount_usd": "number with two decimals; 0.00 when no customer charge is needed"
+    }
+  ],
+  "queue_summary": {
+    "self_service_fixes": "integer",
+    "data_recoveries": "integer",
+    "billing_recoveries": "integer",
+    "carrier_updates": "integer",
+    "human_transfers": "integer",
+    "total_estimated_customer_charge_usd": "number with two decimals"
+  },
+  "triage_audit": {
+    "device_records_checked": "integer",
+    "line_records_checked": "integer",
+    "transfer_case_ids": "list of case IDs sorted ascending",
+    "carrier_update_case_ids": "list of case IDs sorted ascending",
+    "device_state_issue_case_ids": "list of case IDs sorted ascending where device state, not carrier line state, determines the fix",
+    "line_state_issue_case_ids": "list of case IDs sorted ascending where carrier line/account state determines the route",
+    "human_transfer_reason_codes": "list of reason_code enum values sorted alphabetically for human-transfer cases"
+  },
+  "environment_issue_distribution": {
+    "non_target_same_issue_case_counts": "object keyed by MMS | MOBILE_DATA | NO_SERVICE | SLOW_DATA with integer counts",
+    "all_case_records_available": "integer"
+  },
+  "mobile_inventory_audit": {
+    "all_case_issue_counts": "object keyed by MMS | MOBILE_DATA | NO_SERVICE | SLOW_DATA with counts across all console cases",
+    "locked_or_missing_sim_case_ids": "list of all case IDs sorted ascending whose device SIM state is missing or locked",
+    "mmsc_missing_case_ids": "list of all case IDs sorted ascending whose device is missing the MMSC/APN URL"
+  },
+  "mobile_line_state_audit": {
+    "suspended_line_case_ids": "list of all case IDs sorted ascending whose line is suspended or otherwise not active",
+    "suspension_reason_counts": "object keyed by CONTRACT_ENDED and OVERDUE_BILL with counts across all console lines",
+    "line_roaming_disabled_case_ids": "list of all case IDs sorted ascending whose carrier line roaming is disabled"
+  },
+  "mobile_device_setting_audit": {
+    "data_saver_on_case_ids": "list of all case IDs sorted ascending whose device data saver is on",
+    "vpn_connected_case_ids": "list of all case IDs sorted ascending whose device VPN is connected",
+    "old_network_mode_case_ids": "list of all case IDs sorted ascending whose device is set to 3g_only",
+    "mobile_data_disabled_case_ids": "list of all case IDs sorted ascending whose device mobile data is disabled"
+  },
+  "mobile_plan_usage_audit": {
+    "data_limit_exceeded_case_ids": "list of all case IDs sorted ascending whose line data_used_gb exceeds plan data_limit_gb",
+    "target_refuel_case_ids": "list of target case IDs sorted ascending requiring REFUEL_DATA",
+    "target_refuel_gb_total": "number with one decimal; total refuel amount for target queue",
+    "target_refuel_charge_total_usd": "number with two decimals; total refuel charge for target queue"
+  },
+  "source_family_audit": {
+    "device_configuration_case_ids": "list of target case IDs sorted ascending where device configuration or device state determines the action",
+    "carrier_line_state_case_ids": "list of target case IDs sorted ascending where carrier line state determines the action",
+    "plan_allowance_case_ids": "list of target case IDs sorted ascending where plan allowance/data usage determines the action",
+    "billing_recovery_case_ids": "list of target case IDs sorted ascending where overdue bill payment and line resume determine the action",
+    "human_handoff_case_ids": "list of target case IDs sorted ascending where safe resolution requires human handoff"
+  }
+}

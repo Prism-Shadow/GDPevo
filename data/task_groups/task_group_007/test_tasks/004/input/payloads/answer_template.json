@@ -1,0 +1,56 @@
+{
+  "task_id": {"type": "string", "required": true, "expected_value": "test_004"},
+  "wave": {"type": "string", "required": true, "expected_value": "TEST_QUALITY_E"},
+  "api_base_url": {"type": "string", "required": true},
+  "analysis_date": {"type": "string", "required": true, "format": "YYYY-MM-DD"},
+  "orders": {
+    "type": "list",
+    "required": true,
+    "ordering": "ascending by order_id",
+    "item_schema": {
+      "order_id": {"type": "string", "required": true},
+      "customer_id": {"type": "string", "required": true},
+      "warehouse_id": {"type": "enum", "required": true, "allowed_values": ["WH_NORTH", "WH_CENTRAL", "WH_WEST"]},
+      "inventory_status": {"type": "enum", "required": true, "allowed_values": ["AVAILABLE", "SHORTAGE"]},
+      "release_decision": {"type": "enum", "required": true, "allowed_values": ["RELEASE_TO_SHIP", "MANUAL_REVIEW", "BACKORDER_INVENTORY"]},
+      "reason_codes": {
+        "type": "list",
+        "required": true,
+        "ordering": "ascending enum value",
+        "allowed_values": ["ACCOUNT_BLOCKED", "ACCOUNT_REVIEW_REQUIRED", "ACTIVE_SEVERE_INCIDENT", "CREDIT_WATCH", "FRAUD_WATCH", "INACTIVE_PRODUCT", "INVENTORY_SHORTAGE", "SUPPLIER_QUALITY_HOLD"]
+      },
+      "blocked_skus": {"type": "list", "required": true, "ordering": "ascending SKU"},
+      "quality_hold_suppliers": {"type": "list", "required": true, "ordering": "ascending supplier_id"},
+      "active_severe_incident_ids": {"type": "list", "required": true, "ordering": "ascending incident_id"},
+      "risk_suppliers": {"type": "list", "required": true, "ordering": "ascending supplier_id"},
+      "next_action": {"type": "enum", "required": true, "allowed_values": ["release_to_warehouse", "route_to_release_control", "create_backorder_and_quality_watch"]}
+    }
+  },
+  "risk_suppliers": {
+    "type": "list",
+    "required": true,
+    "ordering": "ascending supplier_id",
+    "item_schema": {
+      "supplier_id": {"type": "string", "required": true},
+      "supplier_name": {"type": "string", "required": true},
+      "risk_type": {"type": "enum", "required": true, "allowed_values": ["QUALITY_HOLD", "ACTIVE_SEVERE_INCIDENT", "BOTH"]},
+      "affected_skus": {"type": "list", "required": true, "ordering": "ascending SKU"},
+      "active_severe_incident_ids": {"type": "list", "required": true, "ordering": "ascending incident_id"},
+      "affected_order_ids": {"type": "list", "required": true, "ordering": "ascending order_id"}
+    }
+  },
+  "summary": {
+    "type": "object",
+    "required": true,
+    "schema": {
+      "order_count": {"type": "integer", "required": true},
+      "release_decision_counts": {"type": "object", "required": true, "keys": ["BACKORDER_INVENTORY", "MANUAL_REVIEW", "RELEASE_TO_SHIP"]},
+      "inventory_status_counts": {"type": "object", "required": true, "keys": ["AVAILABLE", "SHORTAGE"]},
+      "release_order_ids": {"type": "list", "required": true, "ordering": "ascending order_id"},
+      "manual_review_order_ids": {"type": "list", "required": true, "ordering": "ascending order_id"},
+      "backorder_order_ids": {"type": "list", "required": true, "ordering": "ascending order_id"},
+      "risk_supplier_count": {"type": "integer", "required": true},
+      "active_severe_incident_count": {"type": "integer", "required": true}
+    }
+  }
+}

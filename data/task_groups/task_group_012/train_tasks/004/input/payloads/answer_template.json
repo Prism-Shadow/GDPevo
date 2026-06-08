@@ -1,0 +1,30 @@
+{
+  "employee_id": {"type": "string"},
+  "effective_leave_policy": {"type": "string"},
+  "assignment_id": {"type": "string"},
+  "balance_days": {"type": "integer"},
+  "precedence_source": {
+    "type": "enum",
+    "allowed_values": ["approved_assignment_over_profile", "employee_profile_summary", "case_summary_only"]
+  },
+  "profile_policy_ignored": {"type": "boolean"},
+  "audit_event_id": {"type": "string"},
+  "audit_result": {
+    "type": "enum",
+    "allowed_values": ["profile_summary_stale", "ready_with_monitoring", "block_close"]
+  },
+  "next_action": {
+    "type": "enum",
+    "allowed_values": ["update_employee_summary", "open_records_remediation", "no_action"]
+  },
+  "leave_precedence_source": {
+    "type": "enum",
+    "allowed_values": ["approved_assignment_current_period", "profile_summary_current_period", "case_summary_only"]
+  },
+  "supporting_audit_event_ids": {"type": "list[string]"},
+  "excluded_audit_event_ids": {"type": "list[string]"},
+  "audit_scope": {
+    "type": "enum",
+    "allowed_values": ["leave_source_precedence_only", "document_notice_findings_only", "payroll_assignment_readiness"]
+  }
+}

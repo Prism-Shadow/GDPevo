@@ -1,0 +1,254 @@
+task_group:
+  task_group_id: task_group_012
+  scenario_id: SCN_012_erp_hr_employee_lifecycle
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: ERP HR Employee Lifecycle and Policy Operations
+  description: |
+    Web-first PeopleOps Console benchmark for HR lifecycle operations. Tasks require
+    cross-module review of employee details, recruitment outcomes, leave assignments,
+    payroll assignments, policy cases, document folders, messages, approvals, comments,
+    attachments, and audit details.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/app.py
+    - env/generate_data.py
+    - env/static/index.html
+    - env/static/app.css
+    - env/static/app.js
+    - env/data/manifest.json
+    - env/data/employees.json
+    - env/data/departments.json
+    - env/data/policies.json
+    - env/data/cases.json
+    - env/data/payroll_ledgers.json
+    - env/data/recruitment.json
+    - env/data/documents.json
+    - env/data/messages.json
+    - env/data/notifications.json
+    - env/data/audit_events.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/rubric.json
+        - train_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Identify employee and effective leave policy.
+          weight: 2
+        - goal: Apply leave source precedence and annual days.
+          weight: 2
+        - goal: Select effective and excluded leave records.
+          weight: 3
+        - goal: Select submitted payroll assignment and salary.
+          weight: 3
+        - goal: Exclude draft payroll and set closeout action.
+          weight: 2
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/rubric.json
+        - train_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: Identify case, final decision, and approval record.
+          weight: 3
+        - goal: Determine folder readiness, missing files, and tag state.
+          weight: 3
+        - goal: Determine notice quality, audit event, and next action.
+          weight: 3
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/rubric.json
+        - train_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: Reconstruct candidate outcome sets.
+          weight: 3
+        - goal: Report selected offer and salary.
+          weight: 3
+        - goal: Calculate recruitment cost and follow-up obligations.
+          weight: 3
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/rubric.json
+        - train_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: Apply approved leave assignment over stale profile summary.
+          weight: 3
+        - goal: Report balance and precedence source.
+          weight: 3
+        - goal: Use audit detail and remediation action.
+          weight: 3
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/rubric.json
+        - train_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: Select submitted payroll assignment and exclude draft assignment.
+          weight: 3
+        - goal: Verify accrual readiness and batch.
+          weight: 3
+        - goal: Use audit event and control result.
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/rubric.json
+        - test_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Determine hold decision for EMP-255.
+          weight: 3
+        - goal: Reconstruct effective leave and payroll assignments.
+          weight: 3
+        - goal: Identify folder and notice defects.
+          weight: 3
+        - goal: Use audit event and escalation owner.
+          weight: 2
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/rubric.json
+        - test_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: Determine final approval and authority.
+          weight: 3
+        - goal: Determine folder readiness and missing tag.
+          weight: 3
+        - goal: Determine notice defects, audit event, and next action.
+          weight: 3
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/rubric.json
+        - test_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: Reconstruct candidate outcome sets and selected offer.
+          weight: 3
+        - goal: Calculate recruitment cost.
+          weight: 2
+        - goal: Identify defective notice and payroll handoff.
+          weight: 3
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/rubric.json
+        - test_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: Identify reviewed folders and not-ready folders.
+          weight: 2
+        - goal: Map missing files and tags.
+          weight: 3
+        - goal: Identify defective messages, audit events, and remediation action.
+          weight: 3
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/rubric.json
+        - test_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: Determine escalation package, risk, and affected entities.
+          weight: 3
+        - goal: Link module-specific issue entities.
+          weight: 3
+        - goal: Cite audit events, owner, and SLA.
+          weight: 3

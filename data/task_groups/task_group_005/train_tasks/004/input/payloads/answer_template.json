@@ -1,0 +1,75 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "eligible_claim_ids",
+    "not_ready_claim_ids",
+    "ap_balance_by_claim",
+    "stale_snapshot_corrections",
+    "close_log_required",
+    "batch_status"
+  ],
+  "fields": {
+    "eligible_claim_ids": {
+      "type": "list",
+      "items": "claim_id string",
+      "ordering": "ascending by claim_id",
+      "description": "Candidate claims that can remain in the conference reimbursement AP batch after current ERP reconciliation."
+    },
+    "not_ready_claim_ids": {
+      "type": "list",
+      "items": "claim_id string",
+      "ordering": "ascending by claim_id",
+      "description": "Candidate claims that should not remain in the batch because current claim, bill, payment, or support state is not ready."
+    },
+    "ap_balance_by_claim": {
+      "type": "object",
+      "keys": "candidate claim IDs",
+      "values": {
+        "type": "number",
+        "precision": 2,
+        "unit": "USD",
+        "description": "Open AP balance for the claim after applying cleared payments and ignoring stale or voided AP rows."
+      }
+    },
+    "stale_snapshot_corrections": {
+      "type": "object",
+      "keys": "candidate claim IDs",
+      "values": {
+        "type": "enum",
+        "allowed_values": [
+          "current_snapshot_ok",
+          "mark_in_flight_payment",
+          "replace_with_matched_paid_bill",
+          "exclude_amount_or_vendor_mismatch",
+          "ignore_void_bill",
+          "block_unapproved_claim"
+        ]
+      }
+    },
+    "close_log_required": {
+      "type": "object",
+      "required_keys": [
+        "required",
+        "ids"
+      ],
+      "fields": {
+        "required": {
+          "type": "boolean"
+        },
+        "ids": {
+          "type": "list",
+          "items": "close log ID string",
+          "ordering": "ascending by close log ID"
+        }
+      }
+    },
+    "batch_status": {
+      "type": "enum",
+      "allowed_values": [
+        "ready_to_send",
+        "needs_ap_refresh",
+        "blocked"
+      ]
+    }
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "gold": {
+    "reviewed_folder_ids": [
+      "DOC-ERIN-ONB",
+      "DOC-PRIYA-POL",
+      "DOC-MARCO-PAY"
+    ],
+    "folders_not_ready": [
+      "DOC-ERIN-ONB",
+      "DOC-PRIYA-POL"
+    ],
+    "missing_file_map": {
+      "DOC-ERIN-ONB": [
+        "benefits-election.pdf",
+        "executive-exception-approval.pdf"
+      ],
+      "DOC-PRIYA-POL": [
+        "decision-record.txt"
+      ],
+      "DOC-MARCO-PAY": []
+    },
+    "missing_tag_map": {
+      "DOC-ERIN-ONB": [
+        "PolicyException2026"
+      ],
+      "DOC-PRIYA-POL": [
+        "PolicyException2026"
+      ],
+      "DOC-MARCO-PAY": []
+    },
+    "defective_message_ids": [
+      "MSG-ERIN-445",
+      "MSG-PRIYA-118"
+    ],
+    "audit_event_ids": [
+      "AUD-CASE445-03",
+      "AUD-DOC118-06"
+    ],
+    "escalation_action": "open_records_remediation",
+    "folder_evidence_source": "folder_checklist_comparison",
+    "notice_evidence_source": "message_notice_inspection",
+    "excluded_audit_event_ids": [
+      "AUD-EMP118-LEAVE-04"
+    ],
+    "audit_scope": "document_notice_findings_only",
+    "records_remediation_owner": "Records",
+    "notice_remediation_action": "reissue_defective_notices"
+  },
+  "checks": [
+    {
+      "name": "reviewed_folders",
+      "description": "Reviews the three required lifecycle document folders.",
+      "points": 1,
+      "fields": [
+        "reviewed_folder_ids"
+      ]
+    },
+    {
+      "name": "folder_readiness_and_files",
+      "description": "Identifies not-ready folders and missing files.",
+      "points": 2,
+      "fields": [
+        "folders_not_ready",
+        "missing_file_map"
+      ]
+    },
+    {
+      "name": "missing_tags",
+      "description": "Reports missing required tags from folder checklist comparison.",
+      "points": 2,
+      "fields": [
+        "missing_tag_map",
+        "folder_evidence_source"
+      ]
+    },
+    {
+      "name": "defective_messages",
+      "description": "Identifies defective lifecycle notices from message inspection.",
+      "points": 2,
+      "fields": [
+        "defective_message_ids",
+        "notice_evidence_source"
+      ]
+    },
+    {
+      "name": "supporting_audit_events",
+      "description": "Reports supporting audit events and excludes non-document support events.",
+      "points": 2,
+      "fields": [
+        "audit_event_ids",
+        "audit_scope"
+      ]
+    },
+    {
+      "name": "excluded_audit_events",
+      "description": "Excludes adjacent non-document audit events when reported.",
+      "points": 1,
+      "fields": [
+        "excluded_audit_event_ids"
+      ]
+    },
+    {
+      "name": "remediation_action",
+      "description": "Selects the normalized remediation action, owner, and notice action.",
+      "points": 3,
+      "fields": [
+        "escalation_action",
+        "records_remediation_owner",
+        "notice_remediation_action"
+      ]
+    }
+  ]
+}

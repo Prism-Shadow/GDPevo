@@ -1,0 +1,92 @@
+{
+  "request_id": "AIO-CIO-Q3-2026-ALLOC-CROSS-ASSET",
+  "desk": "Asteria Investment Office CIO Desk",
+  "target_quarter": "Q3_2026",
+  "prior_quarter": "Q2_2026",
+  "portfolio_context": "Global multi-asset reference model with active currency overlay",
+  "focus_opportunity_sets": [
+    "U.S. Large Cap",
+    "U.S. Small Cap",
+    "Europe",
+    "Japan",
+    "Emerging Markets",
+    "India",
+    "Latin America",
+    "U.S. Treasuries",
+    "German Bunds",
+    "Corporate Investment Grade",
+    "Corporate High Yield",
+    "USD",
+    "EUR",
+    "JPY",
+    "CHF"
+  ],
+  "currency_overlay_universe": [
+    "USD",
+    "EUR",
+    "JPY",
+    "CHF"
+  ],
+  "requested_outputs": {
+    "allocation_rows": [
+      "opportunity_set",
+      "asset_class",
+      "prior_view",
+      "current_signal_score",
+      "view",
+      "change",
+      "conviction",
+      "rationale_code"
+    ],
+    "currency_overlay": [
+      "base_currency",
+      "policy_action",
+      "decisions"
+    ],
+    "cross_asset_judgments": [
+      "equity_relative_value",
+      "rates_credit_mix",
+      "currency_overlay_bias"
+    ],
+    "lineage": [
+      "as_of_date",
+      "target_quarter",
+      "prior_quarter",
+      "prior_view_record_quarter",
+      "policy_id",
+      "mapping_policy_id"
+    ]
+  },
+  "currency_policy_action_choices": [
+    "tilt_to_procyclical_fx",
+    "reduce_dollar_beta",
+    "add_defensive_fx",
+    "hold_currency_policy"
+  ],
+  "currency_overlay_action_choices": [
+    "ADD_EXPOSURE",
+    "REDUCE_EXPOSURE",
+    "HOLD_EXPOSURE"
+  ],
+  "judgment_choices": {
+    "equity_relative_value": [
+      "favor_us_large_cap_quality",
+      "favor_small_cap_europe_india_latam_over_large_cap_and_broad_em",
+      "neutral_global_equity_mix",
+      "reduce_all_equity_beta"
+    ],
+    "rates_credit_mix": [
+      "prefer_duration_and_ig_over_hy_beta",
+      "prefer_hy_carry_over_duration",
+      "neutral_rates_credit_mix",
+      "reduce_duration_add_hy"
+    ],
+    "currency_overlay_bias": [
+      "reduce_usd_add_eur_reduce_jpy_hold_chf",
+      "add_defensive_usd_chf",
+      "neutral_currency_overlay",
+      "add_jpy_reduce_eur"
+    ]
+  },
+  "office_note": "Keep the answer in controlled JSON fields; committee prose is not needed for this refresh."
+}

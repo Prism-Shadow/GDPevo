@@ -1,0 +1,26 @@
+{
+  "employee_id": {"type": "string"},
+  "salary_assignment_id": {"type": "string"},
+  "base_salary": {"type": "number"},
+  "effective_date": {"type": "string"},
+  "excluded_assignment_id": {"type": "string"},
+  "accrual_ready": {"type": "boolean"},
+  "accrual_batch_id": {"type": "string"},
+  "audit_event_id": {"type": "string"},
+  "control_result": {
+    "type": "enum",
+    "allowed_values": ["ready_with_monitoring", "hold_for_folder_and_notice_defects", "approve_closeout"]
+  },
+  "payroll_source_status": {
+    "type": "enum",
+    "allowed_values": ["submitted", "draft", "superseded"]
+  },
+  "draft_exclusion_rule": {
+    "type": "enum",
+    "allowed_values": ["exclude_draft_assignment", "draft_allowed", "exclude_superseded_only"]
+  },
+  "audit_scope": {
+    "type": "enum",
+    "allowed_values": ["payroll_assignment_readiness", "document_notice_findings_only", "leave_source_precedence_only"]
+  }
+}

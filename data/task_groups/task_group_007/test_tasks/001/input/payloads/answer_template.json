@@ -1,0 +1,165 @@
+{
+  "task_id": {
+    "type": "string",
+    "required": true,
+    "expected_value": "test_001"
+  },
+  "wave": {
+    "type": "string",
+    "required": true,
+    "expected_value": "TEST_PRIORITY_D"
+  },
+  "api_base_url": {
+    "type": "string",
+    "required": true,
+    "description": "Base URL used for the shared ERP API, normally http://127.0.0.1:8007."
+  },
+  "orders": {
+    "type": "list",
+    "required": true,
+    "ordering": "ascending by order_id",
+    "item_schema": {
+      "order_id": {
+        "type": "string",
+        "required": true
+      },
+      "customer_id": {
+        "type": "string",
+        "required": true
+      },
+      "warehouse_id": {
+        "type": "enum",
+        "required": true,
+        "allowed_values": [
+          "WH_NORTH",
+          "WH_CENTRAL",
+          "WH_WEST"
+        ]
+      },
+      "inventory_status": {
+        "type": "enum",
+        "required": true,
+        "allowed_values": [
+          "AVAILABLE",
+          "LOW_STOCK_COVERED",
+          "SHORTAGE"
+        ]
+      },
+      "final_decision": {
+        "type": "enum",
+        "required": true,
+        "allowed_values": [
+          "RELEASE_TO_SHIP",
+          "DELAY_STOCK_WATCH",
+          "BACKORDER_INVENTORY",
+          "MANUAL_REVIEW",
+          "REJECT_ACCOUNT_HOLD"
+        ]
+      },
+      "exception_reasons": {
+        "type": "list",
+        "required": true,
+        "ordering": "ascending enum value",
+        "allowed_values": [
+          "ACCOUNT_BLOCKED",
+          "ACCOUNT_REVIEW_REQUIRED",
+          "CREDIT_WATCH",
+          "FRAUD_WATCH",
+          "HIGH_SHIPPING_COST_LOW_MARGIN",
+          "INVENTORY_SHORTAGE",
+          "LOW_STOCK_AFTER_ALLOCATION"
+        ]
+      },
+      "blocking_skus": {
+        "type": "list",
+        "required": true,
+        "ordering": "ascending SKU",
+        "description": "SKUs whose live effective availability is below this order's required quantity. Use an empty list when no SKU blocks inventory coverage."
+      },
+      "shipping_cost": {
+        "type": "number",
+        "required": true,
+        "precision": 2,
+        "unit": "USD"
+      },
+      "service_days": {
+        "type": "integer",
+        "required": true,
+        "unit": "calendar days"
+      },
+      "next_action": {
+        "type": "enum",
+        "required": true,
+        "allowed_values": [
+          "release_to_warehouse",
+          "hold_for_allocation_review",
+          "create_backorder_and_replenishment_check",
+          "route_to_account_review",
+          "route_to_margin_review",
+          "do_not_ship_notify_credit"
+        ]
+      }
+    }
+  },
+  "summary": {
+    "type": "object",
+    "required": true,
+    "schema": {
+      "order_count": {
+        "type": "integer",
+        "required": true
+      },
+      "final_decision_counts": {
+        "type": "object",
+        "required": true,
+        "keys": [
+          "BACKORDER_INVENTORY",
+          "DELAY_STOCK_WATCH",
+          "MANUAL_REVIEW",
+          "REJECT_ACCOUNT_HOLD",
+          "RELEASE_TO_SHIP"
+        ],
+        "description": "Include only decisions present in the wave, or include absent decisions with value 0."
+      },
+      "inventory_status_counts": {
+        "type": "object",
+        "required": true,
+        "keys": [
+          "AVAILABLE",
+          "LOW_STOCK_COVERED",
+          "SHORTAGE"
+        ],
+        "description": "Include only statuses present in the wave, or include absent statuses with value 0."
+      },
+      "exception_reason_counts": {
+        "type": "object",
+        "required": true,
+        "keys": [
+          "ACCOUNT_BLOCKED",
+          "ACCOUNT_REVIEW_REQUIRED",
+          "CREDIT_WATCH",
+          "FRAUD_WATCH",
+          "HIGH_SHIPPING_COST_LOW_MARGIN",
+          "INVENTORY_SHORTAGE",
+          "LOW_STOCK_AFTER_ALLOCATION"
+        ],
+        "description": "Count each exception reason once per affected order."
+      },
+      "manual_review_order_ids": {
+        "type": "list",
+        "required": true,
+        "ordering": "ascending order_id"
+      },
+      "backorder_order_ids": {
+        "type": "list",
+        "required": true,
+        "ordering": "ascending order_id"
+      },
+      "rejected_order_ids": {
+        "type": "list",
+        "required": true,
+        "ordering": "ascending order_id"
+      }
+    }
+  }
+}

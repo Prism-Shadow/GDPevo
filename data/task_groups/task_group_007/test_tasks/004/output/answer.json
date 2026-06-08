@@ -1,0 +1,38 @@
+{
+  "task_id": "test_004",
+  "wave": "TEST_QUALITY_E",
+  "api_base_url": "http://127.0.0.1:8007",
+  "analysis_date": "2026-06-01",
+  "orders": [
+    {"order_id": "SO-70004", "customer_id": "CUST-2028", "warehouse_id": "WH_NORTH", "inventory_status": "SHORTAGE", "release_decision": "BACKORDER_INVENTORY", "reason_codes": ["ACTIVE_SEVERE_INCIDENT", "INVENTORY_SHORTAGE"], "blocked_skus": ["NW-1009"], "quality_hold_suppliers": [], "active_severe_incident_ids": ["INC-90154"], "risk_suppliers": ["SUP-010"], "next_action": "create_backorder_and_quality_watch"},
+    {"order_id": "SO-70011", "customer_id": "CUST-2022", "warehouse_id": "WH_NORTH", "inventory_status": "SHORTAGE", "release_decision": "BACKORDER_INVENTORY", "reason_codes": ["ACTIVE_SEVERE_INCIDENT", "INVENTORY_SHORTAGE"], "blocked_skus": ["NW-1053"], "quality_hold_suppliers": [], "active_severe_incident_ids": ["INC-90028"], "risk_suppliers": ["SUP-007"], "next_action": "create_backorder_and_quality_watch"},
+    {"order_id": "SO-70018", "customer_id": "CUST-2022", "warehouse_id": "WH_NORTH", "inventory_status": "SHORTAGE", "release_decision": "BACKORDER_INVENTORY", "reason_codes": ["ACTIVE_SEVERE_INCIDENT", "INVENTORY_SHORTAGE"], "blocked_skus": ["NW-1052"], "quality_hold_suppliers": [], "active_severe_incident_ids": ["INC-90048", "INC-90174"], "risk_suppliers": ["SUP-009", "SUP-011"], "next_action": "create_backorder_and_quality_watch"},
+    {"order_id": "SO-70025", "customer_id": "CUST-2028", "warehouse_id": "WH_CENTRAL", "inventory_status": "AVAILABLE", "release_decision": "MANUAL_REVIEW", "reason_codes": ["ACTIVE_SEVERE_INCIDENT", "INACTIVE_PRODUCT", "SUPPLIER_QUALITY_HOLD"], "blocked_skus": [], "quality_hold_suppliers": ["SUP-003"], "active_severe_incident_ids": ["INC-90182"], "risk_suppliers": ["SUP-003", "SUP-011"], "next_action": "route_to_release_control"},
+    {"order_id": "SO-70032", "customer_id": "CUST-2016", "warehouse_id": "WH_NORTH", "inventory_status": "SHORTAGE", "release_decision": "MANUAL_REVIEW", "reason_codes": ["ACCOUNT_REVIEW_REQUIRED", "ACTIVE_SEVERE_INCIDENT", "INVENTORY_SHORTAGE", "SUPPLIER_QUALITY_HOLD"], "blocked_skus": ["NW-1005"], "quality_hold_suppliers": ["SUP-003"], "active_severe_incident_ids": ["INC-90201"], "risk_suppliers": ["SUP-003"], "next_action": "route_to_release_control"},
+    {"order_id": "SO-70039", "customer_id": "CUST-2006", "warehouse_id": "WH_WEST", "inventory_status": "AVAILABLE", "release_decision": "MANUAL_REVIEW", "reason_codes": ["ACCOUNT_BLOCKED", "CREDIT_WATCH"], "blocked_skus": [], "quality_hold_suppliers": [], "active_severe_incident_ids": [], "risk_suppliers": [], "next_action": "route_to_release_control"},
+    {"order_id": "SO-70046", "customer_id": "CUST-2023", "warehouse_id": "WH_WEST", "inventory_status": "SHORTAGE", "release_decision": "MANUAL_REVIEW", "reason_codes": ["ACCOUNT_REVIEW_REQUIRED", "INVENTORY_SHORTAGE"], "blocked_skus": ["NW-1040", "NW-1042"], "quality_hold_suppliers": [], "active_severe_incident_ids": [], "risk_suppliers": [], "next_action": "route_to_release_control"},
+    {"order_id": "SO-70053", "customer_id": "CUST-2012", "warehouse_id": "WH_WEST", "inventory_status": "SHORTAGE", "release_decision": "BACKORDER_INVENTORY", "reason_codes": ["INVENTORY_SHORTAGE"], "blocked_skus": ["NW-1042"], "quality_hold_suppliers": [], "active_severe_incident_ids": [], "risk_suppliers": [], "next_action": "create_backorder_and_quality_watch"},
+    {"order_id": "SO-70060", "customer_id": "CUST-2029", "warehouse_id": "WH_NORTH", "inventory_status": "AVAILABLE", "release_decision": "RELEASE_TO_SHIP", "reason_codes": [], "blocked_skus": [], "quality_hold_suppliers": [], "active_severe_incident_ids": [], "risk_suppliers": [], "next_action": "release_to_warehouse"},
+    {"order_id": "SO-70067", "customer_id": "CUST-2029", "warehouse_id": "WH_NORTH", "inventory_status": "SHORTAGE", "release_decision": "BACKORDER_INVENTORY", "reason_codes": ["ACTIVE_SEVERE_INCIDENT", "INVENTORY_SHORTAGE"], "blocked_skus": ["NW-1017", "NW-1041"], "quality_hold_suppliers": [], "active_severe_incident_ids": ["INC-90043"], "risk_suppliers": ["SUP-002"], "next_action": "create_backorder_and_quality_watch"},
+    {"order_id": "SO-70074", "customer_id": "CUST-2002", "warehouse_id": "WH_CENTRAL", "inventory_status": "SHORTAGE", "release_decision": "BACKORDER_INVENTORY", "reason_codes": ["INVENTORY_SHORTAGE"], "blocked_skus": ["NW-1043"], "quality_hold_suppliers": [], "active_severe_incident_ids": [], "risk_suppliers": [], "next_action": "create_backorder_and_quality_watch"},
+    {"order_id": "SO-70081", "customer_id": "CUST-2034", "warehouse_id": "WH_WEST", "inventory_status": "SHORTAGE", "release_decision": "MANUAL_REVIEW", "reason_codes": ["ACCOUNT_REVIEW_REQUIRED", "ACTIVE_SEVERE_INCIDENT", "INVENTORY_SHORTAGE", "SUPPLIER_QUALITY_HOLD"], "blocked_skus": ["NW-1005", "NW-1014", "NW-1029", "NW-1034"], "quality_hold_suppliers": ["SUP-003"], "active_severe_incident_ids": ["INC-90043", "INC-90201"], "risk_suppliers": ["SUP-002", "SUP-003"], "next_action": "route_to_release_control"}
+  ],
+  "risk_suppliers": [
+    {"supplier_id": "SUP-002", "supplier_name": "Apex Capacitors Intl.", "risk_type": "ACTIVE_SEVERE_INCIDENT", "affected_skus": ["NW-1017", "NW-1029", "NW-1041"], "active_severe_incident_ids": ["INC-90043"], "affected_order_ids": ["SO-70067", "SO-70081"]},
+    {"supplier_id": "SUP-003", "supplier_name": "Branson Relay Group", "risk_type": "BOTH", "affected_skus": ["NW-1005", "NW-1019", "NW-1031"], "active_severe_incident_ids": ["INC-90201"], "affected_order_ids": ["SO-70025", "SO-70032", "SO-70081"]},
+    {"supplier_id": "SUP-007", "supplier_name": "Foxtrot Sensor Labs", "risk_type": "ACTIVE_SEVERE_INCIDENT", "affected_skus": ["NW-1039"], "active_severe_incident_ids": ["INC-90028"], "affected_order_ids": ["SO-70011"]},
+    {"supplier_id": "SUP-009", "supplier_name": "Harbor PCB Assembly", "risk_type": "ACTIVE_SEVERE_INCIDENT", "affected_skus": ["NW-1001"], "active_severe_incident_ids": ["INC-90174"], "affected_order_ids": ["SO-70018"]},
+    {"supplier_id": "SUP-010", "supplier_name": "Ionix Thermal Systems", "risk_type": "ACTIVE_SEVERE_INCIDENT", "affected_skus": ["NW-1009"], "active_severe_incident_ids": ["INC-90154"], "affected_order_ids": ["SO-70004"]},
+    {"supplier_id": "SUP-011", "supplier_name": "Juniper Packaging Ltd.", "risk_type": "ACTIVE_SEVERE_INCIDENT", "affected_skus": ["NW-1050", "NW-1052"], "active_severe_incident_ids": ["INC-90048", "INC-90182"], "affected_order_ids": ["SO-70018", "SO-70025"]}
+  ],
+  "summary": {
+    "order_count": 12,
+    "release_decision_counts": {"BACKORDER_INVENTORY": 6, "MANUAL_REVIEW": 5, "RELEASE_TO_SHIP": 1},
+    "inventory_status_counts": {"AVAILABLE": 3, "SHORTAGE": 9},
+    "release_order_ids": ["SO-70060"],
+    "manual_review_order_ids": ["SO-70025", "SO-70032", "SO-70039", "SO-70046", "SO-70081"],
+    "backorder_order_ids": ["SO-70004", "SO-70011", "SO-70018", "SO-70053", "SO-70067", "SO-70074"],
+    "risk_supplier_count": 6,
+    "active_severe_incident_count": 7
+  }
+}

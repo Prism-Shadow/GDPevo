@@ -1,0 +1,153 @@
+{
+  "task_id": "task_group_006_test_003",
+  "program_id": "PRG-NOVA-31",
+  "as_of_date": "2026-06-01",
+  "rfq_packet_ref": "NOVA-SRC-31",
+  "sku": "SEN-NOVA",
+  "requirement": {
+    "requisition_id": "REQ-NOVA-302",
+    "quantity": 180,
+    "need_by": "2026-06-22"
+  },
+  "program_summary": {
+    "owner": "Ravi Menon",
+    "priority": "critical",
+    "budget_headroom_usd": 61795.85,
+    "shortlist_status": "shortlist_ready",
+    "nomination_gate_status": "blocked"
+  },
+  "candidate_screening": [
+    {
+      "supplier_id": "SUP-BLUESTEM",
+      "supplier_name": "Bluestem Logistics",
+      "supplier_status": "active",
+      "risk_rating": "medium",
+      "memo_technical_fit": "conditional",
+      "memo_capacity_units": 120,
+      "quote_unit_price_usd": 151.9,
+      "existing_commercial_basis_id": null,
+      "open_or_monitoring_risk_event_ids": [
+        "VRE-00001",
+        "VRE-00017"
+      ],
+      "shortlist_decision": "do_not_shortlist",
+      "blocker_codes": [
+        "capacity_shortfall",
+        "missing_contract",
+        "open_supplier_risk",
+        "technical_conditional"
+      ]
+    },
+    {
+      "supplier_id": "SUP-HEXEL",
+      "supplier_name": "Hexel Motion",
+      "supplier_status": "active",
+      "risk_rating": "medium",
+      "memo_technical_fit": "approved",
+      "memo_capacity_units": 220,
+      "quote_unit_price_usd": 149.75,
+      "existing_commercial_basis_id": "CR-NOVA-311",
+      "open_or_monitoring_risk_event_ids": [
+        "VRE-00010",
+        "VRE-00032"
+      ],
+      "shortlist_decision": "shortlist_preferred",
+      "blocker_codes": [
+        "open_supplier_risk"
+      ]
+    },
+    {
+      "supplier_id": "SUP-NORD",
+      "supplier_name": "Nord Valve Group",
+      "supplier_status": "quality_hold",
+      "risk_rating": "high",
+      "memo_technical_fit": "approved",
+      "memo_capacity_units": 210,
+      "quote_unit_price_usd": 148.4,
+      "existing_commercial_basis_id": null,
+      "open_or_monitoring_risk_event_ids": [],
+      "shortlist_decision": "do_not_shortlist",
+      "blocker_codes": [
+        "missing_contract",
+        "quality_hold",
+        "supplier_high_risk"
+      ]
+    },
+    {
+      "supplier_id": "SUP-ORION",
+      "supplier_name": "Orion Packworks",
+      "supplier_status": "active",
+      "risk_rating": "low",
+      "memo_technical_fit": "approved",
+      "memo_capacity_units": 200,
+      "quote_unit_price_usd": 153.1,
+      "existing_commercial_basis_id": null,
+      "open_or_monitoring_risk_event_ids": [],
+      "shortlist_decision": "shortlist_backup",
+      "blocker_codes": [
+        "missing_contract"
+      ]
+    }
+  ],
+  "shortlist_supplier_ids": [
+    "SUP-HEXEL",
+    "SUP-ORION"
+  ],
+  "excluded_supplier_ids": [
+    "SUP-BLUESTEM",
+    "SUP-NORD"
+  ],
+  "selected_supplier_id": "SUP-HEXEL",
+  "commercial_support": {
+    "contract_id": "CR-NOVA-311",
+    "purchase_order_id": "PO-NOVA-3107",
+    "receipt_id": "RCV-GOLD-27",
+    "approved_invoice_id": "AP-HEXEL-3309",
+    "scheduled_payment_id": "PAY-00001",
+    "invoice_total_usd": 28909.24
+  },
+  "nomination_gate": {
+    "decision": "hold_for_missing_program_manager_signoff",
+    "readiness_status": "at_risk",
+    "can_nominate_now": false,
+    "required_signoffs_present": [
+      "ER",
+      "Finance",
+      "Quality"
+    ],
+    "required_signoffs_missing": [
+      "Program Manager"
+    ],
+    "next_owner": "program_owner",
+    "send_to_committee": "no"
+  },
+  "transfer_gate_controls": {
+    "trar_gate_policy": "outreach_after_er_quality_purchase",
+    "nomination_policy": "block_without_program_manager_signoff",
+    "commercial_policy": "prefer_active_contract_with_open_risk_review",
+    "backup_policy": "keep_low_risk_no_contract_supplier_as_backup_not_nominee"
+  },
+  "recommended_actions": [
+    "clear_hexel_open_risk_review",
+    "keep_orion_as_backup_rfq",
+    "obtain_program_manager_signoff"
+  ],
+  "source_record_ids": [
+    "AP-HEXEL-3309",
+    "BUD-PRG-NOVA-31",
+    "CR-NOVA-311",
+    "PAY-00001",
+    "PO-NOVA-3107",
+    "PRG-NOVA-31",
+    "RCV-GOLD-27",
+    "REQ-NOVA-302",
+    "SUP-BLUESTEM",
+    "SUP-HEXEL",
+    "SUP-NORD",
+    "SUP-ORION",
+    "VRE-00001",
+    "VRE-00010",
+    "VRE-00017",
+    "VRE-00032"
+  ]
+}

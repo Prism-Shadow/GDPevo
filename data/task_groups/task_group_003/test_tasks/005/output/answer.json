@@ -1,0 +1,250 @@
+{
+  "proposal_reviews": [
+    {
+      "proposal_id": "P-001",
+      "is_accepted": false,
+      "corrected_status_or_action": "PENDING_ACTION",
+      "corrected_team": "NONE",
+      "corrected_credit_percent": 0,
+      "correction_reason_code": "OUTAGE_PENDING",
+      "corrected_refuel_gb": 0.0,
+      "corrected_charge_amount_usd": 0.0
+    },
+    {
+      "proposal_id": "P-002",
+      "is_accepted": false,
+      "corrected_status_or_action": "ESCALATED",
+      "corrected_team": "NETWORK_ENGINEERING",
+      "corrected_credit_percent": 0,
+      "correction_reason_code": "WRONG_ESCALATION_TEAM",
+      "corrected_refuel_gb": 0.0,
+      "corrected_charge_amount_usd": 0.0
+    },
+    {
+      "proposal_id": "P-003",
+      "is_accepted": false,
+      "corrected_status_or_action": "TRANSFER_HUMAN",
+      "corrected_team": "NONE",
+      "corrected_credit_percent": 0,
+      "correction_reason_code": "SIM_LOCKED_TRANSFER",
+      "corrected_refuel_gb": 0.0,
+      "corrected_charge_amount_usd": 0.0
+    },
+    {
+      "proposal_id": "P-004",
+      "is_accepted": false,
+      "corrected_status_or_action": "RESET_APN_REBOOT",
+      "corrected_team": "NONE",
+      "corrected_credit_percent": 0,
+      "correction_reason_code": "MMSC_APN_FAILURE",
+      "corrected_refuel_gb": 0.0,
+      "corrected_charge_amount_usd": 0.0
+    },
+    {
+      "proposal_id": "P-005",
+      "is_accepted": false,
+      "corrected_status_or_action": "NEEDS_FINANCE_REVIEW",
+      "corrected_team": "DATA_PLATFORM",
+      "corrected_credit_percent": 20,
+      "correction_reason_code": "SLA_CREDIT_MISMATCH",
+      "corrected_refuel_gb": 0.0,
+      "corrected_charge_amount_usd": 0.0
+    },
+    {
+      "proposal_id": "P-006",
+      "is_accepted": true,
+      "corrected_status_or_action": "RESOLVED",
+      "corrected_team": "NONE",
+      "corrected_credit_percent": 0,
+      "correction_reason_code": "NO_DEFECT",
+      "corrected_refuel_gb": 0.0,
+      "corrected_charge_amount_usd": 0.0
+    },
+    {
+      "proposal_id": "P-007",
+      "is_accepted": false,
+      "corrected_status_or_action": "REFUEL_DATA",
+      "corrected_team": "NONE",
+      "corrected_credit_percent": 0,
+      "correction_reason_code": "DATA_LIMIT_EXCEEDED",
+      "corrected_refuel_gb": 2.0,
+      "corrected_charge_amount_usd": 4.0
+    },
+    {
+      "proposal_id": "P-008",
+      "is_accepted": true,
+      "corrected_status_or_action": "NEEDS_FINANCE_REVIEW",
+      "corrected_team": "DATA_PLATFORM",
+      "corrected_credit_percent": 15,
+      "correction_reason_code": "NO_DEFECT",
+      "corrected_refuel_gb": 0.0,
+      "corrected_charge_amount_usd": 0.0
+    },
+    {
+      "proposal_id": "P-009",
+      "is_accepted": false,
+      "corrected_status_or_action": "FAILED",
+      "corrected_team": "NONE",
+      "corrected_credit_percent": 0,
+      "correction_reason_code": "AUTH_FAILED",
+      "corrected_refuel_gb": 0.0,
+      "corrected_charge_amount_usd": 0.0
+    }
+  ],
+  "audit_summary": {
+    "accepted": 2,
+    "rejected": 7,
+    "status_defects": 2,
+    "action_defects": 3,
+    "team_defects": 2,
+    "credit_defects": 1,
+    "no_defect": 2
+  },
+  "qa_reconciliation_audit": {
+    "proposal_record_type_counts": {
+      "service_ticket": 4,
+      "contact_case": 3,
+      "enterprise_incident": 2
+    },
+    "service_ticket_proposals_with_active_outage_match": [
+      "P-001"
+    ],
+    "contact_case_proposals_with_device_state_defect": [
+      "P-003",
+      "P-004"
+    ],
+    "enterprise_credit_proposal_ids": [
+      "P-005",
+      "P-008"
+    ],
+    "contact_case_proposals_with_plan_usage_defect": [
+      "P-007"
+    ]
+  },
+  "defect_breakdown_audit": {
+    "accepted_proposal_ids": [
+      "P-006",
+      "P-008"
+    ],
+    "rejected_proposal_ids": [
+      "P-001",
+      "P-002",
+      "P-003",
+      "P-004",
+      "P-005",
+      "P-007",
+      "P-009"
+    ],
+    "proposal_ids_by_reason_code": {
+      "NO_DEFECT": [
+        "P-006",
+        "P-008"
+      ],
+      "OUTAGE_PENDING": [
+        "P-001"
+      ],
+      "WRONG_ESCALATION_TEAM": [
+        "P-002"
+      ],
+      "SIM_LOCKED_TRANSFER": [
+        "P-003"
+      ],
+      "MMSC_APN_FAILURE": [
+        "P-004"
+      ],
+      "SLA_CREDIT_MISMATCH": [
+        "P-005"
+      ],
+      "AUTH_FAILED": [
+        "P-009"
+      ],
+      "DATA_LIMIT_EXCEEDED": [
+        "P-007"
+      ]
+    }
+  },
+  "service_evidence_audit": {
+    "active_outage_proposal_ids": [
+      "P-001"
+    ],
+    "diagnostics_used_proposal_ids": [
+      "P-002",
+      "P-006"
+    ],
+    "network_engineering_root_cause_proposal_ids": [
+      "P-002"
+    ],
+    "auto_resolved_service_proposal_ids": [
+      "P-006"
+    ],
+    "auth_failure_proposal_ids": [
+      "P-009"
+    ]
+  },
+  "contact_evidence_audit": {
+    "device_state_defect_proposal_ids": [
+      "P-003",
+      "P-004"
+    ],
+    "plan_usage_defect_proposal_ids": [
+      "P-007"
+    ],
+    "line_state_defect_proposal_ids": [],
+    "total_refuel_gb": 2.0,
+    "total_refuel_charge_usd": 4.0
+  },
+  "enterprise_evidence_audit": {
+    "finance_review_proposal_ids": [
+      "P-005",
+      "P-008"
+    ],
+    "credit_mismatch_proposal_ids": [
+      "P-005"
+    ],
+    "accepted_credit_proposal_ids": [
+      "P-008"
+    ],
+    "total_credit_delta_percent": 5
+  },
+  "service_metric_audit": {
+    "diagnostics_skipped_proposal_ids": [
+      "P-001",
+      "P-009"
+    ],
+    "diagnostics_used_proposal_ids": [
+      "P-002",
+      "P-006"
+    ],
+    "post_troubleshooting_success_proposal_ids": [
+      "P-006"
+    ],
+    "post_troubleshooting_failure_proposal_ids": [
+      "P-002"
+    ],
+    "pre_bandwidth_shortfall_total_mbps": 162.0,
+    "post_remaining_issue_flags_total": 3,
+    "post_threshold_excess_totals": {
+      "latency_ms": 106.0,
+      "jitter_ms": 16.0,
+      "bandwidth_mbps": 120.0
+    }
+  },
+  "enterprise_package_audit": {
+    "package_reviews": [
+      {
+        "proposal_id": "P-005",
+        "incident_id": "INC-8301",
+        "finance_review_user": "maya.patel",
+        "document_editor_user": "jun.chen",
+        "response_status": "NEEDS_FINANCE_REVIEW"
+      },
+      {
+        "proposal_id": "P-008",
+        "incident_id": "INC-7301",
+        "finance_review_user": "laura.brown",
+        "document_editor_user": "jun.chen",
+        "response_status": "NEEDS_FINANCE_REVIEW"
+      }
+    ]
+  }
+}

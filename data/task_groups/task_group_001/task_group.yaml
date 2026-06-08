@@ -1,0 +1,313 @@
+task_group:
+  task_group_id: task_group_001
+  scenario_id: SCN_001_crm_marketing_lead_capture
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: CRM
+  description: |
+    HarborCRM is a shared front-of-funnel CRM marketing environment where event
+    sponsorship, trade-show prospecting, and raw contact-import workflows become
+    CRM-ready accounts, contacts, campaign members, opportunities, and follow-up
+    plans. The train and test tasks use the same business systems and recurring
+    source-precedence, qualification, and data-hygiene conventions while varying
+    events, exhibitors, imports, record states, and output schemas.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/generate_data.py
+    - env/server.py
+    - env/README.md
+    - env/data/harborcrm_data.json
+    - env/data/manifest.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Correct sponsor status set.
+          weight: 3
+        - goal: Correct sponsor revenue totals.
+          weight: 2
+        - goal: Correct qualified non-sponsor leads.
+          weight: 3
+        - goal: Correct excluded records.
+          weight: 2
+        - goal: Correct lead pipeline total.
+          weight: 2
+        - goal: Correct follow-up due dates and counts.
+          weight: 2
+        - goal: Correct CRM action counts.
+          weight: 1
+
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: Correct qualified manufacturer/OEM exhibitor set.
+          weight: 3
+        - goal: Correct platform labels for each qualified exhibitor.
+          weight: 3
+        - goal: Correct booth, country, and website enrichment for qualified leads.
+          weight: 2
+        - goal: Correct exclusion of distributor, service-only, and sensor-only near misses.
+          weight: 2
+        - goal: Correct priority tier assignment for qualified exhibitors.
+          weight: 2
+        - goal: Correct aggregate counts by platform, priority tier, and exclusion total.
+          weight: 1
+
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/evaluator.py
+      rubric:
+        - goal: Correct surviving cleaned contact IDs in order.
+          weight: 3
+        - goal: Correct normalized email values.
+          weight: 2
+        - goal: Correct normalized phone values.
+          weight: 2
+        - goal: Correct duplicate removal count and duplicate keys.
+          weight: 2
+        - goal: Correct unusable and suppressed removal counts.
+          weight: 2
+        - goal: Correct create/update/no-import action totals.
+          weight: 2
+        - goal: Correct campaign member import count.
+          weight: 1
+
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: Correct sponsor status set and badge sponsor/attendee classification.
+          weight: 3
+        - goal: Correct campaign member create/update/no-action decisions.
+          weight: 2
+        - goal: Correct open opportunity total for qualified non-sponsor leads.
+          weight: 2
+        - goal: Correct unpaid sponsor follow-up account set and amount.
+          weight: 2
+        - goal: Correct normalized contacts for badge-only leads.
+          weight: 2
+        - goal: Correct event follow-up due date.
+          weight: 1
+        - goal: Correct exclusion reason counts.
+          weight: 1
+
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/evaluator.py
+      rubric:
+        - goal: Correct ranked qualified robotics lead order from the five AquaFarm exhibitors.
+          weight: 3
+        - goal: Correct platform coverage for each ranked lead.
+          weight: 2
+        - goal: Correct CRM action enum per ranked lead.
+          weight: 2
+        - goal: Correct excluded non-manufacturer accounts.
+          weight: 2
+        - goal: Correct aggregate opportunity estimate.
+          weight: 2
+        - goal: Correct existing CRM overlap count.
+          weight: 1
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Correct sponsor status set.
+          weight: 3
+        - goal: Correct sponsor revenue totals.
+          weight: 2
+        - goal: Correct qualified non-sponsor leads.
+          weight: 3
+        - goal: Correct excluded records.
+          weight: 2
+        - goal: Correct lead pipeline total and average.
+          weight: 2
+        - goal: Correct follow-up due dates and counts.
+          weight: 3
+        - goal: Correct CRM action counts.
+          weight: 1
+
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: Correct qualified exhibitor set for Nordic Aquaculture Tech.
+          weight: 3
+        - goal: Correct platform labels for each qualified exhibitor.
+          weight: 3
+        - goal: Correct booth, country, and website enrichment.
+          weight: 2
+        - goal: Correct exclusion of service-only and sensor-only near misses.
+          weight: 2
+        - goal: Correct priority tier assignment.
+          weight: 2
+        - goal: Correct platform, priority, qualified, and exclusion aggregate counts.
+          weight: 1
+        - goal: Correct CRM action and existing account id per qualified exhibitor.
+          weight: 3
+        - goal: Correct pipeline estimate per qualified exhibitor.
+          weight: 3
+        - goal: Correct CRM overlap and total estimated pipeline rollup.
+          weight: 3
+
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/evaluator.py
+      rubric:
+        - goal: Correct surviving cleaned contact IDs in order.
+          weight: 3
+        - goal: Correct normalized email and phone values for key contacts.
+          weight: 3
+        - goal: Correct duplicate resolution winners.
+          weight: 2
+        - goal: Correct suppression and unusable removal counts.
+          weight: 2
+        - goal: Correct create/update/no-import counts.
+          weight: 2
+        - goal: Correct campaign member count and source label.
+          weight: 1
+
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: Correct sponsor status set and attendee/sponsor classification.
+          weight: 3
+        - goal: Correct campaign member create/update decisions, including stale CRM gap handling.
+          weight: 2
+        - goal: Correct unpaid sponsor follow-up account set and amount.
+          weight: 2
+        - goal: Correct new lead contact normalization and CRM create decisions.
+          weight: 2
+        - goal: Correct non-sponsor opportunity account set and total.
+          weight: 2
+        - goal: Correct lead and sponsor follow-up due dates.
+          weight: 2
+        - goal: Correct exclusion reason counts and CRM gap summary.
+          weight: 1
+
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/evaluator.py
+      rubric:
+        - goal: Correct ranked BlueTech target-account order.
+          weight: 3
+        - goal: Correct platform coverage and product-fit enums.
+          weight: 3
+        - goal: Correct CRM action enum per target account.
+          weight: 2
+        - goal: Correct exclusion of reseller and sensor-only accounts.
+          weight: 2
+        - goal: Correct pipeline estimate and meeting counts.
+          weight: 3
+        - goal: Correct existing CRM overlap and update count.
+          weight: 1

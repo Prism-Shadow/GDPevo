@@ -1,0 +1,55 @@
+{
+  "branch_id": "CENTRAL",
+  "watch_list_summary": {
+    "adverse_rating_min": 6,
+    "adverse_loan_count": 7,
+    "adverse_balance": 8959908.25,
+    "risk_classes": [
+      {"loan_id": "CEN-LN-001", "risk_class": "Prime", "factor_score": 5},
+      {"loan_id": "CEN-LN-008", "risk_class": "Satisfactory", "factor_score": 11},
+      {"loan_id": "CEN-LN-010", "risk_class": "Desirable", "factor_score": 6},
+      {"loan_id": "CEN-LN-013", "risk_class": "Desirable", "factor_score": 9},
+      {"loan_id": "CEN-LN-016", "risk_class": "Prime", "factor_score": 3},
+      {"loan_id": "CEN-LN-901", "risk_class": "Projected Loss", "factor_score": 17},
+      {"loan_id": "CEN-LN-902", "risk_class": "Satisfactory", "factor_score": 13}
+    ],
+    "monitoring_cadence": "monthly"
+  },
+  "stress_results": {
+    "shock_label": "+200bp",
+    "breach_threshold": 1.0,
+    "results": [
+      {"loan_id": "CEN-LN-008", "base_dscr": 1.02, "stressed_dscr": 0.86, "breaches_threshold": true},
+      {"loan_id": "CEN-LN-010", "base_dscr": 1.11, "stressed_dscr": 0.94, "breaches_threshold": true},
+      {"loan_id": "CEN-LN-901", "base_dscr": 0.81, "stressed_dscr": 0.69, "breaches_threshold": true},
+      {"loan_id": "CEN-LN-902", "base_dscr": 1.04, "stressed_dscr": 0.88, "breaches_threshold": true}
+    ],
+    "breach_loan_ids": ["CEN-LN-008", "CEN-LN-010", "CEN-LN-901", "CEN-LN-902"]
+  },
+  "workout_queue": [
+    {"loan_id": "CEN-LN-901", "exposure": 3210000.0, "risk_class": "Projected Loss", "payment_status": "Nonaccrual", "recommended_action": "partial_chargeoff_review", "projected_loss": true},
+    {"loan_id": "CEN-LN-010", "exposure": 1734778.63, "risk_class": "Desirable", "payment_status": "Nonaccrual", "recommended_action": "special_assets", "projected_loss": false},
+    {"loan_id": "CEN-LN-001", "exposure": 1457867.49, "risk_class": "Prime", "payment_status": "90+ Days Past Due", "recommended_action": "special_assets", "projected_loss": false},
+    {"loan_id": "CEN-LN-016", "exposure": 1086332.4, "risk_class": "Prime", "payment_status": "90+ Days Past Due", "recommended_action": "special_assets", "projected_loss": false},
+    {"loan_id": "CEN-LN-902", "exposure": 735000.0, "risk_class": "Satisfactory", "payment_status": "Current", "recommended_action": "watchlist", "projected_loss": false},
+    {"loan_id": "CEN-LN-013", "exposure": 471274.13, "risk_class": "Desirable", "payment_status": "60 Days Past Due", "recommended_action": "watchlist", "projected_loss": false},
+    {"loan_id": "CEN-LN-008", "exposure": 264655.6, "risk_class": "Satisfactory", "payment_status": "Nonaccrual", "recommended_action": "special_assets", "projected_loss": false}
+  ],
+  "severe_bucket_counts": [
+    {"current_rating": 6, "payment_status": "60 Days Past Due", "loan_count": 1, "exposure": 471274.13},
+    {"current_rating": 6, "payment_status": "Current", "loan_count": 1, "exposure": 735000.0},
+    {"current_rating": 7, "payment_status": "Nonaccrual", "loan_count": 1, "exposure": 3210000.0},
+    {"current_rating": 8, "payment_status": "90+ Days Past Due", "loan_count": 2, "exposure": 2544199.89},
+    {"current_rating": 8, "payment_status": "Nonaccrual", "loan_count": 2, "exposure": 1999434.23}
+  ],
+  "npa_benchmark": {
+    "benchmark_version": "fdic_q4_2024",
+    "benchmark_metric": "total_loans_noncurrent_pct",
+    "branch_npa_exposure": 7753634.12,
+    "branch_total_loans": 20504486.58,
+    "branch_npa_ratio": 0.3781,
+    "fdic_benchmark_ratio": 0.0098,
+    "variance_ratio": 0.3683,
+    "variance_bps": 3683.43
+  }
+}

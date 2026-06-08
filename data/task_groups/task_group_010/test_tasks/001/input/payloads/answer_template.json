@@ -1,0 +1,399 @@
+{
+  "description": "Required JSON output shape for the PF-EN-BOREAL energy-credit recommendation.",
+  "type": "object",
+  "required": [
+    "portfolio_id",
+    "as_of_date",
+    "recommendation",
+    "ranked_package_shortlist",
+    "selected_trade_package",
+    "post_trade_metrics",
+    "constraint_checks",
+    "source_precedence",
+    "candidate_rejection_reasons",
+    "client_suitability",
+    "sales_positioning"
+  ],
+  "properties": {
+    "portfolio_id": {
+      "type": "string",
+      "required_value": "PF-EN-BOREAL"
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD",
+      "description": "Current environment as-of date used for the recommendation."
+    },
+    "recommendation": {
+      "type": "object",
+      "required": [
+        "package_type",
+        "primary_action",
+        "selected_route_id",
+        "primary_constraint_conflict"
+      ],
+      "properties": {
+        "package_type": {
+          "type": "enum",
+          "allowed_values": [
+            "cash_add",
+            "funded_lng_rotation",
+            "balanced_rotation_with_net_add",
+            "defer",
+            "no_trade"
+          ]
+        },
+        "primary_action": {
+          "type": "enum",
+          "allowed_values": [
+            "trim",
+            "add",
+            "hold",
+            "hedge",
+            "monitor",
+            "rotate"
+          ]
+        },
+        "selected_route_id": {
+          "type": "enum",
+          "allowed_values": [
+            "R_CASH_ADD_LNG_ONLY",
+            "R_LNG_ONLY_BLUEGAS_TRIM",
+            "R_BALANCED_GAS_MIDSTREAM_ROTATION",
+            "R_STALE_HIGH_CARRY_ADD",
+            "R_DEFER_NO_TRADE"
+          ]
+        },
+        "primary_constraint_conflict": {
+          "type": "enum",
+          "allowed_values": [
+            "none",
+            "hy_cap_pressure",
+            "duration_drift",
+            "gas_lng_issuer_concentration",
+            "watchlist_yield_trap",
+            "stale_duration_marks"
+          ]
+        }
+      }
+    },
+    "ranked_package_shortlist": {
+      "type": "list",
+      "length": 4,
+      "ordering": "Rank ascending by rank, with rank 1 as the recommended route.",
+      "items": {
+        "type": "object",
+        "required": [
+          "rank",
+          "route_id",
+          "decision",
+          "route_reason"
+        ],
+        "properties": {
+          "rank": {
+            "type": "integer"
+          },
+          "route_id": {
+            "type": "enum",
+            "allowed_values": [
+              "R_CASH_ADD_LNG_ONLY",
+              "R_LNG_ONLY_BLUEGAS_TRIM",
+              "R_BALANCED_GAS_MIDSTREAM_ROTATION",
+              "R_STALE_HIGH_CARRY_ADD",
+              "R_DEFER_NO_TRADE"
+            ]
+          },
+          "decision": {
+            "type": "enum",
+            "allowed_values": [
+              "recommend",
+              "shortlist",
+              "reject"
+            ]
+          },
+          "route_reason": {
+            "type": "enum",
+            "allowed_values": [
+              "clears_issuer_and_preserves_lng_income",
+              "issuer_concentration_still_breaches",
+              "stale_marks_and_watchlist_conflicts",
+              "clean_but_unnecessary_defer",
+              "cash_add_leaves_concentration_exception",
+              "hy_cap_or_duration_pressure"
+            ]
+          }
+        }
+      }
+    },
+    "selected_trade_package": {
+      "type": "list",
+      "ordering": "Sort ascending by action, then instrument_id.",
+      "items": {
+        "type": "object",
+        "required": [
+          "action",
+          "instrument_id",
+          "notional_usd_m"
+        ],
+        "properties": {
+          "action": {
+            "type": "enum",
+            "allowed_values": [
+              "BUY",
+              "SELL",
+              "HOLD",
+              "NO_TRADE"
+            ]
+          },
+          "instrument_id": {
+            "type": "enum",
+            "allowed_values": [
+              "BND_BLUEGAS_2030",
+              "BND_BLUEGAS_2034",
+              "BND_CASCADE_2031",
+              "BND_DRIFTWOOD_2031",
+              "BND_EASTERN_LNG_2029",
+              "BND_EASTERN_LNG_2032",
+              "BND_GRANITE_2030",
+              "BND_PACREF_2030"
+            ]
+          },
+          "notional_usd_m": {
+            "type": "number",
+            "precision": 1,
+            "unit": "USD millions"
+          }
+        }
+      }
+    },
+    "post_trade_metrics": {
+      "type": "object",
+      "required": [
+        "total_market_value_usd_m",
+        "gross_trade_notional_usd_m",
+        "net_new_cash_usd_m",
+        "hy_allocation_pct",
+        "weighted_modified_duration_years",
+        "weighted_yield_to_maturity_pct",
+        "bluegas_issuer_concentration_pct"
+      ],
+      "properties": {
+        "total_market_value_usd_m": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD millions"
+        },
+        "gross_trade_notional_usd_m": {
+          "type": "number",
+          "precision": 1,
+          "unit": "USD millions"
+        },
+        "net_new_cash_usd_m": {
+          "type": "number",
+          "precision": 1,
+          "unit": "USD millions"
+        },
+        "hy_allocation_pct": {
+          "type": "number",
+          "precision": 2,
+          "unit": "percent of post-trade market value"
+        },
+        "weighted_modified_duration_years": {
+          "type": "number",
+          "precision": 2,
+          "unit": "years"
+        },
+        "weighted_yield_to_maturity_pct": {
+          "type": "number",
+          "precision": 2,
+          "unit": "percent"
+        },
+        "bluegas_issuer_concentration_pct": {
+          "type": "number",
+          "precision": 2,
+          "unit": "percent of post-trade market value"
+        }
+      }
+    },
+    "constraint_checks": {
+      "type": "object",
+      "required": [
+        "hy_cap_pass",
+        "duration_band_pass",
+        "bluegas_issuer_concentration_pass",
+        "selected_subsector_diversification_pass",
+        "watchlist_avoidance_pass",
+        "current_data_override_pass"
+      ],
+      "properties": {
+        "hy_cap_pass": {
+          "type": "boolean"
+        },
+        "duration_band_pass": {
+          "type": "boolean"
+        },
+        "bluegas_issuer_concentration_pass": {
+          "type": "boolean"
+        },
+        "selected_subsector_diversification_pass": {
+          "type": "boolean"
+        },
+        "watchlist_avoidance_pass": {
+          "type": "boolean"
+        },
+        "current_data_override_pass": {
+          "type": "boolean"
+        }
+      }
+    },
+    "source_precedence": {
+      "type": "object",
+      "required": [
+        "decision",
+        "conflict_details"
+      ],
+      "properties": {
+        "decision": {
+          "type": "enum",
+          "allowed_values": [
+            "current_environment_over_stale_payload",
+            "local_payload_over_current_environment",
+            "no_conflict_found"
+          ]
+        },
+        "conflict_details": {
+          "type": "list",
+          "ordering": "Sort ascending by instrument_id.",
+          "items": {
+            "type": "object",
+            "required": [
+              "instrument_id",
+              "conflict_type"
+            ],
+            "properties": {
+              "instrument_id": {
+                "type": "enum",
+                "allowed_values": [
+                  "BND_BLUEGAS_2034",
+                  "BND_DRIFTWOOD_2031",
+                  "BND_EASTERN_LNG_2032",
+                  "BND_PACREF_2030"
+                ]
+              },
+              "conflict_type": {
+                "type": "enum",
+                "allowed_values": [
+                  "duration_stale_vs_current",
+                  "rating_stale_vs_current",
+                  "yield_stale_vs_current",
+                  "watchlist_missing_in_payload"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "candidate_rejection_reasons": {
+      "type": "object",
+      "description": "Map each rejected instrument_id to one or more controlled rejection reasons, sorted alphabetically within each list.",
+      "additionalProperties": {
+        "type": "list",
+        "items": {
+          "type": "enum",
+          "allowed_values": [
+            "duration_band_fail",
+            "issuer_concentration_breach",
+            "watchlist_yield_trap",
+            "not_gas_lng_theme",
+            "stale_mark_conflict",
+            "hy_cap_pressure"
+          ]
+        }
+      },
+      "expected_keys": [
+        "BND_BLUEGAS_2034",
+        "BND_DRIFTWOOD_2031",
+        "BND_EASTERN_LNG_2032",
+        "BND_PACREF_2030"
+      ]
+    },
+    "client_suitability": {
+      "type": "object",
+      "required": [
+        "client_segment",
+        "suitability_decision",
+        "income_profile",
+        "monitoring_trigger"
+      ],
+      "properties": {
+        "client_segment": {
+          "type": "enum",
+          "allowed_values": [
+            "insurance_general_account",
+            "pension_liability_matching",
+            "multi_asset_income",
+            "private_bank_income",
+            "endowment_opportunistic"
+          ]
+        },
+        "suitability_decision": {
+          "type": "enum",
+          "allowed_values": [
+            "suitable",
+            "suitable_with_monitoring",
+            "unsuitable_watchlist_or_concentration",
+            "defer_for_credit_review"
+          ]
+        },
+        "income_profile": {
+          "type": "enum",
+          "allowed_values": [
+            "balanced_lng_hy_and_ig_midstream",
+            "pure_lng_extension",
+            "high_carry_watchlist",
+            "defensive_midstream_only"
+          ]
+        },
+        "monitoring_trigger": {
+          "type": "enum",
+          "allowed_values": [
+            "hy_headroom_narrow",
+            "issuer_concentration_near_limit",
+            "duration_near_upper_band",
+            "none"
+          ]
+        }
+      }
+    },
+    "sales_positioning": {
+      "type": "object",
+      "required": [
+        "target_segment",
+        "theme"
+      ],
+      "properties": {
+        "target_segment": {
+          "type": "enum",
+          "allowed_values": [
+            "insurance_general_account",
+            "pension_liability_matching",
+            "multi_asset_income",
+            "private_bank_income",
+            "endowment_opportunistic"
+          ]
+        },
+        "theme": {
+          "type": "enum",
+          "allowed_values": [
+            "lng_export_tailwind",
+            "oil_oversupply_caution",
+            "midstream_stability",
+            "transition_bond_selectivity",
+            "avoid_watchlist_yield_trap"
+          ]
+        }
+      }
+    }
+  }
+}

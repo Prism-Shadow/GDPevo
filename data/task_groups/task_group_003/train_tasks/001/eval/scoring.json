@@ -1,0 +1,86 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "TCK-5107 has the correct resolved status and auto-troubleshooting route.",
+      "weight": 2,
+      "checks": [
+        {"path": "ticket_decisions[0].final_resolution_status"},
+        {"path": "ticket_decisions[0].resolution_route"},
+        {"path": "ticket_decisions[0].escalation_team"}
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "TCK-5107 diagnostic issue flags are all correct.",
+      "weight": 2,
+      "checks": [
+        {"path": "ticket_decisions[0].diagnostic_needed"},
+        {"path": "ticket_decisions[0].latency_issue"},
+        {"path": "ticket_decisions[0].stability_issue"},
+        {"path": "ticket_decisions[0].bandwidth_issue"}
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "TCK-5131 is correctly held for outage with no diagnostics.",
+      "weight": 3,
+      "checks": [
+        {"path": "ticket_decisions[1].final_resolution_status"},
+        {"path": "ticket_decisions[1].outage_id"},
+        {"path": "ticket_decisions[1].diagnostic_needed"},
+        {"path": "ticket_decisions[1].resolution_route"}
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "TCK-5184 is correctly escalated to field operations.",
+      "weight": 3,
+      "checks": [
+        {"path": "ticket_decisions[2].final_resolution_status"},
+        {"path": "ticket_decisions[2].escalation_team"},
+        {"path": "ticket_decisions[2].resolution_route"}
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "TCK-5184 diagnostic issue flags are all correct.",
+      "weight": 2,
+      "checks": [
+        {"path": "ticket_decisions[2].diagnostic_needed"},
+        {"path": "ticket_decisions[2].latency_issue"},
+        {"path": "ticket_decisions[2].stability_issue"},
+        {"path": "ticket_decisions[2].bandwidth_issue"}
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "TCK-5202 is correctly failed for account ineligibility.",
+      "weight": 2,
+      "checks": [
+        {"path": "ticket_decisions[3].final_resolution_status"},
+        {"path": "ticket_decisions[3].diagnostic_needed"},
+        {"path": "ticket_decisions[3].resolution_route"}
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Batch final status counts are correct.",
+      "weight": 1,
+      "checks": [
+        {"path": "batch_summary.RESOLVED"},
+        {"path": "batch_summary.PENDING_ACTION"},
+        {"path": "batch_summary.ESCALATED"},
+        {"path": "batch_summary.FAILED"}
+      ]
+    },
+    {
+      "id": "SP008",
+      "goal": "Customer-wait count is correct.",
+      "weight": 1,
+      "checks": [
+        {"path": "batch_summary.tickets_requiring_customer_wait"}
+      ]
+    }
+  ]
+}

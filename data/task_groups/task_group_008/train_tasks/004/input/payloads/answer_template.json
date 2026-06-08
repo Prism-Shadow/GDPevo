@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "client_id",
+    "analysis_type",
+    "recommendation",
+    "estate_context",
+    "ilit",
+    "trust_transfer",
+    "action_set",
+    "source_resolution"
+  ],
+  "fields": {
+    "client_id": "string; stable client identifier",
+    "analysis_type": "enum: estate_liquidity_action_plan",
+    "recommendation.primary_action": "enum: COMBINE_ILIT_AND_GRAT, CRAT_WITH_LIQUIDITY_REVIEW, ILIT_WITH_EXEMPTION_REVIEW",
+    "recommendation.sequencing": "enum: ILIT_FIRST_THEN_GRAT, TRUST_DECISION_FIRST, ILIT_FIRST_THEN_ATTORNEY_REVIEW",
+    "recommendation.risk_flag": "enum: LOW_IF_FORMALITIES_MET, EXCLUSION_SHORTFALL, THREE_YEAR_LOOKBACK, THREE_YEAR_LOOKBACK_AND_EXCLUSION_SHORTFALL",
+    "estate_context.taxable_estate": "number, USD, rounded to cents",
+    "estate_context.estate_tax_exposure": "number, USD, rounded to cents",
+    "estate_context.liquidity_gap_before_planning": "number, USD, rounded to cents",
+    "ilit.annual_exclusion_capacity": "number, USD, rounded to cents",
+    "ilit.premium_gap": "number, USD, rounded to cents",
+    "ilit.estate_inclusion_risk": "enum; same risk flags",
+    "ilit.projected_outside_estate_if_implemented": "number, USD, rounded to cents",
+    "trust_transfer.preferred_strategy": "enum: GRAT, CRAT",
+    "trust_transfer.projected_remainder_to_heirs": "number, USD, rounded to cents",
+    "trust_transfer.estimated_estate_tax_reduction": "number, USD, rounded to cents",
+    "trust_transfer.projected_charitable_remainder": "number, USD, rounded to cents",
+    "action_set": "list of enums sorted alphabetically: ATTORNEY_DRAFT_REVIEW, CRAT_FOR_CHARITABLE_REMAINDER, GRAT_FOR_APPRECIATING_SHARES, ILIT_CRUMMEY_NOTICE_CYCLE, LIFETIME_EXEMPTION_ALLOCATION",
+    "source_resolution.controlling_goal_source": "enum: SIGNED_PROFILE, ATTORNEY_MEMO, CUSTODIAN_EXPORT, CRM_NOTE, STALE_MARKETING_INTAKE",
+    "source_resolution.controlling_policy_source": "enum: SIGNED_PROFILE, ATTORNEY_MEMO, CUSTODIAN_EXPORT, CRM_NOTE",
+    "task_id": "string; stable task identifier such as train_001 or test_001"
+  },
+  "ordering": "action_set must be sorted alphabetically. Other object key order is not scored."
+}

@@ -1,0 +1,38 @@
+{
+  "employee_id": {"type": "string"},
+  "effective_leave_policy": {"type": "string"},
+  "leave_source": {
+    "type": "enum",
+    "allowed_values": ["leave_assignment_history", "employee_profile_summary", "case_summary_only"]
+  },
+  "annual_days": {"type": "integer"},
+  "assignment_id": {"type": "string"},
+  "excluded_leave_ids": {"type": "list[string]"},
+  "payroll_assignment_id": {"type": "string"},
+  "base_salary": {"type": "number"},
+  "payroll_status": {
+    "type": "enum",
+    "allowed_values": ["submitted", "draft", "superseded"]
+  },
+  "excluded_payroll_ids": {"type": "list[string]"},
+  "closeout_action": {
+    "type": "enum",
+    "allowed_values": ["approve_onboarding_close", "block_close_and_reissue_notice", "open_records_remediation"]
+  },
+  "leave_precedence_source": {
+    "type": "enum",
+    "allowed_values": ["approved_assignment_current_period", "profile_summary_current_period", "case_summary_only"]
+  },
+  "payroll_source_status": {
+    "type": "enum",
+    "allowed_values": ["submitted", "draft", "superseded"]
+  },
+  "approval_closeout_gate": {
+    "type": "enum",
+    "allowed_values": ["approval_sufficient_when_records_clean", "approval_not_sufficient_when_folder_or_notice_defective"]
+  },
+  "final_control_result": {
+    "type": "enum",
+    "allowed_values": ["approve_closeout", "hold_for_folder_and_notice_defects", "ready_with_monitoring"]
+  }
+}

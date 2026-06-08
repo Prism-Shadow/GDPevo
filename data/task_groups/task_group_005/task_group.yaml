@@ -1,0 +1,351 @@
+task_group:
+  task_group_id: task_group_005
+  scenario_id: SCN_005_erp_finance_expense_control
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: ERP Finance Expense Control and Accounting Close
+  description: |
+    A train-predict benchmark for ERP finance controls. Tasks use one shared
+    office environment with HR reimbursement claims, AP bills and payments,
+    vendor compliance records, prepaid accounting schedules, GL balances, and
+    close logs. Train and test tasks are formal finance operations tasks from
+    the same distribution.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/server.py
+    - env/generate_data.py
+    - env/manifest.json
+    - env/README.md
+    - env/data/claims.json
+    - env/data/bills.json
+    - env/data/payments.json
+    - env/data/vendors.json
+    - env/data/compliance_objects.json
+    - env/data/prepaid_invoices.json
+    - env/data/gl_balances.json
+    - env/data/close_logs.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Correct payable reimbursement claim set.
+          weight: 3
+        - goal: Correct blocked reimbursement claim set.
+          weight: 3
+        - goal: Correct paid claim set.
+          weight: 2
+        - goal: Correct open AP balance total.
+          weight: 2
+        - goal: Correct CRM cleanup claim set.
+          weight: 2
+        - goal: Correct overall batch status.
+          weight: 2
+        - goal: Correct reviewed claim count.
+          weight: 1
+        - goal: Correct partition consistency.
+          weight: 1
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+      - train_tasks/002/input/payloads/onboarding_batch.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/evaluator.py
+      rubric:
+        - goal: Correct primary vendor access decisions.
+          weight: 3
+        - goal: Correct remaining vendor access decisions.
+          weight: 2
+        - goal: Correct primary UBO counts.
+          weight: 2
+        - goal: Correct remaining UBO counts.
+          weight: 1
+        - goal: Correct primary hard-stop flags.
+          weight: 3
+        - goal: Correct remaining hard-stop flags.
+          weight: 3
+        - goal: Correct follow-up business set.
+          weight: 2
+        - goal: Correct release-ready boolean.
+          weight: 1
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+      - train_tasks/003/input/payloads/prepaid_close_scope.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct selected invoice population.
+          weight: 1
+        - goal: Correct account 1250 schedule totals.
+          weight: 2
+        - goal: Correct account 1251 schedule totals.
+          weight: 2
+        - goal: Correct account 1250 GL variance decision.
+          weight: 2
+        - goal: Correct account 1251 GL variance decision.
+          weight: 2
+        - goal: Correct default or missing-term invoice set.
+          weight: 1
+        - goal: Correct exception invoice set.
+          weight: 1
+        - goal: Correct invoice amortization and ending balances.
+          weight: 3
+        - goal: Correct invoice default and exception flags.
+          weight: 1
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+      - train_tasks/004/input/payloads/stale_ap_snapshot.csv
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct eligible claim set.
+          weight: 2
+        - goal: Correct not-ready claim set.
+          weight: 2
+        - goal: Correct balances for eligible claims.
+          weight: 2
+        - goal: Correct balances for not-ready claims.
+          weight: 2
+        - goal: Correct stale corrections for eligible claims.
+          weight: 2
+        - goal: Correct stale corrections for not-ready claims.
+          weight: 2
+        - goal: Correct close-log requirement.
+          weight: 2
+        - goal: Correct batch status.
+          weight: 1
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+      - train_tasks/005/input/payloads/account_change_batch.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct target entity set.
+          weight: 1
+        - goal: Correct clean release decision.
+          weight: 2
+        - goal: Correct remediable hold decisions.
+          weight: 3
+        - goal: Correct escalation decisions.
+          weight: 3
+        - goal: Correct bank mismatch set.
+          weight: 2
+        - goal: Correct invalid tax ID set.
+          weight: 2
+        - goal: Correct expired license set.
+          weight: 2
+        - goal: Correct review queue and override flags.
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct payable claim set.
+          weight: 3
+        - goal: Correct blocked claim set.
+          weight: 2
+        - goal: Correct paid claim set.
+          weight: 2
+        - goal: Correct AP open balance total.
+          weight: 2
+        - goal: Correct CRM close set.
+          weight: 1
+        - goal: Correct payable and paid reason codes.
+          weight: 3
+        - goal: Correct blocked reason codes.
+          weight: 2
+        - goal: Correct batch status.
+          weight: 1
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+      - test_tasks/002/input/payloads/vendor_intake_scope.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct high-impact business decisions.
+          weight: 3
+        - goal: Correct remaining business decisions.
+          weight: 2
+        - goal: Correct risk levels.
+          weight: 2
+        - goal: Correct reportable UBO counts.
+          weight: 2
+        - goal: Correct primary hard-stop code sets.
+          weight: 3
+        - goal: Correct remaining hard-stop code sets.
+          weight: 2
+        - goal: Correct follow-up business set.
+          weight: 2
+        - goal: Correct batch status and ready count.
+          weight: 1
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+      - test_tasks/003/input/payloads/prepaid_april_scope.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct selected invoice set.
+          weight: 1
+        - goal: Correct account totals for 1250 and 1251.
+          weight: 1
+        - goal: Correct April GL ending balances.
+          weight: 1
+        - goal: Correct variance status for both accounts.
+          weight: 1
+        - goal: Correct exception invoice set.
+          weight: 2
+        - goal: Correct default-term invoice set.
+          weight: 2
+        - goal: Correct priority exception membership.
+          weight: 3
+        - goal: Correct priority exception ranking.
+          weight: 3
+        - goal: Correct close status.
+          weight: 3
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+      - test_tasks/004/input/payloads/release_board_batch.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct release bill set.
+          weight: 3
+        - goal: Correct hold bill set.
+          weight: 2
+        - goal: Correct claim-gate hold reason.
+          weight: 2
+        - goal: Correct compliance hold reasons.
+          weight: 3
+        - goal: Correct compliance-blocked business set.
+          weight: 3
+        - goal: Correct payment priority ranking.
+          weight: 2
+        - goal: Correct released AP balance total.
+          weight: 2
+        - goal: Correct board status.
+          weight: 1
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+      - test_tasks/005/input/payloads/month_end_exception_scope.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct close readiness status.
+          weight: 1
+        - goal: Correct exception ID set.
+          weight: 2
+        - goal: Correct exception types.
+          weight: 2
+        - goal: Correct materiality classes.
+          weight: 2
+        - goal: Correct owner queues.
+          weight: 2
+        - goal: Correct top-priority exception ranking.
+          weight: 2
+        - goal: Correct signed close impact by exception.
+          weight: 3
+        - goal: Correct impact direction by exception.
+          weight: 3
+        - goal: Correct net close impact total.
+          weight: 3
+        - goal: Correct reimbursement exception detail.
+          weight: 1

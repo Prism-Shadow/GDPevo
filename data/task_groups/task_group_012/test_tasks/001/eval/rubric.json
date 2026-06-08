@@ -1,0 +1,86 @@
+{
+  "points": [
+    {
+      "id": "employee_identity",
+      "description": "Correctly identifies the employee under review.",
+      "weight": 1,
+      "fields": {
+        "employee_id": "EMP-255"
+      }
+    },
+    {
+      "id": "clearance_control",
+      "description": "Applies the normalized hold decision, control result, and next action.",
+      "weight": 3,
+      "fields": {
+        "clearance_decision": "hold",
+        "final_control_result": "hold_for_folder_and_notice_defects",
+        "next_action": "block_close_and_reissue_notice"
+      }
+    },
+    {
+      "id": "leave_source_precedence",
+      "description": "Uses the approved current-period leave assignment and reports policy and balance.",
+      "weight": 3,
+      "fields": {
+        "effective_leave_policy": "R&D Flex Leave 2026",
+        "leave_assignment_id": "LA-255-APP-03",
+        "leave_balance_days": 21,
+        "leave_precedence_source": "approved_assignment_current_period"
+      }
+    },
+    {
+      "id": "payroll_source_precedence",
+      "description": "Uses the submitted payroll assignment and excludes the draft assignment.",
+      "weight": 3,
+      "fields": {
+        "payroll_assignment_id": "PAY-255-SUB-02",
+        "base_salary": 142000,
+        "payroll_source_status": "submitted",
+        "excluded_payroll_assignment_ids": [
+          "PAY-255-DRAFT-03"
+        ]
+      }
+    },
+    {
+      "id": "folder_evidence",
+      "description": "Identifies missing required files and missing required tag state.",
+      "weight": 1,
+      "fields": {
+        "folder_missing_files": [
+          "benefits-election.pdf",
+          "executive-exception-approval.pdf"
+        ],
+        "folder_required_tag_present": false
+      }
+    },
+    {
+      "id": "notice_defects",
+      "description": "Identifies normalized defects in the clearance notice workflow.",
+      "weight": 1,
+      "fields": {
+        "notice_defects": [
+          "missing_ack_deadline",
+          "missing_appeal_instructions"
+        ]
+      }
+    },
+    {
+      "id": "approval_gate",
+      "description": "Does not let final approval override folder and notice defects.",
+      "weight": 3,
+      "fields": {
+        "approval_closeout_gate": "approval_not_sufficient_when_folder_or_notice_defective"
+      }
+    },
+    {
+      "id": "audit_and_escalation",
+      "description": "Reports the controlling audit event and escalation owner.",
+      "weight": 1,
+      "fields": {
+        "audit_event_id": "AUD-CASE445-03",
+        "escalation_owner": "People Ops Compliance"
+      }
+    }
+  ]
+}

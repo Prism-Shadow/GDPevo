@@ -1,0 +1,60 @@
+{
+  "construction_notes": [
+    "CRM ARR can be stale; latest posted billing snapshots carry current ARR.",
+    "A/R customer names include exact CRM legal names plus noisy subsidiaries and similar names.",
+    "Support exports include spam, duplicate, and cancelled records for convention learning.",
+    "NPS exports include missing and retracted responses.",
+    "Churn candidates omit the Churn label; train and validation include it."
+  ],
+  "data_files": [
+    "account_metric_extract.csv",
+    "account_metrics.json",
+    "accounts.json",
+    "ar_aging.json",
+    "billing_snapshots.json",
+    "churn_candidates.csv",
+    "churn_train.csv",
+    "churn_validation.csv",
+    "event_performance.json",
+    "hr_summary.json",
+    "nps_responses.json",
+    "opportunities.json",
+    "support_tickets.json"
+  ],
+  "environment": "ApexCloud Retention Operations",
+  "generated_at": "2026-06-01T00:00:00Z",
+  "public_endpoints": [
+    "/api/health",
+    "/api/accounts",
+    "/api/accounts/<account_id>",
+    "/api/accounts/<account_id>/metrics?start=YYYY-MM&end=YYYY-MM",
+    "/api/accounts/<account_id>/tickets?start=YYYY-MM-DD&end=YYYY-MM-DD",
+    "/api/accounts/<account_id>/nps?start=YYYY-MM-DD&end=YYYY-MM-DD",
+    "/api/billing/snapshots",
+    "/api/finance/ar-aging?as_of=YYYY-MM-DD",
+    "/api/opportunities?start=YYYY-MM-DD&end=YYYY-MM-DD&region=<optional>",
+    "/api/hr/summary?quarter=YYYY-QN&region=<optional>",
+    "/api/events/performance?event=<event_id>&quarter=YYYY-QN",
+    "/exports/churn/train.csv",
+    "/exports/churn/validation.csv",
+    "/exports/churn/candidates.csv",
+    "/exports/account_metric_extract.csv"
+  ],
+  "row_counts": {
+    "account_metric_extract.csv": 528,
+    "account_metrics.json": 528,
+    "accounts.json": 44,
+    "ar_aging.json": 196,
+    "billing_snapshots.json": 176,
+    "churn_candidates.csv": 44,
+    "churn_train.csv": 180,
+    "churn_validation.csv": 60,
+    "event_performance.json": 20,
+    "hr_summary.json": 16,
+    "nps_responses.json": 451,
+    "opportunities.json": 114,
+    "support_tickets.json": 1595
+  },
+  "seed": 4004,
+  "task_group": "task_group_004"
+}

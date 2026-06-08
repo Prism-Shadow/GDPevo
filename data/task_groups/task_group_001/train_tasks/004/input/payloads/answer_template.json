@@ -1,0 +1,143 @@
+{
+  "task_id": "train_004",
+  "event_id": "edgeai_field_2026",
+  "schema_version": "1.0",
+  "required_top_level_keys": [
+    "event",
+    "sponsor_statuses",
+    "badge_decisions",
+    "campaign_member_actions",
+    "opportunity_summary",
+    "sponsor_followup",
+    "badge_only_contacts",
+    "exclusion_counts"
+  ],
+  "field_definitions": {
+    "event": {
+      "type": "object",
+      "required_keys": [
+        "event_id",
+        "name",
+        "lead_followup_due_date",
+        "sponsor_followup_due_date"
+      ],
+      "date_format": "YYYY-MM-DD"
+    },
+    "sponsor_statuses": {
+      "type": "list",
+      "ordering": "Sort by account_name ascending.",
+      "item_required_keys": [
+        "account_id",
+        "account_name",
+        "sponsor_status",
+        "amount_usd"
+      ],
+      "sponsor_status_allowed_values": [
+        "paid_deferred",
+        "open_invoice",
+        "proposal_only",
+        "not_sponsor"
+      ],
+      "amount_usd": "integer"
+    },
+    "badge_decisions": {
+      "type": "list",
+      "ordering": "Sort by badge_id ascending.",
+      "item_required_keys": [
+        "badge_id",
+        "company_name",
+        "contact_name",
+        "classification",
+        "crm_action",
+        "exclusion_reason"
+      ],
+      "classification_allowed_values": [
+        "sponsor_attendee",
+        "qualified_non_sponsor_lead",
+        "excluded"
+      ],
+      "crm_action_allowed_values": [
+        "create_account_contact_campaign_member",
+        "create_contact_campaign_member",
+        "add_campaign_member",
+        "update_campaign_member",
+        "no_action",
+        "no_import"
+      ],
+      "exclusion_reason_allowed_values": [
+        "sponsor_attendee",
+        "non_business_badge",
+        "existing_disqualified",
+        "missing_contact",
+        null
+      ]
+    },
+    "campaign_member_actions": {
+      "type": "list",
+      "ordering": "Sort by subject_key ascending.",
+      "item_required_keys": [
+        "subject_key",
+        "account_name",
+        "contact_name",
+        "action",
+        "target_status"
+      ],
+      "action_allowed_values": [
+        "create",
+        "update",
+        "no_action",
+        "no_import"
+      ],
+      "target_status_allowed_values": [
+        "attended_sponsor",
+        "registered_sponsor",
+        "attended",
+        "excluded"
+      ]
+    },
+    "opportunity_summary": {
+      "type": "object",
+      "required_keys": [
+        "qualified_non_sponsor_account_names",
+        "lead_opportunity_amount_usd",
+        "open_opportunity_total_usd",
+        "open_opportunity_count"
+      ],
+      "qualified_non_sponsor_account_names": "list of strings sorted ascending",
+      "currency_precision": "integer USD"
+    },
+    "sponsor_followup": {
+      "type": "object",
+      "required_keys": [
+        "unpaid_sponsor_account_names",
+        "unpaid_sponsor_total_usd",
+        "followup_due_date"
+      ],
+      "unpaid_sponsor_account_names": "list of strings sorted ascending",
+      "currency_precision": "integer USD",
+      "date_format": "YYYY-MM-DD"
+    },
+    "badge_only_contacts": {
+      "type": "list",
+      "ordering": "Sort by company_name ascending.",
+      "item_required_keys": [
+        "company_name",
+        "contact_name",
+        "normalized_email",
+        "normalized_phone"
+      ],
+      "normalized_email": "lowercase trimmed string; empty string allowed when no email was supplied",
+      "normalized_phone": "digits only; empty string allowed when no phone was supplied"
+    },
+    "exclusion_counts": {
+      "type": "object",
+      "required_keys": [
+        "sponsor_attendee",
+        "non_business_badge",
+        "existing_disqualified",
+        "missing_contact"
+      ],
+      "values": "integers"
+    }
+  }
+}
