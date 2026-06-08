@@ -17,7 +17,7 @@ Agent Learn Bench 是一个公开 benchmark，用于评估 agent 在真实业务
 | --- | --- |
 | `data/task_groups/` | 已发布的 task groups，包含共享环境、train tasks、test tasks、答案、评测器和数据说明。 |
 | `experiments/` | 已发布的评估协议、evaluation workspaces、结果报告、生成 skills 和实验看板。 |
-| `site/` | 预留给后续网站或 blog 内容。 |
+| `site/` | 用于 GitHub Pages 的静态网站和 blog 内容。 |
 | `assets/` | 预留给后续图片、logo 和视觉资源。 |
 
 ## 数据
