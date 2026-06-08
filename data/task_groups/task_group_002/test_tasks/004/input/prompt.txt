@@ -1,0 +1,5 @@
+The MedBridge Sales Ops API is available at the shared base URL `http://127.0.0.1:${PORT}`. Use the business records there, not any embedded answer source, to prepare the field-clinic quote update for customer `CUST-CAREBRIDGE`.
+
+CareBridge has asked for quote `Q-TE-FC-4560` dated `2026-06-01`. The source records include account policy, quote scope, module lines, operational component notes, and linked freight rows. Reconcile those records into the account-ready quote package and controls that Sales Ops should send back.
+
+Return a single valid JSON object matching `input/payloads/answer_template.json`. Include the quote header, commercial line items, the EXW subtotal, all valid linked freight options with grand totals, the recommended transport mode, and the quote controls. Do not include markdown or explanatory prose.

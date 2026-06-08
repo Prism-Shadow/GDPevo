@@ -1,0 +1,25 @@
+{
+  "description": "Return one company dashboard JSON object. Currency values must be rounded to 2 decimals. Percent and ratio fields must be rounded to 4 decimals.",
+  "required_top_level_keys": [
+    "company_view",
+    "rank_leaders"
+  ],
+  "field_types": {
+    "company_view": {
+      "branch_count": "integer",
+      "fy2024_revenue": "currency",
+      "fy2025_revenue": "currency",
+      "fy2025_ebitda": "currency",
+      "revenue_growth_pct": "decimal percent",
+      "ebitda_margin_2025": "decimal percent",
+      "arpu_2025": "currency",
+      "sales_per_labor_headcount_2025": "currency"
+    },
+    "rank_leaders": {
+      "top_sales_growth_branch_id": "string",
+      "top_arpu_branch_id": "string",
+      "top_gross_margin_growth_branch_id": "string",
+      "lowest_order_growth_branch_id": "string"
+    }
+  }
+}

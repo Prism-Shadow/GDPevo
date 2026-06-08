@@ -1,0 +1,400 @@
+{
+  "schema_name": "pf_ma_cygnus_risk_board",
+  "schema_version": "1.1",
+  "required_top_level_keys": [
+    "task_id",
+    "portfolio_id",
+    "as_of_date",
+    "review_window",
+    "source_reconciliation",
+    "ranked_exceptions",
+    "credit_metrics",
+    "correlation_concentration",
+    "rebalance_package",
+    "constraint_flags",
+    "board_decision"
+  ],
+  "field_definitions": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_004"
+    },
+    "portfolio_id": {
+      "type": "string",
+      "required_value": "PF-MA-CYGNUS"
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD",
+      "description": "Use the date of the current portfolio and policy records used for the board package."
+    },
+    "review_window": {
+      "type": "object",
+      "required_keys": [
+        "level_start_date",
+        "level_end_date",
+        "return_observations"
+      ],
+      "fields": {
+        "level_start_date": {
+          "type": "string",
+          "format": "YYYY-MM-DD"
+        },
+        "level_end_date": {
+          "type": "string",
+          "format": "YYYY-MM-DD"
+        },
+        "return_observations": {
+          "type": "integer"
+        }
+      }
+    },
+    "source_reconciliation": {
+      "type": "object",
+      "required_keys": [
+        "authoritative_source",
+        "local_packet_status",
+        "quantity_overrides",
+        "correlation_window_override"
+      ],
+      "fields": {
+        "authoritative_source": {
+          "type": "enum",
+          "allowed_values": [
+            "current_environment_records",
+            "local_packet_snapshot"
+          ]
+        },
+        "local_packet_status": {
+          "type": "enum",
+          "allowed_values": [
+            "context_only_current_records_override",
+            "accepted_without_override"
+          ]
+        },
+        "quantity_overrides": {
+          "type": "list",
+          "ordering": "Sort by instrument_id ascending.",
+          "item_fields": {
+            "instrument_id": {
+              "type": "string"
+            },
+            "local_quantity_usd_m": {
+              "type": "number",
+              "precision": 1,
+              "units": "USD millions"
+            },
+            "current_quantity_usd_m": {
+              "type": "number",
+              "precision": 1,
+              "units": "USD millions"
+            },
+            "override_applied": {
+              "type": "boolean"
+            }
+          }
+        },
+        "correlation_window_override": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ranked_exceptions": {
+      "type": "list",
+      "length": 2,
+      "ordering": "Ascending rank, with rank 1 as the most material exception.",
+      "item_fields": {
+        "rank": {
+          "type": "integer"
+        },
+        "exception_code": {
+          "type": "enum",
+          "allowed_values": [
+            "watchlist_hy_cap_pressure",
+            "equity_correlation_concentration",
+            "duration_drift",
+            "issuer_concentration",
+            "no_material_exception"
+          ]
+        },
+        "primary_driver": {
+          "type": "enum",
+          "allowed_values": [
+            "fixed_income",
+            "international_equity",
+            "multi_asset"
+          ]
+        },
+        "materiality": {
+          "type": "enum",
+          "allowed_values": [
+            "HIGH",
+            "MEDIUM",
+            "LOW"
+          ]
+        },
+        "severity_metric": {
+          "type": "enum",
+          "allowed_values": [
+            "hy_cap_excess_pct_points",
+            "correlation_threshold_excess",
+            "duration_band_gap_years",
+            "issuer_limit_excess_pct_points",
+            "none"
+          ]
+        },
+        "severity_value": {
+          "type": "number",
+          "precision": 3,
+          "description": "Use the numeric excess over the relevant threshold, rounded to three decimals."
+        }
+      }
+    },
+    "credit_metrics": {
+      "type": "object",
+      "required_keys": [
+        "current_hy_allocation_pct",
+        "post_trade_hy_allocation_pct",
+        "current_duration_years",
+        "post_trade_duration_years",
+        "hy_reduction_pct_points",
+        "current_watchlist_exposure_usd_m",
+        "post_trade_watchlist_exposure_usd_m"
+      ],
+      "fields": {
+        "current_hy_allocation_pct": {
+          "type": "number",
+          "precision": 2,
+          "units": "percent of total portfolio market value"
+        },
+        "post_trade_hy_allocation_pct": {
+          "type": "number",
+          "precision": 2,
+          "units": "percent of total portfolio market value"
+        },
+        "current_duration_years": {
+          "type": "number",
+          "precision": 2,
+          "units": "years"
+        },
+        "post_trade_duration_years": {
+          "type": "number",
+          "precision": 2,
+          "units": "years"
+        },
+        "hy_reduction_pct_points": {
+          "type": "number",
+          "precision": 2,
+          "units": "percentage points"
+        },
+        "current_watchlist_exposure_usd_m": {
+          "type": "number",
+          "precision": 1,
+          "units": "USD millions"
+        },
+        "post_trade_watchlist_exposure_usd_m": {
+          "type": "number",
+          "precision": 1,
+          "units": "USD millions"
+        }
+      }
+    },
+    "correlation_concentration": {
+      "type": "object",
+      "required_keys": [
+        "pair_role",
+        "pair",
+        "correlation",
+        "high_threshold_breached",
+        "threshold_excess",
+        "paired_sleeve_exposure_usd_m",
+        "diversifier_index_id",
+        "diversifier_pair_correlation"
+      ],
+      "fields": {
+        "pair_role": {
+          "type": "enum",
+          "allowed_values": [
+            "highest_concentration"
+          ]
+        },
+        "pair": {
+          "type": "list",
+          "length": 2,
+          "item_type": "string",
+          "ordering_rule": "Index ids within the pair must be sorted alphabetically."
+        },
+        "correlation": {
+          "type": "number",
+          "precision": 3,
+          "calculation": "Pearson correlation of monthly simple returns from consecutive index levels."
+        },
+        "high_threshold_breached": {
+          "type": "boolean"
+        },
+        "threshold_excess": {
+          "type": "number",
+          "precision": 3
+        },
+        "paired_sleeve_exposure_usd_m": {
+          "type": "number",
+          "precision": 1,
+          "units": "USD millions"
+        },
+        "diversifier_index_id": {
+          "type": "string"
+        },
+        "diversifier_pair_correlation": {
+          "type": "number",
+          "precision": 3
+        }
+      }
+    },
+    "rebalance_package": {
+      "type": "object",
+      "required_keys": [
+        "fixed_income_trades",
+        "equity_actions",
+        "rebalance_trigger"
+      ],
+      "fields": {
+        "fixed_income_trades": {
+          "type": "list",
+          "ordering": "Sort by action with SELL before BUY, then by instrument_id ascending within each action.",
+          "item_fields": {
+            "action": {
+              "type": "enum",
+              "allowed_values": [
+                "BUY",
+                "SELL"
+              ]
+            },
+            "instrument_id": {
+              "type": "string"
+            },
+            "quantity_usd_m": {
+              "type": "number",
+              "precision": 1,
+              "units": "USD millions"
+            }
+          }
+        },
+        "equity_actions": {
+          "type": "list",
+          "ordering": "Sort by action with trim before add, then by index_id ascending within each action.",
+          "item_fields": {
+            "action": {
+              "type": "enum",
+              "allowed_values": [
+                "trim",
+                "add",
+                "hold",
+                "hedge",
+                "monitor",
+                "rotate"
+              ]
+            },
+            "index_id": {
+              "type": "string"
+            },
+            "quantity_usd_m": {
+              "type": "number",
+              "precision": 1,
+              "units": "USD millions"
+            }
+          }
+        },
+        "rebalance_trigger": {
+          "type": "enum",
+          "allowed_values": [
+            "correlation_cap_breach",
+            "hy_cap_pressure",
+            "duration_drift",
+            "watchlist_concentration",
+            "committee_review"
+          ]
+        }
+      }
+    },
+    "constraint_flags": {
+      "type": "object",
+      "required_keys": [
+        "current_hy_cap_pass",
+        "post_trade_hy_cap_pass",
+        "current_duration_band_pass",
+        "post_trade_duration_band_pass",
+        "watchlist_exposure_cleared",
+        "correlation_threshold_breached"
+      ],
+      "fields": {
+        "current_hy_cap_pass": {
+          "type": "boolean"
+        },
+        "post_trade_hy_cap_pass": {
+          "type": "boolean"
+        },
+        "current_duration_band_pass": {
+          "type": "boolean"
+        },
+        "post_trade_duration_band_pass": {
+          "type": "boolean"
+        },
+        "watchlist_exposure_cleared": {
+          "type": "boolean"
+        },
+        "correlation_threshold_breached": {
+          "type": "boolean"
+        }
+      }
+    },
+    "board_decision": {
+      "type": "object",
+      "required_keys": [
+        "dominant_exception_code",
+        "secondary_exception_code",
+        "combined_judgement",
+        "committee_escalation"
+      ],
+      "fields": {
+        "dominant_exception_code": {
+          "type": "enum",
+          "allowed_values": [
+            "watchlist_hy_cap_pressure",
+            "equity_correlation_concentration",
+            "duration_drift",
+            "issuer_concentration",
+            "no_material_exception"
+          ]
+        },
+        "secondary_exception_code": {
+          "type": "enum",
+          "allowed_values": [
+            "watchlist_hy_cap_pressure",
+            "equity_correlation_concentration",
+            "duration_drift",
+            "issuer_concentration",
+            "no_material_exception"
+          ]
+        },
+        "combined_judgement": {
+          "type": "enum",
+          "allowed_values": [
+            "approve_credit_rotation_with_equity_trim",
+            "credit_only_rotation",
+            "equity_only_trim",
+            "monitor_without_trade",
+            "reject_constraint_breach"
+          ]
+        },
+        "committee_escalation": {
+          "type": "enum",
+          "allowed_values": [
+            "committee_review",
+            "desk_monitoring",
+            "none"
+          ]
+        }
+      }
+    }
+  }
+}

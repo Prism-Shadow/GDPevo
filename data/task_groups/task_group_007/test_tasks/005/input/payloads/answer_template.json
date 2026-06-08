@@ -1,0 +1,47 @@
+{
+  "required_top_level_keys": [
+    "board_date",
+    "wave",
+    "order_decisions",
+    "replenishment_gaps",
+    "incident_escalations",
+    "priority_actions",
+    "summary"
+  ],
+  "board_date": {"type": "string", "format": "YYYY-MM-DD"},
+  "wave": {"type": "string", "expected": "TEST_BOARD_F"},
+  "order_decisions": {
+    "type": "list",
+    "ordering": "sort by order_id ascending",
+    "item_required_keys": ["order_id", "decision", "reason_codes", "shortage_skus", "risk_supplier_ids"],
+    "decision": {"type": "enum", "allowed": ["release", "quality_review", "backorder_or_replenish", "customer_hold", "data_review"]},
+    "reason_codes": "sorted list of controlled strings",
+    "shortage_skus": "sorted list of SKU strings",
+    "risk_supplier_ids": "sorted list of supplier id strings"
+  },
+  "replenishment_gaps": {
+    "type": "list",
+    "ordering": "sort by order_id ascending, then sku ascending",
+    "item_required_keys": ["order_id", "warehouse_id", "sku", "shortage_qty", "effective_available"],
+    "numeric_fields": {"shortage_qty": "integer units", "effective_available": "integer units"}
+  },
+  "incident_escalations": {
+    "type": "list",
+    "ordering": "sort by supplier_id ascending",
+    "item_required_keys": ["supplier_id", "supplier_name", "quality_status", "recent_incident_count", "severe_or_critical_count"]
+  },
+  "priority_actions": {
+    "type": "list",
+    "ordering": "rank ascending",
+    "item_required_keys": ["rank", "action_code", "owner"],
+    "action_code": {"type": "enum", "allowed": ["hold_quality_risk_orders", "place_replenishment_for_shortages", "clear_customer_holds"]},
+    "owner": {"type": "enum", "allowed": ["quality_control", "procurement", "customer_success"]}
+  },
+  "summary": {
+    "order_count": "integer",
+    "decision_counts": "object mapping decision enum to integer count",
+    "reason_counts": "object mapping reason code to integer count",
+    "shortage_line_count": "integer",
+    "risk_supplier_count": "integer"
+  }
+}

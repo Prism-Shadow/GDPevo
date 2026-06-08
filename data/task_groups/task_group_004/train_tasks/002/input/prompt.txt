@@ -1,0 +1,63 @@
+Title: Globex North Q2 QBR Metrics Packet
+
+You are preparing a structured QBR metrics packet for a customer success director. The packet will be used for a Q2 2026 deck, an internal readiness review, and a client-facing agenda for Globex North.
+
+Use the ApexCloud Retention Operations API at http://127.0.0.1:8074. If the service is not already running, it can be started from the task group environment with:
+
+PORT=8074 task_factory/task_group/task_group_004/env/setup.sh
+
+Account and period:
+- Account ID: acct_globex_north
+- Legal name: Globex North Holdings LLC
+- Quarter: 2026-Q2
+- Months: 2026-04, 2026-05, 2026-06
+- Date range: 2026-04-01 through 2026-06-30
+
+Useful endpoint families include:
+- /api/accounts/<account_id>
+- /api/accounts/<account_id>/metrics?start=YYYY-MM&end=YYYY-MM
+- /api/accounts/<account_id>/tickets?start=YYYY-MM-DD&end=YYYY-MM-DD
+- /api/accounts/<account_id>/nps?start=YYYY-MM-DD&end=YYYY-MM-DD
+
+Return only valid JSON following this shape:
+
+{
+  "qbr_metrics": [
+    {
+      "month": "YYYY-MM",
+      "revenue": 0.00,
+      "support_tickets": 0,
+      "sla_compliance_pct": 0.0,
+      "nps_score": 0
+    }
+  ],
+  "highlights": {
+    "average_revenue": 0.00,
+    "peak_revenue_month": "YYYY-MM",
+    "peak_revenue": 0.00,
+    "max_sla_month": "YYYY-MM",
+    "max_sla_pct": 0.0,
+    "peak_nps_month": "YYYY-MM",
+    "peak_nps_score": 0,
+    "ticket_trend": "trend_enum"
+  },
+  "metric_sources": {
+    "revenue": "source_enum",
+    "support_tickets": "source_enum",
+    "sla_compliance": "source_enum",
+    "nps": "source_enum"
+  },
+  "review_plan": {
+    "review_owner": "owner_enum",
+    "review_due_date": "2026-07-22",
+    "needs_technical_signoff": true
+  },
+  "agenda_topics": [
+    "agenda_topic_enum",
+    "agenda_topic_enum",
+    "agenda_topic_enum",
+    "agenda_topic_enum"
+  ]
+}
+
+Use currency values to 2 decimals, percentage values to 1 decimal, and counts as integers. For `ticket_trend`, choose one of `improving`, `worsening`, or `flat`. For metric sources, choose from the available source enum vocabulary: `crm_closed_won`, `support_export`, `sla_report`, `nps_survey`, `billing_snapshot`, `ar_aging`, `pipeline_crm`, `event_dashboard`, `hr_report`. For `review_owner`, choose one of `solutions_engineering`, `customer_success`, or `finance_ops`. For agenda topics, choose exactly four ordered enum strings from: partnership_overview, q2_metrics, performance_highlights, q3_initiatives, technical_recovery, commercial_expansion.

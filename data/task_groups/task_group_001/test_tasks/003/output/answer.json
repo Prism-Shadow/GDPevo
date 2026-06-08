@@ -1,0 +1,109 @@
+{
+  "batch_id": "q1_partner_import",
+  "campaign_code": "PARTNER-Q1-2027",
+  "clean_contacts": [
+    {
+      "clean_contact_id": "q1_002",
+      "source_row_id": "q1_002",
+      "company_name": "Riverbend Chem",
+      "contact_name": "Hana Park",
+      "email": "hana.park@riverbendchem.example",
+      "phone": "7135550138",
+      "source_name": "manual_upload",
+      "captured_at": "2027-01-22T09:45:00Z",
+      "crm_action": "update_existing",
+      "existing_account_id": "acct_riverbend_chem",
+      "existing_contact_id": "cont_hana_park"
+    },
+    {
+      "clean_contact_id": "q1_003",
+      "source_row_id": "q1_003",
+      "company_name": "LakeHealth Robotics",
+      "contact_name": "Pia Norberg",
+      "email": "pia.norberg@lakehealthrobotics.example",
+      "phone": "358405550190",
+      "source_name": "exhibitor_form",
+      "captured_at": "2027-01-25T16:00:00Z",
+      "crm_action": "update_existing",
+      "existing_account_id": "acct_lakehealth",
+      "existing_contact_id": null
+    },
+    {
+      "clean_contact_id": "q1_004",
+      "source_row_id": "q1_004",
+      "company_name": "DeltaForge Tools",
+      "contact_name": "Noah Kim",
+      "email": "",
+      "phone": "12165550180",
+      "source_name": "partner_upload",
+      "captured_at": "2027-01-26T10:20:00Z",
+      "crm_action": "create_account",
+      "existing_account_id": null,
+      "existing_contact_id": null
+    },
+    {
+      "clean_contact_id": "q1_008",
+      "source_row_id": "q1_008",
+      "company_name": "Cascadia Steel",
+      "contact_name": "Miles Chen",
+      "email": "miles.chen@cascadiasteel.example",
+      "phone": "15035550114",
+      "source_name": "badge_scan",
+      "captured_at": "2027-03-24T17:00:00Z",
+      "crm_action": "create_account",
+      "existing_account_id": null,
+      "existing_contact_id": null
+    }
+  ],
+  "duplicate_summary": {
+    "duplicate_removed_count": 2,
+    "duplicate_keys": [
+      {
+        "key": "email:hana.park@riverbendchem.example",
+        "winner_row_id": "q1_002",
+        "removed_row_ids": [
+          "q1_001"
+        ]
+      },
+      {
+        "key": "email:miles.chen@cascadiasteel.example",
+        "winner_row_id": "q1_008",
+        "removed_row_ids": [
+          "q1_007"
+        ]
+      }
+    ]
+  },
+  "removal_summary": {
+    "unusable_removed_count": 1,
+    "suppressed_removed_count": 1,
+    "removed_rows": [
+      {
+        "row_id": "q1_001",
+        "reason": "duplicate"
+      },
+      {
+        "row_id": "q1_005",
+        "reason": "missing_contact"
+      },
+      {
+        "row_id": "q1_006",
+        "reason": "suppressed"
+      },
+      {
+        "row_id": "q1_007",
+        "reason": "duplicate"
+      }
+    ]
+  },
+  "import_action_totals": {
+    "create_account": 2,
+    "update_existing": 2,
+    "no_import": 3,
+    "suppress": 1
+  },
+  "campaign_member_import": {
+    "count": 4,
+    "source_label": "partner_and_manual_upload"
+  }
+}

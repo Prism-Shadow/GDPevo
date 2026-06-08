@@ -1,0 +1,245 @@
+{
+  "description": "Required JSON output shape for the Harbor competing CRE decision.",
+  "required_top_level_keys": [
+    "branch_id",
+    "applications_compared",
+    "recommended_path",
+    "stress",
+    "concentration",
+    "conditions"
+  ],
+  "fields": {
+    "branch_id": {
+      "type": "string",
+      "required": true,
+      "description": "Target branch identifier."
+    },
+    "applications_compared": {
+      "type": "list",
+      "required": true,
+      "ordering": "ascending by application_id",
+      "item_required_keys": [
+        "application_id",
+        "weighted_cdfi_score",
+        "score_class",
+        "decision",
+        "reason_codes"
+      ],
+      "item_fields": {
+        "application_id": {
+          "type": "string"
+        },
+        "weighted_cdfi_score": {
+          "type": "number",
+          "precision": 1,
+          "description": "Lower is better."
+        },
+        "score_class": {
+          "type": "enum",
+          "allowed_values": [
+            "approve_quality",
+            "conditional",
+            "weak"
+          ]
+        },
+        "decision": {
+          "type": "enum",
+          "allowed_values": [
+            "approve",
+            "conditional_approve",
+            "decline",
+            "defer",
+            "participation_required"
+          ]
+        },
+        "reason_codes": {
+          "type": "list",
+          "items": "enum",
+          "allowed_values": [
+            "capacity_limit",
+            "sector_breach",
+            "weak_dscr",
+            "high_ltv",
+            "low_fico",
+            "recent_bankruptcy",
+            "startup_risk",
+            "underwater_collateral",
+            "policy_floor_missing",
+            "documentation_gap",
+            "fdic_adverse_variance",
+            "ncua_peer_weakness"
+          ],
+          "ordering": "ascending alphabetically"
+        }
+      }
+    },
+    "recommended_path": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "selected_application_id",
+        "path",
+        "unselected_application_id",
+        "unselected_disposition",
+        "unselected_reason_codes"
+      ],
+      "fields": {
+        "selected_application_id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "enum",
+          "allowed_values": [
+            "approve",
+            "conditional_approve",
+            "decline",
+            "defer",
+            "participation_required"
+          ]
+        },
+        "unselected_application_id": {
+          "type": "string"
+        },
+        "unselected_disposition": {
+          "type": "enum",
+          "allowed_values": [
+            "decline",
+            "defer"
+          ]
+        },
+        "unselected_reason_codes": {
+          "type": "list",
+          "items": "enum",
+          "allowed_values": [
+            "sector_breach",
+            "weak_dscr",
+            "high_ltv",
+            "fdic_adverse_variance"
+          ],
+          "ordering": "ascending alphabetically"
+        }
+      }
+    },
+    "stress": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "formula",
+        "coverage_breach_threshold",
+        "results"
+      ],
+      "fields": {
+        "formula": {
+          "type": "string",
+          "description": "Name or compact expression of the CRE dual-stress formula."
+        },
+        "coverage_breach_threshold": {
+          "type": "number",
+          "precision": 2
+        },
+        "results": {
+          "type": "list",
+          "ordering": "ascending by application_id",
+          "item_required_keys": [
+            "application_id",
+            "base_dscr",
+            "stressed_dscr",
+            "breaches_threshold"
+          ],
+          "item_fields": {
+            "application_id": {
+              "type": "string"
+            },
+            "base_dscr": {
+              "type": "number",
+              "precision": 2
+            },
+            "stressed_dscr": {
+              "type": "number",
+              "precision": 2
+            },
+            "breaches_threshold": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "concentration": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "cre_policy_limit_pct",
+        "existing_cre_exposure",
+        "existing_cre_concentration",
+        "selected_post_approval_cre_concentration",
+        "selected_policy_variance_bps",
+        "fdic_benchmark_metric",
+        "branch_delinquency_ratio",
+        "fdic_benchmark_ratio",
+        "fdic_variance_ratio",
+        "fdic_variance_bps"
+      ],
+      "fields": {
+        "cre_policy_limit_pct": {
+          "type": "number",
+          "precision": 4
+        },
+        "existing_cre_exposure": {
+          "type": "number",
+          "precision": 2,
+          "units": "USD"
+        },
+        "existing_cre_concentration": {
+          "type": "number",
+          "precision": 4
+        },
+        "selected_post_approval_cre_concentration": {
+          "type": "number",
+          "precision": 4
+        },
+        "selected_policy_variance_bps": {
+          "type": "number",
+          "precision": 2
+        },
+        "fdic_benchmark_metric": {
+          "type": "enum",
+          "allowed_values": [
+            "total_real_estate_30_89_pct"
+          ]
+        },
+        "branch_delinquency_ratio": {
+          "type": "number",
+          "precision": 4
+        },
+        "fdic_benchmark_ratio": {
+          "type": "number",
+          "precision": 4
+        },
+        "fdic_variance_ratio": {
+          "type": "number",
+          "precision": 4
+        },
+        "fdic_variance_bps": {
+          "type": "number",
+          "precision": 2
+        }
+      }
+    },
+    "conditions": {
+      "type": "list",
+      "required": true,
+      "items": "enum",
+      "allowed_values": [
+        "bank_retained_exposure_cap",
+        "committee_cre_exception",
+        "updated_appraisal_before_close",
+        "tenant_roll_and_lease_review",
+        "minimum_dscr_covenant_1_25",
+        "quarterly_financial_reporting",
+        "no_additional_cre_without_committee_review"
+      ],
+      "ordering": "ascending alphabetically"
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "period",
+    "entity",
+    "selected_invoice_ids",
+    "account_rollup",
+    "invoice_results",
+    "default_missing_term_invoice_ids",
+    "exception_invoice_ids"
+  ],
+  "fields": {
+    "period": {
+      "type": "string",
+      "format": "YYYY-MM"
+    },
+    "entity": {
+      "type": "string"
+    },
+    "selected_invoice_ids": {
+      "type": "list[string]",
+      "ordering": "same order as prepaid_close_scope.json"
+    },
+    "account_rollup": {
+      "type": "object",
+      "keys": ["1250", "1251"],
+      "value_fields": {
+        "account_name": {
+          "type": "string"
+        },
+        "selected_invoice_count": {
+          "type": "integer"
+        },
+        "original_amount_total": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "march_amortization_total": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "cumulative_amortization_through_march": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "schedule_ending_balance": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "gl_ending_balance": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "variance_amount": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD",
+          "definition": "schedule_ending_balance minus gl_ending_balance"
+        },
+        "variance_flag": {
+          "type": "boolean"
+        },
+        "has_default_missing_term_flag": {
+          "type": "boolean"
+        },
+        "account_status": {
+          "type": "enum",
+          "allowed_values": ["reconciled", "variance_review", "requires_reconciliation"]
+        }
+      }
+    },
+    "invoice_results": {
+      "type": "list[object]",
+      "ordering": "same order as prepaid_close_scope.json",
+      "required_object_keys": [
+        "prepaid_invoice_id",
+        "account",
+        "march_amortization",
+        "cumulative_amortization_through_march",
+        "ending_balance",
+        "default_missing_term_flag",
+        "exception_flag"
+      ],
+      "numeric_precision": 2
+    },
+    "default_missing_term_invoice_ids": {
+      "type": "list[string]",
+      "ordering": "ascending by invoice id"
+    },
+    "exception_invoice_ids": {
+      "type": "list[string]",
+      "ordering": "ascending by invoice id"
+    }
+  }
+}

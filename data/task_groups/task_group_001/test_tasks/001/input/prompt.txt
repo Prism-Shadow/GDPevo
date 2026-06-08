@@ -1,0 +1,27 @@
+You are auditing the post-event CRM and finance handoff for Predictive Ops Summit 2027.
+
+Use the HarborCRM API data for event_id `predictive_ops_2027`. The base API URL will be provided by the runner. Relevant public endpoints include:
+
+- `GET /api/events/predictive_ops_2027`
+- `GET /api/events/predictive_ops_2027/orders`
+- `GET /api/events/predictive_ops_2027/badges`
+- `GET /api/events/predictive_ops_2027/sponsor_packages`
+- `GET /api/finance/invoices?event_id=predictive_ops_2027`
+- `GET /api/crm/accounts`
+- `GET /api/crm/contacts`
+- `GET /api/crm/opportunities`
+- `GET /api/crm/campaign_members?event_id=predictive_ops_2027`
+- `GET /api/policies`
+
+Return one JSON object matching `input/payloads/answer_template.json`.
+
+The handoff should cover active sponsor status and revenue rollup, the qualified non-sponsor lead opportunity plan, records that should not enter the sales handoff, follow-up due dates and task counts, and CRM create/update counts implied by the final handoff. Use integer USD for currency values and two decimal places for the average deal size.
+
+Sorting:
+
+- Sort `sponsor_statuses` by `account_name` ascending.
+- Sort `qualified_lead_accounts` by `account_name` ascending.
+- Sort `excluded_records` by `company_name` ascending, then `contact_name` ascending.
+- Sort account-name lists ascending.
+
+Do not include explanatory prose outside the JSON.

@@ -1,0 +1,85 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "analysis_window",
+    "summary",
+    "supplier_scorecard",
+    "supplier_ranking",
+    "top_five_supplier_ranking",
+    "highest_cost_supplier_id",
+    "highest_share_supplier_id",
+    "management_action_sets"
+  ],
+  "analysis_window": {
+    "start_date": "string, YYYY-MM-DD",
+    "end_date": "string, YYYY-MM-DD",
+    "analysis_date": "string, YYYY-MM-DD"
+  },
+  "summary": {
+    "filtered_incident_count": "integer",
+    "supplier_count": "integer count of suppliers with at least one filtered incident",
+    "total_resolution_cost": "number, USD, rounded to 2 decimals",
+    "overall_rma_count": "integer",
+    "overall_work_order_count": "integer",
+    "overall_rma_avg_duration_days": "number, rounded to 2 decimals",
+    "overall_work_order_avg_duration_days": "number, rounded to 2 decimals",
+    "open_incident_count": "integer",
+    "severe_incident_count": "integer, severity in high or critical"
+  },
+  "supplier_scorecard": {
+    "type": "list",
+    "ordering": "supplier_id ascending",
+    "row_keys": {
+      "supplier_id": "string",
+      "supplier_name": "string",
+      "quality_status": {
+        "type": "enum",
+        "allowed_values": [
+          "approved",
+          "watch",
+          "quality_hold"
+        ]
+      },
+      "incident_count": "integer",
+      "incident_percentage": "number, percent of filtered incident population, rounded to 1 decimal",
+      "total_resolution_cost": "number, USD, rounded to 2 decimals",
+      "cost_percentage": "number, percent of filtered total resolution cost, rounded to 1 decimal",
+      "avg_duration_days": "number, rounded to 2 decimals",
+      "rma_count": "integer",
+      "work_order_count": "integer",
+      "avg_rma_duration_days": "number or null if the supplier has no filtered RMA incidents, rounded to 2 decimals",
+      "avg_work_order_duration_days": "number or null if the supplier has no filtered WORK_ORDER incidents, rounded to 2 decimals",
+      "open_incident_count": "integer",
+      "severe_incident_count": "integer, severity in high or critical",
+      "critical_rma_count": "integer",
+      "recommendation_code": {
+        "type": "enum",
+        "allowed_values": [
+          "PROCUREMENT_FREEZE",
+          "SUPPLIER_ESCALATION",
+          "WAREHOUSE_PROCESS_REVIEW",
+          "WATCHLIST",
+          "MONITOR"
+        ]
+      }
+    }
+  },
+  "supplier_ranking": {
+    "type": "list of supplier_id strings",
+    "contents": "all suppliers with filtered incidents",
+    "ordering": "incident_count descending, then total_resolution_cost descending, then supplier_id ascending"
+  },
+  "top_five_supplier_ranking": {
+    "type": "list of exactly five supplier_id strings",
+    "contents": "first five supplier ids from supplier_ranking"
+  },
+  "highest_cost_supplier_id": "string supplier_id",
+  "highest_share_supplier_id": "string supplier_id from the first position of supplier_ranking",
+  "management_action_sets": {
+    "procurement_freeze_supplier_ids": "list of supplier_id strings, supplier_id ascending",
+    "supplier_escalation_supplier_ids": "list of supplier_id strings, supplier_id ascending",
+    "warehouse_process_review_supplier_ids": "list of supplier_id strings, supplier_id ascending",
+    "watchlist_supplier_ids": "list of supplier_id strings, supplier_id ascending",
+    "monitor_supplier_ids": "list of supplier_id strings, supplier_id ascending"
+  }
+}

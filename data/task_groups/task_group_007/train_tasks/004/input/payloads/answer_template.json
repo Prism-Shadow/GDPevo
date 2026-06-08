@@ -1,0 +1,139 @@
+{
+  "description": "Required JSON output for the TRAIN_TRANSFER_B mixed-warehouse allocation task.",
+  "top_level_required_keys": [
+    "wave_id",
+    "line_actions",
+    "transfer_requests",
+    "blocked_orders",
+    "order_rollup",
+    "summary"
+  ],
+  "field_rules": {
+    "wave_id": {
+      "type": "string",
+      "required_value": "TRAIN_TRANSFER_B"
+    },
+    "line_actions": {
+      "type": "list",
+      "ordering": "sort by order_id ascending, then line_id ascending",
+      "item_required_keys": [
+        "order_id",
+        "line_id",
+        "sku",
+        "requested_warehouse",
+        "requested_effective_available",
+        "action",
+        "ship_quantity",
+        "transfer_from",
+        "transfer_quantity",
+        "backorder_quantity",
+        "primary_reason"
+      ],
+      "item_fields": {
+        "order_id": "string",
+        "line_id": "integer",
+        "sku": "string",
+        "requested_warehouse": {
+          "type": "enum",
+          "allowed": [
+            "WH_NORTH",
+            "WH_CENTRAL",
+            "WH_WEST"
+          ]
+        },
+        "requested_effective_available": {
+          "type": "integer",
+          "units": "units"
+        },
+        "action": {
+          "type": "enum",
+          "allowed": [
+            "ship",
+            "transfer",
+            "backorder",
+            "manual_review"
+          ]
+        },
+        "ship_quantity": {
+          "type": "integer",
+          "units": "units"
+        },
+        "transfer_from": {
+          "type": "enum_or_null",
+          "allowed": [
+            "WH_NORTH",
+            "WH_CENTRAL",
+            "WH_WEST",
+            null
+          ]
+        },
+        "transfer_quantity": {
+          "type": "integer",
+          "units": "units"
+        },
+        "backorder_quantity": {
+          "type": "integer",
+          "units": "units"
+        },
+        "primary_reason": {
+          "type": "enum",
+          "allowed": [
+            "none",
+            "account_blocked",
+            "account_review_required",
+            "fraud_watch",
+            "inactive_product",
+            "insufficient_effective_stock"
+          ]
+        }
+      }
+    },
+    "transfer_requests": {
+      "type": "list",
+      "ordering": "sort by order_id ascending, then line_id ascending",
+      "item_required_keys": [
+        "order_id",
+        "line_id",
+        "sku",
+        "from_warehouse",
+        "to_warehouse",
+        "quantity"
+      ]
+    },
+    "blocked_orders": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "sort ascending",
+      "meaning": "Orders stopped at account or customer-risk level, not line-only product reviews."
+    },
+    "order_rollup": {
+      "type": "list",
+      "ordering": "sort by order_id ascending",
+      "item_required_keys": [
+        "order_id",
+        "outcome"
+      ],
+      "outcome_allowed": [
+        "ready_to_ship",
+        "needs_transfer",
+        "has_backorder",
+        "manual_review",
+        "mixed_actions"
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "required_integer_keys": [
+        "total_orders",
+        "total_lines",
+        "ship_lines",
+        "transfer_lines",
+        "backorder_lines",
+        "manual_review_lines",
+        "blocked_orders",
+        "transfer_units",
+        "backorder_units"
+      ]
+    }
+  }
+}

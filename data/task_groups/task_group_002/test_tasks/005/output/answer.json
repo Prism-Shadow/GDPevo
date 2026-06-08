@@ -1,0 +1,105 @@
+{
+  "engagement_reconciliation": {
+    "as_of_date": "2026-06-01",
+    "opportunity_id": "OPP-TE-SUNRISE",
+    "customer_id": "CUST-SUNRISE",
+    "customer_name": "Sunrise Relief Network",
+    "stage": "WON",
+    "won_amount": 120000.00,
+    "phase_total_amount": 120000.00,
+    "opportunity_matches_phase_total": true,
+    "total_paid_amount": 75000.00,
+    "outstanding_balance": 45000.00,
+    "primary_contact": {
+      "contact_name": "Priya Raman",
+      "customer_id": "CUST-SUNRISE",
+      "opportunity_id": "OPP-TE-SUNRISE"
+    },
+    "milestones": [
+      {
+        "milestone_id": "MS1",
+        "source_phase_id": "SUN-P1",
+        "amount": 40000.00,
+        "invoice_state": "PAID",
+        "payment_state": "PAID",
+        "paid_amount": 40000.00,
+        "unpaid_amount": 0.00,
+        "due_date": null,
+        "recognition_status": "RECOGNIZED"
+      },
+      {
+        "milestone_id": "MS2",
+        "source_phase_id": "SUN-P2",
+        "amount": 35000.00,
+        "invoice_state": "PAID",
+        "payment_state": "PAID",
+        "paid_amount": 35000.00,
+        "unpaid_amount": 0.00,
+        "due_date": null,
+        "recognition_status": "MISSING_REVENUE_JOURNAL"
+      },
+      {
+        "milestone_id": "MS3",
+        "source_phase_id": "SUN-P3",
+        "amount": 45000.00,
+        "invoice_state": "OPEN",
+        "payment_state": "UNPAID",
+        "paid_amount": 0.00,
+        "unpaid_amount": 45000.00,
+        "due_date": "2026-07-01",
+        "recognition_status": "NOT_REQUIRED_UNPAID"
+      }
+    ]
+  },
+  "invoice_actions": {
+    "primary_accounting_action": "RECORD_REVENUE_MS2",
+    "collection_action": "MONITOR_UNPAID_NOT_DUE",
+    "reconciliation_controls": {
+      "paid_milestone_due_date_policy": "NULL_WHEN_SETTLED",
+      "recognition_trigger": "PAID_COMPLETE_MILESTONES",
+      "unpaid_future_policy": "MONITOR_NOT_COLLECT",
+      "action_priority": "ACCOUNTING_BEFORE_COLLECTION"
+    },
+    "accounting_action": {
+      "action": "RECORD_REVENUE_MS2",
+      "milestone_id": "MS2",
+      "amount": 35000.00,
+      "due_date": "2026-06-01",
+      "debit_account": "DEFERRED_REVENUE",
+      "credit_account": "IMPLEMENTATION_SERVICES_REVENUE",
+      "owner_queue": "ACCOUNTING"
+    },
+    "collection_task": {
+      "action": "MONITOR_UNPAID_NOT_DUE",
+      "milestone_id": "MS3",
+      "amount": 45000.00,
+      "due_date": "2026-07-01",
+      "owner_queue": "ACCOUNT_MANAGEMENT",
+      "contact_name": "Priya Raman",
+      "customer_id": "CUST-SUNRISE",
+      "opportunity_id": "OPP-TE-SUNRISE"
+    }
+  },
+  "event_actions": {
+    "event_id": "EVT-SUNRISE-TRAINING",
+    "event_date": "2026-06-20",
+    "event_status": "LIVE",
+    "voucher": {
+      "voucher_code": "SUNRISESTAFF100",
+      "voucher_status": "ACTIVE",
+      "discount_amount": 100.00,
+      "max_uses": 25
+    },
+    "invite_action": "SEND_TRAINING_INVITE",
+    "invite_task": {
+      "action": "SEND_TRAINING_INVITE",
+      "due_date": "2026-06-10",
+      "event_id": "EVT-SUNRISE-TRAINING",
+      "voucher_code": "SUNRISESTAFF100",
+      "owner_queue": "ACCOUNT_MANAGEMENT",
+      "contact_name": "Priya Raman",
+      "customer_id": "CUST-SUNRISE",
+      "opportunity_id": "OPP-TE-SUNRISE"
+    }
+  }
+}

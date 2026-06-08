@@ -1,0 +1,96 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "close_date",
+    "invoice_decisions",
+    "vendor_balances",
+    "program_summary",
+    "payment_hold_queue",
+    "payment_release_queue",
+    "total_close_balance"
+  ],
+  "task_id": "string, expected train_003",
+  "close_date": "string, YYYY-MM-DD",
+  "invoice_decisions": {
+    "type": "list",
+    "ordering": "invoice_id ascending",
+    "row_keys": {
+      "invoice_id": "string",
+      "program_id": "string",
+      "po_id": "string",
+      "supplier_id": "string",
+      "supplier_name": "string",
+      "invoice_status": "string from ProcureOps invoice status",
+      "hold_decision": {
+        "type": "enum",
+        "allowed_values": [
+          "HOLD",
+          "RELEASE"
+        ]
+      },
+      "hold_code": "string or null",
+      "release_to_payment": "boolean",
+      "quantity_billed": "number, rounded to 2 decimals",
+      "quantity_received": "number, rounded to 2 decimals; use 0.00 when no receipt exists",
+      "quantity_variance": "number, quantity_billed minus quantity_received, rounded to 2 decimals",
+      "quantity_variance_pct": "number, percentage of PO quantity, rounded to 1 decimal",
+      "invoice_total": "number, USD, rounded to 2 decimals",
+      "scheduled_payment_amount": "number, USD, rounded to 2 decimals",
+      "net_balance_impact": "number, invoice_total minus scheduled_payment_amount, rounded to 2 decimals",
+      "reason_codes": {
+        "type": "list of enum strings",
+        "allowed_values": [
+          "APPROVED_THREE_WAY_MATCH",
+          "NO_RECEIPT",
+          "QTY_VARIANCE",
+          "SCHEDULED_PAYMENT_FOUND"
+        ],
+        "ordering": "alphabetical"
+      }
+    }
+  },
+  "vendor_balances": {
+    "type": "list",
+    "ordering": "supplier_id ascending",
+    "row_keys": {
+      "supplier_id": "string",
+      "supplier_name": "string",
+      "opening_balance": "number, USD, rounded to 2 decimals",
+      "invoice_total": "number, USD, rounded to 2 decimals",
+      "scheduled_payments": "number, USD, rounded to 2 decimals",
+      "held_invoice_total": "number, USD, rounded to 2 decimals",
+      "releasable_invoice_total": "number, USD, rounded to 2 decimals",
+      "close_balance": "number, opening_balance plus invoice_total minus scheduled_payments, rounded to 2 decimals",
+      "balance_status": {
+        "type": "enum",
+        "allowed_values": [
+          "OPEN_HELD",
+          "OPEN_APPROVED",
+          "FULLY_SCHEDULED"
+        ]
+      }
+    }
+  },
+  "program_summary": {
+    "type": "list",
+    "ordering": "program_id ascending",
+    "row_keys": {
+      "program_id": "string",
+      "invoice_count": "integer",
+      "invoice_total": "number, USD, rounded to 2 decimals",
+      "held_total": "number, USD, rounded to 2 decimals",
+      "released_total": "number, USD, rounded to 2 decimals",
+      "net_close_balance": "number, USD, rounded to 2 decimals"
+    }
+  },
+  "payment_hold_queue": {
+    "type": "list of invoice_id strings",
+    "ordering": "invoice_id ascending"
+  },
+  "payment_release_queue": {
+    "type": "list of invoice_id strings",
+    "ordering": "invoice_id ascending"
+  },
+  "total_close_balance": "number, USD, rounded to 2 decimals"
+}

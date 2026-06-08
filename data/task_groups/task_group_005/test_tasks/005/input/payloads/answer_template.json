@@ -1,0 +1,76 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "close_readiness",
+    "exception_ids",
+    "exception_type_by_id",
+    "materiality_by_exception",
+    "owner_queue_by_exception",
+    "top_priority_exception_ids",
+    "close_impact_by_exception",
+    "impact_direction_by_exception",
+    "net_close_impact_total"
+  ],
+  "fields": {
+    "close_readiness": {
+      "type": "enum",
+      "allowed_values": ["ready", "not_ready"]
+    },
+    "exception_ids": {
+      "type": "list[string]",
+      "ordering": "ascending by exception ID"
+    },
+    "exception_type_by_id": {
+      "type": "object",
+      "keys": "exception_ids",
+      "values": {
+        "type": "enum",
+        "allowed_values": ["reimbursement_unreconciled", "prepaid_variance"]
+      }
+    },
+    "materiality_by_exception": {
+      "type": "object",
+      "keys": "exception_ids",
+      "values": {
+        "type": "enum",
+        "allowed_values": ["low", "medium", "high"]
+      }
+    },
+    "owner_queue_by_exception": {
+      "type": "object",
+      "keys": "exception_ids",
+      "values": {
+        "type": "enum",
+        "allowed_values": ["ap", "compliance", "accounting", "controller"]
+      }
+    },
+    "top_priority_exception_ids": {
+      "type": "list[string]",
+      "ordering": "absolute close impact descending, then exception ID ascending"
+    },
+    "close_impact_by_exception": {
+      "type": "object",
+      "keys": "exception_ids",
+      "values": {
+        "type": "number",
+        "precision": 2,
+        "unit": "USD"
+      },
+      "definition": "signed close impact for each included exception"
+    },
+    "impact_direction_by_exception": {
+      "type": "object",
+      "keys": "exception_ids",
+      "values": {
+        "type": "enum",
+        "allowed_values": ["increase_liability", "increase_asset", "decrease_asset", "disclosure_only"]
+      }
+    },
+    "net_close_impact_total": {
+      "type": "number",
+      "precision": 2,
+      "unit": "USD",
+      "definition": "signed sum of included exception close impacts"
+    }
+  }
+}

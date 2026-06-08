@@ -1,0 +1,80 @@
+{
+  "points": [
+    {
+      "id": "employee_identity",
+      "description": "Correctly identifies the employee under review as EMP-104.",
+      "weight": 1,
+      "fields": {
+        "employee_id": "EMP-104"
+      }
+    },
+    {
+      "id": "leave_policy",
+      "description": "Reports the effective leave policy for Mira Chen.",
+      "weight": 2,
+      "fields": {
+        "effective_leave_policy": "Engineering Flex Leave 2026"
+      }
+    },
+    {
+      "id": "leave_source_and_days",
+      "description": "Uses the authoritative leave source and annual day count.",
+      "weight": 2,
+      "fields": {
+        "leave_source": "leave_assignment_history",
+        "annual_days": 18,
+        "leave_precedence_source": "approved_assignment_current_period"
+      }
+    },
+    {
+      "id": "leave_assignment",
+      "description": "Selects the effective leave assignment identifier.",
+      "weight": 2,
+      "fields": {
+        "assignment_id": "LA-104-2026-B"
+      }
+    },
+    {
+      "id": "excluded_leave_records",
+      "description": "Excludes the obsolete and draft leave records.",
+      "weight": 2,
+      "fields": {
+        "excluded_leave_ids": [
+          "LA-104-2026-A",
+          "LA-104-2026-DRAFT"
+        ]
+      }
+    },
+    {
+      "id": "payroll_assignment",
+      "description": "Selects the submitted payroll assignment identifier.",
+      "weight": 2,
+      "fields": {
+        "payroll_assignment_id": "PAY-104-2026-SUB"
+      }
+    },
+    {
+      "id": "payroll_values",
+      "description": "Reports the submitted payroll status and base salary.",
+      "weight": 2,
+      "fields": {
+        "base_salary": 128000,
+        "payroll_status": "submitted",
+        "payroll_source_status": "submitted"
+      }
+    },
+    {
+      "id": "payroll_exclusion_and_closeout",
+      "description": "Excludes draft payroll data and chooses the correct closeout action.",
+      "weight": 2,
+      "fields": {
+        "excluded_payroll_ids": [
+          "PAY-104-2026-DRAFT"
+        ],
+        "closeout_action": "approve_onboarding_close",
+        "approval_closeout_gate": "approval_sufficient_when_records_clean",
+        "final_control_result": "approve_closeout"
+      }
+    }
+  ]
+}

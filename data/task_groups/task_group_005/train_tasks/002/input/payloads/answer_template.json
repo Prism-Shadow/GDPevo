@@ -1,0 +1,103 @@
+{
+  "description": "Vendor onboarding finance-risk answer schema. Return JSON only.",
+  "top_level_order": [
+    "per_business",
+    "reportable_ubo_counts",
+    "hard_stop_flags",
+    "follow_up_business_ids",
+    "overall_release_ready"
+  ],
+  "fields": {
+    "per_business": {
+      "type": "list",
+      "ordering": "Ascending by business_id.",
+      "items": {
+        "type": "object",
+        "required_keys": [
+          "business_id",
+          "decision"
+        ],
+        "business_id": {
+          "type": "enum",
+          "allowed_values": [
+            "BUS-2025-0009",
+            "BUS-2025-0017",
+            "BUS-2025-0022",
+            "BUS-2025-0033",
+            "BUS-2025-0036"
+          ]
+        },
+        "decision": {
+          "type": "enum",
+          "allowed_values": [
+            "approve",
+            "awaiting_information",
+            "escalate"
+          ]
+        }
+      }
+    },
+    "reportable_ubo_counts": {
+      "type": "object",
+      "keys": [
+        "BUS-2025-0009",
+        "BUS-2025-0017",
+        "BUS-2025-0022",
+        "BUS-2025-0033",
+        "BUS-2025-0036"
+      ],
+      "values": {
+        "type": "integer",
+        "minimum": 0,
+        "precision": "whole number",
+        "meaning": "Count of unique beneficial-owner names at or above the reporting threshold."
+      }
+    },
+    "hard_stop_flags": {
+      "type": "object",
+      "keys": [
+        "BUS-2025-0009",
+        "BUS-2025-0017",
+        "BUS-2025-0022",
+        "BUS-2025-0033",
+        "BUS-2025-0036"
+      ],
+      "values": {
+        "type": "list",
+        "ordering": "Alphabetical by enum value. Use an empty list when none apply.",
+        "items": {
+          "type": "enum",
+          "allowed_values": [
+            "bank_closed",
+            "bank_name_mismatch",
+            "confirmed_pep",
+            "expired_license",
+            "missing_required_documents",
+            "sanctions_confirmed",
+            "screening_not_run",
+            "shell_company_suspected",
+            "vendor_on_hold"
+          ]
+        }
+      }
+    },
+    "follow_up_business_ids": {
+      "type": "list",
+      "ordering": "Ascending by business_id.",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "BUS-2025-0009",
+          "BUS-2025-0017",
+          "BUS-2025-0022",
+          "BUS-2025-0033",
+          "BUS-2025-0036"
+        ]
+      }
+    },
+    "overall_release_ready": {
+      "type": "boolean",
+      "meaning": "True only if every listed business can be released for vendor access."
+    }
+  }
+}

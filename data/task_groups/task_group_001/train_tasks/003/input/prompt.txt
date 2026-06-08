@@ -1,0 +1,14 @@
+You are preparing the HarborCRM batch `fall_webinar_import` for CRM import.
+
+Use the shared HarborCRM API and the provided answer template. The API base URL will be supplied by the runner; when running locally, the default is `http://127.0.0.1:8067`.
+
+Relevant public entry points include:
+
+- `GET /api/import_batches`
+- `GET /api/import_batches/fall_webinar_import/raw_contacts`
+- `GET /api/import_batches/fall_webinar_import/suppression`
+- `GET /api/crm/accounts`
+- `GET /api/crm/contacts`
+- `GET /api/policies`
+
+Return a JSON object that conforms to `input/payloads/answer_template.json`. Include the cleaned import contacts, rows removed from the import, duplicate keys, import action totals, and campaign-member count for the batch campaign.

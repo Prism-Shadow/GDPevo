@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Northwind People Lifecycle Portal</title>
+    <link rel="stylesheet" href="/static/app.css">
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">NP</div>
+          <div>
+            <h1>People Lifecycle</h1>
+            <p>Northwind HRMS</p>
+          </div>
+        </div>
+        <nav class="nav" aria-label="Modules">
+          <button class="nav-button active" data-module="dashboard">Dashboard</button>
+          <button class="nav-button" data-module="employees">Employees</button>
+          <button class="nav-button" data-module="recruitment">Recruitment</button>
+          <button class="nav-button" data-module="leave">Leave</button>
+          <button class="nav-button" data-module="payroll">Payroll</button>
+          <button class="nav-button" data-module="cases">Policy Cases</button>
+          <button class="nav-button" data-module="documents">Documents</button>
+          <button class="nav-button" data-module="messages">Messages</button>
+          <button class="nav-button" data-module="audit">Audit Log</button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <h2 id="module-title">Dashboard</h2>
+            <p id="module-subtitle">Shared HR operations workspace</p>
+          </div>
+          <div class="top-actions">
+            <button id="refresh-button" class="button secondary">Refresh</button>
+            <button id="open-policy-button" class="button">Open Policy Viewer</button>
+          </div>
+        </header>
+
+        <section id="dashboard" class="module active">
+          <div id="metrics" class="metrics"></div>
+          <div class="split">
+            <section>
+              <div class="section-header">
+                <h3>Priority Cases</h3>
+                <button class="button small" data-jump="cases">Open Cases</button>
+              </div>
+              <div id="priority-cases" class="list"></div>
+            </section>
+            <section>
+              <div class="section-header">
+                <h3>Policy Documents</h3>
+                <button class="button small" data-jump="policies">Browse Policies</button>
+              </div>
+              <div id="policy-list-short" class="list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="cases" class="module">
+          <div class="toolbar">
+            <input id="case-search" type="search" placeholder="Search cases, employees, owners">
+            <select id="case-status">
+              <option value="">Any status</option>
+              <option>Draft</option>
+              <option>Submitted</option>
+              <option>In Review</option>
+              <option>Approved</option>
+              <option>Rejected</option>
+              <option>Needs Info</option>
+              <option>Closed</option>
+            </select>
+            <select id="case-type">
+              <option value="">Any type</option>
+              <option>New hire onboarding</option>
+              <option>Recruiting pipeline</option>
+              <option>Remote work exception</option>
+              <option>Leave policy setup</option>
+              <option>Salary structure change</option>
+              <option>Final payroll clearance</option>
+              <option>Document correction</option>
+            </select>
+            <button id="case-filter" class="button">Apply</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Case</th>
+                  <th>Employee</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                  <th>Owner</th>
+                  <th>Due</th>
+                </tr>
+              </thead>
+              <tbody id="case-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="employees" class="module">
+          <div class="toolbar">
+            <input id="employee-search" type="search" placeholder="Search employees, departments, locations">
+            <select id="employee-status">
+              <option value="">Any status</option>
+              <option>Active</option>
+              <option>Onboarding</option>
+              <option>Leave</option>
+              <option>Terminated</option>
+            </select>
+            <button id="employee-filter" class="button">Apply</button>
+          </div>
+          <div id="employee-grid" class="grid-list"></div>
+        </section>
+
+        <section id="recruitment" class="module">
+          <div class="toolbar">
+            <input id="recruitment-search" type="search" placeholder="Search openings, candidates, offers">
+            <button id="recruitment-filter" class="button">Apply</button>
+          </div>
+          <div id="recruitment-list" class="list"></div>
+        </section>
+
+        <section id="leave" class="module">
+          <div class="toolbar">
+            <input id="leave-search" type="search" placeholder="Search leave assignments and employees">
+            <button id="leave-filter" class="button">Apply</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Assignment</th>
+                  <th>Employee</th>
+                  <th>Status</th>
+                  <th>Period</th>
+                  <th>Approved Days</th>
+                  <th>Worksheet Days</th>
+                  <th>Updated</th>
+                </tr>
+              </thead>
+              <tbody id="leave-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="policies" class="module">
+          <div class="toolbar">
+            <input id="policy-search" type="search" placeholder="Search policies">
+            <button id="policy-filter" class="button">Apply</button>
+          </div>
+          <div id="policy-grid" class="policy-grid"></div>
+        </section>
+
+        <section id="payroll" class="module">
+          <div class="toolbar">
+            <input id="ledger-search" type="search" placeholder="Search ledgers by employee or period">
+            <select id="ledger-status">
+              <option value="">Any status</option>
+              <option>Approved</option>
+              <option>Submitted</option>
+              <option>Draft</option>
+              <option>Superseded</option>
+            </select>
+            <button id="ledger-filter" class="button">Apply</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ledger</th>
+                  <th>Employee</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Period</th>
+                  <th>Approved Days</th>
+                  <th>Worksheet Days</th>
+                  <th>Updated</th>
+                </tr>
+              </thead>
+              <tbody id="ledger-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="documents" class="module">
+          <div class="toolbar">
+            <input id="document-search" type="search" placeholder="Search folders, files, tags">
+            <button id="document-filter" class="button">Apply</button>
+          </div>
+          <div id="document-list" class="list"></div>
+        </section>
+
+        <section id="messages" class="module">
+          <div class="toolbar">
+            <input id="message-search" type="search" placeholder="Search messages and notices">
+            <button id="message-filter" class="button">Apply</button>
+          </div>
+          <div id="message-list" class="list"></div>
+        </section>
+
+        <section id="audit" class="module">
+          <div class="toolbar">
+            <input id="audit-search" type="search" placeholder="Search audit events, actors, cases">
+            <button id="audit-filter" class="button">Apply</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Audit ID</th>
+                  <th>Timestamp</th>
+                  <th>Case</th>
+                  <th>Actor</th>
+                  <th>Event</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody id="audit-table"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <aside id="case-drawer" class="drawer" aria-hidden="true">
+      <div class="drawer-header">
+        <div>
+          <p id="drawer-kicker"></p>
+          <h3 id="drawer-title">Case detail</h3>
+        </div>
+        <button id="drawer-close" class="icon-button" title="Close">X</button>
+      </div>
+      <div class="business-actions">
+        <button class="button small" data-action="assign">Assign Reviewer</button>
+        <button class="button small" data-action="request">Request Info</button>
+        <button class="button small" data-action="approve">Record Approval</button>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="approvals">Approval History</button>
+        <button class="tab" data-tab="comments">Comments</button>
+        <button class="tab" data-tab="attachments">Attachments</button>
+        <button class="tab" data-tab="audit-detail">Audit Detail</button>
+      </div>
+      <div id="drawer-content" class="drawer-content"></div>
+    </aside>
+
+    <div id="modal-backdrop" class="modal-backdrop" hidden></div>
+    <section id="modal" class="modal" role="dialog" aria-modal="true" hidden>
+      <div class="modal-header">
+        <h3 id="modal-title">Detail</h3>
+        <button id="modal-close" class="icon-button" title="Close">X</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </section>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

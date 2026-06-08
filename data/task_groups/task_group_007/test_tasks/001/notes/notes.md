@@ -1,0 +1,22 @@
+# test_001 Hidden Notes
+
+## English
+
+Data/source lineage: This task belongs to `SCN_007_erp_inventory_order_fulfillment` and uses source examples `E001`, `E002`, and `E003` as the distributional basis. The specific brief is `test_001`: priority order wave `TEST_PRIORITY_D` with a stale local inventory extract that conflicts with the live ERP API. Shared environment data comes from `task_group/task_group_007/env/` through public API endpoints only. Task-local visible payloads are `priority_wave_memo.md`, `priority_wave_TEST_PRIORITY_D_inventory_extract.csv`, and `answer_template.json`.
+
+Task definition: The solver must evaluate every order returned by `/orders?wave=TEST_PRIORITY_D`, reconcile customer, product, inventory, and shipping records, and produce final fulfillment decisions, inventory statuses, controlled exception reasons, blocking SKUs, shipping quote values, next actions, and summary counts. The stale extract is deliberately optimistic for several SKUs and must not be used as the final source for live stock decisions.
+
+Scenario fit: The task exercises the fulfillment-control family in the task group. It combines ERP order state, customer account state, live warehouse inventory, product safety stock, and shipping economics. This mirrors the source examples' cross-system reconciliation and final operational decision work while adding a realistic source conflict between a local extract and a live API.
+
+Material map: `/orders?wave=TEST_PRIORITY_D` provides the order set, lines, warehouse, destination ZIP, priority, required date, and shipping speed. `/customers/<customer_id>` supplies account status, margin band, and risk flags. `/products/<sku>` supplies product weight and safety stock. `/inventory?warehouse_id=&sku=` supplies live on-hand, reserved, and quarantined quantities. `/shipping/quote` supplies the scored shipping cost and service days. The CSV extract supplies stale planning quantities and is useful mainly as a conflict source.
+
+Solution and evaluation basis: Live effective availability is computed as `on_hand - reserved - quarantined - safety_stock`. An order is `SHORTAGE` if any line's live effective availability is below required quantity, `LOW_STOCK_COVERED` if all lines are covered but at least one line has fewer than 10 units left after allocation, and `AVAILABLE` otherwise. Account status and risk exceptions override ordinary release. Blocked accounts become `REJECT_ACCOUNT_HOLD`; review-required, fraud-watch, credit-watch, and high-shipping-cost low-margin cases become `MANUAL_REVIEW`; uncovered inventory without a stronger override becomes `BACKORDER_INVENTORY`; low-stock covered orders become `DELAY_STOCK_WATCH`; otherwise the decision is `RELEASE_TO_SHIP`. High shipping cost is flagged for active low-margin customers when `shipping_cost / order_revenue > 0.12`.
+
+The standard answer contains 13 order records. Scoring is exact-match with 8 weighted points: SP1 all final decisions weight 3; SP2 all inventory statuses weight 2; SP3 all per-order exception reason sets weight 3; SP4 all blocking SKU sets weight 2; SP5 shipping cost and service days for every order weight 1; SP6 order, decision, and inventory summary counts weight 1; SP7 manual-review, backorder, and rejected order sets weight 2; SP8 exception reason counts weight 2. Total raw weight is 16. Numeric shipping costs are rounded to cents.
+
+Transfer design: This test is anchored by `train_001` and `train_004`. `train_001` anchors customer override handling, shipping quote use, and final decision enums. `train_004` anchors live effective stock reconstruction and allocation-status classification. The transfer-dependent high-value points are SP1, SP2, SP3, and SP4. Task-specific exploration difficulty comes from the 13-order wave, multi-line orders, stale local extract conflicts, and live API reconciliation.
+
+Likely model pitfalls: trusting the stale CSV instead of live inventory, omitting safety stock from effective availability, treating open stock as available despite quarantines or reservations, missing risk-flag overrides, failing to compute shipping quotes from total order weight, and returning free-text reason labels instead of controlled enums.
+
+Construction record: Author `task-builder subagent test_001`; created 2026-06-01; updated 2026-06-01. Major changes: created the full test task folder, added stale local extract, produced hidden answer, and implemented exact-match scoring.
+

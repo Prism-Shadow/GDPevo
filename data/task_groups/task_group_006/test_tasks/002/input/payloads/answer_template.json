@@ -1,0 +1,52 @@
+{
+  "task_id": "string, expected test_002",
+  "package_id": "string",
+  "as_of_date": "string, YYYY-MM-DD",
+  "target_invoice_ids": "list of invoice_id strings, ascending",
+  "invoice_release_lines": [
+    {
+      "invoice_id": "string",
+      "supplier_id": "string",
+      "supplier_name": "string",
+      "program_id": "string",
+      "po_id": "string",
+      "po_status": "string",
+      "invoice_status": "string",
+      "hold_code": "string or null",
+      "receipt_ids_as_of": "list of receipt_id strings dated on or before as_of_date",
+      "excluded_receipt_ids": "list of excluded receipt_id strings",
+      "receipt_cutoff_status": "matched_before_cutoff, no_receipt_as_of_cutoff, or receipt_after_cutoff_excluded",
+      "payment_id": "string",
+      "payment_status": "string",
+      "payment_scheduled_date": "string, YYYY-MM-DD",
+      "payment_amount": "number, USD cents",
+      "release_decision": "RELEASE or HOLD",
+      "bank_action": "release_scheduled_payment, keep_blocked, suppress_future_payment, or recall_or_stop_payment",
+      "exception_codes": "alphabetical list using INSPECTION_HOLD, NO_RECEIPT_AS_OF_CUTOFF, PAYMENT_BLOCKED, RECEIPT_AFTER_CUTOFF",
+      "quantity_billed": "number",
+      "quantity_received_as_of": "number",
+      "quantity_variance_as_of": "number",
+      "invoice_total": "number, USD cents",
+      "release_amount": "number, USD cents",
+      "hold_amount": "number, USD cents"
+    }
+  ],
+  "supplier_release_summary": "list grouped by supplier_id ascending",
+  "program_summary": "list grouped by program_id ascending",
+  "release_queue": "list of invoice_id strings ascending",
+  "hold_queue": "list of invoice_id strings ascending",
+  "bank_action_summary": {
+    "release_payment_ids": "list of payment_id strings ascending",
+    "blocked_payment_ids": "list of payment_id strings ascending",
+    "suppress_payment_ids": "list of payment_id strings ascending",
+    "recall_or_stop_payment_ids": "list of payment_id strings ascending",
+    "total_release_amount": "number, USD cents",
+    "total_hold_amount": "number, USD cents",
+    "total_exception_payment_amount": "number, USD cents"
+  },
+  "source_precedence": {
+    "authoritative_sources": "list of strings ascending",
+    "supporting_only_sources": "list of strings ascending",
+    "cutoff_rule": "string"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "description": "Return one compensation forecast JSON object. Currency values must be rounded to 2 decimals. Growth rates must be rounded to 4 decimals.",
+  "required_top_level_keys": [
+    "ensemble_id",
+    "scenario_id",
+    "annual_totals",
+    "growth_rates",
+    "year_plus_2_quarter_totals",
+    "year_plus_2_pay_type_totals",
+    "largest_growth_pay_type",
+    "combined_overscale_employee_count",
+    "partial_quarter_employee_count"
+  ],
+  "field_types": {
+    "ensemble_id": "string",
+    "scenario_id": "string",
+    "annual_totals": {
+      "current": "currency",
+      "year_plus_1": "currency",
+      "year_plus_2": "currency"
+    },
+    "growth_rates": {
+      "year_plus_1_vs_current": "decimal percent",
+      "year_plus_2_vs_year_plus_1": "decimal percent"
+    },
+    "year_plus_2_quarter_totals": {
+      "Q1": "currency",
+      "Q2": "currency",
+      "Q3": "currency",
+      "Q4": "currency"
+    },
+    "year_plus_2_pay_type_totals": {
+      "Minimum Weekly Scale": "currency",
+      "Titled Position Premium": "currency",
+      "Seniority": "currency",
+      "Overscale": "currency"
+    },
+    "largest_growth_pay_type": "enum: Minimum Weekly Scale, Titled Position Premium, Seniority, Overscale",
+    "combined_overscale_employee_count": "integer",
+    "partial_quarter_employee_count": "integer"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "account_status": {
+    "as_of_date": "2026-06-01",
+    "customer_id": "CUST-POLARIS",
+    "customer_name": "Polaris Cold Chain",
+    "opportunity_id": "OPP-TE-POLARIS",
+    "opportunity_stage": "WON",
+    "won_amount": 120000.00,
+    "opportunity_matches_milestones": true,
+    "outstanding_balance": 58000.00,
+    "contact": {
+      "name": "Amara Singh",
+      "linked_customer_id": "CUST-POLARIS",
+      "linked_opportunity_id": "OPP-TE-POLARIS"
+    }
+  },
+  "milestones": [
+    {
+      "milestone_id": "MS1",
+      "source_phase_id": "POL-P1",
+      "phase_number": 1,
+      "invoice_id": "INV-POLARIS-P1",
+      "invoice_total": 62000.00,
+      "payment_status": "PAID",
+      "amount_paid": 62000.00,
+      "amount_unpaid": 0.00,
+      "due_date": null,
+      "overdue": false,
+      "revenue_recognition_status": "RECOGNIZED"
+    },
+    {
+      "milestone_id": "MS2",
+      "source_phase_id": "POL-P2",
+      "phase_number": 2,
+      "invoice_id": "INV-POLARIS-P2",
+      "invoice_total": 58000.00,
+      "payment_status": "UNPAID",
+      "amount_paid": 0.00,
+      "amount_unpaid": 58000.00,
+      "due_date": "2026-05-20",
+      "overdue": true,
+      "revenue_recognition_status": "NOT_REQUIRED_UNPAID"
+    }
+  ],
+  "revenue_recognition": {
+    "recognition_status": "COMPLETE_FOR_PAID_MILESTONES",
+    "recognized_milestones": [
+      "MS1"
+    ],
+    "missing_required_milestones": [],
+    "recognized_amount": 62000.00
+  },
+  "event": {
+    "event_id": "EVT-POLARIS-GALA",
+    "event_date": "2026-06-18",
+    "event_status": "LIVE",
+    "voucher_code": "POLARIS100VIP",
+    "voucher_discount": 100.00,
+    "voucher_max_uses": 3
+  },
+  "follow_up_tasks": [
+    {
+      "task_type": "COLLECTION",
+      "task_title": "Escalate overdue milestone collection - Polaris Cold Chain",
+      "linked_customer_id": "CUST-POLARIS",
+      "linked_opportunity_id": "OPP-TE-POLARIS",
+      "contact_name": "Amara Singh",
+      "due_date": "2026-06-01",
+      "next_action": "ESCALATE_COLLECTION",
+      "milestone_id": "MS2",
+      "amount_due": 58000.00,
+      "event_id": null,
+      "voucher_code": null
+    },
+    {
+      "task_type": "EVENT_INVITATION",
+      "task_title": "Send gala invite - Polaris Cold Chain",
+      "linked_customer_id": "CUST-POLARIS",
+      "linked_opportunity_id": "OPP-TE-POLARIS",
+      "contact_name": "Amara Singh",
+      "due_date": "2026-06-10",
+      "next_action": "SEND_EVENT_INVITATION",
+      "milestone_id": null,
+      "amount_due": null,
+      "event_id": "EVT-POLARIS-GALA",
+      "voucher_code": "POLARIS100VIP"
+    }
+  ]
+}

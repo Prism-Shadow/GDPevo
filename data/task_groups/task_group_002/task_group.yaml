@@ -1,0 +1,349 @@
+task_group:
+  task_group_id: task_group_002
+  scenario_id: SCN_002_crm_b2b_quote_account_response
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: CRM
+  description: |
+    A train-predict benchmark for B2B CRM account-manager work in medical wholesale
+    and implementation-services contexts. Agents use a shared MedBridge Sales Ops
+    environment to reconcile customer RFQs, internal product catalogs, freight quotes,
+    CRM opportunities, phased invoices, payments, revenue-recognition records, events,
+    vouchers, and account follow-up requirements.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/server.py
+    - env/generate_data.py
+    - env/data/business_data.json
+    - env/data/manifest.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct confirmed quantity and internal tier unit price.
+          weight: 2
+        - goal: Correct catalog lead time and EXW total.
+          weight: 2
+        - goal: Correct air freight charge and grand total.
+          weight: 2
+        - goal: Correct sea freight charge and grand total.
+          weight: 2
+        - goal: Correct road freight risk flag and risk level.
+          weight: 2
+        - goal: Correct recommended transport mode.
+          weight: 2
+        - goal: Correct freight validity and reconfirmation warning.
+          weight: 1
+        - goal: Correct account payment terms.
+          weight: 1
+
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct module-level line set with no component lines.
+          weight: 3
+        - goal: Correct quantities for all requested modules.
+          weight: 2
+        - goal: Correct internal catalog unit prices.
+          weight: 3
+        - goal: Correct line totals and grand total.
+          weight: 3
+        - goal: Correct shelf-life and lead-time values.
+          weight: 2
+        - goal: Correct EXW basis and freight exclusion.
+          weight: 2
+        - goal: Correct new-client payment and offer-validity controls.
+          weight: 2
+        - goal: Correct WHO documentation requirement flag.
+          weight: 1
+
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct CRM opportunity total and stage.
+          weight: 2
+        - goal: Correct milestone invoice totals.
+          weight: 2
+        - goal: Correct paid/unpaid states and outstanding balance.
+          weight: 3
+        - goal: Correct revenue-recognition entry status.
+          weight: 2
+        - goal: Correct event and voucher facts.
+          weight: 2
+        - goal: Correct phase collection task fields.
+          weight: 2
+        - goal: Correct invitation task fields.
+          weight: 1
+        - goal: Correct contact linkage.
+          weight: 1
+
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct catalog tier and EXW total.
+          weight: 3
+        - goal: Correct source validity and stale road quote flag.
+          weight: 2
+        - goal: Correct customs or border risk enum.
+          weight: 2
+        - goal: Correct air, sea, and road grand totals.
+          weight: 3
+        - goal: Correct recommended transport mode.
+          weight: 2
+        - goal: Correct freight warning.
+          weight: 1
+        - goal: Correct account policy terms.
+          weight: 1
+
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct opportunity total equals phase totals.
+          weight: 2
+        - goal: Correct invoice and payment states.
+          weight: 3
+        - goal: Correct outstanding balance.
+          weight: 3
+        - goal: Correct revenue-recognition missing or present status.
+          weight: 2
+        - goal: Correct event and voucher state.
+          weight: 2
+        - goal: Correct CRM action routing.
+          weight: 2
+        - goal: Correct deferred-revenue account action.
+          weight: 1
+        - goal: Correct contact linkage.
+          weight: 1
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct catalog tier price, lead time, shelf life, and EXW total.
+          weight: 3
+        - goal: Correct freight costs and grand totals for all transport options.
+          weight: 3
+        - goal: Correct route risk flags.
+          weight: 3
+        - goal: Correct recommended transport mode.
+          weight: 2
+        - goal: Correct delivery-window feasibility decisions.
+          weight: 2
+        - goal: Correct freight validity warning.
+          weight: 1
+        - goal: Correct account terms.
+          weight: 1
+        - goal: Correct source precedence and source-date control.
+          weight: 2
+        - goal: Correct decision-control conventions for feasibility, risk, and recommendation basis.
+          weight: 5
+
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct module-only line set.
+          weight: 2
+        - goal: Correct module quantities.
+          weight: 1
+        - goal: Correct catalog prices and line totals.
+          weight: 2
+        - goal: Correct grand total.
+          weight: 1
+        - goal: Correct shelf-life and lead-time values.
+          weight: 1
+        - goal: Correct commercial scope controls for basis, freight, payment, and validity.
+          weight: 3
+        - goal: Correct granularity, component, and duplicate-normalization controls.
+          weight: 4
+        - goal: Correct policy-source, quote-scope, and total-basis controls.
+          weight: 4
+
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct opportunity and account identity.
+          weight: 1
+        - goal: Correct reporting milestone labels, source phase IDs, and phase totals.
+          weight: 3
+        - goal: Correct payment state and outstanding balance.
+          weight: 2
+        - goal: Correct paid-milestone due-date nulling and collection convention.
+          weight: 10
+        - goal: Correct revenue-recognition state.
+          weight: 3
+        - goal: Correct event and voucher action.
+          weight: 2
+        - goal: Correct CRM follow-up actions and due dates.
+          weight: 2
+        - goal: Correct contact linkage.
+          weight: 1
+
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct hybrid module line set.
+          weight: 3
+        - goal: Correct quantities and unit prices.
+          weight: 3
+        - goal: Correct EXW subtotal.
+          weight: 2
+        - goal: Correct freight option grand totals.
+          weight: 3
+        - goal: Correct advisory transport recommendation.
+          weight: 2
+        - goal: Correct quote controls, payment, and validity.
+          weight: 2
+        - goal: Correct component-overexpansion avoidance.
+          weight: 2
+        - goal: Correct route risk flag.
+          weight: 1
+        - goal: Correct advisory freight and base-total policy controls.
+          weight: 5
+        - goal: Correct component-line policy control.
+          weight: 5
+        - goal: Correct payment-source policy control.
+          weight: 5
+
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct phase sum and opportunity total.
+          weight: 2
+        - goal: Correct paid and unpaid invoice state.
+          weight: 3
+        - goal: Correct missing revenue-recognition action.
+          weight: 3
+        - goal: Correct outstanding balance.
+          weight: 2
+        - goal: Correct training event and voucher facts.
+          weight: 2
+        - goal: Correct CRM follow-up task routing.
+          weight: 2
+        - goal: Correct collection versus accounting action enum.
+          weight: 2
+        - goal: Correct paid-milestone due-date policy control.
+          weight: 3
+        - goal: Correct revenue-recognition trigger policy control.
+          weight: 3
+        - goal: Correct unpaid-future milestone policy control.
+          weight: 3
+        - goal: Correct action-priority policy control.
+          weight: 3
+        - goal: Correct contact linkage.
+          weight: 1

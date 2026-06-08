@@ -1,0 +1,38 @@
+{
+  "description": "Return one weekly payroll JSON object. Currency values must be rounded to 2 decimals. `per_musician` must be ordered by musician_id. `conflict_flags` must be sorted alphabetically.",
+  "required_top_level_keys": [
+    "production_id",
+    "service_counts",
+    "category_totals",
+    "weekly_total",
+    "conflict_flags",
+    "per_musician",
+    "top_paid_musician_id"
+  ],
+  "field_types": {
+    "production_id": "string",
+    "service_counts": "object mapping service type to integer count",
+    "category_totals": {
+      "performance": "currency",
+      "audit": "currency",
+      "rehearsal": "currency",
+      "sound_check": "currency",
+      "premium": "currency",
+      "doubles": "currency",
+      "vacation": "currency",
+      "guarantee_adjustment": "currency",
+      "substitute_adjustment": "currency when applicable"
+    },
+    "weekly_total": "currency",
+    "conflict_flags": "sorted list using enum values: REHEARSAL_EARLY_START, REHEARSAL_LATE_END, SERVICE_OVER_TIME_LIMIT, SOUND_CHECK_DURATION_MISMATCH",
+    "per_musician": [
+      {
+        "musician_id": "string",
+        "name": "string",
+        "total": "currency",
+        "categories": "object mapping nonzero category names to currency amounts"
+      }
+    ],
+    "top_paid_musician_id": "string"
+  }
+}

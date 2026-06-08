@@ -1,0 +1,70 @@
+{
+  "segment_id": "CIVIC_NC_FIRE_EMS",
+  "posture": "continue_with_tighter_conditions",
+  "state_metrics": {
+    "state_code": "NC",
+    "benchmark_version": "ncua_q1_2025",
+    "delinquency_bps": 79,
+    "loan_to_share_pct": 76,
+    "roaa_bps": 44,
+    "positive_net_income_pct": 76
+  },
+  "peer_comparison": {
+    "peer_states": [
+      "SC",
+      "TN",
+      "VA"
+    ],
+    "nc_vs_us": {
+      "delinquency_bps": "higher",
+      "loan_to_share_pct": "higher",
+      "roaa_bps": "lower",
+      "positive_net_income_pct": "lower"
+    },
+    "nc_vs_peer_median": {
+      "delinquency_bps": "higher",
+      "loan_to_share_pct": "higher",
+      "roaa_bps": "lower",
+      "positive_net_income_pct": "lower"
+    }
+  },
+  "controls": {
+    "required_checklist_gates": [
+      "board_authorization",
+      "equipment_invoice",
+      "public_contract_or_tax_support",
+      "proof_of_insurance",
+      "ucc_or_title_lien"
+    ],
+    "added_operating_controls": [
+      "lien_perfection_prior_to_funding",
+      "monthly_segment_delinquency_watch",
+      "pre_close_insurance_binder_verification",
+      "quarterly_state_benchmark_monitoring",
+      "senior_underwriter_second_review"
+    ]
+  },
+  "escalation_triggers": [
+    {
+      "trigger_id": "ET001",
+      "condition": "segment_recent_delinquency_ge_90_bps",
+      "owner": "credit_risk_manager"
+    },
+    {
+      "trigger_id": "ET002",
+      "condition": "missing_insurance_or_lien_exception",
+      "owner": "operations_control_manager"
+    },
+    {
+      "trigger_id": "ET003",
+      "condition": "quarterly_capacity_exceeded_or_exception_requested",
+      "owner": "lending_committee_chair"
+    }
+  ],
+  "interpretation": {
+    "capacity_status": "capacity_available",
+    "external_risk_status": "weaker_than_national_and_peers",
+    "risk_tolerance": "moderate",
+    "committee_message": "capacity_available_but_external_risk_weaker"
+  }
+}

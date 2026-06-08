@@ -1,0 +1,74 @@
+{
+  "batch_id": "ACR-TRAIN-005",
+  "review_date": "2025-06-01",
+  "request_type": "payment_release_risk_review",
+  "target_business_ids": [
+    "BUS-2025-0018",
+    "BUS-2025-0006",
+    "BUS-2025-0056",
+    "BUS-2025-0009",
+    "BUS-2025-0041"
+  ],
+  "account_change_events": [
+    {
+      "ticket_id": "ACT-250601-018",
+      "business_id": "BUS-2025-0018",
+      "vendor_id": "VEN-0047",
+      "requested_bank_last4": "6607",
+      "change_type": "account_revalidation",
+      "requested_release_amount_usd": 18420.25,
+      "requestor": "ap.ops@company.example",
+      "priority": "standard"
+    },
+    {
+      "ticket_id": "ACT-250601-006",
+      "business_id": "BUS-2025-0006",
+      "vendor_id": "VEN-0043",
+      "requested_bank_last4": "3067",
+      "change_type": "new_account_after_remittance_failure",
+      "requested_release_amount_usd": 42750.00,
+      "requestor": "treasury@company.example",
+      "priority": "urgent"
+    },
+    {
+      "ticket_id": "ACT-250601-056",
+      "business_id": "BUS-2025-0056",
+      "vendor_id": "VEN-0073",
+      "requested_bank_last4": "0856",
+      "change_type": "reactivation_after_closed_bank_notice",
+      "requested_release_amount_usd": 9180.40,
+      "requestor": "ap.ops@company.example",
+      "priority": "standard"
+    },
+    {
+      "ticket_id": "ACT-250601-009",
+      "business_id": "BUS-2025-0009",
+      "vendor_id": "VEN-0064",
+      "requested_bank_last4": "1112",
+      "change_type": "account_revalidation",
+      "requested_release_amount_usd": 31100.00,
+      "requestor": "controller@company.example",
+      "priority": "urgent"
+    },
+    {
+      "ticket_id": "ACT-250601-041",
+      "business_id": "BUS-2025-0041",
+      "vendor_id": "VEN-0048",
+      "requested_bank_last4": "7249",
+      "change_type": "account_change",
+      "requested_release_amount_usd": 22765.90,
+      "requestor": "treasury@company.example",
+      "priority": "standard"
+    }
+  ],
+  "review_context": {
+    "memo_id": "FIN-AP-GATE-2025-06",
+    "summary": "Payment release after account-change events requires current vendor, compliance, bank, tax, license, screening, and risk evidence from the shared API.",
+    "decision_values": [
+      "release",
+      "hold",
+      "escalate"
+    ],
+    "list_order": "Return ID lists in ascending business_id order."
+  }
+}

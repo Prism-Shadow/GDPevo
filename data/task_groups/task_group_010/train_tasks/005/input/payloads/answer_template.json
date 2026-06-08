@@ -1,0 +1,183 @@
+{
+  "schema_name": "pf_ma_helio_committee_json",
+  "schema_version": "1.0",
+  "required_top_level_keys": [
+    "portfolio_id",
+    "as_of_date",
+    "review_quarter",
+    "correlation_summary",
+    "target_sleeve_actions",
+    "allocation_views",
+    "rebalance_trigger",
+    "portfolio_risk_concentration_flag",
+    "next_step"
+  ],
+  "field_definitions": {
+    "portfolio_id": {
+      "type": "string",
+      "required_value": "PF-MA-HELIO"
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "review_quarter": {
+      "type": "string",
+      "required_value": "Q2_2026"
+    },
+    "correlation_summary": {
+      "type": "list",
+      "length": 2,
+      "item_order": [
+        "highest_concentration",
+        "best_diversifier"
+      ],
+      "item_fields": {
+        "pair_role": {
+          "type": "enum",
+          "allowed_values": [
+            "highest_concentration",
+            "best_diversifier"
+          ]
+        },
+        "pair": {
+          "type": "list",
+          "length": 2,
+          "item_type": "string",
+          "ordering_rule": "Index ids within each pair must be sorted alphabetically."
+        },
+        "correlation": {
+          "type": "number",
+          "precision": 3,
+          "calculation": "Pearson correlation of monthly simple returns from consecutive index levels."
+        }
+      }
+    },
+    "target_sleeve_actions": {
+      "type": "list",
+      "item_order": [
+        "Emerging Markets",
+        "India",
+        "Latin America",
+        "USD"
+      ],
+      "item_fields": {
+        "opportunity_set": {
+          "type": "enum",
+          "allowed_values": [
+            "Emerging Markets",
+            "India",
+            "Latin America",
+            "USD"
+          ]
+        },
+        "action": {
+          "type": "enum",
+          "allowed_values": [
+            "trim",
+            "add",
+            "hold",
+            "hedge",
+            "monitor",
+            "rotate"
+          ]
+        }
+      }
+    },
+    "allocation_views": {
+      "type": "list",
+      "item_order": [
+        "Emerging Markets",
+        "India",
+        "Latin America",
+        "USD"
+      ],
+      "item_fields": {
+        "opportunity_set": {
+          "type": "enum",
+          "allowed_values": [
+            "Emerging Markets",
+            "India",
+            "Latin America",
+            "USD"
+          ]
+        },
+        "prior_view": {
+          "type": "enum",
+          "allowed_values": [
+            "UW",
+            "N",
+            "OW"
+          ]
+        },
+        "signal_score": {
+          "type": "number",
+          "precision": 3
+        },
+        "view": {
+          "type": "enum",
+          "allowed_values": [
+            "UW",
+            "N",
+            "OW"
+          ]
+        },
+        "change": {
+          "type": "enum",
+          "allowed_values": [
+            "UP",
+            "DOWN",
+            "UNCHANGED"
+          ]
+        },
+        "conviction": {
+          "type": "enum",
+          "allowed_values": [
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ]
+        },
+        "rationale_code": {
+          "type": "enum",
+          "allowed_values": [
+            "GROWTH_IMPROVES",
+            "RATE_CUT_SUPPORT",
+            "CREDIT_SPREAD_RISK",
+            "DOLLAR_DEFENSIVE",
+            "CHINA_DEPENDENCE",
+            "LATAM_DIVERSIFIER",
+            "INDIA_OFFSET",
+            "DURATION_SUPPORT",
+            "HY_VALUATION_RISK",
+            "EUROPE_RECOVERY",
+            "JAPAN_POLICY_RISK",
+            "NEUTRAL_BALANCE"
+          ]
+        }
+      }
+    },
+    "rebalance_trigger": {
+      "type": "enum",
+      "allowed_values": [
+        "correlation_cap_breach",
+        "hy_cap_pressure",
+        "duration_drift",
+        "watchlist_concentration",
+        "committee_review"
+      ]
+    },
+    "portfolio_risk_concentration_flag": {
+      "type": "boolean"
+    },
+    "next_step": {
+      "type": "enum",
+      "allowed_values": [
+        "approve_rotation",
+        "defer_pending_risk_review",
+        "approve_with_monitoring",
+        "reject_constraint_breach"
+      ]
+    }
+  }
+}

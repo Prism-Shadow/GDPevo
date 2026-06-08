@@ -1,0 +1,158 @@
+{
+  "description": "Required JSON output shape for the TRAIN_EXPEDITE_A expedite queue decision task.",
+  "required_top_level_keys": [
+    "wave_id",
+    "records",
+    "summary"
+  ],
+  "fields": {
+    "wave_id": {
+      "type": "string",
+      "required_value": "TRAIN_EXPEDITE_A"
+    },
+    "records": {
+      "type": "list",
+      "ordering": "sort ascending by order_id",
+      "item_required_keys": [
+        "order_id",
+        "inventory_status",
+        "customer_exception",
+        "final_decision",
+        "next_action",
+        "shortage_skus",
+        "inactive_skus",
+        "low_stock_skus",
+        "shipping_quote"
+      ],
+      "item_fields": {
+        "order_id": {
+          "type": "string",
+          "source": "queue memo order_id"
+        },
+        "inventory_status": {
+          "type": "enum",
+          "allowed_values": [
+            "ready",
+            "low_stock",
+            "shortage",
+            "inactive_sku",
+            "inactive_and_shortage"
+          ]
+        },
+        "customer_exception": {
+          "type": "enum",
+          "allowed_values": [
+            "none",
+            "review_required",
+            "account_blocked",
+            "fraud_watch",
+            "credit_watch"
+          ]
+        },
+        "final_decision": {
+          "type": "enum",
+          "allowed_values": [
+            "ship_now",
+            "delayed_release",
+            "manual_review",
+            "backorder",
+            "reject_hold"
+          ]
+        },
+        "next_action": {
+          "type": "enum",
+          "allowed_values": [
+            "release_to_pick",
+            "delay_and_monitor",
+            "send_account_review",
+            "create_backorder",
+            "hold_credit_or_fraud",
+            "escalate_product_master"
+          ]
+        },
+        "shortage_skus": {
+          "type": "list[string]",
+          "ordering": "sort ascending by SKU"
+        },
+        "inactive_skus": {
+          "type": "list[string]",
+          "ordering": "sort ascending by SKU"
+        },
+        "low_stock_skus": {
+          "type": "list[string]",
+          "ordering": "sort ascending by SKU"
+        },
+        "shipping_quote": {
+          "type": "object",
+          "required_keys": [
+            "zone_distance",
+            "service_days",
+            "total_cost_usd"
+          ],
+          "fields": {
+            "zone_distance": {
+              "type": "integer"
+            },
+            "service_days": {
+              "type": "integer"
+            },
+            "total_cost_usd": {
+              "type": "number",
+              "precision": "2 decimal places",
+              "unit": "USD"
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required_keys": [
+        "order_count",
+        "decision_counts",
+        "total_shipping_cost_usd",
+        "blocked_order_ids",
+        "manual_review_order_ids",
+        "backorder_order_ids",
+        "inactive_sku_order_ids"
+      ],
+      "fields": {
+        "order_count": {
+          "type": "integer"
+        },
+        "decision_counts": {
+          "type": "object",
+          "required_keys": [
+            "ship_now",
+            "delayed_release",
+            "manual_review",
+            "backorder",
+            "reject_hold"
+          ],
+          "value_type": "integer"
+        },
+        "total_shipping_cost_usd": {
+          "type": "number",
+          "precision": "2 decimal places",
+          "unit": "USD"
+        },
+        "blocked_order_ids": {
+          "type": "list[string]",
+          "ordering": "sort ascending"
+        },
+        "manual_review_order_ids": {
+          "type": "list[string]",
+          "ordering": "sort ascending"
+        },
+        "backorder_order_ids": {
+          "type": "list[string]",
+          "ordering": "sort ascending"
+        },
+        "inactive_sku_order_ids": {
+          "type": "list[string]",
+          "ordering": "sort ascending"
+        }
+      }
+    }
+  }
+}

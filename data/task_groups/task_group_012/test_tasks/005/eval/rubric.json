@@ -1,0 +1,86 @@
+{
+  "points": [
+    {
+      "id": "audit_package_and_escalation",
+      "description": "Identifies AUD-XMODULE-77 and concludes escalation is required.",
+      "weight": 1,
+      "fields": {
+        "audit_package_id": "AUD-XMODULE-77",
+        "escalation_required": true
+      }
+    },
+    {
+      "id": "affected_entities",
+      "description": "Reports all entities affected by the cross-module anomalies.",
+      "weight": 1,
+      "fields": {
+        "affected_entities": [
+          "EMP-255",
+          "CASE-445",
+          "REQ-OPS-19"
+        ]
+      }
+    },
+    {
+      "id": "primary_risk",
+      "description": "Classifies the primary risk as payroll and policy closeout control.",
+      "weight": 1,
+      "fields": {
+        "primary_risk": "payroll_and_policy_closeout_control"
+      }
+    },
+    {
+      "id": "employee_leave_and_payroll_entities",
+      "description": "Links both leave and payroll issues to EMP-255.",
+      "weight": 1,
+      "fields": {
+        "leave_issue_entity": "EMP-255",
+        "payroll_issue_entity": "EMP-255"
+      }
+    },
+    {
+      "id": "policy_issue_entity",
+      "description": "Links the policy issue to CASE-445.",
+      "weight": 1,
+      "fields": {
+        "policy_issue_entity": "CASE-445"
+      }
+    },
+    {
+      "id": "recruitment_issue_entity",
+      "description": "Links the recruitment operations issue to REQ-OPS-19.",
+      "weight": 1,
+      "fields": {
+        "recruitment_issue_entity": "REQ-OPS-19"
+      }
+    },
+    {
+      "id": "audit_events",
+      "description": "Cites all supporting audit events for the escalation decision.",
+      "weight": 1,
+      "fields": {
+        "audit_events": [
+          "AUD-CASE445-03",
+          "AUD-PAY255-02",
+          "AUD-REQOPS-11"
+        ]
+      }
+    },
+    {
+      "id": "escalation_owner",
+      "description": "Assigns the escalation to People Ops Compliance.",
+      "weight": 1,
+      "fields": {
+        "escalation_owner": "People Ops Compliance"
+      }
+    },
+    {
+      "id": "remediation_sla",
+      "description": "Sets the remediation SLA to five days.",
+      "weight": 1,
+      "fields": {
+        "remediation_sla_days": 5
+      }
+    }
+  ]
+}

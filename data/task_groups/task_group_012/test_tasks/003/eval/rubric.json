@@ -1,0 +1,94 @@
+{
+  "points": [
+    {
+      "id": "opening_and_outcomes",
+      "description": "Reports the opening and candidate outcome sets.",
+      "weight": 2,
+      "fields": {
+        "opening_id": "REQ-OPS-19",
+        "selected_candidate": "CAND-OPS-1902",
+        "waitlisted_candidates": [
+          "CAND-OPS-1901"
+        ],
+        "rejected_candidates": [
+          "CAND-OPS-1903",
+          "CAND-OPS-1904"
+        ]
+      }
+    },
+    {
+      "id": "candidate_outcome_control",
+      "description": "Uses the transferable outcome-control source convention.",
+      "weight": 3,
+      "fields": {
+        "candidate_status_source": "interview_feedback_and_offer",
+        "candidate_outcome_control": "committee_decision_with_offer_confirmation"
+      }
+    },
+    {
+      "id": "accepted_offer_and_cost",
+      "description": "Reports accepted offer and cost ledger total.",
+      "weight": 2,
+      "fields": {
+        "offer_id": "OFFER-OPS-1902",
+        "offer_base_salary": 124000,
+        "selected_offer_status": "accepted",
+        "cost_source": "recruitment_cost_ledger",
+        "recruitment_cost_total": 7350
+      }
+    },
+    {
+      "id": "notice_defect_and_source",
+      "description": "Identifies defective waitlist notice and the source used to inspect it.",
+      "weight": 3,
+      "fields": {
+        "defective_notice_candidate": "CAND-OPS-1901",
+        "notice_defects": [
+          "missing_waitlist_status"
+        ],
+        "waitlisted_followup_action": "reissue_waitlist_notice_not_rejection",
+        "notice_quality_source": "notice_packet_inspection"
+      }
+    },
+    {
+      "id": "payroll_handoff_control",
+      "description": "Applies submitted-after-acceptance payroll handoff control.",
+      "weight": 3,
+      "fields": {
+        "payroll_handoff_action": "create_submitted_assignment_after_acceptance",
+        "payroll_handoff_gate": "accepted_offer_only",
+        "payroll_assignment_status_required": "submitted_after_acceptance",
+        "handoff_control_result": "submitted_handoff_required_after_acceptance",
+        "payroll_policy_id": "PAY-SRC-001"
+      }
+    },
+    {
+      "id": "draft_and_waitlist_exclusion",
+      "description": "Excludes draft payroll precheck and prevents waitlisted offer routing.",
+      "weight": 1,
+      "fields": {
+        "draft_payroll_allowed": false,
+        "excluded_payroll_precheck_ids": [
+          "PAY-PRECHECK-OPS-1901-D"
+        ],
+        "offer_exclusion_reason_for_waitlisted": "no_accepted_status_or_offer"
+      }
+    },
+    {
+      "id": "audit_support",
+      "description": "Cites the supporting audit event.",
+      "weight": 1,
+      "fields": {
+        "audit_event_id": "AUD-REQOPS-11"
+      }
+    },
+    {
+      "id": "rejected_followup_action",
+      "description": "Separates already-sent rejected notices from waitlist reissue.",
+      "weight": 3,
+      "fields": {
+        "rejected_followup_action": "no_action"
+      }
+    }
+  ]
+}

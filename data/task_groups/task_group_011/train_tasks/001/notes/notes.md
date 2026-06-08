@@ -1,0 +1,20 @@
+# train_001 Notes - Redwood Branch Rating Migration Review
+
+## English
+
+Data/source lineage: This task belongs to `SCN_011_bank_branch_credit_risk_lending_committee`, using the task-group design derived from source examples `E001`, `E002`, and `E003`. It uses only shared public environment data under `task_group_011_bank_branch_credit_risk_lending_committee/env/`, especially the API surfaces for branches, Redwood loans, Redwood branch metrics, credit policy, and FDIC Q4 2024 benchmarks. There are no task-local data payloads beyond `input/payloads/answer_template.json`.
+
+Task definition: The solver receives an internal credit committee request for branch_id `REDWOOD` with review date `2025-03-31`. The expected output is a structured JSON object covering `branch_id`, `review_date`, `portfolio_regrade`, `npa_benchmark`, `material_downgrades`, and `top_problem_credit`. The regrade population is Redwood loans whose current rating is 3 or worse. The target set has 15 loans and $13,072,381.11 of exposure.
+
+Scenario fit: The task is a portfolio surveillance and lending-committee reporting task. It requires reconciling branch portfolio records, policy rules, rating migration, external FDIC benchmark variance, and controlled follow-up actions, matching the source examples' branch credit review workflow.
+
+Material map: `/api/branches/REDWOOD` identifies the branch and FDIC benchmark set. `/api/branches/REDWOOD/loans` provides current ratings, balances, DSCR, LTV, delinquency status, borrower names, and notes. `/api/branches/REDWOOD/metrics` supplies 2025Q1 total loans outstanding and branch nonperforming loans. `/api/policies` supplies the risk-rating policy, dominant-factor convention, and material-downgrade threshold. `/api/benchmarks/fdic/q4-2024` supplies `total_loans_noncurrent_pct`.
+
+Solution and evaluation basis: The answer uses the policy's dominant worst-factor rating from available DSCR, LTV, and delinquency factors. A material downgrade is two or more notches worse than the current rating inside the target population. Nonperforming exposure is $1,725,000.00, total loans are $15,191,701.54, branch NPA ratio is 0.1135, FDIC benchmark is 0.0098, and variance is 0.1037 or 1,037.49 bps. The top problem credit is `RED-LN-901`, a nonaccrual exposure to Cedar Harbor Properties LLC, assigned `partial_chargeoff_review`.
+
+Evaluation scoring goals use exact matches with raw weights: SP001 target regrade count and exposure, weight 2; SP002 final-rating exposure totals, weight 3; SP003 material downgrade loan IDs, weight 3; SP004 NPA ratio and FDIC variance, weight 2; SP005 top problem credit and action, weight 2; SP006 current-rating-3 migration distribution, weight 2; SP007 watch-list action coverage, weight 1. Common pitfalls are treating all Redwood loans as the regrade population, including current-rating-2 `RED-LN-009` as a material downgrade, using the branch delinquency 30+ percentage as the NPA ratio, or comparing against the wrong FDIC real-estate benchmark.
+
+Transfer design: As a train task, this should let solvers infer transferable habits for later portfolio surveillance tasks: discover the relevant public API endpoints, preserve the target population boundary, apply the dominant-factor rating convention, use the total-loans noncurrent FDIC benchmark for branch-level NPA variance, and convert adverse regrades into controlled watch-list actions. It is not a tutorial; the prompt does not expose thresholds or a step list, so the transferable method comes from solving the task and comparing against the standard answer.
+
+Construction record: Author `train_001` task-builder worker. Created 2026-06-03. Updated 2026-06-03. Major changes: created prompt, answer template, standard answer, evaluator, and notes for the Redwood branch rating migration review.
+

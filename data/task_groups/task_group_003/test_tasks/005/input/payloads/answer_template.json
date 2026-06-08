@@ -1,0 +1,71 @@
+{
+  "proposal_reviews": [
+    {
+      "proposal_id": "string; preserve proposal order",
+      "is_accepted": "boolean",
+      "corrected_status_or_action": "enum: RESOLVED | PENDING_ACTION | ESCALATED | FAILED | TRANSFER_HUMAN | RESET_APN_REBOOT | TOGGLE_DATA_SAVER | REFUEL_DATA | NEEDS_FINANCE_REVIEW",
+      "corrected_team": "enum: NONE | TIER2_SUPPORT | FIELD_OPS | NETWORK_ENGINEERING | DATA_PLATFORM",
+      "corrected_credit_percent": "integer; 0 when not applicable",
+      "correction_reason_code": "enum: NO_DEFECT | OUTAGE_PENDING | WRONG_ESCALATION_TEAM | SIM_LOCKED_TRANSFER | MMSC_APN_FAILURE | SLA_CREDIT_MISMATCH | AUTH_FAILED | DATA_LIMIT_EXCEEDED",
+      "corrected_refuel_gb": "number with one decimal; 0.0 unless the corrected action is REFUEL_DATA",
+      "corrected_charge_amount_usd": "number with two decimals; 0.00 unless the corrected action creates a customer charge"
+    }
+  ],
+  "audit_summary": {
+    "accepted": "integer",
+    "rejected": "integer",
+    "status_defects": "integer",
+    "action_defects": "integer",
+    "team_defects": "integer",
+    "credit_defects": "integer",
+    "no_defect": "integer"
+  },
+  "qa_reconciliation_audit": {
+    "proposal_record_type_counts": "object keyed by service_ticket | contact_case | enterprise_incident with proposal counts",
+    "service_ticket_proposals_with_active_outage_match": "list of proposal IDs sorted ascending whose service ticket matches an active outage by service area and type",
+    "contact_case_proposals_with_device_state_defect": "list of contact-case proposal IDs sorted ascending where device state evidence determines the acceptance/correction decision",
+    "enterprise_credit_proposal_ids": "list of enterprise incident proposal IDs sorted ascending that include proposed_credit_percent",
+    "contact_case_proposals_with_plan_usage_defect": "list of contact-case proposal IDs sorted ascending where plan usage evidence determines the correction decision"
+  },
+  "defect_breakdown_audit": {
+    "accepted_proposal_ids": "list of accepted proposal IDs sorted ascending",
+    "rejected_proposal_ids": "list of rejected proposal IDs sorted ascending",
+    "proposal_ids_by_reason_code": "object keyed by NO_DEFECT | OUTAGE_PENDING | WRONG_ESCALATION_TEAM | SIM_LOCKED_TRANSFER | MMSC_APN_FAILURE | SLA_CREDIT_MISMATCH | AUTH_FAILED | DATA_LIMIT_EXCEEDED; each value is a sorted list of proposal IDs"
+  },
+  "service_evidence_audit": {
+    "active_outage_proposal_ids": "list of service proposal IDs sorted ascending whose ticket matches an active outage",
+    "diagnostics_used_proposal_ids": "list of service proposal IDs sorted ascending whose ticket decision requires diagnostics/troubleshooting evidence",
+    "network_engineering_root_cause_proposal_ids": "list of service proposal IDs sorted ascending whose root cause maps to network engineering",
+    "auto_resolved_service_proposal_ids": "list of service proposal IDs sorted ascending whose ticket is resolved after troubleshooting",
+    "auth_failure_proposal_ids": "list of service proposal IDs sorted ascending whose account authentication gate fails"
+  },
+  "contact_evidence_audit": {
+    "device_state_defect_proposal_ids": "list of contact proposal IDs sorted ascending where device state determines the correction",
+    "plan_usage_defect_proposal_ids": "list of contact proposal IDs sorted ascending where plan usage determines the correction",
+    "line_state_defect_proposal_ids": "list of contact proposal IDs sorted ascending where carrier line state determines the correction",
+    "total_refuel_gb": "number with one decimal across corrected contact proposals",
+    "total_refuel_charge_usd": "number with two decimals across corrected contact proposals"
+  },
+  "enterprise_evidence_audit": {
+    "finance_review_proposal_ids": "list of enterprise proposal IDs sorted ascending whose corrected status is NEEDS_FINANCE_REVIEW",
+    "credit_mismatch_proposal_ids": "list of enterprise proposal IDs sorted ascending whose proposed credit percent is wrong",
+    "accepted_credit_proposal_ids": "list of enterprise proposal IDs sorted ascending whose credit proposal is accepted",
+    "total_credit_delta_percent": "integer; sum of corrected minus proposed credit percent over rejected enterprise credit proposals"
+  },
+  "service_metric_audit": {
+    "diagnostics_skipped_proposal_ids": "list of service proposal IDs sorted ascending skipped by an earlier outage/account gate",
+    "diagnostics_used_proposal_ids": "list of service proposal IDs sorted ascending whose review requires diagnostics/troubleshooting evidence",
+    "post_troubleshooting_success_proposal_ids": "list of service proposal IDs sorted ascending whose ticket passes all support metric thresholds after troubleshooting",
+    "post_troubleshooting_failure_proposal_ids": "list of service proposal IDs sorted ascending whose ticket still fails any support metric threshold after troubleshooting",
+    "pre_bandwidth_shortfall_total_mbps": "number with one decimal; total pre-diagnostic bandwidth shortfall for diagnostics-used service proposals",
+    "post_remaining_issue_flags_total": "integer; total post-troubleshooting latency/stability/bandwidth issue flags for diagnostics-used service proposals",
+    "post_threshold_excess_totals": {
+      "latency_ms": "number with one decimal; total post-troubleshooting latency excess across unresolved diagnostics-used service proposals",
+      "jitter_ms": "number with one decimal; total post-troubleshooting jitter excess across unresolved diagnostics-used service proposals",
+      "bandwidth_mbps": "number with one decimal; total post-troubleshooting bandwidth shortfall across unresolved diagnostics-used service proposals"
+    }
+  },
+  "enterprise_package_audit": {
+    "package_reviews": "list ordered by proposal_id for enterprise incident proposals; each object has proposal_id, incident_id, finance_review_user, document_editor_user, response_status"
+  }
+}

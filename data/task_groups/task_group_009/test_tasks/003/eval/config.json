@@ -1,0 +1,13 @@
+{
+  "points": [
+    {"id": "SP001", "goal": "Correct production id and service counts.", "weight": 2, "paths": [["production_id"], ["service_counts"]]},
+    {"id": "SP002", "goal": "Correct pay category totals.", "weight": 3, "paths": [["category_totals"]]},
+    {"id": "SP003", "goal": "Correct weekly payroll total.", "weight": 2, "paths": [["weekly_total"]]},
+    {"id": "SP004", "goal": "Correct CBA conflict flag set.", "weight": 3, "paths": [["conflict_flags"]]},
+    {"id": "SP005", "goal": "Correct per-musician payroll totals and categories.", "weight": 3, "paths": [["per_musician"]]},
+    {"id": "SP006", "goal": "Correct top-paid musician.", "weight": 1, "paths": [["top_paid_musician_id"]]},
+    {"id": "SP007", "goal": "Correct substitute electronic treatment.", "weight": 2, "paths": [["per_musician", 0, "categories", "substitute_adjustment"], ["category_totals", "substitute_adjustment"]]},
+    {"id": "SP008", "goal": "Correct doubles and guarantee adjustment handling.", "weight": 2, "paths": [["category_totals", "doubles"], ["category_totals", "guarantee_adjustment"]]},
+    {"id": "SP009", "goal": "Correct premium total after roster flags and substitute treatment.", "weight": 2, "paths": [["category_totals", "premium"]]}
+  ]
+}

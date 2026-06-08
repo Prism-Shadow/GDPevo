@@ -1,0 +1,17 @@
+You are preparing a CRM-ready prospecting summary for HarborCRM's aquaculture robotics campaign.
+
+Use the shared HarborCRM API and focus on the trade show `AquaFarm Robotics Forum 2026` with `show_id` `aquafarm_robotics_2026`.
+
+Relevant public API entry points include:
+- `/api/tradeshows`
+- `/api/tradeshows/aquafarm_robotics_2026/exhibitors`
+- `/api/tradeshows/aquafarm_robotics_2026/meeting_interest`
+- `/api/crm/accounts`
+- `/api/crm/contacts`
+- `/api/policies`
+
+Prepare the output JSON using `input/payloads/answer_template.json`.
+
+For this campaign, qualified leads are exhibitors that make or OEM-build robotics or underwater-camera platforms covered by the prospecting policy. Existing CRM accounts should be marked for update, while qualified exhibitors not already in CRM should be marked for account creation. Excluded exhibitors should remain visible in the exclusion list with a controlled reason.
+
+Rank qualified leads by demo request first, then meeting interest score descending, then broader platform coverage, then company name. Assign opportunity sizing by priority tier: `A` is USD 120000, `B` is USD 90000, and `C` is USD 50000. Use `A` for demo-requested qualified leads with score at least 90, `B` for demo-requested qualified leads with score at least 80, and `C` for all other qualified leads.

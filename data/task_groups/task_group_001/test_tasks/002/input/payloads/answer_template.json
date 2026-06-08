@@ -1,0 +1,184 @@
+{
+  "description": "Required JSON output shape for the Nordic Aquaculture Tech 2027 LakeHealth integration prospecting task.",
+  "required_top_level_keys": [
+    "show_id",
+    "campaign",
+    "qualified_exhibitors",
+    "excluded_near_misses",
+    "aggregate_counts"
+  ],
+  "fields": {
+    "show_id": {
+      "type": "string",
+      "required_value": "nordic_aqua_2027"
+    },
+    "campaign": {
+      "type": "string",
+      "required_value": "lakehealth_integration"
+    },
+    "qualified_exhibitors": {
+      "type": "list",
+      "ordering": "Sort by company_name ascending.",
+      "item_type": "object",
+      "required_item_keys": [
+        "company_id",
+        "company_name",
+        "platforms",
+        "priority_tier",
+        "crm_account_id",
+        "crm_action",
+        "pipeline_estimate_usd",
+        "booth",
+        "country",
+        "website"
+      ],
+      "item_fields": {
+        "company_id": {
+          "type": "string",
+          "source": "HarborCRM exhibitor company_id"
+        },
+        "company_name": {
+          "type": "string",
+          "source": "HarborCRM exhibitor company_name"
+        },
+        "platforms": {
+          "type": "list",
+          "item_type": "enum",
+          "allowed_values": [
+            "AUV",
+            "ROV",
+            "Underwater Camera"
+          ],
+          "ordering": "Sort in the enum order shown here."
+        },
+        "priority_tier": {
+          "type": "enum",
+          "allowed_values": [
+            "A",
+            "B",
+            "C"
+          ]
+        },
+        "crm_account_id": {
+          "type": "string or null"
+        },
+        "crm_action": {
+          "type": "enum",
+          "allowed_values": [
+            "create_account",
+            "update_existing"
+          ]
+        },
+        "pipeline_estimate_usd": {
+          "type": "integer",
+          "units": "USD"
+        },
+        "booth": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        }
+      }
+    },
+    "excluded_near_misses": {
+      "type": "list",
+      "ordering": "Sort by company_name ascending.",
+      "item_type": "object",
+      "required_item_keys": [
+        "company_id",
+        "company_name",
+        "exclusion_reason"
+      ],
+      "item_fields": {
+        "company_id": {
+          "type": "string",
+          "source": "HarborCRM exhibitor company_id"
+        },
+        "company_name": {
+          "type": "string",
+          "source": "HarborCRM exhibitor company_name"
+        },
+        "exclusion_reason": {
+          "type": "enum",
+          "allowed_values": [
+            "distributor_only",
+            "service_only",
+            "sensor_vendor_only",
+            "research_only",
+            "not_target_market"
+          ]
+        }
+      }
+    },
+    "aggregate_counts": {
+      "type": "object",
+      "required_keys": [
+        "qualified_total",
+        "platform_counts",
+        "priority_counts",
+        "excluded_near_misses_total",
+        "create_account_count",
+        "update_existing_count",
+        "existing_crm_overlap_count",
+        "existing_crm_overlap_account_ids",
+        "total_estimated_pipeline_usd"
+      ],
+      "fields": {
+        "qualified_total": {
+          "type": "integer"
+        },
+        "platform_counts": {
+          "type": "object",
+          "required_keys": [
+            "AUV",
+            "ROV",
+            "Underwater Camera"
+          ],
+          "value_type": "integer"
+        },
+        "priority_counts": {
+          "type": "object",
+          "required_keys": [
+            "A",
+            "B",
+            "C"
+          ],
+          "value_type": "integer"
+        },
+        "excluded_near_misses_total": {
+          "type": "integer"
+        },
+        "create_account_count": {
+          "type": "integer"
+        },
+        "update_existing_count": {
+          "type": "integer"
+        },
+        "existing_crm_overlap_count": {
+          "type": "integer"
+        },
+        "existing_crm_overlap_account_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering": "Sort CRM account ids ascending."
+        },
+        "total_estimated_pipeline_usd": {
+          "type": "integer",
+          "units": "USD"
+        }
+      }
+    }
+  },
+  "numeric_precision": {
+    "counts": "integers"
+  },
+  "response_rules": [
+    "Return one JSON object only.",
+    "Do not include explanatory prose outside the JSON object.",
+    "Do not add fields not declared in this template."
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "description": "Required JSON output for the NOVA post-nomination headlamp redesign price-change control.",
+  "top_level_required_keys": [
+    "task_id",
+    "control_id",
+    "as_of_date",
+    "program_id",
+    "contract_id",
+    "sku",
+    "supplier_id",
+    "source_requisition_id",
+    "nominated_po_id",
+    "decision",
+    "change_basis",
+    "contract_check",
+    "program_budget_check",
+    "nomination_control",
+    "supplier_risk_check",
+    "invoice_control",
+    "supporting_ids",
+    "required_actions",
+    "summary"
+  ],
+  "field_rules": {
+    "decision": {
+      "type": "enum",
+      "allowed": [
+        "release_price_amendment",
+        "hold_for_budget",
+        "hold_for_contract_ceiling",
+        "hold_for_approval",
+        "hold_for_supplier_risk",
+        "hold_for_invoice_control",
+        "reject_contract_mismatch"
+      ]
+    },
+    "currency_amounts": "numbers rounded to cents",
+    "change_basis": {
+      "required_keys": [
+        "change_type",
+        "redesign_reference",
+        "contract_price_type",
+        "baseline_unit_price",
+        "proposed_unit_price",
+        "unit_price_delta",
+        "uplift_percent",
+        "impacted_quantity",
+        "incremental_subtotal",
+        "estimated_tax",
+        "freight_included",
+        "incremental_total",
+        "price_change_ok"
+      ]
+    },
+    "contract_check": {
+      "required_keys": [
+        "contract_status",
+        "ceiling_amount",
+        "existing_noncancelled_subtotal",
+        "headroom_before_change",
+        "incremental_ceiling_exposure",
+        "headroom_after_change",
+        "ceiling_ok"
+      ]
+    },
+    "program_budget_check": {
+      "required_keys": [
+        "snapshot_id",
+        "budget_cap",
+        "committed_amount",
+        "remaining_budget",
+        "incremental_total",
+        "budget_after_change",
+        "budget_ok"
+      ]
+    },
+    "nomination_control": {
+      "required_keys": [
+        "requisition_status",
+        "latest_approval_event_id",
+        "latest_approval_action",
+        "latest_approval_actor",
+        "latest_approval_date",
+        "approval_ok",
+        "nominated_po_status",
+        "receipt_evidence_ids",
+        "matched_invoice_ids",
+        "nomination_record_ok"
+      ],
+      "list_ordering": "sort IDs ascending"
+    },
+    "supplier_risk_check": {
+      "required_keys": [
+        "supplier_status",
+        "supplier_risk_rating",
+        "open_event_ids_as_of",
+        "monitoring_event_ids_as_of",
+        "severe_open_event_ids_as_of",
+        "supplier_risk_ok"
+      ],
+      "list_ordering": "sort event IDs ascending"
+    },
+    "invoice_control": {
+      "required_keys": [
+        "price_variance_invoice_ids",
+        "unmatched_invoice_ids",
+        "invoice_control_ok"
+      ],
+      "list_ordering": "sort invoice IDs ascending"
+    },
+    "supporting_ids": {
+      "required_keys": [
+        "included_po_ids",
+        "excluded_cancelled_po_ids",
+        "approval_event_ids",
+        "receipt_ids",
+        "invoice_ids"
+      ],
+      "list_ordering": "sort IDs ascending"
+    },
+    "required_actions": {
+      "type": "list",
+      "item_type": "enum",
+      "allowed": [
+        "issue_price_delta_amendment",
+        "block_unmatched_price_invoice",
+        "resolve_supplier_risk_hold",
+        "raise_budget_exception",
+        "obtain_final_requisition_approval",
+        "none"
+      ],
+      "ordering": "sort ascending"
+    },
+    "summary": {
+      "required_keys": [
+        "blocker_count",
+        "currency",
+        "ready_to_release"
+      ]
+    }
+  }
+}

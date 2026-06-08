@@ -1,0 +1,16 @@
+# train_002 Notes - Lakeview Q1 Application Allocation
+
+## English
+
+Data/source lineage: This task belongs to `SCN_011_bank_branch_credit_risk_lending_committee`, using the shared generated credit-office environment for `task_group_011_bank_branch_credit_risk_lending_committee`. It is the train application-allocation task for branch `LAKEVIEW`. The solver-visible files are `input/prompt.txt` and `input/payloads/answer_template.json`; the business evidence is in the public API endpoints for branch details, metrics, sector exposures, applications, and policies.
+
+Task definition: The solver must evaluate Lakeview's pending applications for Q1 committee allocation, assign controlled decisions, use capacity-aware approved amounts, identify concentration handling, record controlled decline reasons, and report post-approval sector concentrations. The output schema covers `branch_id`, `allocation`, `decisions`, `concentration_flags`, `decline_reasons`, and `post_approval_concentrations`.
+
+Scenario fit and material map: This is a branch lending-committee workflow matching the source examples' portfolio and application decision work. `/api/branches/LAKEVIEW` supplies capacity and limits, `/api/branches/LAKEVIEW/metrics` supplies total loans outstanding, `/api/branches/LAKEVIEW/sector-exposures` supplies current exposures and sector limit overrides, `/api/branches/LAKEVIEW/applications` supplies the application queue, and `/api/policies` supplies concentration and SBA/participation conventions.
+
+Solution and evaluation basis: The standard answer approves `LAK-APP-004` and `LAK-APP-005`, conditionally approves `LAK-APP-901` with participation and `LAK-APP-902` with SBA guaranty/startup monitoring, and declines `LAK-APP-001`, `LAK-APP-002`, `LAK-APP-003`, `LAK-APP-006`, and `LAK-APP-903`. Gross approved amount is `4574253.45`; bank capacity used is `3802366.76`; remaining capacity is `2097633.24`. Healthcare is the planted strong-applicant concentration case: `LAK-APP-901` is strong but receives participation handling. High-risk consumer `LAK-APP-903` is declined for `low_fico` and `recent_bankruptcy`. SBA startup `LAK-APP-902` uses `840000.00` gross approval and `210000.00` bank capacity after guaranty. Post-approval concentrations are exact matched for Construction, Consumer, Healthcare, and Hospitality. Scoring uses seven exact-match points: SP001 decision sets weight 3; SP002 capacity numbers weight 2; SP003 Healthcare breach handling weight 3; SP004 high-risk consumer decline reason weight 2; SP005 SBA startup structure weight 2; SP006 post-approval concentrations weight 2; SP007 priority ranking weight 1.
+
+Transfer design: As a train task, this teaches by answer comparison rather than by visible instructions. Useful transferable habits are discovering the generic API surfaces, separating gross approved exposure from bank-held capacity when guarantees or participation apply, treating sector ceilings as committee constraints, using controlled decline reasons, and preserving stable application IDs and ordered rankings.
+
+Construction record: Author `train_002` task-builder worker. Created and updated on 2026-06-03. Minimum complete version created after user requested rapid finalization; no shared environment, task-group metadata, scratch design, or other task files were edited.
+

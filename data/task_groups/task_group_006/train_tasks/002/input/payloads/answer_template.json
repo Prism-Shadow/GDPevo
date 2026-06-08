@@ -1,0 +1,146 @@
+{
+  "task_id": {
+    "type": "string",
+    "required_value": "train_002"
+  },
+  "batch_id": {
+    "type": "string",
+    "description": "Receiving batch ID under review."
+  },
+  "inspection_summary": {
+    "type": "object",
+    "required_keys": [
+      "po_id",
+      "program_id",
+      "supplier_id",
+      "supplier_name",
+      "warehouse_id",
+      "receipt_date",
+      "packing_slip",
+      "receiver"
+    ]
+  },
+  "line_reconciliation": {
+    "type": "list",
+    "ordering": "sort by po_line_id ascending",
+    "item_schema": {
+      "po_line_id": "integer",
+      "sku": "string",
+      "ordered_qty": "integer",
+      "received_qty": "integer",
+      "rejected_qty": "integer",
+      "billed_qty": "integer",
+      "short_qty_vs_po": "integer",
+      "unreceived_billed_qty": "integer",
+      "receipt_completion_ratio": {
+        "type": "number",
+        "precision": 4
+      },
+      "po_unit_price": {
+        "type": "number",
+        "precision": 2,
+        "currency": "USD"
+      },
+      "contract_unit_price": {
+        "type": "number",
+        "precision": 2,
+        "currency": "USD"
+      },
+      "invoice_unit_price": {
+        "type": "number",
+        "precision": 2,
+        "currency": "USD"
+      },
+      "contract_price_match": "boolean"
+    }
+  },
+  "invoice_review": {
+    "type": "object",
+    "required_keys": [
+      "invoice_id",
+      "invoice_status",
+      "hold_code",
+      "receipt_status",
+      "po_status",
+      "exception_codes"
+    ],
+    "exception_codes": {
+      "type": "list",
+      "ordering": "set; evaluator sorts values",
+      "allowed_values": [
+        "INVOICE_QTY_EXCEEDS_RECEIPT",
+        "PARTIAL_RECEIPT",
+        "SUPPLIER_WATCH_RISK",
+        "PRICE_MISMATCH",
+        "DAMAGE_REJECTION",
+        "NO_EXCEPTION"
+      ]
+    }
+  },
+  "financials": {
+    "type": "object",
+    "currency": "USD",
+    "precision": 2,
+    "required_keys": [
+      "received_goods_value",
+      "unreceived_goods_value",
+      "invoice_subtotal",
+      "invoice_freight",
+      "invoice_tax",
+      "invoice_total"
+    ]
+  },
+  "decision": {
+    "type": "object",
+    "allowed_values": {
+      "batch_disposition": [
+        "accept_partial_hold_variance",
+        "release_full_invoice",
+        "reject_batch",
+        "manual_recount_required"
+      ],
+      "ap_action": [
+        "keep_invoice_on_hold",
+        "release_invoice",
+        "void_invoice"
+      ],
+      "receiving_action": [
+        "record_shortage_follow_up",
+        "no_receiving_action",
+        "reject_all_units"
+      ],
+      "supplier_action": [
+        "request_credit_or_remaining_delivery",
+        "no_supplier_action",
+        "supplier_debit_for_damage"
+      ]
+    }
+  },
+  "supplier_risk_context": {
+    "type": "object",
+    "required_keys": [
+      "supplier_risk_rating",
+      "has_open_supplier_risk",
+      "open_supplier_risk_event_ids"
+    ],
+    "open_supplier_risk_event_ids": {
+      "type": "list",
+      "ordering": "set; evaluator sorts values"
+    }
+  },
+  "evidence": {
+    "type": "object",
+    "required_keys": [
+      "endpoint_record_ids",
+      "task_payloads_reviewed"
+    ],
+    "endpoint_record_ids": {
+      "type": "list",
+      "ordering": "set; evaluator sorts values"
+    },
+    "task_payloads_reviewed": {
+      "type": "list",
+      "ordering": "set; evaluator sorts values"
+    }
+  }
+}

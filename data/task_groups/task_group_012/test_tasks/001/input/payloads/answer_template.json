@@ -1,0 +1,98 @@
+{
+  "employee_id": {
+    "type": "string",
+    "description": "Stable employee identifier under review."
+  },
+  "clearance_decision": {
+    "type": "enum",
+    "allowed_values": [
+      "approve",
+      "hold",
+      "escalate"
+    ],
+    "description": "Final lifecycle clearance decision."
+  },
+  "effective_leave_policy": {
+    "type": "string",
+    "description": "Effective leave policy name from the authoritative leave assignment."
+  },
+  "leave_assignment_id": {
+    "type": "string",
+    "description": "Authoritative leave assignment identifier."
+  },
+  "leave_balance_days": {
+    "type": "integer",
+    "unit": "days",
+    "description": "Current leave balance in whole days."
+  },
+  "payroll_assignment_id": {
+    "type": "string",
+    "description": "Authoritative submitted payroll assignment identifier."
+  },
+  "base_salary": {
+    "type": "number",
+    "unit": "USD per year",
+    "precision": "whole dollars",
+    "description": "Base salary from the authoritative payroll assignment."
+  },
+  "folder_missing_files": {
+    "type": "list[string]",
+    "ordering": "Any order; evaluated as a set.",
+    "description": "Required document filenames missing from the employee lifecycle folder."
+  },
+  "notice_defects": {
+    "type": "list[enum]",
+    "allowed_values": [
+      "missing_ack_deadline",
+      "missing_appeal_instructions",
+      "wrong_recipient",
+      "missing_manager_cc",
+      "missing_policy_reference",
+      "stale_template"
+    ],
+    "ordering": "Any order; evaluated as a set.",
+    "description": "Normalized notice defect codes found in messages or notification records."
+  },
+  "audit_event_id": {
+    "type": "string",
+    "description": "Audit log event that controls or confirms the clearance outcome."
+  },
+  "escalation_owner": {
+    "type": "string",
+    "description": "Team or role responsible for resolving the held clearance."
+  },
+  "leave_precedence_source": {
+    "type": "string",
+    "description": "Source-precedence label for the leave decision."
+  },
+  "payroll_source_status": {
+    "type": "enum",
+    "allowed_values": [
+      "submitted",
+      "draft",
+      "superseded"
+    ],
+    "description": "Status of the payroll assignment used for the salary decision."
+  },
+  "excluded_payroll_assignment_ids": {
+    "type": "list[string]",
+    "ordering": "Any order; evaluated as a set.",
+    "description": "Payroll assignments excluded from the current clearance decision."
+  },
+  "folder_required_tag_present": {
+    "type": "boolean",
+    "description": "Whether all required lifecycle folder tags are present."
+  },
+  "approval_closeout_gate": {
+    "type": "string",
+    "description": "Closeout gate applied after approval history is reviewed."
+  },
+  "final_control_result": {
+    "type": "string",
+    "description": "Normalized control result for the final lifecycle clearance."
+  },
+  "next_action": {
+    "type": "string",
+    "description": "Normalized next operational action."
+  }
+}

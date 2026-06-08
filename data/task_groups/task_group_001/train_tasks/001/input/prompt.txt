@@ -1,0 +1,34 @@
+You are auditing the post-event CRM handoff for Summit NeuralOps 2026.
+
+Use the HarborCRM API data for event_id `neuralops_2026`. The base API URL will be provided by the runner. Relevant public endpoints include:
+
+- `GET /api/events/neuralops_2026`
+- `GET /api/events/neuralops_2026/orders`
+- `GET /api/events/neuralops_2026/badges`
+- `GET /api/events/neuralops_2026/sponsor_packages`
+- `GET /api/finance/invoices?event_id=neuralops_2026`
+- `GET /api/crm/accounts`
+- `GET /api/crm/contacts`
+- `GET /api/crm/opportunities`
+- `GET /api/crm/campaign_members?event_id=neuralops_2026`
+- `GET /api/policies`
+
+Return one JSON object matching `input/payloads/answer_template.json`.
+
+Requirements:
+
+- Report active sponsor account statuses using the controlled values `paid_deferred`, `open_invoice`, and `proposal_only`.
+- Summarize sponsor revenue by status in integer USD. For open invoices, include the open balance separately.
+- Identify only qualified non-sponsor event lead accounts for sales handoff.
+- Exclude sponsor contacts, inactive/canceled sponsor records, non-business badges, and CRM accounts that are already disqualified.
+- Use the event's lead opportunity amount for each qualified non-sponsor account.
+- Provide follow-up due dates and task counts for qualified lead handoff and sponsor finance handoff.
+- Provide CRM action counts for account, contact, and campaign-member work implied by the handoff.
+
+Sorting:
+
+- Sort `sponsor_statuses` by `account_name` ascending.
+- Sort `qualified_lead_accounts` by `account_name` ascending.
+- Sort `excluded_records` by `company_name` ascending, then `contact_name` ascending.
+
+Do not include explanatory prose outside the JSON.

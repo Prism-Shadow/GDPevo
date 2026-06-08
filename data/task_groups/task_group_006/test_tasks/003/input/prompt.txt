@@ -1,0 +1,7 @@
+Procurement PMO needs a sourcing shortlist and nomination-gate packet for PRG-NOVA-31 as of 2026-06-01.
+
+Use the shared ProcureOps API at http://127.0.0.1:8006. The runner may provide the same service at a different base URL. Relevant public endpoints include /programs, /suppliers, /items, /contracts, /purchase_requisitions, /purchase_orders, /receipts, /ap/invoices, /ap/payments, /budget_snapshots, and /vendor_risk_events.
+
+Review the local sourcing memo in input/payloads/sourcing_memo.md. The memo provides the current RFQ packet and signoff tracker, but the API is the source of truth for ERP records, supplier status, risk, commercial basis, receipts, invoices, payments, and budget values.
+
+Return only JSON matching input/payloads/answer_template.json. Use USD amounts rounded to cents. Treat list fields as sets unless the template says otherwise.

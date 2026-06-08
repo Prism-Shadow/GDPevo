@@ -1,0 +1,150 @@
+{
+  "task_id": "test_005",
+  "portfolio_id": "PF-MA-VEGA",
+  "as_of_date": "2026-05-29",
+  "review_quarter": "Q3_2026",
+  "policy_id": "POLICY_SET_2026_05",
+  "allocation_views": [
+    {
+      "opportunity_set": "Emerging Markets",
+      "asset_class": "Equities",
+      "prior_view": "UW",
+      "signal_score": -0.408,
+      "view": "UW",
+      "change": "UNCHANGED",
+      "conviction": "MEDIUM",
+      "rationale_code": "CHINA_DEPENDENCE"
+    },
+    {
+      "opportunity_set": "India",
+      "asset_class": "Equities",
+      "prior_view": "OW",
+      "signal_score": 0.778,
+      "view": "OW",
+      "change": "UNCHANGED",
+      "conviction": "HIGH",
+      "rationale_code": "INDIA_OFFSET"
+    },
+    {
+      "opportunity_set": "Latin America",
+      "asset_class": "Equities",
+      "prior_view": "OW",
+      "signal_score": 0.524,
+      "view": "OW",
+      "change": "UNCHANGED",
+      "conviction": "MEDIUM",
+      "rationale_code": "LATAM_DIVERSIFIER"
+    },
+    {
+      "opportunity_set": "Corporate Investment Grade",
+      "asset_class": "Credit",
+      "prior_view": "OW",
+      "signal_score": 0.465,
+      "view": "OW",
+      "change": "UNCHANGED",
+      "conviction": "MEDIUM",
+      "rationale_code": "RATE_CUT_SUPPORT"
+    },
+    {
+      "opportunity_set": "Corporate High Yield",
+      "asset_class": "Credit",
+      "prior_view": "UW",
+      "signal_score": -0.628,
+      "view": "UW",
+      "change": "UNCHANGED",
+      "conviction": "MEDIUM",
+      "rationale_code": "HY_VALUATION_RISK"
+    },
+    {
+      "opportunity_set": "USD",
+      "asset_class": "Currency",
+      "prior_view": "N",
+      "signal_score": -0.385,
+      "view": "UW",
+      "change": "DOWN",
+      "conviction": "MEDIUM",
+      "rationale_code": "DOLLAR_DEFENSIVE"
+    }
+  ],
+  "energy_credit_action": {
+    "action_type": "rotate",
+    "theme": "transition_bond_selectivity",
+    "trades": [
+      {
+        "action": "SELL",
+        "instrument_id": "BND_BLUEGAS_2030",
+        "notional_usd_m": 2.0
+      },
+      {
+        "action": "SELL",
+        "instrument_id": "BND_GRANITE_2030",
+        "notional_usd_m": 2.0
+      },
+      {
+        "action": "BUY",
+        "instrument_id": "BND_HELIOS_2028",
+        "notional_usd_m": 4.0
+      }
+    ],
+    "metrics": {
+      "current_hy_allocation_pct": 10.0,
+      "post_trade_hy_allocation_pct": 10.0,
+      "current_weighted_duration_years": 3.93,
+      "post_trade_weighted_duration_years": 3.78,
+      "current_max_issuer_concentration_pct": 14.29,
+      "post_trade_max_issuer_concentration_pct": 11.43
+    },
+    "constraint_flags": {
+      "post_trade_hy_cap_pass": true,
+      "post_trade_duration_band_pass": true,
+      "post_trade_issuer_concentration_pass": true,
+      "watchlist_avoidance_pass": true
+    }
+  },
+  "international_diversification": {
+    "correlation_summary": [
+      {
+        "pair_role": "highest_concentration",
+        "pair": [
+          "IDX_EM",
+          "IDX_WORLD"
+        ],
+        "correlation": 0.974,
+        "threshold_breached": true
+      },
+      {
+        "pair_role": "best_diversifier",
+        "pair": [
+          "IDX_CHINA",
+          "IDX_LATAM"
+        ],
+        "correlation": -0.825,
+        "threshold_breached": false
+      }
+    ],
+    "action": {
+      "action_type": "rotate",
+      "trim_index_id": "IDX_EM",
+      "add_index_id": "IDX_LATAM",
+      "rationale_code": "LATAM_DIVERSIFIER"
+    }
+  },
+  "committee_decision": {
+    "decision": "approve_with_monitoring",
+    "rebalance_trigger": "correlation_cap_breach",
+    "priority_order": [
+      "international_diversification",
+      "energy_credit_rotation",
+      "allocation_view_update"
+    ]
+  },
+  "risk_flags": {
+    "correlation_threshold_breached": true,
+    "china_dependence_flag": true,
+    "current_issuer_concentration_breach": true,
+    "post_trade_issuer_concentration_breach": false,
+    "hy_cap_pressure": false,
+    "duration_drift": false,
+    "high_yield_underweight_signal": true
+  }
+}

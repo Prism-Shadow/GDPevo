@@ -1,0 +1,23 @@
+{
+  "ticket_decisions": [
+    {
+      "ticket_id": "string; preserve payload order",
+      "account_id": "string",
+      "final_resolution_status": "enum: RESOLVED | PENDING_ACTION | ESCALATED | FAILED",
+      "diagnostic_needed": "boolean",
+      "latency_issue": "boolean",
+      "stability_issue": "boolean",
+      "bandwidth_issue": "boolean",
+      "outage_id": "string; empty string when none applies",
+      "escalation_team": "enum: NONE | TIER2_SUPPORT | FIELD_OPS | NETWORK_ENGINEERING | ACCOUNTS_PAYABLE",
+      "resolution_route": "enum: AUTO_TROUBLESHOOTING | OUTAGE_WAIT | ESCALATION | INELIGIBLE_ACCOUNT | AUTH_FAILED | INVALID_ACCOUNT"
+    }
+  ],
+  "batch_summary": {
+    "RESOLVED": "integer",
+    "PENDING_ACTION": "integer",
+    "ESCALATED": "integer",
+    "FAILED": "integer",
+    "tickets_requiring_customer_wait": "integer"
+  }
+}

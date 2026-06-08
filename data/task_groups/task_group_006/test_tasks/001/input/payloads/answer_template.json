@@ -1,0 +1,76 @@
+{
+  "task_id": "test_001",
+  "review_as_of": "YYYY-MM-DD",
+  "target_ids": {
+    "target_receipt_id": "string",
+    "program_id": "string",
+    "po_id": "string",
+    "supplier_id": "string",
+    "invoice_ids": ["string"],
+    "payment_ids": ["string"]
+  },
+  "receipt_controls": [
+    {
+      "receipt_id": "string",
+      "po_id": "string",
+      "relation_to_target": "One of: target_receipt, same_po_later_receipt, same_supplier_other_po",
+      "scope_decision": "One of: include_for_closeout, exclude_later_duplicate_receipt, exclude_other_po",
+      "primary_reason": "One of: target_full_quantity_passed, after_review_same_po_receipt, different_po_not_closeout_scope",
+      "receipt_status": "string",
+      "accepted_qty": "number, 2 decimals",
+      "rejected_qty": "number, 2 decimals"
+    }
+  ],
+  "target_reconciliation": {
+    "sku": "string",
+    "ordered_qty": "number, 2 decimals",
+    "target_received_qty": "number, 2 decimals",
+    "target_rejected_qty": "number, 2 decimals",
+    "invoice_billed_qty": "number, 2 decimals",
+    "quantity_variance": "number, 2 decimals",
+    "po_unit_price": "number, USD cents",
+    "contract_unit_price": "number, USD cents",
+    "linked_invoice_unit_price": "number, USD cents",
+    "contract_price_match": "boolean"
+  },
+  "invoice_controls": [
+    {
+      "invoice_id": "string",
+      "po_id": "string",
+      "receipt_ids_in_scope": ["string"],
+      "excluded_receipt_ids": ["string"],
+      "decision": "One of: release_three_way_match, hold_unlinked_duplicate_review",
+      "primary_reason": "One of: approved_full_quantity_match, unlinked_same_po_price_variance",
+      "release_to_payment": "boolean",
+      "invoice_total": "number, USD cents",
+      "scheduled_payment_amount": "number, USD cents",
+      "price_variance_subtotal": "number, USD cents"
+    }
+  ],
+  "supplier_context": {
+    "supplier_name": "string",
+    "supplier_risk_rating": "string",
+    "has_open_supplier_risk_as_of": "boolean",
+    "open_supplier_risk_event_ids_as_of": ["string"]
+  },
+  "transfer_controls": {
+    "ap_release_policy": "One of: release_only_linked_three_way_match, release_all_approved_invoices, hold_all_medium_risk_suppliers",
+    "duplicate_invoice_policy": "One of: hold_unlinked_same_po_invoice_even_when_payment_scheduled, release_if_payment_scheduled, ignore_unlinked_invoice",
+    "receipt_scope_policy": "One of: target_receipt_only_exclude_later_same_po_exports, include_all_same_po_receipts, use_export_scope_only",
+    "risk_policy": "One of: medium_supplier_risk_requires_note_not_block_release, medium_supplier_risk_blocks_all_release, ignore_supplier_risk"
+  },
+  "summary": {
+    "release_invoice_ids": ["string"],
+    "review_invoice_ids": ["string"],
+    "scheduled_payment_ids": ["string"],
+    "in_scope_receipt_ids": ["string"],
+    "excluded_receipt_ids": ["string"],
+    "non_scope_export_receipt_ids": ["string"],
+    "net_release_total": "number, USD cents",
+    "duplicate_payment_exposure": "number, USD cents",
+    "price_variance_subtotal": "number, USD cents",
+    "authoritative_sources": ["string"],
+    "supporting_only_sources": ["string"],
+    "followup_actions": ["string"]
+  }
+}

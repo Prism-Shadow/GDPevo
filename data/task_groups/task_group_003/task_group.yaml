@@ -1,0 +1,352 @@
+task_group:
+  task_group_id: task_group_003
+  scenario_id: SCN_003_crm_service_ticket_resolution
+  source_examples:
+  - E001
+  - E002
+  - E003
+  domain: CRM
+  description: 'Train-predict benchmark for CRM service ticket resolution and escalation. Agents work in a shared support-console environment that exposes consumer service tickets, telecom contact-center records, network diagnostics, outages, enterprise export incidents, SLA contracts, and coordination messages. Train and test tasks cover offline ticket resolution, mobile support triage, and enterprise complaint investigation with recurring status, routing, and evidence-synthesis conventions.
+
+    '
+env:
+  setup: env/setup.sh
+  files:
+  - env/setup.sh
+  - env/generate_data.py
+  - env/server.py
+  - env/README.md
+  - env/data/support_data.json
+  - env/data/manifest.json
+train_tasks:
+- task_id: train_001
+  input: train_tasks/001/input/
+  prompt_txt: train_tasks/001/input/prompt.txt
+  payloads:
+  - train_tasks/001/input/payloads/answer_template.json
+  - train_tasks/001/input/payloads/ticket_batch.csv
+  notes: train_tasks/001/notes/notes.md
+  output: train_tasks/001/output/
+  answer_json: train_tasks/001/output/answer.json
+  eval:
+    script: train_tasks/001/eval/eval.sh
+    files:
+    - train_tasks/001/eval/eval.sh
+    - train_tasks/001/eval/eval.py
+    - train_tasks/001/eval/scoring.json
+    rubric:
+    - goal: TCK-5107 has the correct resolved status and auto-troubleshooting route.
+      weight: 2
+    - goal: TCK-5107 diagnostic issue flags are all correct.
+      weight: 2
+    - goal: TCK-5131 is correctly held for outage with no diagnostics.
+      weight: 3
+    - goal: TCK-5184 is correctly escalated to field operations.
+      weight: 3
+    - goal: TCK-5184 diagnostic issue flags are all correct.
+      weight: 2
+    - goal: TCK-5202 is correctly failed for account ineligibility.
+      weight: 2
+    - goal: Batch final status counts are correct.
+      weight: 1
+    - goal: Customer-wait count is correct.
+      weight: 1
+- task_id: train_002
+  input: train_tasks/002/input/
+  prompt_txt: train_tasks/002/input/prompt.txt
+  payloads:
+  - train_tasks/002/input/payloads/answer_template.json
+  - train_tasks/002/input/payloads/case_queue.json
+  notes: train_tasks/002/notes/notes.md
+  output: train_tasks/002/output/
+  answer_json: train_tasks/002/output/answer.json
+  eval:
+    script: train_tasks/002/eval/eval.sh
+    files:
+    - train_tasks/002/eval/eval.sh
+    - train_tasks/002/eval/eval.py
+    - train_tasks/002/eval/scoring.json
+    rubric:
+    - goal: CASE-2101 selects the SIM reseat self-service fix.
+      weight: 2
+    - goal: CASE-2102 handles overdue suspension with payment and line resume.
+      weight: 3
+    - goal: CASE-2103 uses phone roaming toggle, not carrier update.
+      weight: 2
+    - goal: CASE-2104 grants the missing storage permission.
+      weight: 2
+    - goal: CASE-2105 disconnects VPN for slow data.
+      weight: 2
+    - goal: Queue summary self-service and billing counts are correct.
+      weight: 2
+    - goal: Queue summary correctly has no carrier updates or human transfers.
+      weight: 1
+    - goal: Case identity mapping is preserved for the final two cases.
+      weight: 1
+- task_id: train_003
+  input: train_tasks/003/input/
+  prompt_txt: train_tasks/003/input/prompt.txt
+  payloads:
+  - train_tasks/003/input/payloads/answer_template.json
+  - train_tasks/003/input/payloads/client_complaint_email.txt
+  - train_tasks/003/input/payloads/response_requirements.json
+  notes: train_tasks/003/notes/notes.md
+  output: train_tasks/003/output/
+  answer_json: train_tasks/003/output/answer.json
+  eval:
+    script: train_tasks/003/eval/eval.sh
+    files:
+    - train_tasks/003/eval/eval.sh
+    - train_tasks/003/eval/eval.py
+    - train_tasks/003/eval/scoring.json
+    rubric:
+    - goal: Correct incident and enterprise account are identified.
+      weight: 1
+    - goal: Primary root cause is correctly identified.
+      weight: 3
+    - goal: Archived alert route is captured as a contributing issue.
+      weight: 1
+    - goal: Failure window and failed-day count are correct.
+      weight: 3
+    - goal: Backfill day count and SLA credit percent are correct.
+      weight: 3
+    - goal: Engineering and account owners are correct.
+      weight: 2
+    - goal: Channel, evidence folder, and report title follow the response convention.
+      weight: 2
+    - goal: Share permissions and response status are correct.
+      weight: 2
+- task_id: train_004
+  input: train_tasks/004/input/
+  prompt_txt: train_tasks/004/input/prompt.txt
+  payloads:
+  - train_tasks/004/input/payloads/answer_template.json
+  - train_tasks/004/input/payloads/queue_snapshot.csv
+  notes: train_tasks/004/notes/notes.md
+  output: train_tasks/004/output/
+  answer_json: train_tasks/004/output/answer.json
+  eval:
+    script: train_tasks/004/eval/eval.sh
+    files:
+    - train_tasks/004/eval/eval.sh
+    - train_tasks/004/eval/eval.py
+    - train_tasks/004/eval/scoring.json
+    rubric:
+    - goal: Outage ticket TCK-5401 is pending action without diagnostics.
+      weight: 2
+    - goal: Voice profile ticket TCK-5402 is resolved through diagnostics.
+      weight: 2
+    - goal: Invalid account ticket TCK-5403 is failed correctly.
+      weight: 2
+    - goal: Authentication failure ticket TCK-5404 is failed correctly.
+      weight: 2
+    - goal: Overdue suspended ticket TCK-5405 is routed to accounts payable and failed.
+      weight: 2
+    - goal: Backbone capacity ticket TCK-5406 is network engineering escalation.
+      weight: 3
+    - goal: Provisioning ticket TCK-5407 is tier-2 escalation.
+      weight: 3
+    - goal: Final status queue counts are correct.
+      weight: 1
+    - goal: Escalation-team queue counts are correct.
+      weight: 1
+- task_id: train_005
+  input: train_tasks/005/input/
+  prompt_txt: train_tasks/005/input/prompt.txt
+  payloads:
+  - train_tasks/005/input/payloads/answer_template.json
+  - train_tasks/005/input/payloads/mobile_data_worklist.json
+  notes: train_tasks/005/notes/notes.md
+  output: train_tasks/005/output/
+  answer_json: train_tasks/005/output/answer.json
+  eval:
+    script: train_tasks/005/eval/eval.sh
+    files:
+    - train_tasks/005/eval/eval.sh
+    - train_tasks/005/eval/eval.py
+    - train_tasks/005/eval/scoring.json
+    rubric:
+    - goal: CASE-2501 uses data refuel with correct amount and charge.
+      weight: 3
+    - goal: CASE-2502 uses carrier-side line roaming enablement.
+      weight: 3
+    - goal: CASE-2503 uses data saver toggle.
+      weight: 2
+    - goal: CASE-2504 uses network mode update.
+      weight: 2
+    - goal: CASE-2505 uses mobile data toggle.
+      weight: 2
+    - goal: No unnecessary secondary actions are proposed.
+      weight: 1
+    - goal: Worklist action-family counts are correct.
+      weight: 2
+    - goal: Total estimated customer charge is correct.
+      weight: 2
+test_tasks:
+- task_id: test_001
+  input: test_tasks/001/input/
+  prompt_txt: test_tasks/001/input/prompt.txt
+  payloads:
+  - test_tasks/001/input/payloads/answer_template.json
+  - test_tasks/001/input/payloads/ticket_batch.csv
+  notes: test_tasks/001/notes/notes.md
+  output: test_tasks/001/output/
+  answer_json: test_tasks/001/output/answer.json
+  eval:
+    script: test_tasks/001/eval/eval.sh
+    files:
+    - test_tasks/001/eval/eval.sh
+    - test_tasks/001/eval/eval.py
+    - test_tasks/001/eval/scoring.json
+    rubric:
+    - goal: TCK-6101 outage hold and TCK-6102 authentication failure are both correctly resolved.
+      weight: 2
+    - goal: TCK-6103 is resolved with correct diagnostic flags.
+      weight: 3
+    - goal: TCK-6104 is escalated to network engineering with correct diagnostic flags.
+      weight: 1
+    - goal: TCK-6105 is escalated to field operations with correct diagnostic flags.
+      weight: 1
+    - goal: Batch status counts and customer-wait count are correct.
+      weight: 1
+    - goal: Gate-skipped versus used troubleshooting record counts are correct.
+      weight: 2
+    - goal: Target pre-troubleshooting bandwidth floors and shortfalls are correct.
+      weight: 1
+    - goal: Target post-troubleshooting success/failure and remaining flag counts are correct.
+      weight: 1
+    - goal: Target post-troubleshooting excess totals are correct.
+      weight: 3
+    - goal: Root-cause escalation evidence sets and record availability are correct.
+      weight: 2
+- task_id: test_002
+  input: test_tasks/002/input/
+  prompt_txt: test_tasks/002/input/prompt.txt
+  payloads:
+  - test_tasks/002/input/payloads/answer_template.json
+  - test_tasks/002/input/payloads/case_queue.json
+  notes: test_tasks/002/notes/notes.md
+  output: test_tasks/002/output/
+  answer_json: test_tasks/002/output/answer.json
+  eval:
+    script: test_tasks/002/eval/eval.sh
+    files:
+    - test_tasks/002/eval/eval.sh
+    - test_tasks/002/eval/eval.py
+    - test_tasks/002/eval/scoring.json
+    rubric:
+    - goal: All five case decisions have correct action, route, and reason code.
+      weight: 2
+    - goal: Refuel amount and customer charge for the target data-limit case are correct.
+      weight: 2
+    - goal: Queue route counts and secondary actions are correct.
+      weight: 1
+    - goal: Transfer, carrier update, and human-transfer reason sets are correct.
+      weight: 1
+    - goal: Device-configuration versus carrier-line source families are correctly separated.
+      weight: 3
+    - goal: Plan allowance, billing recovery, and human handoff source families are correct.
+      weight: 3
+    - goal: Plan-usage audit for data-limit cases and refuel totals is correct.
+      weight: 3
+    - goal: Same-issue distribution and available case count are correct.
+      weight: 1
+    - goal: Mobile inventory audit is correct.
+      weight: 1
+    - goal: Mobile line-state and device-setting audits are correct.
+      weight: 1
+- task_id: test_003
+  input: test_tasks/003/input/
+  prompt_txt: test_tasks/003/input/prompt.txt
+  payloads:
+  - test_tasks/003/input/payloads/answer_template.json
+  - test_tasks/003/input/payloads/client_complaint_email.txt
+  - test_tasks/003/input/payloads/response_requirements.json
+  notes: test_tasks/003/notes/notes.md
+  output: test_tasks/003/output/
+  answer_json: test_tasks/003/output/answer.json
+  eval:
+    script: test_tasks/003/eval/eval.sh
+    files:
+    - test_tasks/003/eval/eval.sh
+    - test_tasks/003/eval/eval.py
+    - test_tasks/003/eval/scoring.json
+    rubric:
+    - goal: Correct incident, account, severity, owners, and failed export window are identified.
+      weight: 3
+    - goal: SLA credit percent and response status are correct.
+      weight: 3
+    - goal: Channel, evidence folder, and report title follow the response convention.
+      weight: 3
+    - goal: Share permissions are correct in the required order.
+      weight: 2
+    - goal: Target enterprise evidence audit over export runs and messages is correct.
+      weight: 2
+    - goal: Target enterprise export incident environment audit is correct.
+      weight: 2
+    - goal: Cross-incident critical monthly export failure counts are correct.
+      weight: 2
+- task_id: test_004
+  input: test_tasks/004/input/
+  prompt_txt: test_tasks/004/input/prompt.txt
+  payloads:
+  - test_tasks/004/input/payloads/answer_template.json
+  - test_tasks/004/input/payloads/escalation_board_request.json
+  notes: test_tasks/004/notes/notes.md
+  output: test_tasks/004/output/
+  answer_json: test_tasks/004/output/answer.json
+  eval:
+    script: test_tasks/004/eval/eval.sh
+    files:
+    - test_tasks/004/eval/eval.sh
+    - test_tasks/004/eval/eval.py
+    - test_tasks/004/eval/scoring.json
+    rubric:
+    - goal: Top-three ranked records, account IDs, and reason codes are correct.
+      weight: 3
+    - goal: Priority scores are correct for the ranked board.
+      weight: 1
+    - goal: Credit-review accounts and owner notification list are correct.
+      weight: 2
+    - goal: Board summary and business risk audit are correct.
+      weight: 2
+    - goal: Candidate-record board audits are correct.
+      weight: 2
+    - goal: Environment credit and enterprise incident audit is correct.
+      weight: 1
+- task_id: test_005
+  input: test_tasks/005/input/
+  prompt_txt: test_tasks/005/input/prompt.txt
+  payloads:
+  - test_tasks/005/input/payloads/answer_template.json
+  - test_tasks/005/input/payloads/proposed_updates.json
+  notes: test_tasks/005/notes/notes.md
+  output: test_tasks/005/output/
+  answer_json: test_tasks/005/output/answer.json
+  eval:
+    script: test_tasks/005/eval/eval.sh
+    files:
+    - test_tasks/005/eval/eval.sh
+    - test_tasks/005/eval/eval.py
+    - test_tasks/005/eval/scoring.json
+    rubric:
+    - goal: Service-ticket proposals have correct accept/reject decisions and corrected fields.
+      weight: 1
+    - goal: Contact-case proposals have correct decisions, corrected actions, and refuel charge fields.
+      weight: 2
+    - goal: Enterprise proposals have correct decisions, credit values, and teams.
+      weight: 1
+    - goal: Audit summary and accept/reject proposal sets are correct.
+      weight: 3
+    - goal: Defect reason-code proposal sets are correct.
+      weight: 2
+    - goal: Service-ticket source evidence audit is correct.
+      weight: 2
+    - goal: Contact-case evidence and refuel totals are correct.
+      weight: 1
+    - goal: Enterprise credit evidence, package review permissions, and QA reconciliation type counts are correct.
+      weight: 3
+    - goal: Service proposal gate and troubleshooting outcome audit is correct.
+      weight: 3
+    - goal: Service proposal diagnostic metric totals are correct.
+      weight: 3

@@ -1,0 +1,135 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "Correct incident, account, severity, owners, and failed export window are identified.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "incident_id"
+        },
+        {
+          "path": "enterprise_account_id"
+        },
+        {
+          "path": "root_cause_category",
+          "contains_all": ["storage", "quota"]
+        },
+        {
+          "path": "severity"
+        },
+        {
+          "path": "engineering_owner"
+        },
+        {
+          "path": "account_owner"
+        },
+        {
+          "path": "failure_window.start_date"
+        },
+        {
+          "path": "failure_window.end_date"
+        },
+        {
+          "path": "failure_window.failed_days"
+        },
+        {
+          "path": "backfill_days"
+        }
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "SLA credit percent and response status are correct.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "sla_credit_percent"
+        },
+        {
+          "path": "response_status"
+        }
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "Channel, evidence folder, and report title follow the response convention.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "channel_name"
+        },
+        {
+          "path": "evidence_folder"
+        },
+        {
+          "path": "report_title"
+        }
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "Share permissions are correct in the required order.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "share_permissions[0].user"
+        },
+        {
+          "path": "share_permissions[0].permission"
+        },
+        {
+          "path": "share_permissions[1].user"
+        },
+        {
+          "path": "share_permissions[1].permission"
+        }
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "Target enterprise evidence audit over export runs and messages is correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "enterprise_evidence_audit.target_failed_run_ids",
+          "sort_list": true
+        },
+        {
+          "path": "enterprise_evidence_audit.recovery_run_id"
+        },
+        {
+          "path": "enterprise_evidence_audit.quanta_message_ids",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "Target enterprise export incident environment audit is correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "enterprise_environment_audit.critical_monthly_export_incident_ids",
+          "sort_list": true
+        },
+        {
+          "path": "enterprise_environment_audit.target_incident_failed_runs"
+        }
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Cross-incident critical monthly export failure counts are correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "enterprise_environment_audit.other_critical_monthly_export_failed_runs"
+        },
+        {
+          "path": "enterprise_environment_audit.critical_monthly_export_failed_runs"
+        }
+      ]
+    }
+  ]
+}

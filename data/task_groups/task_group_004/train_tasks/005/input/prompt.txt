@@ -1,0 +1,28 @@
+High-Touch Retention Operations Board
+
+The Customer Success leadership team is preparing the Q2 2026 operating review and needs a high-touch retention action board. Use the ApexCloud Retention Operations API at http://127.0.0.1:8074 to reconcile account profile data, billing snapshots, support health, NPS, receivables, product usage, and expansion opportunities.
+
+Build the board as of 2026-06-30 for activity from 2026-04-01 through 2026-06-30, using the months 2026-04, 2026-05, and 2026-06. Use A/R aging as of 2026-06-30 and Q2 open expansion opportunities whose close dates fall within the same period.
+
+Include these account_ids:
+
+- acct_lumen_rail
+- acct_quartz_insure
+- acct_valence
+- acct_solstice
+- acct_bayside_bio
+- acct_metrobyte
+- acct_peakstone
+- acct_apexia
+
+Return all accounts in the standard retention board order. The response must be JSON only and must follow the structure in input/payloads/answer_template.json.
+
+Use these follow-up due dates by action:
+
+- collections_followup: 2026-07-15
+- technical_recovery: 2026-07-18
+- renewal_save: 2026-07-22
+- executive_qbr: 2026-07-29
+- nurture_monitor: 2026-08-05
+
+Use deterministic precision: currency values to 2 decimals, percentages to 1 decimal if any are included, counts as integers, and controlled enum values for risk levels, actions, and reason codes.

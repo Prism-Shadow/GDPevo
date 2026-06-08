@@ -1,0 +1,46 @@
+{
+  "ranked_accounts": [
+    {
+      "rank": "integer starting at 1",
+      "record_type": "enum: service_ticket | enterprise_incident",
+      "account_id": "string",
+      "record_id": "string",
+      "priority_score": "integer",
+      "reason_code": "enum: CRITICAL_SLA_CREDIT | NETWORK_ENGINEERING_ESCALATION | FIELD_REPAIR_ESCALATION | ACTIVE_OUTAGE | AUTH_FAILED | LOW_RISK"
+    }
+  ],
+  "credit_review_accounts": "list of enterprise account ids sorted ascending",
+  "owner_notifications": "list of user/team ids sorted by escalation priority",
+  "board_summary": {
+    "service_PENDING_ACTION": "integer",
+    "service_ESCALATED": "integer",
+    "service_RESOLVED": "integer",
+    "service_FAILED": "integer",
+    "enterprise_Critical": "integer",
+    "enterprise_High": "integer",
+    "credit_review_count": "integer"
+  },
+  "risk_audit": {
+    "candidate_records_reviewed": "integer",
+    "service_escalation_accounts": "list of account IDs sorted ascending",
+    "enterprise_credit_accounts": "list of enterprise account IDs sorted ascending",
+    "credit_review_incident_not_ranked_top3": "string incident id",
+    "critical_incidents_reviewed": "integer count of candidate enterprise incidents with Critical severity",
+    "not_ranked_credit_percent": "integer SLA credit percent for credit-review incident not ranked top three",
+    "service_escalation_teams": "list of escalation team enum values sorted alphabetically for ranked service escalations"
+  },
+  "environment_credit_audit": {
+    "failed_export_runs_for_credit_review_accounts": "integer across full environment, not only candidate incidents",
+    "critical_incidents_outside_candidate_set": "integer"
+  },
+  "board_candidate_audit": {
+    "candidate_service_records_with_active_outage_match": "list of candidate service ticket IDs sorted ascending matching an active outage by service area and type",
+    "candidate_service_records_with_post_troubleshooting_failure": "list of candidate service ticket IDs sorted ascending whose post-troubleshooting metrics still fail any threshold",
+    "candidate_enterprise_incidents_with_failed_runs": "list of candidate enterprise incident IDs sorted ascending that have at least one failed export run"
+  },
+  "board_full_environment_audit": {
+    "critical_monthly_export_incident_ids": "list of Critical monthly_export incident IDs sorted ascending across the full console",
+    "failed_runs_for_critical_monthly_export_incidents": "integer failed export-run count for Critical monthly_export incidents across the full console",
+    "enterprise_accounts_with_sla_credit": "integer count of enterprise accounts with positive monthly_export SLA credit percent"
+  }
+}

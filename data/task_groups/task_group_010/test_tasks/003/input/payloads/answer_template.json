@@ -1,0 +1,251 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "lineage",
+    "allocation_views",
+    "currency_overlay",
+    "cross_asset_judgments"
+  ],
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_003"
+    },
+    "lineage": {
+      "type": "object",
+      "required_keys": [
+        "as_of_date",
+        "target_quarter",
+        "prior_quarter",
+        "prior_view_record_quarter",
+        "policy_id",
+        "mapping_policy_id"
+      ],
+      "fields": {
+        "as_of_date": {
+          "type": "string",
+          "format": "YYYY-MM-DD"
+        },
+        "target_quarter": {
+          "type": "string",
+          "required_value": "Q3_2026"
+        },
+        "prior_quarter": {
+          "type": "string",
+          "required_value": "Q2_2026"
+        },
+        "prior_view_record_quarter": {
+          "type": "string",
+          "required_value": "Q3_2026"
+        },
+        "policy_id": {
+          "type": "string"
+        },
+        "mapping_policy_id": {
+          "type": "string"
+        }
+      }
+    },
+    "allocation_views": {
+      "type": "list",
+      "ordering": "Sort rows by the request payload's focus_opportunity_sets order.",
+      "required_length": 15,
+      "row_schema": {
+        "opportunity_set": {
+          "type": "enum",
+          "allowed_values": [
+            "U.S. Large Cap",
+            "U.S. Small Cap",
+            "Europe",
+            "Japan",
+            "Emerging Markets",
+            "India",
+            "Latin America",
+            "U.S. Treasuries",
+            "German Bunds",
+            "Corporate Investment Grade",
+            "Corporate High Yield",
+            "USD",
+            "EUR",
+            "JPY",
+            "CHF"
+          ]
+        },
+        "asset_class": {
+          "type": "enum",
+          "allowed_values": [
+            "Equities",
+            "Duration",
+            "Credit",
+            "Currency"
+          ]
+        },
+        "prior_view": {
+          "type": "enum",
+          "allowed_values": [
+            "UW",
+            "N",
+            "OW"
+          ]
+        },
+        "current_signal_score": {
+          "type": "number",
+          "precision": 3
+        },
+        "view": {
+          "type": "enum",
+          "allowed_values": [
+            "UW",
+            "N",
+            "OW"
+          ]
+        },
+        "change": {
+          "type": "enum",
+          "allowed_values": [
+            "UP",
+            "DOWN",
+            "UNCHANGED"
+          ]
+        },
+        "conviction": {
+          "type": "enum",
+          "allowed_values": [
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ]
+        },
+        "rationale_code": {
+          "type": "enum",
+          "allowed_values": [
+            "GROWTH_IMPROVES",
+            "RATE_CUT_SUPPORT",
+            "CREDIT_SPREAD_RISK",
+            "DOLLAR_DEFENSIVE",
+            "CHINA_DEPENDENCE",
+            "LATAM_DIVERSIFIER",
+            "INDIA_OFFSET",
+            "DURATION_SUPPORT",
+            "HY_VALUATION_RISK",
+            "EUROPE_RECOVERY",
+            "JAPAN_POLICY_RISK",
+            "NEUTRAL_BALANCE"
+          ]
+        }
+      }
+    },
+    "currency_overlay": {
+      "type": "object",
+      "required_keys": [
+        "base_currency",
+        "policy_action",
+        "decisions"
+      ],
+      "fields": {
+        "base_currency": {
+          "type": "enum",
+          "allowed_values": [
+            "USD"
+          ]
+        },
+        "policy_action": {
+          "type": "enum",
+          "allowed_values": [
+            "tilt_to_procyclical_fx",
+            "reduce_dollar_beta",
+            "add_defensive_fx",
+            "hold_currency_policy"
+          ]
+        },
+        "decisions": {
+          "type": "list",
+          "ordering": "Sort rows by the request payload's currency_overlay_universe order.",
+          "required_length": 4,
+          "row_schema": {
+            "currency": {
+              "type": "enum",
+              "allowed_values": [
+                "USD",
+                "EUR",
+                "JPY",
+                "CHF"
+              ]
+            },
+            "prior_view": {
+              "type": "enum",
+              "allowed_values": [
+                "UW",
+                "N",
+                "OW"
+              ]
+            },
+            "active_view": {
+              "type": "enum",
+              "allowed_values": [
+                "UW",
+                "N",
+                "OW"
+              ]
+            },
+            "overlay_action": {
+              "type": "enum",
+              "allowed_values": [
+                "ADD_EXPOSURE",
+                "REDUCE_EXPOSURE",
+                "HOLD_EXPOSURE"
+              ]
+            },
+            "rationale_code": {
+              "type": "enum",
+              "allowed_values": [
+                "DOLLAR_DEFENSIVE",
+                "EUROPE_RECOVERY",
+                "JAPAN_POLICY_RISK",
+                "NEUTRAL_BALANCE"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "cross_asset_judgments": {
+      "type": "object",
+      "required_keys": [
+        "equity_relative_value",
+        "rates_credit_mix",
+        "currency_overlay_bias"
+      ],
+      "fields": {
+        "equity_relative_value": {
+          "type": "enum",
+          "allowed_values": [
+            "favor_us_large_cap_quality",
+            "favor_small_cap_europe_india_latam_over_large_cap_and_broad_em",
+            "neutral_global_equity_mix",
+            "reduce_all_equity_beta"
+          ]
+        },
+        "rates_credit_mix": {
+          "type": "enum",
+          "allowed_values": [
+            "prefer_duration_and_ig_over_hy_beta",
+            "prefer_hy_carry_over_duration",
+            "neutral_rates_credit_mix",
+            "reduce_duration_add_hy"
+          ]
+        },
+        "currency_overlay_bias": {
+          "type": "enum",
+          "allowed_values": [
+            "reduce_usd_add_eur_reduce_jpy_hold_chf",
+            "add_defensive_usd_chf",
+            "neutral_currency_overlay",
+            "add_jpy_reduce_eur"
+          ]
+        }
+      }
+    }
+  }
+}

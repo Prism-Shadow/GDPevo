@@ -1,0 +1,22 @@
+Title: Churn Model Validation And Outreach Ranking
+
+Analytics Ops needs a formal validation readout for the ApexCloud churn exports and a prioritized outreach ranking for a selected set of candidate accounts.
+
+Use the ApexCloud Retention Operations API at http://127.0.0.1:8074. The relevant exports are:
+
+- /exports/churn/train.csv
+- /exports/churn/validation.csv
+- /exports/churn/candidates.csv
+
+Validate the exported churn dataset, then rank only these candidate accounts:
+
+- acct_northstar_finance
+- acct_northstar_retail
+- acct_tandemworks
+- acct_quartz_insure
+- acct_valence
+- acct_globex_north
+- acct_bluepeak
+- acct_harborbyte
+
+Return the top 5 candidates by predicted churn probability. Follow the JSON structure in input/payloads/answer_template.json. Use deterministic precision: percentages to 1 decimal and churn probabilities to 3 decimals.

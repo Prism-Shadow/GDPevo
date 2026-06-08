@@ -1,0 +1,16 @@
+# train_005 Notes
+
+## English
+
+This task belongs to source scenario `SCN_002_crm_b2b_quote_account_response`, using the milestone-client-engagement workflow derived from source example `E003` and the `task_group_002` design brief. It is a train task for the account-response family, focused on reconciling a won implementation opportunity, milestone invoices, payments, revenue recognition, and a related customer event/voucher. Solver-visible materials are `input/prompt.txt` and `input/payloads/answer_template.json`; the expected evidence comes from the shared MedBridge Sales Ops API described in `task_factory/scratch/env_blueprint.md`.
+
+The business case is `OPP-TR-MERIDIAN` for `CUST-MERIDIAN` / Meridian Public Health, with Daniel Rees as the contact. The opportunity is won for USD 100,000.00 and should reconcile to three milestone phases: `MS1` USD 30,000.00, `MS2` USD 45,000.00, and `MS3` USD 25,000.00. `MS1` is paid and recognized, `MS2` is paid but missing the revenue journal, and `MS3` is unpaid with due date 2026-07-15, which is not yet due on the 2026-06-01 task date. The briefing event is `EVT-MERIDIAN-BRIEFING`; voucher `MERIDIANBRIEF50` is active for a USD 50.00 discount and 20 maximum uses.
+
+The output schema has three top-level objects: `engagement_reconciliation`, `invoice_actions`, and `event_actions`. The answer records the phase sum, paid amount, outstanding balance, per-phase invoice/payment/recognition statuses, the required primary accounting action `RECORD_REVENUE_MS2`, the MS3 collection action `MONITOR_UNPAID_NOT_DUE`, and the invite action `SEND_BRIEFING_INVITE`. Revenue recognition is intentionally separate from cash receipt: the paid MS2 milestone still needs a deferred-revenue release journal, debiting `DEFERRED_REVENUE` and crediting `IMPLEMENTATION_SERVICES_REVENUE` for USD 45,000.00.
+
+The evaluator has eight exact-match scoring points with raw weights matching the design brief: opportunity equals phases (2), invoice/payment states (3), outstanding balance (3), revenue recognition missing/present status (2), event/voucher state (2), CRM action routing (2), deferred revenue account action (1), and contact linkage (1). Currency is compared at cent precision; enums and IDs are normalized for casing and whitespace. Likely pitfalls include treating paid MS2 as fully reconciled despite the missing revenue journal, sending a collection notice for MS3 before its due date, omitting the contact from CRM tasks, or treating the voucher discount as a percent rather than a USD amount.
+
+As a train task, this should help solvers infer reusable conventions for later engagement-reconciliation tasks: the opportunity amount must equal the service milestone total, payment and revenue recognition are different controls, paid completed milestones need recognition checks, unpaid future milestones should be monitored rather than escalated as overdue, and event/voucher follow-up belongs in CRM task routing with the account contact.
+
+Construction record: authored by Codex on 2026-06-01, updated on 2026-06-01. Initial construction created the prompt, answer template, standard answer, evaluator, and notes for task-builder assignment `train_005`.
+

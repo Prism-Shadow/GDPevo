@@ -1,0 +1,168 @@
+{
+  "task_id": "test_004",
+  "event_id": "industrial_vision_2027",
+  "schema_version": "1.0",
+  "required_top_level_keys": [
+    "event",
+    "sponsor_statuses",
+    "badge_decisions",
+    "campaign_member_actions",
+    "new_lead_contacts",
+    "opportunity_summary",
+    "sponsor_followup",
+    "crm_gap_summary",
+    "exclusion_counts"
+  ],
+  "field_definitions": {
+    "event": {
+      "type": "object",
+      "required_keys": [
+        "event_id",
+        "name",
+        "lead_followup_due_date",
+        "sponsor_followup_due_date"
+      ],
+      "date_format": "YYYY-MM-DD"
+    },
+    "sponsor_statuses": {
+      "type": "list",
+      "ordering": "Sort by account_name ascending.",
+      "item_required_keys": [
+        "account_id",
+        "account_name",
+        "sponsor_status",
+        "amount_usd"
+      ],
+      "sponsor_status_allowed_values": [
+        "paid_deferred",
+        "open_invoice",
+        "proposal_only",
+        "not_sponsor"
+      ],
+      "amount_usd": "integer USD"
+    },
+    "badge_decisions": {
+      "type": "list",
+      "ordering": "Sort by badge_id ascending.",
+      "item_required_keys": [
+        "badge_id",
+        "company_name",
+        "contact_name",
+        "classification",
+        "crm_action",
+        "exclusion_reason"
+      ],
+      "classification_allowed_values": [
+        "sponsor_attendee",
+        "qualified_non_sponsor_lead",
+        "excluded"
+      ],
+      "crm_action_allowed_values": [
+        "create_account_contact_campaign_member",
+        "create_contact_campaign_member",
+        "add_campaign_member",
+        "update_campaign_member",
+        "no_action",
+        "no_import"
+      ],
+      "exclusion_reason_allowed_values": [
+        "sponsor_attendee",
+        "non_business_badge",
+        "existing_disqualified",
+        "missing_contact",
+        null
+      ]
+    },
+    "campaign_member_actions": {
+      "type": "list",
+      "ordering": "Sort by subject_key ascending.",
+      "item_required_keys": [
+        "subject_key",
+        "account_name",
+        "contact_name",
+        "action",
+        "target_status"
+      ],
+      "action_allowed_values": [
+        "create",
+        "update",
+        "no_action",
+        "no_import"
+      ],
+      "target_status_allowed_values": [
+        "attended_sponsor",
+        "registered_sponsor",
+        "attended",
+        "excluded"
+      ]
+    },
+    "new_lead_contacts": {
+      "type": "list",
+      "ordering": "Sort by company_name ascending.",
+      "item_required_keys": [
+        "company_name",
+        "contact_name",
+        "normalized_email",
+        "normalized_phone",
+        "crm_account_action",
+        "crm_contact_action"
+      ],
+      "normalized_email": "lowercase trimmed string; empty string allowed when no email was supplied",
+      "normalized_phone": "digits only; empty string allowed when no phone was supplied",
+      "crm_account_action_allowed_values": [
+        "create_account",
+        "update_existing",
+        "no_import"
+      ],
+      "crm_contact_action_allowed_values": [
+        "create_contact",
+        "update_existing",
+        "no_import"
+      ]
+    },
+    "opportunity_summary": {
+      "type": "object",
+      "required_keys": [
+        "qualified_non_sponsor_account_names",
+        "lead_opportunity_amount_usd",
+        "open_opportunity_total_usd",
+        "open_opportunity_count"
+      ],
+      "qualified_non_sponsor_account_names": "list of strings sorted ascending",
+      "currency_precision": "integer USD"
+    },
+    "sponsor_followup": {
+      "type": "object",
+      "required_keys": [
+        "unpaid_sponsor_account_names",
+        "unpaid_sponsor_total_usd",
+        "followup_due_date"
+      ],
+      "unpaid_sponsor_account_names": "list of strings sorted ascending",
+      "currency_precision": "integer USD",
+      "date_format": "YYYY-MM-DD"
+    },
+    "crm_gap_summary": {
+      "type": "object",
+      "required_keys": [
+        "stale_campaign_member_keys",
+        "sponsor_contacts_to_create",
+        "new_lead_accounts_to_create",
+        "campaign_members_to_create",
+        "campaign_members_to_update"
+      ],
+      "stale_campaign_member_keys": "list of subject_key strings sorted ascending",
+      "values": "integers except stale_campaign_member_keys"
+    },
+    "exclusion_counts": {
+      "type": "object",
+      "required_keys": [
+        "sponsor_attendee",
+        "non_business_badge",
+        "existing_disqualified",
+        "missing_contact"
+      ],
+      "values": "integers"
+    }
+  }
+}

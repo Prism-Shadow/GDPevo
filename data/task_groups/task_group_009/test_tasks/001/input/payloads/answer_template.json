@@ -1,0 +1,61 @@
+{
+  "description": "Return one JSON object with branch close reporting results. Currency values must be rounded to 2 decimals. Percent and ratio fields must be rounded to 4 decimals. Lists must use ascending stable IDs unless a rank field states otherwise.",
+  "required_top_level_keys": [
+    "target_branch_id",
+    "target_branch_name",
+    "period_convention",
+    "m24_income_statement",
+    "mom_revenue_variance",
+    "fy2025_vs_fy2024",
+    "region_context",
+    "branch_rankings"
+  ],
+  "field_types": {
+    "target_branch_id": "string",
+    "target_branch_name": "string",
+    "period_convention": {
+      "M1_to_M12": "FY#### string",
+      "M13_to_M24": "FY#### string",
+      "current_month": "period label string",
+      "prior_month": "period label string"
+    },
+    "m24_income_statement": {
+      "revenue": "currency",
+      "cogs": "currency",
+      "gross_margin": "currency",
+      "sga": "currency",
+      "allocations": "currency",
+      "ebitda": "currency"
+    },
+    "mom_revenue_variance": {
+      "amount": "currency",
+      "pct": "decimal percent"
+    },
+    "fy2025_vs_fy2024": {
+      "fy2025": {
+        "revenue": "currency",
+        "cogs": "currency",
+        "gross_margin": "currency",
+        "sga": "currency",
+        "allocations": "currency",
+        "ebitda": "currency",
+        "ebitda_margin": "decimal percent",
+        "arpu": "currency",
+        "sales_per_labor_headcount": "currency"
+      },
+      "revenue_growth_pct": "decimal percent",
+      "ebitda_growth_pct": "decimal percent"
+    },
+    "region_context": {
+      "region_id": "string",
+      "branch_ids": "list of branch_id strings",
+      "fy2025_ebitda": "currency",
+      "ebitda_rank_desc": "integer"
+    },
+    "branch_rankings": {
+      "sales_growth_rank_desc": "integer",
+      "top_sales_growth_branch_id": "string",
+      "top_arpu_branch_id": "string"
+    }
+  }
+}

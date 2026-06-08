@@ -1,0 +1,51 @@
+{
+  "task_id": "task_group_006_train_001",
+  "program_id": "string",
+  "as_of_date": "YYYY-MM-DD",
+  "package_line_skus": [
+    "string; sorted ascending"
+  ],
+  "program_summary": {
+    "owner": "string",
+    "budget_headroom_usd": "number; round to cents",
+    "overall_readiness": "ready|at_risk|not_ready"
+  },
+  "nomination_lines": [
+    {
+      "sku": "string; one of package_line_skus; evaluator matches by sku",
+      "selected_supplier_id": "string",
+      "nomination_decision": "nominate|conditional_nomination|hold",
+      "readiness_status": "ready|at_risk|not_ready",
+      "primary_requisition_id": "string",
+      "commercial_basis_id": "string|null",
+      "package_po_ids": [
+        "string; sorted ascending"
+      ],
+      "receipt_evidence_ids": [
+        "string; sorted ascending; as of as_of_date"
+      ],
+      "invoice_exception_ids": [
+        "string; sorted ascending; as of as_of_date"
+      ],
+      "risk_event_ids": [
+        "string; sorted ascending; open or monitoring supplier-risk events as of as_of_date"
+      ],
+      "blocker_codes": [
+        "missing_contract|supplier_watch|open_supplier_risk|ap_hold|pending_receipt|late_due_date|none; sorted ascending"
+      ]
+    }
+  ],
+  "committee_action": {
+    "nominate_now_supplier_ids": [
+      "string; sorted ascending"
+    ],
+    "conditional_supplier_ids": [
+      "string; sorted ascending"
+    ],
+    "hold_supplier_ids": [
+      "string; sorted ascending"
+    ],
+    "next_owner": "buyer|finance_ops|quality_ops|program_owner|ap_team",
+    "send_to_committee": "yes|no"
+  }
+}

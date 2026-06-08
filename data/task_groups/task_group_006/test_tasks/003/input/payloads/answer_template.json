@@ -1,0 +1,78 @@
+{
+  "task_id": "task_group_006_test_003",
+  "program_id": "string",
+  "as_of_date": "YYYY-MM-DD",
+  "rfq_packet_ref": "string",
+  "sku": "string",
+  "requirement": {
+    "requisition_id": "string",
+    "quantity": "number",
+    "need_by": "YYYY-MM-DD"
+  },
+  "program_summary": {
+    "owner": "string",
+    "priority": "low|medium|high|critical",
+    "budget_headroom_usd": "number; round to cents",
+    "shortlist_status": "shortlist_ready|shortlist_blocked",
+    "nomination_gate_status": "ready|at_risk|blocked"
+  },
+  "candidate_screening": [
+    {
+      "supplier_id": "string; evaluator matches by supplier_id",
+      "supplier_name": "string",
+      "supplier_status": "string",
+      "risk_rating": "string",
+      "memo_technical_fit": "approved|conditional|rejected",
+      "memo_capacity_units": "number",
+      "quote_unit_price_usd": "number; round to cents",
+      "existing_commercial_basis_id": "string|null",
+      "open_or_monitoring_risk_event_ids": [
+        "string; sorted ascending; supplier-wide open or monitoring events through as_of_date"
+      ],
+      "shortlist_decision": "shortlist_preferred|shortlist_backup|do_not_shortlist",
+      "blocker_codes": [
+        "capacity_shortfall|missing_contract|open_supplier_risk|quality_hold|supplier_high_risk|technical_conditional|none; sorted ascending"
+      ]
+    }
+  ],
+  "shortlist_supplier_ids": [
+    "string; sorted ascending"
+  ],
+  "excluded_supplier_ids": [
+    "string; sorted ascending"
+  ],
+  "selected_supplier_id": "string",
+  "commercial_support": {
+    "contract_id": "string|null",
+    "purchase_order_id": "string|null",
+    "receipt_id": "string|null",
+    "approved_invoice_id": "string|null",
+    "scheduled_payment_id": "string|null",
+    "invoice_total_usd": "number; round to cents"
+  },
+  "nomination_gate": {
+    "decision": "approve_nomination|conditional_nomination|hold_for_missing_program_manager_signoff|hold_for_supplier_control",
+    "readiness_status": "ready|at_risk|not_ready",
+    "can_nominate_now": "boolean",
+    "required_signoffs_present": [
+      "ER|Finance|Program Manager|Quality; sorted ascending"
+    ],
+    "required_signoffs_missing": [
+      "ER|Finance|Program Manager|Quality; sorted ascending"
+    ],
+    "next_owner": "buyer|finance_ops|quality_ops|program_owner|supplier_control",
+    "send_to_committee": "yes|no"
+  },
+  "transfer_gate_controls": {
+    "trar_gate_policy": "outreach_after_er_quality_purchase|outreach_before_trar_completion|outreach_after_finance_only",
+    "nomination_policy": "block_without_program_manager_signoff|nominate_with_three_signoffs|block_on_any_medium_risk",
+    "commercial_policy": "prefer_active_contract_with_open_risk_review|prefer_lowest_quote_even_without_contract|ignore_existing_contract",
+    "backup_policy": "keep_low_risk_no_contract_supplier_as_backup_not_nominee|exclude_all_no_contract_suppliers|nominate_backup_if_price_low"
+  },
+  "recommended_actions": [
+    "clear_hexel_open_risk_review|obtain_program_manager_signoff|keep_orion_as_backup_rfq; sorted ascending"
+  ],
+  "source_record_ids": [
+    "string; sorted ascending"
+  ]
+}

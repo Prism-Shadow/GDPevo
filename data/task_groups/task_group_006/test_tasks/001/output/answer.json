@@ -1,0 +1,119 @@
+{
+  "task_id": "test_001",
+  "review_as_of": "2026-06-02",
+  "target_ids": {
+    "target_receipt_id": "RCV-GOLD-27",
+    "program_id": "PRG-NOVA-31",
+    "po_id": "PO-NOVA-3107",
+    "supplier_id": "SUP-HEXEL",
+    "invoice_ids": ["AP-00002", "AP-HEXEL-3309"],
+    "payment_ids": ["PAY-00001", "PAY-00002"]
+  },
+  "receipt_controls": [
+    {
+      "receipt_id": "RCV-00002",
+      "po_id": "PO-NOVA-3107",
+      "relation_to_target": "same_po_later_receipt",
+      "scope_decision": "exclude_later_duplicate_receipt",
+      "primary_reason": "after_review_same_po_receipt",
+      "receipt_status": "accepted",
+      "accepted_qty": 180.0,
+      "rejected_qty": 0.0
+    },
+    {
+      "receipt_id": "RCV-00014",
+      "po_id": "PO-00026",
+      "relation_to_target": "same_supplier_other_po",
+      "scope_decision": "exclude_other_po",
+      "primary_reason": "different_po_not_closeout_scope",
+      "receipt_status": "accepted",
+      "accepted_qty": 107.0,
+      "rejected_qty": 0.0
+    },
+    {
+      "receipt_id": "RCV-GOLD-27",
+      "po_id": "PO-NOVA-3107",
+      "relation_to_target": "target_receipt",
+      "scope_decision": "include_for_closeout",
+      "primary_reason": "target_full_quantity_passed",
+      "receipt_status": "accepted_with_note",
+      "accepted_qty": 180.0,
+      "rejected_qty": 0.0
+    }
+  ],
+  "target_reconciliation": {
+    "sku": "SEN-NOVA",
+    "ordered_qty": 180.0,
+    "target_received_qty": 180.0,
+    "target_rejected_qty": 0.0,
+    "invoice_billed_qty": 180.0,
+    "quantity_variance": 0.0,
+    "po_unit_price": 149.75,
+    "contract_unit_price": 149.75,
+    "linked_invoice_unit_price": 149.75,
+    "contract_price_match": true
+  },
+  "invoice_controls": [
+    {
+      "invoice_id": "AP-00002",
+      "po_id": "PO-NOVA-3107",
+      "receipt_ids_in_scope": [],
+      "excluded_receipt_ids": ["RCV-00002", "RCV-GOLD-27"],
+      "decision": "hold_unlinked_duplicate_review",
+      "primary_reason": "unlinked_same_po_price_variance",
+      "release_to_payment": false,
+      "invoice_total": 29901.03,
+      "scheduled_payment_amount": 29901.03,
+      "price_variance_subtotal": 808.2
+    },
+    {
+      "invoice_id": "AP-HEXEL-3309",
+      "po_id": "PO-NOVA-3107",
+      "receipt_ids_in_scope": ["RCV-GOLD-27"],
+      "excluded_receipt_ids": ["RCV-00002"],
+      "decision": "release_three_way_match",
+      "primary_reason": "approved_full_quantity_match",
+      "release_to_payment": true,
+      "invoice_total": 28909.24,
+      "scheduled_payment_amount": 28909.24,
+      "price_variance_subtotal": 0.0
+    }
+  ],
+  "supplier_context": {
+    "supplier_name": "Hexel Motion",
+    "supplier_risk_rating": "medium",
+    "has_open_supplier_risk_as_of": true,
+    "open_supplier_risk_event_ids_as_of": ["VRE-00032"]
+  },
+  "transfer_controls": {
+    "ap_release_policy": "release_only_linked_three_way_match",
+    "duplicate_invoice_policy": "hold_unlinked_same_po_invoice_even_when_payment_scheduled",
+    "receipt_scope_policy": "target_receipt_only_exclude_later_same_po_exports",
+    "risk_policy": "medium_supplier_risk_requires_note_not_block_release"
+  },
+  "summary": {
+    "release_invoice_ids": ["AP-HEXEL-3309"],
+    "review_invoice_ids": ["AP-00002"],
+    "scheduled_payment_ids": ["PAY-00001", "PAY-00002"],
+    "in_scope_receipt_ids": ["RCV-GOLD-27"],
+    "excluded_receipt_ids": ["RCV-00002"],
+    "non_scope_export_receipt_ids": ["RCV-00014"],
+    "net_release_total": 28909.24,
+    "duplicate_payment_exposure": 29901.03,
+    "price_variance_subtotal": 808.2,
+    "authoritative_sources": [
+      "procureops_ap_records",
+      "procureops_contract_records",
+      "procureops_payment_records",
+      "procureops_po_records",
+      "procureops_receipt_records",
+      "procureops_supplier_risk_records"
+    ],
+    "supporting_only_sources": ["dock_memo", "wh_gold_dock_export"],
+    "followup_actions": [
+      "exclude_later_same_po_receipt_from_closeout",
+      "release_ap_hexel_3309",
+      "stop_pay_ap00002_pending_duplicate_review"
+    ]
+  }
+}

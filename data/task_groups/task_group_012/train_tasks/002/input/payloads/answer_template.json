@@ -1,0 +1,67 @@
+{
+  "case_id": {"type": "string"},
+  "final_decision": {
+    "type": "enum",
+    "allowed_values": ["approved_with_conditions", "approved", "rejected", "held"]
+  },
+  "approval_authority": {"type": "string"},
+  "approval_event_id": {"type": "string"},
+  "folder_ready": {"type": "boolean"},
+  "missing_files": {"type": "list[string]"},
+  "required_tag_present": {"type": "boolean"},
+  "notice_quality": {
+    "type": "enum",
+    "allowed_values": ["valid", "defective"]
+  },
+  "notice_defects": {
+    "type": "list[enum]",
+    "allowed_values": ["missing_ack_deadline", "missing_appeal_instructions", "missing_waitlist_status", "missing_correct_policy"]
+  },
+  "audit_event_id": {"type": "string"},
+  "supporting_audit_event_ids": {"type": "list[string]"},
+  "excluded_audit_event_ids": {"type": "list[string]"},
+  "audit_scope": {
+    "type": "enum",
+    "allowed_values": ["document_notice_findings_only", "leave_source_precedence_only", "payroll_assignment_readiness"]
+  },
+  "next_action": {
+    "type": "enum",
+    "allowed_values": ["block_close_and_reissue_notice", "approve_onboarding_close", "open_records_remediation"]
+  },
+  "approval_closeout_gate": {
+    "type": "enum",
+    "allowed_values": ["approval_not_sufficient_when_folder_or_notice_defective", "approval_sufficient_when_records_clean"]
+  },
+  "closeout_blockers": {
+    "type": "list[enum]",
+    "allowed_values": ["missing_required_files", "missing_required_tags", "defective_formal_notice"]
+  },
+  "evidence_source_order": {
+    "type": "enum",
+    "allowed_values": ["approval_history_folder_notice_audit", "folder_notice_audit", "audit_only"]
+  },
+  "folder_required_tag_action": {
+    "type": "enum",
+    "allowed_values": ["no_tag_action", "add_required_tag"]
+  },
+  "notice_evidence_source": {
+    "type": "enum",
+    "allowed_values": ["notice_packet_inspection", "message_notice_inspection", "case_summary_only"]
+  },
+  "escalation_action": {
+    "type": "enum",
+    "allowed_values": ["open_records_remediation", "block_close_and_reissue_notice", "no_action"]
+  },
+  "records_remediation_owner": {
+    "type": "enum",
+    "allowed_values": ["Records", "People Ops Compliance", "Payroll QA"]
+  },
+  "notice_remediation_action": {
+    "type": "enum",
+    "allowed_values": ["reissue_defective_notices", "no_notice_action", "send_new_offer_notice"]
+  },
+  "final_control_result": {
+    "type": "enum",
+    "allowed_values": ["hold_for_folder_and_notice_defects", "approve_closeout", "ready_with_monitoring"]
+  }
+}

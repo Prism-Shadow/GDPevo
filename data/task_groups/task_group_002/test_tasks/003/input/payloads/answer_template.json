@@ -1,0 +1,65 @@
+{
+  "account_status": {
+    "as_of_date": "YYYY-MM-DD",
+    "customer_id": "string",
+    "customer_name": "string",
+    "opportunity_id": "string",
+    "opportunity_stage": "enum: WON | OPEN | LOST",
+    "won_amount": "number, USD currency with 2 decimals",
+    "opportunity_matches_milestones": "boolean",
+    "outstanding_balance": "number, USD currency with 2 decimals",
+    "contact": {
+      "name": "string",
+      "linked_customer_id": "string",
+      "linked_opportunity_id": "string"
+    }
+  },
+    "milestones": [
+        {
+            "milestone_id": "string",
+            "source_phase_id": "string source phase id from API",
+            "phase_number": "integer",
+            "invoice_id": "string",
+      "invoice_total": "number, USD currency with 2 decimals",
+      "payment_status": "enum: PAID | PARTIAL | UNPAID",
+      "amount_paid": "number, USD currency with 2 decimals",
+      "amount_unpaid": "number, USD currency with 2 decimals",
+      "due_date": "string or null, ISO YYYY-MM-DD when applicable",
+      "overdue": "boolean",
+      "revenue_recognition_status": "enum: RECOGNIZED | REQUIRED_MISSING | NOT_REQUIRED_UNPAID"
+    }
+  ],
+  "revenue_recognition": {
+    "recognition_status": "enum: COMPLETE_FOR_PAID_MILESTONES | MISSING_FOR_PAID_MILESTONES | NOT_REQUIRED",
+    "recognized_milestones": [
+      "string"
+    ],
+    "missing_required_milestones": [
+      "string"
+    ],
+    "recognized_amount": "number, USD currency with 2 decimals"
+  },
+  "event": {
+    "event_id": "string",
+    "event_date": "string, ISO YYYY-MM-DD",
+    "event_status": "enum: LIVE | SCHEDULED | COMPLETED | CANCELLED",
+    "voucher_code": "string",
+    "voucher_discount": "number, voucher discount value",
+    "voucher_max_uses": "integer"
+  },
+  "follow_up_tasks": [
+    {
+      "task_type": "enum: COLLECTION | EVENT_INVITATION",
+      "task_title": "string",
+      "linked_customer_id": "string",
+      "linked_opportunity_id": "string",
+            "contact_name": "string",
+            "due_date": "string, ISO YYYY-MM-DD",
+            "next_action": "enum: ESCALATE_COLLECTION | SEND_EVENT_INVITATION",
+            "milestone_id": "string or null",
+            "amount_due": "number or null, USD currency with 2 decimals",
+      "event_id": "string or null",
+      "voucher_code": "string or null"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+Q4 North America Operations Digest
+
+Revenue Operations needs a North America Q4 digest for ApexCloud that ties receivables risk to CRM follow-up, summarizes Q4 pipeline, and adds operating context for leadership. Build the digest from the public ApexCloud Retention Operations API at http://127.0.0.1:8074.
+
+Use these parameters:
+- Quarter: 2026-Q4
+- Date range: 2026-10-01 through 2026-12-31
+- A/R as-of date: 2026-12-31
+- Region: North America
+- HR context: North America for 2026-Q4
+- Event context: retention_summit for 2026-Q4
+- Follow-up due date for every receivables action: 2027-01-15
+
+Relevant endpoint families include:
+- /api/finance/ar-aging
+- /api/accounts
+- /api/opportunities
+- /api/hr/summary
+- /api/events/performance
+
+Return one JSON object only, using the shape shown in input/payloads/answer_template.json. Include the receivables follow-up actions required under company policy, the Q4 North America CRM pipeline summary, the requested HR/event operating context, and the policy-audit labels that explain which company conventions you applied.
+
+Use these output conventions:
+- Currency values use 2 decimal places.
+- Percentage values use 1 decimal place.
+- Counts are integers.
+- Link status must be "linked" or "unlinked".
+- The primary action for receivables follow-ups should use the controlled action label that best fits overdue receivables work.
+- Sort receivable_actions by customer_name ascending.

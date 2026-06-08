@@ -1,0 +1,70 @@
+{
+  "environment": "Asteria Investment Office",
+  "files": [
+    {
+      "path": "data/issuers.json",
+      "records": 18
+    },
+    {
+      "path": "data/bonds.json",
+      "records": 27
+    },
+    {
+      "path": "data/portfolios.json",
+      "records": 10
+    },
+    {
+      "path": "data/policies.json",
+      "records": 8
+    },
+    {
+      "path": "data/energy_market.json",
+      "records": 5
+    },
+    {
+      "path": "data/indices.json",
+      "records": 14
+    },
+    {
+      "path": "data/index_levels.json",
+      "records": 14
+    },
+    {
+      "path": "data/opportunity_sets.json",
+      "records": 25
+    },
+    {
+      "path": "data/prior_views.json",
+      "records": 50
+    },
+    {
+      "path": "data/macro_signals.json",
+      "records": 50
+    }
+  ],
+  "generated_at": "2026-06-03",
+  "lineage": {
+    "allocation_data": "Prior views and macro signals are shared policy inputs, not task-specific answers.",
+    "credit_data": "Issuer and bond universe includes held instruments, candidates, watchlist risks, and duration-ineligible distractors.",
+    "index_levels": "Generated from deterministic factor returns; no correlations are precomputed or stored.",
+    "portfolios": "Shared office records with current holdings, policy references, and distractor portfolios."
+  },
+  "public_entrypoints": [
+    "/",
+    "/api/catalog",
+    "/api/policies",
+    "/api/portfolios",
+    "/api/portfolios/<portfolio_id>",
+    "/api/instruments/bonds",
+    "/api/issuers",
+    "/api/market/energy",
+    "/api/indices",
+    "/api/index-levels",
+    "/api/index-levels/<index_id>",
+    "/api/allocation/opportunity-sets",
+    "/api/allocation/prior-views",
+    "/api/macro-signals"
+  ],
+  "seed": 20260603,
+  "task_group_id": "task_group_010_institutional_portfolio_risk"
+}

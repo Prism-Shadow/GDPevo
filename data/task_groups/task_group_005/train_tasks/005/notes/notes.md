@@ -1,0 +1,22 @@
+# train_005 Notes
+
+## English
+
+This train task belongs to task_group_005, the shared ERP finance and compliance review environment. The local task brief is an AP payment release risk review for five vendors after account-change events. The task uses generated shared environment records under `task_group/task_group_005/env/data/`, especially `compliance_objects.json` and `vendors.json`, plus the task-local solver payload `input/payloads/account_change_batch.json`.
+
+The solver-visible request asks for a structured release posture for five business IDs: `BUS-2025-0018`, `BUS-2025-0006`, `BUS-2025-0056`, `BUS-2025-0009`, and `BUS-2025-0041`. The review date is `2025-06-01`. The expected output is constrained by `input/payloads/answer_template.json` and uses controlled decision values `release`, `hold`, and `escalate`.
+
+This task fits the scenario because it requires coordination across AP release requests, vendor master data, compliance profile data, and account-change controls. The local payload provides the batch and release gate memo; the shared environment provides the authoritative compliance facts. The main object relationship is `business_id` to `vendor_id`, with bank, tax, license, screening, and risk fields used to reconstruct the effective payment-release state.
+
+Material map: `account_change_batch.json` identifies the five account-change tickets, the review date, and high-level review context. `answer_template.json` defines the output schema, enum values, stable ID ordering, and required lists. The shared compliance object records provide `bank_account_status`, `tax_id`, `license_expiry`, `sanctions_check_status`, `pep_status`, `missing_fields`, and `risk_score`. The vendor records are useful for confirming that the selected business profiles map to the expected vendor master identities.
+
+Solution basis: `BUS-2025-0018` releases because its bank is verified, tax ID is valid, license is active on `2025-06-01`, screening is clear, PEP is none, no fields are missing, and risk is below the override threshold. `BUS-2025-0006` is held because the bank account has `name_mismatch`, license evidence is missing, and risk score `70` triggers the override flag. `BUS-2025-0056` is held because the bank account is closed, sanctions screening is not run, and the license expired before the review date. `BUS-2025-0009` escalates because it has confirmed PEP, invalid placeholder tax ID `TIN999999`, and an expired license. `BUS-2025-0041` escalates because it has possible PEP, bank `name_mismatch`, invalid tax ID format `TIN12X899`, and an expired license.
+
+Evaluation uses eight exact-match scoring points with raw weights totaling 17: SP1 target entity set (1), SP2 release decision for `BUS-2025-0018` (2), SP3 hold decisions for `BUS-2025-0006` and `BUS-2025-0056` (3), SP4 escalation decisions for `BUS-2025-0009` and `BUS-2025-0041` (3), SP5 bank mismatch IDs (2), SP6 invalid tax IDs (2), SP7 expired license IDs (2), and SP8 review queue plus risk-score override flags (2). Lists are normalized by sorted ID set; decision checks are exact enum matches.
+
+Transfer design: as a train task, this is a real calibration task rather than a tutorial. Comparing an attempted answer against the standard answer should teach the transferable habits needed for later payment-release risk tasks: treat the compliance profile as authoritative for release gates, distinguish hold from escalation, treat PEP/sanctions concerns as escalation triggers, compare license expiry to the stated review date, recognize placeholder and malformed tax IDs, keep bank `name_mismatch` separate from other unusable bank states, and return normalized ID lists instead of free-text rationales.
+
+Likely pitfalls include using the current calendar date instead of `2025-06-01`, treating current `review_status` as the final release decision, escalating every non-clear bank or not-run screening case, missing that `TIN999999` is invalid despite matching the basic pattern, omitting the risk override flag for score `70`, or including the closed-bank case in `bank_mismatch_ids`.
+
+Construction record: created by task-builder subagent for `train_005` on 2026-06-01. Files added under `task_group/task_group_005/train_tasks/005/` only.
+

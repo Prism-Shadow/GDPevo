@@ -1,0 +1,107 @@
+{
+  "task_id": "test_003",
+  "description": "Output schema for preparing the q1_partner_import batch for CRM import.",
+  "required_top_level_keys": [
+    "batch_id",
+    "campaign_code",
+    "clean_contacts",
+    "duplicate_summary",
+    "removal_summary",
+    "import_action_totals",
+    "campaign_member_import"
+  ],
+  "ordering_rules": {
+    "clean_contacts": "Sort by clean_contact_id ascending.",
+    "duplicate_summary.duplicate_keys": "Sort by key ascending.",
+    "removal_summary.removed_rows": "Sort by row_id ascending."
+  },
+  "field_definitions": {
+    "batch_id": {
+      "type": "string",
+      "required": true
+    },
+    "campaign_code": {
+      "type": "string",
+      "required": true
+    },
+    "clean_contacts": {
+      "type": "list<object>",
+      "required": true,
+      "item_required_keys": [
+        "clean_contact_id",
+        "source_row_id",
+        "company_name",
+        "contact_name",
+        "email",
+        "phone",
+        "source_name",
+        "captured_at",
+        "crm_action",
+        "existing_account_id",
+        "existing_contact_id"
+      ],
+      "field_types": {
+        "clean_contact_id": "string; use the winning source row_id",
+        "source_row_id": "string; use the winning source row_id",
+        "company_name": "string from the winning source row",
+        "contact_name": "string from the winning source row",
+        "email": "string; normalized email or empty string",
+        "phone": "string; normalized digits-only phone or empty string",
+        "source_name": "enum: badge_scan, sponsor_form, partner_upload, webinar_form, exhibitor_form, manual_upload",
+        "captured_at": "string; ISO timestamp from the winning row",
+        "crm_action": "enum: create_account, update_existing, no_import, suppress",
+        "existing_account_id": "string or null",
+        "existing_contact_id": "string or null"
+      }
+    },
+    "duplicate_summary": {
+      "type": "object",
+      "required_keys": [
+        "duplicate_removed_count",
+        "duplicate_keys"
+      ],
+      "duplicate_keys_item_required_keys": [
+        "key",
+        "winner_row_id",
+        "removed_row_ids"
+      ],
+      "duplicate_key_format": "email:<normalized_email> when normalized email exists; otherwise phone_company:<normalized_phone>:<normalized_company_name>"
+    },
+    "removal_summary": {
+      "type": "object",
+      "required_keys": [
+        "unusable_removed_count",
+        "suppressed_removed_count",
+        "removed_rows"
+      ],
+      "removed_rows_item_required_keys": [
+        "row_id",
+        "reason"
+      ],
+      "reason_enum": [
+        "duplicate",
+        "missing_contact",
+        "suppressed"
+      ]
+    },
+    "import_action_totals": {
+      "type": "object",
+      "required_keys": [
+        "create_account",
+        "update_existing",
+        "no_import",
+        "suppress"
+      ],
+      "value_type": "integer"
+    },
+    "campaign_member_import": {
+      "type": "object",
+      "required_keys": [
+        "count",
+        "source_label"
+      ],
+      "count": "integer; number of surviving cleaned contacts that should be imported as members of the batch campaign",
+      "source_label": "string; use the batch source_system value as the import source label"
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "packet_id": "AX17-AP-RELEASE-2026-06-18",
+  "review_as_of": "2026-06-18",
+  "business_request": "Prepare the AP release and hold file for mixed AX17 receiving exceptions and AP holds.",
+  "target_ids": {
+    "program_id": "PRG-AX17",
+    "po_ids": [
+      "PO-00031",
+      "PO-00038",
+      "PO-AX17-4481",
+      "PO-AX17-4519"
+    ],
+    "receipt_ids": [
+      "RCV-00017",
+      "RCV-00020",
+      "RCV-BLUE-14"
+    ],
+    "invoice_ids": [
+      "AP-00027",
+      "AP-00032",
+      "AP-LUMA-7714",
+      "AP-VANTIX-2188"
+    ]
+  },
+  "po73xx_alias_note": {
+    "requested_family": "PO-73xx-style generated receipts",
+    "shared_environment_status": "Exact PO-73xx identifiers are not present in the shared API data.",
+    "use_available_shared_ids": [
+      "PO-00031",
+      "PO-00038"
+    ]
+  },
+  "chargeback_register_excerpt": [
+    {
+      "chargeback_id": "CB-AX17-BLUE-14-QTY",
+      "invoice_id": "AP-LUMA-7714",
+      "po_id": "PO-AX17-4481",
+      "receipt_id": "RCV-BLUE-14",
+      "reason_code": "Underage Quantity",
+      "basis_quantity": 24,
+      "unit_cost": 84.5,
+      "status": "approved"
+    },
+    {
+      "chargeback_id": "CB-GEN-00038-APQTY",
+      "invoice_id": "AP-00032",
+      "po_id": "PO-00038",
+      "receipt_id": "RCV-00020",
+      "reason_code": "AP Quantity Variance",
+      "basis_quantity": 4,
+      "unit_cost": 295.94,
+      "status": "approved"
+    },
+    {
+      "chargeback_id": "CB-GEN-00031-QTY",
+      "invoice_id": "AP-00027",
+      "po_id": "PO-00031",
+      "receipt_id": "RCV-00017",
+      "reason_code": "Underage Quantity",
+      "basis_quantity": 99,
+      "unit_cost": 84.5,
+      "status": "pending_quality_review"
+    }
+  ],
+  "release_request_note": [
+    {
+      "invoice_id": "AP-LUMA-7714",
+      "requester_comment": "Supplier asked AP to clear the AX17 lamp invoice after the Blue receipt was accepted."
+    },
+    {
+      "invoice_id": "AP-VANTIX-2188",
+      "requester_comment": "Buyer mentioned a PO-73xx-style generated receipt, but no receipt ID was provided."
+    },
+    {
+      "invoice_id": "AP-00027",
+      "requester_comment": "AP ledger currently shows approved; receiving still needs quality disposition."
+    }
+  ]
+}

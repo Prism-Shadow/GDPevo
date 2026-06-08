@@ -1,0 +1,155 @@
+{
+  "required_top_level_keys": [
+    "segment_id",
+    "posture",
+    "state_metrics",
+    "peer_comparison",
+    "controls",
+    "escalation_triggers",
+    "interpretation"
+  ],
+  "fields": {
+    "segment_id": {
+      "type": "string",
+      "required": true,
+      "description": "Stable credit-union segment identifier."
+    },
+    "posture": {
+      "type": "enum",
+      "required": true,
+      "choices": [
+        "continue_approving",
+        "continue_with_tighter_conditions",
+        "temporarily_pause"
+      ]
+    },
+    "state_metrics": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "state_code",
+        "benchmark_version",
+        "delinquency_bps",
+        "loan_to_share_pct",
+        "roaa_bps",
+        "positive_net_income_pct"
+      ],
+      "numeric_precision": "integer values exactly as reported by the NCUA benchmark table"
+    },
+    "peer_comparison": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "peer_states",
+        "target_vs_us",
+        "target_vs_peer_median"
+      ],
+      "peer_states": {
+        "type": "list",
+        "item_type": "state_code",
+        "ordering": "ascending state code"
+      },
+      "direction_fields": {
+        "type": "object",
+        "required_keys": [
+          "delinquency_bps",
+          "loan_to_share_pct",
+          "roaa_bps",
+          "positive_net_income_pct"
+        ],
+        "choices": [
+          "higher",
+          "lower",
+          "equal"
+        ],
+        "description": "Direction of the target state's value relative to the comparison value."
+      }
+    },
+    "controls": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "required_checklist_gates",
+        "added_operating_controls"
+      ],
+      "required_checklist_gates": {
+        "type": "set",
+        "item_type": "enum",
+        "choices": [
+          "board_authorization",
+          "equipment_invoice",
+          "fleet_replacement_plan",
+          "payer_contract_summary",
+          "public_contract_or_tax_support",
+          "proof_of_insurance",
+          "ucc_or_title_lien"
+        ]
+      },
+      "added_operating_controls": {
+        "type": "set",
+        "item_type": "enum",
+        "choices": [
+          "payer_contract_refresh_before_close",
+          "field_audit_completion_or_exception",
+          "lien_perfection_prior_to_funding",
+          "senior_underwriter_second_review",
+          "quarterly_state_benchmark_monitoring",
+          "monthly_segment_delinquency_watch",
+          "committee_exception_for_capacity_overrun"
+        ]
+      }
+    },
+    "escalation_triggers": {
+      "type": "list",
+      "required": true,
+      "ordering": "ascending trigger_id",
+      "item_required_keys": [
+        "trigger_id",
+        "condition",
+        "owner"
+      ],
+      "condition_choices": [
+        "segment_recent_delinquency_ge_90_bps",
+        "stale_payer_contract_documentation",
+        "field_audit_backlog_over_30_days",
+        "quarterly_capacity_exceeded_or_exception_requested",
+        "state_delinquency_gap_widens_25_bps"
+      ],
+      "owner_choices": [
+        "credit_risk_manager",
+        "operations_control_manager",
+        "lending_committee_chair"
+      ]
+    },
+    "interpretation": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "capacity_status",
+        "external_risk_status",
+        "risk_tolerance",
+        "committee_message"
+      ],
+      "capacity_status_choices": [
+        "capacity_available",
+        "capacity_constrained",
+        "no_capacity"
+      ],
+      "external_risk_status_choices": [
+        "stronger_than_national_and_peers",
+        "mixed_vs_national_and_peers",
+        "weaker_than_national_and_peers"
+      ],
+      "risk_tolerance_choices": [
+        "restrained",
+        "moderate",
+        "expansive"
+      ],
+      "committee_message_choices": [
+        "capacity_available_but_external_risk_mixed",
+        "pause_until_state_metrics_recover",
+        "routine_approval_path_supported"
+      ]
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "period",
+    "entity",
+    "selected_invoice_ids",
+    "account_rollup",
+    "invoice_results",
+    "default_missing_term_invoice_ids",
+    "exception_invoice_ids",
+    "priority_exception_ids",
+    "close_status"
+  ],
+  "fields": {
+    "period": {
+      "type": "string",
+      "format": "YYYY-MM"
+    },
+    "entity": {
+      "type": "string"
+    },
+    "selected_invoice_ids": {
+      "type": "list[string]",
+      "ordering": "same order as prepaid_april_scope.json target_invoice_ids"
+    },
+    "account_rollup": {
+      "type": "object",
+      "keys": [
+        "1250",
+        "1251"
+      ],
+      "value_fields": {
+        "account_name": {
+          "type": "string"
+        },
+        "selected_invoice_count": {
+          "type": "integer"
+        },
+        "original_amount_total": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "april_amortization_total": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "cumulative_amortization_through_april": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "schedule_ending_balance": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "gl_ending_balance": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD"
+        },
+        "variance_amount": {
+          "type": "number",
+          "precision": 2,
+          "unit": "USD",
+          "definition": "schedule_ending_balance minus gl_ending_balance"
+        },
+        "variance_flag": {
+          "type": "boolean"
+        },
+        "has_default_missing_term_flag": {
+          "type": "boolean"
+        },
+        "account_status": {
+          "type": "enum",
+          "allowed_values": [
+            "reconciled",
+            "variance_review",
+            "requires_reconciliation"
+          ]
+        }
+      }
+    },
+    "invoice_results": {
+      "type": "list[object]",
+      "ordering": "same order as prepaid_april_scope.json target_invoice_ids",
+      "required_object_keys": [
+        "prepaid_invoice_id",
+        "account",
+        "april_amortization",
+        "cumulative_amortization_through_april",
+        "ending_balance",
+        "default_missing_term_flag",
+        "exception_flag",
+        "priority_code"
+      ],
+      "numeric_precision": 2,
+      "priority_code_allowed_values": [
+        "none",
+        "manual_override",
+        "missing_contract_dates",
+        "rounded_amount",
+        "duplicate_invoice_number",
+        "multiple_flags"
+      ]
+    },
+    "default_missing_term_invoice_ids": {
+      "type": "list[string]",
+      "ordering": "ascending by invoice ID"
+    },
+    "exception_invoice_ids": {
+      "type": "list[string]",
+      "ordering": "ascending by invoice ID"
+    },
+    "priority_exception_ids": {
+      "type": "list[string]",
+      "ordering": "highest controller-review priority first"
+    },
+    "close_status": {
+      "type": "enum",
+      "allowed_values": [
+        "ready",
+        "ready_with_exceptions",
+        "blocked"
+      ]
+    }
+  }
+}

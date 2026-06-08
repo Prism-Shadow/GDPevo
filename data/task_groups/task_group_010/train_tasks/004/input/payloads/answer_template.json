@@ -1,0 +1,129 @@
+{
+  "task_id": {
+    "type": "string",
+    "required_value": "train_004"
+  },
+  "portfolio_id": {
+    "type": "string",
+    "required_value": "PF-FI-LUMEN"
+  },
+  "as_of_date": {
+    "type": "string",
+    "format": "YYYY-MM-DD",
+    "description": "Use the date of the current portfolio records used for the rebalance."
+  },
+  "rotation": {
+    "type": "object",
+    "required_keys": [
+      "trades"
+    ],
+    "trades": {
+      "type": "list",
+      "ordering": "Sort by action with SELL before BUY, then by instrument_id ascending within each action.",
+      "item_type": "object",
+      "required_item_keys": [
+        "action",
+        "instrument_id",
+        "quantity_usd_m"
+      ],
+      "fields": {
+        "action": {
+          "type": "enum",
+          "allowed_values": [
+            "BUY",
+            "SELL"
+          ]
+        },
+        "instrument_id": {
+          "type": "string"
+        },
+        "quantity_usd_m": {
+          "type": "number",
+          "precision": 1,
+          "units": "USD millions"
+        }
+      }
+    }
+  },
+  "risk_metrics": {
+    "type": "object",
+    "required_keys": [
+      "post_trade_hy_allocation_pct",
+      "post_trade_duration_years",
+      "hy_reduction_pct_points",
+      "post_trade_watchlist_exposure_usd_m"
+    ],
+    "fields": {
+      "post_trade_hy_allocation_pct": {
+        "type": "number",
+        "precision": 2,
+        "units": "percent"
+      },
+      "post_trade_duration_years": {
+        "type": "number",
+        "precision": 2,
+        "units": "years"
+      },
+      "hy_reduction_pct_points": {
+        "type": "number",
+        "precision": 2,
+        "units": "percentage points"
+      },
+      "post_trade_watchlist_exposure_usd_m": {
+        "type": "number",
+        "precision": 1,
+        "units": "USD millions"
+      }
+    }
+  },
+  "exception_flags": {
+    "type": "object",
+    "required_keys": [
+      "hy_cap_pass",
+      "duration_band_pass",
+      "target_hy_reduction_met",
+      "watchlist_exposure_cleared"
+    ],
+    "fields": {
+      "hy_cap_pass": {
+        "type": "boolean"
+      },
+      "duration_band_pass": {
+        "type": "boolean"
+      },
+      "target_hy_reduction_met": {
+        "type": "boolean"
+      },
+      "watchlist_exposure_cleared": {
+        "type": "boolean"
+      }
+    }
+  },
+  "watchlist_handling": {
+    "type": "object",
+    "required_keys": [
+      "watchlist_sell_ids",
+      "buys_avoid_watchlist"
+    ],
+    "fields": {
+      "watchlist_sell_ids": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Ascending instrument_id order."
+      },
+      "buys_avoid_watchlist": {
+        "type": "boolean"
+      }
+    }
+  },
+  "risk_note_code": {
+    "type": "enum",
+    "allowed_values": [
+      "hy_cap_pressure",
+      "watchlist_concentration",
+      "duration_preservation",
+      "carry_tradeoff",
+      "no_action"
+    ]
+  }
+}

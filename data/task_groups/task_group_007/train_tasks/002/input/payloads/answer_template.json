@@ -1,0 +1,162 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "plan_date",
+    "kit_targets",
+    "component_plan",
+    "transfer_requests",
+    "purchase_requisitions",
+    "excluded_components",
+    "summary"
+  ],
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "train_002"
+    },
+    "plan_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "kit_targets": {
+      "type": "list",
+      "ordering": "Sort by bom_id ascending.",
+      "item_required_keys": [
+        "bom_id",
+        "kit_name",
+        "warehouse_id",
+        "build_quantity",
+        "build_date"
+      ],
+      "field_types": {
+        "bom_id": "string",
+        "kit_name": "string",
+        "warehouse_id": "string",
+        "build_quantity": "integer",
+        "build_date": "YYYY-MM-DD"
+      }
+    },
+    "component_plan": {
+      "type": "list",
+      "ordering": "Sort by sku ascending.",
+      "item_required_keys": [
+        "sku",
+        "total_required",
+        "target_effective_available",
+        "timely_po_qty",
+        "transfer_qty",
+        "purchase_requisition_qty",
+        "final_action",
+        "coverage_po_ids",
+        "exclusion_reason"
+      ],
+      "field_types": {
+        "sku": "string",
+        "total_required": "integer units",
+        "target_effective_available": "integer units",
+        "timely_po_qty": "integer units from eligible same-warehouse open or confirmed purchase orders",
+        "transfer_qty": "integer units",
+        "purchase_requisition_qty": "integer units",
+        "final_action": {
+          "type": "enum",
+          "allowed_values": [
+            "no_action_stocked",
+            "transfer_only",
+            "purchase_required",
+            "timely_po_covered",
+            "overstock_excluded"
+          ]
+        },
+        "coverage_po_ids": "list of strings sorted ascending",
+        "exclusion_reason": {
+          "type": "enum",
+          "allowed_values": [
+            "none",
+            "target_overstock",
+            "timely_po_covers_gap",
+            "stocked_no_gap"
+          ]
+        }
+      }
+    },
+    "transfer_requests": {
+      "type": "list",
+      "ordering": "Sort by sku ascending, then quantity descending, then from_warehouse_id ascending.",
+      "item_required_keys": [
+        "sku",
+        "from_warehouse_id",
+        "to_warehouse_id",
+        "quantity",
+        "needed_by"
+      ],
+      "field_types": {
+        "sku": "string",
+        "from_warehouse_id": "string",
+        "to_warehouse_id": "string",
+        "quantity": "integer units",
+        "needed_by": "YYYY-MM-DD"
+      }
+    },
+    "purchase_requisitions": {
+      "type": "list",
+      "ordering": "Sort by sku ascending.",
+      "item_required_keys": [
+        "sku",
+        "supplier_id",
+        "warehouse_id",
+        "quantity",
+        "needed_by",
+        "unit_cost",
+        "extended_cost"
+      ],
+      "field_types": {
+        "sku": "string",
+        "supplier_id": "string",
+        "warehouse_id": "string",
+        "quantity": "integer units",
+        "needed_by": "YYYY-MM-DD",
+        "unit_cost": "number, currency rounded to 2 decimals",
+        "extended_cost": "number, currency rounded to 2 decimals"
+      }
+    },
+    "excluded_components": {
+      "type": "list",
+      "ordering": "Sort by sku ascending.",
+      "item_required_keys": [
+        "sku",
+        "reason",
+        "supporting_po_ids"
+      ],
+      "field_types": {
+        "sku": "string",
+        "reason": {
+          "type": "enum",
+          "allowed_values": [
+            "target_overstock",
+            "timely_po_covers_gap",
+            "stocked_no_gap"
+          ]
+        },
+        "supporting_po_ids": "list of strings sorted ascending"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required_keys": [
+        "component_count",
+        "total_purchase_units",
+        "total_purchase_cost",
+        "total_transfer_units",
+        "timely_po_covered_units"
+      ],
+      "field_types": {
+        "component_count": "integer",
+        "total_purchase_units": "integer units",
+        "total_purchase_cost": "number, currency rounded to 2 decimals",
+        "total_transfer_units": "integer units",
+        "timely_po_covered_units": "integer units"
+      }
+    }
+  }
+}

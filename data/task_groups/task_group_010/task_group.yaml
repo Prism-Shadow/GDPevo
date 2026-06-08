@@ -1,0 +1,335 @@
+task_group:
+  task_group_id: task_group_010
+  scenario_id: SCN_010_institutional_investment_strategy_portfolio_risk
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Finance
+  description: |
+    Institutional CIO desk tasks for portfolio risk and strategy decisions.
+    The shared Asteria Investment Office environment exposes current portfolio
+    holdings, bond issuer data, energy market signals, international equity
+    index levels, allocation prior views, macro signals, and policy thresholds.
+    Train and test tasks draw from the same investment workflow distribution:
+    energy/fixed-income trade strategy, international correlation review, and
+    cross-asset active allocation view updates.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/app.py
+    - env/generate_data.py
+    - env/README.md
+    - env/manifest.json
+    - env/data/bonds.json
+    - env/data/energy_market.json
+    - env/data/index_levels.json
+    - env/data/indices.json
+    - env/data/issuers.json
+    - env/data/macro_signals.json
+    - env/data/opportunity_sets.json
+    - env/data/policies.json
+    - env/data/portfolios.json
+    - env/data/prior_views.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/desk_request.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/eval.py
+      rubric:
+        - goal: Selected two BUY tickets with correct instrument ids and notionals.
+          weight: 3
+        - goal: Correct post-trade HY allocation percentage.
+          weight: 2
+        - goal: Correct post-trade weighted modified duration.
+          weight: 2
+        - goal: Correct HY cap and duration-band pass/fail decisions.
+          weight: 2
+        - goal: Correct selected-issuer, subsector, and watchlist diversification flags.
+          weight: 1
+        - goal: Correct sales target segment, energy theme, and source-precedence decision.
+          weight: 2
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+      - train_tasks/002/input/payloads/review_request.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct review window and nine-index universe.
+          weight: 1
+        - goal: Correct highest positive correlation pair and rounded value.
+          weight: 3
+        - goal: Correct lowest correlation pair and rounded value.
+          weight: 3
+        - goal: Correct China and Asia dependence concentration flag.
+          weight: 2
+        - goal: Correct diversification candidate set.
+          weight: 2
+        - goal: Correct two sleeve actions.
+          weight: 2
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+      - train_tasks/003/input/payloads/allocation_request.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct task lineage, as-of date, quarters, and policy id.
+          weight: 1
+        - goal: Correct core equity views.
+          weight: 3
+        - goal: Correct diversifier equity views.
+          weight: 3
+        - goal: Correct rates, credit, and currency views.
+          weight: 3
+        - goal: Correct view change directions.
+          weight: 2
+        - goal: Correct conviction levels.
+          weight: 2
+        - goal: Correct rationale codes.
+          weight: 2
+        - goal: Correct risk overlay.
+          weight: 1
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+      - train_tasks/004/input/payloads/risk_meeting_memo.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct sell and buy trade package.
+          weight: 3
+        - goal: Correct post-trade HY allocation percentage.
+          weight: 2
+        - goal: Correct post-trade weighted modified duration.
+          weight: 2
+        - goal: Correct exception flags.
+          weight: 2
+        - goal: Correct downgrade and watchlist handling.
+          weight: 2
+        - goal: Correct risk note code.
+          weight: 1
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+      - train_tasks/005/input/payloads/committee_request.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct two key correlation pairs and rounded values.
+          weight: 3
+        - goal: Correct target sleeve actions.
+          weight: 3
+        - goal: Correct allocation view rows.
+          weight: 2
+        - goal: Correct rebalance trigger.
+          weight: 2
+        - goal: Correct portfolio risk concentration flag.
+          weight: 2
+        - goal: Correct next-step enum.
+          weight: 1
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+      - test_tasks/001/input/payloads/stale_trader_worksheet.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct recommendation type, selected route, action, and primary constraint conflict.
+          weight: 3
+        - goal: Correct ranked route shortlist with decisions and reason enums.
+          weight: 3
+        - goal: Correct selected trade package with actions and notionals.
+          weight: 3
+        - goal: Correct current-data source precedence and detailed conflict map.
+          weight: 2
+        - goal: Correct rejected candidate reason map from current data and policy conventions.
+          weight: 3
+        - goal: Correct core post-trade size, cash, HY allocation, and duration metrics.
+          weight: 2
+        - goal: Correct secondary post-trade yield, BlueGas concentration, and constraint flags.
+          weight: 2
+        - goal: Correct private-bank client suitability decision and monitoring trigger.
+          weight: 1
+        - goal: Correct sales target segment and energy theme.
+          weight: 1
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+      - test_tasks/002/input/payloads/orion_review_request.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct review window and expanded index universe.
+          weight: 1
+        - goal: Correct expanded pair correlation grid with three-decimal values.
+          weight: 2
+        - goal: Correct highest and lowest pairs with rounded correlations.
+          weight: 3
+        - goal: Correct China/Asia dependence and Latin America diversification flags.
+          weight: 3
+        - goal: Correct diversification action set.
+          weight: 2
+        - goal: Correct hedging next-step enum.
+          weight: 2
+        - goal: Correct concentration threshold boolean.
+          weight: 1
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+      - test_tasks/003/input/payloads/allocation_request.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct task and allocation-policy lineage fields.
+          weight: 2
+        - goal: Correct prior-view and current-signal lineage for all requested rows.
+          weight: 3
+        - goal: Correct core equity active views, changes, and convictions.
+          weight: 2
+        - goal: Correct diversifier equity active views, changes, and convictions.
+          weight: 2
+        - goal: Correct fixed-income active views, changes, and convictions.
+          weight: 2
+        - goal: Correct currency active views, changes, and convictions.
+          weight: 2
+        - goal: Correct controlled rationale codes across all allocation rows.
+          weight: 3
+        - goal: Correct currency overlay policy action and per-currency decisions.
+          weight: 3
+        - goal: Correct mixed opportunity-set cross-asset judgment enums.
+          weight: 2
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+      - test_tasks/004/input/payloads/risk_board_packet.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct current-data override and stale-packet reconciliation.
+          weight: 2
+        - goal: Correct ranked risk exceptions with materiality evidence.
+          weight: 3
+        - goal: Correct fixed-income current credit metrics.
+          weight: 2
+        - goal: Correct post-rotation credit metrics and watchlist cleanup.
+          weight: 3
+        - goal: Correct correlation concentration pair, threshold breach, and diversifier evidence.
+          weight: 2
+        - goal: Correct rebalance action package.
+          weight: 2
+        - goal: Correct pass/fail constraint flags.
+          weight: 2
+        - goal: Correct combined credit and correlation board decision.
+          weight: 2
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+      - test_tasks/005/input/payloads/committee_packet.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct task, portfolio, date, quarter, and policy identifiers.
+          weight: 1
+        - goal: Correct allocation view rows for the requested opportunity sets.
+          weight: 3
+        - goal: Correct energy credit rotation action and trade tickets.
+          weight: 3
+        - goal: Correct energy post-trade metrics and constraint flags.
+          weight: 2
+        - goal: Correct international equity correlation summary.
+          weight: 2
+        - goal: Correct international diversification action.
+          weight: 2
+        - goal: Correct committee decision, trigger, and priority order.
+          weight: 2
+        - goal: Correct final risk flags.
+          weight: 2

@@ -1,0 +1,244 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "TCK-6101 outage hold and TCK-6102 authentication failure are both correctly resolved.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "ticket_decisions[0].final_resolution_status"
+        },
+        {
+          "path": "ticket_decisions[0].diagnostic_needed"
+        },
+        {
+          "path": "ticket_decisions[0].outage_id"
+        },
+        {
+          "path": "ticket_decisions[0].resolution_route"
+        },
+        {
+          "path": "ticket_decisions[1].final_resolution_status"
+        },
+        {
+          "path": "ticket_decisions[1].diagnostic_needed"
+        },
+        {
+          "path": "ticket_decisions[1].resolution_route"
+        }
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "TCK-6103 is resolved with correct diagnostic flags.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "ticket_decisions[2].final_resolution_status"
+        },
+        {
+          "path": "ticket_decisions[2].diagnostic_needed"
+        },
+        {
+          "path": "ticket_decisions[2].latency_issue"
+        },
+        {
+          "path": "ticket_decisions[2].stability_issue"
+        },
+        {
+          "path": "ticket_decisions[2].bandwidth_issue"
+        },
+        {
+          "path": "ticket_decisions[2].resolution_route"
+        }
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "TCK-6104 is escalated to network engineering with correct diagnostic flags.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "ticket_decisions[3].final_resolution_status"
+        },
+        {
+          "path": "ticket_decisions[3].escalation_team"
+        },
+        {
+          "path": "ticket_decisions[3].resolution_route"
+        },
+        {
+          "path": "ticket_decisions[3].latency_issue"
+        },
+        {
+          "path": "ticket_decisions[3].stability_issue"
+        },
+        {
+          "path": "ticket_decisions[3].bandwidth_issue"
+        }
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "TCK-6105 is escalated to field operations with correct diagnostic flags.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "ticket_decisions[4].final_resolution_status"
+        },
+        {
+          "path": "ticket_decisions[4].escalation_team"
+        },
+        {
+          "path": "ticket_decisions[4].resolution_route"
+        },
+        {
+          "path": "ticket_decisions[4].latency_issue"
+        },
+        {
+          "path": "ticket_decisions[4].stability_issue"
+        },
+        {
+          "path": "ticket_decisions[4].bandwidth_issue"
+        }
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "Batch status counts and customer-wait count are correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "batch_summary.RESOLVED"
+        },
+        {
+          "path": "batch_summary.PENDING_ACTION"
+        },
+        {
+          "path": "batch_summary.ESCALATED"
+        },
+        {
+          "path": "batch_summary.FAILED"
+        },
+        {
+          "path": "batch_summary.tickets_requiring_customer_wait"
+        }
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "Gate-skipped versus used troubleshooting record counts are correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "evidence_audit.tickets_using_post_troubleshooting_records"
+        },
+        {
+          "path": "evidence_audit.tickets_with_active_outage_match"
+        },
+        {
+          "path": "metric_threshold_audit.diagnostic_records_skipped_by_gate"
+        }
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Target pre-troubleshooting bandwidth floors and shortfalls are correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "metric_threshold_audit.diagnostic_bandwidth_floor_mbps_by_ticket",
+          "sort_list": true,
+          "sort_by": "ticket_id"
+        },
+        {
+          "path": "metric_threshold_audit.pre_bandwidth_shortfall_mbps_by_ticket",
+          "sort_list": true,
+          "sort_by": "ticket_id"
+        },
+        {
+          "path": "evidence_audit.pre_troubleshooting_bandwidth_gap_total_mbps",
+          "precision": 1
+        },
+        {
+          "path": "metric_threshold_audit.tickets_below_pre_bandwidth_threshold",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP008",
+      "goal": "Target post-troubleshooting success/failure and remaining flag counts are correct.",
+      "weight": 1,
+      "checks": [
+        {
+          "path": "evidence_audit.post_troubleshooting_remaining_issue_flags"
+        },
+        {
+          "path": "metric_threshold_audit.post_remaining_issue_flags_by_ticket",
+          "sort_list": true,
+          "sort_by": "ticket_id"
+        },
+        {
+          "path": "metric_threshold_audit.post_troubleshooting_success_ticket_ids",
+          "sort_list": true
+        },
+        {
+          "path": "metric_threshold_audit.post_troubleshooting_failure_ticket_ids",
+          "sort_list": true
+        }
+      ]
+    },
+    {
+      "id": "SP009",
+      "goal": "Target post-troubleshooting excess totals are correct.",
+      "weight": 3,
+      "checks": [
+        {
+          "path": "metric_threshold_audit.post_threshold_excess_totals.latency_ms",
+          "precision": 1
+        },
+        {
+          "path": "metric_threshold_audit.post_threshold_excess_totals.jitter_ms",
+          "precision": 1
+        },
+        {
+          "path": "metric_threshold_audit.post_threshold_excess_totals.bandwidth_mbps",
+          "precision": 1
+        }
+      ]
+    },
+    {
+      "id": "SP010",
+      "goal": "Root-cause escalation evidence sets and record availability are correct.",
+      "weight": 2,
+      "checks": [
+        {
+          "path": "evidence_audit.unique_escalation_teams",
+          "sort_list": true
+        },
+        {
+          "path": "metric_threshold_audit.root_cause_escalation_ticket_ids.FIELD_OPS",
+          "sort_list": true
+        },
+        {
+          "path": "metric_threshold_audit.root_cause_escalation_ticket_ids.NETWORK_ENGINEERING",
+          "sort_list": true
+        },
+        {
+          "path": "metric_threshold_audit.root_cause_escalation_ticket_ids.TIER2_SUPPORT",
+          "sort_list": true
+        },
+        {
+          "path": "deep_environment_audit.target_service_area_active_outages"
+        },
+        {
+          "path": "deep_environment_audit.target_ticket_diagnostic_records_available"
+        },
+        {
+          "path": "deep_environment_audit.target_ticket_troubleshooting_records_available"
+        }
+      ]
+    }
+  ]
+}

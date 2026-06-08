@@ -1,0 +1,358 @@
+task_group:
+  task_group_id: task_group_009
+  scenario_id: SCN_009_finance_operational_modeling_management_reporting
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Finance
+  description: |
+    Train-predict benchmark for finance operational modeling and management reporting.
+    Tasks use a shared Crescent Finance Ops environment to perform branch reporting,
+    CBA compensation forecasting, and theatre weekly payroll control calculations.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/README.md
+    - env/setup.sh
+    - env/server.py
+    - env/generate_data.py
+    - env/data/manifest.json
+    - env/data/finance_branches.json
+    - env/data/finance_period_map.json
+    - env/data/finance_accounts.json
+    - env/data/finance_records.json
+    - env/data/compensation_rate_book.json
+    - env/data/compensation_rosters.json
+    - env/data/compensation_scenarios.json
+    - env/data/payroll_rate_book.json
+    - env/data/payroll_productions.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/environment_access.json
+      - train_tasks/001/input/payloads/request_memo.json
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - eval_common.py
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/config.json
+      rubric:
+        - goal: Correct target branch identity and period convention.
+          weight: 1
+        - goal: Correct current-period income statement for the branch.
+          weight: 3
+        - goal: Correct month-over-month revenue variance.
+          weight: 2
+        - goal: Correct FY2025 income statement and operating metrics.
+          weight: 3
+        - goal: Correct FY2025 versus FY2024 growth rates.
+          weight: 2
+        - goal: Correct region membership, EBITDA, and regional rank.
+          weight: 2
+        - goal: Correct branch ranking facts.
+          weight: 2
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/environment_access.json
+      - train_tasks/002/input/payloads/request_memo.json
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - eval_common.py
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/config.json
+      rubric:
+        - goal: Correct ensemble, current year, roster count, and pay type list.
+          weight: 2
+        - goal: Correct current-year quarter totals.
+          weight: 3
+        - goal: Correct annual pay-type totals.
+          weight: 3
+        - goal: Correct annual compensation total.
+          weight: 2
+        - goal: Correct largest pay type.
+          weight: 1
+        - goal: Correct count of combined overscale/title treatments.
+          weight: 2
+        - goal: Correct count of partial-quarter employees.
+          weight: 2
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/environment_access.json
+      - train_tasks/003/input/payloads/request_memo.json
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - eval_common.py
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/config.json
+      rubric:
+        - goal: Correct production id and service counts.
+          weight: 2
+        - goal: Correct pay category totals.
+          weight: 3
+        - goal: Correct weekly payroll total.
+          weight: 2
+        - goal: Correct CBA conflict flag set.
+          weight: 2
+        - goal: Correct per-musician payroll totals and categories.
+          weight: 3
+        - goal: Correct top-paid musician.
+          weight: 1
+        - goal: Correct substitute electronic treatment.
+          weight: 2
+        - goal: Correct doubles and guarantee adjustment handling.
+          weight: 2
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/environment_access.json
+      - train_tasks/004/input/payloads/request_memo.json
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - eval_common.py
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/config.json
+      rubric:
+        - goal: Correct target region and included branch set.
+          weight: 2
+        - goal: Correct FY2024 regional rollup.
+          weight: 2
+        - goal: Correct FY2025 regional rollup and dashboard ratios.
+          weight: 3
+        - goal: Correct revenue growth percentage.
+          weight: 2
+        - goal: Correct top EBITDA branch.
+          weight: 2
+        - goal: Correct bottom EBITDA branch.
+          weight: 2
+        - goal: Correct reconciliation of branch EBITDA to regional EBITDA.
+          weight: 1
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/environment_access.json
+      - train_tasks/005/input/payloads/request_memo.json
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - eval_common.py
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/config.json
+      rubric:
+        - goal: Correct ensemble and scenario identifiers.
+          weight: 1
+        - goal: Correct current, Year + 1, and Year + 2 annual totals.
+          weight: 3
+        - goal: Correct forecast growth rates.
+          weight: 2
+        - goal: Correct Year + 2 quarter totals.
+          weight: 2
+        - goal: Correct Year + 2 pay-type totals.
+          weight: 3
+        - goal: Correct largest growth pay type.
+          weight: 2
+        - goal: Correct combined overscale/title employee count.
+          weight: 1
+        - goal: Correct partial-quarter employee count.
+          weight: 1
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/environment_access.json
+      - test_tasks/001/input/payloads/request_memo.json
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - eval_common.py
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/config.json
+      rubric:
+        - goal: Correct target branch identity and period convention.
+          weight: 2
+        - goal: Correct current-period income statement for the branch.
+          weight: 2
+        - goal: Correct month-over-month revenue variance and FY growth rates.
+          weight: 1
+        - goal: Correct FY2025 financial statement totals excluding operating ratios.
+          weight: 2
+        - goal: Correct same-scope FY2025 ARPU.
+          weight: 3
+        - goal: Correct region membership, EBITDA, and regional rank.
+          weight: 2
+        - goal: Correct branch ranking facts.
+          weight: 2
+        - goal: Correct same-scope FY2025 sales per labor headcount.
+          weight: 3
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/environment_access.json
+      - test_tasks/002/input/payloads/request_memo.json
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - eval_common.py
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/config.json
+      rubric:
+        - goal: Correct ensemble and scenario identifiers.
+          weight: 1
+        - goal: Correct current, Year + 1, and Year + 2 annual totals.
+          weight: 3
+        - goal: Correct forecast growth rates.
+          weight: 2
+        - goal: Correct Year + 2 quarter totals.
+          weight: 2
+        - goal: Correct Year + 2 pay-type totals.
+          weight: 3
+        - goal: Correct largest growth pay type.
+          weight: 2
+        - goal: Correct combined overscale/title employee count.
+          weight: 1
+        - goal: Correct partial-quarter employee count.
+          weight: 1
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/environment_access.json
+      - test_tasks/003/input/payloads/request_memo.json
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - eval_common.py
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/config.json
+      rubric:
+        - goal: Correct production id and service counts.
+          weight: 2
+        - goal: Correct pay category totals.
+          weight: 3
+        - goal: Correct weekly payroll total.
+          weight: 2
+        - goal: Correct CBA conflict flag set.
+          weight: 3
+        - goal: Correct per-musician payroll totals and categories.
+          weight: 3
+        - goal: Correct top-paid musician.
+          weight: 1
+        - goal: Correct substitute electronic treatment.
+          weight: 2
+        - goal: Correct doubles and guarantee adjustment handling.
+          weight: 2
+        - goal: Correct premium total after roster flags and substitute treatment.
+          weight: 2
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/environment_access.json
+      - test_tasks/004/input/payloads/request_memo.json
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - eval_common.py
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/config.json
+      rubric:
+        - goal: Correct all-company branch count and FY2024/FY2025 revenue.
+          weight: 1
+        - goal: Correct FY2025 EBITDA and EBITDA margin.
+          weight: 1
+        - goal: Correct company revenue growth percentage.
+          weight: 1
+        - goal: Correct all-company same-scope ARPU.
+          weight: 3
+        - goal: Correct same-scope sales per labor headcount.
+          weight: 3
+        - goal: Correct sales-growth, gross-margin-growth, and order-growth ranking facts.
+          weight: 1
+        - goal: Correct top ARPU branch.
+          weight: 2
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/environment_access.json
+      - test_tasks/005/input/payloads/request_memo.json
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - eval_common.py
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/config.json
+      rubric:
+        - goal: Correct ensemble and scenario identifiers.
+          weight: 1
+        - goal: Correct current, Year + 1, and Year + 2 annual totals.
+          weight: 3
+        - goal: Correct forecast growth rates.
+          weight: 2
+        - goal: Correct Year + 2 quarter totals.
+          weight: 2
+        - goal: Correct Year + 2 pay-type totals.
+          weight: 3
+        - goal: Correct largest growth pay type.
+          weight: 2
+        - goal: Correct roster treatment counts.
+          weight: 2
+        - goal: Correct labor-cost risk classification.
+          weight: 2

@@ -1,0 +1,44 @@
+{
+  "task_id": "test_003",
+  "analysis_name": "Full-year 2025 supplier incident analysis",
+  "incident_date_filter": {
+    "field": "open_date",
+    "start_date": "2025-01-01",
+    "end_date": "2025-12-31",
+    "inclusive": true
+  },
+  "analysis_date": "2025-12-31",
+  "duration_rule": {
+    "closed_incidents": "calendar days from open_date to close_date",
+    "open_incidents": "calendar days from open_date to analysis_date"
+  },
+  "percentage_rule": {
+    "incident_percentage_denominator": "all incidents in the filtered full-year population",
+    "cost_percentage_denominator": "total resolution_cost for all incidents in the filtered full-year population",
+    "precision": "one decimal place"
+  },
+  "currency_precision": "two decimal places",
+  "duration_precision": "two decimal places",
+  "supplier_scorecard_row_order": "supplier_id ascending",
+  "supplier_ranking_order": "incident_count descending, then total_resolution_cost descending, then supplier_id ascending",
+  "severe_severity_values": [
+    "high",
+    "critical"
+  ],
+  "management_recommendation_policy": {
+    "precedence": [
+      "PROCUREMENT_FREEZE",
+      "SUPPLIER_ESCALATION",
+      "WAREHOUSE_PROCESS_REVIEW",
+      "WATCHLIST",
+      "MONITOR"
+    ],
+    "codes": {
+      "PROCUREMENT_FREEZE": "Use when the supplier quality_status is quality_hold and the supplier has at least 5 filtered RMAs, at least 1 critical filtered RMA, or at least 30000.00 total filtered resolution cost.",
+      "SUPPLIER_ESCALATION": "Use when the supplier has at least 1 critical filtered RMA, or has at least 8 filtered RMAs, more filtered RMAs than filtered work orders, and at least 65000.00 total filtered resolution cost.",
+      "WAREHOUSE_PROCESS_REVIEW": "Use when filtered WORK_ORDER incidents are at least 10 and are greater than or equal to filtered RMA incidents.",
+      "WATCHLIST": "Use when supplier quality_status is watch or quality_hold, filtered incident_count is at least 8, total filtered resolution cost is at least 30000.00, or severe_incident_count is at least 3.",
+      "MONITOR": "Use when none of the higher-precedence conditions apply."
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "description": "Return one regional reporting JSON object. Currency values must be rounded to 2 decimals. Percent and ratio fields must be rounded to 4 decimals.",
+  "required_top_level_keys": [
+    "region_id",
+    "branch_ids",
+    "fy2024",
+    "fy2025",
+    "revenue_growth_pct",
+    "top_ebitda_branch_id",
+    "bottom_ebitda_branch_id",
+    "region_reconciliation_variance"
+  ],
+  "field_types": {
+    "region_id": "string",
+    "branch_ids": "ascending list of branch_id strings",
+    "fy2024": {
+      "revenue": "currency",
+      "sga": "currency",
+      "allocations": "currency",
+      "ebitda": "currency"
+    },
+    "fy2025": {
+      "revenue": "currency",
+      "sga": "currency",
+      "allocations": "currency",
+      "ebitda": "currency",
+      "ebitda_margin": "decimal percent",
+      "sales_per_labor_headcount": "currency"
+    },
+    "revenue_growth_pct": "decimal percent",
+    "top_ebitda_branch_id": "string",
+    "bottom_ebitda_branch_id": "string",
+    "region_reconciliation_variance": "currency"
+  }
+}

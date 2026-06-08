@@ -1,0 +1,59 @@
+{
+  "opening_id": {"type": "string"},
+  "selected_candidate": {"type": "string"},
+  "waitlisted_candidates": {"type": "list[string]"},
+  "rejected_candidates": {"type": "list[string]"},
+  "offer_id": {"type": "string"},
+  "offer_base_salary": {"type": "number"},
+  "recruitment_cost_total": {"type": "number"},
+  "notice_followup_required": {"type": "list[string]"},
+  "onboarding_handoff": {
+    "type": "enum",
+    "allowed_values": ["create_payroll_precheck", "create_submitted_assignment_after_acceptance", "no_payroll_handoff"]
+  },
+  "candidate_status_source": {
+    "type": "enum",
+    "allowed_values": ["interview_feedback_and_offer", "case_summary_only", "message_only"]
+  },
+  "candidate_outcome_control": {
+    "type": "enum",
+    "allowed_values": ["committee_decision_with_offer_confirmation", "message_status_only", "case_summary_only"]
+  },
+  "selected_offer_status": {
+    "type": "enum",
+    "allowed_values": ["accepted", "draft", "withdrawn", "none"]
+  },
+  "cost_source": {
+    "type": "enum",
+    "allowed_values": ["recruitment_cost_ledger", "case_summary_only"]
+  },
+  "notice_quality_source": {
+    "type": "enum",
+    "allowed_values": ["notice_packet_inspection", "message_notice_inspection", "case_summary_only"]
+  },
+  "waitlisted_followup_action": {
+    "type": "enum",
+    "allowed_values": ["send_waitlist_notice", "reissue_waitlist_notice_not_rejection", "no_action"]
+  },
+  "rejected_followup_action": {
+    "type": "enum",
+    "allowed_values": ["send_rejection_notice", "no_action", "reissue_rejection_notice"]
+  },
+  "payroll_handoff_gate": {
+    "type": "enum",
+    "allowed_values": ["accepted_offer_only", "accepted_offer_and_submitted_assignment", "all_interviewed_candidates"]
+  },
+  "payroll_assignment_status_required": {
+    "type": "enum",
+    "allowed_values": ["submitted_after_acceptance", "submitted", "draft_allowed"]
+  },
+  "draft_payroll_allowed": {"type": "boolean"},
+  "offer_exclusion_reason_for_waitlisted": {
+    "type": "enum",
+    "allowed_values": ["no_accepted_status_or_offer", "waitlisted_not_selected", "already_rejected"]
+  },
+  "handoff_control_result": {
+    "type": "enum",
+    "allowed_values": ["submitted_handoff_required_after_acceptance", "submitted_handoff_required", "no_handoff_required"]
+  }
+}

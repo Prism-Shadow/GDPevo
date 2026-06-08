@@ -1,0 +1,76 @@
+{
+  "segment_id": "TRISTATE_GA_AMBULANCE",
+  "posture": "continue_with_tighter_conditions",
+  "state_metrics": {
+    "state_code": "GA",
+    "benchmark_version": "ncua_q1_2025",
+    "delinquency_bps": 88,
+    "loan_to_share_pct": 74,
+    "roaa_bps": 68,
+    "positive_net_income_pct": 82
+  },
+  "peer_comparison": {
+    "peer_states": [
+      "AL",
+      "FL",
+      "TN"
+    ],
+    "target_vs_us": {
+      "delinquency_bps": "higher",
+      "loan_to_share_pct": "higher",
+      "roaa_bps": "higher",
+      "positive_net_income_pct": "lower"
+    },
+    "target_vs_peer_median": {
+      "delinquency_bps": "higher",
+      "loan_to_share_pct": "higher",
+      "roaa_bps": "higher",
+      "positive_net_income_pct": "higher"
+    }
+  },
+  "controls": {
+    "required_checklist_gates": [
+      "board_authorization",
+      "fleet_replacement_plan",
+      "payer_contract_summary",
+      "proof_of_insurance",
+      "ucc_or_title_lien"
+    ],
+    "added_operating_controls": [
+      "field_audit_completion_or_exception",
+      "lien_perfection_prior_to_funding",
+      "monthly_segment_delinquency_watch",
+      "payer_contract_refresh_before_close",
+      "quarterly_state_benchmark_monitoring",
+      "senior_underwriter_second_review"
+    ]
+  },
+  "escalation_triggers": [
+    {
+      "trigger_id": "ET001",
+      "condition": "segment_recent_delinquency_ge_90_bps",
+      "owner": "credit_risk_manager"
+    },
+    {
+      "trigger_id": "ET002",
+      "condition": "stale_payer_contract_documentation",
+      "owner": "operations_control_manager"
+    },
+    {
+      "trigger_id": "ET003",
+      "condition": "field_audit_backlog_over_30_days",
+      "owner": "operations_control_manager"
+    },
+    {
+      "trigger_id": "ET004",
+      "condition": "quarterly_capacity_exceeded_or_exception_requested",
+      "owner": "lending_committee_chair"
+    }
+  ],
+  "interpretation": {
+    "capacity_status": "capacity_available",
+    "external_risk_status": "mixed_vs_national_and_peers",
+    "risk_tolerance": "restrained",
+    "committee_message": "capacity_available_but_external_risk_mixed"
+  }
+}
