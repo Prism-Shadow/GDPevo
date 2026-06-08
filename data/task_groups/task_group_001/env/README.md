@@ -7,7 +7,7 @@ data through a local JSON API.
 ## Start The API
 
 ```bash
-cd /Users/aaad1eu/ljzhou/work_space/data_gen_001/task_factory/task_group/task_group_001/env
+cd data/task_groups/task_group_001/env
 ./setup.sh
 ```
 
