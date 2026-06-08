@@ -118,9 +118,9 @@ code {
 .signal-grid {
   position: absolute;
   inset: 10% 5% auto auto;
-  width: min(720px, 74vw);
+  width: min(520px, 64vw);
   display: grid;
-  grid-template-columns: repeat(5, minmax(92px, 1fr));
+  grid-template-columns: repeat(3, minmax(92px, 1fr));
   gap: 1px;
   transform: rotate(-4deg);
   opacity: 0.9;
@@ -162,7 +162,7 @@ code {
 .hero-copy {
   position: relative;
   max-width: 980px;
-  padding: clamp(5rem, 16vh, 10rem) clamp(1rem, 5vw, 4.5rem) clamp(3rem, 10vh, 6rem);
+  padding: clamp(5rem, 16vh, 10rem) clamp(1rem, 5vw, 4.5rem) clamp(5rem, 14vh, 8rem);
   color: #fffdf5;
 }
 
@@ -230,180 +230,6 @@ h1 {
 
 .button.secondary {
   color: #fffdf5;
-}
-
-.metric-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-bottom: 1px solid rgba(23, 23, 22, 0.14);
-}
-
-.metric-strip div {
-  min-height: 9rem;
-  display: grid;
-  align-content: center;
-  padding: 1.5rem clamp(1rem, 3vw, 2rem);
-  border-right: 1px solid rgba(23, 23, 22, 0.14);
-  background: rgba(255, 255, 255, 0.38);
-}
-
-.metric-strip div:last-child {
-  border-right: 0;
-}
-
-.metric-strip strong {
-  font-family: Georgia, Times New Roman, serif;
-  font-size: clamp(2rem, 4vw, 4rem);
-  line-height: 1;
-}
-
-.metric-strip span {
-  color: var(--muted);
-  font-weight: 700;
-}
-
-.section {
-  padding: clamp(3.5rem, 8vw, 7rem) clamp(1rem, 5vw, 4.5rem);
-  border-bottom: 1px solid rgba(23, 23, 22, 0.14);
-}
-
-.two-column {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr);
-  gap: clamp(2rem, 6vw, 6rem);
-}
-
-.section h2 {
-  max-width: 780px;
-  font-family: Georgia, Times New Roman, serif;
-  font-size: clamp(2.1rem, 5vw, 4.8rem);
-}
-
-.section-body {
-  max-width: 760px;
-  color: var(--charcoal);
-  font-size: 1.1rem;
-}
-
-.artifact-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-}
-
-.artifact-row a {
-  padding: 0.55rem 0.75rem;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.5);
-  color: var(--ink);
-  font-weight: 800;
-}
-
-.section-heading {
-  max-width: 960px;
-  margin-bottom: clamp(1.8rem, 4vw, 3rem);
-}
-
-.pipeline {
-  counter-reset: item;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  background: var(--line);
-  border: 1px solid var(--line);
-}
-
-.pipeline li {
-  min-height: 20rem;
-  padding: 1.25rem;
-  background: var(--panel);
-}
-
-.pipeline span {
-  display: inline-block;
-  margin-bottom: 4rem;
-  color: var(--teal);
-  font-family: Georgia, Times New Roman, serif;
-  font-size: 2.4rem;
-  font-weight: 800;
-}
-
-.pipeline h3 {
-  font-size: 1.25rem;
-}
-
-.pipeline p {
-  color: var(--muted);
-}
-
-.results-section {
-  background: #f0efe7;
-}
-
-.result-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-.result-card {
-  padding: 1.25rem;
-  border: 1px solid var(--line);
-  background: var(--panel);
-}
-
-.result-card span {
-  display: block;
-  color: var(--muted);
-  font-weight: 800;
-}
-
-.result-card strong {
-  display: block;
-  margin: 1.5rem 0;
-  font-family: Georgia, Times New Roman, serif;
-  font-size: clamp(2rem, 5vw, 4.8rem);
-  line-height: 1;
-}
-
-.bar {
-  height: 0.85rem;
-  border: 1px solid rgba(23, 23, 22, 0.16);
-  background: linear-gradient(90deg, var(--bar-color) var(--value), #e7e2d5 var(--value));
-}
-
-.bar.no-skill {
-  --bar-color: var(--red);
-}
-
-.bar.demonstration {
-  --bar-color: var(--amber);
-}
-
-.bar.reflection {
-  --bar-color: var(--teal);
-}
-
-.result-note {
-  max-width: 720px;
-  color: var(--muted);
-}
-
-.article-callout {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 2rem;
-}
-
-.article-callout p {
-  max-width: 740px;
-  color: var(--muted);
-  font-size: 1.08rem;
 }
 
 .site-footer {
@@ -521,7 +347,6 @@ h1 {
 
 @media (max-width: 860px) {
   .site-header,
-  .article-callout,
   .site-footer {
     align-items: flex-start;
     flex-direction: column;
@@ -544,26 +369,7 @@ h1 {
     writing-mode: vertical-rl;
   }
 
-  .metric-strip,
-  .two-column,
-  .pipeline,
-  .result-grid,
   .article-stat-grid {
     grid-template-columns: 1fr;
   }
-
-  .metric-strip div {
-    min-height: 7rem;
-    border-right: 0;
-    border-bottom: 1px solid rgba(23, 23, 22, 0.14);
-  }
-
-  .pipeline li {
-    min-height: auto;
-  }
-
-  .pipeline span {
-    margin-bottom: 2rem;
-  }
 }
-

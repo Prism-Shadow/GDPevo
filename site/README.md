@@ -11,5 +11,5 @@ landing page and blog.
 | Path | Purpose |
 | --- | --- |
 | `index.html` | Public landing page placeholder. |
-| `blog/` | Blog placeholder. |
+| `blog/` | Reserved placeholder for future writing. |
 | `styles.css` | Shared site styling. |
