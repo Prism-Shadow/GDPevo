@@ -1,25 +1,22 @@
 # Experiment Board
 
-Languages: [English](EXPERIMENT_BOARD.md) | [Chinese](EXPERIMENT_BOARD.zh.md)
+语言：[English](EXPERIMENT_BOARD.md) | [中文](EXPERIMENT_BOARD.zh.md)
 
-This board summarizes the released evaluation results for the public benchmark runs.
-Full structured reports are stored under released experiment directories, such
-as `codex_gpt5_5_xhigh/reports/`.
+本看板汇总公开 benchmark 运行的已发布评估结果。完整结构化 reports 存放在已发布实验目录下，例如 `codex_gpt5_5_xhigh/reports/`。
 
-Efficiency metrics only count test solver subagent answer-writing. They are averaged across the 3 attempts for each test task first, then averaged across the 5 test tasks. Skill generation, environment startup, evaluator execution, and main-agent aggregation are outside these metrics.
+效率指标只统计 test solver agent 写答案的过程。计算时先对每个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。Skill 生成、环境启动、evaluator 执行和主 agent 汇总不计入这些指标。
 
-`cost USD avg@3` is a board-level derived field calculated from report token metrics and the model price used for the run. It is not stored inside the formal report YAML files.
+`cost USD avg@3` 是看板层面的派生字段，由 report 中的 token 指标和该运行使用的模型价格计算得到，不存放在正式 report YAML 文件中。
 
-For the released `gpt-5.5, xhigh` run, this board uses the standard GPT-5.5
-text-token prices:
+对于已发布的 `gpt-5.5, xhigh` 运行，本看板使用 GPT-5.5 标准 text-token 价格：
 
-| Token type | Price |
+| Token 类型 | 价格 |
 | --- | ---: |
 | Input | $5.00 / 1M tokens |
 | Cached input | $0.50 / 1M tokens |
 | Output | $30.00 / 1M tokens |
 
-The board-level cost formula is:
+看板层面的 cost 计算公式为：
 
 ```text
 uncached_input_tokens_avg_3 = input_tokens_avg_3 - cached_input_tokens_avg_3

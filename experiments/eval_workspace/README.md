@@ -1,6 +1,6 @@
 # Evaluation Workspace
 
-`eval_workspace/` is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `avg@3` across three skill conditions.
+This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `avg@3` across three skill conditions.
 
 This workspace evaluates one task group at a time. Do not modify the task group under evaluation. If you find that the task group itself is invalid, record the risk in the report and send the data back to an earlier stage.
 

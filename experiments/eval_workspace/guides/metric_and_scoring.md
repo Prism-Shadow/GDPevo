@@ -28,7 +28,7 @@ attempt: <int>
 model: <model_name_or_config>
 
 trace:
-  session_file: <absolute path to rollout-*.jsonl>
+  session_file: <path to rollout-*.jsonl or null>
   session_id: <session_id>
   parent_thread_id: <parent_thread_id>
   agent_nickname: <agent_nickname>
