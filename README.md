@@ -22,7 +22,7 @@ generated skill packages, and a reusable evaluation workspace.
 
 | Path | Purpose |
 | --- | --- |
-| `data/task_groups/` | Released task groups with shared environments, train tasks, test tasks, answers, evaluators, and data notes. |
+| `data/` | Released task group data, data board, shared environments, train/test tasks, answers, evaluators, and data notes. |
 | `experiments/` | Released evaluation protocol, evaluation workspaces, result reports, generated skills, and experiment board. |
 | `site/` | Static website and blog content for GitHub Pages. |
 | `assets/` | Figures, logos, and visual assets used by released materials. |
@@ -33,8 +33,8 @@ Each task group contains one shared business environment, five train tasks, and
 five test tasks. Train tasks are used to derive skills, and test tasks measure
 whether those skills transfer to related tasks in the same environment.
 
-See [data/task_groups/README.md](data/task_groups/README.md) for the task group
-format.
+Released task groups are summarized in [data/DATA_BOARD.md](data/DATA_BOARD.md).
+See [data/README.md](data/README.md) for the data layout and task group format.
 
 ## Experiments
 
