@@ -1,15 +1,19 @@
-# Agent Learn Bench
+# GDPevo
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
-Agent Learn Bench is a public benchmark for evaluating how agents learn and
-transfer skills in real business environments.
+GDPevo is a public benchmark for evaluating how agents learn and
+transfer skills in real business production environments. Following the spirit
+of real-world work evaluations such as GDPVal, the tasks are designed around
+productivity-bearing office work rather than isolated puzzle prompts.
 
-The benchmark focuses on two capabilities:
+The benchmark focuses on three questions:
 
-- Solving long-horizon tasks in large real business environments.
-- Learning reusable skills from train tasks and transferring them to related
+- Can agents complete long-horizon tasks in real business production environments?
+- Can they learn reusable skills from train tasks and transfer them to related
   test tasks.
+- Do those skills make downstream solving more accurate and less costly, as
+  reflected by score, token, and cost metrics?
 
 The released artifacts include executable task groups, evaluation reports,
 generated skill packages, and a reusable evaluation workspace.
@@ -21,7 +25,7 @@ generated skill packages, and a reusable evaluation workspace.
 | `data/task_groups/` | Released task groups with shared environments, train tasks, test tasks, answers, evaluators, and data notes. |
 | `experiments/` | Released evaluation protocol, evaluation workspaces, result reports, generated skills, and experiment board. |
 | `site/` | Static website and blog content for GitHub Pages. |
-| `assets/` | Placeholder for future figures, logos, and visual assets. |
+| `assets/` | Figures, logos, and visual assets used by released materials. |
 
 ## Data
 

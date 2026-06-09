@@ -3,47 +3,256 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Agent Learn Bench</title>
-    <meta name="description" content="Agent Learn Bench public website placeholder.">
+    <title>GDPevo</title>
+    <meta
+      name="description"
+      content="GDPevo is a public benchmark for evaluating agent skill transfer in real business production environments."
+    >
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header class="site-header" aria-label="Site navigation">
-      <a class="brand" href="./" aria-label="Agent Learn Bench home">
-        <span class="brand-mark" aria-hidden="true">ALB</span>
-        <span>Agent Learn Bench</span>
+      <a class="brand" href="./" aria-label="GDPevo home">
+        <span class="brand-mark" aria-hidden="true">GDP</span>
+        <span>GDPevo</span>
       </a>
       <nav class="nav-links" aria-label="Primary">
-        <a href="https://github.com/Prism-Shadow/agent-learn-bench">GitHub</a>
+        <a href="#data">Data</a>
+        <a href="#results">Results</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#protocol">Protocol</a>
+        <a href="blog/">Notes</a>
+        <a href="https://github.com/Prism-Shadow/GDPevo">GitHub</a>
       </nav>
     </header>
 
     <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-visual" aria-hidden="true">
-          <div class="signal-grid">
-            <span class="signal train">data</span>
-            <span class="signal env">eval</span>
-            <span class="signal skill">site</span>
-          </div>
+      <section class="dossier-hero" aria-labelledby="hero-title">
+        <div class="hero-index" aria-label="Release index">
+          <span>public release</span>
+          <strong>01</strong>
         </div>
         <div class="hero-copy">
-          <p class="eyebrow">Public site in progress</p>
-          <h1 id="hero-title">Agent Learn Bench</h1>
+          <p class="eyebrow">Benchmark dossier</p>
+          <h1 id="hero-title">Measuring whether agents carry skills into real work.</h1>
           <p class="hero-lede">
-            The public website is being prepared. Content and visual design will be finalized
-            after the release narrative is settled.
+            GDPevo evaluates whether an agent can derive a reusable
+            <code>skill</code> from training tasks and transfer it to related test
+            tasks inside the same business environment. The tasks are grounded in
+            productivity-bearing office work, so better transfer means more accurate
+            business outcomes and lower downstream solving cost.
           </p>
           <div class="hero-actions" aria-label="Primary actions">
-            <a class="button primary" href="https://github.com/Prism-Shadow/agent-learn-bench">Open GitHub</a>
+            <a class="button primary" href="#results">Read Results</a>
+            <a class="button secondary" href="https://github.com/Prism-Shadow/GDPevo/tree/main/data/task_groups">Open Data</a>
           </div>
         </div>
+        <aside class="release-card" aria-label="Release summary">
+          <div>
+            <span>release unit</span>
+            <strong>task group</strong>
+            <p>one shared environment, five train tasks, five test tasks</p>
+          </div>
+          <div>
+            <span>main metric</span>
+            <strong>avg@3</strong>
+            <p>three independent solver attempts per test task</p>
+          </div>
+          <div>
+            <span>released run</span>
+            <strong>Codex GPT-5.5 xhigh</strong>
+            <p>no_skill, demonstration_skill, reflection_skill</p>
+          </div>
+        </aside>
+      </section>
+
+      <section id="data" class="release-ledger" aria-label="Released benchmark inventory">
+        <div class="ledger-cell">
+          <span>task groups</span>
+          <strong>12</strong>
+        </div>
+        <div class="ledger-cell">
+          <span>train tasks</span>
+          <strong>60</strong>
+        </div>
+        <div class="ledger-cell">
+          <span>test tasks</span>
+          <strong>60</strong>
+        </div>
+        <div class="ledger-cell">
+          <span>skill packages</span>
+          <strong>72</strong>
+        </div>
+      </section>
+
+      <section class="section question-section" aria-labelledby="question-title">
+        <div class="section-kicker">research question</div>
+        <div class="question-copy">
+          <h2 id="question-title">Direct solving is not the whole story.</h2>
+          <p>
+            Many agent benchmarks ask whether a model can solve a single task. GDPevo
+            asks what changes after the agent has seen related work.
+            A task group creates that comparison by keeping the environment fixed
+            while varying the business requests. The measurement target is whether
+            train-derived skills help the solver complete later productivity-bearing
+            business work more accurately, with less redundant search and lower
+            answer-writing cost.
+          </p>
+        </div>
+        <div class="question-grid" aria-label="Benchmark comparison">
+          <article>
+            <span>without learned skill</span>
+            <strong>test input + environment access</strong>
+            <p>The solver starts cold on each test task.</p>
+          </article>
+          <article>
+            <span>with learned skill</span>
+            <strong>test input + environment access + generated skill</strong>
+            <p>The solver receives a reusable procedure derived from train tasks.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="results" class="section results-section" aria-labelledby="results-title">
+        <div class="section-kicker">released results</div>
+        <div class="result-layout">
+          <div>
+            <h2 id="results-title">The first run shows measurable transfer.</h2>
+            <p>
+              The public Codex GPT-5.5 xhigh run reports three skill conditions across
+              12 task groups. The board score is averaged over three independent
+              attempts per test task and then over the five test tasks. Skill
+              conditions improve accuracy and reduce average answer-writing token
+              usage and cost, suggesting that train-derived skills can make later
+              business work more directed and cheaper to execute.
+            </p>
+          </div>
+          <div class="result-matrix" aria-label="Average scores across released task groups">
+            <div class="matrix-row matrix-head">
+              <span>condition</span>
+              <span>overall avg@3</span>
+              <span>delta vs no_skill</span>
+            </div>
+            <div class="matrix-row">
+              <span><code>no_skill</code></span>
+              <strong>48.35%</strong>
+              <span>baseline</span>
+            </div>
+            <div class="matrix-row">
+              <span><code>demonstration_skill</code></span>
+              <strong>65.99%</strong>
+              <span>+17.64 pp</span>
+            </div>
+            <div class="matrix-row">
+              <span><code>reflection_skill</code></span>
+              <strong>67.13%</strong>
+              <span>+18.78 pp</span>
+            </div>
+          </div>
+        </div>
+        <div class="link-row" aria-label="Result links">
+          <a href="https://github.com/Prism-Shadow/GDPevo/blob/main/experiments/EXPERIMENT_BOARD.md">
+            Experiment board
+          </a>
+          <a href="https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh/reports">
+            Report YAML
+          </a>
+          <a href="https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh/reports/skills">
+            Skill packages
+          </a>
+        </div>
+      </section>
+
+      <section id="pipeline" class="section pipeline-section" aria-labelledby="pipeline-title">
+        <div class="section-kicker">construction system</div>
+        <h2 id="pipeline-title">A task group is built as a transfer instrument.</h2>
+        <div class="pipeline-board" aria-label="Data construction pipeline">
+          <div>
+            <span>01</span>
+            <strong>scenario examples</strong>
+            <p>Start from related business or benchmark examples that expose a reusable work pattern.</p>
+          </div>
+          <div>
+            <span>02</span>
+            <strong>shared environment</strong>
+            <p>Build one operational surface with records, rules, APIs, files, or web interfaces.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>train/test tasks</strong>
+            <p>Create five train tasks and five test tasks that differ in request details but share procedure.</p>
+          </div>
+          <div>
+            <span>04</span>
+            <strong>review and release</strong>
+            <p>Check evaluators, notes, boundaries, and transfer design before reporting avg@3 results.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section anatomy-section" aria-labelledby="anatomy-title">
+        <div class="section-kicker">task group anatomy</div>
+        <div class="anatomy-layout">
+          <div>
+            <h2 id="anatomy-title">One environment, two task sets, one score report.</h2>
+            <p>
+              The release unit is intentionally larger than a prompt. It contains the
+              environment, prompts, answer schemas, reference outputs, evaluators, and
+              notes required to inspect both the data and the scoring target.
+            </p>
+          </div>
+          <div class="anatomy-stack" aria-label="Task group structure">
+            <div>env/</div>
+            <div>train_tasks/001...005</div>
+            <div>test_tasks/001...005</div>
+            <div>eval/ + output/ + notes/</div>
+            <div>report.yaml + skills/</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="protocol" class="section protocol-section" aria-labelledby="protocol-title">
+        <div class="section-kicker">evaluation protocol</div>
+        <div class="protocol-layout">
+          <h2 id="protocol-title">Three conditions separate direct ability from transferable procedure.</h2>
+          <div class="condition-list">
+            <article>
+              <span>condition A</span>
+              <h3>no_skill</h3>
+              <p>The solver receives the test task input and allowed environment access.</p>
+            </article>
+            <article>
+              <span>condition B</span>
+              <h3>demonstration_skill</h3>
+              <p>A skill is generated from train inputs and outputs, then reused for test attempts.</p>
+            </article>
+            <article>
+              <span>condition C</span>
+              <h3>reflection_skill</h3>
+              <p>A skill is generated after blind train attempts, output comparison, and reflection.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section article-entry" aria-labelledby="article-title">
+        <div>
+          <div class="section-kicker">technical report</div>
+          <h2 id="article-title">Benchmark design, pipeline, evaluation protocol, and first results.</h2>
+          <p>
+            The report describes the measurement target, data construction pipeline,
+            task group format, skill conditions, avg@3 protocol, and initial released
+            results, including token and cost signals for downstream solver behavior
+            on productivity-bearing business tasks.
+          </p>
+        </div>
+        <a class="button primary" href="blog/introducing-gdpevo.html">Read Report</a>
       </section>
     </main>
 
     <footer class="site-footer">
-      <span>Agent Learn Bench</span>
-      <a href="https://github.com/Prism-Shadow/agent-learn-bench">GitHub repository</a>
+      <span>GDPevo</span>
+      <a href="https://github.com/Prism-Shadow/GDPevo">GitHub repository</a>
     </footer>
   </body>
 </html>
