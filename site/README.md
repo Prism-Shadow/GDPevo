@@ -9,6 +9,6 @@ this directory directly.
 
 | Path | Purpose |
 | --- | --- |
-| `index.html` | Public landing page with benchmark overview, results, pipeline, protocol, and article entry. |
-| `blog/` | Technical reports and release writing for the benchmark. |
+| `index.html` | Public report-style landing page with benchmark design, pipeline, protocol, and results. |
+| `blog/drafts/` | Markdown drafts for English and Chinese report editing. |
 | `styles.css` | Shared site styling. |
