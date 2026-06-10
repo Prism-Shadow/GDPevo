@@ -1,6 +1,6 @@
 # GDPevo: Measuring Skill Transfer in Real Business Production Environments
 
-GDPevo studies a gap left by task-completion benchmarks: whether agents can turn related training work into reusable skills for held-out tasks in the same business environment. The tasks are grounded in productivity-bearing office operations such as lead handoffs, expense-control checks, supplier receiving reviews, inventory fulfillment decisions, credit reviews, policy decisions, and operational analyses.
+GDPevo is a public benchmark for evaluating agent skill transfer in real business production environments. It studies a gap left by task-completion benchmarks: whether agents can turn related training work into reusable skills for held-out tasks in the same business environment. The tasks are grounded in productivity-bearing office operations such as lead handoffs, expense-control checks, supplier receiving reviews, inventory fulfillment decisions, credit reviews, policy decisions, and operational analyses.
 
 ## Abstract
 
