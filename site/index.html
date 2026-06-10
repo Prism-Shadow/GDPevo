@@ -9,6 +9,16 @@
       content="GDPevo is a public benchmark for measuring agent skill transfer in real business production environments."
     >
     <link rel="stylesheet" href="styles.css">
+    <script>
+      window.MathJax = {
+        tex: {
+          displayMath: [["\\[", "\\]"]],
+          inlineMath: [["\\(", "\\)"]]
+        },
+        svg: { fontCache: "global" }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
   </head>
   <body>
     <header class="site-header" aria-label="Site navigation">
@@ -30,9 +40,10 @@
             GDPevo studies a gap left by task-completion benchmarks: whether agents
             can turn related training work into reusable skills for held-out tasks
             in the same business environment. The tasks are grounded in
-            productivity-bearing office work: CRM handoffs, financial checks, HR
-            decisions, procurement reviews, and operational analyses whose outputs
-            resemble work that would otherwise consume human business effort.
+            productivity-bearing office operations such as lead handoffs,
+            expense-control checks, supplier receiving reviews, inventory
+            fulfillment decisions, credit reviews, policy decisions, and
+            operational analyses.
           </p>
         </header>
 
@@ -49,10 +60,10 @@
             through task groups built from productivity-bearing business scenarios.
             Each task group contains one shared business environment, five train
             tasks, five held-out test tasks, reference answers, exact evaluators, and
-            data notes. We evaluate three conditions: <code>no_skill</code>,
-            <code>demonstration_skill</code>, and <code>reflection_skill</code>. The
-            first released run covers 12 task groups, 60 train tasks, 60 test tasks,
-            and 72 generated skill packages. On Codex GPT-5.5 xhigh,
+            data notes. We evaluate three conditions: no_skill,
+            demonstration_skill, and reflection_skill. The first released run covers
+            12 task groups, 60 train tasks, 60 test tasks, and 72 generated skill
+            packages. On Codex GPT-5.5 xhigh,
             skill-conditioned runs improve average test performance over the
             no-skill baseline and reduce average token/cost usage, indicating that
             the benchmark captures a measurable form of task-family transfer in real
@@ -83,14 +94,14 @@
             portable operating method across held-out tasks.
           </p>
           <p>
-            The name GDPevo reflects this measurement target. We are not only asking
-            whether an agent can finish an isolated task. We are asking whether
-            experience can evolve into reusable skill for recurring work in business
-            production settings: more correct decisions, fewer wasted search steps,
-            and lower marginal effort when similar work appears again. The resulting
-            work products may be qualified account lists, finance reconciliation
-            outputs, procurement review decisions, HR workflow judgments, or
-            operational analysis artifacts.
+            GDPevo focuses on this transfer process rather than isolated task
+            completion. The benchmark asks whether experience can evolve into
+            reusable skill for recurring work in business production settings: more
+            correct decisions, fewer wasted search steps, and lower marginal effort
+            when similar work appears again. The resulting work products may be
+            qualified account lists, finance reconciliation outputs, procurement
+            review decisions, HR workflow judgments, or operational analysis
+            artifacts.
           </p>
           <p>
             The benchmark is designed around real business environments. A task group
@@ -147,9 +158,8 @@
             family of transferable procedures.
           </p>
           <p>
-            This framing treats agent learning as a measurable change in future
-            behavior. A rising success curve over independent samples can be useful
-            for tracking general capability, but it does not isolate experience
+            A rising success curve over independent samples can be useful for
+            tracking general capability, but it does not isolate experience
             accumulation: task 101 may have no designed relation to task 100. In
             GDPevo, train tasks create an explicit source of prior experience, and
             held-out test tasks measure whether that experience changes subsequent
@@ -172,14 +182,9 @@
             and exact output construction.
           </p>
           <p>
-            The public results also track more than final accuracy.
-            <code>avg@3</code> measures held-out task correctness, while token and
-            cost metrics show whether a generated skill makes the solver more
-            directed or merely shifts work into longer answer attempts. Because the
-            task groups model work with productivity value, cost reduction is not
-            just an implementation detail: it helps indicate whether a skill can make
-            repeated business work cheaper to execute, while the primary score
-            remains task correctness.
+            The public results also track more than final accuracy. avg@3 measures
+            held-out task correctness, while token and cost metrics summarize the
+            solver-side compute cost of producing answers.
           </p>
         </section>
 
@@ -212,7 +217,7 @@
           <h3>3.1 Scenario Seed</h3>
           <p>
             The first stage prepares a scenario seed. A seed contains one scenario
-            and <code>n</code> examples from real work or benchmark-like task
+            and n examples from real work or benchmark-like task
             backgrounds. The scenario defines the business setting and task family;
             the examples provide concrete work patterns and difficulty anchors. They
             may involve reconciling CRM records after an event, selecting valid
@@ -298,12 +303,11 @@
           <p>
             The fourth stage releases the evaluation artifacts. For each accepted
             task group, an evaluation workspace runs the same held-out test tasks
-            under three skill conditions: <code>no_skill</code>,
-            <code>demonstration_skill</code>, and <code>reflection_skill</code>. The
-            primary result is <code>avg@3</code>, and the release also records token
-            metrics and board-level cost estimates. Structured reports are released
-            together with the generated skill packages, so readers can inspect both
-            the scores and the skills that influenced those scores.
+            under three skill conditions: no_skill, demonstration_skill, and
+            reflection_skill. The primary result is avg@3, and the release also
+            records token metrics and board-level cost estimates. Structured reports
+            are released together with the generated skill packages, so readers can
+            inspect both the scores and the skills that influenced those scores.
           </p>
         </section>
 
@@ -354,12 +358,12 @@
           </div>
           <p>
             The train and test tasks are drawn from the same real-task distribution.
-            Train tasks are earlier samples from the task family, but their reference
+            Train tasks are examples from the same task family, but their reference
             materials do not directly expose the full SOP or all decisive facts. The
-            solver or skill-generation agent must infer the useful procedure from the
-            same kind of work that will later appear in test tasks. Test tasks change
-            records, entities, constraints, and sometimes output shape, so a skill
-            can guide the solver but cannot replace task-specific exploration.
+            solver or skill-generation agent must infer the useful procedure from
+            related work before applying it to test tasks. Test tasks change records,
+            entities, constraints, and sometimes output shape, so a skill can guide
+            the solver but cannot replace task-specific exploration.
           </p>
         </section>
 
@@ -398,16 +402,25 @@
         <section id="protocol">
           <h2>6. Evaluation Protocol and Workspace</h2>
           <p>
-            The primary metric for a task group is <code>avg@3</code>. For each
-            skill condition, the evaluation runs the five held-out test tasks, with
-            three independent solver attempts per test task. The task-group
-            <code>avg@3</code> is the average score over those test attempts for the
-            current condition:
+            For each skill condition, the evaluation runs the five held-out test
+            tasks, with three independent solver attempts per test task. For task
+            group \(g\), condition \(c\), test set \(T_g\), held-out test task
+            \(t \in T_g\), attempt index \(a \in \{1,2,3\}\), and attempt score
+            \(s_{g,c,t,a}\), avg@3 is defined as:
           </p>
           <div class="formula-block" aria-label="avg@3 definition">
-            <code>task_group_avg@3 = mean(score over 5 test tasks x 3 attempts)</code>
+            \[
+              \mathrm{avg@3}(g,c)
+              =
+              \frac{1}{|T_g|}
+              \sum_{t \in T_g}
+              \left(
+                \frac{1}{3}
+                \sum_{a=1}^{3} s_{g,c,t,a}
+              \right),
+              \quad |T_g| = 5.
+            \]
           </div>
-          <p>Public tables report <code>avg@3</code> as a percentage.</p>
           <p>
             Every solver attempt is context-clean. The solver receives only the
             current test task input, the allowed environment access instructions, and
@@ -420,7 +433,7 @@
             The evaluation workspace also records solver-side token metrics for the
             same answer-writing attempts. Reports track cached input tokens, input
             tokens, and output tokens; public tables display these token counts in
-            thousands (<code>k</code>). Skill generation, environment startup,
+            thousands (k). Skill generation, environment startup,
             evaluator execution, and main-agent aggregation are excluded from these
             token metrics.
           </p>
@@ -437,9 +450,8 @@
         <section id="judging">
           <h2>7. Rule-Based Judging and Rubric Design</h2>
           <p>
-            GDPevo uses rule-based evaluators rather than LLM-as-judge scoring. This
-            choice is central to the benchmark. The tasks often require exact
-            business outcomes: the correct set of qualified accounts, the correct
+            GDPevo uses rule-based evaluators rather than LLM-as-judge scoring. The
+            tasks often require exact business outcomes: the correct set of qualified accounts, the correct
             exclusion reasons, the correct invoice status, a total at a specified
             precision, a ranked list, a due date, or a required JSON field. In these
             settings, a probabilistic judge can introduce two unwanted sources of
@@ -465,22 +477,30 @@
             not meant to be a tiny syntax field; it should correspond to a meaningful
             outcome such as a full sponsor-status set, a revenue aggregate, a
             qualified lead set, an exclusion list, a follow-up schedule, or an
-            action-count summary. The raw weight of each scoring point is restricted
-            to <code>1</code>, <code>2</code>, or <code>3</code>, and the final
-            contribution is normalized by the sum of all raw weights:
+            action-count summary. Let \(\phi_i(\hat{y}, y)\) be the deterministic
+            pass/fail check for scoring point \(i\), comparing a submitted answer
+            \(\hat{y}\) with reference answer \(y\). The raw weight of each scoring
+            point is restricted to 1, 2, or 3, and the task score is:
           </p>
           <div class="formula-block" aria-label="Scoring point definition">
-            <code>score(point_i) = weight_i / sum_j(weight_j)</code>
+            \[
+              \mathrm{score}(\hat{y}, y)
+              =
+              \frac{
+                \sum_{i=1}^{m} w_i \mathbf{1}\!\left[\phi_i(\hat{y}, y)\right]
+              }{
+                \sum_{i=1}^{m} w_i
+              },
+              \quad w_i \in \{1,2,3\}.
+            \]
           </div>
           <p>
-            If the rule check passes, the attempt receives that normalized score for
-            the point, and <code>0</code> otherwise. This keeps rubric design simple
-            enough to audit while still allowing important business outcomes to
-            receive more weight. Higher-weight points are reserved for checks that
-            require real data exploration, source reconciliation, long-horizon
-            reasoning, or transfer from train-task experience. Low-level properties
-            such as JSON parseability or field presence may be prerequisites, but
-            they should not dominate the score.
+            This keeps rubric design simple enough to audit while still allowing
+            important business outcomes to receive more weight. Higher-weight points
+            are reserved for checks that require real data exploration, source
+            reconciliation, long-horizon reasoning, or transfer from train-task
+            experience. Low-level properties such as JSON parseability or field
+            presence may be prerequisites, but they should not dominate the score.
           </p>
           <p>
             Rule-based judging also improves error analysis. Because each point is
@@ -495,7 +515,7 @@
         <section id="case-study">
           <h2>8. Case Study: SCN_001 CRM Marketing Lead Capture</h2>
           <p>
-            <code>SCN_001_crm_marketing_lead_capture</code> illustrates the design.
+            SCN_001_crm_marketing_lead_capture illustrates the design.
             The scenario covers the front end of CRM marketing operations: events,
             sponsorships, trade shows, contact capture, import hygiene, campaign
             membership, and sales follow-up. The source examples combine three
@@ -550,10 +570,9 @@
             train and test tasks share this operational substrate.
           </p>
           <p>
-            In the initial public run, <code>task_group_001</code> improves from
-            44.43% under <code>no_skill</code> to 48.12% with
-            <code>demonstration_skill</code> and 57.46% with
-            <code>reflection_skill</code>. The gain is not simply a format effect;
+            In the initial public run, task_group_001 improves from
+            44.43% under no_skill to 48.12% with demonstration_skill and 57.46% with
+            reflection_skill. The gain is not simply a format effect;
             the strongest improvement comes from procedural knowledge that helps the
             solver avoid repeated mistakes in sponsorship status, exclusion logic,
             and CRM action counting.
@@ -573,13 +592,13 @@
             <div class="metric-row metric-head" role="row">
               <span role="columnheader">condition</span>
               <span role="columnheader">overall avg@3</span>
-              <span role="columnheader">cached tokens</span>
-              <span role="columnheader">input tokens</span>
-              <span role="columnheader">output tokens</span>
-              <span role="columnheader">cost</span>
+              <span role="columnheader">cached tokens avg@3</span>
+              <span role="columnheader">input tokens avg@3</span>
+              <span role="columnheader">output tokens avg@3</span>
+              <span role="columnheader">cost avg@3</span>
             </div>
             <div class="metric-row metric-row-six" role="row">
-              <span role="cell"><code>no_skill</code></span>
+              <span role="cell">no_skill</span>
               <span role="cell">48.35%</span>
               <span role="cell">642.2k</span>
               <span role="cell">709.2k</span>
@@ -587,7 +606,7 @@
               <span role="cell">$1.08</span>
             </div>
             <div class="metric-row metric-row-six" role="row">
-              <span role="cell"><code>demonstration_skill</code></span>
+              <span role="cell">demonstration_skill</span>
               <span role="cell">65.99%</span>
               <span role="cell">413.7k</span>
               <span role="cell">466.1k</span>
@@ -595,7 +614,7 @@
               <span role="cell">$0.81</span>
             </div>
             <div class="metric-row metric-row-six" role="row">
-              <span role="cell"><code>reflection_skill</code></span>
+              <span role="cell">reflection_skill</span>
               <span role="cell">67.13%</span>
               <span role="cell">409.1k</span>
               <span role="cell">458.7k</span>
@@ -604,18 +623,18 @@
             </div>
           </div>
           <p>
-            <code>demonstration_skill</code> improves average performance by +17.64
-            percentage points over <code>no_skill</code>;
-            <code>reflection_skill</code> improves it by +18.78 percentage points.
-            The largest observed improvement appears in <code>task_group_009</code>,
-            where <code>demonstration_skill</code> rises from 42.76% to 92.47%.
+            demonstration_skill improves average performance by +17.64
+            percentage points over no_skill; reflection_skill improves it by +18.78
+            percentage points.
+            The largest observed improvement appears in task_group_009,
+            where demonstration_skill rises from 42.76% to 92.47%.
             Skill-conditioned solving is also cheaper on average. Relative to
-            <code>no_skill</code>, <code>demonstration_skill</code> reduces total
+            no_skill, demonstration_skill reduces total
             input tokens by 34.3%, output tokens by 19.0%, and cost by 24.8%.
-            <code>reflection_skill</code> reduces total input tokens by 35.3%,
+            reflection_skill reduces total input tokens by 35.3%,
             output tokens by 20.1%, and cost by 26.7%. Cost decreases in 11 of 12
-            task groups under <code>demonstration_skill</code> and in 12 of 12 task
-            groups under <code>reflection_skill</code>.
+            task groups under demonstration_skill and in 12 of 12 task groups under
+            reflection_skill.
           </p>
           <p>
             These results suggest that train-derived skills can materially improve
@@ -629,13 +648,10 @@
             the amount of downstream computation needed to produce it.
           </p>
           <p>
-            The result table should be read as an analysis surface rather than only a
-            leaderboard. Some task groups benefit more from demonstrations, because
-            the input/output pairs directly reveal the recurring rule. Others benefit
+            Some task groups benefit more from demonstrations, because the
+            input/output pairs directly reveal the recurring rule. Others benefit
             more from reflection, because the useful procedure becomes clearer after
-            the agent makes and diagnoses mistakes. Still others show modest gains,
-            indicating either a strong no-skill baseline, weak train/test transfer,
-            or generated skills that fail to capture the decisive operation.
+            the agent makes and diagnoses mistakes.
           </p>
           <div class="article-links" aria-label="Experiment links">
             <a href="https://github.com/Prism-Shadow/GDPevo/blob/main/experiments/EXPERIMENT_BOARD.md">
@@ -648,36 +664,6 @@
               Skill packages
             </a>
           </div>
-        </section>
-
-        <section id="discussion">
-          <h2>10. Discussion</h2>
-          <p>
-            GDPevo frames agent learning as an operational workflow. A model does
-            not merely answer a prompt; it interacts with an environment, writes
-            answers, receives structured feedback through train outputs, distills a
-            skill, and then attempts related held-out work. This framing makes
-            several phenomena visible.
-          </p>
-          <p>
-            First, skill transfer is task-family dependent. A skill that encodes
-            source precedence, normalization, or eligibility criteria can sharply
-            improve performance when the same procedure recurs. A skill that only
-            restates generic advice may add little. Second, environment design
-            matters. Transfer is meaningful only when train and test share a real
-            operational substrate rather than a superficial theme. Third, exact
-            evaluators are essential. Without concrete business scoring points, it is
-            difficult to tell whether a skill improved correctness, reduced
-            exploration, or merely changed the style of the answer.
-          </p>
-          <p>
-            The benchmark also highlights a useful tension. The best task groups are
-            neither too homogeneous nor too diverse. If train and test are almost
-            identical, the benchmark measures memorization. If they are unrelated, it
-            measures general reasoning rather than skill transfer. The transfer band
-            is where the benchmark becomes informative: the solver must reuse
-            procedure while still doing fresh work.
-          </p>
         </section>
       </article>
     </main>

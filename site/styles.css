@@ -45,12 +45,13 @@ a {
 }
 
 code {
-  padding: 0.1rem 0.34rem;
-  border: 1px solid #d8ddff;
-  background: var(--blue-soft);
-  color: var(--blue);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.92em;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 750;
   overflow-wrap: anywhere;
   white-space: normal;
 }
@@ -394,8 +395,8 @@ h3 {
   padding: 0.55rem 0.78rem;
   border: 1px solid var(--line-strong);
   background: var(--paper);
-  color: var(--blue);
-  font-weight: 850;
+  color: var(--ink);
+  font-weight: 650;
 }
 
 .pipeline-section h2 {
@@ -454,9 +455,8 @@ h3 {
   padding: 0.9rem 1rem;
   border-bottom: 1px solid var(--line);
   background: var(--paper);
-  color: var(--blue);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-weight: 800;
+  color: var(--ink);
+  font-weight: 550;
 }
 
 .anatomy-stack div:last-child {
@@ -485,9 +485,10 @@ h3 {
 
 .condition-list h3,
 .condition-ledger h3 {
-  color: var(--blue);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--ink);
+  font-family: inherit;
   font-size: 1rem;
+  font-weight: 550;
   overflow-wrap: anywhere;
 }
 
@@ -627,9 +628,9 @@ h3 {
 }
 
 .article-table strong {
-  color: var(--blue);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--ink);
   font-size: 0.94rem;
+  font-weight: 650;
 }
 
 .article-table span {
@@ -681,19 +682,16 @@ h3 {
 }
 
 .formula-block {
-  margin: 1.5rem 0;
-  padding: 1rem 1.1rem;
+  margin: 1.6rem 0;
+  padding: 1.1rem 1.2rem;
   border: 1px solid var(--line-strong);
   background: var(--paper);
+  overflow-x: auto;
+  text-align: center;
 }
 
-.formula-block code {
-  display: block;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--blue);
-  line-height: 1.55;
+.formula-block mjx-container {
+  margin: 0 !important;
 }
 
 .article-result-strip {
@@ -745,8 +743,8 @@ h3 {
   padding: 0.55rem 0.78rem;
   border: 1px solid var(--line-strong);
   background: var(--paper);
-  color: var(--blue);
-  font-weight: 850;
+  color: var(--ink);
+  font-weight: 650;
 }
 
 .metric-table {
@@ -769,13 +767,25 @@ h3 {
   min-height: 3.8rem;
   padding: 0.75rem 0.85rem;
   background: var(--paper);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.metric-row > *:not(:first-child) {
+  justify-content: flex-end;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-row > *:first-child {
+  font-weight: 500;
 }
 
 .metric-head > * {
   background: var(--panel);
-  color: var(--muted);
+  color: var(--ink);
   font-size: 0.78rem;
-  font-weight: 850;
+  font-weight: 650;
   text-transform: uppercase;
 }
 
