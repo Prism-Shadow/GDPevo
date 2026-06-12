@@ -2,7 +2,9 @@
 
 语言：[English](EXPERIMENT_BOARD.md) | [中文](EXPERIMENT_BOARD.zh.md)
 
-本看板汇总公开 benchmark 运行的已发布评估结果。完整结构化 reports 存放在已发布实验目录下，例如 `codex_gpt5_5_xhigh/reports/`。
+本看板汇总 GDPevo 公开 benchmark 运行的已发布评估结果。当前运行将无状态 `no_skill` baseline 与 `demonstration_skill`、`reflection_skill` 两种 skill-creation 方法进行对比，用于衡量 agent 经验是否能提升后续具有经济价值的业务任务。完整结构化 reports 存放在已发布实验目录下，例如 `codex_gpt5_5_xhigh/reports/`。
+
+在已发布的 Codex GPT-5.5 xhigh 运行中，skill-based evolution 平均带来 18.21 个百分点的准确率提升，并让 token 成本平均下降 25.75%。
 
 效率指标只统计 test solver agent 写答案的过程。计算时先对每个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。Skill 生成、环境启动、evaluator 执行和主 agent 汇总不计入这些指标。
 

@@ -2,9 +2,16 @@
 
 Languages: [English](EXPERIMENT_BOARD.md) | [Chinese](EXPERIMENT_BOARD.zh.md)
 
-This board summarizes the released evaluation results for the public benchmark runs.
+This board summarizes the released evaluation results for GDPevo's public
+benchmark runs. The released run compares a stateless `no_skill` baseline with
+two skill-creation methods, `demonstration_skill` and `reflection_skill`, to
+measure whether agent experience improves later GDP-valued business tasks.
 Full structured reports are stored under released experiment directories, such
 as `codex_gpt5_5_xhigh/reports/`.
+
+In the released Codex GPT-5.5 xhigh run, skill-based evolution improves accuracy
+by 18.21 percentage points on average and reduces token cost by 25.75% on
+average.
 
 Efficiency metrics only count test solver subagent answer-writing. They are averaged across the 3 attempts for each test task first, then averaged across the 5 test tasks. Skill generation, environment startup, evaluator execution, and main-agent aggregation are outside these metrics.
 

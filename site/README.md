@@ -1,6 +1,6 @@
 # GDPevo Site
 
-This directory contains the static GitHub Pages site for GDPevo.
+This directory contains the static GitHub Pages scaffold for GDPevo.
 
 The site is intentionally dependency-free: GitHub Pages publishes the files in
 this directory directly.
@@ -9,6 +9,5 @@ this directory directly.
 
 | Path | Purpose |
 | --- | --- |
-| `index.html` | Public report-style landing page with benchmark design, pipeline, protocol, and results. |
-| `blog/drafts/` | Markdown drafts for English and Chinese report editing. |
+| `assets/figures/` | Figure assets prepared for the future public site. |
 | `styles.css` | Shared site styling. |

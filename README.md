@@ -2,19 +2,35 @@
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
-GDPevo is a public benchmark for evaluating how agents learn and
-transfer skills in real business production environments.
+GDPevo is a public benchmark for evaluating self-evolving agents on
+economically valuable, real business tasks. To our knowledge, it is the first
+GDP-valued benchmark that treats agent evaluation as a stateful process: an
+agent first works through related train tasks, turns experience into reusable
+skills, and is then evaluated on held-out tasks from the same business
+environment.
 
-The benchmark focuses on three questions:
+Most agent benchmarks still evaluate stateless task completion. GDPevo instead
+asks whether agents can improve through experience: can they learn business
+rules, source precedence, operating procedures, and output discipline from
+earlier work, and can that learning make later work more accurate and cheaper
+to execute?
 
-- Can agents complete long-horizon tasks in real business production environments?
-- Can they learn reusable skills from train tasks and transfer them to related
-  test tasks.
-- Do those skills make downstream solving more accurate and less costly, as
-  reflected by score, token, and cost metrics?
+The benchmark can be used to evaluate:
 
-The released artifacts include executable task groups, evaluation reports,
-generated skill packages, and a reusable evaluation workspace.
+- self-evolving or continual-learning agents;
+- skill creators and skill optimizers;
+- end-to-end agent memory systems.
+
+The first release contains 120 agent-synthesized tasks organized into 12 task
+groups. Each task group has one shared business environment, five train tasks,
+and five test tasks. The environments are tied to economically meaningful
+industry workflows, including finance, enterprise CRM, and ERP automation.
+
+In the released Codex GPT-5.5 xhigh run, evolved agents improve accuracy by
+18.21 percentage points on average after inductive learning, while reducing
+token cost by 25.75% on average. The released artifacts include executable task
+groups, evaluation reports, generated skill packages, and a reusable evaluation
+workspace that can automate the full scoring flow.
 
 ## Repository Layout
 
@@ -28,8 +44,9 @@ generated skill packages, and a reusable evaluation workspace.
 ## Data
 
 Each task group contains one shared business environment, five train tasks, and
-five test tasks. Train tasks are used to derive skills, and test tasks measure
-whether those skills transfer to related tasks in the same environment.
+five test tasks. Train tasks provide the experience source, and test tasks
+measure whether the resulting skills improve later work in the same business
+environment.
 
 Released task groups are summarized in [data/DATA_BOARD.md](data/DATA_BOARD.md).
 See [data/README.md](data/README.md) for the data layout and task group format.
@@ -52,6 +69,6 @@ See [experiments/README.md](experiments/README.md) for details.
 The reusable evaluation workspace is available at
 [experiments/eval_workspace/](experiments/eval_workspace/). A Chinese mirror is
 available at [experiments/eval_workspace_zh/](experiments/eval_workspace_zh/).
-The workspace describes how to run `avg@3` evaluation with clean-context
-skill-generation and solver agents, how to record token/time metrics, and how
-to write the final report.
+The workspace describes how Codex can run the full evaluation workflow with
+clean-context skill-generation and solver agents, aggregate `avg@3`, record
+token and cost metrics, and write the final report.

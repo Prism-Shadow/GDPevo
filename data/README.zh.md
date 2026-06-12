@@ -2,7 +2,7 @@
 
 语言：[English](README.md) | [中文](README.zh.md)
 
-本目录包含已发布的 GDPevo benchmark 数据。当前版本按 task group 组织：每个 task group 包含一个共享业务环境、5 个 train tasks、5 个 test tasks、参考答案、评测器和任务说明。
+本目录包含已发布的 GDPevo benchmark 数据：120 个由 agent 合成的任务，组织为 12 个 task groups。每个 task group 包含一个共享业务环境、5 个 train tasks、5 个 test tasks、参考答案、评测器和任务说明。
 
 ## 内容
 
@@ -13,7 +13,7 @@
 
 ## Task Groups
 
-每个 task group 都是一个自包含的 benchmark 单元，包含一个共享环境、5 个 train tasks 和 5 个 test tasks。Train tasks 用于生成或沉淀 skills，test tasks 用于衡量这些 skills 是否能够迁移到同一业务环境下的相关任务。
+每个 task group 都是一个用于 stateful agent evaluation 的自包含 benchmark 单元。Train tasks 提供同一真实业务环境中的相关经验，test tasks 用于衡量生成的 skill 是否能让后续任务获得提升。当前公开 task groups 覆盖金融、企业 CRM、ERP 自动化等具有经济价值的工作流程。
 
 ## 目录结构
 

@@ -2,7 +2,7 @@
 
 语言：[English](DATA_BOARD.md) | [中文](DATA_BOARD.zh.md)
 
-本看板汇总当前公开的 benchmark task groups。每个 task group 都是一个自包含单元，包含一个共享业务环境、5 个 train tasks 和 5 个 test tasks。完整定义见各 task group 目录下的 `task_group.yaml`。
+本看板汇总当前公开的 GDPevo task groups：共 12 个 stateful benchmark 单元、120 个任务。每个 task group 包含一个共享业务环境、5 个 train tasks 和 5 个 test tasks，用于衡量早期任务经验是否能让同一环境下的后续任务获得提升。完整定义见各 task group 目录下的 `task_group.yaml`。
 
 | task_group_id | scenario_id | 领域 | 任务侧重点 | train | test | 路径 |
 | --- | --- | --- | --- | ---: | ---: | --- |

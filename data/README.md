@@ -2,10 +2,10 @@
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
-This directory contains the released GDPevo benchmark data. The current release
-is organized as task groups: each task group packages one shared business
-environment, five train tasks, five test tasks, reference answers, evaluators,
-and task notes.
+This directory contains the released GDPevo benchmark data: 120
+agent-synthesized tasks organized into 12 task groups. Each task group packages
+one shared business environment, five train tasks, five test tasks, reference
+answers, evaluators, and task notes.
 
 ## Contents
 
@@ -16,10 +16,11 @@ and task notes.
 
 ## Task Groups
 
-Each task group is a self-contained benchmark unit with one shared environment,
-five train tasks, and five test tasks. Train tasks are used to derive skills,
-and test tasks measure whether those skills transfer to related work in the same
-business environment.
+Each task group is a self-contained benchmark unit for stateful agent
+evaluation. Train tasks provide related experience inside a real business
+environment; test tasks measure whether the generated skill improves later work
+in the same environment. The released task groups cover economically meaningful
+workflows such as finance, enterprise CRM, and ERP automation.
 
 ## Directory Layout
 
