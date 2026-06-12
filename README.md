@@ -3,9 +3,7 @@
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
 GDPevo is a public benchmark for evaluating how agents learn and
-transfer skills in real business production environments. Following the spirit
-of real-world work evaluations such as GDPVal, the tasks are designed around
-productivity-bearing office work rather than isolated puzzle prompts.
+transfer skills in real business production environments.
 
 The benchmark focuses on three questions:
 

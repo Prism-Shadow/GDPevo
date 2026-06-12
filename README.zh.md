@@ -2,7 +2,7 @@
 
 语言：[English](README.md) | [中文](README.zh.md)
 
-GDPevo 是一个公开 benchmark，用于评估 agent 在真实业务生产环境中学习并迁移 skill 的能力。参考 GDPVal 这类 real-world work evaluation 的思路，这里的任务对应具备生产力属性的真实业务工作，而不是孤立题目。
+GDPevo 是一个公开 benchmark，用于评估 agent 在真实业务生产环境中学习并迁移 skill 的能力。
 
 这个 benchmark 主要关注三个问题：
 
