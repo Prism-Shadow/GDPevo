@@ -4,8 +4,6 @@
 
 ### Data and source lineage
 
-This task belongs to `task_group_007`, scenario `SCN_007_erp_inventory_order_fulfillment`, using source examples `E001`, `E002`, and `E003`. It implements the incident analytics operation family described in `scratch/task_group_design.md` and the assigned `test_003` brief in `scratch/task_builder_briefs.md`.
-
 The task uses the shared Northwind Components ERP environment under `task_group/task_group_007/env/`. Solvers should access only the public API, especially `/incidents` and `/suppliers`; they should not inspect environment source files. Task-local visible payloads are `input/payloads/full_year_supplier_incident_request.json` and `input/payloads/answer_template.json`.
 
 ### Task definition and material map
@@ -38,8 +36,3 @@ Likely pitfalls include using all 212 generated incidents instead of the 2025 po
 The primary train anchor is `train_003`, which establishes incident filtering, supplier aggregation, filtered-population denominators, duration rules, severe/open counts, ranking, and controlled recommendation codes. The second anchor is `train_005`, which connects supplier incident patterns to procurement-quality hold decisions and replenishment-freeze style recommendations. This test changes the date window to a complete calendar year, increases the filtered population, adds cost-share percentages, and separates per-supplier RMA and WORK_ORDER duration averages.
 
 Transfer-dependent scoring points are `SP002`, `SP004`, `SP005`, `SP006`, and `SP007`, because they depend on the same aggregation, duration, incident-type separation, severity, quality-status, and recommendation-precedence conventions learned from the train tasks. `SP003` and `SP008` also benefit from train experience but require task-specific ranking and policy application over the larger full-year population.
-
-### Construction record
-
-Author: task-builder subagent `test_003`. Created: 2026-06-01. Updated: 2026-06-01. Major changes: created solver prompt, request payload, answer template, standard answer, exact-match evaluator, and notes for the full-year supplier incident analysis task.
-

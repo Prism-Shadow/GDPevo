@@ -1,10 +1,7 @@
-# test_004 Hidden Notes
-
+# test_004 Notes
 ## English
 
-Task `test_004` belongs to `task_group_001`, sourced from scenario `SCN_001_crm_marketing_lead_capture` and its examples `E001`, `E002`, and `E003`. It implements the test brief from `scratch/task_group_design.md`: reconcile `Industrial Vision AI Forum 2027` (`event_id`: `industrial_vision_2027`) attendees, sponsors, and CRM gaps. The shared environment is HarborCRM under `task_group/task_group_001/env/`, especially `env/data/harborcrm_data.json`, `env/data/manifest.json`, and the public API served by `env/setup.sh`.
-
-The visible task consists of `input/prompt.txt` and `input/payloads/answer_template.json`. Solvers are expected to inspect the public API endpoints for event details, sponsor orders, invoices, badges, CRM accounts, CRM contacts, campaign members, opportunities, and policies, then return JSON in the declared schema. The prompt intentionally asks for a business handoff rather than exposing the construction rules as a step list.
+The visible task consists of `input/prompt.txt` and `input/payloads/answer_template.json`. Solvers are expected to inspect the public API endpoints for event details, sponsor orders, invoices, badges, CRM accounts, CRM contacts, campaign members, opportunities, and policies, then return JSON in the declared schema. The prompt intentionally asks for a business handoff rather than exposing the underlying task rules as a step list.
 
 This task fits the CRM marketing lead-capture scenario because it combines event operations, sponsor finance, badge scanning, CRM contact hygiene, and campaign member cleanup. The key objects are sponsor packages for TerraLens Robotics, Mosaic AI Works, and Prairie Optics; invoice records for TerraLens and Mosaic; badge scans `bdg_0018` through `bdg_0023`; one stale CRM campaign member `acct_terra_lens:cont_lia_foster`; and policy metadata for sponsor status, contact normalization, and follow-up dates.
 
@@ -42,6 +39,3 @@ Evaluation basis: `eval/evaluate.py` has seven exact-match scoring points with r
 Likely model pitfalls include treating Prairie Optics as an ordinary attendee because its badge type is not `sponsor`; missing the proposal-only sponsor state; counting sponsor attendees as sales leads; suppressing Crown Assembly's Lia Foster because of a same-name stale opted-out TerraLens contact; reusing the stale TerraLens campaign member for the wrong person; and using the audit date instead of event-end-date offsets for due dates.
 
 Transfer design: this test is anchored by `train_001`, `train_003`, and `train_004`. From `train_001`, solvers should transfer sponsor finance status handling and event-end-date follow-up conventions. From `train_004`, they should transfer sponsor attendee exclusion, campaign member action patterns, and proposal-only sponsor handling. From `train_003`, they should transfer email/phone normalization and cautious duplicate/contact matching. The task-specific exploration is identifying the fresh Industrial Vision sponsor and badge records, interpreting the TerraLens stale campaign member, and calculating the new event's amounts and dates.
-
-Construction record: created by Codex task-builder for `test_004` on 2026-06-01. Files created: `input/prompt.txt`, `input/payloads/answer_template.json`, `notes/notes.md`, `output/answer.json`, `eval/eval.sh`, and `eval/evaluate.py`.
-

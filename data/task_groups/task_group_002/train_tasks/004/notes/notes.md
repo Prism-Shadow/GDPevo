@@ -15,4 +15,3 @@ Expected facts:
 - Payment terms: `NET_30_AFTER_PO`.
 
 The road quote is cheaper than sea, but it is expired before the quote date and carries high customs/border risk, so it must not drive the recommendation.
-

@@ -2,7 +2,7 @@
 
 语言：[English](README.md) | [中文](README.zh.md)
 
-本目录包含已发布的 GDPevo benchmark 数据：120 个由 agent 合成的任务，组织为 12 个 task groups。每个 task group 包含一个共享业务环境、5 个 train tasks、5 个 test tasks、参考答案、评测器和任务说明。
+本目录包含已发布的 GDPevo benchmark 数据：120 个任务，组织为 12 个 task groups。每个 task group 包含一个共享业务环境、5 个 train tasks、5 个 test tasks、参考答案、评测器和任务说明。
 
 ## 内容
 

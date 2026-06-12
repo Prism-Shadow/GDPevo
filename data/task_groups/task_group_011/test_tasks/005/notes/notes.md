@@ -1,6 +1,6 @@
 # Southport CRE and Mixed Decision Matrix Notes
 
-English notes: This hidden construction note covers `test_005` in `SCN_011_bank_branch_credit_risk_lending_committee`, derived from source examples `E001`, `E002`, and `E003`. The task uses only shared public environment data for branch_id `SOUTHPORT`: branch capacity and CRE limit, Q1 metrics, sector exposures, the pending application queue, policy rules, and FDIC benchmark data. The only task-local payload is `input/payloads/answer_template.json`.
+English notes: This note covers `test_005` in `SCN_011_bank_branch_credit_risk_lending_committee`, derived from source examples `E001`, `E002`, and `E003`. The task uses only shared public environment data for branch_id `SOUTHPORT`: branch capacity and CRE limit, Q1 metrics, sector exposures, the pending application queue, policy rules, and FDIC benchmark data. The only task-local payload is `input/payloads/answer_template.json`.
 
 Task definition and fit: The solver must produce a lending-committee JSON decision matrix for a branch with an already elevated CRE book and a mixed application queue. This belongs to the group because it combines application framework selection, CRE stress, concentration management, capacity allocation, and controlled decision/reason codes.
 
@@ -11,6 +11,3 @@ Solution and evaluation basis: Existing CRE exposure is `5359170.57`, existing c
 Scoring: The evaluator uses nine exact-match points with raw weights: SP001 CRE recommendation/participation for `SOU-APP-901` weight 3; SP002 stressed DSCR and post-participation concentration weight 2; SP003 approved set weight 2; SP004 conditional set weight 2; SP005 declined set weight 2; SP006 framework selection for consumer/residential/C&I/SBA weight 2; SP007 committed and remaining capacity weight 2; SP008 low-FICO consumer decline reason weight 1; SP009 C&I approval conditions weight 2.
 
 Transfer design: Important anchors are `train_005` for CRE weighted decision posture, stress arithmetic, and concentration-aware participation, and `train_002` for mixed-queue allocation, SBA net-exposure treatment, NESDCAP framework assignment for consumer/residential loans, controlled decline reasons, and C&I approval conditions. Transfer-dependent difficulty is concentrated in SP001, SP002, SP006, SP007, SP008, and SP009; task-specific exploration is needed to identify Southport application IDs and exact amounts.
-
-Construction record: Author `test_005` task-builder worker. Created and updated 2026-06-03. Major change: completed minimum viable task files, answer, and exact-match evaluator.
-

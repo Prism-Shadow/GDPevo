@@ -21,8 +21,4 @@ This fits a CRO save-plan workflow because it combines renewal timing, collectio
 The canonical answer uses 2026-09-30 posted billing ARR, Q3 2026 clean support tickets, Q3 valid NPS responses, Q3 account usage, and A/R aging as of 2026-09-30. The six selected accounts are ordered by risk score descending, then current ARR descending, then account_id ascending. The evaluator gives weighted credit for ordered accounts, scores and levels, actions, ARR and ARR-at-risk, support and NPS metrics, overdue amounts, summary action counts, and quality checks.
 
 ### Transfer Design
-The task transfers patterns from the retention scoring and action-priority training tasks: use posted billing as the ARR source of truth, filter invalid support/NPS records, apply the shared risk/action policy, and summarize the portfolio without exposing the hidden formula in the prompt.
-
-### Construction Record
-Built for task_group_004/test_tasks/001 only. No environment files were copied into payloads. The evaluator defaults to this task's own `output/answer.json` and should score it at full credit.
-
+The task transfers patterns from the retention scoring and action-priority training tasks: use posted billing as the ARR source of truth, filter invalid support/NPS records, apply the shared risk/action policy, and summarize the portfolio without exposing the full formula in the prompt.

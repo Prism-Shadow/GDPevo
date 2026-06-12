@@ -21,10 +21,10 @@ The benchmark can be used to evaluate:
 - skill creators and skill optimizers;
 - end-to-end agent memory systems.
 
-The first release contains 120 agent-synthesized tasks organized into 12 task
-groups. Each task group has one shared business environment, five train tasks,
-and five test tasks. The environments are tied to economically meaningful
-industry workflows, including finance, enterprise CRM, and ERP automation.
+The first release contains 120 tasks organized into 12 task groups. Each task
+group has one shared business environment, five train tasks, and five test
+tasks. The task groups are constructed from economically meaningful industry
+workflows, including finance, enterprise CRM, and ERP automation.
 
 In the released Codex GPT-5.5 xhigh run, evolved agents improve accuracy by
 18.21 percentage points on average after inductive learning, while reducing
@@ -38,7 +38,7 @@ workspace that can automate the full scoring flow.
 | --- | --- |
 | `data/` | Released task group data, data board, shared environments, train/test tasks, answers, evaluators, and data notes. |
 | `experiments/` | Released evaluation protocol, evaluation workspaces, result reports, generated skills, and experiment board. |
-| `site/` | Static website and blog content for GitHub Pages. |
+| `site/` | GitHub Pages scaffold and public site assets. |
 | `assets/` | Figures, logos, and visual assets used by released materials. |
 
 ## Data

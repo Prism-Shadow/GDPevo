@@ -17,6 +17,3 @@ Evaluation uses eight exact-match scoring points with raw weights totaling 17: S
 Transfer design: as a train task, this is a real calibration task rather than a tutorial. Comparing an attempted answer against the standard answer should teach the transferable habits needed for later payment-release risk tasks: treat the compliance profile as authoritative for release gates, distinguish hold from escalation, treat PEP/sanctions concerns as escalation triggers, compare license expiry to the stated review date, recognize placeholder and malformed tax IDs, keep bank `name_mismatch` separate from other unusable bank states, and return normalized ID lists instead of free-text rationales.
 
 Likely pitfalls include using the current calendar date instead of `2025-06-01`, treating current `review_status` as the final release decision, escalating every non-clear bank or not-run screening case, missing that `TIN999999` is invalid despite matching the basic pattern, omitting the risk override flag for score `70`, or including the closed-bank case in `bank_mismatch_ids`.
-
-Construction record: created by task-builder subagent for `train_005` on 2026-06-01. Files added under `task_group/task_group_005/train_tasks/005/` only.
-

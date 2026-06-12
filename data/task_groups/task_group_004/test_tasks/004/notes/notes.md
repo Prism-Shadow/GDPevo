@@ -8,7 +8,7 @@ This task uses the ApexCloud Retention Operations churn exports from the shared 
 
 ### Task definition
 
-The solver is asked to validate the churn model export and return a deployment-oriented report plus the top six accounts from a fixed candidate subset. The visible prompt names the API endpoints and candidate IDs but does not disclose the construction-only model settings, encodings, or training procedure.
+The solver is asked to validate the churn model export and return a deployment-oriented report plus the top six accounts from a fixed candidate subset. The visible prompt names the API endpoints and candidate IDs but does not disclose the reference model settings, encodings, or training procedure.
 
 ### Scenario fit
 
@@ -28,8 +28,3 @@ The deterministic test-task churn procedure uses all 19 exported feature columns
 ### Transfer design
 
 This task transfers the churn-export handling from the train anchor while changing the candidate subset, required list length, top-level schema, and deployment-readiness fields. It also adds risk levels and enterprise-or-strategic cohort counting so solvers must combine the model output with customer account context.
-
-### Construction record
-
-Created the five required task files under `test_tasks/004/` only. The evaluator defaults to the task's own answer and accepts an optional prediction JSON path as its first argument.
-

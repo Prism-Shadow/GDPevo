@@ -1,5 +1,4 @@
-# train_003 Hidden Notes
-
+# train_003 Notes
 ## English
 
 This task belongs to source scenario `SCN_001_crm_marketing_lead_capture`, using source examples `E001`, `E002`, and especially `E003` for contact-data hygiene. It implements the task-group design brief for `train_003`: clean and summarize the HarborCRM raw campaign batch `fall_webinar_import` for CRM import. The shared environment data is in `task_group/task_group_001/env/data/harborcrm_data.json`; public solver access is through the HarborCRM API endpoints for import batches, raw contacts, suppression, CRM accounts, CRM contacts, and policies. The only task-local solver payload is `input/payloads/answer_template.json`.
@@ -32,6 +31,3 @@ The evaluator has seven scoring points, matching the design:
 Likely pitfalls include keeping both duplicate rows, picking the webinar form over the partner upload on equal timestamp, dropping Kenji Sato because the phone is blank, treating suppressed rows as ordinary `no_import` rather than `suppress`, normalizing Evan Blake from the losing row instead of the winning row, and assuming HelioWare requires account creation even though it exists in CRM.
 
 As a train task, this should teach transfer habits for `test_003`: read public policies, normalize before matching, suppress before final import, handle existing opted-out contacts, dedupe by normalized email before phone-company keys, and prefer the most recent/highest-priority source record. The train-derived skill should capture the shape of the hygiene workflow without memorizing these row ids.
-
-Construction record: created by Codex task-builder for `train_003` on 2026-06-01. Initial version created `prompt.txt`, `answer_template.json`, `answer.json`, `eval.sh`, `evaluator.py`, and these notes.
-

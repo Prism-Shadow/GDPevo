@@ -12,7 +12,7 @@ GDPevo 是一个面向真实业务场景的公开 agent benchmark，用于评估
 - 评估 Skill Creator / SkillOpt 的能力。
 - 评估 Agent Memory 的端到端效果。
 
-首个公开版本包含 120 个由先进 agent 合成的任务，并组织为 12 个 task groups。每个 task group 包含一个共享业务环境、5 个 train tasks 和 5 个 test tasks。任务组都对应具有经济价值的产业场景，例如金融、企业 CRM 和 ERP 自动化。
+首个公开版本包含 120 个任务，并组织为 12 个 task groups。每个 task group 包含一个共享业务环境、5 个 train tasks 和 5 个 test tasks。任务组从具有经济价值的产业工作流构造而来，例如金融、企业 CRM 和 ERP 自动化。
 
 在已发布的 Codex GPT-5.5 xhigh 运行中，自进化后的 agent 在归纳学习后平均获得 18.21 个百分点的准确率提升，同时 token 成本平均节省 25.75%。当前公开内容包括可执行 task groups、评估报告、生成的 skill packages，以及可复用的 evaluation workspace，用于自动执行完整评估流程并生成最终分数。
 
@@ -22,7 +22,7 @@ GDPevo 是一个面向真实业务场景的公开 agent benchmark，用于评估
 | --- | --- |
 | `data/` | 已发布的 task group 数据、数据看板、共享环境、train/test tasks、答案、评测器和数据说明。 |
 | `experiments/` | 已发布的评估协议、evaluation workspaces、结果报告、生成 skills 和实验看板。 |
-| `site/` | 用于 GitHub Pages 的静态网站和 blog 内容。 |
+| `site/` | GitHub Pages 站点脚手架和公开展示资源。 |
 | `assets/` | 已发布材料使用的图片、logo 和视觉资源。 |
 
 ## 数据

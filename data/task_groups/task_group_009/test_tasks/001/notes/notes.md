@@ -11,6 +11,3 @@ Material map: Finance Ops period map resolves the fiscal-year convention; accoun
 Evaluation has 8 scoring points with weights 2, 2, 1, 2, 3, 2, 2, and 3. Transfer-dependent points include period convention, account rollup, same-scope ARPU and labor-headcount ratios, regional branch inclusion, and ranking direction. Task-specific difficulty comes from exploring a different branch and region.
 
 Likely pitfalls include following the stale local memo, treating M1-M12 as the current year, omitting allocations from EBITDA, or computing ARPU from a single month instead of the fiscal-year record set.
-
-Construction record: created by Codex on 2026-06-02.
-

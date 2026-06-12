@@ -13,6 +13,3 @@ Solution and evaluation basis: The standard answer sells `BND_JUNIPER_2028` for 
 Transfer design: As a train task, this is a real calibration task rather than a worked example. It lets the solver infer reusable fixed-income conventions for later tasks: use current portfolio/security/issuer records when local desk materials are stale, calculate HY allocation from post-trade market value, calculate weighted modified duration from post-trade bond market value, treat issuer watchlist records as risk-reduction priorities, and convert the final risk judgment into controlled enum fields. These conventions transfer directly to the energy-credit and multi-asset credit-risk test tasks without exposing their specific portfolios or answers.
 
 Likely model pitfalls: A solver may use the stale Juniper quantity in the memo, buy a watchlisted high-yield candidate because of yield, reduce HY by the target amount but leave the portfolio above the HY cap, calculate duration over only traded bonds, or provide prose instead of controlled fields.
-
-Construction record: Created by task-builder 4 on 2026-06-03. Files created under `train_tasks/004/` only. No environment, scratch, sibling task, or task-group index files were edited.
-

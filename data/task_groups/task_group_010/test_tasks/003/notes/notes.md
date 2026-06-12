@@ -6,8 +6,6 @@
 
 This task belongs to `SCN_010_institutional_investment_strategy_portfolio_risk`, with source-example lineage from `E003` quarterly active allocation views and secondary scenario support from the cross-asset currency handling in `E002` and `train_005`. The task uses the shared Asteria Investment Office environment, especially `env/data/opportunity_sets.json`, `env/data/prior_views.json`, `env/data/macro_signals.json`, and `env/data/policies.json`. The solver-visible local files are `input/prompt.txt`, `input/payloads/allocation_request.json`, and `input/payloads/answer_template.json`.
 
-The rework was requested after direct calibration scored `0.852941` avg@2, which showed that the original prompt and broad rubric made the task too easy without train-derived allocation experience.
-
 ### Task Definition and Scenario Fit
 
 The solver acts as a CIO-desk analyst updating Q3 2026 active allocation views across equities, fixed income, and currencies for a global multi-asset reference model. The expected answer is a normalized JSON object with task lineage, fifteen active allocation rows, a USD-base currency overlay, and three controlled cross-asset judgment enums.
@@ -33,10 +31,3 @@ Likely pitfalls include using the Q3 prior-view record as the final answer, comp
 ### Transfer Design
 
 This is a test task. `train_003` anchors the allocation-view conventions: current signals drive active views, prior-quarter records drive change direction, signal magnitude controls conviction, and rationale codes remain controlled enums. `train_005` anchors currency handling inside a cross-asset committee workflow and the habit of turning mixed opportunity-set evidence into controlled action enums.
-
-The rework increases transfer dependence by removing endpoint and workflow leakage from the prompt, requiring row-level prior-quarter lineage, adding signal-score evidence, splitting scoring across equity subgroups, fixed income, currencies, and rationale style, and adding a currency overlay plus cross-asset judgment block. A direct solver can still solve the task fairly from the shared environment, but it must reconstruct the active-allocation conventions rather than follow an explicit prompt recipe.
-
-### Construction Record
-
-Author: task-builder 8, reworked by calibration maintainer. Created: 2026-06-03. Updated: 2026-06-03. Major changes: reduced solver-visible procedural leakage; expanded `answer_template.json`; updated `answer.json`; replaced the evaluator with nine targeted scoring points; updated `task_group.yaml` rubric; refreshed notes.
-

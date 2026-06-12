@@ -11,4 +11,3 @@ Gold derivation: PRG-AX17 is owned by Elena Marsh. Budget headroom is 285000.00 
 Transfer value: solvers should learn to reconcile local package anchors with live ERP-style records, separate conditional readiness from hard holds, use an as-of date for evidence, and report controlled structured decisions rather than free-form sourcing advice.
 
 Evaluation: the evaluator uses seven exact-match scoring points with raw weights 1, 2, 2, 2, 2, 2, and 1. List-like fields are normalized as sets, and nomination lines are matched by SKU.
-

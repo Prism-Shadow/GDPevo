@@ -13,6 +13,3 @@ Material map: `/api/enterprise/incidents/INC-7301` identifies the incident. `/ap
 Solution and evaluation basis: The root cause is stale credentials after rotation, with archived alert routing as a contributing issue. The failed window is 2026-05-12 to 2026-05-14, with 3 backfill days and a 15 percent SLA credit. There are 8 exact-match scoring points.
 
 Transfer design: As a train task, it teaches by comparison how enterprise service complaints should combine export run evidence, message evidence, SLA terms, owner mapping, artifact naming, and differentiated sharing permissions.
-
-Construction record: Created by Codex on 2026-06-01. Major change: initial task construction for `task_group_003`.
-

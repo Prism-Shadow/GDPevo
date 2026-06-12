@@ -2,7 +2,7 @@
 
 ## Data lineage
 
-The task uses the ApexCloud Retention Operations churn exports exposed by the shared environment: `/exports/churn/train.csv`, `/exports/churn/validation.csv`, and `/exports/churn/candidates.csv`. The row counts are taken from the public export files, and the model-validation answer is computed from the training and validation exports using the construction-only deterministic churn procedure.
+The task uses the ApexCloud Retention Operations churn exports exposed by the shared environment: `/exports/churn/train.csv`, `/exports/churn/validation.csv`, and `/exports/churn/candidates.csv`. The row counts are taken from the public export files, and the model-validation answer is computed from the training and validation exports using the deterministic reference churn procedure.
 
 ## Task definition
 
@@ -27,10 +27,6 @@ The reference result uses 180 training rows, 60 validation rows, and 19 model fe
 ## Transfer design
 
 This train task teaches solvers how to handle churn exports, verify feature counts, check whether tenure behaves in the expected business direction, rank a selected candidate cohort, and preserve probability precision. Those behaviors transfer to test tasks that use the same export family with different candidate subsets or longer training settings.
-
-## Construction record
-
-Created the complete task folder for train task 004 under `task_group_004/train_tasks/004/`. No files outside the assigned folder were modified. The evaluator defaults to grading `output/answer.json` and can also grade a supplied prediction file path.
 
 ## Update record
 

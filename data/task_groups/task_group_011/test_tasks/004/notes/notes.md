@@ -13,6 +13,3 @@ Solution and evaluation basis: Central has seven adversely rated loans totaling 
 Scoring basis: Seven exact-match scoring points are used: SP001 adverse count/balance weight 2; SP002 risk class mapping and projected-loss set weight 3; SP003 stressed DSCR breach set weight 3; SP004 dominant problem exposure/action weight 2; SP005 severe bucket counts weight 2; SP006 NPA/FDIC variance weight 2; SP007 monitoring cadence weight 1. Common pitfalls include using all weak-looking Central loans instead of only current-rating adverse loans, treating missing DSCR as a breach, missing the projected-loss override, or using the wrong FDIC benchmark field.
 
 Transfer design: The main transfer anchor is `train_004`, which establishes CDFI factor scoring, watch-list stress arithmetic, projected-loss treatment, workout action enums, and severe bucket counts. `train_001` anchors NPA numerator/denominator handling and the FDIC total-loans noncurrent benchmark comparison. High-value scoring points SP002, SP003, SP004, SP005, and SP006 depend on those anchors plus Central-specific exploration.
-
-Construction record: Author `test_004_builder`; created and updated 2026-06-03. Major changes: created minimum complete prompt, answer template, standard answer, evaluator, and notes.
-

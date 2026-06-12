@@ -9,6 +9,3 @@ The task definition is to produce FY2024/FY2025 revenue, FY2025 EBITDA, revenue 
 The solution uses `/api/finance/branches` for the active branch set, `/api/finance/period-map` for fiscal years, `/api/finance/accounts` for rollups, and `/api/finance/records` for monthly values. The ranking checks require separate branch-level calculations for revenue growth, ARPU, gross-margin growth, and order growth.
 
 There are 7 scoring points with raw weights 1, 1, 1, 3, 3, 1, and 2. Transfer-dependent points are period mapping, account classification, all-company aggregation, same-scope operating ratios, and ranking direction. Intrinsic difficulty comes from doing the same calculations over the full branch universe.
-
-Construction record: created by Codex on 2026-06-02.
-

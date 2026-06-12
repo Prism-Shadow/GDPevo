@@ -14,7 +14,7 @@
 The solver must create a formal JSON QBR metrics packet with monthly revenue, support ticket volume, SLA compliance, NPS, quarter highlights, source labels, internal review routing, and an ordered four-topic client agenda.
 
 ### Scenario Fit
-This task fits a customer success director preparing QBR material for a deck, internal review, and client discussion. It requires reconciling metrics from several endpoint families without revealing hidden construction conventions in the user-facing prompt.
+This task fits a customer success director preparing QBR material for a deck, internal review, and client discussion. It requires reconciling metrics from several endpoint families without revealing underlying task conventions in the user-facing prompt.
 
 ### Material Map
 - `input/prompt.txt`: solver-facing request, account, quarter, endpoint hints, and required JSON shape.
@@ -35,7 +35,3 @@ This task fits a customer success director preparing QBR material for a deck, in
 
 ### Transfer Design
 This train task teaches QBR metric-source usage, support/NPS cleaning implications, highlight calculations, and review routing in a compact account-specific packet. The same pattern transfers to other accounts and quarters with different support, SLA, and NPS edge cases.
-
-### Construction Record
-Created the task folder contents only under `train_tasks/002/`. The answer was derived from the shared environment data and the hidden shared business rules. No generated environment source files were copied into the task payloads.
-

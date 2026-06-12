@@ -17,6 +17,3 @@ Scoring goals: 8 exact-match points are used: eligible claim set (weight 2), not
 Transfer design: As a train task, this should teach through answer comparison that local AP exports are not authoritative, void bills and mismatched bill amount/vendor links should not be treated as open reimbursement AP, and payment status matters: cleared payments reduce AP balance, while processing or scheduled payments do not. It also reinforces close-log awareness when late AP activity occurs after a close log. These habits transfer to later tasks involving stale ERP extracts, source precedence, and structured finance status decisions.
 
 Likely model pitfalls: A model may copy the stale snapshot, count the scheduled `AP-2025-0079` row for `CLM-2025-FIN-042`, reduce balance for a processing payment, treat a void AP bill as open AP, or accept an unapproved claim because the snapshot says approved.
-
-Construction record: Created by Codex task-builder subagent for `train_004` on 2026-06-01. Files written only under `task_group/task_group_005/train_tasks/004/`.
-

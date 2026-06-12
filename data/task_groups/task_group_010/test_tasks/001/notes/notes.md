@@ -67,11 +67,4 @@ Likely pitfalls are: following the stale worksheet into `BND_EASTERN_LNG_2032`, 
 
 ### Transfer Design
 
-This test remains anchored by `train_001` and `train_004`. The transferable conventions are current-environment source precedence, post-trade market-value calculations, HY cap and duration checks, issuer/watchlist handling, selected-subsector diversification, and controlled enum outputs. The rework increases difficulty by requiring a route shortlist, reason-coded candidate rejection map, and client suitability judgment. These are still normal institutional credit-desk tasks, not hidden schema traps.
-
 Transfer-dependent scoring points are `SP001`, `SP002`, `SP004`, `SP005`, `SP007`, and `SP008`. `SP003` and `SP006` also benefit from train-derived calculation discipline but require task-specific exploration of PF-EN-BOREAL and current bond data. `SP009` is intentionally low weight.
-
-### Construction Record
-
-Author: task-builder 6 second rework. Created: 2026-06-03. Updated: 2026-06-03. Major changes: reworked after direct avg@2 remained 0.882353; removed prompt/payload language that strongly pointed to the exact rotation and notional pattern; added multiple route types, ranked shortlist, candidate rejection reason map, source conflict detail, client suitability, and heavier scoring on transfer-dependent business judgment.
-

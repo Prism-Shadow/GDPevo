@@ -23,10 +23,3 @@ The expected solution selects A/R rows at `as_of=2026-09-30` where `61_90 + 90_p
 ## Transfer design
 
 The task transfers to other operations-review problems by preserving the same reasoning pattern: start with a trigger population, validate cross-system identity linkage, calculate dated pipeline metrics, then add auxiliary operating context without changing the required JSON contract.
-
-## Construction record
-
-Built for `train_003` in `task_group_004`. The files created are `input/prompt.txt`, `input/payloads/answer_template.json`, `output/answer.json`, `eval/eval.sh`, and this notes file. The evaluator accepts an optional prediction path and defaults to the task's own answer.
-
-Updated 2026-06-01: added `policy_codes` to make the operations-review SOP explicit to train-skill comparison without leaking it into test prompts.
-Updated 2026-06-01: changed policy codes from semantic labels to neutral internal enum values so they are learnable from train comparison rather than obvious from the test template.

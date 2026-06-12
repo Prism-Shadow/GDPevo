@@ -2,8 +2,6 @@
 
 ## English
 
-Data/source lineage: This task belongs to `SCN_007_erp_inventory_order_fulfillment` and uses source examples `E001`, `E002`, and `E003`. The assigned brief is `test_004` in `scratch/task_builder_briefs.md`: build an order release task for `TEST_QUALITY_E` that combines fulfillment checks with supplier quality holds and active severe incidents. The shared generated environment under `task_group/task_group_007/env/` supplies the authoritative ERP API data. Task-local solver-visible payloads are `input/prompt.txt`, `input/payloads/release_control_memo.md`, and `input/payloads/answer_template.json`.
-
 Task definition: The solver must inspect live API records for `TEST_QUALITY_E`, classify each order as `RELEASE_TO_SHIP`, `MANUAL_REVIEW`, or `BACKORDER_INVENTORY`, identify blocked SKUs, attach controlled reason codes, and produce a supplier-risk rollup. The expected JSON includes per-order decisions, inventory status, quality-hold suppliers, active severe incident IDs, risk supplier IDs, next actions, and summary counts.
 
 Scenario fit and material map: This is an ERP release-control workflow using `/orders?wave=TEST_QUALITY_E`, `/customers/<customer_id>`, `/products/<sku>`, `/inventory?warehouse_id=&sku=`, `/suppliers`, and `/incidents?status=open`. It combines fulfillment control from `train_001` and `train_004` with supplier quality and incident analysis from `train_005` and `train_003`.
@@ -17,6 +15,3 @@ Evaluation is exact-match with 8 scoring points and total raw weight 17: SP1 rel
 Likely pitfalls: using on-hand stock instead of effective availability; ignoring safety stock; treating only `critical` as severe and missing `high`; applying active severe incidents at whole-supplier level instead of ordered-SKU evidence for the rollup; missing inactive product `NW-1019`; allowing account review orders to backorder without release-control review.
 
 Transfer design: `train_001` anchors customer override and fulfillment outcome conventions. `train_004` anchors effective availability and backorder/manual-review distinctions. `train_005` anchors supplier quality holds and incident-linked release control. `train_003` reinforces incident filtering and high/critical severity treatment. Transfer-dependent points are SP1, SP3, SP4, SP5, and SP6; SP2 also benefits from train-derived effective-stock calculation.
-
-Construction record: Author `test_004` task-builder subagent. Created 2026-06-01. Updated 2026-06-01. Built only `task_group/task_group_007/test_tasks/004/` and `scratch/task_builder_reports/test_004.md`.
-

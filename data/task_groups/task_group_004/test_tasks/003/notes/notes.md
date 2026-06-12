@@ -23,13 +23,3 @@ The expected solution selects North America A/R rows at `as_of=2026-12-31` where
 ## Transfer design
 
 The task transfers the `train_003` pattern to a stricter regional Q4 digest: identify the receivables trigger population, validate cross-system identity by exact legal name, calculate dated pipeline metrics, and add operating context while preserving a compact JSON contract.
-
-## Construction record
-
-Built for `test_003` in `task_group_004`. The files created are `input/prompt.txt`, `input/payloads/answer_template.json`, `output/answer.json`, `eval/eval.sh`, and this notes file. The evaluator accepts an optional prediction path and defaults to the task's own answer.
-
-Updated 2026-06-01: prompt wording was tightened after direct calibration showed the original phrasing made the receivables trigger and matching rule too explicit.
-Updated 2026-06-01: added `task_scope` and `policy_audit` fields so scoring includes transfer-dependent source-policy and CRM matching conventions rather than only direct API aggregation.
-Updated 2026-06-01: further reduced prompt cueing and expanded policy audit labels after a clean direct attempt still reconstructed most aggregates from the API. Easy aggregate weights were reduced and transfer-dependent policy weights retained at high value.
-Updated 2026-06-01: added `policy_codes` aligned with `train_003`, so post-skill solvers can transfer internal code conventions learned from train answer comparison.
-Updated 2026-06-01: changed policy codes to neutral internal enum values after direct solvers inferred the earlier semantic code labels.

@@ -1,5 +1,4 @@
-# test_001 Hidden Notes
-
+# test_001 Notes
 ## English
 
 Data/source lineage: This task belongs to `SCN_007_erp_inventory_order_fulfillment` and uses source examples `E001`, `E002`, and `E003` as the distributional basis. The specific brief is `test_001`: priority order wave `TEST_PRIORITY_D` with a stale local inventory extract that conflicts with the live ERP API. Shared environment data comes from `task_group/task_group_007/env/` through public API endpoints only. Task-local visible payloads are `priority_wave_memo.md`, `priority_wave_TEST_PRIORITY_D_inventory_extract.csv`, and `answer_template.json`.
@@ -17,6 +16,3 @@ The standard answer contains 13 order records. Scoring is exact-match with 8 wei
 Transfer design: This test is anchored by `train_001` and `train_004`. `train_001` anchors customer override handling, shipping quote use, and final decision enums. `train_004` anchors live effective stock reconstruction and allocation-status classification. The transfer-dependent high-value points are SP1, SP2, SP3, and SP4. Task-specific exploration difficulty comes from the 13-order wave, multi-line orders, stale local extract conflicts, and live API reconciliation.
 
 Likely model pitfalls: trusting the stale CSV instead of live inventory, omitting safety stock from effective availability, treating open stock as available despite quarantines or reservations, missing risk-flag overrides, failing to compute shipping quotes from total order weight, and returning free-text reason labels instead of controlled enums.
-
-Construction record: Author `task-builder subagent test_001`; created 2026-06-01; updated 2026-06-01. Major changes: created the full test task folder, added stale local extract, produced hidden answer, and implemented exact-match scoring.
-

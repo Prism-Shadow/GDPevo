@@ -22,6 +22,3 @@ Train anchors and transferred knowledge: This test combines `train_002` for fold
 Likely pitfalls: Treating document titles as proof of readiness; missing required tags while finding missing files; including `AUD-EMP118-LEAVE-04` as support because it shares an employee; omitting `audit_scope`; using `People Ops Compliance` instead of `Records` for this records-remediation owner field; or writing prose instead of normalized remediation labels.
 
 Evaluator/scoring basis: `eval/rubric.json` has seven checks with 13 total points: reviewed folders, readiness/files, missing tags/source, defective messages/source, supporting audit events/scope, excluded audit events, and remediation action/owner/notice action. The remediation check is high value and requires all three normalized fields.
-
-Construction/rework note: This notes file was expanded after reviewer feedback to include current source fields, audit-scope fields, exclusion fields, remediation owner, and notice action from `output/answer.json` and `eval/rubric.json`.
-

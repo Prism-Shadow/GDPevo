@@ -2,7 +2,7 @@
 
 ## English
 
-This hidden construction note covers `train_004` for `task_group_001`, based on source scenario `SCN_001_crm_marketing_lead_capture` and source examples `E001`, `E002`, and `E003`. The task follows the task-group design brief for `EdgeAI Field Day 2026` / `edgeai_field_2026`, combining event-to-CRM reconciliation with contact hygiene. Solver-visible files are `input/prompt.txt` and `input/payloads/answer_template.json`; the shared public environment is HarborCRM under `task_group_001/env/`.
+This note covers `train_004` for `task_group_001`, based on source scenario `SCN_001_crm_marketing_lead_capture` and source examples `E001`, `E002`, and `E003`. The task follows the task-group design brief for `EdgeAI Field Day 2026` / `edgeai_field_2026`, combining event-to-CRM reconciliation with contact hygiene. Solver-visible files are `input/prompt.txt` and `input/payloads/answer_template.json`; the shared public environment is HarborCRM under `task_group_001/env/`.
 
 The task asks the solver to reconcile badge scans, sponsor packages/orders, finance invoices, existing CRM accounts/contacts/opportunities, and campaign members. The expected answer is a structured handoff with sponsor statuses, badge-level inclusion/exclusion decisions, campaign member actions, opportunity rollups for non-sponsor leads, unpaid sponsor follow-up targets, normalized badge-only contacts, and exclusion counts. The prompt deliberately names the business outcome and API entry point without revealing a step-by-step SOP.
 
@@ -15,6 +15,3 @@ Campaign member basis: Sofia Meyer already has `attended_sponsor`, so no action 
 Evaluation uses seven exact scoring points with raw weights `[3, 2, 2, 2, 2, 1, 1]`: SP001 sponsor statuses and badge classifications; SP002 campaign member actions; SP003 non-sponsor opportunity summary; SP004 unpaid sponsor follow-up set, amount, and due date; SP005 normalized badge-only contacts; SP006 event lead follow-up date; SP007 exclusion counts. The evaluator ignores incidental extra fields but requires exact normalized business results for each point. Likely pitfalls include treating sponsor badge scans as ordinary leads, missing proposal-only sponsor follow-up, not creating the VectorQuay sponsor campaign member, dropping the phone-only Glassfield lead, or using the audit date instead of the event-derived due dates.
 
 Transfer design: this is a real train task, not a tutorial. It reinforces sponsor/attendee separation from event tasks, finance-aware sponsor status, CRM campaign member create/no-action decisions, lead opportunity rollups from event values, follow-up date conventions, and contact normalization from badge scans. These conventions are intended to transfer to later event-reconciliation and hygiene tasks, especially test tasks involving sponsor attendees, unpaid sponsor follow-up, and badge-only contact creation.
-
-Construction record: authored by Codex on 2026-06-01. Created `prompt.txt`, `answer_template.json`, `answer.json`, `eval/eval.sh`, `eval/evaluate.py`, and these notes for `train_004`.
-

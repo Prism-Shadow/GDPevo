@@ -9,5 +9,5 @@ this directory directly.
 
 | Path | Purpose |
 | --- | --- |
-| `assets/figures/` | Figure assets prepared for the future public site. |
+| `assets/figures/` | Figure assets for the public site scaffold. |
 | `styles.css` | Shared site styling. |

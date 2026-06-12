@@ -9,6 +9,3 @@ The task asks for annual forecast totals, growth rates, Year + 2 quarter and pay
 Transfer-dependent difficulty includes cumulative driver use, future-year seniority bands, quarter-week handling, and combined overscale/title treatment. Task-specific difficulty comes from the Oak roster's partial-quarter employees and a separate board sensitivity case.
 
 There are 8 scoring points with raw weights 1, 3, 2, 2, 3, 2, 2, and 2. The evaluator exact-matches numeric totals and the risk enum.
-
-Construction record: created by Codex on 2026-06-02.
-

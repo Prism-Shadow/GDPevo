@@ -13,6 +13,3 @@ Material map: `/api/enterprise/incidents/<id>` identifies the incident. `/api/en
 Solution and evaluation basis: The expected response is derived from failed export runs, internal messages, the enterprise account record, and the SLA contract. There are 7 scoring points focused on the response package, export-run/message evidence, and enterprise consistency audits.
 
 Transfer design: This task transfers response-package conventions from `train_003`: synthesize export runs, messages, and SLA terms; produce channel/folder/report names; assign owners and permissions. The client, root cause, failure length, and credit percent change.
-
-Construction record: Created by Codex on 2026-06-01. Major change: initial test task construction for `task_group_003`.
-

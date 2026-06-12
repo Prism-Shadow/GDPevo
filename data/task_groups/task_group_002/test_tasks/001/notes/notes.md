@@ -1,5 +1,4 @@
-# test_001 construction notes
-
+# test_001 Notes
 ## English
 
 - Task family: quote revision with logistics comparison.
@@ -15,4 +14,3 @@
 - Customer/payment policy: recurring NGO account terms `NET_30_AFTER_PO`.
 - Freight reconfirmation is required at final order even though all three freight quotes are valid on the quote date.
 - Evaluation uses nine scoring points with total weight 22: tier price/lead time/EXW, freight totals, risk flags, recommendation, delivery-window feasibility, freight warning, account terms, source precedence/date control, and decision-control conventions.
-

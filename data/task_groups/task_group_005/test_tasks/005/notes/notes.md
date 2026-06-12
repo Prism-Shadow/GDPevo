@@ -2,8 +2,6 @@
 
 ## English
 
-Data/source lineage: This hidden note documents `test_005` for `task_group_005`, the shared ERP finance scenario covering claims, AP bills, payments, prepaids, GL balances, and close reporting. This task aligns to the factory guides, `scratch/task_group_design.md`, `scratch/env_blueprint.md`, the generated environment data, and the existing transfer anchors in `train_003` and `train_004`. Solver-visible inputs are `input/prompt.txt`, `input/payloads/month_end_exception_scope.json`, and `input/payloads/answer_template.json`.
-
 Task definition: The business request is an April 2025 controller exception report that combines two recurring close-work families. The reimbursement side uses candidate claim IDs from the payload and the current claims, AP bills, and payment records. The prepaid side uses accounts 1250 and 1251 for the March 2025 prepaid variance period, because the GL export in the environment has the March prepaid balances used by the current close review. The expected output is a compact structured report: readiness enum, exception IDs, type enums, materiality enums, owner queues, priority ranking, and signed net close impact.
 
 Scenario fit: This task belongs to the group because it forces coordination across the same finance objects and source-precedence habits as the train tasks. The solver must avoid treating stale or irrelevant AP rows as authoritative, must distinguish cleared from processing payment state, and must roll prepaid schedule-vs-GL differences into a controller-level decision. It is not a one-file transformation; correct results require using mixed AP/claim and prepaid/GL records in the shared environment.
@@ -19,6 +17,3 @@ The evaluator uses ten exact-match scoring points: close readiness (weight 1), e
 Transfer design: The prepaid half maps directly to `train_003`, which anchors account-level schedule-vs-GL variance, variance sign, use of source monthly amortization, and treatment of accounts 1250/1251 as close reconciliation accounts. The reimbursement half maps to `train_004`, which anchors current ERP source precedence over stale AP context, cleared-only payment reduction, and the habit of excluding void, mismatched, unapproved, or blocked claim states from open reimbursement AP exposure. The test changes the output surface by requiring a controller rollup, materiality buckets, owner routing, ranking, and a signed combined impact rather than the train tasks' detailed schedule or AP batch outputs.
 
 Likely model pitfalls: A solver may include blocked claims as controller exceptions, count the stale scheduled AP row for `CLM-2025-FIN-042`, reduce `CLM-2025-OPS-017` by a processing payment, reverse the prepaid variance sign, use April GL balances instead of the March prepaid variance period, or rank by signed amount instead of absolute impact.
-
-Construction record: Created by Codex task-builder subagent for `test_005` on 2026-06-01. Files were written only under `task_group/task_group_005/test_tasks/005/`.
-

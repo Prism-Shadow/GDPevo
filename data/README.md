@@ -2,10 +2,10 @@
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
-This directory contains the released GDPevo benchmark data: 120
-agent-synthesized tasks organized into 12 task groups. Each task group packages
-one shared business environment, five train tasks, five test tasks, reference
-answers, evaluators, and task notes.
+This directory contains the released GDPevo benchmark data: 120 tasks organized
+into 12 task groups. Each task group packages one shared business environment,
+five train tasks, five test tasks, reference answers, evaluators, and task
+notes.
 
 ## Contents
 

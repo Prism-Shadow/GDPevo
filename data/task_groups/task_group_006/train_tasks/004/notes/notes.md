@@ -33,6 +33,3 @@ Scoring points:
 - `SP5_requisition_approval_state`, weight 2: exact match on latest source requisition approval event and failed approval flag.
 - `SP6_supplier_risk_context_and_supporting_ids`, weight 1: exact match on supplier risk context and supporting PO/approval ID sets.
 - `SP7_hold_actions_and_summary`, weight 2: exact match on required actions and summary.
-
-Construction record: created for `task_group_006/train_tasks/004` on 2026-06-01. The task-specific design file requested by the builder prompt was not present under `6.1/006/task_factory/scratch`; the task was built from the workspace-level builder context, the explicit train_004 brief, and the shared environment data.
-
