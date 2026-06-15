@@ -1,0 +1,102 @@
+# Metric And Scoring
+
+主评估指标是 `avg@3`。
+
+## 单次运行
+
+一次运行指一个干净上下文的 solver subagent 在一种评估条件下完成一个 test task。
+
+每次运行应产出：
+
+```text
+runs/<condition>/<task_id>/attempt_<nn>/answer.json
+runs/<condition>/<task_id>/attempt_<nn>/score.yaml
+runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
+```
+
+`answer.json` 是 solver 的最终答案。`score.yaml` 由主 agent 调用 task evaluator 后生成。
+
+`run_metadata.yaml` 记录唯一 attempt ID、匹配到的 transcript 引用和 token 用量。token 值来自该 subagent 的 session transcript，而不是让 agent 在 prompt 内手动统计。
+
+### Token 口径(务必看清，极易算错)
+
+每个 solver subagent 有自己独立的 transcript：
+
+```text
+~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
+```
+
+**一条 API 响应会被拆成多条 content-block 记录。** 这些记录里 `input_tokens` / `cache_creation_input_tokens` / `cache_read_input_tokens` **完全相同**,但 `output_tokens` 是**流式累计**的——后面的记录值更大。所以按 `message.id` 去重时:input/cache 三桶取任一条,`output_tokens` 取该 `message.id` 的**最大值(最后一条)**。逐行求和会把 input/cache 放大约 2-3 倍;只取第一条又会低估 output。去重后,四个桶分别在响应间求和:
+
+- `input_tokens` —— 未缓存 input（全价）
+- `cache_creation_input_tokens` —— 写缓存
+- `cache_read_input_tokens` —— 读缓存（折扣价）
+- `output_tokens` —— 生成 token
+
+每条响应的成本（Opus 4.8 / Opus 4.5 档，USD）= `input/1e6 * 5 + cache_creation/1e6 * 6.25 + cache_read/1e6 * 0.5 + output/1e6 * 25`；对去重后的响应求和即为该 attempt 成本。（这正是 Claude Code 自己的逐响应成本公式，逐条套用再累加。）
+
+**不要**用父会话 `toolUseResult.totalTokens` 当成本或计费总量——它是 `最后一条响应(input+cache) + 累计 output`（一个"最终上下文规模"口径），且**不含 cache_read**，不是计费总量。只能当快速校验或"上下文规模"KPI 用。
+
+推荐格式：
+
+```yaml
+eval_attempt_id: <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
+condition: <condition>
+task_id: <task_id>
+attempt: <int>
+model: <model_name_or_config>
+
+transcript:
+  subagent_file: <path to .../subagents/agent-<agent_id>.jsonl or null>
+  parent_tool_use_id: <tool_use_id of the Agent call for this attempt>
+  match_status: matched
+
+token_usage:                          # 按 message.id 去重、跨响应求和
+  source: subagent_transcript
+  input_tokens: <int>                 # 未缓存
+  cache_creation_input_tokens: <int>
+  cache_read_input_tokens: <int>
+  output_tokens: <int>
+  cost_usd: <float>
+```
+
+如果 transcript 不能被唯一匹配，应在 `match_status` 中写入 `missing` 或 `ambiguous`，将对应 token 字段设为 `null`，不要手动估算。
+
+## avg@3
+
+同一个 test task 在同一种条件下运行 3 次独立 attempts。
+
+```text
+task avg@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
+```
+
+某一条件的整体 `avg@3` 是 5 个 test-task `avg@3` 的平均值。
+
+## 分数范围
+
+所有分数都应归一化到 `[0, 1]`。
+
+如果 evaluator 输出的是非归一化分数，主 agent 应找到 `earned / max` 或等价字段，并转换为归一化分数。如果无法确定归一化分数，应将该运行标记为失败，而不是手动猜测分数。
+
+## 失败处理
+
+以下情况应记录为失败，并在报告中解释：
+
+- Solver 没有产出可解析的 `answer.json`。
+- Evaluator 失败或超时。
+- Evaluator 输出无法解析为 `[0, 1]` 分数。
+- 环境不可用，导致 solver 无法完成任务。
+
+失败后，主 agent 应重试，直到获得一次有效、可打分的 attempt。重试原因和失败记录应保留在对应 attempt 目录中。
+
+如果重试后仍无法获得有效分数，应停止评估并报告问题。不要把失败 attempt 记为 `0`，也不要丢弃失败 attempt 后继续计算 `avg@3`。
+
+## 聚合要求
+
+所有 `score.yaml` 准备完成后，主 agent 应检查三种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `avg@3`、整体 `avg@3`，以及条件之间的提升。
+
+主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 cached/input/output tokens，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
+
+这些效率指标只统计 test solver subagents 写答案的过程。不包括 skill 生成、环境启动、evaluator 执行或主 agent 汇总。它们不能替代 `avg@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
+
+评估 agent 可以根据当前 task group 的 evaluator 形态，在 `scratch/` 中编写临时聚合或检查代码。
