@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GDPevo — The First Benchmark for Agent Self-Evolution on GDP-Valued Tasks</title>
-    <meta name="description" content="GDPevo is the first benchmark for evaluating agent self-evolution on economically valuable (GDP) tasks — for self-evolving agents, skill creators / SkillOpt, and agent memory.">
-    <meta property="og:title" content="GDPevo — The First Benchmark for Agent Self-Evolution on GDP-Valued Tasks">
-    <meta property="og:description" content="A stateful, GDPval-style benchmark: agents turn experience into reusable skills, then are evaluated on held-out tasks. +18.21 pp accuracy, −25.75% token cost.">
+    <title>GDPevo — Measuring Agent Self-Evolution on GDP-Worthy Work</title>
+    <meta name="description" content="GDPevo asks whether an agent can get better at a class of tasks by learning from related ones. Real business work across CRM, ERP, and Finance, built and graded by agents, with cost reported alongside accuracy.">
+    <meta property="og:title" content="GDPevo — Measuring Agent Self-Evolution on GDP-Worthy Work">
+    <meta property="og:description" content="Can an agent get better at a class of tasks by learning from related ones? GDPevo makes that measurable on real, GDP-worthy work. Skills lift held-out accuracy by +18 to +22 pp — while spending fewer tokens, not more.">
     <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,11 +37,11 @@
           <span class="brand-name">GDP<span class="brand-accent">evo</span></span>
         </a>
         <nav class="nav-links" aria-label="Primary">
-          <a href="#contributions"><span class="lang-en">Contributions</span><span class="lang-zh">贡献</span></a>
-          <a href="#abstract"><span class="lang-en">Abstract</span><span class="lang-zh">摘要</span></a>
-          <a href="#benchmark"><span class="lang-en">Benchmark</span><span class="lang-zh">基准</span></a>
+          <a href="#tasks"><span class="lang-en">Tasks</span><span class="lang-zh">任务</span></a>
+          <a href="#evolution"><span class="lang-en">Self-Evolution</span><span class="lang-zh">自进化</span></a>
+          <a href="#construction"><span class="lang-en">Construction</span><span class="lang-zh">数据构造</span></a>
+          <a href="#grading"><span class="lang-en">Grading</span><span class="lang-zh">评分</span></a>
           <a href="#results"><span class="lang-en">Results</span><span class="lang-zh">结果</span></a>
-          <a href="#pipeline"><span class="lang-en">Auto-Eval</span><span class="lang-zh">自动评估</span></a>
         </nav>
         <div class="nav-right">
           <button type="button" class="lang-btn" id="lang-toggle" aria-label="Switch language">
@@ -61,22 +61,21 @@
         <div class="wrap hero-inner">
           <span class="badge">
             <span class="badge-dot" aria-hidden="true"></span>
-            <span class="lang-en">First benchmark for agent self-evolution on GDP-valued tasks</span>
-            <span class="lang-zh">首个面向 GDP-valued 任务的 Agent 自进化基准</span>
+            <span class="lang-en">Agent self-evolution on GDP-worthy work</span>
+            <span class="lang-zh">面向真实生产力工作的 Agent 自我进化</span>
           </span>
           <h1 class="hero-title">
-            <span class="lang-en"><span class="accent">GDPevo</span>: The First Benchmark for<br>Agent Self-Evolution on GDP-Valued Tasks</span>
-            <span class="lang-zh"><span class="accent">GDPevo</span>：首个评估 Agent<br>自进化能力的 GDP-Valued 基准</span>
+            <span class="lang-en"><span class="accent">GDPevo</span>: Measuring Agent<br>Self-Evolution on GDP-Worthy Work</span>
+            <span class="lang-zh"><span class="accent">GDPevo</span>：在真实生产力工作上<br>衡量 Agent 的自我进化</span>
           </h1>
           <p class="hero-sub">
-            <span class="lang-en">GDPevo evaluates whether agents can <strong>self-evolve on economically valuable (GDP) work</strong> —
-              get better at real industry tasks through their own experience. In each business environment, an agent works
-              through related train tasks, turns that experience into reusable skills, and is then evaluated on held-out
-              tasks. Like GDPval, the work is real and economically meaningful; unlike it, GDPevo is <strong>stateful</strong>,
-              so experience carries from one task to the next.</span>
-            <span class="lang-zh">GDPevo 评估 agent 能否在<strong>具有经济价值（GDP）的任务上自进化</strong> —— 即通过自身经验，把真实产业工作做得越来越好。
-              在每个业务环境中，agent 先完成一组相关的 train tasks，把经验沉淀为可复用的 skill，再在 held-out tasks 上接受评估。与 GDPval 一样，
-              这些工作真实且具有经济价值；不同的是，GDPevo 是<strong>有状态</strong>的 —— 经验会从一个任务延续到下一个。</span>
+            <span class="lang-en">Most agent benchmarks ask: <em>can the agent solve this task?</em> GDPevo asks a different question:
+              <strong>can the agent get better at a class of tasks by learning from related ones?</strong> We think that's the
+              more honest question for agents meant to be useful at real business work — and we built GDPevo to make it
+              measurable.</span>
+            <span class="lang-zh">大多数 agent benchmark 问的是：<em>这个 agent 能不能解决这个任务？</em> GDPevo 问的是另一个问题：
+              <strong>这个 agent 能不能通过相关任务的经验，越来越擅长这一类任务？</strong> 我们认为，对于真正想在业务工作中派上用场的 agent 来说，
+              后者才是更诚实的问题，于是我们做了 GDPevo，让这件事变得可衡量。</span>
           </p>
           <p class="hero-meta">
             <span class="lang-en">Public Benchmark Release · 2026 · GDPevo Team</span>
@@ -87,187 +86,75 @@
               <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.41-1.27.74-1.56-2.56-.29-5.26-1.28-5.26-5.71 0-1.26.45-2.3 1.19-3.11-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.19a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.19 3.17-1.19.63 1.59.23 2.76.11 3.05.74.81 1.19 1.85 1.19 3.11 0 4.44-2.7 5.42-5.27 5.7.42.37.8 1.09.8 2.2v3.26c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
               <span>GitHub</span>
             </a>
-            <a class="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/blob/main/data/DATA_BOARD.md">
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><ellipse cx="12" cy="6" rx="7.5" ry="3"/><path d="M4.5 6v6c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3V6M4.5 12v6c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3v-6"/></svg>
-              <span><span class="lang-en">Data Board</span><span class="lang-zh">数据看板</span></span>
-            </a>
             <a class="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/blob/main/experiments/EXPERIMENT_BOARD.md">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke-linecap="round"/></svg>
-              <span><span class="lang-en">Experiments</span><span class="lang-zh">实验结果</span></span>
+              <span><span class="lang-en">Experiment board</span><span class="lang-zh">实验看板</span></span>
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/blob/main/data/DATA_BOARD.md">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><ellipse cx="12" cy="6" rx="7.5" ry="3"/><path d="M4.5 6v6c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3V6M4.5 12v6c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3v-6"/></svg>
+              <span><span class="lang-en">Data board</span><span class="lang-zh">数据看板</span></span>
             </a>
             <a class="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/eval_workspace">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="m8 6-5 6 5 6M16 6l5 6-5 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span><span class="lang-en">Eval Workspace</span><span class="lang-zh">评估工作区</span></span>
+              <span><span class="lang-en">Eval workspace</span><span class="lang-zh">评估工作区</span></span>
             </a>
           </div>
 
           <div class="stat-band">
             <div class="stat">
               <span class="stat-num">120</span>
-              <span class="stat-label"><span class="lang-en">GDP-valued tasks</span><span class="lang-zh">经济价值任务</span></span>
+              <span class="stat-label"><span class="lang-en">GDP-worthy tasks</span><span class="lang-zh">真实生产力任务</span></span>
             </div>
             <div class="stat">
               <span class="stat-num">12</span>
-              <span class="stat-label"><span class="lang-en">Stateful task groups</span><span class="lang-zh">有状态任务组</span></span>
+              <span class="stat-label"><span class="lang-en">Task groups · CRM · ERP · Finance</span><span class="lang-zh">任务组 · CRM · ERP · Finance</span></span>
             </div>
             <div class="stat stat-pos">
-              <span class="stat-num">+18.21<i>pp</i></span>
-              <span class="stat-label"><span class="lang-en">Avg. accuracy gain</span><span class="lang-zh">平均准确率提升</span></span>
+              <span class="stat-num">+18–22<i>pp</i></span>
+              <span class="stat-label"><span class="lang-en">Held-out accuracy lift from skills</span><span class="lang-zh">skill 带来的 held-out 准确率提升</span></span>
             </div>
             <div class="stat stat-pos">
-              <span class="stat-num">−25.75<i>%</i></span>
-              <span class="stat-label"><span class="lang-en">Avg. token-cost saving</span><span class="lang-zh">平均成本节省</span></span>
+              <span class="stat-num">−9 to −26<i>%</i></span>
+              <span class="stat-label"><span class="lang-en">Token cost — fewer, not more</span><span class="lang-zh">token 成本 —— 更少，而非更多</span></span>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ===================== KEY CONTRIBUTIONS ===================== -->
-      <section class="section" id="contributions">
+      <!-- ===================== 1 · GDP-WORTHY TASKS ===================== -->
+      <section class="section" id="tasks">
         <div class="wrap">
-          <p class="kicker"><span class="lang-en">Key Contributions</span><span class="lang-zh">核心贡献</span></p>
-          <h2 class="h2 center">
-            <span class="lang-en">Evaluating <span class="accent">agent self-evolution</span> on economically valuable work.</span>
-            <span class="lang-zh">在具有经济价值的真实任务上，评估 <span class="accent">Agent 自进化</span>。</span>
-          </h2>
-          <div class="cards3">
-            <article class="card">
-              <span class="card-ic ic-blue" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11a8 8 0 1 0-2.34 5.66" stroke-linecap="round"/><path d="M20 5v6h-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </span>
-              <h3><span class="lang-en">A benchmark built for self-evolution</span><span class="lang-zh">为自进化而生的基准</span></h3>
-              <p><span class="lang-en">Benchmarks for self-evolving agents are scarce — most can only evaluate stateless ones.
-                GDPevo makes self-evolution measurable on real, economically valuable (GDP) business work.</span>
-                <span class="lang-zh">评估自进化 agent 的基准十分稀缺，多数基准只能评估无状态的 agent。GDPevo 把自进化放到具有经济价值（GDP）的真实业务中来衡量。</span></p>
-              <div class="tags"><span class="tag">Finance</span><span class="tag">CRM</span><span class="tag">ERP</span></div>
-            </article>
-            <article class="card">
-              <span class="card-ic ic-violet" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 1.9 4.6L18.5 9l-4.6 1.9L12 15l-1.9-4.1L5.5 9l4.6-1.4L12 3Z" stroke-linejoin="round"/><path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14Z" stroke-linejoin="round"/></svg>
-              </span>
-              <h3><span class="lang-en">Two evolution methods, measured</span><span class="lang-zh">两种进化方法，可量化</span></h3>
-              <p><span class="lang-en">We design two ways for an agent to self-evolve — a demonstration-based and a reflection-based skill
-                creator — and measure both against a non-evolving agent with exact, rule-based evaluators.</span>
-                <span class="lang-zh">我们设计了两种让 agent 自进化的方式：基于示范的和基于反思的 skill creator，并用精确的规则评测器，把它们与未进化的 agent 做严格对比。</span></p>
-              <div class="tags"><span class="tag">demonstration</span><span class="tag">reflection</span></div>
-            </article>
-            <article class="card">
-              <span class="card-ic ic-green" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke-linecap="round"/><circle cx="12" cy="12" r="4"/></svg>
-              </span>
-              <h3><span class="lang-en">Framework-free auto-evaluation</span><span class="lang-zh">不依赖框架的全自动评估</span></h3>
-              <p><span class="lang-en">A reusable evaluation workspace lets Codex run the full scoring flow from a single prompt — a building
-                block of <strong>AI that builds AI</strong>.</span>
-                <span class="lang-zh">可复用的评估工作区让 Codex 仅凭一段提示词跑完整评分流程 —— 这是 <strong>AI build AI</strong> 的重要一环。</span></p>
-              <div class="tags"><span class="tag">Codex</span><span class="tag">avg@3</span></div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== ABSTRACT ===================== -->
-      <section class="section band" id="abstract">
-        <div class="wrap narrow">
-          <p class="kicker center"><span class="lang-en">Abstract</span><span class="lang-zh">摘要</span></p>
-          <h2 class="h2 center">
-            <span class="lang-en">Most benchmarks can't measure self-evolution.</span>
-            <span class="lang-zh">多数基准无法衡量自进化。</span>
-          </h2>
-          <div class="prose">
-            <p><span class="lang-en">Benchmarks for self-evolving agents are still scarce, and most existing benchmarks can only evaluate
-              <em>stateless</em> agent systems: every task starts from a blank slate, and nothing an agent learns on one task is
-              allowed to help the next. Yet the value of an agent in real economic work comes precisely from the opposite — from
-              accumulating experience and getting faster and more accurate over time.</span>
-              <span class="lang-zh">专门评估自进化 agent 的基准仍然十分稀缺，绝大多数现有基准只能评估<em>无状态</em>的 agent 系统：每个任务都从零开始，
-              agent 在一个任务上学到的东西无法帮助下一个任务。但 agent 在真实经济工作中的价值，恰恰来自相反的方向 —— 来自经验的累积，
-              以及随时间变得更快、更准。</span></p>
-            <p><span class="lang-en">GDPevo closes this gap. The benchmark's unit is the <strong>task group</strong>: one shared business
-              environment, five train tasks, and five held-out test tasks that share a family of transferable procedures. Train tasks are
-              the experience source; held-out test tasks measure whether the agent <strong>self-evolves</strong> — whether experience becomes
-              a portable operating method. Across the first release of 120 tasks in 12 groups, self-evolving agents improve held-out accuracy
-              by <strong>18.21 percentage points</strong> after inductive learning, while reducing solver token cost by <strong>25.75%</strong>
-              — agents do not just get better, they get better while doing less work.</span>
-              <span class="lang-zh">GDPevo 填补了这一空白。基准的基本单元是 <strong>task group</strong>：一个共享业务环境、5 个 train tasks，以及 5 个共享同一类
-              可迁移流程的 held-out test tasks。Train tasks 是经验来源，held-out test tasks 衡量 agent 是否<strong>自进化</strong> —— 即经验是否真正变成可迁移的操作方法。在首个版本的
-              12 组共 120 个任务上，自进化 agent 在归纳学习后把 held-out 准确率平均提升 <strong>18.21 个百分点</strong>，同时把 solver 的 token 成本削减
-              <strong>25.75%</strong> —— agent 不只是变强了，而是在做更少工作的同时变强。</span></p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== WHAT YOU CAN EVALUATE ===================== -->
-      <section class="section" id="evaluate">
-        <div class="wrap">
-          <p class="kicker"><span class="lang-en">What you can evaluate</span><span class="lang-zh">可以评估什么</span></p>
+          <p class="kicker"><span class="lang-en">1 · GDP-worthy tasks</span><span class="lang-zh">1 · 真实生产力任务</span></p>
           <h2 class="h2">
-            <span class="lang-en">One benchmark, three capabilities.</span>
-            <span class="lang-zh">一个基准，三类能力。</span>
+            <span class="lang-en">GDP-worthy tasks, not exam questions.</span>
+            <span class="lang-zh">真实生产力任务，不是考试题。</span>
           </h2>
-          <div class="num-cards">
-            <article class="num-card">
-              <span class="num-badge">01</span>
-              <div>
-                <h3><span class="lang-en">Self-evolving agents</span><span class="lang-zh">自进化 Agent</span></h3>
-                <p><span class="lang-en">Evaluate agents with self-evolution or continual-learning loops end to end — can they learn business
-                  rules, source precedence, and output discipline from earlier work?</span>
-                  <span class="lang-zh">端到端评估带有自进化 / 持续学习回路的 agent —— 它们能否从早期工作中学习业务规则、信息来源优先级与输出规范？</span></p>
-              </div>
-            </article>
-            <article class="num-card">
-              <span class="num-badge">02</span>
-              <div>
-                <h3><span class="lang-en">Skill Creator / SkillOpt</span><span class="lang-zh">Skill Creator / SkillOpt</span></h3>
-                <p><span class="lang-en">Measure how well a system distills reusable, transferable skills from experience, and how much those
-                  skills improve later work in the same environment.</span>
-                  <span class="lang-zh">衡量系统从经验中提炼可复用、可迁移 skill 的能力，以及这些 skill 对同一环境下后续工作的提升幅度。</span></p>
-              </div>
-            </article>
-            <article class="num-card">
-              <span class="num-badge">03</span>
-              <div>
-                <h3><span class="lang-en">Agent Memory</span><span class="lang-zh">Agent Memory</span></h3>
-                <p><span class="lang-en">Test whether an end-to-end memory system actually improves downstream task outcomes — not just retrieval
-                  quality, but measured accuracy and cost on held-out tasks.</span>
-                  <span class="lang-zh">检验端到端 memory 系统是否真正改善下游任务效果 —— 不只是检索质量，而是在 held-out 任务上可量化的准确率与成本。</span></p>
-              </div>
-            </article>
+          <div class="oneline">
+            <p><span class="lang-en"><b>In one line:</b> most agent benchmarks test agents on neat, self-contained problems.
+              Very few test them on the kind of messy, repetitive work that real businesses actually pay people to do.</span>
+              <span class="lang-zh"><b>一句话总结：</b>大多数 agent benchmark 测的是干净、自包含的小题目，几乎没有人测真正在企业里跑、又乱又重复的那种活。</span></p>
           </div>
-        </div>
-      </section>
-
-      <!-- ===================== BENCHMARK COMPOSITION ===================== -->
-      <section class="section band" id="benchmark">
-        <div class="wrap">
-          <p class="kicker center"><span class="lang-en">Benchmark composition</span><span class="lang-zh">基准构成</span></p>
-          <h2 class="h2 center">
-            <span class="lang-en">The task group is the unit of evaluation.</span>
-            <span class="lang-zh">Task group 是评估的基本单元。</span>
-          </h2>
-          <p class="lead center">
-            <span class="lang-en">A single task cannot reveal learning. So GDPevo's unit is the task group: one shared environment, plus a
-              train/test split whose tasks share a family of transferable procedures — letting us measure whether experience
-              actually changes later work.</span>
-            <span class="lang-zh">单个任务看不出学习。所以 GDPevo 以 task group 为单元：一个共享环境，加上一组共享可迁移流程的 train / test 任务 —— 由此衡量经验是否真的改变了后续工作。</span>
-          </p>
-
-          <div class="anatomy">
-            <div class="ana-card ana-env">
-              <span class="ana-tag"><span class="lang-en">Shared environment</span><span class="lang-zh">共享环境</span></span>
-              <strong><span class="lang-en">1 × business world</span><span class="lang-zh">1 × 业务世界</span></strong>
-              <p><span class="lang-en">CRM console, REST APIs, ERP records, finance &amp; banking workspaces.</span><span class="lang-zh">CRM 控制台、REST API、ERP 记录、金融与银行工作区。</span></p>
-            </div>
-            <div class="ana-arrow" aria-hidden="true">→</div>
-            <div class="ana-card ana-train">
-              <span class="ana-tag"><span class="lang-en">Experience source</span><span class="lang-zh">经验来源</span></span>
-              <strong>5 × train tasks</strong>
-              <p><span class="lang-en">Real tasks whose materials don't expose the full procedure — skills must emerge.</span><span class="lang-zh">真实任务，其材料不会暴露完整流程 —— skill 必须自然涌现。</span></p>
-            </div>
-            <div class="ana-arrow" aria-hidden="true">→</div>
-            <div class="ana-card ana-test">
-              <span class="ana-tag"><span class="lang-en">Transfer measured</span><span class="lang-zh">迁移评估</span></span>
-              <strong>5 × held-out test</strong>
-              <p><span class="lang-en">Scored by exact, rule-based evaluators over concrete business outcomes.</span><span class="lang-zh">由精确的规则评测器，针对具体业务结果评分。</span></p>
-            </div>
+          <div class="prose">
+            <p><span class="lang-en">The work that runs a business is repetitive but not identical. Today's lead handoff is
+              yesterday's lead handoff with a new sponsor list. Today's expense review is last week's review with a new vendor.
+              The tasks rhyme; the data does not.</span>
+              <span class="lang-zh">企业里跑的活有一个特点：重复，但不完全相同。今天的销售线索交接和昨天的几乎一样，只是赞助商名单换了。
+              今天的报销审核和上周的几乎一样，只是供应商换了。任务长得像，数据不一样。</span></p>
+            <p><span class="lang-en">GDPevo's tasks come from work that actually moves money: reconciling an event sponsorship
+              across CRM, finance, and badge systems; deciding whether a vendor invoice should be paid given the receiving
+              record; assembling a credit memo for a small-business loan committee. There are 12 task groups across CRM, ERP,
+              and Finance, seeded from public sources of real-job tasks such as
+              <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener">GDPVal</a> and
+              <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener">SOP-Bench</a>. Every group
+              looks like a real company's working surface — web consoles, APIs, databases, ledgers — with plenty of lookalike
+              records mixed in to throw a careless agent off. The agent has to find the right invoice in a real-feeling system,
+              not pick from a clean prompt with the answer already filtered for it.</span>
+              <span class="lang-zh">GDPevo 的任务都是<strong>真正会动钱</strong>的工作：把一场展会的赞助情况在 CRM、财务和胸卡系统三方对账；
+              根据收货记录决定一张供应商发票要不要付；为小企业贷款审议会准备一份 credit memo。一共 12 个 task group，覆盖 CRM、ERP 和 Finance 三大类，
+              场景来自像 <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener">GDPVal</a> 和
+              <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener">SOP-Bench</a> 这样的真实工作任务源。
+              每一组 task group 看起来都像一家真实公司的工作面：Web 控制台、API、数据库、账本，并且故意混入了一堆"长得很像但不是答案"的干扰记录，
+              把粗心的 agent 引偏。Agent 必须在一个像真实公司的系统里找到那张正确的发票，而不是从一段已经替它筛过答案的干净 prompt 里挑。</span></p>
           </div>
 
           <div class="tg-table">
@@ -293,75 +180,249 @@
         </div>
       </section>
 
-      <!-- ===================== METHODS ===================== -->
-      <section class="section" id="methods">
+      <!-- ===================== 2 · SELF-EVOLUTION ===================== -->
+      <section class="section band" id="evolution">
         <div class="wrap">
-          <p class="kicker"><span class="lang-en">Evolution methods</span><span class="lang-zh">进化方法</span></p>
-          <h2 class="h2">
-            <span class="lang-en">Two ways to self-evolve vs. a non-evolving agent.</span>
-            <span class="lang-zh">两种自进化方法，对比未进化的 Agent。</span>
+          <p class="kicker center"><span class="lang-en">2 · The capability we care about</span><span class="lang-zh">2 · 我们关心的能力</span></p>
+          <h2 class="h2 center">
+            <span class="lang-en">Self-evolution is the capability we care about.</span>
+            <span class="lang-zh">我们关心的能力：自我进化。</span>
           </h2>
-          <p class="lead">
-            <span class="lang-en">We compare a non-evolving baseline with two self-evolution methods. The same solver, harness, and
-              evaluators run across all three conditions — only the evolved skill context changes.</span>
-            <span class="lang-zh">我们用一个未进化的基线，对比两种自进化方法。三种条件使用完全相同的 solver、harness 与评测器 —— 唯一变化的是进化得到的 skill 上下文。</span>
+          <div class="oneline center">
+            <p><span class="lang-en"><b>In one line:</b> an agent that solves 100 unrelated tasks tells us almost nothing about
+              whether it is learning from them. The interesting question is whether yesterday's task makes the agent better at
+              today's.</span>
+              <span class="lang-zh"><b>一句话总结：</b>一个 agent 把 100 个互不相关的任务都做对，几乎说明不了它有没有从中学到东西。
+              真正有意思的问题是：昨天做过的任务，能不能让它今天做得更好。</span></p>
+          </div>
+          <p class="lead center">
+            <span class="lang-en">Each task group ships with <strong>5 train tasks</strong> and <strong>5 held-out test tasks</strong>
+              that share the same business environment. We compare three settings on the held-out tests.</span>
+            <span class="lang-zh">每一组 task group 包含 <strong>5 个 train task</strong> 和 <strong>5 个 held-out test task</strong>，
+              它们共享同一个业务环境。我们在这 5 个 held-out test 上对比三种设定。</span>
           </p>
+
+          <div class="anatomy">
+            <div class="ana-card ana-env">
+              <span class="ana-tag"><span class="lang-en">Shared environment</span><span class="lang-zh">共享环境</span></span>
+              <strong><span class="lang-en">1 × business world</span><span class="lang-zh">1 × 业务世界</span></strong>
+              <p><span class="lang-en">CRM console, REST APIs, ERP records, finance &amp; banking workspaces.</span><span class="lang-zh">CRM 控制台、REST API、ERP 记录、金融与银行工作区。</span></p>
+            </div>
+            <div class="ana-arrow" aria-hidden="true">→</div>
+            <div class="ana-card ana-train">
+              <span class="ana-tag"><span class="lang-en">Experience source</span><span class="lang-zh">经验来源</span></span>
+              <strong>5 × train tasks</strong>
+              <p><span class="lang-en">Related earlier work the agent learns from — the way a new analyst learns on the job.</span><span class="lang-zh">agent 据以学习的相关旧任务 —— 就像新分析师在岗位上学习。</span></p>
+            </div>
+            <div class="ana-arrow" aria-hidden="true">→</div>
+            <div class="ana-card ana-test">
+              <span class="ana-tag"><span class="lang-en">Learning measured</span><span class="lang-zh">学习评估</span></span>
+              <strong>5 × held-out test</strong>
+              <p><span class="lang-en">Never seen by the skill-writer; scored by exact, rule-based evaluators.</span><span class="lang-zh">skill-writer 从未见过；由精确的规则评测器评分。</span></p>
+            </div>
+          </div>
+
           <div class="cards3">
             <article class="method">
               <code class="m-code">no_skill</code>
-              <h3><span class="lang-en">Non-evolving baseline</span><span class="lang-zh">未进化基线</span></h3>
-              <p><span class="lang-en">The agent solves each held-out test task from scratch, with no memory of related work — it never evolves.</span><span class="lang-zh">agent 从零解决每个 held-out test task，对相关工作没有任何记忆 —— 完全不进化。</span></p>
+              <h3><span class="lang-en">Cold start</span><span class="lang-zh">裸做</span></h3>
+              <p><span class="lang-en">The agent goes in cold, with no prior training tasks and no skill notes.</span><span class="lang-zh">agent 裸做，没有任何先验任务，也没有 skill 笔记。</span></p>
             </article>
             <article class="method method-accent">
               <code class="m-code">demonstration_skill</code>
-              <h3><span class="lang-en">Demonstration-based evolution</span><span class="lang-zh">基于示范的进化</span></h3>
-              <p><span class="lang-en">The agent self-evolves by inducing skills from worked demonstrations of the train tasks, then applying them at test time.</span><span class="lang-zh">agent 研究 train tasks 的完整示范，从中归纳出 skill，并在测试时应用 —— 以此实现自进化。</span></p>
+              <h3><span class="lang-en">Learn from worked examples</span><span class="lang-zh">从样例中学习</span></h3>
+              <p><span class="lang-en">The agent reads the train inputs and answers and writes a reusable skill from them — the way a new analyst might if shown a folder of worked examples.</span><span class="lang-zh">agent 看完 train 的输入和答案后，自己总结写出一份可复用的 skill —— 就像新分析师拿到一沓"做好的样例"翻一翻、整理出工作笔记。</span></p>
             </article>
             <article class="method method-accent">
               <code class="m-code">reflection_skill</code>
-              <h3><span class="lang-en">Reflection-based evolution</span><span class="lang-zh">基于反思的进化</span></h3>
-              <p><span class="lang-en">The agent self-evolves by attempting train tasks, reflecting on its own outcomes, and distilling skills from that reflection.</span><span class="lang-zh">agent 先尝试 train tasks，再对自己的结果进行反思，从反思中提炼出 skill —— 以此实现自进化。</span></p>
+              <h3><span class="lang-en">Learn from its own mistakes</span><span class="lang-zh">从自己的错误中学习</span></h3>
+              <p><span class="lang-en">The agent first attempts the train tasks blind, gets graded, and reflects on its mistakes before writing the skill — closer to how a person actually learns on the job.</span><span class="lang-zh">agent 先盲做 train task，被对答案打分后反思自己错在哪里，再据此写 skill —— 这更接近一个人真正在岗位上学习的方式。</span></p>
             </article>
+          </div>
+          <p class="note center">
+            <span class="lang-en">The number we care about is the <strong>lift</strong> from <code>no_skill</code> to the skill settings on tasks the skill-writer never saw.</span>
+            <span class="lang-zh">我们关心的指标，是从 <code>no_skill</code> 到 skill 设定下的 <strong>lift</strong>（提升）—— 而且是测在 skill-writer 没见过的 test 任务上的提升。</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== 3 · CONSTRUCTION ===================== -->
+      <section class="section" id="construction">
+        <div class="wrap">
+          <p class="kicker"><span class="lang-en">3 · How the dataset is built</span><span class="lang-zh">3 · 数据集是怎么构造的</span></p>
+          <h2 class="h2">
+            <span class="lang-en">Hidden rules, spread across the train tasks.</span>
+            <span class="lang-zh">隐藏规则，分散到各个 train task 里。</span>
+          </h2>
+          <div class="oneline">
+            <p><span class="lang-en"><b>In one line:</b> if we want to know whether the agent really learned something, the
+              training tasks have to teach a real lesson — one that actually pays off on the test. Otherwise any improvement
+              could just be luck.</span>
+              <span class="lang-zh"><b>一句话总结：</b>要想知道 agent 是不是真的学到了东西，train 任务必须真的"教会一个东西" ——
+              一个在 test 上能派上用场的东西。否则任何提升都可能只是运气。</span></p>
+          </div>
+          <div class="prose">
+            <p><span class="lang-en">For every task group we plant a small set of hidden operational rules. A typical CRM
+              lead-capture group might encode a sponsor-status precedence rule (finance invoices outrank badge scans), a
+              suppression-list policy (do not contact certain segments), and a date-rounding convention. We then <em>spread</em>
+              these rules across the 5 train tasks, so each train task only exercises a subset. The 5 test tasks are
+              deliberately built as <strong>combinations</strong> of those rules — say, the precedence rule together with the
+              suppression policy.</span>
+              <span class="lang-zh">对于每一个 task group，我们都会埋下一小组<strong>隐藏的业务规则</strong>。一个典型的 CRM 销售线索捕获场景，
+              可能埋了三条规则：赞助商身份的优先级判定（财务发票优先于胸卡扫描）、suppression list 政策（某些细分人群禁止联系）、以及一条日期取整规则。
+              然后我们把这几条规则<em>分散</em>到 5 个 train task 里，每个 train task 只触发其中一部分。5 个 test task 则故意被设计成这些规则的
+              <strong>组合</strong> —— 比如同时触发"优先级判定 + suppression list 政策"。</span></p>
+            <p><span class="lang-en">An agent that handles each train task on its own learns the rules in pieces. An agent that
+              writes them down as a single reusable skill has all the rules in one place — so when the test asks for two of them
+              at once, it doesn't need to rediscover them. That's why a higher test score is real evidence of learning, not
+              luck.</span>
+              <span class="lang-zh">只盯着一个个 train task 单独做的 agent，学到的是碎片。把这些规则整理成一份可复用 skill 的 agent，把所有规则都放在一个地方 ——
+              这样当 test 一次性问到两条规则时，它不需要再去重新发现。这就是为什么 test 分数变高是真的"学到了"，而不是运气。</span></p>
+          </div>
+
+          <h2 class="h2" style="margin-top:3.2rem">
+            <span class="lang-en">Built and reviewed by agents, end to end.</span>
+            <span class="lang-zh">从头到尾，全部由 agent 完成。</span>
+          </h2>
+          <div class="oneline">
+            <p><span class="lang-en"><b>In one line:</b> if we want agents to keep getting better on their own, then writing the
+              practice problems, tuning their difficulty, and grading the answers should also be things agents can do — not just
+              things humans do for them.</span>
+              <span class="lang-zh"><b>一句话总结：</b>如果我们指望 agent 能自己越变越好，那么写练习题、调难度、给答案打分这些事，也得是 agent 自己能干的，
+              而不是只能由人代劳。</span></p>
+          </div>
+          <p class="lead">
+            <span class="lang-en">Every task group in GDPevo was built and reviewed by Codex agents — no hand-written tasks,
+              no hand-written graders. GDPevo is, in part, a small working demonstration of that loop: a curriculum that agents
+              can both consume and create.</span>
+            <span class="lang-zh">GDPevo 里的每一组 task group 都是 Codex agent 构造和审核的 —— 没有人手写任务，也没有人手写打分逻辑。
+              GDPevo 在某种意义上就是这个闭环的小型工作样例：一份 agent 既能消费、也能创建的 curriculum。</span>
+          </p>
+          <div class="stepper">
+            <div class="step"><span class="step-n">01</span><h3><span class="lang-en">Task factory</span><span class="lang-zh">任务工厂</span></h3><p><span class="lang-en">A task-factory agent writes the environment, the tasks, and the graders.</span><span class="lang-zh">一个 task-factory agent 负责写环境、写任务、写 grader。</span></p></div>
+            <div class="step"><span class="step-n">02</span><h3><span class="lang-en">Calibration</span><span class="lang-zh">难度校准</span></h3><p><span class="lang-en">A calibration agent checks that cold start is low enough to leave room to grow, and that skills produce a meaningful lift; misses go back for rework.</span><span class="lang-zh">一个 calibration agent 检查冷启动分数足够低、且 skill 能带来有意义的提升；不达标的会被打回返工。</span></p></div>
+            <div class="step"><span class="step-n">03</span><h3><span class="lang-en">Review panel</span><span class="lang-zh">审核小组</span></h3><p><span class="lang-en">A panel of 6 reviewer agents — each starting fresh, no prior context — audits each group. 5 of 6 must pass.</span><span class="lang-zh">一组 6 个互不通气、上下文干净的 reviewer agent 审核每个 task group。6 个里有 5 个通过才行。</span></p></div>
+            <div class="step"><span class="step-n">04</span><h3><span class="lang-en">Ship</span><span class="lang-zh">发布</span></h3><p><span class="lang-en">Only groups that clear all three stages enter the public release.</span><span class="lang-zh">只有通过这三关的 task group 才会进入公开发布。</span></p></div>
           </div>
         </div>
       </section>
 
-      <!-- ===================== RESULTS ===================== -->
-      <section class="section band" id="results">
-        <div class="wrap">
-          <p class="kicker center"><span class="lang-en">Results · Codex GPT-5.5 xhigh</span><span class="lang-zh">结果 · Codex GPT-5.5 xhigh</span></p>
+      <!-- ===================== 4 · GRADING ===================== -->
+      <section class="section band" id="grading">
+        <div class="wrap narrow">
+          <p class="kicker center"><span class="lang-en">4 · How the benchmark is used</span><span class="lang-zh">4 · 这个 benchmark 怎么用</span></p>
           <h2 class="h2 center">
-            <span class="lang-en">Self-evolution makes agents more accurate and cheaper.</span>
-            <span class="lang-zh">自进化让 Agent 更准确，也更省成本。</span>
+            <span class="lang-en">Grading is rule-based, not "ask another LLM".</span>
+            <span class="lang-zh">评分基于规则，而不是"再叫一个 LLM 来判"。</span>
           </h2>
-          <p class="lead center">
-            <span class="lang-en">Across the 12 task groups, self-evolving agents — after inductive learning — lift held-out accuracy by
-              <strong>+18.21 pp</strong> on average while cutting solver token cost by <strong>25.75%</strong>.</span>
-            <span class="lang-zh">在全部 12 个 task groups 上，自进化 agent 在归纳学习后把 held-out 准确率平均提升 <strong>18.21 个百分点</strong>，同时把 solver 的 token 成本削减 <strong>25.75%</strong>。</span>
+          <div class="oneline center">
+            <p><span class="lang-en"><b>In one line:</b> using another LLM as the judge is convenient but quietly unreliable on
+              business work. It tends to forgive the mistakes that matter and complain about differences that don't.</span>
+              <span class="lang-zh"><b>一句话总结：</b>用另一个 LLM 当裁判很方便，但在业务工作上其实悄悄地不可靠 ——
+              它会放过那些真正该扣分的错误，又会因为一些根本无所谓的差异扣你的分。</span></p>
+          </div>
+          <div class="prose">
+            <p><span class="lang-en">GDPevo grades with rule-based checkers that look at the things a human reviewer would
+              actually check — was the right set of records returned, was the right exclusion reason given, did the amount round
+              to the right precision, did the action count match. When an agent fails, the failure points to a specific rule it
+              broke, not a vague verdict. The heavier weight in the rubric goes to checks that require real exploration and
+              knowledge carried over from training; getting the JSON to parse is a baseline, not a score.</span>
+              <span class="lang-zh">GDPevo 用的是基于规则的 checker，去检查那些<strong>人工审核员真正会去检查的东西</strong>：返回的记录集对不对、
+              给的排除原因对不对、金额是否按要求精度取整、动作数对不对。当 agent 错了，错误能直接定位到它违反了哪一条具体规则，而不是给你一个含糊的整体结论。
+              Rubric 里更高的权重留给"真正需要去探索、需要把 train 阶段学到的东西用上"的检查点；JSON 能 parse 这件事是底线，不是得分项。</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 4.2 / RESULTS ===================== -->
+      <section class="section" id="results">
+        <div class="wrap">
+          <p class="kicker"><span class="lang-en">Cost reported alongside accuracy</span><span class="lang-zh">Cost 和 accuracy 一起报告</span></p>
+          <h2 class="h2">
+            <span class="lang-en">Useful experience buys accuracy by spending <span class="accent">fewer</span> tokens.</span>
+            <span class="lang-zh">有用的经验，用<span class="accent">更少</span>的 token 换来准确率。</span>
+          </h2>
+          <div class="oneline">
+            <p><span class="lang-en"><b>In one line:</b> a useful agent is not just one that gets the right answer. It is one that
+              stops redoing the same legwork — clicking through the same systems, looking up the same records — every time a
+              similar task comes in.</span>
+              <span class="lang-zh"><b>一句话总结：</b>一个有用的 agent，不仅是答得对的 agent；还得是一个不会每次都把同样的活儿重做一遍 ——
+              不会每次都重新点开同样的系统、查同样的记录 —— 的 agent。</span></p>
+          </div>
+          <p class="lead">
+            <span class="lang-en">GDPevo treats what the agent spends as a first-class number — input tokens, output tokens, and
+              USD cost, averaged across attempts. We ran the same 12 task groups under two different agent harnesses, and the
+              shape of the result is the same on both.</span>
+            <span class="lang-zh">GDPevo 把 agent 花了多少钱当作一等公民来报告 —— input token、output token，以及折算成的美元 cost，都按 attempts 平均。
+              我们在同样这 12 组 task group 上跑了两套不同的 agent harness，两套结果的形状是一样的。</span>
           </p>
 
           <div class="metric-band">
             <div class="metric">
-              <span class="metric-num pos">+18.21<i>pp</i></span>
-              <span class="metric-label"><span class="lang-en">Avg. accuracy gain (avg@3)</span><span class="lang-zh">平均准确率提升 (avg@3)</span></span>
+              <span class="metric-num pos">+18–22<i>pp</i></span>
+              <span class="metric-label"><span class="lang-en">Avg. held-out accuracy lift (both harnesses)</span><span class="lang-zh">held-out 平均准确率提升（两套 harness）</span></span>
             </div>
             <div class="metric">
-              <span class="metric-num pos">−25.75<i>%</i></span>
-              <span class="metric-label"><span class="lang-en">Avg. token-cost saving</span><span class="lang-zh">平均 token 成本节省</span></span>
+              <span class="metric-num pos">−9 to −26<i>%</i></span>
+              <span class="metric-label"><span class="lang-en">Avg. token-cost saving (both harnesses)</span><span class="lang-zh">平均 token 成本节省（两套 harness）</span></span>
             </div>
             <div class="metric">
-              <span class="metric-num">12<i>/12</i></span>
-              <span class="metric-label"><span class="lang-en">Groups improved by evolution</span><span class="lang-zh">进化带来提升的组数</span></span>
+              <span class="metric-num">2<i>/2</i></span>
+              <span class="metric-label"><span class="lang-en">Harnesses reproducing the effect</span><span class="lang-zh">复现该效应的 harness 数</span></span>
             </div>
           </div>
 
-          <!-- Bar chart -->
+          <div class="htables">
+            <div class="htable">
+              <div class="ht-cap">
+                <span class="lang-en">Codex with GPT-5.5 (xhigh)</span><span class="lang-zh">Codex，配 GPT-5.5（xhigh）</span>
+                <small><span class="lang-en">avg@3 over 12 task groups</span><span class="lang-zh">12 个 task group 的 avg@3</span></small>
+              </div>
+              <div class="ht-row ht-head">
+                <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
+                <span class="num">avg@3</span>
+                <span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span>
+                <span class="num">USD</span>
+              </div>
+              <div class="ht-row"><code>no_skill</code><span class="num">48.35%</span><span class="num">709.2</span><span class="num">1.08</span></div>
+              <div class="ht-row"><code>demonstration</code><span class="num">65.99%</span><span class="num">466.1</span><span class="num">0.81</span></div>
+              <div class="ht-row best"><code>reflection</code><span class="num">67.13%</span><span class="num">458.7</span><span class="num">0.79</span></div>
+            </div>
+            <div class="htable">
+              <div class="ht-cap">
+                <span class="lang-en">Claude Code with Opus 4.8 (xhigh)</span><span class="lang-zh">Claude Code，配 Opus 4.8（xhigh）</span>
+                <small><span class="lang-en">avg@3 over 12 task groups</span><span class="lang-zh">12 个 task group 的 avg@3</span></small>
+              </div>
+              <div class="ht-row ht-head">
+                <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
+                <span class="num">avg@3</span>
+                <span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span>
+                <span class="num">USD</span>
+              </div>
+              <div class="ht-row"><code>no_skill</code><span class="num">49.11%</span><span class="num">376.8</span><span class="num">0.61</span></div>
+              <div class="ht-row best"><code>demonstration</code><span class="num">70.90%</span><span class="num">340.8</span><span class="num">0.55</span></div>
+              <div class="ht-row"><code>reflection</code><span class="num">67.94%</span><span class="num">331.9</span><span class="num">0.56</span></div>
+            </div>
+          </div>
+          <p class="note">
+            <span class="lang-en">On Codex, skills lifted accuracy by <strong>+17.6 to +18.8 points</strong> while cutting input
+              tokens by <strong>~35%</strong> and cost by <strong>25–27%</strong>. On Claude Code, skills lifted accuracy by
+              <strong>+18.8 to +21.8 points</strong> while cutting input tokens by <strong>~10%</strong> and cost by
+              <strong>~9%</strong>. Board-level summaries put skill-based evolution at <strong>+20.31 points / −8.69% cost</strong>
+              for Claude Code, and <strong>+18.21 points / −25.75% cost</strong> for Codex.</span>
+            <span class="lang-zh">在 Codex 上，skill 把准确率提高了 <strong>+17.6 到 +18.8 个百分点</strong>，同时把 input token 砍了
+              <strong>~35%</strong>、cost 砍了 <strong>25–27%</strong>。在 Claude Code 上，skill 把准确率推高了 <strong>+18.8 到 +21.8 个百分点</strong>，
+              同时把 input token 降低了 <strong>~10%</strong>、cost 降低了 <strong>~9%</strong>。Board 口径汇总：Claude Code 是
+              <strong>+20.31 个百分点 / −8.69% cost</strong>，Codex 是 <strong>+18.21 个百分点 / −25.75% cost</strong>。</span>
+          </p>
+
+          <!-- Per-group bar chart (Codex) -->
           <figure class="panel chart" id="chart">
             <figcaption class="panel-head">
-              <span class="panel-title"><span class="lang-en">Held-out accuracy by task group</span><span class="lang-zh">各 task group 的 held-out 准确率</span></span>
+              <span class="panel-title"><span class="lang-en">Held-out accuracy by task group · Codex GPT-5.5</span><span class="lang-zh">各 task group 的 held-out 准确率 · Codex GPT-5.5</span></span>
               <span class="legend">
-                <span class="leg"><i class="sw sw-base"></i><span class="lang-en">Baseline (no_skill)</span><span class="lang-zh">基线 (no_skill)</span></span>
-                <span class="leg"><i class="sw sw-evo"></i><span class="lang-en">Evolved (avg. of skill creators)</span><span class="lang-zh">进化后（两种 skill creator 均值）</span></span>
+                <span class="leg"><i class="sw sw-base"></i><span class="lang-en">Cold start (no_skill)</span><span class="lang-zh">冷启动 (no_skill)</span></span>
+                <span class="leg"><i class="sw sw-evo"></i><span class="lang-en">With skills (avg. of both)</span><span class="lang-zh">用 skill（两种均值）</span></span>
               </span>
             </figcaption>
             <div class="bars">
@@ -380,10 +441,10 @@
             </div>
           </figure>
 
-          <!-- Heatmap + detailed table -->
+          <!-- Per-group heatmap (Claude Code) -->
           <figure class="panel">
             <figcaption class="panel-head">
-              <span class="panel-title"><span class="lang-en">Per-group accuracy across conditions (avg@3, %)</span><span class="lang-zh">各组在不同条件下的准确率 (avg@3, %)</span></span>
+              <span class="panel-title"><span class="lang-en">Per-group accuracy across conditions · Claude Code Opus 4.8 (avg@3, %)</span><span class="lang-zh">各组在不同条件下的准确率 · Claude Code Opus 4.8 (avg@3, %)</span></span>
             </figcaption>
             <div class="lb">
               <div class="lb-row lb-head">
@@ -393,65 +454,57 @@
                 <span><code>reflection</code></span>
                 <span>Δ<span class="lang-en"> best</span><span class="lang-zh"> 最佳</span></span>
               </div>
-              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">Lead capture</span><span class="lang-zh">线索捕获</span></span><span class="hc" data-v="44.43">44.4</span><span class="hc" data-v="48.12">48.1</span><span class="hc best" data-v="57.46">57.5</span><span class="d">+13.0</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">B2B quote</span><span class="lang-zh">B2B 报价</span></span><span class="hc" data-v="41.62">41.6</span><span class="hc" data-v="51.17">51.2</span><span class="hc best" data-v="60.41">60.4</span><span class="d">+18.8</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">Service ticket</span><span class="lang-zh">服务工单</span></span><span class="hc" data-v="57.84">57.8</span><span class="hc best" data-v="78.11">78.1</span><span class="hc" data-v="71.69">71.7</span><span class="d">+20.3</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">Churn analytics</span><span class="lang-zh">流失分析</span></span><span class="hc" data-v="31.73">31.7</span><span class="hc best" data-v="60.94">60.9</span><span class="hc" data-v="59.95">60.0</span><span class="d">+29.2</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">Expense control</span><span class="lang-zh">费用控制</span></span><span class="hc" data-v="35.09">35.1</span><span class="hc best" data-v="52.45">52.5</span><span class="hc" data-v="46.51">46.5</span><span class="d">+17.4</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">Procurement</span><span class="lang-zh">采购收货</span></span><span class="hc" data-v="66.28">66.3</span><span class="hc best" data-v="72.39">72.4</span><span class="hc" data-v="71.76">71.8</span><span class="d">+6.1</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">Inventory</span><span class="lang-zh">库存履约</span></span><span class="hc" data-v="38.40">38.4</span><span class="hc" data-v="54.31">54.3</span><span class="hc best" data-v="54.49">54.5</span><span class="d">+16.1</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Advisory &amp; tax</span><span class="lang-zh">理财税务</span></span><span class="hc" data-v="70.57">70.6</span><span class="hc best" data-v="93.18">93.2</span><span class="hc" data-v="93.05">93.1</span><span class="d">+22.6</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Ops modeling</span><span class="lang-zh">运营建模</span></span><span class="hc" data-v="42.76">42.8</span><span class="hc best" data-v="92.47">92.5</span><span class="hc" data-v="80.94">80.9</span><span class="d">+49.7</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Investment</span><span class="lang-zh">投资策略</span></span><span class="hc" data-v="60.76">60.8</span><span class="hc" data-v="71.05">71.1</span><span class="hc best" data-v="73.77">73.8</span><span class="d">+13.0</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Credit risk</span><span class="lang-zh">信用风险</span></span><span class="hc" data-v="45.68">45.7</span><span class="hc" data-v="56.48">56.5</span><span class="hc best" data-v="65.41">65.4</span><span class="d">+19.7</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">HR lifecycle</span><span class="lang-zh">HR 生命周期</span></span><span class="hc" data-v="45.08">45.1</span><span class="hc" data-v="61.24">61.2</span><span class="hc best" data-v="70.10">70.1</span><span class="d">+25.0</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">Lead capture</span><span class="lang-zh">线索捕获</span></span><span class="hc" data-v="48.75">48.8</span><span class="hc best" data-v="81.96">82.0</span><span class="hc" data-v="75.47">75.5</span><span class="d">+33.2</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">B2B quote</span><span class="lang-zh">B2B 报价</span></span><span class="hc" data-v="42.74">42.7</span><span class="hc best" data-v="58.48">58.5</span><span class="hc" data-v="46.53">46.5</span><span class="d">+15.7</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">Service ticket</span><span class="lang-zh">服务工单</span></span><span class="hc" data-v="46.69">46.7</span><span class="hc best" data-v="70.89">70.9</span><span class="hc" data-v="63.92">63.9</span><span class="d">+24.2</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">Churn analytics</span><span class="lang-zh">流失分析</span></span><span class="hc" data-v="25.24">25.2</span><span class="hc best" data-v="54.55">54.6</span><span class="hc" data-v="54.28">54.3</span><span class="d">+29.3</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">Expense control</span><span class="lang-zh">费用控制</span></span><span class="hc" data-v="51.15">51.2</span><span class="hc" data-v="57.96">58.0</span><span class="hc best" data-v="59.26">59.3</span><span class="d">+8.1</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">Procurement</span><span class="lang-zh">采购收货</span></span><span class="hc" data-v="67.98">68.0</span><span class="hc best" data-v="72.98">73.0</span><span class="hc" data-v="72.54">72.5</span><span class="d">+5.0</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">Inventory</span><span class="lang-zh">库存履约</span></span><span class="hc" data-v="39.54">39.5</span><span class="hc" data-v="55.76">55.8</span><span class="hc best" data-v="57.10">57.1</span><span class="d">+17.6</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Advisory &amp; tax</span><span class="lang-zh">理财税务</span></span><span class="hc" data-v="66.89">66.9</span><span class="hc best" data-v="93.60">93.6</span><span class="hc" data-v="90.94">90.9</span><span class="d">+26.7</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Ops modeling</span><span class="lang-zh">运营建模</span></span><span class="hc" data-v="51.76">51.8</span><span class="hc best" data-v="100.00">100</span><span class="hc" data-v="80.00">80.0</span><span class="d">+48.2</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Investment</span><span class="lang-zh">投资策略</span></span><span class="hc" data-v="58.60">58.6</span><span class="hc" data-v="63.45">63.5</span><span class="hc best" data-v="75.07">75.1</span><span class="d">+16.5</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Credit risk</span><span class="lang-zh">信用风险</span></span><span class="hc" data-v="41.56">41.6</span><span class="hc best" data-v="63.48">63.5</span><span class="hc" data-v="60.82">60.8</span><span class="d">+21.9</span></div>
+              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">HR lifecycle</span><span class="lang-zh">HR 生命周期</span></span><span class="hc" data-v="48.41">48.4</span><span class="hc" data-v="77.66">77.7</span><span class="hc best" data-v="79.30">79.3</span><span class="d">+30.9</span></div>
             </div>
           </figure>
           <p class="note center">
-            <span class="lang-en"><strong>avg@3</strong> = mean held-out test accuracy over 3 attempts per task. Cell shading scales with accuracy. Token cost is
-              computed from solver answer-writing tokens at standard GPT-5.5 pricing. Full per-task reports are released under
-              <code>experiments/codex_gpt5_5_xhigh/reports/</code>.</span>
-            <span class="lang-zh"><strong>avg@3</strong> = 每个任务 3 次尝试的 held-out 测试准确率均值；单元格底色深浅随准确率变化。Token 成本基于 solver 答案撰写阶段的 token，
-              按 GPT-5.5 标准价格计算。完整逐任务报告发布于 <code>experiments/codex_gpt5_5_xhigh/reports/</code>。</span>
+            <span class="lang-en">On one task group — operational financial modeling — Codex went from <strong>42.76% to 92.47%</strong>
+              with fewer tokens than cold start; on the same group, Claude Code's <code>demonstration_skill</code> reached
+              <strong>100%, up from 51.76%</strong>. <strong>avg@3</strong> = mean held-out accuracy over 3 attempts per task; cell
+              shading scales with accuracy. Full per-task reports live under
+              <code>experiments/codex_gpt5_5_xhigh/</code> and <code>experiments/claude_code_opus_4_8_xhigh/</code>.</span>
+            <span class="lang-zh">在一组任务上 —— operational financial modeling —— Codex 从 <strong>42.76% 提升到 92.47%</strong>，且花的 token 比冷启动还少；
+              同一组上，Claude Code 的 <code>demonstration_skill</code> 这次达到了 <strong>100%，起点是 51.76%</strong>。<strong>avg@3</strong> =
+              每个任务 3 次尝试的 held-out 准确率均值；单元格底色深浅随准确率变化。完整逐任务报告见
+              <code>experiments/codex_gpt5_5_xhigh/</code> 与 <code>experiments/claude_code_opus_4_8_xhigh/</code>。</span>
           </p>
         </div>
       </section>
 
-      <!-- ===================== AUTO-EVAL PIPELINE ===================== -->
-      <section class="section" id="pipeline">
-        <div class="wrap">
-          <p class="kicker"><span class="lang-en">Toward AI that builds AI</span><span class="lang-zh">迈向 AI build AI</span></p>
-          <h2 class="h2">
-            <span class="lang-en">A fully automated, framework-free evaluation pipeline.</span>
-            <span class="lang-zh">不依赖评估框架的全自动评估流水线。</span>
-          </h2>
-          <p class="lead">
-            <span class="lang-en">Give Codex a single prompt pointed at the evaluation workspace, and it runs the entire flow end to end — no bespoke
-              harness required.</span>
-            <span class="lang-zh">只需给 Codex 一段指向评估工作区的提示词，它就能端到端跑完整个流程 —— 无需任何专门的评估框架。</span>
-          </p>
-          <div class="stepper">
-            <div class="step"><span class="step-n">01</span><h3><span class="lang-en">One prompt in</span><span class="lang-zh">输入一段提示词</span></h3><p><span class="lang-en">Point Codex at the eval workspace; no evaluation framework required.</span><span class="lang-zh">让 Codex 指向评估工作区，无需任何评估框架。</span></p></div>
-            <div class="step"><span class="step-n">02</span><h3><span class="lang-en">Generate skills</span><span class="lang-zh">生成 skill</span></h3><p><span class="lang-en">Clean-context agents distill skills from the train tasks.</span><span class="lang-zh">干净上下文的 agent 从 train tasks 提炼 skill。</span></p></div>
-            <div class="step"><span class="step-n">03</span><h3><span class="lang-en">Run held-out tasks</span><span class="lang-zh">运行 held-out 任务</span></h3><p><span class="lang-en">Solver agents execute test tasks against the live environment, 3 attempts each.</span><span class="lang-zh">solver agent 在真实环境中执行 test tasks，每个 3 次尝试。</span></p></div>
-            <div class="step"><span class="step-n">04</span><h3><span class="lang-en">Score &amp; report</span><span class="lang-zh">评分并报告</span></h3><p><span class="lang-en">Aggregate avg@3, record tokens and cost, emit a structured final report.</span><span class="lang-zh">聚合 avg@3、记录 token 与成本，产出结构化最终报告。</span></p></div>
-          </div>
-          <div class="btn-row left">
-            <a class="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/eval_workspace"><span><span class="lang-en">Eval workspace (EN)</span><span class="lang-zh">评估工作区 (EN)</span></span></a>
-            <a class="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/eval_workspace_zh"><span><span class="lang-en">Eval workspace (中文)</span><span class="lang-zh">评估工作区 (中文)</span></span></a>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== CITATION ===================== -->
-      <section class="section band" id="cite">
+      <!-- ===================== INVITATION ===================== -->
+      <section class="section band" id="invite">
         <div class="wrap narrow">
-          <p class="kicker center"><span class="lang-en">Citation</span><span class="lang-zh">引用</span></p>
-          <h2 class="h2 center"><span class="lang-en">Cite GDPevo.</span><span class="lang-zh">引用 GDPevo。</span></h2>
+          <p class="kicker center"><span class="lang-en">An invitation</span><span class="lang-zh">邀请</span></p>
+          <h2 class="h2 center"><span class="lang-en">GDPevo is a seed, not a finished product.</span><span class="lang-zh">GDPevo 是一颗种子，不是一件成品。</span></h2>
+          <div class="prose">
+            <p><span class="lang-en">The tasks, environments, graders, generated skills, and full reports are open. Bring your own
+              agents and scenarios. Submit harder hidden rules. The goal is not a leaderboard, but a public surface where agents
+              that actually do productive work can be trained — and where the evidence of that improvement is open to
+              inspection.</span>
+              <span class="lang-zh">任务、环境、grader、生成的 skill 包、完整 report 都是开放的。欢迎带上你自己的 agent、你自己的业务场景，欢迎来挑战、欢迎提交更难的隐藏规则。
+              我们的目标不是一张 leaderboard，而是一个公共的 surface —— 让真正能干生产力工作的 agent 在这里被训练出来，并且这种"它真的变好了"的证据可以被任何人审计。</span></p>
+          </div>
+          <div class="btn-row" style="justify-content:center;margin-top:2rem">
+            <a class="btn btn-dark" href="https://github.com/Prism-Shadow/GDPevo"><span>GitHub</span></a>
+            <a class="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/blob/main/experiments/EXPERIMENT_BOARD.md"><span><span class="lang-en">Experiment board</span><span class="lang-zh">实验看板</span></span></a>
+            <a class="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/eval_workspace"><span><span class="lang-en">Eval workspace</span><span class="lang-zh">评估工作区</span></span></a>
+          </div>
+
           <div class="bibtex">
             <button type="button" class="copy-btn" id="copy-btn" aria-label="Copy citation"><span class="lang-en">Copy</span><span class="lang-zh">复制</span></button>
             <pre><code id="bib">@misc{gdpevo2026,
-  title  = {GDPevo: The First Benchmark for Agent Self-Evolution on GDP-Valued Tasks},
+  title  = {GDPevo: Measuring Agent Self-Evolution on GDP-Worthy Work},
   author = {GDPevo Team},
   year   = {2026},
   url    = {https://github.com/Prism-Shadow/GDPevo}
@@ -466,7 +519,7 @@
         <div class="brand">
           <span class="brand-name">GDP<span class="brand-accent">evo</span></span>
         </div>
-        <p class="footer-tag"><span class="lang-en">The first benchmark for agent self-evolution on GDP-valued tasks.</span><span class="lang-zh">首个评估 Agent 自进化的 GDP-valued 基准。</span></p>
+        <p class="footer-tag"><span class="lang-en">Measuring agent self-evolution on GDP-worthy work.</span><span class="lang-zh">在真实生产力工作上衡量 Agent 的自我进化。</span></p>
         <a class="footer-link" href="https://github.com/Prism-Shadow/GDPevo">github.com/Prism-Shadow/GDPevo</a>
       </div>
     </footer>

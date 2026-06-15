@@ -454,8 +454,47 @@ html[lang="zh-Hans"] body { letter-spacing: .002em; }
 .footer-link { color: #8b9bff; font-weight: 600; font-size: 0.9rem; }
 .footer-link:hover { color: #fff; }
 
+/* ===================== "IN ONE LINE" CALLOUT ===================== */
+.oneline {
+  margin: 1.9rem 0 0; padding: 1.05rem 1.3rem;
+  background: var(--accent-soft); border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.oneline.center { max-width: 880px; margin-left: auto; margin-right: auto; }
+.oneline p { margin: 0; color: var(--accent-ink); font-weight: 550; font-size: 1.02rem; line-height: 1.6; }
+.oneline p b { font-weight: 750; }
+
+/* ===================== HARNESS SUMMARY TABLES ===================== */
+.htables { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; margin-top: 1.9rem; }
+.htable {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.ht-cap {
+  padding: 1rem 1.2rem; border-bottom: 1px solid var(--line); background: #fcfcfe;
+  font-size: 0.96rem; font-weight: 700; color: var(--ink);
+}
+.ht-cap small { display: block; margin-top: 0.15rem; color: var(--muted); font-weight: 500; font-size: 0.8rem; }
+.ht-row {
+  display: grid; grid-template-columns: 1.5fr 0.85fr 1fr 0.85fr; align-items: center;
+  border-top: 1px solid var(--line);
+}
+.ht-row:first-of-type { border-top: 0; }
+.ht-row > span, .ht-row > code { padding: 0.62rem 0.9rem; font-size: 0.92rem; }
+.ht-row code { font-family: var(--mono); font-size: 0.8rem; color: var(--accent-ink); }
+.ht-row .num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+.ht-row.ht-head {
+  background: #fcfcfe; font-size: 0.72rem; font-weight: 750; text-transform: uppercase;
+  letter-spacing: .04em; color: var(--muted);
+}
+.ht-row.ht-head > span { padding: 0.7rem 0.9rem; }
+.ht-row.best { background: var(--green-soft); }
+.ht-row.best .num { color: var(--green-ink); font-weight: 700; }
+.ht-row.best code { color: var(--green-ink); }
+
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 920px) {
+  .htables { grid-template-columns: 1fr; }
   .cards3, .num-cards, .metric-band, .stepper { grid-template-columns: 1fr; }
   .stat-band { grid-template-columns: repeat(2, 1fr); max-width: 480px; }
   .anatomy { grid-template-columns: 1fr; }
