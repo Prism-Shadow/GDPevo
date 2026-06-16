@@ -1,0 +1,86 @@
+# Evaluation Workspace — Panofy
+
+This workspace evaluates **one task group** on the **Panofy agent platform**,
+using `avg@3` across three conditions.
+
+You are the **main evaluation agent**. You run the evaluation by **calling the
+Panofy SDK directly** (`train`, `predict`) and running each task's official
+`eval/eval.sh` — there is no fixed driver to invoke. Write whatever small,
+throwaway SDK / aggregation scripts you need under `scratch/`; the formal
+outputs are the run records and the report.
+
+The solver is a **trained agent reached over the SDK**. The agent **evolves from
+the train tasks during training** — the training instruction tells it to learn
+from them and get better at this family of tasks; nothing is extracted. So each
+condition is a different **training setup** over the same input/output contract,
+and the test-time call is `predict()`.
+
+The trained agent runs remotely and **can make outbound HTTP requests**, so the
+task environment is served at a **remote URL given at run time**; you put that
+URL into every `predict()` input as `api_base_url`, and the agent fetches it
+live exactly as a local solver would.
+
+## Directories
+
+| Path | Purpose |
+| --- | --- |
+| `guides/` | Workflow, the three conditions, metrics/scoring, report format |
+| `task_group/` | The single official task group currently under evaluation |
+| `agents/` | Notes / a small registry of the trained agent ids per condition/attempt |
+| `runs/` | Per condition / test task / attempt: `func_input.json`, `answer.json`, `score.yaml`, `run_metadata.yaml` |
+| `report/` | The final `report/<task_group_id>.yaml` |
+| `scratch/` | Training materials you stage + any temporary SDK / aggregation scripts |
+
+## Guides
+
+Read in order before evaluating:
+
+1. `guides/workflow.md` — the end-to-end train → predict → score → aggregate flow you drive
+2. `guides/evolve_modes.md` — the three conditions, realised through training, and the information boundary
+3. `guides/metric_and_scoring.md` — `avg@3`, scoring via `eval/eval.sh`, and Panofy point/token accounting
+4. `guides/report_format.md` — the final report YAML
+
+## Connection inputs (`.env`)
+
+The hosted Panofy service and the task environment are remote. Put their
+addresses in a `.env` file — copy `.env.example` to `.env` and fill in:
+
+- `PANOFY_BASE_URL` — Panofy SDK base URL (e.g. a Railway URL)
+- `PANOFY_API_KEY` — Panofy API key (`da_...`)
+- `PANOFY_ENV_BASE_URL` — the remote task-environment API endpoint the agent fetches
+- `PANOFY_MODEL_ID` — optional, `PANOFY_PRO` (default) or `PANOFY_AIR`
+
+`.env` is gitignored — never commit real keys; the values for a given run come
+from the launch prompt. Load them before running your scripts, e.g.
+`set -a && source .env && set +a`.
+
+## Setup
+
+Manage the Python environment with `uv` (the panofy SDK needs Python ≥ 3.10):
+
+```bash
+uv venv --python 3.12
+uv pip install panofy pyyaml
+```
+
+Run any script you stage under `scratch/` with `uv run python scratch/<script>.py`.
+
+## Launch Prompt
+
+```text
+Evaluate task_group/<task_group_id> on Panofy using README.md and guides/.
+Panofy base URL: <url>   API key: <da_...>   Env API URL: <url>
+Run all three conditions with avg@3 and write report/<task_group_id>.yaml.
+```
+
+## Boundaries
+
+- You may read the whole task group to stage training materials, score, and
+  aggregate — but a **test** `FUNC_INPUT` only ever carries `prompt`,
+  `api_base_url`, and `answer_template`. Never the gold answer, the task notes,
+  or the evaluator.
+- Training materials may include the **train** tasks' inputs and gold answers
+  (that is the supervision) but never any test task, test answer, note, or
+  evaluator source.
+- The hosted agent only sees the **remote** env URL. Confirm that URL exposes
+  the same public projection as `task_group/env` — do not expose hidden fields.

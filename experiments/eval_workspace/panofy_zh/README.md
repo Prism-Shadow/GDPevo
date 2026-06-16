@@ -1,0 +1,65 @@
+# Evaluation Workspace — Panofy
+
+本 workspace 在 **Panofy agent 平台**上评估**一个 task group**，在三种条件下使用 `avg@3` 指标。
+
+你是**主评估 agent**。你通过**直接调用 Panofy SDK**（`train`、`predict`）并运行每个 task 自带的官方 `eval/eval.sh` 来完成评估——没有固定的 driver 程序可调。需要时把临时的 SDK / 聚合脚本写在 `scratch/` 下；正式产出是 run 记录和报告。
+
+solver 是**通过 SDK 访问的、训练好的 agent**。agent 在**训练时根据 train task 进行 evolve**——训练 instruction 让它从这些任务上学习、在这一类任务上变得更强;**不导出任何东西**。因此每个条件就是同一套输入/输出契约下的一种不同**训练配置**,测试时的调用是 `predict()`。
+
+训练好的 agent 运行在远端、**可以发起外网 HTTP 请求**，所以任务环境部署在一个**运行时给出的远程 URL** 上；你把这个 URL 放进每次 `predict()` 输入的 `api_base_url`，agent 就像本地 solver 一样实时拉取它。
+
+## 目录
+
+| 路径 | 用途 |
+| --- | --- |
+| `guides/` | 评估流程、三种条件、指标/打分、报告格式 |
+| `task_group/` | 当前正在评估的单个正式 task group |
+| `agents/` | 每个条件/attempt 训练出的 agent id 的记录 / 小型 registry |
+| `runs/` | 每种条件 / 每个 test task / 每次 attempt：`func_input.json`、`answer.json`、`score.yaml`、`run_metadata.yaml` |
+| `report/` | 最终的 `report/<task_group_id>.yaml` |
+| `scratch/` | 你 staging 的训练材料 + 任意临时 SDK / 聚合脚本 |
+
+## 指南
+
+开始评估前按顺序阅读：
+
+1. `guides/workflow.md` —— 你驱动的 train → predict → score → aggregate 全流程
+2. `guides/evolve_modes.md` —— 三种条件（经训练实现）与信息边界
+3. `guides/metric_and_scoring.md` —— `avg@3`、用 `eval/eval.sh` 打分、Panofy point/token 计量
+4. `guides/report_format.md` —— 最终报告 YAML
+
+## 连接输入（`.env`）
+
+Panofy 服务和任务环境都在远端。把它们的地址放进 `.env` 文件——复制 `.env.example` 为 `.env` 并填写：
+
+- `PANOFY_BASE_URL` —— Panofy SDK base URL（例如一个 Railway 地址）
+- `PANOFY_API_KEY` —— Panofy API key（`da_...`）
+- `PANOFY_ENV_BASE_URL` —— agent 实时拉取的远程任务环境 API endpoint
+- `PANOFY_MODEL_ID` —— 可选，`PANOFY_PRO`（默认）或 `PANOFY_AIR`
+
+`.env` 已被 gitignore——**绝不提交真实 key**；某次运行的具体值来自启动 prompt。运行脚本前先加载，例如 `set -a && source .env && set +a`。
+
+## 环境准备
+
+用 `uv` 管理 Python 环境（panofy SDK 需要 Python ≥ 3.10）：
+
+```bash
+uv venv --python 3.12
+uv pip install panofy pyyaml
+```
+
+在 `scratch/` 下写的脚本用 `uv run python scratch/<script>.py` 运行。
+
+## 启动 Prompt
+
+```text
+Evaluate task_group/<task_group_id> on Panofy using README.md and guides/.
+Panofy base URL: <url>   API key: <da_...>   Env API URL: <url>
+Run all three conditions with avg@3 and write report/<task_group_id>.yaml.
+```
+
+## 边界
+
+- 你可以读取完整 task group 以 staging 训练材料、打分和聚合——但 **test** 的 `FUNC_INPUT` 只能携带 `prompt`、`api_base_url`、`answer_template`，**绝不**包含标准答案、task notes 或 evaluator。
+- 训练材料可以包含 **train** task 的输入和标准答案（这是监督信号），但绝不能包含任何 test task、test 答案、note 或 evaluator 源码。
+- 远端 agent 只看到**远程** env URL。确认该 URL 暴露的是与 `task_group/env` 相同的**公开投影**——不要暴露隐藏字段。
