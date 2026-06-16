@@ -90,6 +90,12 @@ Run each test task independently 3 times. The solver for `attempt_<nn>` is the
 official test `FUNC_INPUT` — `task_id`, `prompt`, `api_base_url`,
 `answer_template` — and the allowed remote env URL.
 
+**One question per call, run sequentially (applies to all three conditions):**
+answer exactly one test task per `predict()` call, and run the 5 test tasks one
+at a time — do not put multiple tasks in a single input, and do not fire
+predicts concurrently. The platform caps concurrent tasks, so overlapping runs
+fail.
+
 Recommended record layout:
 
 ```text

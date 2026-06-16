@@ -56,11 +56,13 @@ from the launch prompt. Load them before running your scripts, e.g.
 
 ## Setup
 
-Manage the Python environment with `uv` (the panofy SDK needs Python ≥ 3.10):
+Each workspace installs its own environment. Manage it with `uv` (the panofy
+SDK needs Python ≥ 3.10). Install the SDK **from GitHub** — that copy carries
+the fixed adapter; do not use the PyPI package:
 
 ```bash
 uv venv --python 3.12
-uv pip install panofy pyyaml
+uv pip install "git+https://github.com/Prism-Shadow/panofy.git#subdirectory=python" pyyaml
 ```
 
 Run any script you stage under `scratch/` with `uv run python scratch/<script>.py`.

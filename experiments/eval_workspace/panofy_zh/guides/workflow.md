@@ -58,6 +58,8 @@ scratch/materials/reflect/attempt_01/
 
 每个 test task 独立运行 3 次。`attempt_<nn>` 的 solver 是训练为 `attempt_<nn>` 的 `base` agent。每次 `predict()` 只收到该 test task 的官方 `FUNC_INPUT`——`task_id`、`prompt`、`api_base_url`、`answer_template`——以及允许的远程 env URL。
 
+**一次只答一个、逐个顺序跑（三个条件都适用）：** 每次 `predict()` 只回答一个 test task，5 个 test 一个一个来——不要把多个任务塞进同一次输入，也不要并发发起 predict。平台对并发任务有上限，重叠运行会失败。
+
 建议记录布局：
 
 ```text
