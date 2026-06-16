@@ -225,12 +225,9 @@
             <span class="lang-zh">GDPevo 里的每一组 task group 都是 Codex agent 构造和审核的 —— 没有人手写任务，也没有人手写打分逻辑。
               GDPevo 在某种意义上就是这个闭环的小型工作样例：一份 agent 既能消费、也能创建的 curriculum。</span>
           </p>
-          <div class="stepper">
-            <div class="step"><span class="step-n">01</span><h3><span class="lang-en">Task factory</span><span class="lang-zh">任务工厂</span></h3><p><span class="lang-en">A task-factory agent writes the environment, the tasks, and the graders.</span><span class="lang-zh">一个 task-factory agent 负责写环境、写任务、写 grader。</span></p></div>
-            <div class="step"><span class="step-n">02</span><h3><span class="lang-en">Calibration</span><span class="lang-zh">难度校准</span></h3><p><span class="lang-en">A calibration agent checks that cold start is low enough to leave room to grow, and that skills produce a meaningful lift; misses go back for rework.</span><span class="lang-zh">一个 calibration agent 检查冷启动分数足够低、且 skill 能带来有意义的提升；不达标的会被打回返工。</span></p></div>
-            <div class="step"><span class="step-n">03</span><h3><span class="lang-en">Review panel</span><span class="lang-zh">审核小组</span></h3><p><span class="lang-en">A panel of 6 reviewer agents — each starting fresh, no prior context — audits each group. 5 of 6 must pass.</span><span class="lang-zh">一组 6 个互不通气、上下文干净的 reviewer agent 审核每个 task group。6 个里有 5 个通过才行。</span></p></div>
-            <div class="step"><span class="step-n">04</span><h3><span class="lang-en">Ship</span><span class="lang-zh">发布</span></h3><p><span class="lang-en">Only groups that clear all three stages enter the public release.</span><span class="lang-zh">只有通过这三关的 task group 才会进入公开发布。</span></p></div>
-          </div>
+          <figure class="pipeline-figure">
+            <img src="assets/gdpevo-pipeline-v2.png" alt="GDPevo data pipeline: from real-job seeds to a graded benchmark — in four steps." />
+          </figure>
         </div>
       </section>
 
