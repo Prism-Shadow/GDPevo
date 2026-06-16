@@ -10,7 +10,7 @@
 | --- | --- |
 | `guides/` | 评估流程、skill modes、指标、打分和报告格式 |
 | `task_group/` | 当前正在评估的单个正式 task group |
-| `skills/` | 生成的 `demonstration_skill` 和 `reflection_skill` 文件 |
+| `skills/` | 生成的 `demo` 和 `reflect` 文件 |
 | `runs/` | 每种条件、每个 test task、每次 attempt 的 solver 输出和打分记录 |
 | `scratch/` | 主评估 agent 创建的临时脚本、环境记录和中间检查 |
 | `report/` | 当前 task group 的最终评估报告 |
@@ -51,20 +51,20 @@ task_group/<task_group_id>/
 4. 为每种 skill 条件生成 3 个独立 skills：
 
 ```text
-skills/demonstration_skill/demonstration_skill_attempt_01/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_02/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_03/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_01/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_02/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_03/SKILL.md
+skills/demo/demo_attempt_01/SKILL.md
+skills/demo/demo_attempt_02/SKILL.md
+skills/demo/demo_attempt_03/SKILL.md
+skills/reflect/reflect_attempt_01/SKILL.md
+skills/reflect/reflect_attempt_02/SKILL.md
+skills/reflect/reflect_attempt_03/SKILL.md
 ```
 
 5. 在三种条件下运行 test tasks：
 
 ```text
-runs/no_skill/
-runs/demonstration_skill/
-runs/reflection_skill/
+runs/base/
+runs/demo/
+runs/reflect/
 ```
 
 每种条件下，每个 test task 独立运行 3 次。每次运行都必须由干净上下文的 solver subagent 完成。对于 skill 条件，solver 的 `attempt_<nn>` 使用相同编号的独立生成 skill。
@@ -81,7 +81,7 @@ Skill-generation subagents 只负责生成 skills，不参与 test 解题。
 
 Solver subagents 只能看到当前条件允许的信息。Solver 不应该看到 test 标准答案、test notes、evaluator 实现细节或 `env/` 源码。Skill-generation 和 solver subagents 不能进入、列出或读取 `env/`；它们只能通过主 agent 明确暴露的端口、Web/API URL 或数据库连接使用共享环境。
 
-对于每次 solver attempt，主 agent 把允许的文件 staging 到一个专属 attempt 目录（例如 `runs/no_skill/test_001/attempt_01/`），并启动一个干净上下文 subagent，将其限定在该目录内：subagent 只能读写该目录下的文件，不得访问该目录之外的任何路径。staging 当前 task 的 `input/`、环境访问说明，以及（仅 skill 条件下）与 attempt 编号匹配的 skill 副本。Skill 生成则把该模式允许的 train 材料 staging 到 `scratch/skill_generation/` 下的专属目录，并以同样方式将 subagent 限定在自己的目录内。
+对于每次 solver attempt，主 agent 把允许的文件 staging 到一个专属 attempt 目录（例如 `runs/base/test_001/attempt_01/`），并启动一个干净上下文 subagent，将其限定在该目录内：subagent 只能读写该目录下的文件，不得访问该目录之外的任何路径。staging 当前 task 的 `input/`、环境访问说明，以及（仅 skill 条件下）与 attempt 编号匹配的 skill 副本。Skill 生成则把该模式允许的 train 材料 staging 到 `scratch/skill_generation/` 下的专属目录，并以同样方式将 subagent 限定在自己的目录内。
 
 ## Solver Prompt
 

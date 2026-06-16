@@ -4,7 +4,7 @@ model: claude-opus-4-8[1m] (Opus 4.8, 1M context)
 harness: claude_code
 
 conditions:
-  no_skill:
+  base:
     overall_avg_at_3: 0.3954
     efficiency:
       cache_creation_tokens_avg_3: 35677.7
@@ -68,7 +68,7 @@ conditions:
         cost_usd_avg_3: 0.7832
         input_tokens_avg_3: 2815.3
         output_tokens_avg_3: 12398.7
-  demonstration_skill:
+  demo:
     skill_dirs:
       attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
       attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
@@ -136,7 +136,7 @@ conditions:
         cost_usd_avg_3: 0.7536
         input_tokens_avg_3: 2802
         output_tokens_avg_3: 7639.3
-  reflection_skill:
+  reflect:
     skill_dirs:
       attempt_01: ../skills/reflection_skill/reflection_skill_attempt_01
       attempt_02: ../skills/reflection_skill/reflection_skill_attempt_02

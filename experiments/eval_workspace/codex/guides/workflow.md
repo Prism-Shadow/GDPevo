@@ -47,21 +47,21 @@ The main agent generates 3 independent skills for each skill condition. Each ski
 Each skill-generation subagent should be launched from a dedicated workspace such as:
 
 ```text
-scratch/skill_generation/demonstration_skill_attempt_01/
-scratch/skill_generation/reflection_skill_attempt_01/
+scratch/skill_generation/demo_attempt_01/
+scratch/skill_generation/reflect_attempt_01/
 ```
 
-The main agent stages only the allowed train inputs, allowed train answers, and exposed environment entrypoints into that workspace. For `reflection_skill`, do not stage train answers until the blind train attempts have been saved. The skill-generation subagent writes its draft skill inside its own workspace; the main agent then copies the accepted skill into `skills/`.
+The main agent stages only the allowed train inputs, allowed train answers, and exposed environment entrypoints into that workspace. For `reflect`, do not stage train answers until the blind train attempts have been saved. The skill-generation subagent writes its draft skill inside its own workspace; the main agent then copies the accepted skill into `skills/`.
 
 Recommended layout:
 
 ```text
-skills/demonstration_skill/demonstration_skill_attempt_01/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_02/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_03/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_01/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_02/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_03/SKILL.md
+skills/demo/demo_attempt_01/SKILL.md
+skills/demo/demo_attempt_02/SKILL.md
+skills/demo/demo_attempt_03/SKILL.md
+skills/reflect/reflect_attempt_01/SKILL.md
+skills/reflect/reflect_attempt_02/SKILL.md
+skills/reflect/reflect_attempt_03/SKILL.md
 ```
 
 Generation rules are defined in `skill_modes.md`.
@@ -70,22 +70,22 @@ Each generated skill should be a Codex-style skill directory whose markdown entr
 
 Skill-generation token usage is not included in solver efficiency metrics.
 
-## 5. Run The No-Skill Experiment
+## 5. Run The Base Experiment
 
 Run each test task independently 3 times. The solver only receives the official input for that test task and the allowed environment entrypoints.
 
 Recommended record layout:
 
 ```text
-runs/no_skill/test_001/attempt_01/answer.json
-runs/no_skill/test_001/attempt_01/score.yaml
-runs/no_skill/test_001/attempt_01/run_metadata.yaml
+runs/base/test_001/attempt_01/answer.json
+runs/base/test_001/attempt_01/score.yaml
+runs/base/test_001/attempt_01/run_metadata.yaml
 ```
 
 Launch each solver subagent with the corresponding attempt directory as its workspace/cwd:
 
 ```text
-runs/no_skill/test_001/attempt_01/
+runs/base/test_001/attempt_01/
 ```
 
 Before launch, stage only the allowed files into that attempt directory:
@@ -93,16 +93,16 @@ Before launch, stage only the allowed files into that attempt directory:
 - `input/` copied from the current test task's official `input/`.
 - `environment_access.md` or equivalent concise instructions for the exposed Web/API/database entrypoints.
 
-Do not stage `env/`, task outputs, task notes, evaluator files, train tasks, other test tasks, generated skills, or prior run outputs for no-skill runs. The solver writes `answer.json` in its own attempt directory.
+Do not stage `env/`, task outputs, task notes, evaluator files, train tasks, other test tasks, generated skills, or prior run outputs for base runs. The solver writes `answer.json` in its own attempt directory.
 
-## 6. Run The Demonstration Skill Experiment
+## 6. Run The Demo Experiment
 
 Run each test task independently 3 times. The solver receives the official input for that test task, allowed environment entrypoints, and the corresponding independently generated demonstration skill:
 
 ```text
-attempt_01 uses skills/demonstration_skill/demonstration_skill_attempt_01/SKILL.md
-attempt_02 uses skills/demonstration_skill/demonstration_skill_attempt_02/SKILL.md
-attempt_03 uses skills/demonstration_skill/demonstration_skill_attempt_03/SKILL.md
+attempt_01 uses skills/demo/demo_attempt_01/SKILL.md
+attempt_02 uses skills/demo/demo_attempt_02/SKILL.md
+attempt_03 uses skills/demo/demo_attempt_03/SKILL.md
 ```
 
 Every run still requires clean context. Do not let one solver solve multiple test tasks.
@@ -110,19 +110,19 @@ Every run still requires clean context. Do not let one solver solve multiple tes
 Launch each solver from its own attempt directory, for example:
 
 ```text
-runs/demonstration_skill/test_001/attempt_01/
+runs/demo/test_001/attempt_01/
 ```
 
 Stage only the current test task `input/`, environment entrypoints, and a copy of the matching generated skill for that attempt number. Do not expose the full `skills/` directory or skills from other attempt numbers.
 
-## 7. Run The Reflection Skill Experiment
+## 7. Run The Reflect Experiment
 
 Run each test task independently 3 times. The solver receives the official input for that test task, allowed environment entrypoints, and the corresponding independently generated reflection skill:
 
 ```text
-attempt_01 uses skills/reflection_skill/reflection_skill_attempt_01/SKILL.md
-attempt_02 uses skills/reflection_skill/reflection_skill_attempt_02/SKILL.md
-attempt_03 uses skills/reflection_skill/reflection_skill_attempt_03/SKILL.md
+attempt_01 uses skills/reflect/reflect_attempt_01/SKILL.md
+attempt_02 uses skills/reflect/reflect_attempt_02/SKILL.md
+attempt_03 uses skills/reflect/reflect_attempt_03/SKILL.md
 ```
 
 Every run still requires clean context. Do not let one solver solve multiple test tasks.
@@ -130,7 +130,7 @@ Every run still requires clean context. Do not let one solver solve multiple tes
 Launch each solver from its own attempt directory, for example:
 
 ```text
-runs/reflection_skill/test_001/attempt_01/
+runs/reflect/test_001/attempt_01/
 ```
 
 Stage only the current test task `input/`, environment entrypoints, and a copy of the matching generated skill for that attempt number. Do not expose the full `skills/` directory or skills from other attempt numbers.
@@ -169,7 +169,7 @@ Temporary checking code, aggregation code, or environment startup notes may be p
 In the report, explain:
 
 - Overall `avg@3` for all three conditions.
-- Improvement from each skill condition over no-skill.
+- Improvement from each skill condition over base.
 - Whether reflection skill outperforms demonstration skill.
 - Which test tasks improved clearly and which did not.
 - Any environment instability, output-schema friction, evaluator issue, or suspicious leakage risk.

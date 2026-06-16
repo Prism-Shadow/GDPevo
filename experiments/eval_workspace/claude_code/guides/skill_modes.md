@@ -4,7 +4,7 @@ This evaluation compares three conditions. All three conditions must use the sam
 
 The main agent should stage the allowed materials for each subagent into that subagent's dedicated directory and restrict the subagent to it. Do not give skill-generation or solver subagents the full task group directory.
 
-## no_skill
+## base
 
 No skill is generated.
 
@@ -20,7 +20,7 @@ The solver must not see:
 - Test notes.
 - Evaluator implementation details.
 
-## demonstration_skill
+## demo
 
 For this condition, generate 3 independent skills with 3 clean-context skill-generation subagents. Each generator should use the `skill-creator` skill.
 
@@ -39,9 +39,9 @@ The skill generator must not see:
 Save the generated skills as:
 
 ```text
-skills/demonstration_skill/demonstration_skill_attempt_01/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_02/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_03/SKILL.md
+skills/demo/demo_attempt_01/SKILL.md
+skills/demo/demo_attempt_02/SKILL.md
+skills/demo/demo_attempt_03/SKILL.md
 ```
 
 The solver may see:
@@ -50,7 +50,7 @@ The solver may see:
 - Allowed exposed ports, Web/API URLs, or database connections.
 - The demonstration skill whose attempt number matches the solver attempt number.
 
-## reflection_skill
+## reflect
 
 For this condition, generate 3 independent skills with 3 clean-context skill-generation subagents. Each generator should use the `skill-creator` skill, and each skill is generated through independent attempts, answer comparison, and error reflection.
 
@@ -65,9 +65,9 @@ Generation process:
 Save the generated skills as:
 
 ```text
-skills/reflection_skill/reflection_skill_attempt_01/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_02/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_03/SKILL.md
+skills/reflect/reflect_attempt_01/SKILL.md
+skills/reflect/reflect_attempt_02/SKILL.md
+skills/reflect/reflect_attempt_03/SKILL.md
 ```
 
 The solver may see:

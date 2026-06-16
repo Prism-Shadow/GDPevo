@@ -17,7 +17,7 @@ model: <model_name_or_config>
 harness: <evaluation_harness, e.g. claude_code>
 
 conditions:
-  no_skill:
+  base:
     overall_avg_at_3: <float>
     efficiency:
       input_tokens_avg_3: <float or null>            # 未缓存
@@ -45,22 +45,22 @@ conditions:
         <same shape as test_001>
       test_005:
         <same shape as test_001>
-  demonstration_skill:
+  demo:
     skill_dirs:
-      attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
-      attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
-      attempt_03: ../skills/demonstration_skill/demonstration_skill_attempt_03
+      attempt_01: ../skills/demo/demo_attempt_01
+      attempt_02: ../skills/demo/demo_attempt_02
+      attempt_03: ../skills/demo/demo_attempt_03
     overall_avg_at_3: <float>
-    efficiency: <same shape as no_skill.efficiency>
-    tasks: <same shape as no_skill.tasks>
-  reflection_skill:
+    efficiency: <same shape as base.efficiency>
+    tasks: <same shape as base.tasks>
+  reflect:
     skill_dirs:
-      attempt_01: ../skills/reflection_skill/reflection_skill_attempt_01
-      attempt_02: ../skills/reflection_skill/reflection_skill_attempt_02
-      attempt_03: ../skills/reflection_skill/reflection_skill_attempt_03
+      attempt_01: ../skills/reflect/reflect_attempt_01
+      attempt_02: ../skills/reflect/reflect_attempt_02
+      attempt_03: ../skills/reflect/reflect_attempt_03
     overall_avg_at_3: <float>
-    efficiency: <same shape as no_skill.efficiency>
-    tasks: <same shape as no_skill.tasks>
+    efficiency: <same shape as base.efficiency>
+    tasks: <same shape as base.tasks>
 ```
 
 ## 要求

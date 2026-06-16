@@ -4,7 +4,7 @@
 
 主 agent 应将每个 subagent 允许读取的材料 staging 到该 subagent 专属 workspace/cwd 中。不要把完整 task group 目录作为 skill-generation 或 solver subagents 的 workspace。
 
-## no_skill
+## base
 
 不生成 skill。
 
@@ -20,7 +20,7 @@ Solver 不能看到：
 - Test notes。
 - Evaluator 实现细节。
 
-## demonstration_skill
+## demo
 
 这个条件下，使用 3 个干净上下文的 skill-generation subagents 生成 3 个独立 skills。每个 generator 应使用 Codex `skill-creator` skill。
 
@@ -39,9 +39,9 @@ Skill generator 不能看到：
 将生成的 skills 保存为：
 
 ```text
-skills/demonstration_skill/demonstration_skill_attempt_01/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_02/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_03/SKILL.md
+skills/demo/demo_attempt_01/SKILL.md
+skills/demo/demo_attempt_02/SKILL.md
+skills/demo/demo_attempt_03/SKILL.md
 ```
 
 Solver 可以看到：
@@ -50,7 +50,7 @@ Solver 可以看到：
 - 允许的暴露端口、Web/API URL 或数据库连接。
 - 与 solver attempt 编号匹配的 demonstration skill。
 
-## reflection_skill
+## reflect
 
 这个条件下，使用 3 个干净上下文的 skill-generation subagents 生成 3 个独立 skills。每个 generator 应使用 Codex `skill-creator` skill，并通过独立尝试、答案对比和错误反思生成 skill。
 
@@ -65,9 +65,9 @@ Solver 可以看到：
 将生成的 skills 保存为：
 
 ```text
-skills/reflection_skill/reflection_skill_attempt_01/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_02/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_03/SKILL.md
+skills/reflect/reflect_attempt_01/SKILL.md
+skills/reflect/reflect_attempt_02/SKILL.md
+skills/reflect/reflect_attempt_03/SKILL.md
 ```
 
 Solver 可以看到：

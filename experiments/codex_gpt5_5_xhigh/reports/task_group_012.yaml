@@ -3,7 +3,7 @@ scenario_id: SCN_012_erp_hr_employee_lifecycle
 model: gpt-5.5, xhigh
 harness: codex
 conditions:
-  no_skill:
+  base:
     overall_avg_at_3: 0.4508
     efficiency:
       cached_input_tokens_avg_3: 336366.9333
@@ -61,7 +61,7 @@ conditions:
         input_tokens_avg_3: 421108.3333
         output_tokens_avg_3: 8203.3333
         seconds_avg_3: 189.602
-  demonstration_skill:
+  demo:
     skill_dirs:
       attempt_01: skills/task_group_012/demonstration_skill/demonstration_skill_attempt_01
       attempt_02: skills/task_group_012/demonstration_skill/demonstration_skill_attempt_02
@@ -123,7 +123,7 @@ conditions:
         input_tokens_avg_3: 462149.6667
         output_tokens_avg_3: 10567.6667
         seconds_avg_3: 253.961
-  reflection_skill:
+  reflect:
     skill_dirs:
       attempt_01: skills/task_group_012/reflection_skill/reflection_skill_attempt_01
       attempt_02: skills/task_group_012/reflection_skill/reflection_skill_attempt_02

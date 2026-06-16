@@ -5,7 +5,7 @@ harness: claude_code
 metric: avg@3
 
 conditions:
-  no_skill:
+  base:
     overall_avg_at_3: 0.6798
     efficiency:
       cache_creation_tokens_avg_3: 28625.9
@@ -69,7 +69,7 @@ conditions:
         cost_usd_avg_3: 0.6164
         input_tokens_avg_3: 2810.7
         output_tokens_avg_3: 9458.3
-  demonstration_skill:
+  demo:
     skill_dirs:
       attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
       attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
@@ -137,7 +137,7 @@ conditions:
         cost_usd_avg_3: 0.6967
         input_tokens_avg_3: 2802.7
         output_tokens_avg_3: 9603.7
-  reflection_skill:
+  reflect:
     skill_dirs:
       attempt_01: ../skills/reflection_skill/reflection_skill_attempt_01
       attempt_02: ../skills/reflection_skill/reflection_skill_attempt_02
@@ -214,11 +214,11 @@ risks_and_notes:
     persisted. Health re-confirmed. No data change.
 - id: transient_api_rate_limit
   detail: |
-    The first reflection_skill Phase-B batch (3 generators) died on a server-side rate limit with
+    The first reflect Phase-B batch (3 generators) died on a server-side rate limit with
     0 tokens; retried successfully after server restart. No effect on final skills.
 - id: platform_session_limit
   detail: |
-    A platform session limit (reset 07:00 Asia/Shanghai) killed 5 demonstration_skill solvers
+    A platform session limit (reset 07:00 Asia/Shanghai) killed 5 demo solvers
     mid-batch. 2 of them (test_003 a01/a02) had already written valid answer.json and were kept; 3
     (test_002 a03, test_003 a03, test_004 a01) produced no answer and were retried after reset.
     Token backfill attributed each of those 3 attempts to its COMPLETED retry transcript and
@@ -238,7 +238,7 @@ risks_and_notes:
     carries `task_id: null` (a placeholder) unlike the train templates which hardcode the literal
     task_id; gold expects 'task_group_006_test_005', which is not derivable from the inputs. (2)
     Substantive divergence: gold's decision is `release_price_amendment`, but all 15 attempts
-    (no_skill + both skills) concluded a `hold_*` decision because they read invoice AP-00002 (new
+    (base + both skills) concluded a `hold_*` decision because they read invoice AP-00002 (new
     price, no linked receipt) as an unmatched price-variance blocker. The SP1 point bundles
     task_id AND decision, so it is effectively unwinnable here, and SP6 (risk/invoice-control)
     also fails for all. SEND BACK TO EARLIER STAGE for review: (a) embed the literal task_id in
@@ -256,7 +256,7 @@ risks_and_notes:
   detail: |
     Solver and skill-generation subagents were each confined to a dedicated staged directory with
     only allowed files (no env/ source, no notes/, no eval/, no test answers, no cross-attempt
-    skills). reflection_skill train answers were withheld until blind train attempts were saved.
+    skills). reflect train answers were withheld until blind train attempts were saved.
     All 45 attempts produced parseable answer.json; all evaluators returned normalized [0,1]
     scores; all 45 transcripts matched uniquely by eval_attempt_id with parent_tool_use_id
     verified in the main session.

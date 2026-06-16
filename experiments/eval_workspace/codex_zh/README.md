@@ -10,7 +10,7 @@
 | --- | --- |
 | `guides/` | 评估流程、skill modes、指标、打分和报告格式 |
 | `task_group/` | 当前正在评估的单个正式 task group |
-| `skills/` | 生成的 `demonstration_skill` 和 `reflection_skill` 文件 |
+| `skills/` | 生成的 `demo` 和 `reflect` 文件 |
 | `runs/` | 每种条件、每个 test task、每次 attempt 的 solver 输出和打分记录 |
 | `scratch/` | 主评估 agent 创建的临时脚本、环境记录和中间检查 |
 | `report/` | 当前 task group 的最终评估报告 |
@@ -49,20 +49,20 @@ task_group/<task_group_id>/
 4. 为每种 skill 条件生成 3 个独立 skills：
 
 ```text
-skills/demonstration_skill/demonstration_skill_attempt_01/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_02/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_03/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_01/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_02/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_03/SKILL.md
+skills/demo/demo_attempt_01/SKILL.md
+skills/demo/demo_attempt_02/SKILL.md
+skills/demo/demo_attempt_03/SKILL.md
+skills/reflect/reflect_attempt_01/SKILL.md
+skills/reflect/reflect_attempt_02/SKILL.md
+skills/reflect/reflect_attempt_03/SKILL.md
 ```
 
 5. 在三种条件下运行 test tasks：
 
 ```text
-runs/no_skill/
-runs/demonstration_skill/
-runs/reflection_skill/
+runs/base/
+runs/demo/
+runs/reflect/
 ```
 
 每种条件下，每个 test task 独立运行 3 次。每次运行都必须由干净上下文的 solver subagent 完成。对于 skill 条件，solver 的 `attempt_<nn>` 使用相同编号的独立生成 skill。
@@ -79,7 +79,7 @@ Skill-generation subagents 只负责生成 skills，不参与 test 解题。
 
 Solver subagents 只能看到当前条件允许的信息。Solver 不应该看到 test 标准答案、test notes、evaluator 实现细节或 `env/` 源码。Skill-generation 和 solver subagents 不能进入、列出或读取 `env/`；它们只能通过主 agent 明确暴露的端口、Web/API URL 或数据库连接使用共享环境。
 
-对于 solver attempts，应使用对应 attempt 目录作为 subagent workspace/cwd，例如 `runs/no_skill/test_001/attempt_01/`。主 agent 只放入当前 task 的 `input/`、环境访问说明，以及 skill 条件下与 attempt 编号匹配的 skill 副本。Skill 生成应使用 `scratch/skill_generation/` 下的独立目录，并只放入该模式允许的 train 材料。
+对于 solver attempts，应使用对应 attempt 目录作为 subagent workspace/cwd，例如 `runs/base/test_001/attempt_01/`。主 agent 只放入当前 task 的 `input/`、环境访问说明，以及 skill 条件下与 attempt 编号匹配的 skill 副本。Skill 生成应使用 `scratch/skill_generation/` 下的独立目录，并只放入该模式允许的 train 材料。
 
 ## Solver Prompt
 

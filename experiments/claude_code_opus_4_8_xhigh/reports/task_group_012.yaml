@@ -4,7 +4,7 @@ model: claude-opus-4-8[1m]
 harness: claude_code
 
 conditions:
-  no_skill:
+  base:
     overall_avg_at_3: 0.4841
     efficiency:
       cache_creation_tokens_avg_3: 17642.9
@@ -68,7 +68,7 @@ conditions:
         cost_usd_avg_3: 0.2813
         input_tokens_avg_3: 2792
         output_tokens_avg_3: 3360.3
-  demonstration_skill:
+  demo:
     skill_dirs:
       attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
       attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
@@ -136,7 +136,7 @@ conditions:
         cost_usd_avg_3: 0.3227
         input_tokens_avg_3: 2790
         output_tokens_avg_3: 3118.7
-  reflection_skill:
+  reflect:
     skill_dirs:
       attempt_01: ../skills/reflection_skill/reflection_skill_attempt_01
       attempt_02: ../skills/reflection_skill/reflection_skill_attempt_02
@@ -210,7 +210,7 @@ conditions:
 # ---------------------------------------------------------------------------
 evaluation_setup:
   metric: avg@3 (mean of 3 independent clean-context solver attempts per test task)
-  conditions: [no_skill, demonstration_skill, reflection_skill]
+  conditions: [base, demo, reflect]
   test_tasks: 5
   attempts_per_task: 3
   total_solver_runs: 45

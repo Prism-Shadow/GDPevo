@@ -2,7 +2,7 @@
 
 语言：[English](README.md) | [中文](README.zh.md)
 
-本目录包含已发布的 GDPevo 评估方法和结果产物。评估将无状态 baseline 与两种 skill-creation 方法进行对比：`demonstration_skill` 和 `reflection_skill`。它可以用于观察自进化 agent、Skill Creator / SkillOpt，以及 Agent Memory 的端到端效果。
+本目录包含已发布的 GDPevo 评估方法和结果产物。评估将无状态 baseline 与两种 evolve 方法进行对比：`demo` 和 `reflect`。它可以用于观察自进化 agent、Skill Creator / SkillOpt，以及 Agent Memory 的端到端效果。
 
 ## 内容
 
@@ -14,5 +14,3 @@
 | `codex_gpt5_5_xhigh/` | 已发布的 Codex GPT-5.5 xhigh 评估运行 |
 
 每个已发布实验目录都包含 `config.yaml`、结构化 report YAML 文件，以及这些 reports 引用的生成 skill packages。
-
-在已发布的 Codex GPT-5.5 xhigh 运行中，skill-based evolution 平均带来 18.21 个百分点的准确率提升，并让 token 成本平均下降 25.75%。可复用 evaluation workspace 展示了如何用 Codex 自动完成完整流程：skill 生成、solver 执行、evaluator 调用、指标聚合和最终报告写作。

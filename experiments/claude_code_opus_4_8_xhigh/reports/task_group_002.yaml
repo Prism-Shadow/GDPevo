@@ -26,13 +26,13 @@ token_accounting:
     subagents; skill generation, environment startup, evaluator runs, and main-agent work
     are excluded. Aggregation mirrors avg@3 (mean of 3 attempts per task, then mean of 5 tasks).
   retried_attempts: >-
-    The 9 reflection_skill attempts for test_001/002/003 hit a transient upstream API
+    The 9 reflect attempts for test_001/002/003 hit a transient upstream API
     rate-limit on first launch (no answer.json written) and were retried under the SAME
     eval_attempt_id. Tokens are attributed to the successful retry subagent only; the
     rate-limited transcripts are excluded. All other 36 solver runs matched 1:1.
 
 conditions:
-  no_skill:
+  base:
     overall_avg_at_3: 0.4274
     efficiency:
       cache_creation_tokens_avg_3: 19357.9
@@ -96,7 +96,7 @@ conditions:
         cost_usd_avg_3: 0.2365
         input_tokens_avg_3: 2786.7
         output_tokens_avg_3: 2507
-  demonstration_skill:
+  demo:
     skill_dirs:
       attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
       attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
@@ -164,7 +164,7 @@ conditions:
         cost_usd_avg_3: 0.3693
         input_tokens_avg_3: 2786
         output_tokens_avg_3: 3844.7
-  reflection_skill:
+  reflect:
     skill_dirs:
       attempt_01: ../skills/reflection_skill/reflection_skill_attempt_01
       attempt_02: ../skills/reflection_skill/reflection_skill_attempt_02
@@ -241,5 +241,5 @@ run_accounting:
   all_runs_scored: true
   all_token_matches: matched
   skills_generated:
-    demonstration_skill: 3
-    reflection_skill: 3
+    demo: 3
+    reflect: 3

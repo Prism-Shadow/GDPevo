@@ -10,7 +10,7 @@ This workspace evaluates one task group at a time. Do not modify the task group 
 | --- | --- |
 | `guides/` | Evaluation workflow, skill modes, metrics, scoring, and report format |
 | `task_group/` | The single official task group currently under evaluation |
-| `skills/` | Generated `demonstration_skill` and `reflection_skill` files |
+| `skills/` | Generated `demo` and `reflect` files |
 | `runs/` | Solver outputs and scoring records for each condition, test task, and attempt |
 | `scratch/` | Temporary scripts, environment notes, and intermediate checks created by the main evaluation agent |
 | `report/` | The final evaluation report for the current task group |
@@ -49,20 +49,20 @@ task_group/<task_group_id>/
 4. Generate 3 independent skills for each skill condition:
 
 ```text
-skills/demonstration_skill/demonstration_skill_attempt_01/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_02/SKILL.md
-skills/demonstration_skill/demonstration_skill_attempt_03/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_01/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_02/SKILL.md
-skills/reflection_skill/reflection_skill_attempt_03/SKILL.md
+skills/demo/demo_attempt_01/SKILL.md
+skills/demo/demo_attempt_02/SKILL.md
+skills/demo/demo_attempt_03/SKILL.md
+skills/reflect/reflect_attempt_01/SKILL.md
+skills/reflect/reflect_attempt_02/SKILL.md
+skills/reflect/reflect_attempt_03/SKILL.md
 ```
 
 5. Run test tasks under all three conditions:
 
 ```text
-runs/no_skill/
-runs/demonstration_skill/
-runs/reflection_skill/
+runs/base/
+runs/demo/
+runs/reflect/
 ```
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context solver subagent. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
@@ -79,7 +79,7 @@ Skill-generation subagents only generate skills. They do not solve test tasks.
 
 Solver subagents may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver subagents must not enter, list, or read `env/`; they may use the shared environment only through the port, Web/API URL, or database connection explicitly exposed by the main agent.
 
-For solver attempts, use the corresponding attempt directory as the subagent workspace/cwd, such as `runs/no_skill/test_001/attempt_01/`. Stage the current task `input/`, environment access instructions, and, for skill modes only, the matching skill copy for the same attempt number. For skill generation, use a dedicated directory under `scratch/skill_generation/` and stage only the allowed train materials for that mode.
+For solver attempts, use the corresponding attempt directory as the subagent workspace/cwd, such as `runs/base/test_001/attempt_01/`. Stage the current task `input/`, environment access instructions, and, for skill modes only, the matching skill copy for the same attempt number. For skill generation, use a dedicated directory under `scratch/skill_generation/` and stage only the allowed train materials for that mode.
 
 ## Solver Prompt
 
