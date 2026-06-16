@@ -20,8 +20,12 @@
           document.documentElement.setAttribute('data-lang', lang);
           document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-Hans' : 'en');
           var st = localStorage.getItem('gdpevo-theme');
-          var theme = st || ((window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+          var choice = (st === 'light' || st === 'dark' || st === 'system') ? st : 'system';
+          var theme = choice === 'system'
+            ? ((window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light')
+            : choice;
           document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.setAttribute('data-theme-choice', choice);
         } catch (e) {}
       })();
     </script>
@@ -40,17 +44,25 @@
           <span class="brand-name">GDP<span class="brand-accent">evo</span></span>
         </a>
         <div class="nav-right">
-          <a class="nav-tab" href="blog.html">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10" stroke-linecap="round"/></svg>
-            <span class="lang-en">Blog</span><span class="lang-zh">博客</span>
-          </a>
-          <button type="button" class="icon-link theme-btn" id="theme-toggle" aria-label="Toggle light/dark theme">
-            <svg class="ic-moon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z" stroke-linejoin="round"/></svg>
-            <svg class="ic-sun" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4" stroke-linecap="round"/></svg>
-          </button>
-          <button type="button" class="lang-btn" id="lang-toggle" aria-label="Switch language">
-            <span class="lang-en">中文</span><span class="lang-zh">EN</span>
-          </button>
+          <nav class="page-nav" aria-label="Primary">
+            <a class="is-active" href="#top"><span class="lang-en">Home</span><span class="lang-zh">首页</span></a>
+            <a href="blog.html"><span class="lang-en">Blog</span><span class="lang-zh">博客</span></a>
+          </nav>
+          <div class="theme-segment" role="group" aria-label="Color theme">
+            <button type="button" class="theme-choice" data-theme-choice="light" aria-label="Light theme" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" class="theme-choice" data-theme-choice="dark" aria-label="Dark theme" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="theme-choice" data-theme-choice="system" aria-label="Use system theme" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.8"/><path d="M9 20h6M12 16v4" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div class="lang-segment" role="group" aria-label="Language">
+            <button type="button" class="lang-choice" data-lang-choice="en" aria-label="English" aria-pressed="false">EN</button>
+            <button type="button" class="lang-choice" data-lang-choice="zh" aria-label="Chinese" aria-pressed="false">ZH</button>
+          </div>
           <a class="icon-link" href="https://github.com/Prism-Shadow/GDPevo" aria-label="GitHub repository">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.41-1.27.74-1.56-2.56-.29-5.26-1.28-5.26-5.71 0-1.26.45-2.3 1.19-3.11-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.19a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.19 3.17-1.19.63 1.59.23 2.76.11 3.05.74.81 1.19 1.85 1.19 3.11 0 4.44-2.7 5.42-5.27 5.7.42.37.8 1.09.8 2.2v3.26c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
           </a>
@@ -118,33 +130,17 @@
       <!-- ===================== RESULTS ===================== -->
       <section class="section" id="results">
         <div class="wrap">
-          <p class="kicker"><span class="lang-en">Results · two harnesses, same shape</span><span class="lang-zh">结果 · 两套 harness，同一种形状</span></p>
           <h2 class="h2">
             <span class="lang-en">Skills make agents more accurate while spending <span class="accent">fewer</span> tokens.</span>
             <span class="lang-zh">Skill 让 agent 更准,同时花<span class="accent">更少</span>的 token。</span>
           </h2>
           <p class="lead">
             <span class="lang-en">Each group has 5 train and 5 held-out test tasks. We compare a cold-start baseline
-              (<code>no_skill</code>) against two skill-writers — <code>demonstration</code> (learn from worked examples) and
-              <code>reflection</code> (learn from its own mistakes) — and measure the lift on tasks the skill-writer never saw.</span>
-            <span class="lang-zh">每组有 5 个 train、5 个 held-out test。我们用冷启动基线（<code>no_skill</code>）对比两种 skill-writer ——
-              <code>demonstration</code>（从样例中学）和 <code>reflection</code>（从自己的错误中学）—— 衡量在 skill-writer 没见过的任务上的提升。</span>
+              (<code>base</code>) against two skill-writers — <code>demo</code> (learn from worked examples) and
+              <code>reflect</code> (learn from its own mistakes) — and measure the lift on tasks the skill-writer never saw.</span>
+            <span class="lang-zh">每组有 5 个 train、5 个 held-out test。我们用冷启动基线（<code>base</code>）对比两种 skill-writer ——
+              <code>demo</code>（从样例中学）和 <code>reflect</code>（从自己的错误中学）—— 衡量在 skill-writer 没见过的任务上的提升。</span>
           </p>
-
-          <div class="metric-band">
-            <div class="metric">
-              <span class="metric-num stat-tba"><span class="lang-en">TBD</span><span class="lang-zh">暂定</span></span>
-              <span class="metric-label"><span class="lang-en">Avg. held-out accuracy lift (both harnesses)</span><span class="lang-zh">held-out 平均准确率提升（两套 harness）</span></span>
-            </div>
-            <div class="metric">
-              <span class="metric-num stat-tba"><span class="lang-en">TBD</span><span class="lang-zh">暂定</span></span>
-              <span class="metric-label"><span class="lang-en">Avg. token-cost saving (both harnesses)</span><span class="lang-zh">平均 token 成本节省（两套 harness）</span></span>
-            </div>
-            <div class="metric">
-              <span class="metric-num">2<i>/2</i></span>
-              <span class="metric-label"><span class="lang-en">Harnesses reproducing the effect</span><span class="lang-zh">复现该效应的 harness 数</span></span>
-            </div>
-          </div>
 
           <div class="htables">
             <div class="htable">
@@ -156,9 +152,9 @@
                 <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
                 <span class="num">avg@3</span><span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span><span class="num">USD</span>
               </div>
-              <div class="ht-row"><code>no_skill</code><span class="num">48.35%</span><span class="num">709.2</span><span class="num">1.08</span></div>
-              <div class="ht-row"><code>demonstration</code><span class="num">65.99%</span><span class="num">466.1</span><span class="num">0.81</span></div>
-              <div class="ht-row best"><code>reflection</code><span class="num">67.13%</span><span class="num">458.7</span><span class="num">0.79</span></div>
+              <div class="ht-row"><code>base</code><span class="num">48.35%</span><span class="num">709.2</span><span class="num">1.08</span></div>
+              <div class="ht-row"><code>demo</code><span class="num">65.99%</span><span class="num">466.1</span><span class="num">0.81</span></div>
+              <div class="ht-row best"><code>reflect</code><span class="num">67.13%</span><span class="num">458.7</span><span class="num">0.79</span></div>
             </div>
             <div class="htable">
               <div class="ht-cap">
@@ -169,67 +165,26 @@
                 <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
                 <span class="num">avg@3</span><span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span><span class="num">USD</span>
               </div>
-              <div class="ht-row"><code>no_skill</code><span class="num">49.11%</span><span class="num">376.8</span><span class="num">0.61</span></div>
-              <div class="ht-row best"><code>demonstration</code><span class="num">70.90%</span><span class="num">340.8</span><span class="num">0.55</span></div>
-              <div class="ht-row"><code>reflection</code><span class="num">67.94%</span><span class="num">331.9</span><span class="num">0.56</span></div>
+              <div class="ht-row"><code>base</code><span class="num">49.11%</span><span class="num">376.8</span><span class="num">0.61</span></div>
+              <div class="ht-row best"><code>demo</code><span class="num">70.90%</span><span class="num">340.8</span><span class="num">0.55</span></div>
+              <div class="ht-row"><code>reflect</code><span class="num">67.94%</span><span class="num">331.9</span><span class="num">0.56</span></div>
             </div>
           </div>
 
-          <!-- Per-group bar chart (Codex) -->
-          <figure class="panel chart" id="chart">
+          <figure class="panel chart merged-chart" id="chart">
             <figcaption class="panel-head">
-              <span class="panel-title"><span class="lang-en">Held-out accuracy by task group · Codex GPT-5.5</span><span class="lang-zh">各 task group 的 held-out 准确率 · Codex GPT-5.5</span></span>
+              <span class="panel-title"><span class="lang-en">Held-out accuracy by task group (avg@3, %)</span><span class="lang-zh">各 task group 的 held-out 准确率 (avg@3, %)</span></span>
               <span class="legend">
-                <span class="leg"><i class="sw sw-base"></i><span class="lang-en">Cold start (no_skill)</span><span class="lang-zh">冷启动 (no_skill)</span></span>
-                <span class="leg"><i class="sw sw-evo"></i><span class="lang-en">With skills (avg. of both)</span><span class="lang-zh">用 skill（两种均值）</span></span>
+                <span class="leg"><i class="sw sw-base"></i>base</span>
+                <span class="leg"><i class="sw sw-demo"></i>demo</span>
+                <span class="leg"><i class="sw sw-reflect"></i>reflect</span>
               </span>
             </figcaption>
-            <div class="bars">
-              <div class="bar-row"><span class="bl">01 · CRM</span><div class="bp"><div class="tr"><span class="fl base" style="--w:44.4%"></span><b>44.4</b></div><div class="tr"><span class="fl evo" style="--w:52.8%"></span><b>52.8</b></div></div></div>
-              <div class="bar-row"><span class="bl">02 · CRM</span><div class="bp"><div class="tr"><span class="fl base" style="--w:41.6%"></span><b>41.6</b></div><div class="tr"><span class="fl evo" style="--w:55.8%"></span><b>55.8</b></div></div></div>
-              <div class="bar-row"><span class="bl">03 · CRM</span><div class="bp"><div class="tr"><span class="fl base" style="--w:57.8%"></span><b>57.8</b></div><div class="tr"><span class="fl evo" style="--w:74.9%"></span><b>74.9</b></div></div></div>
-              <div class="bar-row"><span class="bl">04 · CRM</span><div class="bp"><div class="tr"><span class="fl base" style="--w:31.7%"></span><b>31.7</b></div><div class="tr"><span class="fl evo" style="--w:60.4%"></span><b>60.4</b></div></div></div>
-              <div class="bar-row"><span class="bl">05 · ERP</span><div class="bp"><div class="tr"><span class="fl base" style="--w:35.1%"></span><b>35.1</b></div><div class="tr"><span class="fl evo" style="--w:49.5%"></span><b>49.5</b></div></div></div>
-              <div class="bar-row"><span class="bl">06 · ERP</span><div class="bp"><div class="tr"><span class="fl base" style="--w:66.3%"></span><b>66.3</b></div><div class="tr"><span class="fl evo" style="--w:72.1%"></span><b>72.1</b></div></div></div>
-              <div class="bar-row"><span class="bl">07 · ERP</span><div class="bp"><div class="tr"><span class="fl base" style="--w:38.4%"></span><b>38.4</b></div><div class="tr"><span class="fl evo" style="--w:54.4%"></span><b>54.4</b></div></div></div>
-              <div class="bar-row"><span class="bl">08 · Finance</span><div class="bp"><div class="tr"><span class="fl base" style="--w:70.6%"></span><b>70.6</b></div><div class="tr"><span class="fl evo" style="--w:93.1%"></span><b>93.1</b></div></div></div>
-              <div class="bar-row"><span class="bl">09 · Finance</span><div class="bp"><div class="tr"><span class="fl base" style="--w:42.8%"></span><b>42.8</b></div><div class="tr"><span class="fl evo" style="--w:86.7%"></span><b>86.7</b></div></div></div>
-              <div class="bar-row"><span class="bl">10 · Finance</span><div class="bp"><div class="tr"><span class="fl base" style="--w:60.8%"></span><b>60.8</b></div><div class="tr"><span class="fl evo" style="--w:72.4%"></span><b>72.4</b></div></div></div>
-              <div class="bar-row"><span class="bl">11 · Finance</span><div class="bp"><div class="tr"><span class="fl base" style="--w:45.7%"></span><b>45.7</b></div><div class="tr"><span class="fl evo" style="--w:60.9%"></span><b>60.9</b></div></div></div>
-              <div class="bar-row"><span class="bl">12 · ERP</span><div class="bp"><div class="tr"><span class="fl base" style="--w:45.1%"></span><b>45.1</b></div><div class="tr"><span class="fl evo" style="--w:65.7%"></span><b>65.7</b></div></div></div>
-            </div>
-          </figure>
-
-          <!-- Per-group heatmap (Claude Code) -->
-          <figure class="panel">
-            <figcaption class="panel-head">
-              <span class="panel-title"><span class="lang-en">Per-group accuracy across conditions · Claude Code Opus 4.8 (avg@3, %)</span><span class="lang-zh">各组在不同条件下的准确率 · Claude Code Opus 4.8 (avg@3, %)</span></span>
-            </figcaption>
-            <div class="lb">
-              <div class="lb-row lb-head">
-                <span><span class="lang-en">Task group</span><span class="lang-zh">Task group</span></span>
-                <span><code>no_skill</code></span>
-                <span><code>demonstration</code></span>
-                <span><code>reflection</code></span>
-                <span>Δ<span class="lang-en"> best</span><span class="lang-zh"> 最佳</span></span>
-              </div>
-              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">Lead capture</span><span class="lang-zh">线索捕获</span></span><span class="hc" data-v="48.75">48.8</span><span class="hc best" data-v="81.96">82.0</span><span class="hc" data-v="75.47">75.5</span><span class="d">+33.2</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">B2B quote</span><span class="lang-zh">B2B 报价</span></span><span class="hc" data-v="42.74">42.7</span><span class="hc best" data-v="58.48">58.5</span><span class="hc" data-v="46.53">46.5</span><span class="d">+15.7</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">Service ticket</span><span class="lang-zh">服务工单</span></span><span class="hc" data-v="46.69">46.7</span><span class="hc best" data-v="70.89">70.9</span><span class="hc" data-v="63.92">63.9</span><span class="d">+24.2</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip crm">CRM</i><span class="lang-en">Churn analytics</span><span class="lang-zh">流失分析</span></span><span class="hc" data-v="25.24">25.2</span><span class="hc best" data-v="54.55">54.6</span><span class="hc" data-v="54.28">54.3</span><span class="d">+29.3</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">Expense control</span><span class="lang-zh">费用控制</span></span><span class="hc" data-v="51.15">51.2</span><span class="hc" data-v="57.96">58.0</span><span class="hc best" data-v="59.26">59.3</span><span class="d">+8.1</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">Procurement</span><span class="lang-zh">采购收货</span></span><span class="hc" data-v="67.98">68.0</span><span class="hc best" data-v="72.98">73.0</span><span class="hc" data-v="72.54">72.5</span><span class="d">+5.0</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">Inventory</span><span class="lang-zh">库存履约</span></span><span class="hc" data-v="39.54">39.5</span><span class="hc" data-v="55.76">55.8</span><span class="hc best" data-v="57.10">57.1</span><span class="d">+17.6</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Advisory &amp; tax</span><span class="lang-zh">理财税务</span></span><span class="hc" data-v="66.89">66.9</span><span class="hc best" data-v="93.60">93.6</span><span class="hc" data-v="90.94">90.9</span><span class="d">+26.7</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Ops modeling</span><span class="lang-zh">运营建模</span></span><span class="hc" data-v="51.76">51.8</span><span class="hc best" data-v="100.00">100</span><span class="hc" data-v="80.00">80.0</span><span class="d">+48.2</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Investment</span><span class="lang-zh">投资策略</span></span><span class="hc" data-v="58.60">58.6</span><span class="hc" data-v="63.45">63.5</span><span class="hc best" data-v="75.07">75.1</span><span class="d">+16.5</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip fin">Finance</i><span class="lang-en">Credit risk</span><span class="lang-zh">信用风险</span></span><span class="hc" data-v="41.56">41.6</span><span class="hc best" data-v="63.48">63.5</span><span class="hc" data-v="60.82">60.8</span><span class="d">+21.9</span></div>
-              <div class="lb-row"><span class="lb-name"><i class="chip erp">ERP</i><span class="lang-en">HR lifecycle</span><span class="lang-zh">HR 生命周期</span></span><span class="hc" data-v="48.41">48.4</span><span class="hc" data-v="77.66">77.7</span><span class="hc best" data-v="79.30">79.3</span><span class="d">+30.9</span></div>
-            </div>
+            <div class="combined-bars" id="combined-bars"></div>
           </figure>
           <p class="note">
-            <span class="lang-en"><strong>avg@3</strong> = mean held-out accuracy over 3 attempts per task; cell shading scales with accuracy.</span>
-            <span class="lang-zh"><strong>avg@3</strong> = 每个任务 3 次尝试的 held-out 准确率均值;单元格底色深浅随准确率变化。</span>
+            <span class="lang-en"><strong>avg@3</strong> = mean held-out accuracy over 3 attempts per task. Each task group now shows both harnesses under the same base, demo, and reflect settings.</span>
+            <span class="lang-zh"><strong>avg@3</strong> = 每个任务 3 次尝试的 held-out 准确率均值。每个 task group 现在在同一个图里展示两套 harness 的 base、demo、reflect 结果。</span>
           </p>
           <p class="note">
             <span class="lang-en">Board summaries: <strong>+20.31 pp / −8.69% cost</strong> (Claude Code) · <strong>+18.21 pp / −25.75% cost</strong> (Codex).</span>
@@ -248,10 +203,9 @@
       <!-- ===================== TASKS ===================== -->
       <section class="section band" id="tasks">
         <div class="wrap">
-          <p class="kicker"><span class="lang-en">The 12 task groups</span><span class="lang-zh">12 个 task group</span></p>
           <h2 class="h2">
-            <span class="lang-en">Real company surfaces — CRM, ERP, Finance.</span>
-            <span class="lang-zh">真实的公司工作面 —— CRM、ERP、Finance。</span>
+            <span class="lang-en">Real company interfaces — CRM, ERP, Finance.</span>
+            <span class="lang-zh">真实的公司业务接口 —— CRM、ERP、Finance。</span>
           </h2>
           <p class="lead">
             <span class="lang-en">Each group is one shared business world with lookalike records mixed in, seeded from real-job
@@ -266,20 +220,19 @@
               <span><span class="lang-en">Group</span><span class="lang-zh">编号</span></span>
               <span><span class="lang-en">Domain</span><span class="lang-zh">领域</span></span>
               <span><span class="lang-en">Business focus</span><span class="lang-zh">业务场景</span></span>
-              <span><span class="lang-en">Train / Test</span><span class="lang-zh">训练 / 测试</span></span>
             </div>
-            <div class="tg-row"><span class="tg-id">01</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">Marketing lead capture</span><span class="lang-zh">市场营销线索捕获</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">02</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">B2B quote &amp; account response</span><span class="lang-zh">B2B 报价与客户响应</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">03</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">Service ticket resolution</span><span class="lang-zh">服务工单处理</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">04</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">Retention &amp; churn analytics</span><span class="lang-zh">留存与流失分析</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">05</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">Finance expense control &amp; close</span><span class="lang-zh">费用控制与账务结算</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">06</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">Procurement, supplier &amp; receiving</span><span class="lang-zh">采购、供应商与收货</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">07</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">Inventory &amp; order fulfillment</span><span class="lang-zh">库存与订单履约</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">08</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Personal advisory, tax &amp; estate</span><span class="lang-zh">个人理财、税务与遗产规划</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">09</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Operational modeling &amp; reporting</span><span class="lang-zh">运营建模与管理报表</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">10</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Investment strategy &amp; portfolio risk</span><span class="lang-zh">投资策略与组合风险</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">11</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Credit risk &amp; lending committee</span><span class="lang-zh">信用风险与信贷委员会</span></span><span class="tg-num">5 / 5</span></div>
-            <div class="tg-row"><span class="tg-id">12</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">HR employee lifecycle &amp; policy</span><span class="lang-zh">HR 员工生命周期与制度</span></span><span class="tg-num">5 / 5</span></div>
+            <div class="tg-row" data-task-group="001"><span class="tg-id">01</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">Marketing lead capture</span><span class="lang-zh">市场营销线索捕获</span></span></div>
+            <div class="tg-row" data-task-group="002"><span class="tg-id">02</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">B2B quote &amp; account response</span><span class="lang-zh">B2B 报价与客户响应</span></span></div>
+            <div class="tg-row" data-task-group="003"><span class="tg-id">03</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">Service ticket resolution</span><span class="lang-zh">服务工单处理</span></span></div>
+            <div class="tg-row" data-task-group="004"><span class="tg-id">04</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">Retention &amp; churn analytics</span><span class="lang-zh">留存与流失分析</span></span></div>
+            <div class="tg-row" data-task-group="005"><span class="tg-id">05</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">Finance expense control &amp; close</span><span class="lang-zh">费用控制与账务结算</span></span></div>
+            <div class="tg-row" data-task-group="006"><span class="tg-id">06</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">Procurement, supplier &amp; receiving</span><span class="lang-zh">采购、供应商与收货</span></span></div>
+            <div class="tg-row" data-task-group="007"><span class="tg-id">07</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">Inventory &amp; order fulfillment</span><span class="lang-zh">库存与订单履约</span></span></div>
+            <div class="tg-row" data-task-group="008"><span class="tg-id">08</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Personal advisory, tax &amp; estate</span><span class="lang-zh">个人理财、税务与遗产规划</span></span></div>
+            <div class="tg-row" data-task-group="009"><span class="tg-id">09</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Operational modeling &amp; reporting</span><span class="lang-zh">运营建模与管理报表</span></span></div>
+            <div class="tg-row" data-task-group="010"><span class="tg-id">10</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Investment strategy &amp; portfolio risk</span><span class="lang-zh">投资策略与组合风险</span></span></div>
+            <div class="tg-row" data-task-group="011"><span class="tg-id">11</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Credit risk &amp; lending committee</span><span class="lang-zh">信用风险与信贷委员会</span></span></div>
+            <div class="tg-row" data-task-group="012"><span class="tg-id">12</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">HR employee lifecycle &amp; policy</span><span class="lang-zh">HR 员工生命周期与制度</span></span></div>
           </div>
           <p class="note">
             <span class="lang-en">How the hidden rules are planted, how the data is built and graded by agents, and why cost goes
@@ -302,32 +255,323 @@
     <script>
       (function () {
         // Language toggle
-        var btn = document.getElementById('lang-toggle');
         function setLang(lang) {
           document.documentElement.setAttribute('data-lang', lang);
           document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-Hans' : 'en');
+          document.querySelectorAll('[data-lang-choice]').forEach(function (b) {
+            var on = b.getAttribute('data-lang-choice') === lang;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
           try { localStorage.setItem('gdpevo-lang', lang); } catch (e) {}
         }
-        if (btn) btn.addEventListener('click', function () {
-          var cur = document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
-          setLang(cur === 'zh' ? 'en' : 'zh');
+        document.querySelectorAll('[data-lang-choice]').forEach(function (b) {
+          b.addEventListener('click', function () { setLang(b.getAttribute('data-lang-choice')); });
         });
+        setLang(document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en');
 
-        // Theme toggle
-        var tb = document.getElementById('theme-toggle');
-        if (tb) tb.addEventListener('click', function () {
-          var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-          var nx = cur === 'dark' ? 'light' : 'dark';
-          document.documentElement.setAttribute('data-theme', nx);
-          try { localStorage.setItem('gdpevo-theme', nx); } catch (e) {}
+        // Theme segmented control
+        var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+        function resolveTheme(choice) {
+          return choice === 'system' ? ((mq && mq.matches) ? 'dark' : 'light') : choice;
+        }
+        function setThemeChoice(choice) {
+          if (choice !== 'light' && choice !== 'dark' && choice !== 'system') choice = 'system';
+          document.documentElement.setAttribute('data-theme', resolveTheme(choice));
+          document.documentElement.setAttribute('data-theme-choice', choice);
+          document.querySelectorAll('[data-theme-choice]').forEach(function (b) {
+            var on = b.getAttribute('data-theme-choice') === choice;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          try { localStorage.setItem('gdpevo-theme', choice); } catch (e) {}
+        }
+        document.querySelectorAll('[data-theme-choice]').forEach(function (b) {
+          b.addEventListener('click', function () { setThemeChoice(b.getAttribute('data-theme-choice')); });
         });
+        setThemeChoice(document.documentElement.getAttribute('data-theme-choice') || 'system');
+        if (mq && mq.addEventListener) {
+          mq.addEventListener('change', function () {
+            if (document.documentElement.getAttribute('data-theme-choice') === 'system') setThemeChoice('system');
+          });
+        }
 
-        // Heatmap cell shading
-        document.querySelectorAll('.hc[data-v]').forEach(function (c) {
-          var v = parseFloat(c.getAttribute('data-v'));
-          var a = 0.08 + (v / 100) * 0.82;
-          c.style.background = 'rgba(16, 163, 110, ' + a.toFixed(3) + ')';
-          if (a > 0.52) c.style.color = '#fff';
+        // Combined per-group chart
+        var holder = document.getElementById('combined-bars');
+        var groups = [
+          { id: '01', domain: 'CRM', en: 'Lead capture', zh: '线索捕获', codex: [44.43, 48.12, 57.46], claude: [48.75, 81.96, 75.47] },
+          { id: '02', domain: 'CRM', en: 'B2B quote', zh: 'B2B 报价', codex: [41.62, 51.17, 60.41], claude: [42.74, 58.48, 46.53] },
+          { id: '03', domain: 'CRM', en: 'Service ticket', zh: '服务工单', codex: [57.84, 78.11, 71.69], claude: [46.69, 70.89, 63.92] },
+          { id: '04', domain: 'CRM', en: 'Churn analytics', zh: '流失分析', codex: [31.73, 60.94, 59.95], claude: [25.24, 54.55, 54.28] },
+          { id: '05', domain: 'ERP', en: 'Expense control', zh: '费用控制', codex: [35.09, 52.45, 46.51], claude: [51.15, 57.96, 59.26] },
+          { id: '06', domain: 'ERP', en: 'Procurement', zh: '采购收货', codex: [66.28, 72.39, 71.76], claude: [67.98, 72.98, 72.54] },
+          { id: '07', domain: 'ERP', en: 'Inventory', zh: '库存履约', codex: [38.40, 54.31, 54.49], claude: [39.54, 55.76, 57.10] },
+          { id: '08', domain: 'Finance', en: 'Advisory & tax', zh: '理财税务', codex: [70.57, 93.18, 93.05], claude: [66.89, 93.60, 90.94] },
+          { id: '09', domain: 'Finance', en: 'Ops modeling', zh: '运营建模', codex: [42.76, 92.47, 80.94], claude: [51.76, 100.00, 80.00] },
+          { id: '10', domain: 'Finance', en: 'Investment', zh: '投资策略', codex: [60.76, 71.05, 73.77], claude: [58.60, 63.45, 75.07] },
+          { id: '11', domain: 'Finance', en: 'Credit risk', zh: '信用风险', codex: [45.68, 56.48, 65.41], claude: [41.56, 63.48, 60.82] },
+          { id: '12', domain: 'ERP', en: 'HR lifecycle', zh: 'HR 生命周期', codex: [45.08, 61.24, 70.10], claude: [48.41, 77.66, 79.30] }
+        ];
+        function lang(en, zh) {
+          return '<span class="lang-en">' + en + '</span><span class="lang-zh">' + zh + '</span>';
+        }
+        function meter(v, mode) {
+          return '<div class="ob-meter mode-' + mode + '">' +
+            '<div class="ob-track"><span class="fl ' + mode + '" style="--w:' + v.toFixed(2) + '%"></span></div>' +
+            '<b>' + v.toFixed(1) + '</b>' +
+          '</div>';
+        }
+        function modelRows(label, values) {
+          var modes = ['base', 'demo', 'reflect'];
+          return modes.map(function (mode, i) {
+            return '<div class="ob-row">' +
+              '<span class="ob-model">' + label + '</span>' +
+              '<code>' + mode + '</code>' +
+              meter(values[i], mode) +
+            '</div>';
+          }).join('');
+        }
+        if (holder) {
+          holder.innerHTML =
+            '<div class="ob-head">' +
+              '<span>' + lang('Task group', 'Task group') + '</span>' +
+              '<span>Model</span>' +
+              '<span>' + lang('Setting', '设定') + '</span>' +
+              '<span>Accuracy</span>' +
+            '</div>' +
+            groups.map(function (g) {
+              var chip = g.domain === 'Finance' ? 'fin' : g.domain.toLowerCase();
+              return '<div class="ob-group">' +
+                '<div class="ob-name"><strong>' + g.id + '</strong><i class="chip ' + chip + '">' + g.domain + '</i><span>' + lang(g.en, g.zh) + '</span></div>' +
+                '<div class="ob-rows">' +
+                  modelRows('Codex GPT-5.5', g.codex) +
+                  modelRows('Claude Opus 4.8', g.claude) +
+                '</div>' +
+              '</div>';
+            }).join('');
+        }
+
+        // Expandable task-group summaries
+        var taskTopics = {
+          '001': [
+            ['train_001', 'Train', 'Event sponsor handoff', 'Validate event attendance, sponsor status, qualified leads, and the next CRM follow-up.'],
+            ['train_002', 'Train', 'Exhibitor lead qualification', 'Rank booth leads by fit, urgency, and account context before assigning sales ownership.'],
+            ['train_003', 'Train', 'Webinar import cleanup', 'Deduplicate imported attendees and reconcile form answers with existing company records.'],
+            ['train_004', 'Train', 'Field-day campaign review', 'Turn scattered event activity into clean campaign outcomes and follow-up queues.'],
+            ['train_005', 'Train', 'Target-account prospecting', 'Identify the strongest prospects in a niche segment and prepare CRM-ready outreach notes.'],
+            ['test_001', 'Test', 'Executive forum handoff', 'Audit a new event pipeline and decide which accounts deserve immediate sales action.'],
+            ['test_002', 'Test', 'Partner expo qualification', 'Separate real opportunities from lookalike records after a partner-led marketing event.'],
+            ['test_003', 'Test', 'Imported lead normalization', 'Clean a messy lead import and connect attendees to the right companies and campaigns.'],
+            ['test_004', 'Test', 'Industrial demo follow-up', 'Reconcile demo attendance, sponsor signals, and account history into follow-up priorities.'],
+            ['test_005', 'Test', 'Regional account shortlist', 'Build a prioritized prospect list using firmographic clues and recent engagement signals.']
+          ],
+          '002': [
+            ['train_001', 'Train', 'Renewal quote triage', 'Review a customer request and assemble the right quote details from account context.'],
+            ['train_002', 'Train', 'Enterprise upsell response', 'Check contract terms, usage signals, and open opportunities before drafting a response.'],
+            ['train_003', 'Train', 'Procurement email routing', 'Classify buyer questions and attach the right commercial owner and next step.'],
+            ['train_004', 'Train', 'Discount exception review', 'Decide whether a requested discount fits policy, deal stage, and customer history.'],
+            ['train_005', 'Train', 'Account expansion brief', 'Summarize renewal risk, expansion fit, and quote blockers for the account team.'],
+            ['test_001', 'Test', 'Quote revision request', 'Resolve a changed scope request while preserving pricing, approval, and CRM consistency.'],
+            ['test_002', 'Test', 'Buyer objection response', 'Use account records to answer procurement concerns without inventing commercial terms.'],
+            ['test_003', 'Test', 'Contract-change handoff', 'Find the correct owner and required evidence for a contract or quote adjustment.'],
+            ['test_004', 'Test', 'Multi-site account quote', 'Combine subsidiary records, seat counts, and timing into a clean quote recommendation.'],
+            ['test_005', 'Test', 'Escalation-ready account note', 'Prepare a concise response plan for a customer whose quote needs extra approval.']
+          ],
+          '003': [
+            ['train_001', 'Train', 'Priority ticket routing', 'Read a support case and assign severity, owner, and the next customer action.'],
+            ['train_002', 'Train', 'SLA breach investigation', 'Use ticket history to explain whether a service-level deadline was missed.'],
+            ['train_003', 'Train', 'Bug-report consolidation', 'Merge related complaints into a clean support summary without losing customer impact.'],
+            ['train_004', 'Train', 'Escalation evidence pack', 'Collect reproduction steps, account details, and recent support notes for engineering.'],
+            ['train_005', 'Train', 'Resolution quality check', 'Verify whether a proposed response actually addresses the customer issue.'],
+            ['test_001', 'Test', 'Refund-risk support case', 'Identify support history, promised actions, and the right path to preserve the account.'],
+            ['test_002', 'Test', 'Outage communication draft', 'Summarize customer impact and produce a grounded update from service records.'],
+            ['test_003', 'Test', 'Duplicate-ticket cleanup', 'Find duplicate cases and consolidate status, ownership, and customer-facing commitments.'],
+            ['test_004', 'Test', 'Technical escalation triage', 'Decide if a case requires engineering escalation and list the missing diagnostics.'],
+            ['test_005', 'Test', 'Close-ready ticket audit', 'Check whether a ticket can be closed or needs one more customer-confirmed step.']
+          ],
+          '004': [
+            ['train_001', 'Train', 'At-risk account scan', 'Detect churn risk from usage drops, support history, renewal timing, and stakeholder signals.'],
+            ['train_002', 'Train', 'Retention playbook selection', 'Choose a save motion based on contract value, adoption pattern, and open issues.'],
+            ['train_003', 'Train', 'Customer health explanation', 'Turn mixed account signals into a clear health score rationale.'],
+            ['train_004', 'Train', 'Renewal objection map', 'Connect cancellation language to the right product, price, or support concern.'],
+            ['train_005', 'Train', 'Win-back segmenting', 'Identify which former customers are realistic candidates for reactivation.'],
+            ['test_001', 'Test', 'Executive churn brief', 'Summarize why a customer may leave and which actions are most time-sensitive.'],
+            ['test_002', 'Test', 'Usage-cohort comparison', 'Compare similar customers to separate normal seasonality from real disengagement.'],
+            ['test_003', 'Test', 'Retention owner assignment', 'Route each account to the correct success, sales, or support owner.'],
+            ['test_004', 'Test', 'Cancellation pattern review', 'Extract repeated churn drivers from a set of recent customer records.'],
+            ['test_005', 'Test', 'Save-plan prioritization', 'Rank at-risk customers by revenue impact and probability of recovery.']
+          ],
+          '005': [
+            ['train_001', 'Train', 'Expense-policy audit', 'Check employee expenses against category rules, limits, receipts, and approval status.'],
+            ['train_002', 'Train', 'Month-end close cleanup', 'Find close blockers caused by unmatched invoices, late approvals, or miscoded items.'],
+            ['train_003', 'Train', 'Vendor invoice exception', 'Resolve invoice mismatches by comparing purchase, receipt, and payment records.'],
+            ['train_004', 'Train', 'Card-spend reconciliation', 'Match card transactions to employees, projects, and policy-compliant documentation.'],
+            ['train_005', 'Train', 'Accrual review', 'Identify expenses that should be accrued before the reporting period closes.'],
+            ['test_001', 'Test', 'Late expense triage', 'Decide which late claims can be approved and which need finance follow-up.'],
+            ['test_002', 'Test', 'Close variance explanation', 'Explain budget variance using invoices, expense categories, and timing differences.'],
+            ['test_003', 'Test', 'Duplicate payment check', 'Detect duplicate or suspicious payments across similar vendor records.'],
+            ['test_004', 'Test', 'Department spend review', 'Summarize spend exceptions for a department head before close.'],
+            ['test_005', 'Test', 'Approval-chain repair', 'Find missing approvals and route finance items to the correct approver.']
+          ],
+          '006': [
+            ['train_001', 'Train', 'Purchase-order matching', 'Match requested items, POs, receipts, and supplier invoices.'],
+            ['train_002', 'Train', 'Supplier onboarding check', 'Verify required vendor records, tax forms, risk flags, and payment terms.'],
+            ['train_003', 'Train', 'Receiving discrepancy', 'Resolve quantity or item mismatches between warehouse receipt and purchase order.'],
+            ['train_004', 'Train', 'Vendor performance review', 'Compare late deliveries, defect notes, and contract terms for supplier follow-up.'],
+            ['train_005', 'Train', 'Emergency reorder decision', 'Determine whether a rush purchase is justified by demand and stock status.'],
+            ['test_001', 'Test', 'Invoice hold release', 'Decide what evidence is needed before releasing a blocked supplier invoice.'],
+            ['test_002', 'Test', 'Supplier substitution request', 'Evaluate an alternate supplier using price, availability, and compliance context.'],
+            ['test_003', 'Test', 'Partial receipt reconciliation', 'Update receiving status when only part of a purchase order arrives.'],
+            ['test_004', 'Test', 'Procurement exception summary', 'Prepare a clean exception list for finance and operations review.'],
+            ['test_005', 'Test', 'Contract-term validation', 'Check whether a purchasing decision follows negotiated supplier terms.']
+          ],
+          '007': [
+            ['train_001', 'Train', 'Stockout prevention', 'Spot items at risk of stockout and recommend reorder priorities.'],
+            ['train_002', 'Train', 'Order allocation review', 'Allocate limited inventory across customer orders using priority and due dates.'],
+            ['train_003', 'Train', 'Warehouse transfer plan', 'Move stock between locations to cover demand without creating new gaps.'],
+            ['train_004', 'Train', 'Backorder communication', 'Summarize delayed orders and prepare accurate customer-facing status updates.'],
+            ['train_005', 'Train', 'Fulfillment exception audit', 'Identify orders blocked by address, payment, inventory, or shipping issues.'],
+            ['test_001', 'Test', 'Demand spike response', 'Decide how to fulfill urgent demand when inventory is split across sites.'],
+            ['test_002', 'Test', 'Aged inventory cleanup', 'Find slow-moving items and suggest transfer, markdown, or hold actions.'],
+            ['test_003', 'Test', 'Shipment priority queue', 'Rank open shipments by service level, customer importance, and promised date.'],
+            ['test_004', 'Test', 'Inventory count variance', 'Explain count differences using recent receipts, shipments, and adjustments.'],
+            ['test_005', 'Test', 'Order rescue plan', 'Create the next best action for orders that are close to missing fulfillment SLA.']
+          ],
+          '008': [
+            ['train_001', 'Train', 'Tax-sensitive income review', 'Assess income, deductions, and deadlines before recommending planning steps.'],
+            ['train_002', 'Train', 'Estate document checklist', 'Identify missing estate-planning documents and beneficiary conflicts.'],
+            ['train_003', 'Train', 'Retirement cash-flow snapshot', 'Summarize assets, spending, and timeline to guide retirement advice.'],
+            ['train_004', 'Train', 'Capital-gains planning', 'Evaluate realized gains, holding periods, and tax-loss harvesting opportunities.'],
+            ['train_005', 'Train', 'Family advisory brief', 'Turn scattered household records into an adviser-ready planning memo.'],
+            ['test_001', 'Test', 'Year-end tax action list', 'Prioritize tax moves before filing or year-end deadlines.'],
+            ['test_002', 'Test', 'Trust and beneficiary review', 'Spot mismatches between estate wishes, account titling, and beneficiary records.'],
+            ['test_003', 'Test', 'Liquidity-needs analysis', 'Determine whether planned withdrawals can cover spending without disrupting strategy.'],
+            ['test_004', 'Test', 'Charitable giving scenario', 'Compare charitable options using tax impact, timing, and portfolio context.'],
+            ['test_005', 'Test', 'Adviser meeting prep', 'Prepare the key questions and recommendations for a personal finance review.']
+          ],
+          '009': [
+            ['train_001', 'Train', 'Revenue-forecast refresh', 'Update a forecast from actuals, pipeline changes, and seasonality notes.'],
+            ['train_002', 'Train', 'Operating KPI deck', 'Choose the right metrics and explain movement for a management update.'],
+            ['train_003', 'Train', 'Budget variance bridge', 'Explain the difference between plan and actuals across drivers.'],
+            ['train_004', 'Train', 'Scenario model check', 'Evaluate upside and downside assumptions for a business scenario.'],
+            ['train_005', 'Train', 'Monthly report QA', 'Find inconsistent totals, stale assumptions, and narrative gaps in a report.'],
+            ['test_001', 'Test', 'Board metric summary', 'Turn operating data into a concise performance narrative for leadership.'],
+            ['test_002', 'Test', 'Forecast-risk callout', 'Identify which assumptions create the largest risk to the next forecast.'],
+            ['test_003', 'Test', 'Department model reconciliation', 'Align headcount, spend, and revenue assumptions across operating teams.'],
+            ['test_004', 'Test', 'Executive variance note', 'Explain a surprising variance without overclaiming from incomplete data.'],
+            ['test_005', 'Test', 'Report correction plan', 'Prioritize corrections needed before a financial model can be shared.']
+          ],
+          '010': [
+            ['train_001', 'Train', 'Portfolio risk scan', 'Measure concentration, drawdown exposure, and asset-class imbalance.'],
+            ['train_002', 'Train', 'Rebalancing recommendation', 'Suggest trades that bring a portfolio closer to target allocation.'],
+            ['train_003', 'Train', 'Investment memo review', 'Compare thesis, risk, valuation, and time horizon before recommending action.'],
+            ['train_004', 'Train', 'Stress-scenario summary', 'Explain how a portfolio might behave under rate, inflation, or market shocks.'],
+            ['train_005', 'Train', 'Manager due-diligence notes', 'Summarize performance, fees, mandate fit, and red flags for a fund manager.'],
+            ['test_001', 'Test', 'Risk-budget adjustment', 'Decide how to adjust exposure when risk budget or client constraints change.'],
+            ['test_002', 'Test', 'Portfolio drift diagnosis', 'Find which positions caused allocation drift and what to do next.'],
+            ['test_003', 'Test', 'Strategy comparison brief', 'Compare candidate strategies using return drivers and downside controls.'],
+            ['test_004', 'Test', 'Liquidity stress review', 'Check whether portfolio liquidity matches expected withdrawal needs.'],
+            ['test_005', 'Test', 'Committee-ready recommendation', 'Prepare an investment action with supporting risk and rationale.']
+          ],
+          '011': [
+            ['train_001', 'Train', 'Borrower risk summary', 'Review financials, collateral, covenants, and recent performance for credit risk.'],
+            ['train_002', 'Train', 'Loan exception triage', 'Identify missing documents and policy exceptions before committee review.'],
+            ['train_003', 'Train', 'Covenant breach analysis', 'Explain whether a borrower has breached terms and what mitigation is needed.'],
+            ['train_004', 'Train', 'Lending memo preparation', 'Condense borrower strengths, weaknesses, and proposed terms into a committee memo.'],
+            ['train_005', 'Train', 'Portfolio watchlist update', 'Rank credits by deterioration signals and required monitoring actions.'],
+            ['test_001', 'Test', 'Renewal credit review', 'Assess whether a loan renewal fits risk appetite and updated borrower data.'],
+            ['test_002', 'Test', 'Collateral sufficiency check', 'Evaluate collateral coverage under updated values and outstanding exposure.'],
+            ['test_003', 'Test', 'Committee question pack', 'Prepare likely committee questions from weaknesses in the credit file.'],
+            ['test_004', 'Test', 'Risk-rating adjustment', 'Decide whether borrower risk rating should change based on new signals.'],
+            ['test_005', 'Test', 'Approval-condition drafting', 'Write clear conditions needed before credit approval can proceed.']
+          ],
+          '012': [
+            ['train_001', 'Train', 'Onboarding readiness audit', 'Check whether a new hire has the right documents, systems, and manager actions.'],
+            ['train_002', 'Train', 'Leave-policy interpretation', 'Apply company policy to a leave request with timing and eligibility constraints.'],
+            ['train_003', 'Train', 'Compensation-change routing', 'Route a pay or role change through the correct approval and record updates.'],
+            ['train_004', 'Train', 'Employee-relations case summary', 'Summarize a sensitive HR case with facts, dates, and required next steps.'],
+            ['train_005', 'Train', 'Offboarding checklist repair', 'Find missing offboarding actions across IT, payroll, manager, and compliance.'],
+            ['test_001', 'Test', 'Internal transfer review', 'Validate transfer eligibility and identify changes needed in HR systems.'],
+            ['test_002', 'Test', 'Policy exception decision', 'Decide whether an exception request fits documented HR policy and precedent.'],
+            ['test_003', 'Test', 'Performance-cycle cleanup', 'Identify missing reviews, calibration blockers, and manager follow-ups.'],
+            ['test_004', 'Test', 'Benefits enrollment case', 'Resolve benefit eligibility and enrollment timing from employee records.'],
+            ['test_005', 'Test', 'Termination-risk handoff', 'Prepare a compliant handoff for a complex employee exit.']
+          ]
+        };
+        function closeTaskDetails() {
+          document.querySelectorAll('.tg-row.is-open').forEach(function (row) {
+            row.classList.remove('is-open');
+            row.setAttribute('aria-expanded', 'false');
+          });
+          document.querySelectorAll('.tg-detail').forEach(function (detail) { detail.remove(); });
+        }
+        function appendTaskText(parent, text, className) {
+          var node = document.createElement('span');
+          node.className = className;
+          node.textContent = text;
+          parent.appendChild(node);
+        }
+        function openTaskDetails(row) {
+          var groupId = row.getAttribute('data-task-group');
+          var tasks = taskTopics[groupId] || [];
+          var wasOpen = row.classList.contains('is-open');
+          closeTaskDetails();
+          if (wasOpen || !tasks.length) return;
+
+          row.classList.add('is-open');
+          row.setAttribute('aria-expanded', 'true');
+
+          var detail = document.createElement('div');
+          detail.className = 'tg-detail';
+          detail.id = 'task-detail-' + groupId;
+
+          var head = document.createElement('div');
+          head.className = 'tg-detail-head';
+          head.innerHTML = '<strong>' + lang('Task themes', 'Task 主题') + '</strong><span>' + lang('5 train · 5 test', '5 个 train · 5 个 test') + '</span>';
+          detail.appendChild(head);
+
+          var sets = document.createElement('div');
+          sets.className = 'task-sets';
+          [
+            ['Train', lang('train', 'train'), lang('5 examples', '5 个样例')],
+            ['Test', lang('test', 'test'), lang('5 held-out', '5 个 held-out')]
+          ].forEach(function (setInfo) {
+            var set = document.createElement('section');
+            set.className = 'task-set task-set-' + setInfo[0].toLowerCase();
+            var setHead = document.createElement('div');
+            setHead.className = 'task-set-head';
+            setHead.innerHTML = '<strong>' + setInfo[1] + '</strong><span>' + setInfo[2] + '</span>';
+            set.appendChild(setHead);
+
+            var list = document.createElement('div');
+            list.className = 'task-list';
+            tasks.filter(function (task) { return task[1] === setInfo[0]; }).forEach(function (task) {
+              var item = document.createElement('div');
+              var taskNo = String(parseInt(task[0].split('_')[1], 10)).padStart(2, '0');
+              item.className = 'task-item';
+              appendTaskText(item, 'task ' + taskNo, 'task-id');
+              appendTaskText(item, task[2], 'task-title');
+              appendTaskText(item, task[3], 'task-desc');
+              list.appendChild(item);
+            });
+            set.appendChild(list);
+            sets.appendChild(set);
+          });
+          detail.appendChild(sets);
+          row.setAttribute('aria-controls', detail.id);
+          row.insertAdjacentElement('afterend', detail);
+        }
+        document.querySelectorAll('.tg-row[data-task-group]').forEach(function (row) {
+          row.setAttribute('role', 'button');
+          row.setAttribute('tabindex', '0');
+          row.setAttribute('aria-expanded', 'false');
+          row.addEventListener('click', function () { openTaskDetails(row); });
+          row.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              openTaskDetails(row);
+            }
+          });
         });
 
         // Reveal bar chart on scroll

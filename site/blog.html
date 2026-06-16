@@ -20,8 +20,12 @@
           document.documentElement.setAttribute('data-lang', lang);
           document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-Hans' : 'en');
           var st = localStorage.getItem('gdpevo-theme');
-          var theme = st || ((window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+          var choice = (st === 'light' || st === 'dark' || st === 'system') ? st : 'system';
+          var theme = choice === 'system'
+            ? ((window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light')
+            : choice;
           document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.setAttribute('data-theme-choice', choice);
         } catch (e) {}
       })();
     </script>
@@ -39,21 +43,26 @@
           </span>
           <span class="brand-name">GDP<span class="brand-accent">evo</span></span>
         </a>
-        <nav class="nav-links" aria-label="Primary">
-          <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">首页</span></a>
-        </nav>
         <div class="nav-right">
-          <a class="nav-tab is-active" href="blog.html">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10" stroke-linecap="round"/></svg>
-            <span class="lang-en">Blog</span><span class="lang-zh">博客</span>
-          </a>
-          <button type="button" class="icon-link theme-btn" id="theme-toggle" aria-label="Toggle light/dark theme">
-            <svg class="ic-moon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z" stroke-linejoin="round"/></svg>
-            <svg class="ic-sun" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4" stroke-linecap="round"/></svg>
-          </button>
-          <button type="button" class="lang-btn" id="lang-toggle" aria-label="Switch language">
-            <span class="lang-en">中文</span><span class="lang-zh">EN</span>
-          </button>
+          <nav class="page-nav" aria-label="Primary">
+            <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">首页</span></a>
+            <a class="is-active" href="blog.html"><span class="lang-en">Blog</span><span class="lang-zh">博客</span></a>
+          </nav>
+          <div class="theme-segment" role="group" aria-label="Color theme">
+            <button type="button" class="theme-choice" data-theme-choice="light" aria-label="Light theme" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" class="theme-choice" data-theme-choice="dark" aria-label="Dark theme" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="theme-choice" data-theme-choice="system" aria-label="Use system theme" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.8"/><path d="M9 20h6M12 16v4" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div class="lang-segment" role="group" aria-label="Language">
+            <button type="button" class="lang-choice" data-lang-choice="en" aria-label="English" aria-pressed="false">EN</button>
+            <button type="button" class="lang-choice" data-lang-choice="zh" aria-label="Chinese" aria-pressed="false">ZH</button>
+          </div>
           <a class="icon-link" href="https://github.com/Prism-Shadow/GDPevo" aria-label="GitHub repository">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.41-1.27.74-1.56-2.56-.29-5.26-1.28-5.26-5.71 0-1.26.45-2.3 1.19-3.11-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.19a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.19 3.17-1.19.63 1.59.23 2.76.11 3.05.74.81 1.19 1.85 1.19 3.11 0 4.44-2.7 5.42-5.27 5.7.42.37.8 1.09.8 2.2v3.26c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
           </a>
@@ -65,7 +74,6 @@
       <!-- ===================== ARTICLE HEADER ===================== -->
       <section class="section blog-head">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">Blog · 2026 · PrismShadow team</span><span class="lang-zh">博客 · 2026 · PrismShadow 团队</span></p>
           <h1 class="h2 blog-title">
             <span class="lang-en">Measuring Agent Self-Evolution on Real Business Work</span>
             <span class="lang-zh">在真实业务工作上衡量 Agent 的自我进化</span>
@@ -85,7 +93,6 @@
       <!-- ===================== 1 · GDP-WORTHY TASKS ===================== -->
       <section class="section" id="tasks">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">1 · GDP-worthy tasks</span><span class="lang-zh">1 · 真实业务任务</span></p>
           <h2 class="h2"><span class="lang-en">GDP-worthy tasks, not exam questions.</span><span class="lang-zh">真实业务任务，不是考试题。</span></h2>
           <div class="oneline">
             <p><span class="lang-en"><b>In one line:</b> most agent benchmarks test agents on neat, self-contained problems.
@@ -104,14 +111,14 @@
               and Finance, seeded from public sources of real-job tasks such as
               <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener">GDPVal</a> and
               <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener">SOP-Bench</a>. Every group
-              looks like a real company's working surface — web consoles, APIs, databases, ledgers — with plenty of lookalike
+              looks like a real company's working interface — web consoles, APIs, databases, ledgers — with plenty of lookalike
               records mixed in to throw a careless agent off. The agent has to find the right invoice in a real-feeling system,
               not pick from a clean prompt with the answer already filtered for it.</span>
               <span class="lang-zh">GDPevo 的任务都是<strong>真正会动钱</strong>的工作：把一场展会的赞助情况在 CRM、财务和胸卡系统三方对账；
               根据收货记录决定一张供应商发票要不要付；为小企业贷款审议会准备一份 credit memo。一共 12 个 task group，覆盖 CRM、ERP 和 Finance 三大类，
               场景来自像 <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener">GDPVal</a> 和
               <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener">SOP-Bench</a> 这样的真实工作任务源。
-              每一组 task group 看起来都像一家真实公司的工作面：Web 控制台、API、数据库、账本，并且故意混入了一堆"长得很像但不是答案"的干扰记录，
+              每一组 task group 看起来都像一家真实公司的业务接口：Web 控制台、API、数据库、账本，并且故意混入了一堆"长得很像但不是答案"的干扰记录，
               把粗心的 agent 引偏。Agent 必须在一个像真实公司的系统里找到那张正确的发票，而不是从一段已经替它筛过答案的干净 prompt 里挑。</span></p>
             <p class="prose-link"><a href="index.html#tasks"><span class="lang-en">See all 12 task groups →</span><span class="lang-zh">查看全部 12 个 task group →</span></a></p>
           </div>
@@ -121,7 +128,6 @@
       <!-- ===================== 2 · SELF-EVOLUTION ===================== -->
       <section class="section band" id="evolution">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">2 · The capability we care about</span><span class="lang-zh">2 · 我们关心的能力</span></p>
           <h2 class="h2"><span class="lang-en">Self-evolution is the capability we care about.</span><span class="lang-zh">我们关心的能力：自我进化。</span></h2>
           <div class="oneline">
             <p><span class="lang-en"><b>In one line:</b> an agent that solves 100 unrelated tasks tells us almost nothing about
@@ -157,24 +163,24 @@
           </div>
           <div class="cards3">
             <article class="method">
-              <code class="m-code">no_skill</code>
+              <code class="m-code">base</code>
               <h3><span class="lang-en">Cold start</span><span class="lang-zh">裸做</span></h3>
               <p><span class="lang-en">The agent goes in cold, with no prior training tasks and no skill notes.</span><span class="lang-zh">agent 裸做，没有任何先验任务，也没有 skill 笔记。</span></p>
             </article>
             <article class="method method-accent">
-              <code class="m-code">demonstration_skill</code>
+              <code class="m-code">demo</code>
               <h3><span class="lang-en">Learn from worked examples</span><span class="lang-zh">从样例中学习</span></h3>
               <p><span class="lang-en">The agent reads the train inputs and answers and writes a reusable skill from them — the way a new analyst might if shown a folder of worked examples.</span><span class="lang-zh">agent 看完 train 的输入和答案后，自己总结写出一份可复用的 skill —— 就像新分析师拿到一沓"做好的样例"翻一翻、整理出工作笔记。</span></p>
             </article>
             <article class="method method-accent">
-              <code class="m-code">reflection_skill</code>
+              <code class="m-code">reflect</code>
               <h3><span class="lang-en">Learn from its own mistakes</span><span class="lang-zh">从自己的错误中学习</span></h3>
               <p><span class="lang-en">The agent first attempts the train tasks blind, gets graded, and reflects on its mistakes before writing the skill — closer to how a person actually learns on the job.</span><span class="lang-zh">agent 先盲做 train task，被对答案打分后反思自己错在哪里，再据此写 skill —— 这更接近一个人真正在岗位上学习的方式。</span></p>
             </article>
           </div>
           <p class="note">
-            <span class="lang-en">The number we care about is the <strong>lift</strong> from <code>no_skill</code> to the skill settings on tasks the skill-writer never saw.</span>
-            <span class="lang-zh">我们关心的指标，是从 <code>no_skill</code> 到 skill 设定下的 <strong>lift</strong>（提升）—— 而且是测在 skill-writer 没见过的 test 任务上的提升。</span>
+            <span class="lang-en">The number we care about is the <strong>lift</strong> from <code>base</code> to the skill settings on tasks the skill-writer never saw.</span>
+            <span class="lang-zh">我们关心的指标，是从 <code>base</code> 到 skill 设定下的 <strong>lift</strong>（提升）—— 而且是测在 skill-writer 没见过的 test 任务上的提升。</span>
           </p>
         </div>
       </section>
@@ -182,7 +188,6 @@
       <!-- ===================== 3 · CONSTRUCTION ===================== -->
       <section class="section" id="construction">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">3 · How the dataset is built</span><span class="lang-zh">3 · 数据集是怎么构造的</span></p>
           <h2 class="h2"><span class="lang-en">Hidden rules, spread across the train tasks.</span><span class="lang-zh">隐藏规则，分散到各个 train task 里。</span></h2>
           <div class="oneline">
             <p><span class="lang-en"><b>In one line:</b> if we want to know whether the agent really learned something, the
@@ -220,7 +225,7 @@
           </div>
           <p class="lead">
             <span class="lang-en">Every task group in GDPevo was built and reviewed by Codex agents — no hand-written tasks,
-              no hand-written graders. GDPevo is, in part, a small working demonstration of that loop: a curriculum that agents
+              no hand-written graders. GDPevo is, in part, a small working example of that loop: a curriculum that agents
               can both consume and create.</span>
             <span class="lang-zh">GDPevo 里的每一组 task group 都是 Codex agent 构造和审核的 —— 没有人手写任务，也没有人手写打分逻辑。
               GDPevo 在某种意义上就是这个闭环的小型工作样例：一份 agent 既能消费、也能创建的 curriculum。</span>
@@ -234,7 +239,6 @@
       <!-- ===================== 4 · GRADING ===================== -->
       <section class="section band" id="grading">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">4 · How the benchmark is used</span><span class="lang-zh">4 · 这个 benchmark 怎么用</span></p>
           <h2 class="h2"><span class="lang-en">Grading is rule-based, not "ask another LLM".</span><span class="lang-zh">评分基于规则，而不是"再叫一个 LLM 来判"。</span></h2>
           <div class="oneline">
             <p><span class="lang-en"><b>In one line:</b> using another LLM as the judge is convenient but quietly unreliable on
@@ -258,7 +262,6 @@
       <!-- ===================== 5 · COST ===================== -->
       <section class="section" id="cost">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">Cost reported alongside accuracy</span><span class="lang-zh">Cost 和 accuracy 一起报告</span></p>
           <h2 class="h2"><span class="lang-en">Useful experience buys accuracy by spending fewer tokens.</span><span class="lang-zh">有用的经验，用更少的 token 换来准确率。</span></h2>
           <div class="oneline">
             <p><span class="lang-en"><b>In one line:</b> a useful agent is not just one that gets the right answer. It is one that
@@ -283,9 +286,9 @@
                 <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
                 <span class="num">avg@3</span><span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span><span class="num">USD</span>
               </div>
-              <div class="ht-row"><code>no_skill</code><span class="num">48.35%</span><span class="num">709.2</span><span class="num">1.08</span></div>
-              <div class="ht-row"><code>demonstration</code><span class="num">65.99%</span><span class="num">466.1</span><span class="num">0.81</span></div>
-              <div class="ht-row best"><code>reflection</code><span class="num">67.13%</span><span class="num">458.7</span><span class="num">0.79</span></div>
+              <div class="ht-row"><code>base</code><span class="num">48.35%</span><span class="num">709.2</span><span class="num">1.08</span></div>
+              <div class="ht-row"><code>demo</code><span class="num">65.99%</span><span class="num">466.1</span><span class="num">0.81</span></div>
+              <div class="ht-row best"><code>reflect</code><span class="num">67.13%</span><span class="num">458.7</span><span class="num">0.79</span></div>
             </div>
             <div class="htable">
               <div class="ht-cap">
@@ -296,19 +299,19 @@
                 <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
                 <span class="num">avg@3</span><span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span><span class="num">USD</span>
               </div>
-              <div class="ht-row"><code>no_skill</code><span class="num">49.11%</span><span class="num">376.8</span><span class="num">0.61</span></div>
-              <div class="ht-row best"><code>demonstration</code><span class="num">70.90%</span><span class="num">340.8</span><span class="num">0.55</span></div>
-              <div class="ht-row"><code>reflection</code><span class="num">67.94%</span><span class="num">331.9</span><span class="num">0.56</span></div>
+              <div class="ht-row"><code>base</code><span class="num">49.11%</span><span class="num">376.8</span><span class="num">0.61</span></div>
+              <div class="ht-row best"><code>demo</code><span class="num">70.90%</span><span class="num">340.8</span><span class="num">0.55</span></div>
+              <div class="ht-row"><code>reflect</code><span class="num">67.94%</span><span class="num">331.9</span><span class="num">0.56</span></div>
             </div>
           </div>
           <p class="note">
             <span class="lang-en">On one task group — operational financial modeling — Codex went from <strong>42.76% to 92.47%</strong>
-              with fewer tokens than cold start; on the same group, Claude Code's <code>demonstration_skill</code> reached
+              with fewer tokens than cold start; on the same group, Claude Code's <code>demo</code> reached
               <strong>100%, up from 51.76%</strong>. Board-level summaries put skill-based evolution at
               <strong>+20.31 points / −8.69% cost</strong> for Claude Code, and <strong>+18.21 points / −25.75% cost</strong> for
               Codex.</span>
             <span class="lang-zh">在一组任务上 —— operational financial modeling —— Codex 从 <strong>42.76% 提升到 92.47%</strong>，且花的 token 比冷启动还少；
-              同一组上，Claude Code 的 <code>demonstration_skill</code> 这次达到了 <strong>100%，起点是 51.76%</strong>。Board 口径汇总：Claude Code 是
+              同一组上，Claude Code 的 <code>demo</code> 这次达到了 <strong>100%，起点是 51.76%</strong>。Board 口径汇总：Claude Code 是
               <strong>+20.31 个百分点 / −8.69% cost</strong>，Codex 是 <strong>+18.21 个百分点 / −25.75% cost</strong>。</span>
           </p>
           <p class="prose-link"><a href="index.html#results"><span class="lang-en">See the per-group breakdown on the homepage →</span><span class="lang-zh">在首页查看逐组的明细 →</span></a></p>
@@ -318,7 +321,6 @@
       <!-- ===================== 5 · EASY TO USE ===================== -->
       <section class="section" id="usage">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">5 · Easy to use</span><span class="lang-zh">5 · 用起来很简单</span></p>
           <h2 class="h2"><span class="lang-en">A natural-language workspace, driven end-to-end by agents.</span><span class="lang-zh">一个基于自然语言的工作区，从头到尾由 agent 驱动。</span></h2>
           <div class="oneline">
             <p><span class="lang-en"><b>In one line:</b> there is no SDK to learn and no glue code to write. You point a coding
@@ -344,15 +346,14 @@
       <!-- ===================== INVITATION ===================== -->
       <section class="section band" id="invite">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">An invitation</span><span class="lang-zh">邀请</span></p>
           <h2 class="h2"><span class="lang-en">GDPevo is a seed, not a finished product.</span><span class="lang-zh">GDPevo 是一颗种子，不是一件成品。</span></h2>
           <div class="prose">
             <p><span class="lang-en">The tasks, environments, graders, generated skills, and full reports are open. Bring your own
-              agents and scenarios. Submit harder hidden rules. The goal is not a leaderboard, but a public surface where agents
+              agents and scenarios. Submit harder hidden rules. The goal is not a leaderboard, but a public interface where agents
               that actually do productive work can be trained — and where the evidence of that improvement is open to
               inspection.</span>
               <span class="lang-zh">任务、环境、grader、生成的 skill 包、完整 report 都是开放的。欢迎带上你自己的 agent、你自己的业务场景，欢迎来挑战、欢迎提交更难的隐藏规则。
-              我们的目标不是一张 leaderboard，而是一个公共的 surface —— 让真正能干生产力工作的 agent 在这里被训练出来，并且这种"它真的变好了"的证据可以被任何人审计。</span></p>
+              我们的目标不是一张 leaderboard，而是一个公共接口 —— 让真正能干生产力工作的 agent 在这里被训练出来，并且这种"它真的变好了"的证据可以被任何人审计。</span></p>
           </div>
           <div class="btn-row" style="margin-top:2rem">
             <a class="btn btn-dark" href="https://github.com/Prism-Shadow/GDPevo"><span>GitHub</span></a>
@@ -382,23 +383,44 @@
 
     <script>
       (function () {
-        var btn = document.getElementById('lang-toggle');
         function setLang(lang) {
           document.documentElement.setAttribute('data-lang', lang);
           document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-Hans' : 'en');
+          document.querySelectorAll('[data-lang-choice]').forEach(function (b) {
+            var on = b.getAttribute('data-lang-choice') === lang;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
           try { localStorage.setItem('gdpevo-lang', lang); } catch (e) {}
         }
-        if (btn) btn.addEventListener('click', function () {
-          var cur = document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
-          setLang(cur === 'zh' ? 'en' : 'zh');
+        document.querySelectorAll('[data-lang-choice]').forEach(function (b) {
+          b.addEventListener('click', function () { setLang(b.getAttribute('data-lang-choice')); });
         });
-        var tb = document.getElementById('theme-toggle');
-        if (tb) tb.addEventListener('click', function () {
-          var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-          var nx = cur === 'dark' ? 'light' : 'dark';
-          document.documentElement.setAttribute('data-theme', nx);
-          try { localStorage.setItem('gdpevo-theme', nx); } catch (e) {}
+        setLang(document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en');
+        var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+        function resolveTheme(choice) {
+          return choice === 'system' ? ((mq && mq.matches) ? 'dark' : 'light') : choice;
+        }
+        function setThemeChoice(choice) {
+          if (choice !== 'light' && choice !== 'dark' && choice !== 'system') choice = 'system';
+          document.documentElement.setAttribute('data-theme', resolveTheme(choice));
+          document.documentElement.setAttribute('data-theme-choice', choice);
+          document.querySelectorAll('[data-theme-choice]').forEach(function (b) {
+            var on = b.getAttribute('data-theme-choice') === choice;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          try { localStorage.setItem('gdpevo-theme', choice); } catch (e) {}
+        }
+        document.querySelectorAll('[data-theme-choice]').forEach(function (b) {
+          b.addEventListener('click', function () { setThemeChoice(b.getAttribute('data-theme-choice')); });
         });
+        setThemeChoice(document.documentElement.getAttribute('data-theme-choice') || 'system');
+        if (mq && mq.addEventListener) {
+          mq.addEventListener('change', function () {
+            if (document.documentElement.getAttribute('data-theme-choice') === 'system') setThemeChoice('system');
+          });
+        }
         var copy = document.getElementById('copy-btn');
         if (copy) copy.addEventListener('click', function () {
           var text = document.getElementById('bib').innerText;

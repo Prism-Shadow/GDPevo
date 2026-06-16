@@ -27,6 +27,23 @@ task_group/<task_group_id>/
 
 同时用运行时的 base URL + API key 列一下 agent（`panofy.agents.list()`；不消耗 points）确认 Panofy 连通性。
 
+## 2.5. 遵守 Panofy 并发上限
+
+Panofy 对同一个 API key 有**全局最多 10 个活跃 task / 进程**的限制。
+训练（`train()`）和推理（`predict()`）都会计入这个上限；使用同一个 key
+的所有 task-group workspace 共享这 10 个名额。
+
+启动任务前，要让所有 Panofy 调用走同一个队列，或者显式分批运行。如果待
+运行的 train / predict 调用超过 10 个，只提交第一批，等活跃任务结束后
+再提交下一批。不要让多个 task-group workspace 各自开互不协调的 worker
+池。
+
+训练时，遇到并发上限错误后不要反复重跑完整的一站式 `train()` 流程：
+这个流程会先创建新 agent，再启动训练；whole-flow retry 会留下大量重复
+的 orphan agents。推荐每个 `(condition, attempt)` 只创建一次 agent，先
+把它记录为 prepared，然后只重试训练启动 / 轮询步骤。如果决定放弃某个
+prepared agent，先用 SDK 删除它，再创建替代 agent。
+
 ## 3. 指向远程环境
 
 训练好的 agent 运行在远端、**可以发起外网 HTTP 请求**，但够不到本地服务。因此任务环境部署在**启动 prompt 给出的远程 URL** 上。你把这个 URL 注入每次 `FUNC_INPUT` 的 `api_base_url`；agent 据此对 task prompt 里点名的端点发起 GET。
@@ -58,7 +75,7 @@ scratch/materials/reflect/attempt_01/
 
 每个 test task 独立运行 3 次。`attempt_<nn>` 的 solver 是训练为 `attempt_<nn>` 的 `base` agent。每次 `predict()` 只收到该 test task 的官方 `FUNC_INPUT`——`task_id`、`prompt`、`api_base_url`、`answer_template`——以及允许的远程 env URL。
 
-**一次只答一个、逐个顺序跑（三个条件都适用）：** 每次 `predict()` 只回答一个 test task，5 个 test 一个一个来——不要把多个任务塞进同一次输入，也不要并发发起 predict。平台对并发任务有上限，重叠运行会失败。
+**注意失败并重试（三个条件都适用）：** 因为并发等平台限制，可能会有部分 `predict()` 失败；要注意每次 `predict()` 是否完成，失败的话要重试。
 
 建议记录布局：
 

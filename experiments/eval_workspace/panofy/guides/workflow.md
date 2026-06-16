@@ -39,6 +39,25 @@ Confirm the workspace contains exactly one task group and that it includes:
 Also confirm Panofy connectivity with the run-time base URL + API key by listing
 agents (`panofy.agents.list()`; this spends no points).
 
+## 2.5. Respect The Panofy Concurrency Limit
+
+Panofy has a **global limit of at most 10 active tasks/processes per API key**.
+Both training (`train()`) and inference (`predict()`) count toward this limit,
+and the limit is shared across every task-group workspace using the same key.
+
+Before launching work, coordinate all Panofy calls through a single queue or run
+them in batches. If more than 10 train/predict calls are pending, submit only the
+first batch, wait for active tasks to finish, then submit the next batch. Do not
+let multiple task-group workspaces each start their own uncoordinated worker
+pool.
+
+For training, avoid retrying the full one-shot `train()` flow after a
+concurrency-limit error: that flow creates a new agent before it starts
+training, so whole-flow retries can leave many duplicate orphan agents. Prefer
+creating each `(condition, attempt)` agent once, recording it as prepared, and
+retrying only the training kickoff / polling step. If you decide to abandon a
+prepared agent, delete it with the SDK before creating a replacement.
+
 ## 3. Point At The Remote Environment
 
 The trained agent runs remotely and **can make outbound HTTP requests**, but it
@@ -90,11 +109,9 @@ Run each test task independently 3 times. The solver for `attempt_<nn>` is the
 official test `FUNC_INPUT` — `task_id`, `prompt`, `api_base_url`,
 `answer_template` — and the allowed remote env URL.
 
-**One question per call, run sequentially (applies to all three conditions):**
-answer exactly one test task per `predict()` call, and run the 5 test tasks one
-at a time — do not put multiple tasks in a single input, and do not fire
-predicts concurrently. The platform caps concurrent tasks, so overlapping runs
-fail.
+**Watch for failed runs and retry (applies to all three conditions):** because
+of concurrency and other platform limits, some `predict()` calls may fail. Check
+whether each `predict()` actually completed, and retry any that failed.
 
 Recommended record layout:
 
