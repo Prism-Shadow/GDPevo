@@ -225,12 +225,9 @@
             <span class="lang-zh">GDPevo 里的每一组 task group 都是 Codex agent 构造和审核的 —— 没有人手写任务，也没有人手写打分逻辑。
               GDPevo 在某种意义上就是这个闭环的小型工作样例：一份 agent 既能消费、也能创建的 curriculum。</span>
           </p>
-          <div class="stepper">
-            <div class="step"><span class="step-n">01</span><h3><span class="lang-en">Task factory</span><span class="lang-zh">任务工厂</span></h3><p><span class="lang-en">A task-factory agent writes the environment, the tasks, and the graders.</span><span class="lang-zh">一个 task-factory agent 负责写环境、写任务、写 grader。</span></p></div>
-            <div class="step"><span class="step-n">02</span><h3><span class="lang-en">Calibration</span><span class="lang-zh">难度校准</span></h3><p><span class="lang-en">A calibration agent checks that cold start is low enough to leave room to grow, and that skills produce a meaningful lift; misses go back for rework.</span><span class="lang-zh">一个 calibration agent 检查冷启动分数足够低、且 skill 能带来有意义的提升；不达标的会被打回返工。</span></p></div>
-            <div class="step"><span class="step-n">03</span><h3><span class="lang-en">Review panel</span><span class="lang-zh">审核小组</span></h3><p><span class="lang-en">A panel of 6 reviewer agents — each starting fresh, no prior context — audits each group. 5 of 6 must pass.</span><span class="lang-zh">一组 6 个互不通气、上下文干净的 reviewer agent 审核每个 task group。6 个里有 5 个通过才行。</span></p></div>
-            <div class="step"><span class="step-n">04</span><h3><span class="lang-en">Ship</span><span class="lang-zh">发布</span></h3><p><span class="lang-en">Only groups that clear all three stages enter the public release.</span><span class="lang-zh">只有通过这三关的 task group 才会进入公开发布。</span></p></div>
-          </div>
+          <figure class="pipeline-figure">
+            <img src="assets/gdpevo-pipeline-v2.png" alt="GDPevo data pipeline: from real-job seeds to a graded benchmark — in four steps." />
+          </figure>
         </div>
       </section>
 
@@ -315,6 +312,32 @@
               <strong>+20.31 个百分点 / −8.69% cost</strong>，Codex 是 <strong>+18.21 个百分点 / −25.75% cost</strong>。</span>
           </p>
           <p class="prose-link"><a href="index.html#results"><span class="lang-en">See the per-group breakdown on the homepage →</span><span class="lang-zh">在首页查看逐组的明细 →</span></a></p>
+        </div>
+      </section>
+
+      <!-- ===================== 5 · EASY TO USE ===================== -->
+      <section class="section" id="usage">
+        <div class="wrap narrow">
+          <p class="kicker"><span class="lang-en">5 · Easy to use</span><span class="lang-zh">5 · 用起来很简单</span></p>
+          <h2 class="h2"><span class="lang-en">A natural-language workspace, driven end-to-end by agents.</span><span class="lang-zh">一个基于自然语言的工作区，从头到尾由 agent 驱动。</span></h2>
+          <div class="oneline">
+            <p><span class="lang-en"><b>In one line:</b> there is no SDK to learn and no glue code to write. You point a coding
+              agent at our evaluation workspace, type one sentence, and it generates skills, runs the solver, calls the graders,
+              and writes the report — all by itself.</span>
+              <span class="lang-zh"><b>一句话总结：</b>没有要学的 SDK，也没有要写的胶水代码。你把一个 coding agent 指向我们的评估工作区，
+              敲一句话，它就会自己生成 skill、跑 solver、调用 grader、写出 report —— 全程不用你插手。</span></p>
+          </div>
+          <div class="prose">
+            <p><span class="lang-en">Because GDPevo is built and graded by agents, running it works the same way. The whole
+              evaluation workspace is a folder of plain Markdown — guides, prompts, directory layout — that any modern coding
+              agent can read and follow. You drop a task group in, open the workspace in Codex or Claude Code, and ask it to
+              evaluate. The numbers in the tables above were produced by exactly this process — not by a custom harness we wrote
+              behind the scenes.</span>
+              <span class="lang-zh">因为 GDPevo 本身就是由 agent 构造和评分的，所以跑它也是同一套方式。整个评估工作区就是一个装满纯 Markdown 的文件夹 ——
+              指南、prompt、目录结构 —— 任何一个现代 coding agent 都能读懂并照着做。你把一组 task group 放进去，用 Codex 或 Claude Code 打开这个工作区，
+              让它去评估就行。上面表格里的数字，正是用这套流程跑出来的 —— 而不是出自我们在背后另写的一套定制 harness。</span></p>
+            <p class="prose-link"><a href="https://github.com/Prism-Shadow/GDPevo" target="_blank" rel="noopener"><span class="lang-en">For the full setup steps, see the repository README →</span><span class="lang-zh">完整的搭建步骤见 repository README →</span></a></p>
+          </div>
         </div>
       </section>
 
