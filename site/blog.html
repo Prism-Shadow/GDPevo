@@ -13,6 +13,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script>
+      window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script>
       (function () {
         try {
           var saved = localStorage.getItem('gdpevo-lang');
@@ -30,7 +37,7 @@
       })();
     </script>
   </head>
-  <body>
+  <body class="blog">
     <!-- ===================== NAV ===================== -->
     <header class="nav">
       <div class="nav-inner">
@@ -79,203 +86,100 @@
             <span class="lang-zh">在真实业务工作上衡量 Agent 的自我进化</span>
           </h1>
           <p class="lead">
-            <span class="lang-en">Most agent benchmarks ask: <em>can the agent solve this task?</em> GDPevo asks a different question:
-              <strong>can the agent get better at a class of tasks by learning from related ones?</strong> We think that's the
-              more honest question for agents meant to be useful at real business work — and we built GDPevo to make it
-              measurable.</span>
-            <span class="lang-zh">大多数 agent benchmark 问的是：<em>这个 agent 能不能解决这个任务？</em> GDPevo 问的是另一个问题：
-              <strong>这个 agent 能不能通过相关任务的经验，越来越擅长这一类任务？</strong> 我们认为，对于真正想在业务工作中派上用场的 agent 来说，
-              后者才是更诚实的问题，于是我们做了 GDPevo，让这件事变得可衡量。</span>
+            <span class="lang-en">Self-supervised fine-tuning (SFT) and Reinforcement Learning (RL) improve agents by changing the model parameters $\theta$. Prompt/context/harness engineering (whatever you call it) improve agents by reshaping the conditioning context $C$. Both bend the same distribution $P(y \mid C, \theta)$ toward the outputs we want. Until recently, $\theta$ and $C$ were frozen at deployment. Now we expect agents to keep adapting from the trajectories they generate during use. If that adaptation goes back into $\theta$, we call it <strong>continuous learning</strong>. If it goes into how $C$ is assembled — by the agent rewriting its own skills, memory, or harness — we call it <strong>self-evolution</strong>.</span>
+            <span class="lang-zh">监督微调（SFT）和强化学习（RL）通过改动模型参数 $\theta$ 让 agent 变好。Prompt / context / harness engineering（叫法不一）则通过改写条件上下文 $C$ 让它变好。两条路都是在让同一个分布 $P(y \mid C, \theta)$ 更集中、更接近我们想要的输出。在很长一段时间里，$\theta$ 和 $C$ 在部署后就是固定的。现在我们希望 agent 能从使用过程中产生的轨迹里继续学习。如果学习的方式是改 $\theta$，那叫 <strong>continuous learning</strong>；如果学习的方式是改"$C$ 是怎么被组装出来的"——agent 自己重写 skills、memory、harness——那就是 <strong>self-evolution</strong>。</span>
           </p>
-        </div>
-      </section>
-
-      <!-- ===================== 1 · GDP-WORTHY TASKS ===================== -->
-      <section class="section" id="tasks">
-        <div class="wrap narrow">
-          <h2 class="h2"><span class="lang-en">GDP-worthy tasks, not exam questions.</span><span class="lang-zh">真实业务任务，不是考试题。</span></h2>
-          <div class="oneline">
-            <p><span class="lang-en"><b>In one line:</b> most agent benchmarks test agents on neat, self-contained problems.
-              Very few test them on the kind of messy, repetitive work that real businesses actually pay people to do.</span>
-              <span class="lang-zh"><b>一句话总结：</b>大多数 agent benchmark 测的是干净、自包含的小题目，几乎没有人测真正在企业里跑、又乱又重复的那种活。</span></p>
-          </div>
           <div class="prose">
-            <p><span class="lang-en">The work that runs a business is repetitive but not identical. Today's lead handoff is
-              yesterday's lead handoff with a new sponsor list. Today's expense review is last week's review with a new vendor.
-              The tasks rhyme; the data does not.</span>
-              <span class="lang-zh">企业里跑的活有一个特点：重复，但不完全相同。今天的销售线索交接和昨天的几乎一样，只是赞助商名单换了。
-              今天的报销审核和上周的几乎一样，只是供应商换了。任务长得像，数据不一样。</span></p>
-            <p><span class="lang-en">GDPevo's tasks come from work that actually moves money: reconciling an event sponsorship
-              across CRM, finance, and badge systems; deciding whether a vendor invoice should be paid given the receiving
-              record; assembling a credit memo for a small-business loan committee. There are 12 task groups across CRM, ERP,
-              and Finance, seeded from public sources of real-job tasks such as
-              <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener">GDPVal</a> and
-              <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener">SOP-Bench</a>. Every group
-              looks like a real company's working interface — web consoles, APIs, databases, ledgers — with plenty of lookalike
-              records mixed in to throw a careless agent off. The agent has to find the right invoice in a real-feeling system,
-              not pick from a clean prompt with the answer already filtered for it.</span>
-              <span class="lang-zh">GDPevo 的任务都是<strong>真正会动钱</strong>的工作：把一场展会的赞助情况在 CRM、财务和胸卡系统三方对账；
-              根据收货记录决定一张供应商发票要不要付；为小企业贷款审议会准备一份 credit memo。一共 12 个 task group，覆盖 CRM、ERP 和 Finance 三大类，
-              场景来自像 <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener">GDPVal</a> 和
-              <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener">SOP-Bench</a> 这样的真实工作任务源。
-              每一组 task group 看起来都像一家真实公司的业务接口：Web 控制台、API、数据库、账本，并且故意混入了一堆"长得很像但不是答案"的干扰记录，
-              把粗心的 agent 引偏。Agent 必须在一个像真实公司的系统里找到那张正确的发票，而不是从一段已经替它筛过答案的干净 prompt 里挑。</span></p>
-            <p class="prose-link"><a href="index.html#tasks"><span class="lang-en">See all 12 task groups →</span><span class="lang-zh">查看全部 12 个 task group →</span></a></p>
+            <p>
+              <span class="lang-en">Self-evolution has taken off for three reasons. It is <strong>cheaper</strong>: the resource is tokens, not GPUs and training infrastructure. It has <strong>high leverage</strong>: by editing its own skills and memory and loading the right context strategically at run time, an agent can lift accuracy by <strong>10–20 points</strong> on the same model — we'll show numbers below. And it is <strong>interpretable</strong>: when behavior changes, you can read the skill or memory entry that caused the change, instead of inspecting a fresh set of weights.</span>
+              <span class="lang-zh">Self-evolution 最近很火，主要有三个原因。第一是<strong>相对便宜</strong>：消耗的资源是 token，而不是 GPU 和训练基建。第二是<strong>杠杆高</strong>：通过让 agent 自己改写身边的 skill 和 memory、在运行时策略性地加载正确的上下文，同一个模型就能把准确率<strong>提升 10–20 个百分点</strong>——下文有具体数字。第三是<strong>可解释</strong>：行为变了，你可以直接读那条 skill 或 memory，而不用去看一组新权重。</span>
+            </p>
+            <p>
+              <span class="lang-en">But the catch is evaluation. Self-evolution is still a form of training — it trains $C$. As such, it has to obey basic learning-theory principle: hold-out, train/test separation, generalization to unseen examples. Many self-evolution benchmarks today let the agent train and test on the same set, so any "improvement" is partly memorization. The rest tend to live in coding or game-style worlds with clean rewards; almost none target <strong>real business work</strong> — auditing an AP invoice, reconciling event sponsorship across CRM and finance, building a branch-close package — where the reward is tricky and the rules are buried in operational conventions.</span>
+              <span class="lang-zh">但是问题出在评测。Self-evolution 本质上还是一种 training，它训练的是 $C$。既然是 training，就要遵守基本的 learning-theory 原则：留 hold-out、分训练/测试、要在没见过的样本上检验泛化。但今天很多 self-evolution benchmark 让 agent 在同一个数据集上一边学一边测，所谓的"提升"有可能是死记硬背。剩下的 benchmark 大多停留在 coding 或游戏式的环境里，reward 干净；几乎没有一个 benchmark 针对<strong>真实业务工作</strong>——审核一张 AP 发票、把展会赞助在 CRM 和财务两边对账、做一个分行月度结账包——这种 reward 棘手、规则埋在业务约定里的场景。</span>
+            </p>
+            <p>
+              <span class="lang-en">GDPevo is a benchmark designed for exactly that gap. <strong>Twelve task groups</strong> span CRM, ERP, and Finance, etc., and each group ships <strong>5 train tasks + 5 test tasks</strong> with a shared environment and rule-based graders. Below, we walk through how this benchmark is built, and how it is used.</span>
+              <span class="lang-zh">GDPevo 就是为这个空缺设计的 benchmark。<strong>12 组 task group</strong> 覆盖 CRM、ERP、Finance等，每组包含 <strong>5 个 train + 5 个 test</strong>，共享一个环境，用基于规则的 grader 打分。下面我们就来看看这个 benchmark 是怎么被构建出来的，以及怎么使用。</span>
+            </p>
           </div>
         </div>
       </section>
 
-      <!-- ===================== 2 · SELF-EVOLUTION ===================== -->
-      <section class="section band" id="evolution">
-        <div class="wrap narrow">
-          <h2 class="h2"><span class="lang-en">Self-evolution is the capability we care about.</span><span class="lang-zh">我们关心的能力：自我进化。</span></h2>
-          <div class="oneline">
-            <p><span class="lang-en"><b>In one line:</b> an agent that solves 100 unrelated tasks tells us almost nothing about
-              whether it is learning from them. The interesting question is whether yesterday's task makes the agent better at
-              today's.</span>
-              <span class="lang-zh"><b>一句话总结：</b>一个 agent 把 100 个互不相关的任务都做对，几乎说明不了它有没有从中学到东西。
-              真正有意思的问题是：昨天做过的任务，能不能让它今天做得更好。</span></p>
-          </div>
-          <p class="lead">
-            <span class="lang-en">Each task group ships with <strong>5 train tasks</strong> and <strong>5 held-out test tasks</strong>
-              that share the same business environment. We compare three settings on the held-out tests.</span>
-            <span class="lang-zh">每一组 task group 包含 <strong>5 个 train task</strong> 和 <strong>5 个 held-out test task</strong>，
-              它们共享同一个业务环境。我们在这 5 个 held-out test 上对比三种设定。</span>
-          </p>
-          <div class="anatomy">
-            <div class="ana-card ana-env">
-              <span class="ana-tag"><span class="lang-en">Shared environment</span><span class="lang-zh">共享环境</span></span>
-              <strong><span class="lang-en">1 × business world</span><span class="lang-zh">1 × 业务世界</span></strong>
-              <p><span class="lang-en">CRM console, REST APIs, ERP records, finance &amp; banking workspaces.</span><span class="lang-zh">CRM 控制台、REST API、ERP 记录、金融与银行工作区。</span></p>
-            </div>
-            <div class="ana-arrow" aria-hidden="true">→</div>
-            <div class="ana-card ana-train">
-              <span class="ana-tag"><span class="lang-en">Experience source</span><span class="lang-zh">经验来源</span></span>
-              <strong>5 × train tasks</strong>
-              <p><span class="lang-en">Related earlier work the agent learns from — the way a new analyst learns on the job.</span><span class="lang-zh">agent 据以学习的相关旧任务 —— 就像新分析师在岗位上学习。</span></p>
-            </div>
-            <div class="ana-arrow" aria-hidden="true">→</div>
-            <div class="ana-card ana-test">
-              <span class="ana-tag"><span class="lang-en">Learning measured</span><span class="lang-zh">学习评估</span></span>
-              <strong>5 × held-out test</strong>
-              <p><span class="lang-en">Never seen by the skill-writer; scored by exact, rule-based evaluators.</span><span class="lang-zh">skill-writer 从未见过；由精确的规则评测器评分。</span></p>
-            </div>
-          </div>
-          <div class="cards3">
-            <article class="method">
-              <code class="m-code">base</code>
-              <h3><span class="lang-en">Cold start</span><span class="lang-zh">裸做</span></h3>
-              <p><span class="lang-en">The agent goes in cold, with no prior training tasks and no skill notes.</span><span class="lang-zh">agent 裸做，没有任何先验任务，也没有 skill 笔记。</span></p>
-            </article>
-            <article class="method method-accent">
-              <code class="m-code">demo</code>
-              <h3><span class="lang-en">Learn from worked examples</span><span class="lang-zh">从样例中学习</span></h3>
-              <p><span class="lang-en">The agent reads the train inputs and answers and writes a reusable skill from them — the way a new analyst might if shown a folder of worked examples.</span><span class="lang-zh">agent 看完 train 的输入和答案后，自己总结写出一份可复用的 skill —— 就像新分析师拿到一沓"做好的样例"翻一翻、整理出工作笔记。</span></p>
-            </article>
-            <article class="method method-accent">
-              <code class="m-code">reflect</code>
-              <h3><span class="lang-en">Learn from its own mistakes</span><span class="lang-zh">从自己的错误中学习</span></h3>
-              <p><span class="lang-en">The agent first attempts the train tasks blind, gets graded, and reflects on its mistakes before writing the skill — closer to how a person actually learns on the job.</span><span class="lang-zh">agent 先盲做 train task，被对答案打分后反思自己错在哪里，再据此写 skill —— 这更接近一个人真正在岗位上学习的方式。</span></p>
-            </article>
-          </div>
-          <p class="note">
-            <span class="lang-en">The number we care about is the <strong>lift</strong> from <code>base</code> to the skill settings on tasks the skill-writer never saw.</span>
-            <span class="lang-zh">我们关心的指标，是从 <code>base</code> 到 skill 设定下的 <strong>lift</strong>（提升）—— 而且是测在 skill-writer 没见过的 test 任务上的提升。</span>
-          </p>
-        </div>
-      </section>
-
-      <!-- ===================== 3 · CONSTRUCTION ===================== -->
+      <!-- ===================== 2 · HOW WE BUILT IT ===================== -->
       <section class="section" id="construction">
         <div class="wrap narrow">
-          <h2 class="h2"><span class="lang-en">Hidden rules, spread across the train tasks.</span><span class="lang-zh">隐藏规则，分散到各个 train task 里。</span></h2>
-          <div class="oneline">
-            <p><span class="lang-en"><b>In one line:</b> if we want to know whether the agent really learned something, the
-              training tasks have to teach a real lesson — one that actually pays off on the test. Otherwise any improvement
-              could just be luck.</span>
-              <span class="lang-zh"><b>一句话总结：</b>要想知道 agent 是不是真的学到了东西，train 任务必须真的"教会一个东西" ——
-              一个在 test 上能派上用场的东西。否则任何提升都可能只是运气。</span></p>
-          </div>
-          <div class="prose">
-            <p><span class="lang-en">For every task group we plant a small set of hidden operational rules. A typical CRM
-              lead-capture group might encode a sponsor-status precedence rule (finance invoices outrank badge scans), a
-              suppression-list policy (do not contact certain segments), and a date-rounding convention. We then <em>spread</em>
-              these rules across the 5 train tasks, so each train task only exercises a subset. The 5 test tasks are
-              deliberately built as <strong>combinations</strong> of those rules — say, the precedence rule together with the
-              suppression policy.</span>
-              <span class="lang-zh">对于每一个 task group，我们都会埋下一小组<strong>隐藏的业务规则</strong>。一个典型的 CRM 销售线索捕获场景，
-              可能埋了三条规则：赞助商身份的优先级判定（财务发票优先于胸卡扫描）、suppression list 政策（某些细分人群禁止联系）、以及一条日期取整规则。
-              然后我们把这几条规则<em>分散</em>到 5 个 train task 里，每个 train task 只触发其中一部分。5 个 test task 则故意被设计成这些规则的
-              <strong>组合</strong> —— 比如同时触发"优先级判定 + suppression list 政策"。</span></p>
-            <p><span class="lang-en">An agent that handles each train task on its own learns the rules in pieces. An agent that
-              writes them down as a single reusable skill has all the rules in one place — so when the test asks for two of them
-              at once, it doesn't need to rediscover them. That's why a higher test score is real evidence of learning, not
-              luck.</span>
-              <span class="lang-zh">只盯着一个个 train task 单独做的 agent，学到的是碎片。把这些规则整理成一份可复用 skill 的 agent，把所有规则都放在一个地方 ——
-              这样当 test 一次性问到两条规则时，它不需要再去重新发现。这就是为什么 test 分数变高是真的"学到了"，而不是运气。</span></p>
-          </div>
-
-          <h2 class="h2" style="margin-top:3.2rem"><span class="lang-en">Built and reviewed by agents, end to end.</span><span class="lang-zh">从头到尾，全部由 agent 完成。</span></h2>
-          <div class="oneline">
-            <p><span class="lang-en"><b>In one line:</b> if we want agents to keep getting better on their own, then writing the
-              practice problems, tuning their difficulty, and grading the answers should also be things agents can do — not just
-              things humans do for them.</span>
-              <span class="lang-zh"><b>一句话总结：</b>如果我们指望 agent 能自己越变越好，那么写练习题、调难度、给答案打分这些事，也得是 agent 自己能干的，
-              而不是只能由人代劳。</span></p>
-          </div>
+          <h2 class="h2"><span class="lang-en">How we built it.</span><span class="lang-zh">我们怎么构建。</span></h2>
           <p class="lead">
-            <span class="lang-en">Every task group in GDPevo was built and reviewed by Codex agents — no hand-written tasks,
-              no hand-written graders. GDPevo is, in part, a small working example of that loop: a curriculum that agents
-              can both consume and create.</span>
-            <span class="lang-zh">GDPevo 里的每一组 task group 都是 Codex agent 构造和审核的 —— 没有人手写任务，也没有人手写打分逻辑。
-              GDPevo 在某种意义上就是这个闭环的小型工作样例：一份 agent 既能消费、也能创建的 curriculum。</span>
+            <span class="lang-en">Building a self-evolution benchmark for real business work poses two challenges. <strong>First</strong>, the construction should be agent-driven end-to-end — humans write the procedure once, agents do the rest. This matters for two reasons. It helps the benchmark <em>outrun data leakage</em>: as long as agents can spawn fresh tasks faster than models absorb the leaked ones, the benchmark stays ahead. It also lets the benchmark <em>scale</em>: when agents both build and evaluate, the loop is closed — no human bottleneck — and the benchmark can keep growing on its own. <strong>Second</strong>, train and test have to be related but not redundant: the train tasks must teach a real, hidden lesson that pays off only when the lesson is extracted, not memorized.</span>
+            <span class="lang-zh">为真实业务工作构建一个 self-evolution benchmark，有两个 challenge。<strong>第一</strong>，构建过程应该是 agent 端到端跑出来的——人只把流程写一次，剩下交给 agent。这件事之所以重要有两个原因。它能帮 benchmark <em>跑赢数据泄露</em>：只要 agent 生成新题的速度比模型吸收已泄露题的速度快，benchmark 就一直保持领先。它也让 benchmark 能<em>真正 scale</em>：当 agent 既负责构造、又负责评测，整个回路就闭合了——没有人力瓶颈，左脚踩右脚，benchmark 可以自己长大。<strong>第二</strong>，train 和 test 要相关、但不能冗余：train 必须真的"教"一个隐藏的规则，这个规则只有被抽象出来才会在 test 上派上用场，而不是被死记下来。</span>
           </p>
+
+          <h3 class="h3" style="margin-top:2.4rem"><span class="lang-en">Built end-to-end by agents.</span><span class="lang-zh">从头到尾，全部由 agent 完成。</span></h3>
+          <div class="prose">
+            <p><span class="lang-en">Humans wrote the pipeline once. After that, agents do everything (illustrated below). They pull seed scenarios from public real-job benchmarks (GDPVal, SOP-Bench, JobBench) and spawn many candidate task groups from those seeds. For each group, they build a shared environment and author 5 train + 5 test tasks with rule-based evaluators. A calibrator then tunes difficulty so that an <code>evolution</code> setup clearly beats a <code>no-evolution</code> setup — this filters out tasks where evolution wouldn't change the answer, keeping the benchmark focused on agents that actually have to learn from experience. Finally, six independent reviewer agents audit the result, and a group ships only when 5 of 6 pass — these reviewers exist because agents have a habit of declaring victory while quietly skipping work, so completeness, file presence, and planted hidden rules are exactly what gets checked. Twelve task groups make it through this filter and form the public release.</span>
+              <span class="lang-zh">人只写一次 pipeline，之后全靠 agent（如下图所示）。先从公开的真实业务 benchmark（GDPVal、SOP-Bench、JobBench）里取种子场景，再据此 spawn 出大量候选 task group。每组里搭一个共享 env，写 5 个 train + 5 个 test 任务并配上基于规则的 evaluator。然后 calibrator 调难度，让 <code>evolution</code> 设定明显超过 <code>no-evolution</code> 设定——这一步是为了把那些"是否进化都不影响答案"的题筛掉，让 benchmark 集中在那些真的需要从经验里学东西的 agent 上。最后由 6 个互相独立的 reviewer agent 审核，6 个里 5 个通过这一组才放行——之所以要 reviewer，是因为 agent 经常嘴上说"做完了"、实际偷懒，所以审核的就是结构、完整性、文件是否齐全、隐藏规则是否真的埋了进去。最终通过这层筛选活下来、进入公开发布的，是 12 组 task group。</span></p>
+          </div>
           <figure class="pipeline-figure">
-            <img src="assets/gdpevo-pipeline-v2.png" alt="GDPevo data pipeline: from real-job seeds to a graded benchmark — in four steps." />
+            <img src="assets/gdpevo-pipeline-v2.png" alt="GDPevo data pipeline: seed scenarios → multi-agent task factory → quality review → release." loading="lazy" />
           </figure>
-        </div>
-      </section>
 
-      <!-- ===================== 4 · GRADING ===================== -->
-      <section class="section band" id="grading">
-        <div class="wrap narrow">
-          <h2 class="h2"><span class="lang-en">Grading is rule-based, not "ask another LLM".</span><span class="lang-zh">评分基于规则，而不是"再叫一个 LLM 来判"。</span></h2>
-          <div class="oneline">
-            <p><span class="lang-en"><b>In one line:</b> using another LLM as the judge is convenient but quietly unreliable on
-              business work. It tends to forgive the mistakes that matter and complain about differences that don't.</span>
-              <span class="lang-zh"><b>一句话总结：</b>用另一个 LLM 当裁判很方便，但在业务工作上其实悄悄地不可靠 ——
-              它会放过那些真正该扣分的错误，又会因为一些根本无所谓的差异扣你的分。</span></p>
-          </div>
+          <h3 class="h3" style="margin-top:2.8rem"><span class="lang-en">Hidden rules, spread across the train tasks.</span><span class="lang-zh">隐藏规则，分散到各个 train task 里。</span></h3>
           <div class="prose">
-            <p><span class="lang-en">GDPevo grades with rule-based checkers that look at the things a human reviewer would
-              actually check — was the right set of records returned, was the right exclusion reason given, did the amount round
-              to the right precision, did the action count match. When an agent fails, the failure points to a specific rule it
-              broke, not a vague verdict. The heavier weight in the rubric goes to checks that require real exploration and
-              knowledge carried over from training; getting the JSON to parse is a baseline, not a score.</span>
-              <span class="lang-zh">GDPevo 用的是基于规则的 checker，去检查那些<strong>人工审核员真正会去检查的东西</strong>：返回的记录集对不对、
-              给的排除原因对不对、金额是否按要求精度取整、动作数对不对。当 agent 错了，错误能直接定位到它违反了哪一条具体规则，而不是给你一个含糊的整体结论。
-              Rubric 里更高的权重留给"真正需要去探索、需要把 train 阶段学到的东西用上"的检查点；JSON 能 parse 这件事是底线，不是得分项。</span></p>
+            <p><span class="lang-en">For every task group we plant a small set of hidden operational rules. A CRM lead-capture group might encode a <em>sponsor-status precedence rule</em> (finance invoices outrank badge scans) and a <em>suppression-list policy</em> (don't contact certain segments). A procurement-readiness group enforces that <em>open vendor-risk events and AP holds force a "held" line</em>, regardless of how clean the PO looks.</span>
+              <span class="lang-zh">每个 task group 我们都会埋一小组隐藏的业务规则。CRM 销售线索组可能埋了两条：<em>赞助商身份的优先级</em>（财务发票优先于胸卡扫描），以及 <em>suppression list 政策</em>（某些细分人群禁止联系）。采购就绪组则要求：<em>只要供应商有 open 的 risk event 或 AP hold，对应行就必须 held</em>，不管 PO 看起来多干净。</span></p>
+            <p><span class="lang-en">We <em>spread</em> these rules across the 5 train tasks, so each train task only exercises a subset. The 5 test tasks are deliberately built as <strong>combinations</strong> — say, the precedence rule together with the suppression policy. An agent that solves each train in isolation learns the rules in pieces. An agent that distills them into a single reusable skill has them all in one place — and when the test asks for two at once, it doesn't need to rediscover them. That's why a higher test score is real evidence of learning, not luck.</span>
+              <span class="lang-zh">我们把这些规则<em>分散</em>到 5 个 train 里，每个 train 只触发一部分。5 个 test 故意被设计成这些规则的<strong>组合</strong>——比如同时触发"优先级 + suppression"。只盯着单个 train 做的 agent 学到的是碎片；把这些规则整理进一份可复用 skill 的 agent 则把它们放在一处——test 同时问两条时，它不需要重新发现。这就是 test 分数变高的原因，是真的"学到了"，而不是运气。</span></p>
           </div>
         </div>
       </section>
 
-      <!-- ===================== 5 · COST ===================== -->
-      <section class="section" id="cost">
+      <!-- ===================== 3 · HOW TO USE & EVALUATE ===================== -->
+      <section class="section" id="usage">
         <div class="wrap narrow">
-          <h2 class="h2"><span class="lang-en">Useful experience buys accuracy by spending fewer tokens.</span><span class="lang-zh">有用的经验，用更少的 token 换来准确率。</span></h2>
-          <div class="oneline">
-            <p><span class="lang-en"><b>In one line:</b> a useful agent is not just one that gets the right answer. It is one that
-              stops redoing the same legwork — clicking through the same systems, looking up the same records — every time a
-              similar task comes in.</span>
-              <span class="lang-zh"><b>一句话总结：</b>一个有用的 agent，不仅是答得对的 agent；还得是一个不会每次都把同样的活儿重做一遍 ——
-              不会每次都重新点开同样的系统、查同样的记录 —— 的 agent。</span></p>
-          </div>
+          <h2 class="h2"><span class="lang-en">How to evaluate with it.</span><span class="lang-zh">怎么用它做评估。</span></h2>
           <p class="lead">
-            <span class="lang-en">We ran the same 12 task groups under two different agent harnesses, and the shape of the
-              result is the same on both: skills lift held-out accuracy while spending fewer tokens, not more.</span>
-            <span class="lang-zh">我们在同样这 12 组 task group 上跑了两套不同的 agent harness，两套结果的形状是一样的：skill 在提升 held-out 准确率的同时，
-              花的 token 更少，而不是更多。</span>
+            <span class="lang-en">Three things we want from an evaluation harness: it should adapt to a new question without hand-edited evaluation code; it should grade in a way you can audit; and it should treat <em>cost</em> as a first-class citizen alongside accuracy. Each one motivated a specific design.</span>
+            <span class="lang-zh">我们对评估 harness 有三个要求：换一个问题不用回去手改评估代码；评分必须可被人审计；<em>cost</em> 要和 accuracy 同等重要。下面三块就是为了满足这三个要求。</span>
           </p>
+
+          <h3 class="h3" style="margin-top:2.4rem"><span class="lang-en">Skills as the new IR; programming language as the machine code.</span><span class="lang-zh">把 skill 当作新的 IR，把编程语言当作机器码。</span></h3>
+          <div class="prose">
+            <p><span class="lang-en">Evaluation is fiddly: which axes go on the chart, log or linear scale, line or bar, which config combinations to compare. Hand a user a rigid SDK and they're stuck. Instead, GDPevo's evaluation workspace is a folder of plain Markdown — guides, prompts, directory layout — that any modern coding agent can read. You point Codex or Claude Code at it, type one sentence describing the experiment and the chart you want, and the agent generates the analysis code, runs the solver, calls the graders, and writes the report. Skills become the human-facing intermediate representation; the underlying code is just compilation.</span>
+              <span class="lang-zh">做评测琐碎得要命：图的横纵轴怎么选、用 log 还是 linear、画折线还是柱状、要对比哪几种 config 组合。给用户一个死的 SDK，每换一次问题都要改代码。GDPevo 不走这条路：整个评估工作区就是一个装满纯 Markdown 的文件夹——指南、prompt、目录约定——任何现代 coding agent 都能读懂。你把 Codex 或 Claude Code 指向它，敲一句话说清楚要跑什么实验、要什么样的图，agent 就会自己生成分析代码、跑 solver、调 grader、写 report。Skill 成为面向人的中间表示，底层代码只是编译产物。</span></p>
+          </div>
+
+          <h3 class="h3" style="margin-top:2.8rem"><span class="lang-en">Rule-based grading, not "ask another LLM".</span><span class="lang-zh">基于规则的评分，而不是"再叫一个 LLM 来判"。</span></h3>
+          <div class="prose">
+            <p><span class="lang-en">GDPevo grades with deterministic, rule-based checkers — for example, was the right set of records returned, did the amount round to the right precision. Two things follow. First, the score is <strong>reproducible</strong>: the same answer always gets the same grade, regardless of who runs it or when. Second, every failure is <strong>traceable</strong>: instead of a vague verdict, you see exactly which rule was violated and by how much. That trace is what makes the benchmark useful for diagnosis — you can read it back to find weak spots in your agent and feed those weak spots into the next round of skill or memory updates.</span>
+              <span class="lang-zh">GDPevo 用确定性的 rule-based checker 打分——比如返回的记录集对不对、金额是否遵守了要求的精度。这带来两个好处。第一，评分是<strong>可复现</strong>的：同一份答案，谁跑、什么时候跑，得到的分都一样。第二，每一次失败都是<strong>可追溯</strong>的：你看到的不是一个含糊的整体结论，而是具体哪一条规则被违反、扣了多少分。这种可追溯性让 benchmark 成为诊断工具——你可以反过来读这些 trace，找到你的 agent 短板在哪儿，再把这些短板喂回下一轮的 skill 或 memory 更新。</span></p>
+          </div>
+
+          <h3 class="h3" style="margin-top:2.8rem"><span class="lang-en">Cost and accuracy, both first-class.</span><span class="lang-zh">cost 和 accuracy 都是一等公民。</span></h3>
+          <div class="prose">
+            <p><span class="lang-en">A useful agent isn't just one that gets the right answer — it's one that <em>stops redoing</em> the same legwork every time a similar task comes in. Self-evolution should look like a human getting fluent: more accurate <em>and</em> faster, with fewer tokens, fewer steps, and cleaner moves. So we instrument every run end-to-end: per-agent total token spend, plus a breakdown by reasoning, tool calls, and stage. That observability isn't only for our analysis — those traces also become the raw material the agent itself can learn from.</span>
+              <span class="lang-zh">一个有用的 agent 不仅要答得对，还得<em>不再每次都把同样的活儿重做一遍</em>。Self-evolution 应该像人变熟练：更准、<em>更快</em>，用更少的 token、更少的步数、更干净的做法。所以我们对每一次运行都做端到端打点：每个 agent 的总 token 消耗，以及按 reasoning、工具调用、不同阶段的 breakdown。这套 observability 不只服务我们自己的分析——这些 trace 本身也是 agent 可以拿去 self-evolve 的学习材料。</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 4 · EVALUATIONS AND FINDINGS ===================== -->
+      <section class="section" id="findings">
+        <div class="wrap narrow">
+          <h2 class="h2"><span class="lang-en">Evaluations and findings.</span><span class="lang-zh">实测与结果。</span></h2>
+          <div class="prose">
+            <p><span class="lang-en">We ran the same 12 task groups under three settings, on two different agent harnesses:</span>
+              <span class="lang-zh">我们在同样的 12 组 task group 上跑了三种设定，跨两套不同的 agent harness：</span></p>
+            <ul class="bullets">
+              <li><span class="lang-en"><code>base</code> — the agent solves the 5 test tasks cold, with no prior exposure to the 5 train tasks.</span>
+                <span class="lang-zh"><code>base</code>——agent 直接做 5 个 test，没接触过 5 个 train。</span></li>
+              <li><span class="lang-en"><code>demo</code> — the agent reads the 5 train tasks <em>with their gold answers</em> first, distills skills/memory from them, and then takes the test. (Analogous to SFT.)</span>
+                <span class="lang-zh"><code>demo</code>——agent 先读 5 个 train 的题目和<em>标准答案</em>，从中沉淀 skill/memory，再去做 test。（类似 SFT。）</span></li>
+              <li><span class="lang-en"><code>reflect</code> — the agent attempts the 5 train tasks <em>without</em> seeing answers, gets back graded reward and feedback, updates its skills/memory from what it got wrong, then takes the test. (Analogous to RL.)</span>
+                <span class="lang-zh"><code>reflect</code>——agent <em>看不到答案</em>，自己做 5 个 train，事后拿到 reward 和反馈，改自己的 skill/memory，再去做 test。（类似 RL。）</span></li>
+            </ul>
+          </div>
+
           <div class="htables">
             <div class="htable">
               <div class="ht-cap">
@@ -305,41 +209,10 @@
             </div>
           </div>
           <p class="note">
-            <span class="lang-en">On one task group — operational financial modeling — Codex went from <strong>42.76% to 92.47%</strong>
-              with fewer tokens than cold start; on the same group, Claude Code's <code>demo</code> reached
-              <strong>100%, up from 51.76%</strong>. Board-level summaries put skill-based evolution at
-              <strong>+20.31 points / −8.69% cost</strong> for Claude Code, and <strong>+18.21 points / −25.75% cost</strong> for
-              Codex.</span>
-            <span class="lang-zh">在一组任务上 —— operational financial modeling —— Codex 从 <strong>42.76% 提升到 92.47%</strong>，且花的 token 比冷启动还少；
-              同一组上，Claude Code 的 <code>demo</code> 这次达到了 <strong>100%，起点是 51.76%</strong>。Board 口径汇总：Claude Code 是
-              <strong>+20.31 个百分点 / −8.69% cost</strong>，Codex 是 <strong>+18.21 个百分点 / −25.75% cost</strong>。</span>
+            <span class="lang-en">The shape is the same on both harnesses: skills lift held-out accuracy <em>while spending fewer tokens</em>, not more — the fluency story, not just a higher score. On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than cold start; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>.</span>
+            <span class="lang-zh">两套 harness 形状一致：skill 让 held-out 准确率上升的同时，<em>花的 token 反而更少</em>——这正是"变熟练"，而不仅仅是分数更高。在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比冷启动还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>。</span>
           </p>
           <p class="prose-link"><a href="index.html#results"><span class="lang-en">See the per-group breakdown on the homepage →</span><span class="lang-zh">在首页查看逐组的明细 →</span></a></p>
-        </div>
-      </section>
-
-      <!-- ===================== 5 · EASY TO USE ===================== -->
-      <section class="section" id="usage">
-        <div class="wrap narrow">
-          <h2 class="h2"><span class="lang-en">A natural-language workspace, driven end-to-end by agents.</span><span class="lang-zh">一个基于自然语言的工作区，从头到尾由 agent 驱动。</span></h2>
-          <div class="oneline">
-            <p><span class="lang-en"><b>In one line:</b> there is no SDK to learn and no glue code to write. You point a coding
-              agent at our evaluation workspace, type one sentence, and it generates skills, runs the solver, calls the graders,
-              and writes the report — all by itself.</span>
-              <span class="lang-zh"><b>一句话总结：</b>没有要学的 SDK，也没有要写的胶水代码。你把一个 coding agent 指向我们的评估工作区，
-              敲一句话，它就会自己生成 skill、跑 solver、调用 grader、写出 report —— 全程不用你插手。</span></p>
-          </div>
-          <div class="prose">
-            <p><span class="lang-en">Because GDPevo is built and graded by agents, running it works the same way. The whole
-              evaluation workspace is a folder of plain Markdown — guides, prompts, directory layout — that any modern coding
-              agent can read and follow. You drop a task group in, open the workspace in Codex or Claude Code, and ask it to
-              evaluate. The numbers in the tables above were produced by exactly this process — not by a custom harness we wrote
-              behind the scenes.</span>
-              <span class="lang-zh">因为 GDPevo 本身就是由 agent 构造和评分的，所以跑它也是同一套方式。整个评估工作区就是一个装满纯 Markdown 的文件夹 ——
-              指南、prompt、目录结构 —— 任何一个现代 coding agent 都能读懂并照着做。你把一组 task group 放进去，用 Codex 或 Claude Code 打开这个工作区，
-              让它去评估就行。上面表格里的数字，正是用这套流程跑出来的 —— 而不是出自我们在背后另写的一套定制 harness。</span></p>
-            <p class="prose-link"><a href="https://github.com/Prism-Shadow/GDPevo" target="_blank" rel="noopener"><span class="lang-en">For the full setup steps, see the repository README →</span><span class="lang-zh">完整的搭建步骤见 repository README →</span></a></p>
-          </div>
         </div>
       </section>
 
