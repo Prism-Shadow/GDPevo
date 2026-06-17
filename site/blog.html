@@ -107,8 +107,8 @@
               <span class="lang-zh">在评估这一面，我们坚持三件事。<strong>第一</strong>，<strong>规则化打分</strong>，不用 LLM-as-a-judge——每一个分都是可复现的，每一次失败都能定位到具体的规则。<strong>第二</strong>，<strong>cost</strong> 与 <strong>accuracy</strong> 同为一等公民——一个好用的 agent 不仅要答得对，还要随时间推移、用<em>更少的代价</em>把题做出来。<strong>第三</strong>，工作区<strong>由自然语言驱动</strong>——你用一句话描述要跑的实验和想要的图表，一个 coding agent 当场生成分析代码出图；你自己不需要写代码。</span>
             </p>
             <p>
-              <span class="lang-en">We close with evaluation and findings. On both agent harnesses we tested, self-evolution lifts held-out accuracy by <strong>+18 to +22 points</strong>, and token usage goes <em>down</em>, not up — fluency, not just a higher score. Below, we walk through how this benchmark is built, and how it is used.</span>
-              <span class="lang-zh">最后是 evaluation 和 findings。在我们测的两套 agent harness 上，self-evolution 把 held-out 准确率提升了 <strong>+18 到 +22 个百分点</strong>，且 token 消耗不增<em>反降</em>——是变熟练，不止是分数变高。下面我们就来看看这个 benchmark 是怎么被构建出来的，以及怎么使用。</span>
+              <span class="lang-en">We close with evaluation and findings. On all three agent harnesses we tested, self-evolution lifts held-out accuracy by <strong>+17 to +22 points</strong>; on two of them token usage actually goes <em>down</em>, not up — fluency, not just a higher score. Below, we walk through how this benchmark is built, and how it is used.</span>
+              <span class="lang-zh">最后是 evaluation 和 findings。在我们测的三套 agent harness 上，self-evolution 都把 held-out 准确率提升了 <strong>+17 到 +22 个百分点</strong>；其中两套 harness 上 token 消耗不增<em>反降</em>——是变熟练，不止是分数变高。下面我们就来看看这个 benchmark 是怎么被构建出来的，以及怎么使用。</span>
             </p>
           </div>
         </div>
@@ -172,8 +172,8 @@
           <div class="prose">
             <p><span class="lang-en">Every run below was driven by natural language: we pointed a coding agent (Codex or Claude Code) at the evaluation workspace — a folder of plain Markdown guides, prompts, and directory conventions — typed one sentence describing the experiment and the chart we wanted, and the agent generated the analysis code, called the graders, and wrote the report. No hand-written harness, no SDK to learn.</span>
               <span class="lang-zh">下面这些实验都是用自然语言驱动跑出来的：我们把一个 coding agent（Codex 或 Claude Code）指向评估工作区——一个装满纯 Markdown 指南、prompt 和目录约定的文件夹——用一句话说清要跑什么实验、想要什么样的图，agent 就会自己生成分析代码、调 grader、写 report。没有手写的 harness，也没有要学的 SDK。</span></p>
-            <p><span class="lang-en">We ran the same 12 task groups under three settings, on two different agent harnesses:</span>
-              <span class="lang-zh">我们在同样的 12 组 task group 上跑了三种设定，跨两套不同的 agent harness：</span></p>
+            <p><span class="lang-en">We ran the same 12 task groups under three settings, on three different agent harnesses:</span>
+              <span class="lang-zh">我们在同样的 12 组 task group 上跑了三种设定，跨三套不同的 agent harness：</span></p>
             <ul class="bullets">
               <li><span class="lang-en"><code>base</code> — the agent solves the 5 test tasks cold, with no prior exposure to the 5 train tasks.</span>
                 <span class="lang-zh"><code>base</code>——agent 直接做 5 个 test，没接触过 5 个 train。</span></li>
@@ -187,12 +187,12 @@
           <div class="htables">
             <div class="htable">
               <div class="ht-cap">
-                <span class="lang-en">Codex with GPT-5.5 (xhigh)</span><span class="lang-zh">Codex，配 GPT-5.5（xhigh）</span>
-                <small><span class="lang-en">avg@3 over 12 task groups</span><span class="lang-zh">12 个 task group 的 avg@3</span></small>
+                <span class="lang-en">Codex · GPT-5.5</span><span class="lang-zh">Codex · GPT-5.5</span>
+                <small><span class="lang-en">xhigh · avg@3 over 12 task groups</span><span class="lang-zh">xhigh · 12 个 task group 的 avg@3</span></small>
               </div>
               <div class="ht-row ht-head">
-                <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
-                <span class="num">avg@3</span><span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span><span class="num">USD</span>
+                <span><span class="lang-en">Mode</span><span class="lang-zh">模式</span></span>
+                <span class="num">avg@3</span><span class="num"><span class="lang-en">Tokens (k)</span><span class="lang-zh">Tokens (k)</span></span><span class="num">USD</span>
               </div>
               <div class="ht-row"><code>base</code><span class="num">48.35%</span><span class="num">709.2</span><span class="num">1.08</span></div>
               <div class="ht-row"><code>demo</code><span class="num">65.99%</span><span class="num">466.1</span><span class="num">0.81</span></div>
@@ -200,21 +200,34 @@
             </div>
             <div class="htable">
               <div class="ht-cap">
-                <span class="lang-en">Claude Code with Opus 4.8 (xhigh)</span><span class="lang-zh">Claude Code，配 Opus 4.8（xhigh）</span>
-                <small><span class="lang-en">avg@3 over 12 task groups</span><span class="lang-zh">12 个 task group 的 avg@3</span></small>
+                <span class="lang-en">Claude Code · Opus 4.8</span><span class="lang-zh">Claude Code · Opus 4.8</span>
+                <small><span class="lang-en">xhigh · avg@3 over 12 task groups</span><span class="lang-zh">xhigh · 12 个 task group 的 avg@3</span></small>
               </div>
               <div class="ht-row ht-head">
-                <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
-                <span class="num">avg@3</span><span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span><span class="num">USD</span>
+                <span><span class="lang-en">Mode</span><span class="lang-zh">模式</span></span>
+                <span class="num">avg@3</span><span class="num"><span class="lang-en">Tokens (k)</span><span class="lang-zh">Tokens (k)</span></span><span class="num">USD</span>
               </div>
               <div class="ht-row"><code>base</code><span class="num">49.11%</span><span class="num">376.8</span><span class="num">0.61</span></div>
               <div class="ht-row best"><code>demo</code><span class="num">70.90%</span><span class="num">340.8</span><span class="num">0.55</span></div>
               <div class="ht-row"><code>reflect</code><span class="num">67.94%</span><span class="num">331.9</span><span class="num">0.56</span></div>
             </div>
+            <div class="htable">
+              <div class="ht-cap">
+                <span class="lang-en">Panofy · Opus 4.6</span><span class="lang-zh">Panofy · Opus 4.6</span>
+                <small><span class="lang-en">high · avg@3 over 12 task groups</span><span class="lang-zh">high · 12 个 task group 的 avg@3</span></small>
+              </div>
+              <div class="ht-row ht-head">
+                <span><span class="lang-en">Mode</span><span class="lang-zh">模式</span></span>
+                <span class="num">avg@3</span><span class="num"><span class="lang-en">Tokens (k)</span><span class="lang-zh">Tokens (k)</span></span><span class="num">USD</span>
+              </div>
+              <div class="ht-row"><code>base</code><span class="num">50.17%</span><span class="num">318.9</span><span class="num">0.72</span></div>
+              <div class="ht-row best"><code>demo</code><span class="num">68.24%</span><span class="num">383.5</span><span class="num">0.80</span></div>
+              <div class="ht-row"><code>reflect</code><span class="num">67.98%</span><span class="num">365.2</span><span class="num">0.79</span></div>
+            </div>
           </div>
           <p class="note">
-            <span class="lang-en">The shape is the same on both harnesses: skills lift held-out accuracy <em>while spending fewer tokens</em>, not more — the fluency story, not just a higher score. On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than cold start; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>.</span>
-            <span class="lang-zh">两套 harness 形状一致：skill 让 held-out 准确率上升的同时，<em>花的 token 反而更少</em>——这正是"变熟练"，而不仅仅是分数更高。在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比冷启动还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>。</span>
+            <span class="lang-en">The shape is the same on all three harnesses: skills lift held-out accuracy by <strong>~17–22 points</strong>, and on the GPT-5.5 / Opus 4.8 setups tokens go <em>down</em>, not up — the fluency story, not just a higher score. On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than cold start; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>.</span>
+            <span class="lang-zh">三套 harness 形状一致：skill 让 held-out 准确率提升 <strong>约 17–22 个百分点</strong>，且在 GPT-5.5 / Opus 4.8 这两套上，<em>花的 token 反而更少</em>——这正是"变熟练"，而不仅仅是分数更高。在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比冷启动还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>。</span>
           </p>
           <p class="prose-link"><a href="index.html#results"><span class="lang-en">See the per-group breakdown on the homepage →</span><span class="lang-zh">在首页查看逐组的明细 →</span></a></p>
         </div>
