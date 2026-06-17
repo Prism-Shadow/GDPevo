@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GDPevo — Measuring Agent Self-Evolution on Real Business Work</title>
-    <meta name="description" content="GDPevo measures whether an agent can get better at a class of tasks by learning from related ones — on real CRM, ERP, and Finance work. Skills lift held-out accuracy by +18 to +22 pp while spending fewer tokens.">
+    <meta name="description" content="GDPevo measures whether an agent can get better at a class of tasks by learning from related ones — on real CRM, ERP, and Finance work. Across three harnesses, skills lift held-out accuracy by +17 to +22 pp, often with fewer tokens.">
     <meta property="og:title" content="GDPevo — Measuring Agent Self-Evolution on Real Business Work">
-    <meta property="og:description" content="Can an agent get better at a class of tasks by learning from related ones? Results across two harnesses: +18 to +22 pp accuracy, fewer tokens, not more.">
+    <meta property="og:description" content="Can an agent get better at a class of tasks by learning from related ones? Results across three harnesses: +17 to +22 pp accuracy, often with fewer tokens.">
     <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -129,7 +129,7 @@
 
       <!-- ===================== RESULTS ===================== -->
       <section class="section" id="results">
-        <div class="wrap">
+        <div class="wrap results-wrap">
           <h2 class="h2">
             <span class="lang-en">Skills make agents more accurate while spending <span class="accent">fewer</span> tokens.</span>
             <span class="lang-zh">Skill 让 agent 更准,同时花<span class="accent">更少</span>的 token。</span>
@@ -145,12 +145,12 @@
           <div class="htables">
             <div class="htable">
               <div class="ht-cap">
-                <span class="lang-en">Codex with GPT-5.5 (xhigh)</span><span class="lang-zh">Codex,配 GPT-5.5（xhigh）</span>
-                <small><span class="lang-en">avg@3 over 12 task groups</span><span class="lang-zh">12 个 task group 的 avg@3</span></small>
+                <span class="lang-en">Codex · GPT-5.5</span><span class="lang-zh">Codex · GPT-5.5</span>
+                <small><span class="lang-en">xhigh · avg@3 over 12 task groups</span><span class="lang-zh">xhigh · 12 个 task group 的 avg@3</span></small>
               </div>
               <div class="ht-row ht-head">
-                <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
-                <span class="num">avg@3</span><span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span><span class="num">USD</span>
+                <span><span class="lang-en">Mode</span><span class="lang-zh">模式</span></span>
+                <span class="num">avg@3</span><span class="num"><span class="lang-en">Tokens (k)</span><span class="lang-zh">Tokens (k)</span></span><span class="num">USD</span>
               </div>
               <div class="ht-row"><code>base</code><span class="num">48.35%</span><span class="num">709.2</span><span class="num">1.08</span></div>
               <div class="ht-row"><code>demo</code><span class="num">65.99%</span><span class="num">466.1</span><span class="num">0.81</span></div>
@@ -158,16 +158,29 @@
             </div>
             <div class="htable">
               <div class="ht-cap">
-                <span class="lang-en">Claude Code with Opus 4.8 (xhigh)</span><span class="lang-zh">Claude Code,配 Opus 4.8（xhigh）</span>
-                <small><span class="lang-en">avg@3 over 12 task groups</span><span class="lang-zh">12 个 task group 的 avg@3</span></small>
+                <span class="lang-en">Claude Code · Opus 4.8</span><span class="lang-zh">Claude Code · Opus 4.8</span>
+                <small><span class="lang-en">xhigh · avg@3 over 12 task groups</span><span class="lang-zh">xhigh · 12 个 task group 的 avg@3</span></small>
               </div>
               <div class="ht-row ht-head">
-                <span><span class="lang-en">Setting</span><span class="lang-zh">设定</span></span>
-                <span class="num">avg@3</span><span class="num"><span class="lang-en">Input (k)</span><span class="lang-zh">Input (k)</span></span><span class="num">USD</span>
+                <span><span class="lang-en">Mode</span><span class="lang-zh">模式</span></span>
+                <span class="num">avg@3</span><span class="num"><span class="lang-en">Tokens (k)</span><span class="lang-zh">Tokens (k)</span></span><span class="num">USD</span>
               </div>
               <div class="ht-row"><code>base</code><span class="num">49.11%</span><span class="num">376.8</span><span class="num">0.61</span></div>
               <div class="ht-row best"><code>demo</code><span class="num">70.90%</span><span class="num">340.8</span><span class="num">0.55</span></div>
               <div class="ht-row"><code>reflect</code><span class="num">67.94%</span><span class="num">331.9</span><span class="num">0.56</span></div>
+            </div>
+            <div class="htable">
+              <div class="ht-cap">
+                <span class="lang-en">Panofy · Opus 4.6</span><span class="lang-zh">Panofy · Opus 4.6</span>
+                <small><span class="lang-en">high · avg@3 over 12 task groups</span><span class="lang-zh">high · 12 个 task group 的 avg@3</span></small>
+              </div>
+              <div class="ht-row ht-head">
+                <span><span class="lang-en">Mode</span><span class="lang-zh">模式</span></span>
+                <span class="num">avg@3</span><span class="num"><span class="lang-en">Tokens (k)</span><span class="lang-zh">Tokens (k)</span></span><span class="num">USD</span>
+              </div>
+              <div class="ht-row"><code>base</code><span class="num">50.17%</span><span class="num">318.9</span><span class="num">0.72</span></div>
+              <div class="ht-row best"><code>demo</code><span class="num">68.24%</span><span class="num">383.5</span><span class="num">0.80</span></div>
+              <div class="ht-row"><code>reflect</code><span class="num">67.98%</span><span class="num">365.2</span><span class="num">0.79</span></div>
             </div>
           </div>
 
@@ -183,16 +196,16 @@
             <div class="combined-bars" id="combined-bars"></div>
           </figure>
           <p class="note">
-            <span class="lang-en"><strong>avg@3</strong> = mean held-out accuracy over 3 attempts per task. Each task group now shows both harnesses under the same base, demo, and reflect settings.</span>
-            <span class="lang-zh"><strong>avg@3</strong> = 每个任务 3 次尝试的 held-out 准确率均值。每个 task group 现在在同一个图里展示两套 harness 的 base、demo、reflect 结果。</span>
+            <span class="lang-en"><strong>avg@3</strong> = mean held-out accuracy over 3 attempts per task. The task-group chart below keeps Codex, Claude Code, and Panofy side by side under the same base, demo, and reflect settings.</span>
+            <span class="lang-zh"><strong>avg@3</strong> = 每个任务 3 次尝试的 held-out 准确率均值。下面的 task-group 图并排展示 Codex、Claude Code 与 Panofy 在 base、demo、reflect 下的结果。</span>
           </p>
           <p class="note">
-            <span class="lang-en">Board summaries: <strong>+20.31 pp / −8.69% cost</strong> (Claude Code) · <strong>+18.21 pp / −25.75% cost</strong> (Codex).</span>
-            <span class="lang-zh">Board 汇总:<strong>+20.31 pp / −8.69% cost</strong>（Claude Code）· <strong>+18.21 pp / −25.75% cost</strong>（Codex）。</span>
+            <span class="lang-en">Board summaries: <strong>+20.31 pp / −8.69% cost</strong> (Claude Code) · <strong>+18.21 pp / −25.75% cost</strong> (Codex) · <strong>+17.94 pp / +11.82% cost</strong> (Panofy).</span>
+            <span class="lang-zh">Board 汇总:<strong>+20.31 pp / −8.69% cost</strong>（Claude Code）· <strong>+18.21 pp / −25.75% cost</strong>（Codex）· <strong>+17.94 pp / +11.82% cost</strong>（Panofy）。</span>
           </p>
           <p class="note">
-            <span class="lang-en">Full per-task reports under <code>experiments/codex_gpt5_5_xhigh/</code> and <code>experiments/claude_code_opus_4_8_xhigh/</code>.</span>
-            <span class="lang-zh">完整逐任务报告见 <code>experiments/codex_gpt5_5_xhigh/</code> 与 <code>experiments/claude_code_opus_4_8_xhigh/</code>。</span>
+            <span class="lang-en">Full per-task reports under <code>experiments/codex_gpt5_5_xhigh/</code>, <code>experiments/claude_code_opus_4_8_xhigh/</code>, and <code>experiments/panofy_claude_opus_4_6_high/</code>.</span>
+            <span class="lang-zh">完整逐任务报告见 <code>experiments/codex_gpt5_5_xhigh/</code>、<code>experiments/claude_code_opus_4_8_xhigh/</code> 与 <code>experiments/panofy_claude_opus_4_6_high/</code>。</span>
           </p>
           <p class="note">
             <a href="blog.html#cost"><span class="lang-en">Why do skills cost less? Read the blog →</span><span class="lang-zh">skill 为什么反而更省？阅读博客 →</span></a>
@@ -299,18 +312,18 @@
         // Combined per-group chart
         var holder = document.getElementById('combined-bars');
         var groups = [
-          { id: '01', domain: 'CRM', en: 'Lead capture', zh: '线索捕获', codex: [44.43, 48.12, 57.46], claude: [48.75, 81.96, 75.47] },
-          { id: '02', domain: 'CRM', en: 'B2B quote', zh: 'B2B 报价', codex: [41.62, 51.17, 60.41], claude: [42.74, 58.48, 46.53] },
-          { id: '03', domain: 'CRM', en: 'Service ticket', zh: '服务工单', codex: [57.84, 78.11, 71.69], claude: [46.69, 70.89, 63.92] },
-          { id: '04', domain: 'CRM', en: 'Churn analytics', zh: '流失分析', codex: [31.73, 60.94, 59.95], claude: [25.24, 54.55, 54.28] },
-          { id: '05', domain: 'ERP', en: 'Expense control', zh: '费用控制', codex: [35.09, 52.45, 46.51], claude: [51.15, 57.96, 59.26] },
-          { id: '06', domain: 'ERP', en: 'Procurement', zh: '采购收货', codex: [66.28, 72.39, 71.76], claude: [67.98, 72.98, 72.54] },
-          { id: '07', domain: 'ERP', en: 'Inventory', zh: '库存履约', codex: [38.40, 54.31, 54.49], claude: [39.54, 55.76, 57.10] },
-          { id: '08', domain: 'Finance', en: 'Advisory & tax', zh: '理财税务', codex: [70.57, 93.18, 93.05], claude: [66.89, 93.60, 90.94] },
-          { id: '09', domain: 'Finance', en: 'Ops modeling', zh: '运营建模', codex: [42.76, 92.47, 80.94], claude: [51.76, 100.00, 80.00] },
-          { id: '10', domain: 'Finance', en: 'Investment', zh: '投资策略', codex: [60.76, 71.05, 73.77], claude: [58.60, 63.45, 75.07] },
-          { id: '11', domain: 'Finance', en: 'Credit risk', zh: '信用风险', codex: [45.68, 56.48, 65.41], claude: [41.56, 63.48, 60.82] },
-          { id: '12', domain: 'ERP', en: 'HR lifecycle', zh: 'HR 生命周期', codex: [45.08, 61.24, 70.10], claude: [48.41, 77.66, 79.30] }
+          { id: '01', domain: 'CRM', en: 'Lead capture', zh: '线索捕获', codex: [44.43, 48.12, 57.46], claude: [48.75, 81.96, 75.47], panofy: [63.74, 85.28, 82.26] },
+          { id: '02', domain: 'CRM', en: 'B2B quote', zh: 'B2B 报价', codex: [41.62, 51.17, 60.41], claude: [42.74, 58.48, 46.53], panofy: [43.85, 58.93, 51.51] },
+          { id: '03', domain: 'CRM', en: 'Service ticket', zh: '服务工单', codex: [57.84, 78.11, 71.69], claude: [46.69, 70.89, 63.92], panofy: [58.58, 73.41, 58.00] },
+          { id: '04', domain: 'CRM', en: 'Churn analytics', zh: '流失分析', codex: [31.73, 60.94, 59.95], claude: [25.24, 54.55, 54.28], panofy: [18.82, 59.53, 57.06] },
+          { id: '05', domain: 'ERP', en: 'Expense control', zh: '费用控制', codex: [35.09, 52.45, 46.51], claude: [51.15, 57.96, 59.26], panofy: [41.05, 60.51, 62.85] },
+          { id: '06', domain: 'ERP', en: 'Procurement', zh: '采购收货', codex: [66.28, 72.39, 71.76], claude: [67.98, 72.98, 72.54], panofy: [64.83, 72.24, 70.39] },
+          { id: '07', domain: 'ERP', en: 'Inventory', zh: '库存履约', codex: [38.40, 54.31, 54.49], claude: [39.54, 55.76, 57.10], panofy: [36.39, 41.88, 51.15] },
+          { id: '08', domain: 'Finance', en: 'Advisory & tax', zh: '理财税务', codex: [70.57, 93.18, 93.05], claude: [66.89, 93.60, 90.94], panofy: [49.18, 73.36, 79.36] },
+          { id: '09', domain: 'Finance', en: 'Ops modeling', zh: '运营建模', codex: [42.76, 92.47, 80.94], claude: [51.76, 100.00, 80.00], panofy: [62.39, 89.73, 92.47] },
+          { id: '10', domain: 'Finance', en: 'Investment', zh: '投资策略', codex: [60.76, 71.05, 73.77], claude: [58.60, 63.45, 75.07], panofy: [50.73, 65.18, 63.90] },
+          { id: '11', domain: 'Finance', en: 'Credit risk', zh: '信用风险', codex: [45.68, 56.48, 65.41], claude: [41.56, 63.48, 60.82], panofy: [48.91, 56.38, 61.07] },
+          { id: '12', domain: 'ERP', en: 'HR lifecycle', zh: 'HR 生命周期', codex: [45.08, 61.24, 70.10], claude: [48.41, 77.66, 79.30], panofy: [63.59, 82.43, 85.77] }
         ];
         function lang(en, zh) {
           return '<span class="lang-en">' + en + '</span><span class="lang-zh">' + zh + '</span>';
@@ -321,21 +334,29 @@
             '<b>' + v.toFixed(1) + '</b>' +
           '</div>';
         }
-        function modelRows(label, values) {
+        function harnessRows(harness, model, thinking, values) {
           var modes = ['base', 'demo', 'reflect'];
-          return modes.map(function (mode, i) {
-            return '<div class="ob-row">' +
-              '<span class="ob-model">' + label + '</span>' +
-              '<code>' + mode + '</code>' +
-              meter(values[i], mode) +
-            '</div>';
-          }).join('');
+          return '<div class="ob-harness-block">' +
+            '<span class="ob-harness">' + harness + '</span>' +
+            '<span class="ob-model">' + model + '</span>' +
+            '<span class="ob-thinking">' + thinking + '</span>' +
+            '<div class="ob-condition-rows">' +
+              modes.map(function (mode, i) {
+                return '<div class="ob-row">' +
+                  '<code>' + mode + '</code>' +
+                  meter(values[i], mode) +
+                '</div>';
+              }).join('') +
+            '</div>' +
+          '</div>';
         }
         if (holder) {
           holder.innerHTML =
             '<div class="ob-head">' +
               '<span>' + lang('Task group', 'Task group') + '</span>' +
+              '<span>Harness</span>' +
               '<span>Model</span>' +
+              '<span>Thinking level</span>' +
               '<span>' + lang('Setting', '设定') + '</span>' +
               '<span>Accuracy</span>' +
             '</div>' +
@@ -344,8 +365,9 @@
               return '<div class="ob-group">' +
                 '<div class="ob-name"><strong>' + g.id + '</strong><i class="chip ' + chip + '">' + g.domain + '</i><span>' + lang(g.en, g.zh) + '</span></div>' +
                 '<div class="ob-rows">' +
-                  modelRows('Codex GPT-5.5', g.codex) +
-                  modelRows('Claude Opus 4.8', g.claude) +
+                  harnessRows('Codex', 'GPT-5.5', 'xhigh', g.codex) +
+                  harnessRows('Claude Code', 'Opus 4.8', 'xhigh', g.claude) +
+                  harnessRows('Panofy', 'Opus 4.6', 'high', g.panofy) +
                 '</div>' +
               '</div>';
             }).join('');
