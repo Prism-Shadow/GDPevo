@@ -86,8 +86,8 @@
             <span class="lang-zh">在真实业务工作上衡量 Agent 的自我进化</span>
           </h1>
           <p class="lead">
-            <span class="lang-en">Fine-tuning and RL improve agents by changing the parameters $\theta$. Prompt, context, and harness engineering improve agents by reshaping the conditioning context $C$. Both bend the same distribution $P(y \mid C, \theta)$ toward the outputs we want. Until recently, $\theta$ and $C$ were frozen at deployment. Now we expect agents to keep adapting from the trajectories they generate during use. If that adaptation goes back into $\theta$, we call it <strong>continuous learning</strong>. If it goes into how $C$ is assembled — by the agent rewriting its own skills, memory, or harness — we call it <strong>self-evolution</strong>.</span>
-            <span class="lang-zh">微调和强化学习通过改动参数 $\theta$ 让 agent 变好。Prompt、context、harness engineering 则通过改写条件上下文 $C$ 让它变好。两条路都是在让同一个分布 $P(y \mid C, \theta)$ 更集中、更接近我们想要的输出。在很长一段时间里，$\theta$ 和 $C$ 在部署后就是固定的。现在我们希望 agent 能从使用过程中产生的轨迹里继续学习。如果学习的方式是改 $\theta$，那叫 <strong>continuous learning</strong>；如果学习的方式是改"$C$ 是怎么被组装出来的"——agent 自己重写身边的 skills、memory、harness——那就是 <strong>self-evolution</strong>。</span>
+            <span class="lang-en">Self-supervised fine-tuning (SFT) and Reinforcement Learning (RL) improve agents by changing the model parameters $\theta$. Prompt/context/harness (whatever you call it) engineering improve agents by reshaping the conditioning context $C$. Both bend the same distribution $P(y \mid C, \theta)$ toward the outputs we want. Until recently, $\theta$ and $C$ were frozen at deployment. Now we expect agents to keep adapting from the trajectories they generate during use. If that adaptation goes back into $\theta$, we call it <strong>continuous learning</strong>. If it goes into how $C$ is assembled — by the agent rewriting its own skills, memory, or harness — we call it <strong>self-evolution</strong>.</span>
+            <span class="lang-zh">监督微调和强化学习通过改动参数 $\theta$ 让 agent 变好。Prompt、context、harness engineering 则通过改写条件上下文 $C$ 让它变好。两条路都是在让同一个分布 $P(y \mid C, \theta)$ 更集中、更接近我们想要的输出。在很长一段时间里，$\theta$ 和 $C$ 在部署后就是固定的。现在我们希望 agent 能从使用过程中产生的轨迹里继续学习。如果学习的方式是改 $\theta$，那叫 <strong>continuous learning</strong>；如果学习的方式是改"$C$ 是怎么被组装出来的"——agent 自己重写身边的 skills、memory、harness——那就是 <strong>self-evolution</strong>。</span>
           </p>
           <div class="prose">
             <p>
@@ -99,8 +99,8 @@
               <span class="lang-zh">问题出在评测。Self-evolution 本质上还是一种 training，它训练的是 $C$。既然是 training，就要遵守基本的 learning-theory 卫生原则：留 hold-out、分训练/测试、要在没见过的样本上检验泛化。但今天很多 self-evolution benchmark 让 agent 在同一个数据集上一边学一边测，所谓的"提升"多半是死记硬背。剩下的 benchmark 大多停留在 coding 或游戏式的环境里，reward 干净；几乎没有一个针对<strong>真实业务工作</strong>——审核一张 AP 发票、把展会赞助在 CRM 和财务两边对账、做一个分行月度结账包——这种 reward 棘手、规则埋在业务约定里的场景。</span>
             </p>
             <p>
-              <span class="lang-en">GDPevo is a benchmark designed for exactly that gap. <strong>Twelve task groups</strong> across CRM, ERP, and Finance — for example, AP invoice readiness, branch financial-modeling reports, and lending-committee credit memos. Each group ships <strong>5 train tasks + 5 test tasks</strong> with a shared environment and rule-based graders. Below, we walk through how this benchmark is built, and how it is used.</span>
-              <span class="lang-zh">GDPevo 就是为这个空缺设计的 benchmark。<strong>12 组 task group</strong>，覆盖 CRM、ERP、Finance：比如 AP 发票上架、分行财务模型报告、信贷委员会备忘录等等。每组包含 <strong>5 个 train + 5 个 test</strong>，共享一个环境，用基于规则的 grader 打分。下面我们就来看看这个 benchmark 是怎么被构建出来的，以及怎么使用。</span>
+              <span class="lang-en">GDPevo is a benchmark designed for exactly that gap. <strong>Twelve task groups</strong> span CRM, ERP, and Finance, and each group ships <strong>5 train tasks + 5 test tasks</strong> with a shared environment and rule-based graders. Below, we walk through how this benchmark is built, and how it is used.</span>
+              <span class="lang-zh">GDPevo 就是为这个空缺设计的 benchmark。<strong>12 组 task group</strong> 覆盖 CRM、ERP、Finance，每组包含 <strong>5 个 train + 5 个 test</strong>，共享一个环境，用基于规则的 grader 打分。下面我们就来看看这个 benchmark 是怎么被构建出来的，以及怎么使用。</span>
             </p>
           </div>
         </div>
