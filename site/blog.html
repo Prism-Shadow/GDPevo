@@ -139,8 +139,8 @@
         <div class="wrap narrow">
           <h2 class="h2"><span class="lang-en">How to evaluate with it.</span><span class="lang-zh">怎么用它做评估。</span></h2>
           <p class="lead">
-            <span class="lang-en">Three things we want from an evaluation harness: when you change the question — different chart, different axes, different config combination — it should generate the new analysis on the fly, instead of forcing you to hand-edit code; it should grade in a way you can audit; and it should treat <em>cost</em> as a first-class citizen alongside accuracy. Each one motivated a specific design.</span>
-            <span class="lang-zh">我们对评估 harness 有三个要求：当你换一个问题——换图表、换横纵轴、换 config 组合——它应该能当场生成新的分析，而不是逼你回去手动改代码；评分必须可被人审计；<em>cost</em> 要和 accuracy 同等重要。下面三块就是为了满足这三个要求。</span>
+            <span class="lang-en">Three things we want from an evaluation harness: it should adapt to a new question without hand-edited code; it should grade in a way you can audit; and it should treat <em>cost</em> as a first-class citizen alongside accuracy. Each one motivated a specific design.</span>
+            <span class="lang-zh">我们对评估 harness 有三个要求：换一个问题不用回去手改代码；评分必须可被人审计；<em>cost</em> 要和 accuracy 同等重要。下面三块就是为了满足这三个要求。</span>
           </p>
 
           <h3 class="h3" style="margin-top:2.4rem"><span class="lang-en">Skills as the new IR; programming language as the machine code.</span><span class="lang-zh">把 skill 当作新的 IR，把编程语言当作机器码。</span></h3>
@@ -151,8 +151,8 @@
 
           <h3 class="h3" style="margin-top:2.8rem"><span class="lang-en">Rule-based grading, not "ask another LLM".</span><span class="lang-zh">规则化评分，而不是"再叫一个 LLM 来判"。</span></h3>
           <div class="prose">
-            <p><span class="lang-en">In real business work, gold answers aren't a paragraph — they're a structured set of correct records, amounts, exclusions, and follow-up actions. LLM-as-a-judge is convenient but quietly unreliable here: it forgives mistakes that matter and complains about differences that don't. GDPevo grades with deterministic checkers that look at the things a human reviewer would actually check — was the right set of records returned, was the exclusion reason right, did the amount round to the right precision, did the action count match. A typical rubric has <strong>seven exact-match scoring points</strong> with weights heavier on checks that require real exploration and carryover from training; getting the JSON to parse is a baseline, not a score. When an agent fails, the failure points to a specific rule, not a vague verdict.</span>
-              <span class="lang-zh">在真实业务工作里，标准答案不是一段话——而是一组正确的记录、金额、排除项和后续动作。LLM-as-a-judge 很方便，但在这种场景下悄悄地不可靠：它会放过真正该扣分的错误，又会因为无所谓的差异给你扣分。GDPevo 用的是确定性的 rule-based checker，检查那些<strong>人工审核员真正会看的东西</strong>：返回的记录集对不对、排除原因对不对、金额按不按要求精度、动作数对不对。典型 rubric 是 <strong>7 个 exact-match 评分点</strong>，权重更高的留给"真正需要去探索、需要把 train 阶段学到的东西用上"的检查点；JSON 能 parse 这件事是底线，不是得分项。错了，错误能直接定位到具体哪条规则，而不是一个含糊的整体结论。</span></p>
+            <p><span class="lang-en">GDPevo grades with deterministic, rule-based checkers — for example, was the right set of records returned, did the amount round to the right precision. Two things follow. First, the score is <strong>reproducible</strong>: the same answer always gets the same grade, regardless of who runs it or when. Second, every failure is <strong>traceable</strong>: instead of a vague verdict, you see exactly which rule was violated and by how much. That trace is what makes the benchmark useful for diagnosis — you can read it back to find weak spots in your agent and feed those weak spots into the next round of skill or memory updates.</span>
+              <span class="lang-zh">GDPevo 用确定性的 rule-based checker 打分——比如返回的记录集对不对、金额按不按要求精度。这带来两个好处。第一，评分是<strong>可复现</strong>的：同一份答案，谁跑、什么时候跑，得到的分都一样。第二，每一次失败都是<strong>可追溯</strong>的：你看到的不是一个含糊的整体结论，而是具体哪一条规则被违反、扣了多少分。这种可追溯性让 benchmark 成为诊断工具——你可以反过来读这些 trace，找到你的 agent 短板在哪儿，再把这些短板喂回下一轮的 skill 或 memory 更新。</span></p>
           </div>
 
           <h3 class="h3" style="margin-top:2.8rem"><span class="lang-en">Cost and accuracy, both first-class.</span><span class="lang-zh">cost 和 accuracy 都是一等公民。</span></h3>
