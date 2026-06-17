@@ -20,19 +20,6 @@ task environment is served at a **remote URL given at run time**; you put that
 URL into every `predict()` input as `api_base_url`, and the agent fetches it
 live exactly as a local solver would.
 
-## Panofy Concurrency Limit
-
-Panofy enforces a global concurrent task/process limit for a given API key:
-run **at most 10 active `train()` / `predict()` calls at the same time** across
-all Panofy workspaces. If a full run has more than 10 pending calls, execute it
-in batches or through a shared queue. Do not let each task-group workspace open
-its own uncoordinated worker pool.
-
-When training, create each `(condition, attempt)` agent once, record the
-`agent_id`, and retry only the training kickoff if the platform reports a
-concurrency-limit error. Re-running the whole one-shot `train()` call can create
-extra orphan agents.
-
 ## Directories
 
 | Path | Purpose |

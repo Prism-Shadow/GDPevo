@@ -12,5 +12,7 @@
 | `eval_workspace/` | 可复用的英文 evaluation workspace 和 guides |
 | `eval_workspace_zh/` | 可复用的中文 evaluation workspace 和 guides |
 | `codex_gpt5_5_xhigh/` | 已发布的 Codex GPT-5.5 xhigh 评估运行 |
+| `claude_code_opus_4_8_xhigh/` | 已发布的 Claude Code Opus 4.8 xhigh 评估运行 |
+| `panofy_claude_opus_4_6_high/` | 已发布的 Panofy Claude Opus 4.6 high 评估运行 |
 
-每个已发布实验目录都包含 `config.yaml`、结构化 report YAML 文件，以及这些 reports 引用的生成 skill packages。
+每个已发布实验目录都包含 `config.yaml`、结构化 report YAML 文件，以及这些 reports 引用的生成 skill packages（如果有）。
