@@ -65,27 +65,24 @@
             </div>
           </div>
 
-          <!-- Group B: forward arrow Tasks→Calib (flexes), Calibration, fail loop -->
+          <!-- Group B: forward arrow Tasks→Calib (straight vertical), Calibration, fail arrow (straight vertical) -->
           <div class="tc-wrap">
             <div class="forward-block">
-              <!-- vertical part at Tasks center (x=386 → 61% of 632), grows with flex -->
+              <!-- Forward: straight vertical at x=316 (Calibration center, also within Tasks) -->
               <div class="forward-line"></div>
-              <!-- bend + head: turn left to Calibration center (x=316) and arrowhead down -->
-              <svg class="forward-bend" width="632" height="18" viewBox="0 0 632 18" fill="none">
-                <path d="M 386 0 V 8 H 316 V 14" stroke="#10a36e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                <polygon points="309,12 316,22 323,12" fill="#10a36e"/>
+              <svg class="forward-head" width="14" height="12" viewBox="0 0 14 12" fill="none">
+                <polygon points="0,0 14,0 7,12" fill="#10a36e"/>
               </svg>
             </div>
             <div class="box box-calib">
               <Robot class="box-icon" :c="G"/>
               <span>Calibration Solvers</span>
             </div>
-            <!-- fail-loop overlay: from Calibration right-edge mid → right → up to Tasks-bottom -->
+            <!-- Fail: straight vertical at x=386 (Tasks center, also within Calibration top) -->
             <div class="fail-loop">
-              <div class="fail-h"></div>
-              <div class="fail-v"></div>
-              <svg class="fail-head" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <polygon points="0,14 14,14 7,0" fill="#10a36e"/>
+              <div class="fail-line"></div>
+              <svg class="fail-head" width="14" height="12" viewBox="0 0 14 12" fill="none">
+                <polygon points="0,12 14,12 7,0" fill="#10a36e"/>
               </svg>
             </div>
             <span class="loop-label">fail</span>
@@ -383,7 +380,7 @@ const DownArrowO = () => h('svg', {
   flex: 1;
 }
 
-/* Forward arrow: flex-line from Tasks-bottom + bend to Calibration top */
+/* Forward arrow: straight vertical line at x=290 from Tasks-bottom to Calibration-top */
 .forward-block {
   position: relative;
   width: 632px;
@@ -394,18 +391,18 @@ const DownArrowO = () => h('svg', {
 }
 .forward-line {
   position: absolute;
-  left: 386px;
+  left: 290px;
   top: -2px;            /* overlap into Tasks bottom border */
   width: 3px;
-  bottom: 18px;          /* leave 18px for the bend SVG */
+  bottom: 10px;          /* leave room for arrowhead */
   background: #10a36e;
   border-radius: 2px;
 }
-.forward-bend {
+.forward-head {
+  position: absolute;
+  left: 284px;          /* 290 - 6 (half arrowhead width) */
+  bottom: 0px;
   display: block;
-  margin-top: auto;      /* push to bottom of forward-block */
-  overflow: visible;
-  width: 632px;
 }
 
 .tc-wrap .box-calib {
@@ -416,40 +413,32 @@ const DownArrowO = () => h('svg', {
 }
 .tc-wrap .box-calib .box-icon { width: 26px; height: 26px; }
 
-/* Fail-loop: starts at Calibration right-edge mid (x=431), goes to x=465, then up to Tasks-bottom */
+/* Fail arrow: straight vertical line at x=342 from Calibration-top to Tasks-bottom */
 .fail-loop {
   position: absolute;
   left: 0; right: 0;
   top: 0; bottom: 0;
   pointer-events: none;
 }
-.fail-h {
+.fail-line {
   position: absolute;
-  left: 431px;
-  bottom: 22px;          /* (44 calib height) / 2 = 22 (right-edge midpoint of calibration) */
-  width: 37px;           /* 465-431=34, +3 to overlap */
-  height: 3px;
-  background: #10a36e;
-  border-radius: 2px;
-}
-.fail-v {
-  position: absolute;
-  left: 465px;
+  left: 342px;
   top: -2px;             /* overlap into Tasks bottom border */
-  bottom: 22px;          /* meet horizontal at Calibration midpoint y */
+  bottom: 42px;          /* end at Calibration top (44px tall - 2 border) */
   width: 3px;
   background: #10a36e;
   border-radius: 2px;
 }
 .fail-head {
   position: absolute;
-  left: 458px;           /* center 465 - 7 */
+  left: 336px;           /* 342 - 6 */
   top: -8px;             /* arrowhead pointing up, into Tasks border */
 }
 .loop-label {
   position: absolute;
-  left: 482px;
-  bottom: 12px;
+  left: 360px;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 14px;
   font-weight: 700;
   color: #10a36e;
