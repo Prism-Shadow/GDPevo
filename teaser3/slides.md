@@ -1,7 +1,7 @@
 ---
 theme: default
-canvasWidth: 1450
-aspectRatio: 1450/600
+canvasWidth: 1340
+aspectRatio: 1340/600
 fonts:
   sans: Inter
   provider: google

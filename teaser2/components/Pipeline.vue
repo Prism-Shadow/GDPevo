@@ -165,8 +165,8 @@
       <!-- bottom fail->revise arc:
            start = Stage 3 bottom-edge midpoint (overlaps border at y=-2)
            end   = Stage 2 bottom-edge midpoint (arrow head into border at y=-2) -->
-      <svg class="fail-arc" width="1474" height="50" viewBox="0 0 1474 50" fill="none" overflow="visible">
-        <path d="M 1091 -2 V 28 H 608 V 4"
+      <svg class="fail-arc" width="1474" height="36" viewBox="0 0 1474 36" fill="none" overflow="visible">
+        <path d="M 1091 -2 V 18 H 608 V 4"
               stroke="#10a36e" stroke-width="3" fill="none"
               stroke-linecap="round" stroke-linejoin="round"/>
         <polygon points="601,4 615,4 608,-6" fill="#10a36e"/>
@@ -290,7 +290,7 @@ const DownArrowO = () => h('svg', {
   border-radius: 6px;
   padding: 8px 14px 12px;
   display: flex; flex-direction: column;
-  min-height: 400px;
+  min-height: 280px;
 }
 .stage-title {
   margin: 0 0 8px;
@@ -322,7 +322,7 @@ const DownArrowO = () => h('svg', {
   font-size: 16px; font-weight: 800; color: #111; text-align: center;
 }
 .seed-list {
-  display: flex; flex-direction: column; gap: 14px;
+  display: flex; flex-direction: column; gap: 10px;
   flex: 1;
   justify-content: space-evenly;
 }
@@ -353,10 +353,10 @@ const DownArrowO = () => h('svg', {
   background: #fff;
   border: 2px solid #10a36e;
   border-radius: 10px;
-  padding: 8px 14px;
+  padding: 6px 14px;
   display: inline-flex; align-items: center; gap: 10px;
   font-size: 15px; color: #111;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 .box-icon { flex: none; width: 22px; height: 22px; }
 .box-main { font-size: 16px; }
@@ -383,8 +383,8 @@ const DownArrowO = () => h('svg', {
   position: relative;
   width: 632px;
   flex: 1;
-  min-height: 30px;
-  max-height: 50px;
+  min-height: 24px;
+  max-height: 36px;
   display: flex; flex-direction: column;
 }
 .forward-line {
@@ -404,11 +404,11 @@ const DownArrowO = () => h('svg', {
 
 .tc-wrap .box-calib {
   width: 230px;
-  height: 44px;
+  height: 42px;
   justify-content: center;
   font-size: 15px; font-weight: 700;
 }
-.tc-wrap .box-calib .box-icon { width: 26px; height: 26px; }
+.tc-wrap .box-calib .box-icon { width: 24px; height: 24px; }
 
 /* Fail arrow: straight vertical line at x=342, from Calibration-top to Tasks-bottom */
 .fail-loop {
@@ -420,8 +420,8 @@ const DownArrowO = () => h('svg', {
 .fail-line {
   position: absolute;
   left: 342px;
-  top: 8px;              /* below arrowhead */
-  bottom: 42px;          /* land 2px into Calibration top border for clean connection */
+  top: 8px;
+  bottom: 40px;          /* land 2px into Calibration top (calib height 42 - 2) */
   width: 3px;
   background: #10a36e;
 }
@@ -447,8 +447,8 @@ const DownArrowO = () => h('svg', {
   width: 632px;
   align-self: center;
   flex: 1;
-  min-height: 28px;
-  max-height: 50px;
+  min-height: 24px;
+  max-height: 36px;
   display: flex; flex-direction: column; align-items: center;
   margin-top: -2px;
 }
@@ -481,22 +481,22 @@ const DownArrowO = () => h('svg', {
   justify-content: center;
 }
 .box-env {
-  flex-direction: column; gap: 4px;
+  flex-direction: column; gap: 2px;
   text-align: center;
-  padding: 8px 12px;
+  padding: 6px 12px;
   align-self: stretch; justify-content: center;
   width: 130px;
 }
-.box-env .box-icon { width: 26px; height: 26px; }
-.env-text { font-size: 14px; font-weight: 700; line-height: 1.2; }
+.box-env .box-icon { width: 24px; height: 24px; }
+.env-text { font-size: 14px; font-weight: 700; line-height: 1.15; }
 
 .box-tasks {
   flex: 1;
-  flex-direction: column; align-items: stretch; gap: 6px;
-  padding: 8px 12px 10px;
+  flex-direction: column; align-items: stretch; gap: 4px;
+  padding: 6px 12px 8px;
 }
 .tasks-title {
-  font-size: 15px; font-weight: 700;
+  font-size: 14px; font-weight: 700;
   text-align: center;
 }
 .tasks-row { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
@@ -530,7 +530,7 @@ const DownArrowO = () => h('svg', {
   background: #fff;
   border: 1.5px solid #10a36e;
   border-radius: 8px;
-  padding: 6px 6px;
+  padding: 5px 6px;
   display: flex; flex-direction: row; align-items: center; gap: 6px;
   font-size: 12px; font-weight: 700; color: #0a7a52;
   text-align: left; line-height: 1.2;
@@ -541,7 +541,7 @@ const DownArrowO = () => h('svg', {
 
 /* ===== Stage 3 ===== */
 .st-3-body { gap: 0; justify-content: stretch; flex: 1; }
-.down-arrow-o { flex: 1; min-height: 24px; max-height: 40px; align-self: center; margin: -2px 0; }
+.down-arrow-o { flex: 1; min-height: 22px; max-height: 32px; align-self: center; margin: -2px 0; }
 .box-struct, .box-rev, .box-pass {
   width: 100%;
   border: 2px solid #ea580c;
@@ -558,13 +558,13 @@ const DownArrowO = () => h('svg', {
 .rev-text { font-size: 16px; font-weight: 700; }
 
 /* ===== Stage 4 ===== */
-.st-4-body { gap: 12px; justify-content: stretch; flex: 1; }
+.st-4-body { gap: 8px; justify-content: stretch; flex: 1; }
 .box-metric {
   width: 100%;
   flex: 1;
-  max-height: 70px;
+  max-height: 56px;
   border: 2px solid #dc2626;
-  padding: 12px 14px;
+  padding: 10px 14px;
   font-size: 16px; font-weight: 700;
   color: #111;
   justify-content: flex-start;
@@ -577,16 +577,16 @@ const DownArrowO = () => h('svg', {
   position: absolute;
   left: 0;
   top: 100%;
-  width: 1474px; height: 50px;
+  width: 1474px; height: 36px;
   pointer-events: none;
   overflow: visible;
 }
 .fail-revise-lab {
   position: absolute;
   left: 0; right: 0;
-  top: calc(100% + 32px);
+  top: calc(100% + 22px);
   text-align: center;
-  font-size: 16px; font-weight: 700;
+  font-size: 14px; font-weight: 700;
   color: #10a36e;
   letter-spacing: 0.2px;
 }

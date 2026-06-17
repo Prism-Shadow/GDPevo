@@ -129,7 +129,7 @@
               <span class="lang-zh">人只写一次 pipeline，之后全靠 agent（如下图所示）。先从公开的真实业务 benchmark（GDPVal、SOP-Bench、JobBench）里取种子场景，再据此 spawn 出大量候选 task group。每组里搭一个共享 env，写 5 个 train + 5 个 test 任务并配上基于规则的 evaluator。然后 calibrator 调难度，让 <code>evolution</code> 设定明显超过 <code>no-evolution</code> 设定——这一步是为了把那些"是否进化都不影响答案"的题筛掉，让 benchmark 集中在那些真的需要从经验里学东西的 agent 上。最后由 6 个互相独立的 reviewer agent 审核，6 个里 5 个通过这一组才放行——之所以要 reviewer，是因为 agent 经常嘴上说"做完了"、实际偷懒，所以审核的就是结构、完整性、文件是否齐全、隐藏规则是否真的埋了进去。最终通过这层筛选活下来、进入公开发布的，是 12 组 task group。</span></p>
           </div>
           <figure class="pipeline-figure">
-            <img src="assets/gdpevo-pipeline-v2.png" alt="GDPevo data pipeline: seed scenarios → multi-agent task factory → quality review → release." loading="lazy" />
+            <img src="assets/gdpevo-pipeline.png" alt="GDPevo data pipeline: seed scenarios → multi-agent task factory → quality review → release." loading="lazy" />
           </figure>
 
           <h3 class="h3" style="margin-top:2.8rem"><span class="lang-en">Hidden rules, spread across the train tasks.</span><span class="lang-zh">隐藏规则，分散到各个 train task 里。</span></h3>
