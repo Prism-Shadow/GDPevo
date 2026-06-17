@@ -1,6 +1,6 @@
 <template>
   <div class="diagram">
-    <h1 class="title">GDPevo Data Construction Pipeline</h1>
+    <h1 class="title">GDPevo Data Pipeline</h1>
 
     <div class="board">
       <!-- ===== Stage 1: Scenario Seed ===== -->
@@ -33,14 +33,14 @@
               <span><b>Main Agent:</b> blueprint + integration</span>
             </div>
 
-            <!-- T-split SVG (extends 2px into top/bottom borders) -->
+            <!-- T-split SVG (14x10 arrowheads, matching forward/fail/pass) -->
             <svg class="t-split" width="632" height="28" viewBox="0 0 632 28" fill="none">
               <path d="M 316 -2 V 10" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
               <path d="M 65 10 H 386" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-              <path d="M 65 10 V 22" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-              <polygon points="58,20 65,30 72,20" fill="#10a36e"/>
-              <path d="M 386 10 V 22" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-              <polygon points="379,20 386,30 393,20" fill="#10a36e"/>
+              <path d="M 65 10 V 20" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+              <polygon points="58,20 72,20 65,30" fill="#10a36e"/>
+              <path d="M 386 10 V 20" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+              <polygon points="379,20 393,20 386,30" fill="#10a36e"/>
             </svg>
 
             <!-- Env + Tasks row -->
@@ -68,21 +68,19 @@
           <!-- Group B: forward arrow Tasks→Calib (straight vertical), Calibration, fail arrow (straight vertical) -->
           <div class="tc-wrap">
             <div class="forward-block">
-              <!-- Forward: straight vertical at x=316 (Calibration center, also within Tasks) -->
               <div class="forward-line"></div>
-              <svg class="forward-head" width="14" height="12" viewBox="0 0 14 12" fill="none">
-                <polygon points="0,0 14,0 7,12" fill="#10a36e"/>
+              <svg class="forward-head" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                <polygon points="0,0 14,0 7,10" fill="#10a36e"/>
               </svg>
             </div>
             <div class="box box-calib">
               <Robot class="box-icon" :c="G"/>
               <span>Calibration Solvers</span>
             </div>
-            <!-- Fail: straight vertical at x=386 (Tasks center, also within Calibration top) -->
             <div class="fail-loop">
               <div class="fail-line"></div>
-              <svg class="fail-head" width="14" height="12" viewBox="0 0 14 12" fill="none">
-                <polygon points="0,12 14,12 7,0" fill="#10a36e"/>
+              <svg class="fail-head" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                <polygon points="0,10 14,10 7,0" fill="#10a36e"/>
               </svg>
             </div>
             <span class="loop-label">fail</span>
@@ -92,8 +90,8 @@
           <div class="grp grp-c">
             <div class="pass-block">
               <div class="pass-line"></div>
-              <svg class="pass-head" width="22" height="14" viewBox="0 0 22 14" fill="none">
-                <polygon points="0,0 22,0 11,14" fill="#10a36e"/>
+              <svg class="pass-head" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                <polygon points="0,0 14,0 7,10" fill="#10a36e"/>
               </svg>
               <span class="pass-label">pass</span>
             </div>
@@ -377,7 +375,7 @@ const DownArrowO = () => h('svg', {
   width: 632px;
   align-self: center;
   display: flex; flex-direction: column; align-items: center;
-  flex: 1;
+  flex: 0 0 auto;       /* size to content; pass-block flexes for vertical fill */
 }
 
 /* Forward arrow: straight vertical line at x=290 from Tasks-bottom to Calibration-top */
@@ -392,16 +390,15 @@ const DownArrowO = () => h('svg', {
 .forward-line {
   position: absolute;
   left: 290px;
-  top: -2px;            /* overlap into Tasks bottom border */
+  top: -2px;             /* overlap into Tasks bottom border */
   width: 3px;
-  bottom: 10px;          /* leave room for arrowhead */
+  bottom: 8px;           /* leave room for arrowhead (10px tall) */
   background: #10a36e;
-  border-radius: 2px;
 }
 .forward-head {
   position: absolute;
-  left: 284px;          /* 290 - 6 (half arrowhead width) */
-  bottom: 0px;
+  left: 284px;           /* center 290 → 14/2=7 → 290-7=283; +1 alignment */
+  bottom: -2px;          /* overlap into Calibration top border */
   display: block;
 }
 
@@ -413,7 +410,7 @@ const DownArrowO = () => h('svg', {
 }
 .tc-wrap .box-calib .box-icon { width: 26px; height: 26px; }
 
-/* Fail arrow: straight vertical line at x=342 from Calibration-top to Tasks-bottom */
+/* Fail arrow: straight vertical line at x=342, from Calibration-top to Tasks-bottom */
 .fail-loop {
   position: absolute;
   left: 0; right: 0;
@@ -423,22 +420,22 @@ const DownArrowO = () => h('svg', {
 .fail-line {
   position: absolute;
   left: 342px;
-  top: -2px;             /* overlap into Tasks bottom border */
-  bottom: 42px;          /* end at Calibration top (44px tall - 2 border) */
+  top: 8px;              /* below arrowhead */
+  bottom: 42px;          /* land 2px into Calibration top border for clean connection */
   width: 3px;
   background: #10a36e;
-  border-radius: 2px;
 }
 .fail-head {
   position: absolute;
-  left: 336px;           /* 342 - 6 */
-  top: -8px;             /* arrowhead pointing up, into Tasks border */
+  left: 335px;           /* center 342 - 7 */
+  top: -2px;             /* overlap into Tasks bottom border */
 }
 .loop-label {
   position: absolute;
   left: 360px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: auto;
+  bottom: 50px;          /* above Calibration top */
+  transform: none;
   font-size: 14px;
   font-weight: 700;
   color: #10a36e;
