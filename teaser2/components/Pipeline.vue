@@ -33,17 +33,17 @@
           </div>
 
           <!-- T-split SVG: vertical from main + horizontal bar + two down arrows into env / tasks -->
-          <svg class="t-split" width="600" height="50" viewBox="0 0 600 50" fill="none">
-            <!-- vertical drop from main -->
-            <path d="M 300 0 V 12" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-            <!-- horizontal bar -->
-            <path d="M 70 12 H 530" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-            <!-- down to env (env card center ~70px from card left) -->
-            <path d="M 70 12 V 38" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-            <polygon points="62,36 70,48 78,36" fill="#10a36e"/>
-            <!-- down to tasks (tasks card center) -->
-            <path d="M 365 12 V 38" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-            <polygon points="357,36 365,48 373,36" fill="#10a36e"/>
+          <svg class="t-split" width="572" height="30" viewBox="0 0 572 30" fill="none">
+            <!-- vertical drop from main center (286) -->
+            <path d="M 286 0 V 10" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+            <!-- horizontal bar from env-center (65) to tasks-center (356) -->
+            <path d="M 65 10 H 356" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+            <!-- down to env -->
+            <path d="M 65 10 V 22" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+            <polygon points="58,20 65,30 72,20" fill="#10a36e"/>
+            <!-- down to tasks -->
+            <path d="M 356 10 V 22" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+            <polygon points="349,20 356,30 363,20" fill="#10a36e"/>
           </svg>
 
           <!-- Env + Tasks row -->
@@ -67,15 +67,15 @@
             </div>
           </div>
 
-          <!-- Tasks → Calibration (down) + Calibration → Tasks fail loop (up on right side) -->
+          <!-- Tasks → Calibration (down with bend) + fail loop up on right -->
           <div class="loop-block">
-            <svg class="loop-svg" width="600" height="60" viewBox="0 0 600 60" fill="none">
-              <!-- down arrow: tasks center to calibration -->
-              <path d="M 365 0 V 46" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-              <polygon points="357,44 365,56 373,44" fill="#10a36e"/>
-              <!-- fail loop: vertical line going up on right side -->
-              <path d="M 480 56 V 6" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-              <polygon points="472,8 480,-4 488,8" fill="#10a36e"/>
+            <svg class="loop-svg" width="572" height="40" viewBox="0 0 572 40" fill="none">
+              <!-- down from tasks (356), bend left, drop to calibration center (286) -->
+              <path d="M 356 0 V 16 H 286 V 30" stroke="#10a36e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <polygon points="279,28 286,40 293,28" fill="#10a36e"/>
+              <!-- fail loop: up on right side -->
+              <path d="M 470 36 V 6" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+              <polygon points="463,8 470,-2 477,8" fill="#10a36e"/>
             </svg>
             <span class="loop-label">fail</span>
           </div>
@@ -88,23 +88,20 @@
 
           <!-- Calibration → Outputs (pass) -->
           <div class="pass-block">
-            <svg class="pass-svg" width="600" height="46" viewBox="0 0 600 46" fill="none">
-              <path d="M 300 4 V 32" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-              <polygon points="292,30 300,42 308,30" fill="#10a36e"/>
+            <svg class="pass-svg" width="572" height="30" viewBox="0 0 572 30" fill="none">
+              <path d="M 286 2 V 20" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+              <polygon points="279,18 286,28 293,18" fill="#10a36e"/>
             </svg>
             <span class="pass-label">pass</span>
           </div>
 
-          <!-- Outputs -->
-          <div class="outputs">
-            <div class="outputs-title">Outputs</div>
-            <div class="outputs-row">
-              <div class="out-cell"><Globe class="out-icon" :c="G"/><span>Shared<br>Env</span></div>
-              <div class="out-cell"><DocG class="out-icon" :c="G"/><span>5 Train<br>Tasks</span></div>
-              <div class="out-cell"><DocG class="out-icon" :c="G"/><span>5 Test<br>Tasks</span></div>
-              <div class="out-cell"><Shield class="out-icon" :c="G"/><span>Evaluators</span></div>
-              <div class="out-cell"><DocG class="out-icon" :c="G"/><span>Task<br>Notes</span></div>
-            </div>
+          <!-- Outputs (single flat row) -->
+          <div class="outputs-flat">
+            <div class="out-cell"><Globe class="out-icon" :c="G"/><span>Shared Env</span></div>
+            <div class="out-cell"><DocG class="out-icon" :c="G"/><span>5 Train Tasks</span></div>
+            <div class="out-cell"><DocG class="out-icon" :c="G"/><span>5 Test Tasks</span></div>
+            <div class="out-cell"><Shield class="out-icon" :c="G"/><span>Evaluators</span></div>
+            <div class="out-cell"><DocG class="out-icon" :c="G"/><span>Task Notes</span></div>
           </div>
         </div>
       </section>
@@ -251,9 +248,9 @@ const BlackArrow = () => h('svg', { width: 38, height: 22, viewBox: '0 0 38 22',
   h('path', { d: 'M2 11 H 24', stroke: '#1f2937', 'stroke-width': 3, 'stroke-linecap': 'round' }),
   h('polygon', { points: '22,3 36,11 22,19', fill: '#1f2937' }),
 ])
-const DownArrowO = () => h('svg', { width: 22, height: 32, viewBox: '0 0 22 32', fill: 'none' }, [
-  h('path', { d: 'M11 2 V 22', stroke: '#ea580c', 'stroke-width': 3, 'stroke-linecap': 'round' }),
-  h('polygon', { points: '3,20 11,32 19,20', fill: '#ea580c' }),
+const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22', fill: 'none' }, [
+  h('path', { d: 'M11 1 V 14', stroke: '#ea580c', 'stroke-width': 3, 'stroke-linecap': 'round' }),
+  h('polygon', { points: '3,12 11,22 19,12', fill: '#ea580c' }),
 ])
 </script>
 
@@ -286,11 +283,11 @@ const DownArrowO = () => h('svg', { width: 22, height: 32, viewBox: '0 0 22 32',
 .stage {
   border: 2px dashed var(--c);
   border-radius: 6px;
-  padding: 14px 14px 22px;
+  padding: 10px 14px 14px;
   display: flex; flex-direction: column;
 }
 .stage-title {
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-size: 19px;
   font-weight: 700;
   color: var(--c);
@@ -312,27 +309,27 @@ const DownArrowO = () => h('svg', { width: 22, height: 32, viewBox: '0 0 22 32',
   border-radius: 14px;
   background: #fff;
   display: flex; flex-direction: column;
-  gap: 14px;
-  padding: 16px 14px 18px;
+  gap: 10px;
+  padding: 12px 12px 14px;
 }
 .seed-head {
   font-size: 16px; font-weight: 800; color: #111; text-align: center;
 }
-.seed-list { display: flex; flex-direction: column; gap: 8px; }
+.seed-list { display: flex; flex-direction: column; gap: 6px; }
 .seed-chip {
   display: flex; align-items: center; gap: 10px;
   background: #e9f0ff; color: #1d4ed8;
-  padding: 10px 14px; border-radius: 10px;
+  padding: 7px 12px; border-radius: 10px;
   font-weight: 700; font-size: 15px;
 }
 .seed-ci { width: 18px; height: 18px; flex: none; }
 .seed-dots {
   justify-content: center; letter-spacing: 4px; font-size: 18px;
-  padding: 6px 14px;
+  padding: 4px 12px;
 }
 .seed-foot {
   margin-top: auto;
-  padding-top: 10px;
+  padding-top: 8px;
   border-top: 1px dashed #cbd5e1;
   text-align: center;
   font-size: 13px; font-weight: 600; color: #475569;
@@ -345,7 +342,7 @@ const DownArrowO = () => h('svg', { width: 22, height: 32, viewBox: '0 0 22 32',
   background: #fff;
   border: 2px solid #10a36e;
   border-radius: 10px;
-  padding: 10px 14px;
+  padding: 8px 14px;
   display: inline-flex; align-items: center; gap: 10px;
   font-size: 15px; color: #111;
   line-height: 1.25;
@@ -355,55 +352,30 @@ const DownArrowO = () => h('svg', { width: 22, height: 32, viewBox: '0 0 22 32',
 .box-main b { font-weight: 700; }
 
 .t-split, .loop-svg, .pass-svg {
-  width: 100%;
-  height: auto;
   display: block;
   margin: 0;
-  max-width: 570px;
+  width: 572px;
 }
 
 .loop-block, .pass-block {
   position: relative;
-  width: 100%;
+  width: 572px;
+  align-self: center;
 }
 .loop-label {
   position: absolute;
-  left: 84%;
-  top: 38%;
+  left: 482px;
+  top: 18px;
   transform: translateY(-50%);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #10a36e;
 }
 .pass-label {
   position: absolute;
-  left: 56%;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 13px;
-  font-weight: 700;
-  color: #10a36e;
-}
-
-.loop-block, .pass-block {
-  position: relative;
-  width: 100%;
-}
-.loop-label {
-  position: absolute;
-  left: 84%;
-  top: 38%;
-  transform: translateY(-50%);
-  font-size: 13px;
-  font-weight: 700;
-  color: #10a36e;
-}
-.pass-label {
-  position: absolute;
-  left: 56%;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 13px;
+  left: 296px;
+  top: 9px;
+  font-size: 14px;
   font-weight: 700;
   color: #10a36e;
 }
@@ -419,19 +391,19 @@ const DownArrowO = () => h('svg', { width: 22, height: 32, viewBox: '0 0 22 32',
   justify-content: center;
 }
 .box-env {
-  flex-direction: column; gap: 6px;
+  flex-direction: column; gap: 4px;
   text-align: center;
-  padding: 12px 14px;
+  padding: 8px 12px;
   align-self: stretch; justify-content: center;
   width: 130px;
 }
-.box-env .box-icon { width: 28px; height: 28px; }
+.box-env .box-icon { width: 26px; height: 26px; }
 .env-text { font-size: 14px; font-weight: 700; line-height: 1.2; }
 
 .box-tasks {
   flex: 1;
-  flex-direction: column; align-items: stretch; gap: 8px;
-  padding: 10px 12px 12px;
+  flex-direction: column; align-items: stretch; gap: 6px;
+  padding: 8px 12px 10px;
 }
 .tasks-title {
   font-size: 15px; font-weight: 700;
@@ -457,58 +429,54 @@ const DownArrowO = () => h('svg', { width: 22, height: 32, viewBox: '0 0 22 32',
 
 .loop-arrows-old { display: none; }
 
-.outputs {
+/* Flat outputs row — no wrapper box, no title */
+.outputs-flat {
   width: 100%;
-  border: 2px dashed #10a36e;
-  border-radius: 10px;
-  padding: 10px 12px 12px;
-  display: flex; flex-direction: column; gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
 }
-.outputs-title {
-  font-size: 16px; font-weight: 700;
-  color: #10a36e;
-  text-align: center;
-}
-.outputs-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.out-cell {
+.outputs-flat .out-cell {
   background: #fff;
   border: 1.5px solid #10a36e;
   border-radius: 8px;
-  padding: 8px 4px;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  font-size: 12.5px; font-weight: 700; color: #0a7a52;
-  text-align: center; line-height: 1.2;
+  padding: 6px 6px;
+  display: flex; flex-direction: row; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; color: #0a7a52;
+  text-align: left; line-height: 1.2;
+  white-space: nowrap;
+  justify-content: center;
 }
-.out-icon { width: 22px; height: 22px; flex: none; }
+.outputs-flat .out-icon { width: 18px; height: 18px; flex: none; }
 
 /* ===== Stage 3 ===== */
-.st-3-body { gap: 12px; justify-content: flex-start; }
+.st-3-body { gap: 8px; justify-content: flex-start; }
 .box-struct, .box-rev, .box-pass {
   width: 100%;
   border: 2px solid #ea580c;
-  flex-direction: column; gap: 8px;
+  flex-direction: column; gap: 6px;
   text-align: center;
-  padding: 14px 12px;
+  padding: 10px 12px;
   font-size: 16px; font-weight: 700; color: #111;
-  line-height: 1.25;
+  line-height: 1.2;
 }
-.box-struct .box-icon, .box-pass .box-icon { width: 38px; height: 38px; }
+.box-struct .box-icon, .box-pass .box-icon { width: 32px; height: 32px; }
 .bots-three { display: flex; gap: 8px; justify-content: center; }
-.bot3 { width: 36px; height: 36px; }
+.bot3 { width: 32px; height: 32px; }
 .rev-text { font-size: 16px; font-weight: 700; }
 
 /* ===== Stage 4 ===== */
-.st-4-body { gap: 12px; justify-content: space-between; }
+.st-4-body { gap: 10px; justify-content: space-between; }
 .box-metric {
   width: 100%;
   border: 2px solid #dc2626;
-  padding: 14px 14px;
+  padding: 10px 14px;
   font-size: 18px; font-weight: 700;
   color: #111;
   justify-content: flex-start;
-  line-height: 1.25;
+  line-height: 1.2;
 }
-.m-icon { width: 32px; height: 32px; flex: none; }
+.m-icon { width: 28px; height: 28px; flex: none; }
 
 /* ===== Bottom fail->revise arc ===== */
 .fail-arc {
