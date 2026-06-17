@@ -147,15 +147,9 @@
         <div class="wrap narrow">
           <h2 class="h2"><span class="lang-en">How to evaluate with it.</span><span class="lang-zh">怎么用它做评估。</span></h2>
           <p class="lead">
-            <span class="lang-en">Three things we want from an evaluation harness: it should adapt to a new question without hand-edited evaluation code; it should grade in a way you can audit; and it should treat <em>cost</em> as a first-class citizen alongside accuracy. Each one motivated a specific design.</span>
-            <span class="lang-zh">我们对评估 harness 有三个要求：换一个问题不用回去手改评估代码；评分必须可被人审计；<em>cost</em> 要和 accuracy 同等重要。下面三块就是为了满足这三个要求。</span>
+            <span class="lang-en">Two things we want from an evaluation harness: it should grade in a way you can audit; and it should treat <em>cost</em> as a first-class citizen alongside accuracy. Each one motivated a specific design.</span>
+            <span class="lang-zh">我们对评估 harness 有两个要求：评分必须可被人审计；<em>cost</em> 要和 accuracy 同等重要。下面两块就是为了满足这两个要求。</span>
           </p>
-
-          <h3 class="h3" style="margin-top:2.4rem"><span class="lang-en">Skills as the new IR; programming language as the machine code.</span><span class="lang-zh">把 skill 当作新的 IR，把编程语言当作机器码。</span></h3>
-          <div class="prose">
-            <p><span class="lang-en">Evaluation is fiddly: which axes go on the chart, log or linear scale, line or bar, which config combinations to compare. Hand a user a rigid SDK and they're stuck. Instead, GDPevo's evaluation workspace is a folder of plain Markdown — guides, prompts, directory layout — that any modern coding agent can read. You point Codex or Claude Code at it, type one sentence describing the experiment and the chart you want, and the agent generates the analysis code, runs the solver, calls the graders, and writes the report. Skills become the human-facing intermediate representation; the underlying code is just compilation.</span>
-              <span class="lang-zh">做评测琐碎得要命：图的横纵轴怎么选、用 log 还是 linear、画折线还是柱状、要对比哪几种 config 组合。给用户一个死的 SDK，每换一次问题都要改代码。GDPevo 不走这条路：整个评估工作区就是一个装满纯 Markdown 的文件夹——指南、prompt、目录约定——任何现代 coding agent 都能读懂。你把 Codex 或 Claude Code 指向它，敲一句话说清楚要跑什么实验、要什么样的图，agent 就会自己生成分析代码、跑 solver、调 grader、写 report。Skill 成为面向人的中间表示，底层代码只是编译产物。</span></p>
-          </div>
 
           <h3 class="h3" style="margin-top:2.8rem"><span class="lang-en">Rule-based grading, not "ask another LLM".</span><span class="lang-zh">基于规则的评分，而不是"再叫一个 LLM 来判"。</span></h3>
           <div class="prose">
@@ -176,6 +170,8 @@
         <div class="wrap narrow">
           <h2 class="h2"><span class="lang-en">Evaluations and findings.</span><span class="lang-zh">实测与结果。</span></h2>
           <div class="prose">
+            <p><span class="lang-en">Every run below was driven by natural language: we pointed a coding agent (Codex or Claude Code) at the evaluation workspace — a folder of plain Markdown guides, prompts, and directory conventions — typed one sentence describing the experiment and the chart we wanted, and the agent generated the analysis code, called the graders, and wrote the report. No hand-written harness, no SDK to learn.</span>
+              <span class="lang-zh">下面这些实验都是用自然语言驱动跑出来的：我们把一个 coding agent（Codex 或 Claude Code）指向评估工作区——一个装满纯 Markdown 指南、prompt 和目录约定的文件夹——用一句话说清要跑什么实验、想要什么样的图，agent 就会自己生成分析代码、调 grader、写 report。没有手写的 harness，也没有要学的 SDK。</span></p>
             <p><span class="lang-en">We ran the same 12 task groups under three settings, on two different agent harnesses:</span>
               <span class="lang-zh">我们在同样的 12 组 task group 上跑了三种设定，跨两套不同的 agent harness：</span></p>
             <ul class="bullets">
