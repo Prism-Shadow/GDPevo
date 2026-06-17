@@ -807,28 +807,30 @@ body.blog #usage { padding-top: 1.4rem; }
 .oneline p b { font-weight: 750; }
 
 /* ===================== HARNESS SUMMARY TABLES ===================== */
-.htables { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; margin-top: 1.9rem; }
+.htables { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 1.9rem; }
 .htable {
   background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
-  box-shadow: var(--shadow-sm); overflow: hidden;
+  box-shadow: var(--shadow-sm); overflow: hidden; min-width: 0;
 }
 .ht-cap {
-  padding: 1rem 1.2rem; border-bottom: 1px solid var(--line); background: #fcfcfe;
-  font-size: 0.96rem; font-weight: 700; color: var(--ink);
+  padding: 0.85rem 1rem; border-bottom: 1px solid var(--line); background: #fcfcfe;
+  font-size: 0.92rem; font-weight: 700; color: var(--ink);
 }
-.ht-cap small { display: block; margin-top: 0.15rem; color: var(--muted); font-weight: 500; font-size: 0.8rem; }
+.ht-cap small { display: block; margin-top: 0.15rem; color: var(--muted); font-weight: 500; font-size: 0.78rem; }
 .ht-row {
-  display: grid; grid-template-columns: 1.5fr 0.85fr 1fr 0.85fr; align-items: center;
+  display: grid; grid-template-columns: 0.95fr 0.95fr 1fr 0.85fr; align-items: center;
   border-top: 1px solid var(--line);
 }
 .ht-row:first-of-type { border-top: 0; }
-.ht-row > span, .ht-row > code { padding: 0.62rem 0.9rem; font-size: 0.92rem; }
-.ht-row code { font-family: var(--mono); font-size: 0.8rem; color: var(--accent-ink); }
-.ht-row .num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+.ht-row > span, .ht-row > code { padding: 0.55rem 0.45rem; font-size: 0.86rem; min-width: 0; overflow: hidden; }
+.ht-row code { font-family: var(--mono); font-size: 0.78rem; color: var(--accent-ink); padding-left: 0.75rem; }
+.ht-row .num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
 .ht-row.ht-head {
-  background: #fcfcfe; font-size: 0.72rem; font-weight: 750; text-transform: uppercase;
-  letter-spacing: .04em; color: var(--muted);
+  background: #fcfcfe; font-size: 0.62rem; font-weight: 750; text-transform: uppercase;
+  letter-spacing: .02em; color: var(--muted);
 }
+.ht-row.ht-head > span:last-child { padding-right: 0.75rem; }
+.ht-row.ht-head .num { text-align: right; }
 .ht-row.ht-head > span { padding: 0.7rem 0.9rem; }
 .ht-row.best { background: var(--green-soft); }
 .ht-row.best .num { color: var(--green-ink); font-weight: 700; }
