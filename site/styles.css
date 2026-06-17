@@ -287,6 +287,12 @@ html[lang="zh-Hans"] body { letter-spacing: .002em; }
 /* ===================== SECTIONS ===================== */
 .section { padding: 5rem 0; border-top: 1px solid transparent; }
 .section.band { background: var(--band); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+/* blog reads more compactly: halve the per-section padding so adjacent sections sit closer */
+body.blog .section { padding: 2.6rem 0; }
+body.blog .section.blog-head { padding-top: 3rem; padding-bottom: 0.6rem; }
+/* sections 2 and 3 read as one continuous block: kill the gap between them */
+body.blog #construction { padding-bottom: 0; }
+body.blog #usage { padding-top: 1.4rem; }
 
 .kicker {
   margin: 0 0 0.7rem;

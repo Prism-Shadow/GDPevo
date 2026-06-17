@@ -37,7 +37,7 @@
       })();
     </script>
   </head>
-  <body>
+  <body class="blog">
     <!-- ===================== NAV ===================== -->
     <header class="nav">
       <div class="nav-inner">
@@ -86,7 +86,7 @@
             <span class="lang-zh">在真实业务工作上衡量 Agent 的自我进化</span>
           </h1>
           <p class="lead">
-            <span class="lang-en">Fine-tuning and RL improve agents by changing the parameters $\theta$. Prompt, context, and harness engineering improve them by reshaping the conditioning context $C$. Both bend the same distribution $P(y \mid C, \theta)$ toward the outputs we want.</span>
+            <span class="lang-en">Fine-tuning and RL improve agents by changing the parameters $\theta$. Prompt, context, and harness engineering improve agents by reshaping the conditioning context $C$. Both bend the same distribution $P(y \mid C, \theta)$ toward the outputs we want.</span>
             <span class="lang-zh">微调和强化学习通过改动参数 $\theta$ 让 agent 变好。Prompt、context、harness engineering 则通过改写条件上下文 $C$ 让它变好。两条路都是在让同一个分布 $P(y \mid C, \theta)$ 更集中、更接近我们想要的输出。</span>
           </p>
           <p class="lead">
@@ -109,21 +109,20 @@
             <span class="lang-zh">问题出在评测。Self-evolution 本质上还是一种 training，它训练的是 $C$。既然是 training，就要遵守基本的 learning-theory 卫生原则：留 hold-out、分训练/测试、要在没见过的样本上检验泛化。但今天很多 self-evolution benchmark 让 agent 在同一个数据集上一边学一边测，所谓的"提升"多半是死记硬背。剩下的 benchmark 大多停留在 coding 或游戏式的环境里，reward 干净；几乎没有一个针对<strong>真实业务工作</strong>——审核一张 AP 发票、把展会赞助在 CRM 和财务两边对账、做一个分行月度结账包——这种 reward 棘手、规则埋在业务约定里的场景。</span>
           </p>
           <p>
-            <span class="lang-en">GDPevo is a benchmark designed for exactly that gap. <strong>Twelve task groups</strong> across CRM, ERP, and Finance — sponsorship-to-CRM handoffs, AP invoice readiness, expense-control close, branch financial-modeling reports, lending-committee credit memos, and more. Each group ships <strong>5 train tasks + 5 test tasks</strong> with a shared environment and rule-based graders. The question we measure is the one in the title: <em>can an agent get better at a class of tasks by learning from related ones?</em></span>
-            <span class="lang-zh">GDPevo 就是为这个空缺设计的 benchmark。<strong>12 组 task group</strong>，覆盖 CRM、ERP、Finance：从展会赞助到 CRM 录入、AP 发票上架、费用控制结账、分行财务模型报告、信贷委员会备忘录等等。每组包含 <strong>5 个 train + 5 个 test</strong>，共享一个环境，用基于规则的 grader 打分。我们要量的就是标题里那个问题：<em>agent 能不能通过相关任务的经验、越来越擅长这一类任务？</em></span>
+            <span class="lang-en">GDPevo is a benchmark designed for exactly that gap. <strong>Twelve task groups</strong> across CRM, ERP, and Finance — for example, AP invoice readiness, branch financial-modeling reports, and lending-committee credit memos. Each group ships <strong>5 train tasks + 5 test tasks</strong> with a shared environment and rule-based graders. Below, we walk through how this benchmark is built, and how it is used.</span>
+            <span class="lang-zh">GDPevo 就是为这个空缺设计的 benchmark。<strong>12 组 task group</strong>，覆盖 CRM、ERP、Finance：比如 AP 发票上架、分行财务模型报告、信贷委员会备忘录等等。每组包含 <strong>5 个 train + 5 个 test</strong>，共享一个环境，用基于规则的 grader 打分。下面我们就来看看这个 benchmark 是怎么被构建出来的，以及怎么使用。</span>
           </p>
           </div>
         </div>
       </section>
 
       <!-- ===================== 2 · HOW WE BUILT IT ===================== -->
-      <section class="section band" id="construction">
+      <section class="section" id="construction">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">2 · How we built the benchmark</span><span class="lang-zh">2 · 我们怎么构建这个 benchmark</span></p>
           <h2 class="h2"><span class="lang-en">How we built it.</span><span class="lang-zh">我们怎么构建。</span></h2>
           <p class="lead">
-            <span class="lang-en">Building a self-evolution benchmark for real business work poses two challenges. <strong>First</strong>, the construction has to be agent-driven end-to-end — humans write the procedure once, agents do the rest — otherwise the benchmark will lose ground to data leakage and stop scaling. <strong>Second</strong>, train and test have to be related but not redundant: the train tasks must teach a real, hidden lesson that pays off only when the lesson is extracted, not memorized.</span>
-            <span class="lang-zh">为真实业务工作构建一个 self-evolution benchmark，有两个 challenge。<strong>第一</strong>，构建过程必须是 agent 端到端跑出来的——人只把流程写一次，剩下交给 agent；否则 benchmark 跟不上数据泄露的速度，也无法 scale。<strong>第二</strong>，train 和 test 要相关、但不能冗余：train 必须真的"教"一个隐藏的规则，这个规则只有被抽象出来才会在 test 上派上用场，而不是被死记下来。</span>
+            <span class="lang-en">Building a self-evolution benchmark for real business work poses two challenges. <strong>First</strong>, the construction has to be agent-driven end-to-end — humans write the procedure once, agents do the rest. This matters for two reasons. It is the only way to <em>outrun data leakage</em>: as long as agents can spawn fresh tasks faster than models can absorb the leaked ones, the benchmark stays ahead. And it is the only way to <em>scale</em>: when agents both build and evaluate, the loop is fully closed — no human bottleneck — and the benchmark can keep growing on its own. <strong>Second</strong>, train and test have to be related but not redundant: the train tasks must teach a real, hidden lesson that pays off only when the lesson is extracted, not memorized.</span>
+            <span class="lang-zh">为真实业务工作构建一个 self-evolution benchmark，有两个 challenge。<strong>第一</strong>，构建过程必须是 agent 端到端跑出来的——人只把流程写一次，剩下交给 agent。这件事重要有两个原因。这是<em>跑赢数据泄露</em>的唯一办法：只要 agent 生成新题的速度比模型吸收已泄露题的速度快，benchmark 就一直保持领先。也是能<em>真正 scale</em> 的唯一办法：当 agent 既负责构造、又负责评测，整个回路就是闭合的——没有人力瓶颈，左脚踩右脚，benchmark 可以自己长大。<strong>第二</strong>，train 和 test 要相关、但不能冗余：train 必须真的"教"一个隐藏的规则，这个规则只有被抽象出来才会在 test 上派上用场，而不是被死记下来。</span>
           </p>
 
           <h3 class="h3" style="margin-top:2.4rem"><span class="lang-en">Built end-to-end by agents.</span><span class="lang-zh">从头到尾，全部由 agent 完成。</span></h3>
@@ -148,7 +147,6 @@
       <!-- ===================== 3 · HOW TO USE & EVALUATE ===================== -->
       <section class="section" id="usage">
         <div class="wrap narrow">
-          <p class="kicker"><span class="lang-en">3 · How to use the benchmark</span><span class="lang-zh">3 · 怎么使用这个 benchmark</span></p>
           <h2 class="h2"><span class="lang-en">How to evaluate with it.</span><span class="lang-zh">怎么用它做评估。</span></h2>
           <p class="lead">
             <span class="lang-en">Three things we want from an evaluation harness: it should bend to whatever question you bring next; it should grade in a way you can audit; and it should treat <em>cost</em> as a first-class citizen alongside accuracy. Each one motivated a specific design.</span>
