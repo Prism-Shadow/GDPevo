@@ -26,82 +26,87 @@
       <section class="stage st-2">
         <h3 class="stage-title">Stage 2: Multi-Agent Task Factory</h3>
         <div class="stage-body st-2-body">
-          <!-- Main Agent -->
-          <div class="box box-main">
-            <Robot class="box-icon" :c="G"/>
-            <span><b>Main Agent:</b> blueprint + integration</span>
-          </div>
-
-          <!-- T-split SVG: vertical from main + horizontal bar + two down arrows into env / tasks -->
-          <svg class="t-split" width="572" height="30" viewBox="0 0 572 30" fill="none">
-            <!-- vertical drop from main center (286) -->
-            <path d="M 286 0 V 10" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-            <!-- horizontal bar from env-center (65) to tasks-center (356) -->
-            <path d="M 65 10 H 356" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-            <!-- down to env -->
-            <path d="M 65 10 V 22" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-            <polygon points="58,20 65,30 72,20" fill="#10a36e"/>
-            <!-- down to tasks -->
-            <path d="M 356 10 V 22" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-            <polygon points="349,20 356,30 363,20" fill="#10a36e"/>
-          </svg>
-
-          <!-- Env + Tasks row -->
-          <div class="row-builders">
-            <div class="box box-env">
+          <!-- Group A: Main → T-split → Env/Tasks builders -->
+          <div class="grp">
+            <div class="box box-main">
               <Robot class="box-icon" :c="G"/>
-              <div class="env-text">Env Builder<br>Agent</div>
+              <span><b>Main Agent:</b> blueprint + integration</span>
             </div>
-            <div class="box box-tasks">
-              <div class="tasks-title">Task Builder Agents (per task)</div>
-              <div class="tasks-row">
-                <div class="task-cell"><Robot class="task-bot" :c="G"/><span>train<br>1</span></div>
-                <div class="task-cell"><Robot class="task-bot" :c="G"/><span>train<br>2</span></div>
-                <div class="task-cell task-dots">···</div>
-                <div class="task-cell"><Robot class="task-bot" :c="G"/><span>train<br>5</span></div>
-                <div class="task-cell"><Robot class="task-bot" :c="G"/><span>test<br>1</span></div>
-                <div class="task-cell"><Robot class="task-bot" :c="G"/><span>test<br>2</span></div>
-                <div class="task-cell task-dots">···</div>
-                <div class="task-cell"><Robot class="task-bot" :c="G"/><span>test<br>5</span></div>
+
+            <!-- T-split SVG (extends 2px into top/bottom borders) -->
+            <svg class="t-split" width="632" height="28" viewBox="0 0 632 28" fill="none">
+              <path d="M 316 -2 V 10" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+              <path d="M 65 10 H 386" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+              <path d="M 65 10 V 22" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+              <polygon points="58,20 65,30 72,20" fill="#10a36e"/>
+              <path d="M 386 10 V 22" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
+              <polygon points="379,20 386,30 393,20" fill="#10a36e"/>
+            </svg>
+
+            <!-- Env + Tasks row -->
+            <div class="row-builders">
+              <div class="box box-env">
+                <Robot class="box-icon" :c="G"/>
+                <div class="env-text">Env Builder<br>Agent</div>
+              </div>
+              <div class="box box-tasks">
+                <div class="tasks-title">Task Builder Agents (per task)</div>
+                <div class="tasks-row">
+                  <div class="task-cell"><Robot class="task-bot" :c="G"/><span>train<br>1</span></div>
+                  <div class="task-cell"><Robot class="task-bot" :c="G"/><span>train<br>2</span></div>
+                  <div class="task-cell task-dots">···</div>
+                  <div class="task-cell"><Robot class="task-bot" :c="G"/><span>train<br>5</span></div>
+                  <div class="task-cell"><Robot class="task-bot" :c="G"/><span>test<br>1</span></div>
+                  <div class="task-cell"><Robot class="task-bot" :c="G"/><span>test<br>2</span></div>
+                  <div class="task-cell task-dots">···</div>
+                  <div class="task-cell"><Robot class="task-bot" :c="G"/><span>test<br>5</span></div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Tasks → Calibration (down with bend) + fail loop up on right -->
-          <div class="loop-block">
-            <svg class="loop-svg" width="572" height="40" viewBox="0 0 572 40" fill="none">
-              <!-- down from tasks (356), bend left, drop to calibration center (286) -->
-              <path d="M 356 0 V 16 H 286 V 30" stroke="#10a36e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              <polygon points="279,28 286,40 293,28" fill="#10a36e"/>
-              <!-- fail loop: up on right side -->
-              <path d="M 470 36 V 6" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-              <polygon points="463,8 470,-2 477,8" fill="#10a36e"/>
-            </svg>
+          <!-- Group B: forward arrow Tasks→Calib (flexes), Calibration, fail loop -->
+          <div class="tc-wrap">
+            <div class="forward-block">
+              <!-- vertical part at Tasks center (x=386 → 61% of 632), grows with flex -->
+              <div class="forward-line"></div>
+              <!-- bend + head: turn left to Calibration center (x=316) and arrowhead down -->
+              <svg class="forward-bend" width="632" height="18" viewBox="0 0 632 18" fill="none">
+                <path d="M 386 0 V 8 H 316 V 14" stroke="#10a36e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <polygon points="309,12 316,22 323,12" fill="#10a36e"/>
+              </svg>
+            </div>
+            <div class="box box-calib">
+              <Robot class="box-icon" :c="G"/>
+              <span>Calibration Solvers</span>
+            </div>
+            <!-- fail-loop overlay: from Calibration right-edge mid → right → up to Tasks-bottom -->
+            <div class="fail-loop">
+              <div class="fail-h"></div>
+              <div class="fail-v"></div>
+              <svg class="fail-head" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <polygon points="0,14 14,14 7,0" fill="#10a36e"/>
+              </svg>
+            </div>
             <span class="loop-label">fail</span>
           </div>
 
-          <!-- Calibration -->
-          <div class="box box-calib">
-            <Robot class="box-icon" :c="G"/>
-            <span>Calibration Solvers</span>
-          </div>
-
-          <!-- Calibration → Outputs (pass) -->
-          <div class="pass-block">
-            <svg class="pass-svg" width="572" height="30" viewBox="0 0 572 30" fill="none">
-              <path d="M 286 2 V 20" stroke="#10a36e" stroke-width="3" stroke-linecap="round"/>
-              <polygon points="279,18 286,28 293,18" fill="#10a36e"/>
-            </svg>
-            <span class="pass-label">pass</span>
-          </div>
-
-          <!-- Outputs (single flat row) -->
-          <div class="outputs-flat">
-            <div class="out-cell"><Globe class="out-icon" :c="G"/><span>Shared Env</span></div>
-            <div class="out-cell"><DocG class="out-icon" :c="G"/><span>5 Train Tasks</span></div>
-            <div class="out-cell"><DocG class="out-icon" :c="G"/><span>5 Test Tasks</span></div>
-            <div class="out-cell"><Shield class="out-icon" :c="G"/><span>Evaluators</span></div>
-            <div class="out-cell"><DocG class="out-icon" :c="G"/><span>Task Notes</span></div>
+          <!-- Group C: pass arrow + outputs (pass-block flexes to fill remaining height) -->
+          <div class="grp grp-c">
+            <div class="pass-block">
+              <div class="pass-line"></div>
+              <svg class="pass-head" width="22" height="14" viewBox="0 0 22 14" fill="none">
+                <polygon points="0,0 22,0 11,14" fill="#10a36e"/>
+              </svg>
+              <span class="pass-label">pass</span>
+            </div>
+            <div class="outputs-flat">
+              <div class="out-cell"><Globe class="out-icon" :c="G"/><span>Shared Env</span></div>
+              <div class="out-cell"><DocG class="out-icon" :c="G"/><span>5 Train Tasks</span></div>
+              <div class="out-cell"><DocG class="out-icon" :c="G"/><span>5 Test Tasks</span></div>
+              <div class="out-cell"><Shield class="out-icon" :c="G"/><span>Evaluators</span></div>
+              <div class="out-cell"><DocG class="out-icon" :c="G"/><span>Task Notes</span></div>
+            </div>
           </div>
         </div>
       </section>
@@ -162,13 +167,14 @@
         </div>
       </section>
 
-      <!-- bottom fail->revise arc -->
-      <svg class="fail-arc" viewBox="0 0 1000 100" preserveAspectRatio="none">
-        <path d="M 670 4 V 60 H 350 V 36"
+      <!-- bottom fail->revise arc:
+           start = Stage 3 bottom-edge midpoint (overlaps border at y=-2)
+           end   = Stage 2 bottom-edge midpoint (arrow head into border at y=-2) -->
+      <svg class="fail-arc" width="1474" height="50" viewBox="0 0 1474 50" fill="none" overflow="visible">
+        <path d="M 1091 -2 V 28 H 608 V 4"
               stroke="#10a36e" stroke-width="3" fill="none"
-              stroke-linecap="round" stroke-linejoin="round"
-              vector-effect="non-scaling-stroke"/>
-        <polygon points="350,30 343,50 357,50" fill="#10a36e"/>
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <polygon points="601,4 615,4 608,-6" fill="#10a36e"/>
       </svg>
       <div class="fail-revise-lab">fail -&gt; revise</div>
     </div>
@@ -248,9 +254,13 @@ const BlackArrow = () => h('svg', { width: 38, height: 22, viewBox: '0 0 38 22',
   h('path', { d: 'M2 11 H 24', stroke: '#1f2937', 'stroke-width': 3, 'stroke-linecap': 'round' }),
   h('polygon', { points: '22,3 36,11 22,19', fill: '#1f2937' }),
 ])
-const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22', fill: 'none' }, [
-  h('path', { d: 'M11 1 V 14', stroke: '#ea580c', 'stroke-width': 3, 'stroke-linecap': 'round' }),
-  h('polygon', { points: '3,12 11,22 19,12', fill: '#ea580c' }),
+const DownArrowO = () => h('svg', {
+  width: 22, viewBox: '0 0 22 60', fill: 'none', preserveAspectRatio: 'none',
+  class: 'down-arrow-o',
+  style: 'display:block; overflow:visible'
+}, [
+  h('path', { d: 'M11 0 V 50', stroke: '#ea580c', 'stroke-width': 3, 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' }),
+  h('polygon', { points: '3,48 11,60 19,48', fill: '#ea580c' }),
 ])
 </script>
 
@@ -260,22 +270,22 @@ const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22',
   width: 1700px;
   font-family: Inter, "Segoe UI", system-ui, sans-serif;
   color: #1f2937;
-  padding: 20px 28px 60px;
+  padding: 14px 28px 50px;
   background: #fff;
 }
 .title {
   text-align: center;
-  font-size: 44px;
+  font-size: 38px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  margin: 0 0 22px;
+  margin: 0 0 12px;
   color: #111;
 }
 
 .board {
   position: relative;
   display: grid;
-  grid-template-columns: 240px 38px 600px 38px 280px 38px 280px;
+  grid-template-columns: 240px 38px 660px 38px 230px 38px 230px;
   align-items: stretch;
   gap: 0;
 }
@@ -283,12 +293,13 @@ const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22',
 .stage {
   border: 2px dashed var(--c);
   border-radius: 6px;
-  padding: 10px 14px 14px;
+  padding: 8px 14px 12px;
   display: flex; flex-direction: column;
+  min-height: 400px;
 }
 .stage-title {
-  margin: 0 0 10px;
-  font-size: 19px;
+  margin: 0 0 8px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--c);
 }
@@ -315,11 +326,15 @@ const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22',
 .seed-head {
   font-size: 16px; font-weight: 800; color: #111; text-align: center;
 }
-.seed-list { display: flex; flex-direction: column; gap: 6px; }
+.seed-list {
+  display: flex; flex-direction: column; gap: 14px;
+  flex: 1;
+  justify-content: space-evenly;
+}
 .seed-chip {
   display: flex; align-items: center; gap: 10px;
   background: #e9f0ff; color: #1d4ed8;
-  padding: 7px 12px; border-radius: 10px;
+  padding: 10px 12px; border-radius: 10px;
   font-weight: 700; font-size: 15px;
 }
 .seed-ci { width: 18px; height: 18px; flex: none; }
@@ -336,7 +351,8 @@ const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22',
 }
 
 /* ===== Stage 2 ===== */
-.st-2-body { gap: 0; }
+.st-2-body { gap: 0; justify-content: flex-start; flex: 1; }
+.grp { width: 100%; display: flex; flex-direction: column; align-items: center; }
 
 .box {
   background: #fff;
@@ -351,39 +367,127 @@ const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22',
 .box-main { font-size: 16px; }
 .box-main b { font-weight: 700; }
 
-.t-split, .loop-svg, .pass-svg {
+.t-split, .pass-svg, .forward-svg {
   display: block;
-  margin: 0;
-  width: 572px;
+  margin: -2px 0;          /* overlap into top/bottom box borders */
+  width: 632px;
+  overflow: visible;
 }
 
-.loop-block, .pass-block {
+/* Calibration block + forward arrow + fail-loop overlay */
+.tc-wrap {
   position: relative;
-  width: 572px;
+  width: 632px;
   align-self: center;
+  display: flex; flex-direction: column; align-items: center;
+  flex: 1;
+}
+
+/* Forward arrow: flex-line from Tasks-bottom + bend to Calibration top */
+.forward-block {
+  position: relative;
+  width: 632px;
+  flex: 1;
+  min-height: 30px;
+  max-height: 50px;
+  display: flex; flex-direction: column;
+}
+.forward-line {
+  position: absolute;
+  left: 386px;
+  top: -2px;            /* overlap into Tasks bottom border */
+  width: 3px;
+  bottom: 18px;          /* leave 18px for the bend SVG */
+  background: #10a36e;
+  border-radius: 2px;
+}
+.forward-bend {
+  display: block;
+  margin-top: auto;      /* push to bottom of forward-block */
+  overflow: visible;
+  width: 632px;
+}
+
+.tc-wrap .box-calib {
+  width: 230px;
+  height: 44px;
+  justify-content: center;
+  font-size: 15px; font-weight: 700;
+}
+.tc-wrap .box-calib .box-icon { width: 26px; height: 26px; }
+
+/* Fail-loop: starts at Calibration right-edge mid (x=431), goes to x=465, then up to Tasks-bottom */
+.fail-loop {
+  position: absolute;
+  left: 0; right: 0;
+  top: 0; bottom: 0;
+  pointer-events: none;
+}
+.fail-h {
+  position: absolute;
+  left: 431px;
+  bottom: 22px;          /* (44 calib height) / 2 = 22 (right-edge midpoint of calibration) */
+  width: 37px;           /* 465-431=34, +3 to overlap */
+  height: 3px;
+  background: #10a36e;
+  border-radius: 2px;
+}
+.fail-v {
+  position: absolute;
+  left: 465px;
+  top: -2px;             /* overlap into Tasks bottom border */
+  bottom: 22px;          /* meet horizontal at Calibration midpoint y */
+  width: 3px;
+  background: #10a36e;
+  border-radius: 2px;
+}
+.fail-head {
+  position: absolute;
+  left: 458px;           /* center 465 - 7 */
+  top: -8px;             /* arrowhead pointing up, into Tasks border */
 }
 .loop-label {
   position: absolute;
   left: 482px;
-  top: 18px;
+  bottom: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #10a36e;
+}
+
+/* pass arrow + label — pass-block grows to push outputs to the bottom */
+.pass-block {
+  position: relative;
+  width: 632px;
+  align-self: center;
+  flex: 1;
+  min-height: 28px;
+  max-height: 50px;
+  display: flex; flex-direction: column; align-items: center;
+  margin-top: -2px;
+}
+.pass-line {
+  width: 3px;
+  flex: 1;
+  background: #10a36e;
+  border-radius: 2px;
+  margin-bottom: -1px;  /* meet arrowhead cleanly */
+}
+.pass-head {
+  display: block;
+  margin-top: -1px;
+}
+.pass-label {
+  position: absolute;
+  left: 326px;
+  top: 50%;
   transform: translateY(-50%);
   font-size: 14px;
   font-weight: 700;
   color: #10a36e;
 }
-.pass-label {
-  position: absolute;
-  left: 296px;
-  top: 9px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #10a36e;
-}
 
-.box-calib {
-  font-size: 15px; font-weight: 700;
-}
-.box-calib .box-icon { width: 26px; height: 26px; }
+.grp-c { flex: 1; justify-content: stretch; gap: 0; }
 
 .row-builders {
   display: flex; align-items: stretch; gap: 10px;
@@ -450,7 +554,8 @@ const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22',
 .outputs-flat .out-icon { width: 18px; height: 18px; flex: none; }
 
 /* ===== Stage 3 ===== */
-.st-3-body { gap: 8px; justify-content: flex-start; }
+.st-3-body { gap: 0; justify-content: stretch; flex: 1; }
+.down-arrow-o { flex: 1; min-height: 24px; max-height: 40px; align-self: center; margin: -2px 0; }
 .box-struct, .box-rev, .box-pass {
   width: 100%;
   border: 2px solid #ea580c;
@@ -459,6 +564,7 @@ const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22',
   padding: 10px 12px;
   font-size: 16px; font-weight: 700; color: #111;
   line-height: 1.2;
+  flex-shrink: 0;
 }
 .box-struct .box-icon, .box-pass .box-icon { width: 32px; height: 32px; }
 .bots-three { display: flex; gap: 8px; justify-content: center; }
@@ -466,12 +572,14 @@ const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22',
 .rev-text { font-size: 16px; font-weight: 700; }
 
 /* ===== Stage 4 ===== */
-.st-4-body { gap: 10px; justify-content: space-between; }
+.st-4-body { gap: 12px; justify-content: stretch; flex: 1; }
 .box-metric {
   width: 100%;
+  flex: 1;
+  max-height: 70px;
   border: 2px solid #dc2626;
-  padding: 10px 14px;
-  font-size: 18px; font-weight: 700;
+  padding: 12px 14px;
+  font-size: 16px; font-weight: 700;
   color: #111;
   justify-content: flex-start;
   line-height: 1.2;
@@ -481,17 +589,18 @@ const DownArrowO = () => h('svg', { width: 22, height: 22, viewBox: '0 0 22 22',
 /* ===== Bottom fail->revise arc ===== */
 .fail-arc {
   position: absolute;
-  left: 0; right: 0;
-  bottom: -42px;
-  width: 100%; height: 80px;
+  left: 0;
+  top: 100%;
+  width: 1474px; height: 50px;
   pointer-events: none;
+  overflow: visible;
 }
 .fail-revise-lab {
   position: absolute;
   left: 0; right: 0;
-  bottom: -56px;
+  top: calc(100% + 32px);
   text-align: center;
-  font-size: 18px; font-weight: 700;
+  font-size: 16px; font-weight: 700;
   color: #10a36e;
   letter-spacing: 0.2px;
 }

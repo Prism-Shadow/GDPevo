@@ -14,6 +14,6 @@ drawings:
 layout: full
 ---
 
-<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#fff;">
+<div style="display:flex;align-items:flex-start;justify-content:center;height:100%;background:#fff;padding-top:6px;">
 <Pipeline />
 </div>
