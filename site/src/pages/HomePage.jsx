@@ -198,7 +198,7 @@ function TaskDetail({ groupId }) {
     () => detail.sets.map((section) => [
       section.label,
       section.count,
-      tasks.filter((task) => task[1] === section.kind)
+      tasks.filter((task) => task.kind === section.kind)
     ]),
     [detail.sets, tasks]
   );
@@ -221,13 +221,17 @@ function TaskDetail({ groupId }) {
               <span>{count}</span>
             </div>
             <div className="task-list">
-              {items.map(([taskId, , title, desc]) => {
+              {items.map(({ id: taskId, title, desc }) => {
                 const taskNo = String(Number(taskId.split("_")[1])).padStart(2, "0");
                 return (
                   <div className="task-item" key={taskId}>
                     <span className="task-id">{detail.taskPrefix} {taskNo}</span>
-                    <span className="task-title">{title}</span>
-                    <span className="task-desc">{desc}</span>
+                    <span className="task-title">
+                      <Lang {...title} />
+                    </span>
+                    <span className="task-desc">
+                      <Lang {...desc} />
+                    </span>
                   </div>
                 );
               })}
