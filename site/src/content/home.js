@@ -126,13 +126,13 @@ export const homeContent = {
       },
       {
         key: "reports",
-        en: "Full per-task reports under `experiments/codex_gpt5_5_xhigh/`, `experiments/claude_code_opus_4_8_xhigh/`, and `experiments/panofy_claude_opus_4_6_high/`.",
-        zh: "完整逐任务报告见 `experiments/codex_gpt5_5_xhigh/`、`experiments/claude_code_opus_4_8_xhigh/` 与 `experiments/panofy_claude_opus_4_6_high/`。"
+        en: "Full per-task reports are under [`experiments/codex_gpt5_5_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh), [`experiments/claude_code_opus_4_8_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_opus_4_8_xhigh), and [`experiments/panofy_claude_opus_4_6_high/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/panofy_claude_opus_4_6_high).",
+        zh: "完整逐任务报告见 [`experiments/codex_gpt5_5_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh)、[`experiments/claude_code_opus_4_8_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_opus_4_8_xhigh) 与 [`experiments/panofy_claude_opus_4_6_high/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/panofy_claude_opus_4_6_high)。"
       }
     ],
     blogLink: {
-      en: "Why can self-evolution cost less? Read the blog →",
-      zh: "为什么自我进化反而更省？阅读博客 →"
+      en: "Why can self-evolution lift accuracy and cost less? Read the blog →",
+      zh: "为什么自我进化能提升准确率，还能更省？阅读博客 →"
     },
     chartTitle: {
       en: "Held-out accuracy by task group (avg@3, %)",
