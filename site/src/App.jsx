@@ -25,8 +25,8 @@ export default function App() {
   useEffect(() => {
     document.body.classList.toggle("blog", page === "blog");
     document.title = page === "blog"
-      ? "GDPevo Blog — Measuring Agent Self-Evolution on Real Business Work"
-      : "GDPevo — Measuring Agent Self-Evolution on Real Business Work";
+      ? "GDPevo Blog: Measuring Agent Self-Evolution on Real Business Work"
+      : "GDPevo: Measuring Agent Self-Evolution on Real Business Work";
   }, [page]);
 
   useEffect(() => {

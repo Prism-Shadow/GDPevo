@@ -25,7 +25,7 @@ function Hero() {
           <span className="lang-en">
             Not <em>can the agent solve this task?</em>
             <br />
-            — but <strong>can it evolve across related tasks to get better?</strong>
+            But <strong>can it evolve across related tasks to get better?</strong>
           </span>
           <span className="lang-zh">
             不是问<em>这个 agent 能不能解决这个任务</em>，
@@ -86,7 +86,7 @@ function Hero() {
               <Lang en="TBD" zh="暂定" />
             </span>
             <span className="stat-label">
-              <Lang en="Token cost — fewer, not more" zh="token 成本 —— 更少，而非更多" />
+              <Lang en="Token cost: fewer, not more" zh="token 成本：更少，而非更多" />
             </span>
           </div>
         </div>
@@ -328,7 +328,7 @@ function TasksSection() {
     <section className="section band" id="tasks">
       <div className="wrap">
         <h2 className="h2">
-          <Lang en="Real company interfaces — CRM, ERP, Finance." zh="真实的公司业务接口 —— CRM、ERP、Finance。" />
+          <Lang en="Real company interfaces: CRM, ERP, Finance." zh="真实的公司业务接口：CRM、ERP、Finance。" />
         </h2>
         <p className="lead">
           <span className="lang-en">
@@ -378,10 +378,10 @@ function TasksSection() {
         </div>
         <p className="note">
           <span className="lang-en">
-            How the hidden rules are planted, how the data is built and graded by agents, and why cost goes down — <a href="blog.html"><strong>read the blog →</strong></a>
+            How the hidden rules are planted, how the data is built and graded by agents, and why cost goes down. <a href="blog.html"><strong>read the blog →</strong></a>
           </span>
           <span className="lang-zh">
-            隐藏规则怎么埋、数据怎么由 agent 构造与评分、成本为什么会下降 —— <a href="blog.html"><strong>阅读博客 →</strong></a>
+            隐藏规则怎么埋、数据怎么由 agent 构造与评分、成本为什么会下降，<a href="blog.html"><strong>阅读博客 →</strong></a>
           </span>
         </p>
       </div>

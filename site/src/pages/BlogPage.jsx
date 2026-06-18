@@ -13,9 +13,6 @@ function BlogBenchmarkFigure() {
     <figure className="blog-benchmark-figure">
       <figcaption className="blog-benchmark-head">
         <div>
-          <strong>
-            <Lang en="Agent performance — all harnesses" zh="三套 harness 的 agent 表现" />
-          </strong>
           <span>
             <Lang en="All metrics are avg@3, then averaged over 12 task groups" zh="所有指标均为 avg@3，再跨 12 个 task group 取均值" />
           </span>
