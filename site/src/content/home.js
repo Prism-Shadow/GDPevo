@@ -1,12 +1,12 @@
 export const homeContent = {
   documentTitle: {
-    home: "GDPevo: Measuring Agent Self-Evolution on Real Business Work",
-    blog: "GDPevo Blog: Measuring Agent Self-Evolution on Real Business Work"
+    home: "GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks",
+    blog: "GDPevo Blog: Evaluating Agent Self-Evolution on Real Business Tasks"
   },
   footer: {
     tagline: {
-      en: "Measuring agent self-evolution on GDP-worthy work.",
-      zh: "在真实业务工作上衡量 Agent 的自我进化。"
+      en: "Evaluating agent self-evolution on GDP-worthy work.",
+      zh: "在真实业务任务上评估 Agent 的自我进化。"
     },
     repoLabel: "github.com/Prism-Shadow/GDPevo"
   },
@@ -23,8 +23,8 @@ export const homeContent = {
   hero: {
     title: {
       brand: "GDPevo",
-      en: ["Measuring Agent", "Self-Evolution on Real Business Work"],
-      zh: ["在真实业务工作上", "衡量 Agent 的自我进化"]
+      en: ["Evaluating Agent", "Self-Evolution on Real Business Tasks"],
+      zh: ["在真实业务任务上", "评估 Agent 的自我进化"]
     },
     subtitle: {
       en: "Not *can the agent solve this task?*  \nBut **can it evolve across related tasks to get better?**",
