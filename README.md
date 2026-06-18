@@ -111,7 +111,6 @@ token/cost metrics, and write `report/<task_group_id>.yaml`.
 | `data/` | Released task group data, data board, shared environments, train/test tasks, answers, evaluators, and notes. |
 | `experiments/` | Released evaluation protocols, reusable workspaces, report YAMLs, generated artifacts, and experiment board. |
 | `site/` | React/Vite public site and GitHub Pages build pipeline. |
-| `assets/` | Figures, logos, and visual assets used by released materials. |
 
 ## Public Site
 

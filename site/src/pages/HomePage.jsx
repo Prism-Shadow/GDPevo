@@ -1,9 +1,10 @@
 import { Fragment, useMemo, useState } from "react";
+import { BenchmarkFigure } from "../components/BenchmarkFigure.jsx";
 import { GitHubIcon, NavIcon } from "../components/icons.jsx";
 import { homeContent } from "../content/home.js";
 import { Lang, LocalizedMarkdown } from "../lib/i18n.jsx";
 import { links } from "../content/links.js";
-import { harnesses, modes, resultGroups, summaryCards, taskGroups, taskTopics } from "../content/benchmark.js";
+import { harnesses, modes, resultGroups, taskGroups, taskTopics } from "../content/benchmark.js";
 
 function Hero() {
   const { title, subtitle, meta, actions, stats } = homeContent.hero;
@@ -68,40 +69,6 @@ function Hero() {
         </div>
       </div>
     </section>
-  );
-}
-
-function SummaryCard({ card }) {
-  const { summary } = homeContent;
-
-  return (
-    <div className="htable">
-      <div className="ht-cap">
-        <span>{card.title}</span>
-        <small>
-          <span className="lang-en">{card.thinking} · {summary.captionSuffix.en}</span>
-          <span className="lang-zh">{card.thinking} · {summary.captionSuffix.zh}</span>
-        </small>
-      </div>
-      <div className="ht-row ht-head">
-        <span>
-          <Lang {...summary.columns.mode} />
-        </span>
-        <span className="num">avg@3</span>
-        <span className="num">
-          <Lang {...summary.columns.tokens} />
-        </span>
-        <span className="num">USD</span>
-      </div>
-      {card.rows.map((row) => (
-        <div key={row.mode} className={`ht-row ${row.best ? "best" : ""}`}>
-          <code>{row.mode}</code>
-          <span className="num">{row.avg}</span>
-          <span className="num">{row.tokens}</span>
-          <span className="num">{row.usd}</span>
-        </div>
-      ))}
-    </div>
   );
 }
 
@@ -207,11 +174,7 @@ function ResultsSection() {
         <p className="lead">
           <LocalizedMarkdown copy={results.lead} />
         </p>
-        <div className="htables">
-          {summaryCards.map((card) => (
-            <SummaryCard key={card.title} card={card} />
-          ))}
-        </div>
+        <BenchmarkFigure className="results-benchmark-figure" />
         <ResultsChart />
         {results.notes.map((note) => (
           <p className="note" key={note.key}>
