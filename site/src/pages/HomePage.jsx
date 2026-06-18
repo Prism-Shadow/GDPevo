@@ -249,6 +249,14 @@ function TasksSection() {
         <h2 className="h2">
           <LocalizedMarkdown copy={tasks.heading} />
         </h2>
+        <p className="domain-definitions" aria-label="Domain definitions">
+          {tasks.domainDefinitions.map((domain) => (
+            <span key={domain.term}>
+              <strong>{domain.term}:</strong>{" "}
+              <Lang en={domain.en} zh={domain.zh} />
+            </span>
+          ))}
+        </p>
         <p className="lead">
           <LocalizedMarkdown copy={tasks.lead} />
         </p>

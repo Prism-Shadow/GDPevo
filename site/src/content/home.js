@@ -27,8 +27,8 @@ export const homeContent = {
       zh: ["在真实业务任务上", "评估 Agent 的自我进化"]
     },
     subtitle: {
-      en: "Not *can the agent solve this task?*  \nBut **can it evolve across related tasks to get better?**",
-      zh: "不是问*这个 agent 能不能解决这个任务*，  \n而是问**它能不能借由相关任务完成自我进化，越来越擅长这一类任务**。"
+      en: "The focus is not whether an agent can solve one task, but **whether it can evolve across related tasks to get better**.",
+      zh: "我们关注的不是*一个 agent 能不能解决某个单题*，而是**它能不能借由相关任务完成自我进化，越来越擅长这一类任务**。"
     },
     meta: {
       en: "PrismShadow Team · 2026",
@@ -158,6 +158,23 @@ export const homeContent = {
       en: "Real company interfaces: CRM, ERP, Finance.",
       zh: "真实的公司业务接口：CRM、ERP、Finance。"
     },
+    domainDefinitions: [
+      {
+        term: "CRM",
+        en: "Customer Relationship Management",
+        zh: "客户关系管理"
+      },
+      {
+        term: "ERP",
+        en: "Enterprise Resource Planning",
+        zh: "企业资源计划"
+      },
+      {
+        term: "Finance",
+        en: "Financial Services",
+        zh: "金融业务"
+      }
+    ],
     lead: {
       en: "Each group is one shared business world with lookalike records mixed in, seeded from real-job sources such as [GDPval](https://openai.com/index/gdpval/) and [SOP-Bench](https://github.com/amazon-science/SOP-Bench).",
       zh: "每组都是一个共享的业务世界，混入了大量\"长得很像\"的干扰记录；场景来自像 [GDPval](https://openai.com/index/gdpval/) 和 [SOP-Bench](https://github.com/amazon-science/SOP-Bench) 这样的真实工作任务源。"
