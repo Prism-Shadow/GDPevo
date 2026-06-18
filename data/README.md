@@ -17,9 +17,9 @@ answers, deterministic evaluators, and task notes.
 ## Task Groups
 
 Each task group is a self-contained benchmark unit for stateful agent
-evaluation. Train tasks provide related experience inside one business
-environment; held-out test tasks measure whether what the agent learned
-transfers to later work it has not seen.
+evaluation. Train tasks drive the evolve step inside one business environment;
+held-out test tasks measure whether the resulting update transfers to later
+work it has not seen.
 
 The released task groups cover real company interfaces across CRM, ERP, and
 Finance. They are seeded from real-job sources such as GDPval and SOP-Bench,

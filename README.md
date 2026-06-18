@@ -7,14 +7,14 @@ business work.
 
 The question is not only: *can the agent solve this task?*
 
-It is: **can the agent learn from related tasks and get better on held-out
+It is: **can the agent evolve across related tasks and get better on held-out
 tasks from the same business world?**
 
 The first public release contains **120 GDP-worthy tasks** across **12 task
 groups** in CRM, ERP, and Finance. Each task group contains one shared business
-environment, **5 train tasks**, and **5 held-out test tasks**. Train tasks are
-the experience source; test tasks measure whether what the agent learned
-transfers to later work it has not seen.
+environment, **5 train tasks**, and **5 held-out test tasks**. Train tasks drive
+the evolve step; test tasks measure whether the resulting update transfers to
+later work it has not seen.
 
 ## What GDPevo Measures
 
@@ -22,15 +22,15 @@ Most agent benchmarks measure stateless task completion. GDPevo measures a
 stateful loop:
 
 1. An agent works through related train tasks.
-2. It turns that experience into reusable procedures, memory, or operating rules.
+2. It turns train-task evidence into reusable procedures, memory, or operating rules.
 3. It is evaluated on held-out tasks from the same business environment.
 
 This makes GDPevo useful for evaluating:
 
 - self-evolving or continual-learning agents;
-- experience distillation and self-improvement mechanisms;
+- evolution-update and self-improvement mechanisms;
 - end-to-end agent memory systems;
-- whether experience improves both **accuracy** and **cost**.
+- whether self-evolution improves both **accuracy** and **cost**.
 
 The benchmark is built around real company interfaces: CRM, ERP, finance,
 procurement, support, lending, investment, HR, and reporting workflows. Task
@@ -56,7 +56,7 @@ two decimals.
 
 ## Released Results
 
-Across all three harnesses, the same pattern holds: experience improves
+Across all three harnesses, the same pattern holds: self-evolution improves
 held-out accuracy by roughly **+17 to +22 percentage points**.
 
 | Harness | Model | Thinking level | `base` avg@3 | `demo` avg@3 | `reflect` avg@3 | Accuracy lift | Cost change |

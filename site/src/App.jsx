@@ -181,12 +181,12 @@ function Hero() {
           <span className="lang-en">
             Not <em>can the agent solve this task?</em>
             <br />
-            — but <strong>can it learn from related tasks to get better?</strong>
+            — but <strong>can it evolve across related tasks to get better?</strong>
           </span>
           <span className="lang-zh">
             不是问<em>这个 agent 能不能解决这个任务</em>，
             <br />
-            而是问<strong>它能不能通过相关任务的经验，越来越擅长这一类任务</strong>。
+            而是问<strong>它能不能借由相关任务完成自我进化，越来越擅长这一类任务</strong>。
           </span>
         </p>
         <p className="hero-meta">
@@ -234,7 +234,7 @@ function Hero() {
               <Lang en="TBD" zh="暂定" />
             </span>
             <span className="stat-label">
-              <Lang en="Held-out accuracy lift from experience" zh="经验带来的 held-out 准确率提升" />
+              <Lang en="Held-out accuracy lift from self-evolution" zh="自我进化带来的 held-out 准确率提升" />
             </span>
           </div>
           <div className="stat">
@@ -399,18 +399,18 @@ function ResultsSection() {
       <div className="wrap results-wrap">
         <h2 className="h2">
           <span className="lang-en">
-            Experience makes agents more accurate while spending <span className="accent">fewer</span> tokens.
+            Self-evolution makes agents more accurate while spending <span className="accent">fewer</span> tokens.
           </span>
           <span className="lang-zh">
-            经验让 agent 更准,同时花<span className="accent">更少</span>的 token。
+            自我进化让 agent 更准,同时花<span className="accent">更少</span>的 token。
           </span>
         </h2>
         <p className="lead">
           <span className="lang-en">
-            Each group has 5 train and 5 held-out test tasks. We compare a baseline (<code>base</code>) against two learning modes: <code>demo</code> learns from worked examples, while <code>reflect</code> learns from its own mistakes. The score measures lift on tasks the agent never saw.
+            Each group has 5 train and 5 held-out test tasks. We compare a baseline (<code>base</code>) against two evolution modes: <code>demo</code> evolves from worked examples, while <code>reflect</code> evolves from its own mistakes. The score measures lift on tasks the agent never saw.
           </span>
           <span className="lang-zh">
-            每组有 5 个 train、5 个 held-out test。我们用基线（<code>base</code>）对比两种学习模式：<code>demo</code> 从样例中学，<code>reflect</code> 从自己的错误中学；分数衡量的是 agent 在没见过的任务上的提升。
+            每组有 5 个 train、5 个 held-out test。我们用基线（<code>base</code>）对比两种进化模式：<code>demo</code> 基于样例进化，<code>reflect</code> 基于自己的错误进化；分数衡量的是 agent 在没见过的任务上的提升。
           </span>
         </p>
         <div className="htables">
@@ -445,7 +445,7 @@ function ResultsSection() {
         </p>
         <p className="note">
           <a href="blog.html#cost">
-            <Lang en="Why can experience cost less? Read the blog →" zh="为什么有经验反而更省？阅读博客 →" />
+            <Lang en="Why can self-evolution cost less? Read the blog →" zh="为什么自我进化反而更省？阅读博客 →" />
           </a>
         </p>
       </div>
@@ -590,8 +590,8 @@ function BlogIntro() {
             <span className="lang-zh">GDPevo 就是来补这个 gap 的。它既是一套<strong>流程</strong>——在真实业务任务上自动化地构建 self-evolution benchmark；也是这套流程的产物，一份<strong>已发布的 benchmark</strong>——12 组 task group，覆盖 CRM、ERP、Finance，每组 5 个 train + 5 个 test，共享同一个环境，用基于规则的 grader 打分。构建与评估的整体流程在后续章节中展示。</span>
           </p>
           <p>
-            <span className="lang-en">Automating the construction and evaluation of productivity-flavored datasets has two hard problems on the construction side. <strong>First</strong>, train and test must be cleanly separated so the agent can actually <em>learn</em> from train and have it <em>show up</em> on test — many existing benchmarks fail this and end up training and testing on the same set. We solve it with <strong>Hidden Rules</strong>: operational rules are planted across the train tasks in pieces and recombined on the test, so a passing score requires real abstraction, not memorization. <strong>Second</strong>, LLMs are lazy — they declare victory while quietly skipping work. We add a <strong>review mechanism</strong>: a panel of independent reviewer agents audits each task group end-to-end, and a group only ships when the reviewers confirm everything was actually delivered.</span>
-            <span className="lang-zh">在生产力相关的数据集上做自动化构建与评估，<em>构建</em>侧有两大难点。<strong>第一</strong>，必须把 train 和 test 干净地分开，让模型真的能从 train 里<em>学到</em>东西，并且在 test 上<em>体现</em>出来——很多现有 benchmark 就是没做到这点，最后在 train 上训、在 train 上测。我们用<strong>Hidden Rules</strong>来解决这个问题：把业务规则拆散埋进 train，再在 test 上重新组合，要拿分就必须真的把规则抽象出来，而不是死记硬背。<strong>第二</strong>，大模型会偷懒——经常嘴上说"做完了"实际跳过了步骤。我们加了一套 <strong>review 机制</strong>：由若干独立的 reviewer agent 端到端审计每一组任务，所有内容确认交付了，这一组才会放行。</span>
+            <span className="lang-en">Automating the construction and evaluation of productivity-flavored datasets has two hard problems on the construction side. <strong>First</strong>, train and test must be cleanly separated so the agent can actually <em>evolve</em> on train and have that change <em>show up</em> on test — many existing benchmarks fail this and end up training and testing on the same set. We solve it with <strong>Hidden Rules</strong>: operational rules are planted across the train tasks in pieces and recombined on the test, so a passing score requires real abstraction, not memorization. <strong>Second</strong>, LLMs are lazy — they declare victory while quietly skipping work. We add a <strong>review mechanism</strong>: a panel of independent reviewer agents audits each task group end-to-end, and a group only ships when the reviewers confirm everything was actually delivered.</span>
+            <span className="lang-zh">在生产力相关的数据集上做自动化构建与评估，<em>构建</em>侧有两大难点。<strong>第一</strong>，必须把 train 和 test 干净地分开，让模型真的能在 train 后<em>发生进化</em>，并且在 test 上<em>体现</em>出来——很多现有 benchmark 就是没做到这点，最后在 train 上训、在 train 上测。我们用<strong>Hidden Rules</strong>来解决这个问题：把业务规则拆散埋进 train，再在 test 上重新组合，要拿分就必须真的把规则抽象出来，而不是死记硬背。<strong>第二</strong>，大模型会偷懒——经常嘴上说"做完了"实际跳过了步骤。我们加了一套 <strong>review 机制</strong>：由若干独立的 reviewer agent 端到端审计每一组任务，所有内容确认交付了，这一组才会放行。</span>
           </p>
           <p>
             <span className="lang-en">In addition, our evaluation makes three commitments. <strong>One</strong>, grading is <strong>rule-based</strong>, not LLM-as-a-judge — every score is reproducible and every failure points to a specific rule. <strong>Two</strong>, both <strong>cost</strong> and <strong>accuracy</strong> are first-class citizens — a useful agent isn't just one that gets the right answer, it's one that gets there <em>more cheaply</em> over time. <strong>Three</strong>, the workspace is <strong>natural-language driven</strong> — you describe the experiment and the chart you want in one sentence, and a coding agent generates the analysis on the fly; you don't write code yourself.</span>
@@ -624,8 +624,8 @@ function BlogConstruction() {
         </h3>
         <div className="prose">
           <p>
-            <span className="lang-en">Humans wrote the pipeline once. After that, agents do everything (illustrated below). They pull seed scenarios from public real-job benchmarks (GDPval, SOP-Bench, JobBench) and spawn many candidate task groups from those seeds. For each group, they build a shared environment and author 5 train + 5 test tasks with rule-based evaluators. A calibrator then tunes difficulty so that an <code>evolution</code> setup clearly beats a <code>no-evolution</code> setup — this filters out tasks where evolution wouldn't change the answer, keeping the benchmark focused on agents that actually have to learn from experience. Finally, six independent reviewer agents audit the result, and a group ships only when 5 of 6 pass — these reviewers exist because agents have a habit of declaring victory while quietly skipping work, so completeness, file presence, and planted hidden rules are exactly what gets checked. Twelve task groups make it through this filter and form the public release.</span>
-            <span className="lang-zh">人只写一次 pipeline，之后全靠 agent（如下图所示）。先从公开的真实业务 benchmark（GDPval、SOP-Bench、JobBench）里取种子场景，再据此 spawn 出大量候选 task group。每组里搭一个共享 env，写 5 个 train + 5 个 test 任务并配上基于规则的 evaluator。然后 calibrator 调难度，让 <code>evolution</code> 设定明显超过 <code>no-evolution</code> 设定——这一步是为了把那些"是否进化都不影响答案"的题筛掉，让 benchmark 集中在那些真的需要从经验里学东西的 agent 上。最后由 6 个互相独立的 reviewer agent 审核，6 个里 5 个通过这一组才放行——之所以要 reviewer，是因为 agent 经常嘴上说"做完了"、实际偷懒，所以审核的就是结构、完整性、文件是否齐全、隐藏规则是否真的埋了进去。最终通过这层筛选活下来、进入公开发布的，是 12 组 task group。</span>
+            <span className="lang-en">Humans wrote the pipeline once. After that, agents do everything (illustrated below). They pull seed scenarios from public real-job benchmarks (GDPval, SOP-Bench, JobBench) and spawn many candidate task groups from those seeds. For each group, they build a shared environment and author 5 train + 5 test tasks with rule-based evaluators. A calibrator then tunes difficulty so that an <code>evolution</code> setup clearly beats a <code>no-evolution</code> setup — this filters out tasks where evolution wouldn't change the answer, keeping the benchmark focused on agents that actually have to evolve across related work. Finally, six independent reviewer agents audit the result, and a group ships only when 5 of 6 pass — these reviewers exist because agents have a habit of declaring victory while quietly skipping work, so completeness, file presence, and planted hidden rules are exactly what gets checked. Twelve task groups make it through this filter and form the public release.</span>
+            <span className="lang-zh">人只写一次 pipeline，之后全靠 agent（如下图所示）。先从公开的真实业务 benchmark（GDPval、SOP-Bench、JobBench）里取种子场景，再据此 spawn 出大量候选 task group。每组里搭一个共享 env，写 5 个 train + 5 个 test 任务并配上基于规则的 evaluator。然后 calibrator 调难度，让 <code>evolution</code> 设定明显超过 <code>no-evolution</code> 设定——这一步是为了把那些"是否进化都不影响答案"的题筛掉，让 benchmark 集中在那些真的需要跨相关任务自我进化的 agent 上。最后由 6 个互相独立的 reviewer agent 审核，6 个里 5 个通过这一组才放行——之所以要 reviewer，是因为 agent 经常嘴上说"做完了"、实际偷懒，所以审核的就是结构、完整性、文件是否齐全、隐藏规则是否真的埋了进去。最终通过这层筛选活下来、进入公开发布的，是 12 组 task group。</span>
           </p>
         </div>
         <figure className="pipeline-figure">
@@ -641,8 +641,8 @@ function BlogConstruction() {
             <span className="lang-zh">每个 task group 我们都会埋一小组隐藏的业务规则。CRM 销售线索组可能埋了两条：<em>赞助商身份的优先级</em>（财务发票优先于胸卡扫描），以及 <em>suppression list 政策</em>（某些细分人群禁止联系）。采购就绪组则要求：<em>只要供应商有 open 的 risk event 或 AP hold，对应行就必须 held</em>，不管 PO 看起来多干净。</span>
           </p>
           <p>
-            <span className="lang-en">We <em>spread</em> these rules across the 5 train tasks, so each train task only exercises a subset. The 5 test tasks are deliberately built as <strong>combinations</strong> — say, the precedence rule together with the suppression policy. An agent that solves each train in isolation learns the rules in pieces. An agent that distills them into reusable experience has them all in one place — and when the test asks for two at once, it doesn't need to rediscover them. That's why a higher test score is real evidence of learning, not luck.</span>
-            <span className="lang-zh">我们把这些规则<em>分散</em>到 5 个 train 里，每个 train 只触发一部分。5 个 test 故意被设计成这些规则的<strong>组合</strong>——比如同时触发"优先级 + suppression"。只盯着单个 train 做的 agent 学到的是碎片；把这些规则整理成可复用经验的 agent 则把它们放在一处——test 同时问两条时，它不需要重新发现。这就是 test 分数变高的原因，是真的"学到了"，而不是运气。</span>
+            <span className="lang-en">We <em>spread</em> these rules across the 5 train tasks, so each train task only exercises a subset. The 5 test tasks are deliberately built as <strong>combinations</strong> — say, the precedence rule together with the suppression policy. An agent that solves each train in isolation only sees rule fragments. An agent that turns them into an evolution update has them all in one place — and when the test asks for two at once, it doesn't need to rediscover them. That's why a higher test score is real evidence of evolution, not luck.</span>
+            <span className="lang-zh">我们把这些规则<em>分散</em>到 5 个 train 里，每个 train 只触发一部分。5 个 test 故意被设计成这些规则的<strong>组合</strong>——比如同时触发"优先级 + suppression"。只盯着单个 train 做的 agent 看到的是碎片；能把这些规则转成一次 evolution update 的 agent，则把它们放在一处——test 同时问两条时，它不需要重新发现。这就是 test 分数变高的原因，是真的发生了进化，而不是运气。</span>
           </p>
         </div>
       </div>
@@ -677,8 +677,8 @@ function BlogUsage() {
         </h3>
         <div className="prose">
           <p>
-            <span className="lang-en">A useful agent isn't just one that gets the right answer — it's one that <em>stops redoing</em> the same legwork every time a similar task comes in. Self-evolution should look like a human getting fluent: more accurate <em>and</em> faster, with fewer tokens, fewer steps, and cleaner moves. So we instrument every run end-to-end: per-agent total token spend, plus a breakdown by reasoning, tool calls, and stage. That observability isn't only for our analysis — those traces also become the raw material the agent itself can learn from.</span>
-            <span className="lang-zh">一个有用的 agent 不仅要答得对，还得<em>不再每次都把同样的活儿重做一遍</em>。Self-evolution 应该像人变熟练：更准、<em>更快</em>，用更少的 token、更少的步数、更干净的做法。所以我们对每一次运行都做端到端打点：每个 agent 的总 token 消耗，以及按 reasoning、工具调用、不同阶段的 breakdown。这套 observability 不只服务我们自己的分析——这些 trace 本身也是 agent 可以拿去 self-evolve 的学习材料。</span>
+            <span className="lang-en">A useful agent isn't just one that gets the right answer — it's one that <em>stops redoing</em> the same legwork every time a similar task comes in. Self-evolution should look like a human getting fluent: more accurate <em>and</em> faster, with fewer tokens, fewer steps, and cleaner moves. So we instrument every run end-to-end: per-agent total token spend, plus a breakdown by reasoning, tool calls, and stage. That observability isn't only for our analysis — those traces also become raw material for the agent's next evolution update.</span>
+            <span className="lang-zh">一个有用的 agent 不仅要答得对，还得<em>不再每次都把同样的活儿重做一遍</em>。Self-evolution 应该像人变熟练：更准、<em>更快</em>，用更少的 token、更少的步数、更干净的做法。所以我们对每一次运行都做端到端打点：每个 agent 的总 token 消耗，以及按 reasoning、工具调用、不同阶段的 breakdown。这套 observability 不只服务我们自己的分析——这些 trace 本身也是 agent 下一次 self-evolve 的材料。</span>
           </p>
         </div>
       </div>
@@ -708,8 +708,8 @@ function BlogFindings() {
               <span className="lang-zh"><code>base</code>——agent 直接做 5 个 test，没接触过 5 个 train。</span>
             </li>
             <li>
-              <span className="lang-en"><code>demo</code> — the agent reads the 5 train tasks <em>with their gold answers</em> first, distills reusable experience from them, and then takes the test. (Analogous to SFT.)</span>
-              <span className="lang-zh"><code>demo</code>——agent 先读 5 个 train 的题目和<em>标准答案</em>，从中沉淀可复用经验，再去做 test。（类似 SFT。）</span>
+              <span className="lang-en"><code>demo</code> — the agent reads the 5 train tasks <em>with their gold answers</em> first, turns them into an evolution update, and then takes the test. (Analogous to SFT.)</span>
+              <span className="lang-zh"><code>demo</code>——agent 先读 5 个 train 的题目和<em>标准答案</em>，把它们转成一次 evolution update，再去做 test。（类似 SFT。）</span>
             </li>
             <li>
               <span className="lang-en"><code>reflect</code> — the agent attempts the 5 train tasks <em>without</em> seeing answers, gets back graded reward and feedback, updates its memory or procedure from what it got wrong, then takes the test. (Analogous to RL.)</span>
