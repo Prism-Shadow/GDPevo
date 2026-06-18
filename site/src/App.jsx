@@ -188,7 +188,7 @@ function Hero() {
           </span>
         </p>
         <p className="hero-meta">
-          <Lang en="Public Benchmark Release · 2026 · PrismShadow team" zh="公开基准发布 · 2026 · PrismShadow 团队" />
+          <Lang en="PrismShadow Team · 2026" zh="PrismShadow Team · 2026" />
         </p>
         <div className="btn-row">
           <a className="btn btn-dark" href="https://github.com/Prism-Shadow/GDPevo">
