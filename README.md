@@ -2,73 +2,127 @@
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
-GDPevo is a public benchmark for evaluating self-evolving agents on
-economically valuable, real business tasks. To our knowledge, it is the first
-GDP-valued benchmark that treats agent evaluation as a stateful process: an
-agent first works through related train tasks, turns experience into reusable
-skills, and is then evaluated on held-out tasks from the same business
-environment.
+**GDPevo** is a public benchmark for measuring agent self-evolution on real
+business work.
 
-Most agent benchmarks still evaluate stateless task completion. GDPevo instead
-asks whether agents can improve through experience: can they learn business
-rules, source precedence, operating procedures, and output discipline from
-earlier work, and can that learning make later work more accurate and cheaper
-to execute?
+The question is not only: *can the agent solve this task?*
 
-The benchmark can be used to evaluate:
+It is: **can the agent learn from related tasks and get better on held-out
+tasks from the same business world?**
+
+The first public release contains **120 GDP-worthy tasks** across **12 task
+groups** in CRM, ERP, and Finance. Each task group contains one shared business
+environment, **5 train tasks**, and **5 held-out test tasks**. Train tasks are
+the experience source; test tasks measure whether what the agent learned
+transfers to later work it has not seen.
+
+## What GDPevo Measures
+
+Most agent benchmarks measure stateless task completion. GDPevo measures a
+stateful loop:
+
+1. An agent works through related train tasks.
+2. It turns that experience into reusable procedures, memory, or operating rules.
+3. It is evaluated on held-out tasks from the same business environment.
+
+This makes GDPevo useful for evaluating:
 
 - self-evolving or continual-learning agents;
-- skill creators and skill optimizers;
-- end-to-end agent memory systems.
+- experience distillation and self-improvement mechanisms;
+- end-to-end agent memory systems;
+- whether experience improves both **accuracy** and **cost**.
 
-The first release contains 120 tasks organized into 12 task groups. Each task
-group has one shared business environment, five train tasks, and five test
-tasks. The task groups are constructed from economically meaningful industry
-workflows, including finance, enterprise CRM, and ERP automation.
+The benchmark is built around real company interfaces: CRM, ERP, finance,
+procurement, support, lending, investment, HR, and reporting workflows. Task
+groups are seeded from real-job sources such as GDPVal and SOP-Bench, then
+expanded into shared environments with lookalike records, hidden operational
+rules, and deterministic rule-based graders.
 
-In the released Codex GPT-5.5 xhigh run, evolved agents improve accuracy by
-18.21 percentage points on average after inductive learning, while reducing
-token cost by 25.75% on average. The released artifacts include executable task
-groups, evaluation reports, generated skill packages, and a reusable evaluation
-workspace that can automate the full scoring flow.
+## Evaluation Setup
+
+Released runs compare three modes:
+
+| Mode | Meaning |
+| --- | --- |
+| `base` | The agent solves the held-out test tasks cold, with no prior exposure to train tasks. |
+| `demo` | The agent reads train tasks with gold answers, distills reusable procedures, then takes the test. |
+| `reflect` | The agent attempts train tasks without answers, receives graded feedback, updates its procedure from mistakes, then takes the test. |
+
+Scores use `avg@3`: mean held-out accuracy over 3 attempts per task.
+
+Cost is reported in **USD** from raw token metrics in the report YAML files.
+The released boards show token counts in thousands (`k`) and cost rounded to
+two decimals.
+
+## Released Results
+
+Across all three harnesses, the same pattern holds: experience improves
+held-out accuracy by roughly **+17 to +22 percentage points**.
+
+| Harness | Model | Thinking level | `base` avg@3 | `demo` avg@3 | `reflect` avg@3 | Accuracy lift | Cost change |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Codex | GPT-5.5 | xhigh | 48.35% | 65.99% | 67.13% | +18.21 pp | -25.75% |
+| Claude Code | Opus 4.8 | xhigh | 49.11% | 70.90% | 67.94% | +20.31 pp | -8.69% |
+| Panofy | Opus 4.6 | high | 50.17% | 68.24% | 67.98% | +17.94 pp | +11.82% |
+
+Full per-task reports are under:
+
+- [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
+- [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
+- [`experiments/panofy_claude_opus_4_6_high/`](experiments/panofy_claude_opus_4_6_high/)
+
+The aggregate board is
+[`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md).
+
+## Data
+
+Each task group contains:
+
+- one shared business environment;
+- 5 train tasks;
+- 5 held-out test tasks;
+- answer files and deterministic evaluators;
+- notes describing the data and grading setup.
+
+Released task groups are summarized in
+[`data/DATA_BOARD.md`](data/DATA_BOARD.md). See
+[`data/README.md`](data/README.md) for the data layout and task group format.
+
+## Evaluation Workspaces
+
+Reusable evaluation workspaces live under
+[`experiments/eval_workspace/`](experiments/eval_workspace/):
+
+| Workspace | Purpose |
+| --- | --- |
+| `codex/` | Codex evaluation workflow and guides |
+| `claude_code/` | Claude Code evaluation workflow and guides |
+| `panofy/` | Panofy evaluation workflow and guides |
+| `codex_zh/`, `claude_code_zh/`, `panofy_zh/` | Chinese mirrors |
+
+Each workspace describes how to load its guides, run the full evaluation for a
+task group, generate mode-specific artifacts when needed, aggregate `avg@3`, record
+token/cost metrics, and write `report/<task_group_id>.yaml`.
 
 ## Repository Layout
 
 | Path | Purpose |
 | --- | --- |
-| `data/` | Released task group data, data board, shared environments, train/test tasks, answers, evaluators, and data notes. |
-| `experiments/` | Released evaluation protocol, evaluation workspaces, result reports, generated skills, and experiment board. |
-| `site/` | GitHub Pages scaffold and public site assets. |
+| `data/` | Released task group data, data board, shared environments, train/test tasks, answers, evaluators, and notes. |
+| `experiments/` | Released evaluation protocols, reusable workspaces, report YAMLs, generated artifacts, and experiment board. |
+| `site/` | React/Vite public site and GitHub Pages build pipeline. |
 | `assets/` | Figures, logos, and visual assets used by released materials. |
 
-## Data
+## Public Site
 
-Each task group contains one shared business environment, five train tasks, and
-five test tasks. Train tasks provide the experience source, and test tasks
-measure whether the resulting skills improve later work in the same business
-environment.
+The public landing page and blog live in [`site/`](site/). The site is built
+with React/Vite and deployed to GitHub Pages.
 
-Released task groups are summarized in [data/DATA_BOARD.md](data/DATA_BOARD.md).
-See [data/README.md](data/README.md) for the data layout and task group format.
+Local preview:
 
-## Experiments
-
-The released evaluation run compares three conditions:
-
-- `no_skill`
-- `demonstration_skill`
-- `reflection_skill`
-
-Results are summarized in
-[experiments/EXPERIMENT_BOARD.md](experiments/EXPERIMENT_BOARD.md).
-
-See [experiments/README.md](experiments/README.md) for details.
-
-## Evaluation Workspace
-
-The reusable evaluation workspace is available at
-[experiments/eval_workspace/](experiments/eval_workspace/). A Chinese mirror is
-available at [experiments/eval_workspace_zh/](experiments/eval_workspace_zh/).
-The workspace describes how Codex can run the full evaluation workflow with
-clean-context skill-generation and solver agents, aggregate `avg@3`, record
-token and cost metrics, and write the final report.
+```bash
+cd site
+npm ci
+npm run build
+npm run preview
+```

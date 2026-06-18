@@ -403,7 +403,11 @@ body.blog #usage { padding-top: 1.4rem; }
 }
 .tg-row {
   display: grid; grid-template-columns: 60px 120px 1fr; align-items: center;
-  padding: 0.5rem 1.2rem; border-top: 1px solid var(--line);
+  width: 100%;
+  padding: 0.5rem 1.2rem; border: 0; border-top: 1px solid var(--line);
+  background: #fff;
+  font: inherit;
+  text-align: left;
 }
 .tg-row:first-child { border-top: 0; }
 .tg-head {
@@ -953,6 +957,7 @@ body.blog #usage { padding-top: 1.4rem; }
 [data-theme="dark"] .step,
 [data-theme="dark"] .ana-card,
 [data-theme="dark"] .tg-table { background: var(--surface); }
+[data-theme="dark"] .tg-row { background: var(--surface); }
 [data-theme="dark"] .panel-head,
 [data-theme="dark"] .lb-head,
 [data-theme="dark"] .ht-cap,
@@ -985,8 +990,71 @@ body.blog #usage { padding-top: 1.4rem; }
 @media (max-width: 620px) {
   .section { padding: 3.6rem 0; }
   .wrap { padding: 0 18px; }
-  .nav-inner { padding-left: 18px; padding-right: 18px; }
-  .stat-band { grid-template-columns: 1fr 1fr; }
+  .nav-inner {
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .brand { gap: 0.42rem; }
+  .brand-logo { width: 28px; height: 28px; border-radius: 8px; }
+  .brand-name { font-size: 1rem; }
+  .nav-right {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-left: 0;
+  }
+  .page-nav { gap: 0.7rem; font-size: 0.84rem; }
+  .theme-segment,
+  .lang-segment { padding: 0.12rem; }
+  .theme-choice { width: 1.82rem; height: 1.82rem; }
+  .theme-choice svg { width: 16px; height: 16px; }
+  .lang-choice {
+    width: 1.95rem;
+    height: 1.82rem;
+    font-size: 0.66rem;
+  }
+  .icon-link { display: none; }
+  .hero { padding: 4.1rem 0 3.2rem; }
+  .hero-title {
+    max-width: 16.5rem;
+    font-size: clamp(1.45rem, 7vw, 1.7rem);
+    line-height: 1.12;
+  }
+  .hero-break { display: none; }
+  .hero-sub {
+    max-width: 16.5rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+  .hero-meta { max-width: 16.5rem; font-size: 0.76rem; }
+  .btn-row {
+    max-width: 16.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 0.55rem;
+  }
+  .btn {
+    flex: 1 1 8rem;
+    justify-content: center;
+    height: 2.55rem;
+    padding: 0 0.86rem;
+    font-size: 0.84rem;
+  }
+  .h2 {
+    font-size: clamp(1.35rem, 6vw, 1.65rem);
+    overflow-wrap: anywhere;
+  }
+  .stat-band {
+    grid-template-columns: 1fr;
+    max-width: 16.5rem;
+  }
+  .results-wrap .h2,
+  .results-wrap .lead {
+    max-width: 16.5rem;
+  }
   .bar-row { grid-template-columns: 64px 1fr; gap: 0.55rem; }
   .bl { font-size: 0.72rem; white-space: normal; }
   .tr b { font-size: 0.68rem; }
