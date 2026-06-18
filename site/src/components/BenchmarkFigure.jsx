@@ -9,11 +9,11 @@ function metricValue(value) {
 
 const benchmarkMetrics = [
   {
-    key: "avg",
-    label: "AVG@3",
-    column: "AVG@3",
-    value: (row) => metricValue(row.avg),
-    display: (row) => row.avg,
+    key: "acc",
+    label: "ACC",
+    column: "ACC",
+    value: (row) => metricValue(row.acc),
+    display: (row) => row.acc,
     max: 100
   },
   {
@@ -25,15 +25,15 @@ const benchmarkMetrics = [
   },
   {
     key: "usd",
-    label: "USD",
-    column: "USD",
+    label: "COST",
+    column: "COST",
     value: (row) => metricValue(row.usd),
     display: (row) => `$${row.usd}`
   }
 ];
 
 export function BenchmarkFigure({ className = "" }) {
-  const [metricKey, setMetricKey] = useState("avg");
+  const [metricKey, setMetricKey] = useState("acc");
   const metric = benchmarkMetrics.find((item) => item.key === metricKey) ?? benchmarkMetrics[0];
   const metricMax = metric.max ?? Math.max(...summaryCards.flatMap((card) => card.rows.map(metric.value)), 1);
 

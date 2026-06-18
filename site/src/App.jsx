@@ -3,7 +3,7 @@ import { Header, Footer } from "./components/Layout.jsx";
 import { homeContent } from "./content/home.js";
 import { BlogPage } from "./pages/BlogPage.jsx";
 import { HomePage } from "./pages/HomePage.jsx";
-import { initialLang } from "./lib/i18n.jsx";
+import { initialLang, localize } from "./lib/i18n.jsx";
 import { initialThemeChoice, resolveTheme } from "./lib/theme.js";
 
 function currentPage() {
@@ -25,8 +25,8 @@ export default function App() {
 
   useEffect(() => {
     document.body.classList.toggle("blog", page === "blog");
-    document.title = homeContent.documentTitle[page];
-  }, [page]);
+    document.title = localize(homeContent.documentTitle[page], lang);
+  }, [page, lang]);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-lang", lang);

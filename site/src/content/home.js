@@ -1,14 +1,20 @@
 export const homeContent = {
   documentTitle: {
-    home: "GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks",
-    blog: "GDPevo Blog: Evaluating Agent Self-Evolution on Real Business Tasks"
+    home: {
+      en: "GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks",
+      zh: "GDPevo：在真实企业任务上评估 Agent 自进化能力"
+    },
+    blog: {
+      en: "GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks",
+      zh: "GDPevo：在真实企业任务上评估 Agent 自进化能力"
+    }
   },
   footer: {
     tagline: {
       en: "Evaluating agent self-evolution on GDP-worthy work.",
-      zh: "在真实业务任务上评估 Agent 的自我进化。"
+      zh: "在真实企业任务上评估 Agent 的自进化能力。"
     },
-    repoLabel: "github.com/Prism-Shadow/GDPevo"
+    repoLabel: "https://github.com/Prism-Shadow/GDPevo"
   },
   header: {
     home: {
@@ -23,12 +29,12 @@ export const homeContent = {
   hero: {
     title: {
       brand: "GDPevo",
-      en: ["Evaluating Agent", "Self-Evolution on Real Business Tasks"],
-      zh: ["在真实业务任务上", "评估 Agent 的自我进化"]
+      en: ["Evaluating Agent Self-Evolution on", "Real Business Tasks"],
+      zh: ["在真实企业任务上", "评估 Agent 的自进化能力"]
     },
     subtitle: {
-      en: "Not *can the agent solve this task?*  \nBut **can it evolve across related tasks to get better?**",
-      zh: "不是问*这个 agent 能不能解决这个任务*，  \n而是问**它能不能借由相关任务完成自我进化，越来越擅长这一类任务**。"
+      en: "Not **can the agent solve this task?**  \nBut **can it self-evolve through related tasks and become better at this class of work?**",
+      zh: "不是问 **Agent 能不能解决这个任务**，  \n而是问**它能不能藉由相关任务完成自进化，越来越擅长这一类任务**。"
     },
     meta: {
       en: "PrismShadow Team · 2026",
@@ -55,7 +61,7 @@ export const homeContent = {
         value: "120",
         label: {
           en: "GDP-worthy tasks",
-          zh: "真实业务任务"
+          zh: "真实企业任务"
         }
       },
       {
@@ -72,8 +78,8 @@ export const homeContent = {
         unit: "pp",
         positive: true,
         label: {
-          en: "held-out accuracy lift from self-evolution",
-          zh: "自我进化带来的 held-out 准确率提升"
+          en: "test-set accuracy lift from self-evolution",
+          zh: "自进化带来的测试集准确率提升"
         }
       },
       {
@@ -82,16 +88,16 @@ export const homeContent = {
         unit: "%",
         positive: true,
         label: {
-          en: "token cost: fewer, not more",
-          zh: "token 成本：更少，而非更多"
+          en: "fewer token cost",
+          zh: "更少的 token 成本"
         }
       }
     ]
   },
   summary: {
     captionSuffix: {
-      en: "avg@3 over 12 task groups",
-      zh: "12 个 task group 的 avg@3"
+      en: "Acc@3 over 12 task groups",
+      zh: "12 个任务的平均准确率（Acc@3）"
     },
     columns: {
       mode: {
@@ -107,56 +113,56 @@ export const homeContent = {
   results: {
     heading: {
       en: "Self-evolution makes agents more accurate while spending **fewer** tokens.",
-      zh: "自我进化让 agent 更准，同时花**更少**的 token。"
+      zh: "自进化让 Agent 更准，同时花**更少**的 token。"
     },
     lead: {
-      en: "Each group has 5 train and 5 held-out test tasks. We compare a baseline (`base`) against two evolution modes: `demo` evolves from worked examples, while `reflect` evolves from its own mistakes. The score measures lift on tasks the agent never saw.",
-      zh: "每组有 5 个 train、5 个 held-out test。我们用基线（`base`）对比两种进化模式：`demo` 基于样例进化，`reflect` 基于自己的错误进化；分数衡量的是 agent 在没见过的任务上的提升。"
+      en: "Each task group has 5 training samples and 5 test samples. We compare the baseline (`base`) with two evolution modes: `demo`, which evolves from examples, and `reflect`, which evolves through reflection. The measurement is the agent's improvement on tasks it has never seen.",
+      zh: "每个任务组有 5 个训练样本和 5 个测试样本。我们对比基线（`base`）和两种进化模式：`demo` 基于样例进化，`reflect` 基于反思进化，衡量的是 Agent 在没见过的任务上的提升。"
     },
     notes: [
       {
-        key: "avg",
-        en: "**avg@3** = mean held-out accuracy over 3 attempts per task. The task-group chart below keeps Codex, Claude Code, and Panofy side by side under the same base, demo, and reflect settings.",
-        zh: "**avg@3** = 每个任务 3 次尝试的 held-out 准确率均值。下面的 task-group 图并排展示 Codex、Claude Code 与 Panofy 在 base、demo、reflect 下的结果。"
+        key: "acc",
+        en: "**acc** = test-set accuracy, with each task averaged over 3 attempts. We compare Codex, Claude Code, and Panofy under the base, demo, and reflect settings.",
+        zh: "**acc** = 测试集准确率，每个任务跑 3 遍后取平均。分别对比了 Codex、Claude Code 与 Panofy 在 base、demo、reflect 下的结果。"
       },
       {
         key: "lift",
-        en: "Accuracy lift / cost change: **+20.31 pp / −8.69%** (Claude Code) · **+18.21 pp / −25.75%** (Codex) · **+17.94 pp / +11.82%** (Panofy).",
-        zh: "准确率提升 / Cost 变化：**+20.31 pp / −8.69%**（Claude Code）· **+18.21 pp / −25.75%**（Codex）· **+17.94 pp / +11.82%**（Panofy）。"
+        en: "Result (accuracy / cost): **+20.31 pp / −8.69%** (Claude Code) · **+18.21 pp / −25.75%** (Codex) · **+17.94 pp / +11.82%** (Panofy).",
+        zh: "实验结果（准确率 / 成本）：**+20.31 pp / −8.69%**（Claude Code）· **+18.21 pp / −25.75%**（Codex）· **+17.94 pp / +11.82%**（Panofy）。"
       },
       {
         key: "reports",
         en: "Full per-task reports are under [`experiments/codex_gpt5_5_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh), [`experiments/claude_code_opus_4_8_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_opus_4_8_xhigh), and [`experiments/panofy_claude_opus_4_6_high/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/panofy_claude_opus_4_6_high).",
-        zh: "完整逐任务报告见 [`experiments/codex_gpt5_5_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh)、[`experiments/claude_code_opus_4_8_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_opus_4_8_xhigh) 与 [`experiments/panofy_claude_opus_4_6_high/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/panofy_claude_opus_4_6_high)。"
+        zh: "完整的逐个任务报告见 [`experiments/codex_gpt5_5_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh)、[`experiments/claude_code_opus_4_8_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_opus_4_8_xhigh) 与 [`experiments/panofy_claude_opus_4_6_high/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/panofy_claude_opus_4_6_high)。"
       }
     ],
     blogLink: {
       en: "Why can self-evolution lift accuracy and cost less? Read the blog →",
-      zh: "为什么自我进化能提升准确率，还能更省？阅读博客 →"
+      zh: "为什么自进化能提升准确率，还能更省成本？阅读博客 →"
     },
     chartTitle: {
-      en: "Held-out accuracy by task group (avg@3, %)",
-      zh: "各 task group 的 held-out 准确率 (avg@3, %)"
+      en: "Test-set accuracy by task group",
+      zh: "各任务组的测试集准确率"
     },
     chartColumns: {
       taskGroup: {
         en: "Task group",
-        zh: "Task group"
+        zh: "任务组"
       },
       harness: "Harness",
       model: "Model",
       thinking: "Thinking level",
       setting: {
-        en: "Setting",
-        zh: "设定"
+        en: "Mode",
+        zh: "模式"
       },
-      accuracy: "Accuracy"
+      accuracy: "Accuracy (%)"
     }
   },
   tasks: {
     heading: {
-      en: "Real company interfaces: CRM, ERP, Finance.",
-      zh: "真实的公司业务接口：CRM、ERP、Finance。"
+      en: "Real business tasks: Customer Relationship Management (CRM), Enterprise Resource Planning (ERP), and Finance.",
+      zh: "真实的企业任务场景：客户关系管理（CRM）、企业资源计划（ERP）和金融（Finance）。"
     },
     domainDefinitions: [
       {
@@ -176,12 +182,12 @@ export const homeContent = {
       }
     ],
     lead: {
-      en: "Each group is one shared business world with lookalike records mixed in, seeded from real-job sources such as [GDPval](https://openai.com/index/gdpval/) and [SOP-Bench](https://github.com/amazon-science/SOP-Bench).",
-      zh: "每组都是一个共享的业务世界，混入了大量\"长得很像\"的干扰记录；场景来自像 [GDPval](https://openai.com/index/gdpval/) 和 [SOP-Bench](https://github.com/amazon-science/SOP-Bench) 这样的真实工作任务源。"
+      en: "Each group is a shared business scenario with many distracting signals, and the scenarios come from real-business benchmarks such as [GDPval](https://openai.com/index/gdpval/) and [SOP-Bench](https://github.com/amazon-science/SOP-Bench).",
+      zh: "每组都是一个共享的业务，混入了大量\"长得很像\"的干扰记录；场景来自像 [GDPval](https://openai.com/index/gdpval/) 和 [SOP-Bench](https://github.com/amazon-science/SOP-Bench) 这样的真实工作任务源。"
     },
     note: {
-      en: "How the hidden rules are planted, how the data is built and graded by agents, and why cost goes down. [**Read the blog →**](blog.html)",
-      zh: "隐藏规则怎么埋、数据怎么由 agent 构造与评分、成本为什么会下降，[**阅读博客 →**](blog.html)"
+      en: "How is the data constructed? How is the evaluation performed? [**Read the blog →**](blog.html)",
+      zh: "数据如何构造？评估如何进行？[**阅读博客 →**](blog.html)"
     },
     tableColumns: {
       group: {
@@ -200,11 +206,11 @@ export const homeContent = {
     detail: {
       heading: {
         en: "Task themes",
-        zh: "Task 主题"
+        zh: "任务主题"
       },
       count: {
-        en: "5 train · 5 test",
-        zh: "5 个 train · 5 个 test"
+        en: "5 training samples · 5 test samples",
+        zh: "5 个训练样本 · 5 个测试样本"
       },
       taskPrefix: "task",
       sets: [
@@ -216,7 +222,7 @@ export const homeContent = {
         {
           kind: "Test",
           label: "test",
-          count: "5 held-out"
+          count: "5 examples"
         }
       ]
     }

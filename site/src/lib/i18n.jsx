@@ -20,6 +20,11 @@ export function Lang({ en, zh }) {
   );
 }
 
+export function localize(copy, lang) {
+  if (typeof copy === "string") return copy;
+  return copy?.[lang] ?? copy?.en ?? "";
+}
+
 const markdownComponents = {
   a({ href = "", children }) {
     const isExternal = /^https?:\/\//.test(href);
