@@ -582,8 +582,8 @@ function BlogIntro() {
         </p>
         <div className="prose">
           <p>
-            <span className="lang-en">Self-evolution — agents that rewrite their own skills, memory, or harness to get better at a class of tasks over time — is a problem the field clearly cares about. Companies built around agentic self-improvement (Cognition, Reflection AI, and others) have raised on the order of <strong>billions of dollars</strong> in 2025 alone. Yet on <strong>real productivity work</strong> — auditing AP invoices, reconciling event sponsorship across CRM and finance, building a branch close-out package — there is essentially <em>no benchmark</em> for whether an agent can actually self-evolve. It can't be measured today, let alone measured automatically.</span>
-            <span className="lang-zh">Self-evolution——agent 通过自己改写 skill、memory 或 harness，在一类任务上越做越好——是一个业界很关注的问题。围绕 agent 自我进化的公司（Cognition、Reflection AI 等）仅 2025 一年就募集了约 <strong>数十亿美元</strong>的资金。然而在<strong>真实生产力工作</strong>这一面——审核 AP 发票、把展会赞助在 CRM 和财务两边对账、做一个分行月度结账包——几乎<em>没有 benchmark</em>能告诉我们 agent 到底有没有 self-evolve。目前它根本测不了，更谈不上自动化测。</span>
+            <span className="lang-en">Self-evolution — agents that rewrite their own memory, procedures, or harness to get better at a class of tasks over time — is a problem the field clearly cares about. Companies built around agentic self-improvement (Cognition, Reflection AI, and others) have raised on the order of <strong>billions of dollars</strong> in 2025 alone. Yet on <strong>real productivity work</strong> — auditing AP invoices, reconciling event sponsorship across CRM and finance, building a branch close-out package — there is essentially <em>no benchmark</em> for whether an agent can actually self-evolve. It can't be measured today, let alone measured automatically.</span>
+            <span className="lang-zh">Self-evolution——agent 通过自己改写 memory、procedure 或 harness，在一类任务上越做越好——是一个业界很关注的问题。围绕 agent 自我进化的公司（Cognition、Reflection AI 等）仅 2025 一年就募集了约 <strong>数十亿美元</strong>的资金。然而在<strong>真实生产力工作</strong>这一面——审核 AP 发票、把展会赞助在 CRM 和财务两边对账、做一个分行月度结账包——几乎<em>没有 benchmark</em>能告诉我们 agent 到底有没有 self-evolve。目前它根本测不了，更谈不上自动化测。</span>
           </p>
           <p>
             <span className="lang-en">GDPevo fills that gap. It is both a <strong>process</strong> for automatically building self-evolution benchmarks on real-job tasks, and a released <strong>benchmark</strong> produced by that process — twelve task groups across CRM, ERP, and Finance, each with five train tasks and five test tasks under a shared environment and rule-based graders. The construction-and-evaluation pipeline is shown in later sections.</span>
@@ -641,8 +641,8 @@ function BlogConstruction() {
             <span className="lang-zh">每个 task group 我们都会埋一小组隐藏的业务规则。CRM 销售线索组可能埋了两条：<em>赞助商身份的优先级</em>（财务发票优先于胸卡扫描），以及 <em>suppression list 政策</em>（某些细分人群禁止联系）。采购就绪组则要求：<em>只要供应商有 open 的 risk event 或 AP hold，对应行就必须 held</em>，不管 PO 看起来多干净。</span>
           </p>
           <p>
-            <span className="lang-en">We <em>spread</em> these rules across the 5 train tasks, so each train task only exercises a subset. The 5 test tasks are deliberately built as <strong>combinations</strong> — say, the precedence rule together with the suppression policy. An agent that solves each train in isolation learns the rules in pieces. An agent that distills them into a single reusable skill has them all in one place — and when the test asks for two at once, it doesn't need to rediscover them. That's why a higher test score is real evidence of learning, not luck.</span>
-            <span className="lang-zh">我们把这些规则<em>分散</em>到 5 个 train 里，每个 train 只触发一部分。5 个 test 故意被设计成这些规则的<strong>组合</strong>——比如同时触发"优先级 + suppression"。只盯着单个 train 做的 agent 学到的是碎片；把这些规则整理进一份可复用 skill 的 agent 则把它们放在一处——test 同时问两条时，它不需要重新发现。这就是 test 分数变高的原因，是真的"学到了"，而不是运气。</span>
+            <span className="lang-en">We <em>spread</em> these rules across the 5 train tasks, so each train task only exercises a subset. The 5 test tasks are deliberately built as <strong>combinations</strong> — say, the precedence rule together with the suppression policy. An agent that solves each train in isolation learns the rules in pieces. An agent that distills them into reusable experience has them all in one place — and when the test asks for two at once, it doesn't need to rediscover them. That's why a higher test score is real evidence of learning, not luck.</span>
+            <span className="lang-zh">我们把这些规则<em>分散</em>到 5 个 train 里，每个 train 只触发一部分。5 个 test 故意被设计成这些规则的<strong>组合</strong>——比如同时触发"优先级 + suppression"。只盯着单个 train 做的 agent 学到的是碎片；把这些规则整理成可复用经验的 agent 则把它们放在一处——test 同时问两条时，它不需要重新发现。这就是 test 分数变高的原因，是真的"学到了"，而不是运气。</span>
           </p>
         </div>
       </div>
@@ -667,8 +667,8 @@ function BlogUsage() {
         </h3>
         <div className="prose">
           <p>
-            <span className="lang-en">GDPevo grades with deterministic, rule-based checkers — for example, was the right set of records returned, did the amount round to the right precision. Two things follow. First, the score is <strong>reproducible</strong>: the same answer always gets the same grade, regardless of who runs it or when. Second, every failure is <strong>traceable</strong>: instead of a vague verdict, you see exactly which rule was violated and by how much. That trace is what makes the benchmark useful for diagnosis — you can read it back to find weak spots in your agent and feed those weak spots into the next round of skill or memory updates.</span>
-            <span className="lang-zh">GDPevo 用确定性的 rule-based checker 打分——比如返回的记录集对不对、金额是否遵守了要求的精度。这带来两个好处。第一，评分是<strong>可复现</strong>的：同一份答案，谁跑、什么时候跑，得到的分都一样。第二，每一次失败都是<strong>可追溯</strong>的：你看到的不是一个含糊的整体结论，而是具体哪一条规则被违反、扣了多少分。这种可追溯性让 benchmark 成为诊断工具——你可以反过来读这些 trace，找到你的 agent 短板在哪儿，再把这些短板喂回下一轮的 skill 或 memory 更新。</span>
+            <span className="lang-en">GDPevo grades with deterministic, rule-based checkers — for example, was the right set of records returned, did the amount round to the right precision. Two things follow. First, the score is <strong>reproducible</strong>: the same answer always gets the same grade, regardless of who runs it or when. Second, every failure is <strong>traceable</strong>: instead of a vague verdict, you see exactly which rule was violated and by how much. That trace is what makes the benchmark useful for diagnosis — you can read it back to find weak spots in your agent and feed those weak spots into the next round of memory or procedure updates.</span>
+            <span className="lang-zh">GDPevo 用确定性的 rule-based checker 打分——比如返回的记录集对不对、金额是否遵守了要求的精度。这带来两个好处。第一，评分是<strong>可复现</strong>的：同一份答案，谁跑、什么时候跑，得到的分都一样。第二，每一次失败都是<strong>可追溯</strong>的：你看到的不是一个含糊的整体结论，而是具体哪一条规则被违反、扣了多少分。这种可追溯性让 benchmark 成为诊断工具——你可以反过来读这些 trace，找到你的 agent 短板在哪儿，再把这些短板喂回下一轮 memory 或 procedure 更新。</span>
           </p>
         </div>
 
@@ -708,12 +708,12 @@ function BlogFindings() {
               <span className="lang-zh"><code>base</code>——agent 直接做 5 个 test，没接触过 5 个 train。</span>
             </li>
             <li>
-              <span className="lang-en"><code>demo</code> — the agent reads the 5 train tasks <em>with their gold answers</em> first, distills skills/memory from them, and then takes the test. (Analogous to SFT.)</span>
-              <span className="lang-zh"><code>demo</code>——agent 先读 5 个 train 的题目和<em>标准答案</em>，从中沉淀 skill/memory，再去做 test。（类似 SFT。）</span>
+              <span className="lang-en"><code>demo</code> — the agent reads the 5 train tasks <em>with their gold answers</em> first, distills reusable experience from them, and then takes the test. (Analogous to SFT.)</span>
+              <span className="lang-zh"><code>demo</code>——agent 先读 5 个 train 的题目和<em>标准答案</em>，从中沉淀可复用经验，再去做 test。（类似 SFT。）</span>
             </li>
             <li>
-              <span className="lang-en"><code>reflect</code> — the agent attempts the 5 train tasks <em>without</em> seeing answers, gets back graded reward and feedback, updates its skills/memory from what it got wrong, then takes the test. (Analogous to RL.)</span>
-              <span className="lang-zh"><code>reflect</code>——agent <em>看不到答案</em>，自己做 5 个 train，事后拿到 reward 和反馈，改自己的 skill/memory，再去做 test。（类似 RL。）</span>
+              <span className="lang-en"><code>reflect</code> — the agent attempts the 5 train tasks <em>without</em> seeing answers, gets back graded reward and feedback, updates its memory or procedure from what it got wrong, then takes the test. (Analogous to RL.)</span>
+              <span className="lang-zh"><code>reflect</code>——agent <em>看不到答案</em>，自己做 5 个 train，事后拿到 reward 和反馈，更新自己的 memory 或 procedure，再去做 test。（类似 RL。）</span>
             </li>
           </ul>
         </div>
@@ -726,8 +726,8 @@ function BlogFindings() {
           </div>
         </div>
         <p className="note">
-          <span className="lang-en">The shape is the same on all three harnesses: skills lift held-out accuracy by <strong>~17–22 points</strong>, and on the GPT-5.5 / Opus 4.8 setups tokens go <em>down</em>, not up — the fluency story, not just a higher score. On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than the baseline; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>.</span>
-          <span className="lang-zh">三套 harness 形状一致：skill 让 held-out 准确率提升 <strong>约 17–22 个百分点</strong>，且在 GPT-5.5 / Opus 4.8 这两套上，<em>花的 token 反而更少</em>——这正是"变熟练"，而不仅仅是分数更高。在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比基线还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>。</span>
+          <span className="lang-en">The shape is the same on all three harnesses: self-evolution lifts held-out accuracy by <strong>~17–22 points</strong>, and on the GPT-5.5 / Opus 4.8 setups tokens go <em>down</em>, not up — the fluency story, not just a higher score. On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than the baseline; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>.</span>
+          <span className="lang-zh">三套 harness 形状一致：self-evolution 让 held-out 准确率提升 <strong>约 17–22 个百分点</strong>，且在 GPT-5.5 / Opus 4.8 这两套上，<em>花的 token 反而更少</em>——这正是"变熟练"，而不仅仅是分数更高。在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比基线还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>。</span>
         </p>
         <p className="prose-link">
           <a href="index.html#results">
@@ -763,8 +763,8 @@ function BlogInvite() {
         </h2>
         <div className="prose">
           <p>
-            <span className="lang-en">The tasks, environments, graders, generated skills, and full reports are open. Bring your own agents and scenarios. Submit harder hidden rules. The goal is not a leaderboard, but a public interface where agents that actually do productive work can be trained — and where the evidence of that improvement is open to inspection.</span>
-            <span className="lang-zh">任务、环境、grader、生成的 skill 包、完整 report 都是开放的。欢迎带上你自己的 agent、你自己的业务场景，欢迎来挑战、欢迎提交更难的隐藏规则。我们的目标不是一张 leaderboard，而是一个公共接口 —— 让真正能干生产力工作的 agent 在这里被训练出来，并且这种"它真的变好了"的证据可以被任何人审计。</span>
+            <span className="lang-en">The tasks, environments, graders, generated updates, and full reports are open. Bring your own agents and scenarios. Submit harder hidden rules. The goal is not a leaderboard, but a public interface where agents that actually do productive work can be trained — and where the evidence of that improvement is open to inspection.</span>
+            <span className="lang-zh">任务、环境、grader、生成的更新、完整 report 都是开放的。欢迎带上你自己的 agent、你自己的业务场景，欢迎来挑战、欢迎提交更难的隐藏规则。我们的目标不是一张 leaderboard，而是一个公共接口 —— 让真正能干生产力工作的 agent 在这里被训练出来，并且这种"它真的变好了"的证据可以被任何人审计。</span>
           </p>
         </div>
         <div className="btn-row invite-actions">
