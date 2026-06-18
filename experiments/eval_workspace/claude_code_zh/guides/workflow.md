@@ -162,7 +162,7 @@ runs/reflect/test_001/attempt_01/
 
 一条 API 响应会被拆成多条 content-block 记录:`input`/`cache_creation`/`cache_read` 完全相同,但 `output_tokens` 是流式累计的。**按 `message.id` 去重**——input/cache 三桶取任一条,`output_tokens` 取该 id 的**最大值**;逐行求和会把 input/cache 放大约 2-3 倍,只取第一条又会低估 output。对去重后的响应,把四个桶(`input_tokens`、`cache_creation_input_tokens`、`cache_read_input_tokens`、`output_tokens`)分别求和,并用 `metric_and_scoring.md` 里的逐响应公式算出 `cost_usd`。不要拿父会话 `toolUseResult.totalTokens` 当计费总量——它是"上下文规模"口径且不含 cache_read。
 
-所有 runs 完成后，聚合三种条件的 `avg@3`、平均各桶 token 和平均 `cost_usd`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。
+所有 runs 完成后，聚合三种条件的 `acc@3`、平均各桶 token 和平均 `cost_usd`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。
 
 临时检查代码、聚合代码或环境启动 notes 可以放在 `scratch/`。这些材料不是正式评估数据。
 
@@ -170,7 +170,7 @@ runs/reflect/test_001/attempt_01/
 
 在报告中解释：
 
-- 三种条件的整体 `avg@3`。
+- 三种条件的整体 `acc@3`。
 - 每种 skill 条件相对 base 的提升。
 - Reflection skill 是否优于 demonstration skill。
 - 哪些 test tasks 提升明显，哪些没有。

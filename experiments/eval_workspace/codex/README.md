@@ -1,6 +1,6 @@
 # Evaluation Workspace
 
-This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `avg@3` across three skill conditions.
+This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc@3` across three skill conditions.
 
 This workspace evaluates one task group at a time. Do not modify the task group under evaluation. If you find that the task group itself is invalid, record the risk in the report and send the data back to an earlier stage.
 
@@ -21,7 +21,7 @@ Read these files in order before starting evaluation:
 
 1. `guides/workflow.md` - main-agent evaluation workflow
 2. `guides/skill_modes.md` - the three skill conditions and information boundaries
-3. `guides/metric_and_scoring.md` - `avg@3`, single-attempt scoring, and aggregation rules
+3. `guides/metric_and_scoring.md` - `acc@3`, single-attempt scoring, and aggregation rules
 4. `guides/report_format.md` - final report format
 
 ## Launch Prompt
@@ -29,7 +29,7 @@ Read these files in order before starting evaluation:
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: <model>, <reasoning_effort>.
-Run all three modes with avg@3 and write report/<task_group_id>.yaml.
+Run all three modes with acc@3 and write report/<task_group_id>.yaml.
 ```
 
 ## Workflow
@@ -69,7 +69,7 @@ For each condition, run each test task independently 3 times. Every run must be 
 
 6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, Codex session trace, and token usage.
 
-7. After all score records are ready, aggregate `avg@3` for the three conditions, plus average cached/input/output tokens for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
+7. After all score records are ready, aggregate `acc@3` for the three conditions, plus average cached/input/output tokens for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
 
 ## Agent Boundaries
 

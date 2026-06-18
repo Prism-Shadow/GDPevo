@@ -40,7 +40,7 @@ task_group/<task_group_id>/
 
 ## 4. 训练 Agent
 
-**为每个条件训练 3 个独立 agent**——`attempt_<nn>` → 一个 agent——这样 avg@3 能捕捉训练方差。每个条件之间唯一不同的只是训练材料和训练 instruction（见 `evolve_modes.md`）。
+**为每个条件训练 3 个独立 agent**——`attempt_<nn>` → 一个 agent——这样 acc@3 能捕捉训练方差。每个条件之间唯一不同的只是训练材料和训练 instruction（见 `evolve_modes.md`）。
 
 把每个条件的材料 staging 到专属目录，例如：
 
@@ -97,13 +97,13 @@ token 用量和 points 直接来自 SDK——不用解析 transcript。`predict_
 <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
 ```
 
-所有 `score.yaml` 就绪后，聚合每个 task 的 `avg@3`、整体 `avg@3`，以及每个条件的平均 points / 各桶 token。这些效率指标只统计 **test-task 的 `predict()`** ——不含训练（进化步骤）、环境启动或 evaluator 执行。聚合方式同 `avg@3`：先对同一 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。临时聚合代码放 `scratch/`。最终报告按 `report_format.md` 写入 `report/<task_group_id>.yaml`。
+所有 `score.yaml` 就绪后，聚合每个 task 的 `acc@3`、整体 `acc@3`，以及每个条件的平均 points / 各桶 token。这些效率指标只统计 **test-task 的 `predict()`** ——不含训练（进化步骤）、环境启动或 evaluator 执行。聚合方式同 `acc@3`：先对同一 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。临时聚合代码放 `scratch/`。最终报告按 `report_format.md` 写入 `report/<task_group_id>.yaml`。
 
 ## 9. 解读结果
 
 在报告（或附带说明）中解释：
 
-- 三种条件各自的整体 `avg@3`。
+- 三种条件各自的整体 `acc@3`。
 - 每个 evolve 条件相对 base 的提升。
 - reflect 是否优于 demo。
 - 哪些 test tasks 明显提升、哪些没有。
@@ -112,4 +112,4 @@ token 用量和 points 直接来自 SDK——不用解析 transcript。`predict_
 
 ## 失败处理
 
-以下情况记为失败并在报告中说明：`predict()` 抛错、agent 返回无法解析的 `answer.json`、evaluator 失败 / 返回不了 `[0,1]` 分。失败后重试，直到拿到一次有效可打分的 attempt，并把失败记录保留在 attempt 目录里。不要把失败的 attempt 记 `0` 分，也不要丢掉它继续算 `avg@3`。如果重试仍拿不到有效分，停下并报告问题。
+以下情况记为失败并在报告中说明：`predict()` 抛错、agent 返回无法解析的 `answer.json`、evaluator 失败 / 返回不了 `[0,1]` 分。失败后重试，直到拿到一次有效可打分的 attempt，并把失败记录保留在 attempt 目录里。不要把失败的 attempt 记 `0` 分，也不要丢掉它继续算 `acc@3`。如果重试仍拿不到有效分，停下并报告问题。

@@ -1,6 +1,6 @@
 # Metric And Scoring
 
-The main evaluation metric is `avg@3`. Cost is reported alongside accuracy, in
+The main evaluation metric is `acc@3`. Cost is reported alongside accuracy, in
 Panofy's native units (points + a 3-bucket token usage), read straight from the
 SDK (no transcript parsing).
 
@@ -74,17 +74,17 @@ token_usage:
   points_consumed: <int>
 ```
 
-## avg@3
+## acc@3
 
 For the same test task under the same condition, run 3 independent attempts,
 where `attempt_<nn>` is answered by the independently trained agent
 `attempt_<nn>`:
 
 ```text
-task avg@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
+task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 ```
 
-The overall `avg@3` for a condition is the average of the 5 test-task `avg@3`
+The overall `acc@3` for a condition is the average of the 5 test-task `acc@3`
 values.
 
 ## Score Range
@@ -104,18 +104,18 @@ Record as a failure and explain in the report:
 
 After a failure, retry until one valid scoreable attempt is obtained; preserve
 the failed record in the attempt directory. Do not score a failed attempt as `0`,
-and do not drop it while still computing `avg@3`. If retries still cannot produce
+and do not drop it while still computing `acc@3`. If retries still cannot produce
 a valid score, stop and report the issue.
 
 ## Aggregation Requirements
 
 After all `score.yaml` files are ready, check that all three conditions, 5 test
-tasks, and 3 runs per task are complete. Then compute per-task `avg@3`, overall
-`avg@3`, and condition-to-condition improvements, plus the average points and
+tasks, and 3 runs per task are complete. Then compute per-task `acc@3`, overall
+`acc@3`, and condition-to-condition improvements, plus the average points and
 per-bucket tokens.
 
 These efficiency metrics only count the **test-task `predict()`** work. They do
 not include training (the evolution step), environment startup, or
-evaluator execution. They aggregate the same way as `avg@3`: average the 3
+evaluator execution. They aggregate the same way as `acc@3`: average the 3
 attempts for one test task, then average the 5 test tasks. Temporary aggregation
 code may live under `scratch/`.

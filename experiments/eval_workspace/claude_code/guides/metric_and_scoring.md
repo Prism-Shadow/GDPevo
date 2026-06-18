@@ -1,6 +1,6 @@
 # Metric And Scoring
 
-The main evaluation metric is `avg@3`.
+The main evaluation metric is `acc@3`.
 
 ## Single Run
 
@@ -62,15 +62,15 @@ token_usage:                          # deduped by message.id, summed across res
 
 If the transcript cannot be matched uniquely, write `missing` or `ambiguous` in `match_status`, set the corresponding token fields to `null`, and do not estimate them manually.
 
-## avg@3
+## acc@3
 
 For the same test task under the same condition, run 3 independent attempts.
 
 ```text
-task avg@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
+task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 ```
 
-The overall `avg@3` for a condition is the average of the 5 test-task `avg@3` values.
+The overall `acc@3` for a condition is the average of the 5 test-task `acc@3` values.
 
 ## Score Range
 
@@ -89,14 +89,14 @@ The following cases should be recorded as failures and explained in the report:
 
 After a failure, the main agent should retry until it obtains one valid, scoreable attempt. The retry reason and failed record should be preserved in the corresponding attempt directory.
 
-If retries still cannot produce a valid score, stop the evaluation and report the issue. Do not score the failed attempt as `0`, and do not drop the failed attempt while continuing to compute `avg@3`.
+If retries still cannot produce a valid score, stop the evaluation and report the issue. Do not score the failed attempt as `0`, and do not drop the failed attempt while continuing to compute `acc@3`.
 
 ## Aggregation Requirements
 
-After all `score.yaml` files are ready, the main agent should check that all three conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `avg@3`, overall `avg@3`, and condition-to-condition improvements.
+After all `score.yaml` files are ready, the main agent should check that all three conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3`, overall `acc@3`, and condition-to-condition improvements.
 
-The main agent should also aggregate average cached/input/output tokens from each `run_metadata.yaml`, first per test task and then per condition. The aggregation follows the same shape as `avg@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
+The main agent should also aggregate average cached/input/output tokens from each `run_metadata.yaml`, first per test task and then per condition. The aggregation follows the same shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
 
-These efficiency metrics only count the answer-writing work of test solver subagents. They do not include skill generation, environment startup, evaluator execution, or main-agent summarization. They do not replace `avg@3`, but they should appear in the final report for efficiency comparison across skill conditions.
+These efficiency metrics only count the answer-writing work of test solver subagents. They do not include skill generation, environment startup, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
 
 The evaluation agent may write temporary aggregation or checking code in `scratch/` according to the current task group's evaluator shape.
