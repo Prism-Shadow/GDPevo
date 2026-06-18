@@ -283,6 +283,71 @@ function SummaryCard({ card }) {
   );
 }
 
+function metricValue(value) {
+  return Number.parseFloat(String(value).replace(/[^\d.-]/g, ""));
+}
+
+function BlogBenchmarkFigure() {
+  return (
+    <figure className="blog-benchmark-figure">
+      <figcaption className="blog-benchmark-head">
+        <div>
+          <strong>
+            <Lang en="Agent performance — all harnesses" zh="三套 harness 的 agent 表现" />
+          </strong>
+          <span>
+            <Lang en="12 task groups · avg@3 · three evaluation modes" zh="12 个 task group · avg@3 · 三种评估模式" />
+          </span>
+        </div>
+        <span className="blog-benchmark-legend" aria-label="Chart legend">
+          {modes.map((mode) => (
+            <i key={mode}>
+              <b className={`sw sw-${mode}`} />
+              {mode}
+            </i>
+          ))}
+        </span>
+      </figcaption>
+      <div className="blog-benchmark-cols">
+        <span>Harness</span>
+        <span>Mode</span>
+        <span>avg@3</span>
+        <span>Tokens (k)</span>
+        <span>USD</span>
+      </div>
+      <div className="blog-benchmark-rows">
+        {summaryCards.map((card) => {
+          const [harness, model] = card.title.split(" · ");
+          return (
+            <div className="blog-benchmark-group" key={card.title}>
+              <div className="blog-benchmark-name">
+                <strong>{harness}</strong>
+                <span>{model}</span>
+                <small>{card.thinking}</small>
+              </div>
+              <div className="blog-benchmark-bars">
+                {card.rows.map((row) => (
+                  <div className={`blog-benchmark-bar mode-${row.mode}`} key={row.mode}>
+                    <code>{row.mode}</code>
+                    <div className="blog-benchmark-measure">
+                      <div className="blog-benchmark-track">
+                        <span style={{ "--w": `${metricValue(row.avg)}%` }} />
+                      </div>
+                      <b>{row.avg}</b>
+                    </div>
+                    <span className="blog-benchmark-token">{row.tokens}</span>
+                    <span className="blog-benchmark-usd">{row.usd}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </figure>
+  );
+}
+
 function Meter({ value, mode }) {
   return (
     <div className={`ob-meter mode-${mode}`}>
@@ -718,13 +783,7 @@ function BlogFindings() {
           </ul>
         </div>
 
-        <div className="blog-results-wide">
-          <div className="htables">
-            {summaryCards.map((card) => (
-              <SummaryCard key={card.title} card={card} />
-            ))}
-          </div>
-        </div>
+        <BlogBenchmarkFigure />
         <p className="note">
           <span className="lang-en">The shape is the same on all three harnesses: self-evolution lifts held-out accuracy by <strong>~17–22 points</strong>, and on the GPT-5.5 / Opus 4.8 setups tokens go <em>down</em>, not up — the fluency story, not just a higher score. On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than the baseline; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>.</span>
           <span className="lang-zh">三套 harness 形状一致：self-evolution 让 held-out 准确率提升 <strong>约 17–22 个百分点</strong>，且在 GPT-5.5 / Opus 4.8 这两套上，<em>花的 token 反而更少</em>——这正是"变熟练"，而不仅仅是分数更高。在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比基线还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>。</span>
