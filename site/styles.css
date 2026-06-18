@@ -289,7 +289,7 @@ html[lang="zh-Hans"] body { letter-spacing: .002em; }
 .section.band { background: var(--band); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 /* blog reads more compactly: halve the per-section padding so adjacent sections sit closer */
 body.blog .section { padding: 2.6rem 0; }
-body.blog .section.blog-head { padding-top: 3rem; padding-bottom: 0.6rem; }
+body.blog .section.blog-head { padding-top: 2.7rem; padding-bottom: 0.3rem; }
 /* sections 2 and 3 read as one continuous block: kill the gap between them */
 body.blog #construction { padding-bottom: 0; }
 body.blog #usage { padding-top: 1.4rem; }
@@ -305,14 +305,15 @@ body.blog #usage { padding-top: 1.4rem; }
   font-size: clamp(1.7rem, 3.4vw, 2.5rem);
   line-height: 1.12; font-weight: 800; letter-spacing: -.025em; color: var(--ink);
 }
+.h2 strong { color: var(--accent); font-weight: inherit; }
 .h2.center { text-align: center; max-width: 860px; margin: 0 auto; }
 .h3 {
   margin: 0;
   font-size: clamp(1.18rem, 2vw, 1.42rem);
   line-height: 1.2; font-weight: 750; letter-spacing: -.015em; color: var(--ink);
 }
-.lead { max-width: 760px; margin: 1.1rem 0 0; font-size: 1.1rem; color: var(--body); }
-.lead.center { margin: 1.1rem auto 0; text-align: center; }
+.lead { max-width: 760px; margin: 0.85rem 0 0; font-size: 1.1rem; color: var(--body); }
+.lead.center { margin: 0.85rem auto 0; text-align: center; }
 .results-wrap .h2,
 .results-wrap .lead { max-width: 980px; }
 
@@ -349,7 +350,7 @@ body.blog #usage { padding-top: 1.4rem; }
 }
 
 /* ===================== ABSTRACT ===================== */
-.prose { max-width: 760px; margin: 1.8rem 0 0; }
+.prose { max-width: 760px; margin: 1.35rem 0 0; }
 .prose.center { margin-left: auto; margin-right: auto; }
 .prose-link { margin: 1.5rem 0 0; }
 .prose-link a { color: var(--accent); font-weight: 650; text-decoration: none; }
@@ -358,8 +359,17 @@ body.blog #usage { padding-top: 1.4rem; }
 /* Blog article header */
 .blog-head { padding-top: 3.4rem; padding-bottom: 0.6rem; }
 .blog-title { font-size: clamp(2rem, 4.4vw, 3rem); line-height: 1.12; max-width: none; margin: 0; }
-.h3-spaced { margin-top: 2.8rem; }
-.h3-spaced-sm { margin-top: 2.4rem; }
+.blog-quote {
+  position: relative;
+  padding: 1rem 1.2rem 1rem 1.35rem;
+  border-left: 4px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  background: var(--accent-soft);
+  font-style: italic;
+  line-height: 1.72;
+}
+.h3-spaced { margin-top: 2.15rem; }
+.h3-spaced-sm { margin-top: 1.75rem; }
 .prose p { margin: 0 0 1.1rem; font-size: 1.08rem; line-height: 1.78; color: var(--body); }
 .prose p:last-child { margin-bottom: 0; }
 .prose strong { color: var(--green-ink); font-weight: 700; }

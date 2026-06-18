@@ -1,12 +1,14 @@
 import { BrandLogo, GitHubIcon, ThemeIcon } from "./icons.jsx";
+import { homeContent } from "../content/home.js";
+import { links } from "../content/links.js";
 import { Lang } from "../lib/i18n.jsx";
-import { links } from "../lib/links.js";
 import { themeChoices } from "../lib/theme.js";
 
 const languageChoices = ["en", "zh"];
 
 export function Header({ page, lang, setLang, themeChoice, setThemeChoice }) {
   const homeHref = page === "home" ? "#top" : "index.html";
+  const { header } = homeContent;
 
   return (
     <header className="nav">
@@ -20,10 +22,10 @@ export function Header({ page, lang, setLang, themeChoice, setThemeChoice }) {
         <div className="nav-right">
           <nav className="page-nav" aria-label="Primary">
             <a className={page === "home" ? "is-active" : undefined} href={homeHref}>
-              <Lang en="Home" zh="首页" />
+              <Lang {...header.home} />
             </a>
             <a className={page === "blog" ? "is-active" : undefined} href="blog.html">
-              <Lang en="Blog" zh="博客" />
+              <Lang {...header.blog} />
             </a>
           </nav>
           <div className="theme-segment" role="group" aria-label="Color theme">
@@ -66,6 +68,8 @@ export function Header({ page, lang, setLang, themeChoice, setThemeChoice }) {
 }
 
 export function Footer() {
+  const { footer } = homeContent;
+
   return (
     <footer className="footer">
       <div className="wrap footer-inner">
@@ -75,9 +79,9 @@ export function Footer() {
           </span>
         </div>
         <p className="footer-tag">
-          <Lang en="Measuring agent self-evolution on GDP-worthy work." zh="在真实业务工作上衡量 Agent 的自我进化。" />
+          <Lang {...footer.tagline} />
         </p>
-        <a className="footer-link" href={links.repo} target="_blank" rel="noreferrer">github.com/Prism-Shadow/GDPevo</a>
+        <a className="footer-link" href={links.repo} target="_blank" rel="noreferrer">{footer.repoLabel}</a>
       </div>
     </footer>
   );
