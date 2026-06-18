@@ -27,8 +27,8 @@ export const homeContent = {
       zh: ["在真实业务任务上", "评估 Agent 的自我进化"]
     },
     subtitle: {
-      en: "The focus is not whether an agent can solve one task, but **whether it can evolve across related tasks to get better**.",
-      zh: "我们关注的不是*一个 agent 能不能解决某个单题*，而是**它能不能借由相关任务完成自我进化，越来越擅长这一类任务**。"
+      en: "Not *can the agent solve this task?*  \nBut **can it evolve across related tasks to get better?**",
+      zh: "不是问*这个 agent 能不能解决这个任务*，  \n而是问**它能不能借由相关任务完成自我进化，越来越擅长这一类任务**。"
     },
     meta: {
       en: "PrismShadow Team · 2026",
