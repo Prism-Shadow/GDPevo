@@ -149,7 +149,7 @@ function Header({ lang, setLang, themeChoice, setThemeChoice }) {
               </button>
             ))}
           </div>
-          <a className="icon-link" href="https://github.com/Prism-Shadow/GDPevo" aria-label="GitHub repository">
+          <a className="icon-link" href="https://github.com/Prism-Shadow/GDPevo" target="_blank" rel="noreferrer" aria-label="GitHub repository">
             <GitHubIcon />
           </a>
         </div>
@@ -191,7 +191,7 @@ function Hero() {
           <Lang en="PrismShadow Team · 2026" zh="PrismShadow Team · 2026" />
         </p>
         <div className="btn-row">
-          <a className="btn btn-dark" href="https://github.com/Prism-Shadow/GDPevo">
+          <a className="btn btn-dark" href="https://github.com/Prism-Shadow/GDPevo" target="_blank" rel="noreferrer">
             <GitHubIcon size={17} />
             <span>GitHub</span>
           </a>
@@ -207,7 +207,7 @@ function Hero() {
               <Lang en="Read the blog" zh="阅读博客" />
             </span>
           </a>
-          <a className="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/blob/main/experiments/EXPERIMENT_BOARD.md">
+          <a className="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/blob/main/experiments/EXPERIMENT_BOARD.md" target="_blank" rel="noreferrer">
             <NavIcon name="code" />
             <span>
               <Lang en="Experiment board" zh="实验看板" />
@@ -577,7 +577,7 @@ function Footer() {
         <p className="footer-tag">
           <Lang en="Measuring agent self-evolution on GDP-worthy work." zh="在真实业务工作上衡量 Agent 的自我进化。" />
         </p>
-        <a className="footer-link" href="https://github.com/Prism-Shadow/GDPevo">github.com/Prism-Shadow/GDPevo</a>
+        <a className="footer-link" href="https://github.com/Prism-Shadow/GDPevo" target="_blank" rel="noreferrer">github.com/Prism-Shadow/GDPevo</a>
       </div>
     </footer>
   );
