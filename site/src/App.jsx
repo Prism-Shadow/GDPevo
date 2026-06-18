@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Header, Footer } from "./components/Layout.jsx";
+import { homeContent } from "./content/home.js";
 import { BlogPage } from "./pages/BlogPage.jsx";
 import { HomePage } from "./pages/HomePage.jsx";
 import { initialLang } from "./lib/i18n.jsx";
@@ -24,9 +25,7 @@ export default function App() {
 
   useEffect(() => {
     document.body.classList.toggle("blog", page === "blog");
-    document.title = page === "blog"
-      ? "GDPevo Blog: Measuring Agent Self-Evolution on Real Business Work"
-      : "GDPevo: Measuring Agent Self-Evolution on Real Business Work";
+    document.title = homeContent.documentTitle[page];
   }, [page]);
 
   useEffect(() => {

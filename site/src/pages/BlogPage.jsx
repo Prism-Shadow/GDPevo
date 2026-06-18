@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { blogConstruction, blogFindings, blogIntro, blogInvite, blogUsage, citation } from "../blogContent.jsx";
-import { modes, summaryCards } from "../data.js";
-import { Lang, LocalizedParagraph } from "../lib/i18n.jsx";
-import { links } from "../lib/links.js";
+import { blogBenchmark, blogConstruction, blogFindings, blogIntro, blogInvite, blogUsage, citation } from "../content/blog.js";
+import { modes, summaryCards } from "../content/benchmark.js";
+import { Lang, LocalizedMarkdown, LocalizedParagraph } from "../lib/i18n.jsx";
+import { links } from "../content/links.js";
 
 function metricValue(value) {
   return Number.parseFloat(String(value).replace(/[^\d.-]/g, ""));
@@ -43,10 +43,7 @@ function BlogBenchmarkFigure() {
       <figcaption className="blog-benchmark-head">
         <div className="blog-benchmark-copy">
           <span>
-            <Lang
-              en="Each metric averages 3 attempts, then 12 task groups"
-              zh="每个指标先跨 3 次 attempt 取均值，再跨 12 个 task group 取均值"
-            />
+            <Lang {...blogBenchmark.caption} />
           </span>
         </div>
         <div className="blog-benchmark-tools">
@@ -74,9 +71,9 @@ function BlogBenchmarkFigure() {
         </div>
       </figcaption>
       <div className="blog-benchmark-cols">
-        <span>Harness</span>
-        <span>Model</span>
-        <span>Mode</span>
+        <span>{blogBenchmark.columns.harness}</span>
+        <span>{blogBenchmark.columns.model}</span>
+        <span>{blogBenchmark.columns.mode}</span>
         <span>{metric.column}</span>
       </div>
       <div className="blog-benchmark-rows">
@@ -119,9 +116,9 @@ function BlogIntro() {
         <h1 className="h2 blog-title">
           <Lang {...blogIntro.title} />
         </h1>
-        <p className="lead">
-          <Lang {...blogIntro.lead} />
-        </p>
+        <blockquote className="lead blog-quote">
+          <LocalizedMarkdown copy={blogIntro.lead} />
+        </blockquote>
         <div className="prose">
           {blogIntro.paragraphs.map((paragraph) => (
             <LocalizedParagraph key={paragraph.key} copy={paragraph} />
@@ -140,7 +137,7 @@ function BlogConstruction() {
           <Lang {...blogConstruction.heading} />
         </h2>
         <p className="lead">
-          <Lang {...blogConstruction.lead} />
+          <LocalizedMarkdown copy={blogConstruction.lead} />
         </p>
 
         <h3 className="h3 h3-spaced h3-spaced-sm">
@@ -150,7 +147,7 @@ function BlogConstruction() {
           <LocalizedParagraph copy={blogConstruction.pipeline} />
         </div>
         <figure className="pipeline-figure">
-          <img src="assets/gdpevo-pipeline.png" alt="GDPevo data pipeline: seed scenarios to multi-agent task factory to quality review to release." loading="lazy" />
+          <img src="assets/gdpevo-pipeline.png" alt={blogConstruction.pipelineImageAlt} loading="lazy" />
         </figure>
 
         <h3 className="h3 h3-spaced">
@@ -174,7 +171,7 @@ function BlogUsage() {
           <Lang {...blogUsage.heading} />
         </h2>
         <p className="lead">
-          <Lang {...blogUsage.lead} />
+          <LocalizedMarkdown copy={blogUsage.lead} />
         </p>
 
         <h3 className="h3 h3-spaced">
@@ -209,7 +206,7 @@ function BlogFindings() {
           <ul className="bullets">
             {blogFindings.modes.map((mode) => (
               <li key={mode.key}>
-                <Lang en={mode.en} zh={mode.zh} />
+                <LocalizedMarkdown copy={mode} />
               </li>
             ))}
           </ul>
@@ -217,11 +214,11 @@ function BlogFindings() {
 
         <BlogBenchmarkFigure />
         <p className="note">
-          <Lang {...blogFindings.note} />
+          <LocalizedMarkdown copy={blogFindings.note} />
         </p>
         <p className="prose-link">
           <a href="index.html#results">
-            <Lang en="See the per-group breakdown on the homepage →" zh="在首页查看逐组的明细 →" />
+            <Lang {...blogBenchmark.breakdownLink} />
           </a>
         </p>
       </div>
@@ -231,6 +228,7 @@ function BlogFindings() {
 
 function BlogInvite() {
   const [copied, setCopied] = useState(false);
+  const { actions, copy } = blogInvite;
 
   const copyCitation = async () => {
     if (!navigator.clipboard) return;
@@ -250,22 +248,22 @@ function BlogInvite() {
         </div>
         <div className="btn-row invite-actions">
           <a className="btn btn-dark" href={links.repo} target="_blank" rel="noreferrer">
-            <span>GitHub</span>
+            <span>{actions.github}</span>
           </a>
           <a className="btn btn-ghost" href={links.experimentBoard} target="_blank" rel="noreferrer">
             <span>
-              <Lang en="Experiment board" zh="实验看板" />
+              <Lang {...actions.experimentBoard} />
             </span>
           </a>
           <a className="btn btn-ghost" href={links.evalWorkspace} target="_blank" rel="noreferrer">
             <span>
-              <Lang en="Eval workspace" zh="评估工作区" />
+              <Lang {...actions.evalWorkspace} />
             </span>
           </a>
         </div>
         <div className="bibtex">
-          <button type="button" className={`copy-btn ${copied ? "copied" : ""}`} aria-label="Copy citation" onClick={copyCitation}>
-            <Lang en={copied ? "Copied" : "Copy"} zh={copied ? "已复制" : "复制"} />
+          <button type="button" className={`copy-btn ${copied ? "copied" : ""}`} aria-label={copy.ariaLabel} onClick={copyCitation}>
+            <Lang {...(copied ? copy.copiedLabel : copy.label)} />
           </button>
           <pre><code>{citation}</code></pre>
         </div>
