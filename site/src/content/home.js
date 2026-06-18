@@ -62,7 +62,7 @@ export const homeContent = {
         key: "groups",
         value: "12",
         label: {
-          en: "Task groups",
+          en: "task groups",
           zh: "任务组"
         }
       },
@@ -72,7 +72,7 @@ export const homeContent = {
         unit: "pp",
         positive: true,
         label: {
-          en: "Held-out accuracy lift from self-evolution",
+          en: "held-out accuracy lift from self-evolution",
           zh: "自我进化带来的 held-out 准确率提升"
         }
       },
@@ -82,7 +82,7 @@ export const homeContent = {
         unit: "%",
         positive: true,
         label: {
-          en: "Token cost: fewer, not more",
+          en: "token cost: fewer, not more",
           zh: "token 成本：更少，而非更多"
         }
       }
