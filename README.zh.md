@@ -32,7 +32,7 @@ stateful loop：
 
 这个 benchmark 围绕真实公司 interface 构建，覆盖 CRM、ERP、finance、
 procurement、support、lending、investment、HR 和 reporting 等工作流。
-Task groups 由 GDPVal 和 SOP-Bench 等真实工作来源 seed，再扩展成共享业务环境；
+Task groups 由 GDPval 和 SOP-Bench 等真实工作来源 seed，再扩展成共享业务环境；
 环境中包含 lookalike records、隐藏业务规则和 deterministic rule-based graders。
 
 ## 评估设置

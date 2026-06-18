@@ -22,7 +22,7 @@ environment; held-out test tasks measure whether what the agent learned
 transfers to later work it has not seen.
 
 The released task groups cover real company interfaces across CRM, ERP, and
-Finance. They are seeded from real-job sources such as GDPVal and SOP-Bench,
+Finance. They are seeded from real-job sources such as GDPval and SOP-Bench,
 then expanded into shared environments with lookalike records, recurring
 operational rules, and deterministic rule-based graders.
 

@@ -10,7 +10,7 @@
           <div class="seed-card">
             <div class="seed-head">Real-job seeds</div>
             <div class="seed-list">
-              <span class="seed-chip"><DocB class="seed-ci" :c="B"/>GDPVal</span>
+              <span class="seed-chip"><DocB class="seed-ci" :c="B"/>GDPval</span>
               <span class="seed-chip"><DocB class="seed-ci" :c="B"/>SOP-Bench</span>
               <span class="seed-chip"><DocB class="seed-ci" :c="B"/>JobBench</span>
               <span class="seed-chip seed-dots">···</span>

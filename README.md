@@ -34,7 +34,7 @@ This makes GDPevo useful for evaluating:
 
 The benchmark is built around real company interfaces: CRM, ERP, finance,
 procurement, support, lending, investment, HR, and reporting workflows. Task
-groups are seeded from real-job sources such as GDPVal and SOP-Bench, then
+groups are seeded from real-job sources such as GDPval and SOP-Bench, then
 expanded into shared environments with lookalike records, hidden operational
 rules, and deterministic rule-based graders.
 

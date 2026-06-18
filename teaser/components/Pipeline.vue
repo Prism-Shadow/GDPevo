@@ -16,7 +16,7 @@
         <p class="desc">Pull seed scenarios from real-work benchmarks — one scenario, several worked examples per source.</p>
         <div class="visual">
           <div class="chips">
-            <span class="chip"><Doc class="ci" :c="B"/>GDPVal</span>
+            <span class="chip"><Doc class="ci" :c="B"/>GDPval</span>
             <span class="chip"><Doc class="ci" :c="B"/>SOP-Bench</span>
             <span class="chip"><Doc class="ci" :c="B"/>JobBench</span>
             <span class="chip chip-dots">···</span>

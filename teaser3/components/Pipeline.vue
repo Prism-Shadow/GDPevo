@@ -16,7 +16,7 @@ const stages = [
 ]
 
 const seeds = [
-  { kind: 'doc',  label: 'GDPVal' },
+  { kind: 'doc',  label: 'GDPval' },
   { kind: 'doc',  label: 'SOP-Bench' },
   { kind: 'doc',  label: 'JobBench' },
   { kind: 'dots' },

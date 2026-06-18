@@ -20,7 +20,7 @@ Train tasks 提供同一业务环境中的相关经验；held-out test tasks 用
 经验与规则能否迁移到 agent 没见过的后续任务。
 
 当前公开 task groups 覆盖 CRM、ERP 和 Finance 中的真实公司 interface。它们由
-GDPVal 和 SOP-Bench 等真实工作来源 seed，再扩展成共享业务环境；环境中包含
+GDPval 和 SOP-Bench 等真实工作来源 seed，再扩展成共享业务环境；环境中包含
 lookalike records、反复出现的业务规则和确定性的 rule-based graders。
 
 ## 目录结构

@@ -510,10 +510,10 @@ function TasksSection() {
         </h2>
         <p className="lead">
           <span className="lang-en">
-            Each group is one shared business world with lookalike records mixed in, seeded from real-job sources such as <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener noreferrer">GDPVal</a> and <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener noreferrer">SOP-Bench</a>.
+            Each group is one shared business world with lookalike records mixed in, seeded from real-job sources such as <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener noreferrer">GDPval</a> and <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener noreferrer">SOP-Bench</a>.
           </span>
           <span className="lang-zh">
-            每组都是一个共享的业务世界,混入了大量"长得很像"的干扰记录;场景来自像 <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener noreferrer">GDPVal</a> 和 <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener noreferrer">SOP-Bench</a> 这样的真实工作任务源。
+            每组都是一个共享的业务世界,混入了大量"长得很像"的干扰记录;场景来自像 <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener noreferrer">GDPval</a> 和 <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener noreferrer">SOP-Bench</a> 这样的真实工作任务源。
           </span>
         </p>
         <div className="tg-table">
@@ -624,8 +624,8 @@ function BlogConstruction() {
         </h3>
         <div className="prose">
           <p>
-            <span className="lang-en">Humans wrote the pipeline once. After that, agents do everything (illustrated below). They pull seed scenarios from public real-job benchmarks (GDPVal, SOP-Bench, JobBench) and spawn many candidate task groups from those seeds. For each group, they build a shared environment and author 5 train + 5 test tasks with rule-based evaluators. A calibrator then tunes difficulty so that an <code>evolution</code> setup clearly beats a <code>no-evolution</code> setup — this filters out tasks where evolution wouldn't change the answer, keeping the benchmark focused on agents that actually have to learn from experience. Finally, six independent reviewer agents audit the result, and a group ships only when 5 of 6 pass — these reviewers exist because agents have a habit of declaring victory while quietly skipping work, so completeness, file presence, and planted hidden rules are exactly what gets checked. Twelve task groups make it through this filter and form the public release.</span>
-            <span className="lang-zh">人只写一次 pipeline，之后全靠 agent（如下图所示）。先从公开的真实业务 benchmark（GDPVal、SOP-Bench、JobBench）里取种子场景，再据此 spawn 出大量候选 task group。每组里搭一个共享 env，写 5 个 train + 5 个 test 任务并配上基于规则的 evaluator。然后 calibrator 调难度，让 <code>evolution</code> 设定明显超过 <code>no-evolution</code> 设定——这一步是为了把那些"是否进化都不影响答案"的题筛掉，让 benchmark 集中在那些真的需要从经验里学东西的 agent 上。最后由 6 个互相独立的 reviewer agent 审核，6 个里 5 个通过这一组才放行——之所以要 reviewer，是因为 agent 经常嘴上说"做完了"、实际偷懒，所以审核的就是结构、完整性、文件是否齐全、隐藏规则是否真的埋了进去。最终通过这层筛选活下来、进入公开发布的，是 12 组 task group。</span>
+            <span className="lang-en">Humans wrote the pipeline once. After that, agents do everything (illustrated below). They pull seed scenarios from public real-job benchmarks (GDPval, SOP-Bench, JobBench) and spawn many candidate task groups from those seeds. For each group, they build a shared environment and author 5 train + 5 test tasks with rule-based evaluators. A calibrator then tunes difficulty so that an <code>evolution</code> setup clearly beats a <code>no-evolution</code> setup — this filters out tasks where evolution wouldn't change the answer, keeping the benchmark focused on agents that actually have to learn from experience. Finally, six independent reviewer agents audit the result, and a group ships only when 5 of 6 pass — these reviewers exist because agents have a habit of declaring victory while quietly skipping work, so completeness, file presence, and planted hidden rules are exactly what gets checked. Twelve task groups make it through this filter and form the public release.</span>
+            <span className="lang-zh">人只写一次 pipeline，之后全靠 agent（如下图所示）。先从公开的真实业务 benchmark（GDPval、SOP-Bench、JobBench）里取种子场景，再据此 spawn 出大量候选 task group。每组里搭一个共享 env，写 5 个 train + 5 个 test 任务并配上基于规则的 evaluator。然后 calibrator 调难度，让 <code>evolution</code> 设定明显超过 <code>no-evolution</code> 设定——这一步是为了把那些"是否进化都不影响答案"的题筛掉，让 benchmark 集中在那些真的需要从经验里学东西的 agent 上。最后由 6 个互相独立的 reviewer agent 审核，6 个里 5 个通过这一组才放行——之所以要 reviewer，是因为 agent 经常嘴上说"做完了"、实际偷懒，所以审核的就是结构、完整性、文件是否齐全、隐藏规则是否真的埋了进去。最终通过这层筛选活下来、进入公开发布的，是 12 组 task group。</span>
           </p>
         </div>
         <figure className="pipeline-figure">
