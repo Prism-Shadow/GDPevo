@@ -11,17 +11,17 @@ export const blogIntro = {
     {
       key: "gap",
       en: "Self-evolution refers to the process by which an Agent continuously improves task performance by improving its internal state. Related concepts include continual learning (CL) and recursive self-improvement (RSI). In recent months, this topic has attracted intense attention. Startups built around AI self-evolution, such as [NeoCognition](https://neocognition.io/) and [Recursive](https://www.recursive.com/), raised **billions of dollars** in 2026. Only if we can accurately evaluate an Agent's ability to self-evolve will we have the chance to explore better self-evolution strategies. Yet in **real enterprise tasks**, such as invoice auditing, trade show operations, and insurance compliance, there is almost no dedicated benchmark for evaluating an Agent's self-evolution capability, let alone doing so automatically.",
-      zh: "自进化（Self-evolution）是指 Agent 通过自我改进内部状态，不断提升任务表现的过程。类似的概念也包括持续学习（Continual learning，CL）和递归自我改进（Recursive self-improvement，RSI）。近几个月这个话题备受关注，围绕 AI 自进化的初创企业（[NeoCognition](https://neocognition.io/)、[Recursive](https://www.recursive.com/) 等），在 2026 年募集了**数十亿美元**的资金。只有当我们能给准确评估 Agent 自进化能力时，我们才能有机会探索更优秀的自进化策略。然而在**真实企业任务**领域，例如发票审核、展会事务和保险合规等任务，几乎没有专门的基准能评估 Agent 的自进化能力，更不用说自动化评估。"
+      zh: "自进化（Self-evolution）是指 Agent 通过自我改进内部状态，不断提升任务表现的过程。类似的概念也包括持续学习（Continual learning，CL）和递归自我改进（Recursive self-improvement，RSI）。近几个月这个话题备受关注，围绕 AI 自进化的初创企业（[NeoCognition](https://neocognition.io/)、[Recursive](https://www.recursive.com/) 等），在 2026 年募集了**数十亿美元**的资金。只有当我们能准确评估 Agent 自进化能力时，我们才能有机会探索更优秀的自进化策略。然而在**真实企业任务**领域，例如发票审核、展会事务和保险合规等任务，几乎没有专门的基准能评估 Agent 的自进化能力，更不用说自动化评估。"
     },
     {
       key: "release",
-      en: "GDPevo attempts to fill this gap. To the best of our knowledge, it is the first benchmark for evaluating Agent self-evolution on economically valuable (GDP) tasks. It is both an **automated benchmark construction process** and the output of that process: an **out-of-the-box benchmark**. The benchmark contains 120 real enterprise tasks across CRM, ERP, and Finance. Each task involves multiple complex rules and requires the Agent to improve itself from prior examples before it can reach satisfactory performance.",
-      zh: "GDPevo 试图弥补这方面的不足，据我们所知，这是首个在具有经济价值（GDP）的任务上评估 Agent 自进化的基准。它既是一套**自动化基准构建流程**，又是这套流程的产物，一份**开箱即用的基准**。这套基准包含 120 个真实企业任务，覆盖 CRM、ERP、Finance 三大场景，每个任务都会涉及多个复杂规则，需要 Agent 通过过往样本改进自身后，才能达到满意的表现。"
+      en: "GDPevo attempts to fill this gap. To the best of our knowledge, it is the first benchmark for evaluating Agent self-evolution on economically valuable (or GDP-related) tasks. It is both an **automated benchmark construction process** and the output of that process: an **out-of-the-box benchmark**. The benchmark contains 120 real enterprise tasks across Customer Relationship Management (CRM), Enterprise Resource Planning (ERP), and Finance. Each task involves multiple complex rules and requires the Agent to improve itself from prior examples before it can reach satisfactory performance.",
+      zh: "GDPevo 试图弥补这方面的不足，据我们所知，这是首个在具有经济价值（和 GDP 相关）的任务上评估 Agent 自进化的基准。它既是一套**自动化基准构建流程**，又是这套流程的产物，一份**开箱即用的基准**。这套基准包含 120 个真实企业任务，覆盖客户关系管理（CRM）、企业资源计划（ERP）和金融（Finance）三大场景，每个任务都会涉及多个复杂规则，需要 Agent 通过过往样本改进自身后，才能达到满意的表现。"
     },
     {
       key: "construction",
-      en: "In building this benchmark, we mainly addressed two hard problems. First, we need two non-overlapping sets to truly test an Agent's self-evolution capability; otherwise, the evaluation becomes **training on the test set**. To solve this, we introduce **rule hybridization**, inspired by crossover evolution in genetic algorithms. We decompose complex business logic into multiple atomic rules, hide them in the training set, and then recombine them into different new business scenarios to form the test set. Only when the Agent has truly learned the rules can it perform well on the test samples, rather than merely memorizing the training set. Second, we want to build a sufficiently difficult evaluation benchmark. To **prevent large models from gaming the tasks**, we design multiple independent evaluation Agents to audit each task group end-to-end. Only automatically constructed data that reaches a required difficulty level is accepted as valid samples.",
-      zh: "在构建这套基准的过程中，我们主要解决了两大难题。第一，我们需要两套互不重叠的集合才能真正测试出 Agent 自进化能力，否则就会出现**在测试集上训练**的问题。为此，我们提出了**规则杂交**的方法，源自于遗传算法中的交叉进化。我们将复杂的业务逻辑分解成多个元规则，隐藏到训练集中，再重新组合成不同的新业务，构成测试集。仅当 Agent 真正学会了规则，才能做好测试样本，而不仅仅是记住了训练集。第二，我们希望构建足够困难的评估基准，为了**防止大模型投机取巧**，我们设计了若干独立的评估 Agent，端到端地审计每一组任务，只有当自动构建的数据达到一定难度要求，才会采用作为有效样本。"
+      en: "In building this benchmark, we mainly address two hard problems. First, we need two non-overlapping sets to truly test an Agent's self-evolution capability; otherwise, the evaluation becomes **training on the test set**. To solve this, we introduce **rule hybridization**, inspired by crossover evolution in genetic algorithms. We decompose complex business logic into multiple atomic rules, hide them in the training set, and then recombine them into different new tasks to form the test set. Only when the Agent has truly learned the rules can it perform well on the test samples, rather than merely memorizing the training set. Second, we want to build a sufficiently difficult evaluation benchmark. To **prevent LLMs from gaming the tasks**, we design multiple independent evaluation Agents to audit each task group end-to-end. Only automatically constructed data that reaches a required difficulty level is accepted as valid samples.",
+      zh: "在构建这套基准的过程中，我们主要解决了两大难题。第一，我们需要两套互不重叠的集合才能真正测试出 Agent 自进化能力，否则就会出现**在测试集上训练**的问题。为此，我们提出了**规则杂交**的方法，源自于遗传算法中的交叉进化。我们将复杂的业务逻辑分解成多个元规则，隐藏到训练集中，再重新组合成不同的新任务，构成测试集。仅当 Agent 真正学会了规则，才能做好测试样本，而不仅仅是记住了训练集。第二，我们希望构建足够困难的评估基准，为了**防止大模型投机取巧**，我们设计了若干独立的评估 Agent，端到端地审计每一组任务，只有当自动构建的数据达到一定难度要求，才会采用作为有效样本。"
     },
     {
       key: "evaluation",
@@ -38,36 +38,36 @@ export const blogIntro = {
 
 export const blogConstruction = {
   heading: {
-    en: "How we built it.",
-    zh: "我们怎么构建。"
+    en: "How we built it",
+    zh: "数据构建方法"
   },
   lead: {
-    en: "Building a self-evolution benchmark for real business work poses two challenges. **First**, the construction should be agent-driven end-to-end: humans write the procedure once, agents do the rest. This matters for two reasons. It helps the benchmark *outrun data leakage*: as long as agents can spawn fresh tasks faster than models absorb the leaked ones, the benchmark stays ahead. It also lets the benchmark *scale*: when agents both build and evaluate, the loop is closed, with no human bottleneck, and the benchmark can keep growing on its own. **Second**, train and test have to be related but not redundant: the train tasks must teach a real, hidden lesson that pays off only when the lesson is extracted, not memorized.",
-    zh: "为真实业务工作构建一个 self-evolution benchmark，有两个 challenge。**第一**，构建过程应该是 agent 端到端跑出来的：人只把流程写一次，剩下交给 agent。这件事之所以重要有两个原因。它能帮 benchmark *跑赢数据泄露*：只要 agent 生成新题的速度比模型吸收已泄露题的速度快，benchmark 就一直保持领先。它也让 benchmark 能*真正 scale*：当 agent 既负责构造、又负责评测，整个回路就闭合了，没有人力瓶颈，benchmark 可以自己长大。**第二**，train 和 test 要相关、但不能冗余：train 必须真的\"教\"一个隐藏的规则，这个规则只有被抽象出来才会在 test 上派上用场，而不是被死记下来。"
+    en: "Building a large-scale self-evolution benchmark for enterprise scenarios poses two challenges. First, the construction process should be fully automated end-to-end: humans write the workflow once, and AI handles the rest of running it (similar to [Loop Engineering](https://addyosmani.com/blog/loop-engineering/)). This not only helps our benchmark **outrun data leakage**: as long as the benchmark can generate new tasks faster than models can memorize leaked solutions, it can stay ahead and remain valid. It also makes the benchmark **scalable**: its size is no longer constrained by human labor and can grow on its own. Second, the training and test sets must be related, but not too similar. The Agent should be able to generalize rules from the training set to the test set, rather than memorize the training set.",
+    zh: "针对企业场景构建大规模的自进化评估基准有两个挑战：首先，构建过程应能被端到端全自动完成，人只需要写一遍流程，剩下跑流程的工作交给 AI（就像 [Loop Engineering](https://addyosmani.com/blog/loop-engineering/)）。它不仅能帮我们的基准**跑赢数据泄露**，只要基准的生成速度比模型记住已泄露题解的速度快，基准就能一直保持领先和有效。它还能让基准变得**可缩放**（Scalable），基准的大小不再受人力制约，而是可以自己长大。其次，训练集和测试集要有相关性，但不能太过相似。Agent 是可以将训练集的规则泛化到测试集中，而不是记住训练集。"
   },
   agentHeading: {
-    en: "Built end-to-end by agents.",
-    zh: "从头到尾，全部由 agent 完成。"
+    en: "Built end-to-end by multiple agents",
+    zh: "数据由多个 Agent 端到端全自动构建"
   },
   pipeline: {
-    en: "Humans wrote the pipeline once. After that, agents do everything (illustrated below). They pull seed scenarios from public real-job benchmarks (GDPval, SOP-Bench, JobBench) and spawn many candidate task groups from those seeds. For each group, they build a shared environment and author 5 train + 5 test tasks with rule-based evaluators. A calibrator then tunes difficulty so that an `evolution` setup clearly beats a `no-evolution` setup. This filters out tasks where evolution wouldn't change the answer, keeping the benchmark focused on agents that actually have to evolve across related work. Finally, six independent reviewer agents audit the result, and a group ships only when 5 of 6 pass. These reviewers exist because agents have a habit of declaring victory while quietly skipping work, so completeness, file presence, and planted hidden rules are exactly what gets checked. Twelve task groups make it through this filter and form the public release.",
-    zh: "人只写一次 pipeline，之后全靠 agent（如下图所示）。先从公开的真实业务 benchmark（GDPval、SOP-Bench、JobBench）里取种子场景，再据此 spawn 出大量候选 task group。每组里搭一个共享 env，写 5 个 train + 5 个 test 任务并配上基于规则的 evaluator。然后 calibrator 调难度，让 `evolution` 设定明显超过 `no-evolution` 设定。这一步是为了把那些\"是否进化都不影响答案\"的题筛掉，让 benchmark 集中在那些真的需要跨相关任务自我进化的 agent 上。最后由 6 个互相独立的 reviewer agent 审核，6 个里 5 个通过这一组才放行。之所以要 reviewer，是因为 agent 经常嘴上说\"做完了\"、实际偷懒，所以审核的就是结构、完整性、文件是否齐全、隐藏规则是否真的埋了进去。最终通过这层筛选活下来、进入公开发布的，是 12 组 task group。"
+    en: "Humans design the workflow, and Agents keep running it continuously, as shown below. We first take seed scenarios from public real-business benchmarks ([GDPval](https://arxiv.org/abs/2510.04374), [SOP-Bench](https://arxiv.org/abs/2506.08119), and [JobBench](https://arxiv.org/abs/2605.26329)), then generate a large number of candidate task groups. Each task group builds a shared environment and generates 5 training samples and 5 test samples, with every sample paired with a rule-based grading script. A new Agent then calibrates the difficulty so that the Agent's performance after evolution clearly exceeds its performance before evolution. This step filters out samples that cannot effectively evaluate Agent evolution capability, keeping the benchmark focused on tasks that truly require cross-task self-evolution. Finally, six independent Reviewer Agents audit the result, and a task group is adopted only if it receives at least 5 passing votes. Reviewers exist to prevent Agents from cutting corners by checking whether the file structure is complete and whether the hidden rules are actually planted. In the end, 120 tasks across 12 task groups pass the filter and form the current benchmark.",
+    zh: "人负责设计流程，Agent 负责持续不断运行，如下图所示。先从公开的真实业务基准（[GDPval](https://arxiv.org/abs/2510.04374)、[SOP-Bench](https://arxiv.org/abs/2506.08119)、[JobBench](https://arxiv.org/abs/2605.26329)）里取种子场景，再生成大量候选任务组。每个任务组都搭建一个共享环境，生成 5 个训练样本和 5 个测试样本，每个样本都搭配上基于规则的评分脚本。然后由一个新的 Agent 校准难度，使 Agent 在进化后的表现明显超过进化之前。这一步是为了将没法有效评估 Agent 进化能力的样本筛掉，让基准集中在那些真的需要跨任务自我进化的 Agent 上。最后由 6 个互相独立的 Reviewer Agent 审核，至少拿到 5 个通过票才会采用这组数据。Reviewer 的存在是为了防止 Agent 偷懒，检查文件结构和隐藏规则是否真正埋好。最终有 120 个任务，12 个任务组通过了筛选，形成了当前的这套基准。"
   },
   pipelineImageAlt: "GDPevo data pipeline: seed scenarios to multi-agent task factory to quality review to release.",
   hiddenHeading: {
-    en: "Hidden rules, spread across the train tasks.",
-    zh: "隐藏规则，分散到各个 train task 里。"
+    en: "Evaluating self-evolution through rule hybridization",
+    zh: "通过规则杂交来评估自进化能力"
   },
   hiddenRules: [
     {
       key: "rules",
-      en: "For every task group we plant a small set of hidden operational rules. A CRM lead-capture group might encode a *sponsor-status precedence rule* (finance invoices outrank badge scans) and a *suppression-list policy* (don't contact certain segments). A procurement-readiness group enforces that *open vendor-risk events and AP holds force a \"held\" line*, regardless of how clean the PO looks.",
-      zh: "每个 task group 我们都会埋一小组隐藏的业务规则。CRM 销售线索组可能埋了两条：*赞助商身份的优先级*（财务发票优先于胸卡扫描），以及 *suppression list 政策*（某些细分人群禁止联系）。采购就绪组则要求：*只要供应商有 open 的 risk event 或 AP hold，对应行就必须 held*，不管 PO 看起来多干净。"
+      en: "We scatter clues and rules throughout the training set of each task group. For example, in customer relationship management (CRM), we hide the priority order for sponsor status and a blacklist policy. In enterprise resource planning (ERP), we hide vendor risk-control rules and the corresponding response measures.",
+      zh: "我们会将一些线索和规则分散藏到每个任务组的训练集中。例如在客户关系管理（CRM）中，我们会隐藏赞助商身份的优先级以及黑名单策略。在企业资源规划（ERP）中，我们会隐藏供应商的风控规则和应对措施。"
     },
     {
       key: "recombine",
-      en: "We *spread* these rules across the 5 train tasks, so each train task only exercises a subset. The 5 test tasks are deliberately built as **combinations**, say, the precedence rule together with the suppression policy. An agent that solves each train in isolation only sees rule fragments. An agent that turns them into an evolution update has them all in one place; when the test asks for two at once, it doesn't need to rediscover them. That's why a higher test score is real evidence of evolution, not luck.",
-      zh: "我们把这些规则*分散*到 5 个 train 里，每个 train 只触发一部分。5 个 test 故意被设计成这些规则的**组合**，比如同时触发\"优先级 + suppression\"。只盯着单个 train 做的 agent 看到的是碎片；能把这些规则转成一次 evolution update 的 agent，则把它们放在一处。test 同时问两条时，它不需要重新发现。这就是 test 分数变高的原因，是真的发生了进化，而不是运气。"
+      en: "We scatter these rules across the 5 training samples, with each sample containing only part of them. The 5 test samples are then designed as **combinations** of these rules, such as triggering both the \"priority\" and \"blacklist\" rules at the same time. An Agent without self-evolution capability can only see the scattered rules, while an Agent with self-evolution capability can generalize them to new tasks.",
+      zh: "我们把这些规则分散埋藏到 5 个训练样本里，每个样本只包含一部分。5 个测试样本则被设计成这些规则的**组合**，比如同时触发”优先级“和”黑名单“。不具备自进化能力的 Agent 只能看到分散的规则，而具有自进化能力的 Agent 可以将它们泛化到新的任务上。"
     }
   ]
 };
@@ -75,7 +75,7 @@ export const blogConstruction = {
 export const blogUsage = {
   heading: {
     en: "How to evaluate with it.",
-    zh: "怎么用它做评估。"
+    zh: "评估方法"
   },
   lead: {
     en: "Two things we want from an evaluation harness: it should grade in a way you can audit; and it should treat *cost* as a first-class citizen alongside accuracy. Each one motivated a specific design.",
