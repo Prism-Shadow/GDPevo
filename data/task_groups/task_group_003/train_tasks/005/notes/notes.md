@@ -13,6 +13,3 @@ Material map: `/api/cases/<id>` gives case context; `/api/lines/<id>` and `/api/
 Solution and evaluation basis: `CASE-2501` requires 2.0 GB refuel at 2.00 USD/GB; `CASE-2502` requires carrier line roaming enablement; the remaining three are device-setting fixes. There are 8 exact-match scoring points.
 
 Transfer design: As a train task, it reinforces the distinction between phone roaming and carrier line roaming, data-limit recovery with price calculation, and slow-data setting fixes.
-
-Construction record: Created by Codex on 2026-06-01. Major change: initial task construction for `task_group_003`.
-

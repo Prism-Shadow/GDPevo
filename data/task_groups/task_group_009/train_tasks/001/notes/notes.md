@@ -11,6 +11,3 @@ Material map: `/api/finance/period-map` defines the M-period fiscal-year mapping
 The standard answer calculates revenue, COGS, gross margin, SG&A, allocations, and EBITDA from the account records; compares M24 to M23 for revenue variance; rolls FY2025 and FY2024 periods; computes EBITDA margin, ARPU, and sales per labor headcount; and ranks branches and regions from the shared data. The seven scoring points have raw weights 1, 3, 2, 3, 2, 2, and 2. Exact matching is done through `eval/config.json`.
 
 Transfer value: blind solving and answer comparison should teach the period convention, source precedence, account rollup logic, and ranking directions needed later in branch test tasks. Common pitfalls are using the wrong fiscal year for M-periods, treating operating counts like expenses, excluding a branch from the region, or ranking growth in ascending order.
-
-Construction record: created by Codex on 2026-06-02; generated from fixed-seed environment data and task-specific branch close brief.
-

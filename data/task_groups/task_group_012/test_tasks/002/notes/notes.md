@@ -21,6 +21,3 @@ Train anchors and transferred knowledge: This test reuses `train_002` for approv
 Likely pitfalls: Closing the case because the approval says final; listing only one missing file; forgetting the missing required tag; using prose for `approval_closeout_gate`; omitting `missing_required_tag` from blockers; or selecting an audit event that confirms payroll rather than case closeout.
 
 Evaluator/scoring basis: `eval/rubric.json` has eight checks with 18 total points: case ID, approval record, folder readiness, notice quality, approval closeout gate, closeout blockers, evidence source/tag action, and audit/next action. The highest-weight points require the normalized gate, blockers, and next action.
-
-Construction/rework note: This notes file was expanded after reviewer feedback to synchronize with current `output/answer.json` and `eval/rubric.json`, including `approval_closeout_gate`, `closeout_blockers`, `evidence_source_order`, and `folder_required_tag_action`.
-

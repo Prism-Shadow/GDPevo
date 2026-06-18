@@ -11,6 +11,3 @@ Material map: `/api/finance/branches` identifies the branches in `REG-WEST`; `/a
 The standard answer includes 7 scoring points with raw weights 2, 2, 3, 2, 2, 2, and 1. Evaluation checks the branch set, FY rollups, dashboard ratios, ranking facts, and zero reconciliation variance.
 
 Transfer design: this is a formal train task that reinforces branch hierarchy source precedence, account category rollups, period mapping, and descending EBITDA ranking. These conventions anchor `test_001` and `test_004`.
-
-Construction record: created by Codex on 2026-06-02 from fixed-seed generated finance data.
-

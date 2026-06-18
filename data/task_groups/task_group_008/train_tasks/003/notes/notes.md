@@ -24,6 +24,3 @@ Solution and evaluation basis: The standard answer in output/answer.json is gene
 Likely model pitfalls include using stale CRM facts over signed profile facts, ignoring custodian account records, treating an ILIT as owned by the grantor, paying premiums before the withdrawal window closes, using the wrong RMD start year or factor, confusing GRAT and CRAT remainder beneficiaries, and returning prose instead of the requested JSON.
 
 Transfer design: This is a formal train task. Solving it and comparing to the answer can reveal source precedence, the relevant calculation convention, and the controlled output style for later tasks.
-
-Construction record: Author: Codex. Created: 2026-06-01. Updated: 2026-06-01. Major changes: Constructed as part of the SCN_008 train-predict task group with shared generated data and exact-match evaluators.
-

@@ -13,6 +13,3 @@ Material map: `ticket_batch.csv` identifies the target tickets. `/api/tickets/<i
 Solution and evaluation basis: The answer uses outage `OUT-9102` for `TCK-5131`, diagnostic thresholds for `TCK-5107` and `TCK-5184`, and account ineligibility for `TCK-5202`. The evaluator has 8 exact-match scoring points with raw weights 1-3.
 
 Transfer design: As a train task, it lets the agent infer the offline support status vocabulary, outage short-circuit convention, diagnostics thresholds, post-troubleshooting success rule, and field escalation mapping.
-
-Construction record: Created by Codex on 2026-06-01. Major change: initial task construction for `task_group_003`.
-

@@ -3,7 +3,7 @@ scenario_id: SCN_010_institutional_investment_strategy_portfolio_risk
 model: gpt-5.5, xhigh
 harness: codex
 conditions:
-  no_skill:
+  base:
     overall_avg_at_3: 0.6076
     efficiency:
       cached_input_tokens_avg_3: 481134.933
@@ -61,7 +61,7 @@ conditions:
         input_tokens_avg_3: 694763.333
         output_tokens_avg_3: 22420.667
         seconds_avg_3: 595.528
-  demonstration_skill:
+  demo:
     skill_dirs:
       attempt_01: skills/task_group_010/demonstration_skill/demonstration_skill_attempt_01
       attempt_02: skills/task_group_010/demonstration_skill/demonstration_skill_attempt_02
@@ -123,7 +123,7 @@ conditions:
         input_tokens_avg_3: 598746.667
         output_tokens_avg_3: 16708.333
         seconds_avg_3: 499.414
-  reflection_skill:
+  reflect:
     skill_dirs:
       attempt_01: skills/task_group_010/reflection_skill/reflection_skill_attempt_01
       attempt_02: skills/task_group_010/reflection_skill/reflection_skill_attempt_02

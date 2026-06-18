@@ -54,8 +54,3 @@ Likely model pitfalls include using the stale local snapshot instead of current 
 ### Transfer design
 
 As a train task, this is a real portfolio workflow rather than a tutorial. Comparing attempts to the answer should let solvers infer several reusable conventions for later tasks: current environment records override stale local desk materials; HY allocation is computed from post-trade market value; weighted duration uses market-value weights; watchlist and duration eligibility matter before headline yield; and pitch themes are represented by controlled enums rather than prose. These conventions transfer directly to later energy-credit and fixed-income test tasks.
-
-### Construction record
-
-Author: task-builder 1. Created: 2026-06-03. Updated: 2026-06-03. Major changes: created formal train task files, computed answer from current shared env data, and implemented six-point exact-match evaluator.
-

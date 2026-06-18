@@ -1,5 +1,4 @@
-# test_001 Hidden Notes
-
+# test_001 Notes
 ## English
 
 This task is `test_001` for `task_group_001`, derived from source scenario `SCN_001_crm_marketing_lead_capture` and source examples `E001`, `E002`, and `E003`. Its design brief is the event-to-CRM operation family: audit `Predictive Ops Summit 2027` (`event_id: predictive_ops_2027`) after the event and produce a finance and sales handoff from the shared HarborCRM environment.
@@ -42,9 +41,6 @@ Transfer design:
 - `train_001` anchors sponsor/attendee separation, sponsor finance status reconstruction from packages plus invoices, non-sponsor lead inclusion, CRM action counts, and due-date offsets.
 - `train_004` anchors event badge classification, campaign member create/update decisions, sponsor attendee exclusion, and how existing CRM state affects handoff actions.
 - The high-value transfer-dependent points are SP001, SP002, SP003, SP004, and SP006. SP005 and SP007 require more task-local exploration because the split invoice, stale contact/campaign-member state, and lead count are specific to this event.
-- The prompt exposes the public endpoints and output schema but does not restate the hidden step-by-step operating method. Solvers must infer the reconciliation pattern from the train tasks and apply it to the Predictive Ops records.
+- The prompt exposes the public endpoints and output schema but does not restate the complete step-by-step operating method. Solvers must infer the reconciliation pattern from the train tasks and apply it to the Predictive Ops records.
 
 Likely model pitfalls include counting Lumina's full package only as open invoice revenue, missing the paid/deferred part of the split invoice, including Keystone AGV as an active sponsor, treating Riverbend as a new lead because the badge email differs from stale CRM, counting sponsor attendees as sales leads, missing the stale Fathom campaign-member mismatch, or anchoring follow-up dates to the audit date instead of the event end date.
-
-Construction record: built by task-builder for `test_001` on 2026-06-01. Created solver prompt, answer template, standard answer, exact-match evaluator, and these notes.
-

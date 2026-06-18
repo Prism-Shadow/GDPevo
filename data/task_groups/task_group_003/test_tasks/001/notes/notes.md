@@ -13,6 +13,3 @@ Material map: `ticket_batch.csv` identifies tickets. `/api/tickets/<id>`, `/api/
 Solution and evaluation basis: The batch includes outage gating, authentication gating, successful troubleshooting, and two unresolved escalation families. There are 10 scoring points focused on ticket decisions, batch counts, target-scoped metric evidence, gate-skipped diagnostics, and root-cause escalation evidence.
 
 Transfer design: High-value points depend on transfer from train: outage short-circuit and no diagnostics from `train_001`/`train_004`, diagnostics thresholds from `train_001`, and root-cause-to-team mapping from `train_004`. The new ticket IDs, service areas, and root causes require task-specific exploration.
-
-Construction record: Created by Codex on 2026-06-01. Major change: initial test task construction for `task_group_003`.
-

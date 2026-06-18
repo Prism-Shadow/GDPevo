@@ -11,6 +11,3 @@ Material map: `/api/payroll/rate-book` provides service rates, time limits, prem
 The solution applies per-service pay, hourly rehearsal minimums, premium stacking, electronic substitute treatment, doubles, vacation, and guarantee adjustments. Conflict flags are derived from early rehearsals and services over CBA time limits. There are 8 scoring points with raw weights 2, 3, 2, 2, 3, 1, 2, and 2.
 
 Transfer design: this formal train task teaches rate-book source precedence, schedule classification, premium stacking, substitute electronic treatment, and conflict-flag detection for `test_003`.
-
-Construction record: created by Codex on 2026-06-02.
-

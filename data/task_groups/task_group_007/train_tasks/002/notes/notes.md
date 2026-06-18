@@ -31,7 +31,7 @@ Important materials and environment surfaces:
 
 ### Solution and evaluation basis
 
-The hidden solution uses these business conventions:
+The reference answer uses these business conventions:
 
 - Effective available stock is `on_hand - reserved - quarantined - safety_stock`.
 - Component demand is the BOM quantity per kit multiplied by the target build quantity, summed across both target builds.
@@ -68,14 +68,3 @@ Likely model pitfalls include using on-hand stock without subtracting reserved, 
 ### Transfer design
 
 As a train task, `train_002` anchors the replenishment/allocation conventions for later test tasks. A skill-builder comparing attempts against the standard answer should infer the effective-stock formula, the same-warehouse timely PO coverage rule, the treatment of late or ineligible POs, the use of inter-warehouse effective surplus before purchases, and the need to exclude overstocked or covered SKUs from requisitions. These conventions transfer especially to `test_002` and also support integrated operations decisions in `test_005`.
-
-### Construction record
-
-Author: task-builder subagent `train_002`.
-
-Created: 2026-06-01.
-
-Updated: 2026-06-01.
-
-Major changes: Created the task folder, local production memo, answer template, standard answer, exact-match evaluator, and notes for the kit replenishment task.
-

@@ -1,4 +1,4 @@
-﻿# Hidden Notes: test_002 Vendor Intake Exception Board
+﻿# Notes: test_002 Vendor Intake Exception Board
 
 ## English
 
@@ -10,7 +10,7 @@ Scenario fit: The task is in the same ERP finance close-operations scenario as t
 
 Material map: `prompt.txt` provides the business request and output location. `vendor_intake_scope.json` defines the batch and target IDs. `answer_template.json` defines required fields, enum values, ID ordering, and list normalization. The shared API supplies `/api/compliance/objects`, `/api/compliance/profile/{business_id}`, `/api/compliance/ownership/{business_id}`, `/api/compliance/registry/{business_id}`, `/api/compliance/screening/{business_id}`, `/api/compliance/bank/{business_id}`, `/api/compliance/risk/{business_id}`, and `/api/vendors`. The prompt deliberately does not direct solvers to inspect environment files.
 
-Solution and evaluation basis: The hidden construction rule is that deterministic exception evidence controls the intake decision; current review status and numeric risk score are supporting context only. Reportable UBO count is the count of owner rows at or above the 25 percent reporting threshold. For this task, the selected records resolve as follows:
+Solution and evaluation basis: The reference rule is that deterministic exception evidence controls the intake decision; current review status and numeric risk score are supporting context only. Reportable UBO count is the count of owner rows at or above the 25 percent reporting threshold. For this task, the selected records resolve as follows:
 
 - `BUS-2025-0025`: bank is `not_verified`; no reportable UBOs; risk score is high; linked vendor `VEN-0016` is inactive as context. Decision `escalate`; hard stops `["bank_not_verified"]`.
 - `BUS-2025-0027`: tax ID is placeholder `TIN999999`; missing `bank_statement`; license expired on `2025-03-08`, which is more than 42 days before `2025-04-30`; one reportable UBO. Decision `escalate`; hard stops `["invalid_tax_id", "license_expired_over_42_days", "missing_required_information"]`.
@@ -23,6 +23,3 @@ The evaluator has 8 exact-match scoring points with raw weights `[3, 2, 2, 2, 3,
 Transfer design: `train_002` anchors vendor onboarding compliance review: combine compliance detail endpoints, do not copy source `review_status`, count reportable UBOs using the reporting threshold, and normalize controlled output sets. `train_005` anchors payment-release and account-change risk habits: compare license dates to the stated review date, recognize placeholder or malformed tax IDs, and distinguish informational risk score from hard exception evidence. In `test_002`, those same habits transfer to a different batch, new business IDs, different missing-information combinations, and a stricter license-age code. High-value scoring points for hard-stop sets, UBO counts, and decisions are intended to benefit from this train-derived experience.
 
 Likely model pitfalls: trusting `review_status` or risk score as the final decision; omitting the `license_expired_over_42_days` code for `BUS-2025-0027`; counting owners below the threshold; failing to normalize hard-stop code order; treating missing information as a lower-priority follow-up when another hard stop requires escalation; or using current calendar date instead of the task review date.
-
-Construction record: Author: clean-context task-builder owner for `task_group_005 test_002`. Created: 2026-06-01. Rebuilt: 2026-06-02. Major changes: replaced leaky/terse solver materials, corrected the `BUS-2025-0027` license hard-stop evidence, updated the standard answer and evaluator, and rewrote notes in valid UTF-8.
-

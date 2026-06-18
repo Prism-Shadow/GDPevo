@@ -21,6 +21,3 @@ Transferable SOP and field conventions: This train task teaches several conventi
 Likely pitfalls: Copying only the recruitment summary; omitting the waitlisted or rejected candidate from follow-up; summing only part of the cost ledger; treating waitlisted status as an accepted offer; allowing draft payroll handoff; or using free-text status labels instead of `committee_decision_with_offer_confirmation`, `accepted_offer_only`, and `submitted_handoff_required_after_acceptance`.
 
 Evaluator/scoring basis: `eval/rubric.json` has six exact-match scoring points: opening/outcomes, candidate outcome control, accepted offer/cost, notice follow-up, handoff gate, and draft/waitlist exclusion. High-value checks include normalized labels such as `candidate_status_source`, `candidate_outcome_control`, `notice_quality_source`, `payroll_handoff_gate`, `payroll_assignment_status_required`, and `handoff_control_result`.
-
-Construction/rework note: This task was reworked to be Web-first and to provide reusable train coverage for recruitment normalized labels, source precedence, notice follow-up, and payroll handoff gates. This notes file now reflects all current answer and scoring fields.
-

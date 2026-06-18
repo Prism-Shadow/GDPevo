@@ -23,10 +23,3 @@ Ranking follows the shared retention risk score order. Current ARR uses billing 
 ## Transfer design
 
 This task transfers the same conventions needed by executive watchlist tasks: retention risk ranking, action priority, billing ARR precedence, A/R legal-name matching, open-pipeline offsets, and action due-date mapping.
-
-## Construction record
-
-Constructed for `task_group_004/train_tasks/005` only. No environment source files were copied into payloads. The evaluator uses nine weighted business-result checks and gives full credit to the included gold answer.
-
-Updated 2026-06-01 to add neutral retention board `policy_codes`, including board sorting, exposure formula, and calendar policy codes for train-to-test transfer.
-

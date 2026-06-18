@@ -21,6 +21,3 @@ Transferable SOP and field conventions: This train task teaches that an approved
 Likely pitfalls: Trusting the profile summary because it is easy to find; omitting the audit result; failing to exclude `AUD-DOC118-06`; using a document/notice audit scope; or choosing a generic review action instead of `update_employee_summary`.
 
 Evaluator/scoring basis: `eval/rubric.json` has eight exact-match scoring points covering identity, effective leave policy, approved assignment, balance, precedence source, stale-profile boolean, audit event/result/support/exclusion/scope, and next action.
-
-Construction/rework note: This notes file was synchronized with the reworked answer and rubric, including `leave_precedence_source`, `supporting_audit_event_ids`, `excluded_audit_event_ids`, and `audit_scope`.
-

@@ -11,6 +11,3 @@ The required primary accounting action is `RECORD_REVENUE_MS2`, due on 2026-06-0
 The evaluator has twelve scoring points with the requested raw weights: phase sum and opportunity total (2), paid/unpaid invoice state (3), missing revenue-recognition action (3), outstanding balance (2), training event/voucher facts (2), CRM follow-up task routing (2), collection versus accounting action enum (2), four reconciliation control conventions (3 each), and contact linkage (1). Currency is compared at cent precision. Enums and IDs are normalized for casing and whitespace, but the expected business decisions are exact.
 
 Likely pitfalls include treating the paid `MS2` invoice as fully reconciled even though revenue recognition is missing, issuing a collection notice for `MS3` before it is due, omitting the 2026-06-10 training invite due date, confusing the accounting action with the collection action, or failing to carry Priya Raman through all CRM-linked tasks.
-
-Construction record: authored by Codex on 2026-06-01 for task-builder assignment `test_005`. Initial construction created the prompt, answer template, standard answer, evaluator, and notes under the assigned write scope.
-

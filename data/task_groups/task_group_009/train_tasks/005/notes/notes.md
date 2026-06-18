@@ -11,6 +11,3 @@ Material map: `/api/compensation/rate-book` provides pay types, MWS, title perce
 The standard answer applies the scenario drivers cumulatively, advances years of service before assigning seniority bands, uses roster quarter weeks, and avoids double-counting title premiums when overscale notes say they are combined. Scoring uses 8 points with raw weights 1, 3, 2, 2, 3, 2, 1, and 1.
 
 Transfer design: this task reinforces future-year driver handling and roster-note treatment for compensation tests `test_002` and `test_005`.
-
-Construction record: created by Codex on 2026-06-02.
-

@@ -1,12 +1,9 @@
-# test_003 Hidden Notes
-
+# test_003 Notes
 ## English
 
 ### Data lineage and task definition
 
 This task belongs to `task_group_002`, scenario `SCN_002_crm_b2b_quote_account_response`, and uses the milestone engagement response family. It targets opportunity `OPP-TE-POLARIS` for customer `CUST-POLARIS` / Polaris Cold Chain and is a test analogue to the training milestone reconciliation tasks. The solver-visible files are English-only; this notes file is bilingual as requested.
-
-The task uses the shared MedBridge Sales Ops API described in `task_factory/scratch/env_blueprint.md`. The prompt asks the solver to use the runner-provided `API_BASE_URL` and reconcile opportunity, invoice, payment, revenue journal, event, and voucher records. It also gives controller-confirmed review facts for the Polaris account contact and overdue phase-2 due date so the test remains aligned to the task-builder assignment.
 
 ### Scenario fit and material map
 
@@ -29,8 +26,3 @@ Likely pitfalls include using stale account metadata instead of Amara Singh, usi
 ### Transfer design
 
 This test checks whether solvers transfer milestone engagement conventions from the train tasks: opportunity value should equal milestone invoice totals; unpaid overdue milestones drive collection escalation; paid completed milestones require revenue recognition verification; unpaid milestones should not be recognized yet; event and voucher facts should become CRM invitation work; and follow-up tasks must be linked to customer, opportunity, contact, and stable business records.
-
-### Construction record
-
-Author: Codex main agent. Created: 2026-06-01. Updated: 2026-06-01. Major changes: created the `test_003` prompt, answer template, canonical answer, notes, and exact-match evaluator within the assigned write scope.
-

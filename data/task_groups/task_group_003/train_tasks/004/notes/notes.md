@@ -13,6 +13,3 @@ Material map: `queue_snapshot.csv` lists target tickets. The relevant API endpoi
 Solution and evaluation basis: The queue includes one outage hold, one resolved voice profile refresh, three failed tickets, one network engineering escalation, and one tier-2 provisioning escalation. There are 9 exact-match scoring points.
 
 Transfer design: As a train task, it reinforces status vocabulary, account/authentication failure gates, outage handling, escalation team mapping, and rollup conventions that later test tasks reuse.
-
-Construction record: Created by Codex on 2026-06-01. Major change: initial task construction for `task_group_003`.
-

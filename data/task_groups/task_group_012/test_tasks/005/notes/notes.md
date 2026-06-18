@@ -21,6 +21,3 @@ Train anchors and transferred knowledge: This test combines several train anchor
 Likely pitfalls: Reporting only the audit package without linked event details; omitting one affected entity; assigning the policy issue to the employee instead of `CASE-445`; assigning the recruitment issue to a candidate instead of `REQ-OPS-19`; missing `AUD-PAY255-02`; or using a vague primary risk label rather than `payroll_and_policy_closeout_control`.
 
 Evaluator/scoring basis: `eval/rubric.json` has nine equal-weight exact-match points: package/escalation, affected entities, primary risk, employee leave/payroll entities, policy issue entity, recruitment issue entity, audit events, escalation owner, and remediation SLA. Lists are normalized by the shared evaluator helper.
-
-Construction/rework note: This notes file was expanded after reviewer feedback to document the cross-train transfer matrix and to synchronize with current answer/rubric fields. No task behavior, answer, evaluator, or calibration artifact was changed.
-

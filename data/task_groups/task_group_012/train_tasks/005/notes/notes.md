@@ -21,6 +21,3 @@ Transferable SOP and field conventions: This train task anchors submitted-versus
 Likely pitfalls: Choosing the draft assignment because it is visible; returning payroll status with UI capitalization instead of normalized `submitted`; omitting `draft_exclusion_rule`; treating accrual readiness as unknown despite audit support; or using a broad audit scope.
 
 Evaluator/scoring basis: `eval/rubric.json` has eight exact-match scoring points: identity, submitted salary assignment/source status, salary/effective date, excluded draft assignment/draft rule, accrual readiness, accrual batch, audit event/scope, and control result.
-
-Construction/rework note: This notes file was synchronized after rework so it now covers `payroll_source_status`, `draft_exclusion_rule`, and `audit_scope`, not just the original salary and batch fields.
-

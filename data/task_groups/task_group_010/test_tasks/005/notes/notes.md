@@ -1,4 +1,4 @@
-# Hidden Notes For `test_005`
+# Notes For `test_005`
 
 ## English
 
@@ -15,6 +15,3 @@ The international equity result uses monthly simple returns from consecutive ind
 Evaluation has eight exact-match scoring points with raw weights: identifiers/date/policy (1), allocation view rows (3), energy rotation action and trade tickets (3), energy metrics and constraint flags (2), correlation summary (2), international diversification action (2), committee decision and priority order (2), and final risk flags (2). Numeric values are normalized to the precision declared in `answer_template.json`; list-like business rows are normalized by stable identifiers where appropriate. The final risk flags are correlation threshold breached true, China dependence true, current issuer concentration breach true, post-trade issuer concentration breach false, HY cap pressure false, duration drift false, and HY underweight signal true.
 
 Transfer anchors are `train_001` and `train_004` for credit constraints, source precedence, and duration/HY/issuer metrics; `train_002` and `train_005` for correlation conventions and diversification actions; and `train_003` plus `train_005` for allocation view mapping, prior-view change, conviction, and rationale-code style. The test-specific difficulty is the composite prioritization and the fact that Vega requires reconciling a positive LNG signal with issuer concentration and HY-underweight allocation signals.
-
-Construction record: authored by task-builder 10 on 2026-06-03. Files created for `test_tasks/005` only: prompt, committee packet, answer template, standard answer, evaluator, shell wrapper, and hidden notes.
-

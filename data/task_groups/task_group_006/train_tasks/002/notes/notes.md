@@ -24,6 +24,3 @@ Evaluation: the evaluator performs exact-match checks on eight structured scorin
 Likely model pitfalls include treating the receipt status `accepted` as permission to release the invoice, using the invoice billed quantity as the accepted quantity, ignoring the supplier watch risk, treating the memo as a substitute for API evidence, or inventing a damage rejection even though no rejected quantity is posted.
 
 Transfer design: as a train task, this task anchors receiving-control conventions for later procurement tasks: join the posted receipt to the PO and AP invoice, separate receipt acceptance from AP release, calculate billed-unreceived exposure from system quantities, treat controlled exception codes as structured outputs, and use supplier risk only as context rather than as a replacement for quantity reconciliation.
-
-Construction record: author `task-builder train_002`; created 2026-06-01; updated 2026-06-01. The design file requested in `scratch/task_group_design.md` was not present in this workspace, so this task follows the explicit build brief and the shared task-builder context.
-

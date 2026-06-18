@@ -23,10 +23,3 @@ Ranking uses score descending, then current ARR descending, then account id asce
 ## Transfer design
 
 This test transfers patterns from the training tasks: retention score ranking, overdue priority, billing ARR precedence, exact legal-name receivables matching, open-pipeline offsets, controlled enum labels, and executive due-date mapping.
-
-## Construction record
-
-Constructed for `task_group_004/test_tasks/005` only. No environment source files were copied into payloads. The evaluator uses ten weighted exact-match business-result checks and gives full credit to the included gold answer.
-
-Updated 2026-06-01 to add neutral retention board `policy_codes` aligned with train_001/train_005 and consolidate scoring to 10 business-result points.
-

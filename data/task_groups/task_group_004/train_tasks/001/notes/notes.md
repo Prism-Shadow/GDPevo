@@ -22,10 +22,3 @@ Current ARR is taken from Q2 posted billing snapshots on 2026-06-30. Clean ticke
 ## Transfer Design
 
 This train task teaches billing ARR precedence, clean-ticket filtering, retracted-NPS handling, overdue collections priority, tenure risk direction, and controlled action enums. These conventions transfer to later strategic save-plan and executive watchlist tasks while leaving account-specific exploration necessary.
-
-## Construction Record
-
-Builder `train_001` created only files under `train_tasks/001`. The evaluator embeds the expected business answer so it can score the bundled answer at full credit without depending on the live service.
-
-Updated 2026-06-01 to add neutral `policy_codes` for retention risk model, ARR source, support hygiene, and action-priority conventions. These codes are hidden in train answers for later skill transfer rather than exposed as test instructions.
-

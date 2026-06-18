@@ -1,49 +1,612 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Agent Learn Bench</title>
-    <meta name="description" content="Agent Learn Bench public website placeholder.">
+    <title>GDPevo — Measuring Agent Self-Evolution on Real Business Work</title>
+    <meta name="description" content="GDPevo measures whether an agent can get better at a class of tasks by learning from related ones — on real CRM, ERP, and Finance work. Across three harnesses, skills lift held-out accuracy by +17 to +22 pp, often with fewer tokens.">
+    <meta property="og:title" content="GDPevo — Measuring Agent Self-Evolution on Real Business Work">
+    <meta property="og:description" content="Can an agent get better at a class of tasks by learning from related ones? Results across three harnesses: +17 to +22 pp accuracy, often with fewer tokens.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('gdpevo-lang');
+          var lang = saved || (navigator.language && navigator.language.toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en');
+          document.documentElement.setAttribute('data-lang', lang);
+          document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-Hans' : 'en');
+          var st = localStorage.getItem('gdpevo-theme');
+          var choice = (st === 'light' || st === 'dark' || st === 'system') ? st : 'system';
+          var theme = choice === 'system'
+            ? ((window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light')
+            : choice;
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.setAttribute('data-theme-choice', choice);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
-    <header class="site-header" aria-label="Site navigation">
-      <a class="brand" href="./" aria-label="Agent Learn Bench home">
-        <span class="brand-mark" aria-hidden="true">ALB</span>
-        <span>Agent Learn Bench</span>
-      </a>
-      <nav class="nav-links" aria-label="Primary">
-        <a href="https://github.com/Prism-Shadow/agent-learn-bench">GitHub</a>
-      </nav>
+    <!-- ===================== NAV ===================== -->
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="#top" aria-label="GDPevo home">
+          <span class="brand-logo" aria-hidden="true">
+            <svg viewBox="0 0 28 28" width="22" height="22" fill="none">
+              <path d="M4 20 L11 11 L16 16 L24 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="24" cy="6" r="2.4" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="brand-name">GDP<span class="brand-accent">evo</span></span>
+        </a>
+        <div class="nav-right">
+          <nav class="page-nav" aria-label="Primary">
+            <a class="is-active" href="#top"><span class="lang-en">Home</span><span class="lang-zh">首页</span></a>
+            <a href="blog.html"><span class="lang-en">Blog</span><span class="lang-zh">博客</span></a>
+          </nav>
+          <div class="theme-segment" role="group" aria-label="Color theme">
+            <button type="button" class="theme-choice" data-theme-choice="light" aria-label="Light theme" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" class="theme-choice" data-theme-choice="dark" aria-label="Dark theme" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="theme-choice" data-theme-choice="system" aria-label="Use system theme" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.8"/><path d="M9 20h6M12 16v4" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div class="lang-segment" role="group" aria-label="Language">
+            <button type="button" class="lang-choice" data-lang-choice="en" aria-label="English" aria-pressed="false">EN</button>
+            <button type="button" class="lang-choice" data-lang-choice="zh" aria-label="Chinese" aria-pressed="false">ZH</button>
+          </div>
+          <a class="icon-link" href="https://github.com/Prism-Shadow/GDPevo" aria-label="GitHub repository">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.41-1.27.74-1.56-2.56-.29-5.26-1.28-5.26-5.71 0-1.26.45-2.3 1.19-3.11-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.19a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.19 3.17-1.19.63 1.59.23 2.76.11 3.05.74.81 1.19 1.85 1.19 3.11 0 4.44-2.7 5.42-5.27 5.7.42.37.8 1.09.8 2.2v3.26c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+          </a>
+        </div>
+      </div>
     </header>
 
-    <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-visual" aria-hidden="true">
-          <div class="signal-grid">
-            <span class="signal train">data</span>
-            <span class="signal env">eval</span>
-            <span class="signal skill">site</span>
+    <main id="top">
+      <!-- ===================== HERO ===================== -->
+      <section class="hero">
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div class="wrap hero-inner">
+          <h1 class="hero-title">
+            <span class="lang-en"><span class="accent">GDPevo</span>: Measuring Agent<br>Self-Evolution on Real Business Work</span>
+            <span class="lang-zh"><span class="accent">GDPevo</span>：在真实业务工作上<br>衡量 Agent 的自我进化</span>
+          </h1>
+          <p class="hero-sub">
+            <span class="lang-en">Not <em>can the agent solve this task?</em><br>— but <strong>can it learn from related tasks to get better?</strong></span>
+            <span class="lang-zh">不是问<em>这个 agent 能不能解决这个任务</em>，<br>而是问<strong>它能不能通过相关任务的经验，越来越擅长这一类任务</strong>。</span>
+          </p>
+          <p class="hero-meta">
+            <span class="lang-en">Public Benchmark Release · 2026 · PrismShadow team</span>
+            <span class="lang-zh">公开基准发布 · 2026 · PrismShadow 团队</span>
+          </p>
+          <div class="btn-row">
+            <a class="btn btn-dark" href="https://github.com/Prism-Shadow/GDPevo">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.41-1.27.74-1.56-2.56-.29-5.26-1.28-5.26-5.71 0-1.26.45-2.3 1.19-3.11-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.19a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.19 3.17-1.19.63 1.59.23 2.76.11 3.05.74.81 1.19 1.85 1.19 3.11 0 4.44-2.7 5.42-5.27 5.7.42.37.8 1.09.8 2.2v3.26c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+              <span>GitHub</span>
+            </a>
+            <a class="btn btn-ghost" href="#results">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke-linecap="round"/></svg>
+              <span><span class="lang-en">Results</span><span class="lang-zh">结果</span></span>
+            </a>
+            <a class="btn btn-ghost" href="blog.html">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10" stroke-linecap="round"/></svg>
+              <span><span class="lang-en">Read the blog</span><span class="lang-zh">阅读博客</span></span>
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/Prism-Shadow/GDPevo/blob/main/experiments/EXPERIMENT_BOARD.md">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="m8 6-5 6 5 6M16 6l5 6-5 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span><span class="lang-en">Experiment board</span><span class="lang-zh">实验看板</span></span>
+            </a>
+          </div>
+
+          <div class="stat-band">
+            <div class="stat">
+              <span class="stat-num">120</span>
+              <span class="stat-label"><span class="lang-en">GDP-worthy tasks</span><span class="lang-zh">真实业务任务</span></span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">12</span>
+              <span class="stat-label"><span class="lang-en">Task groups · CRM · ERP · Finance</span><span class="lang-zh">任务组 · CRM · ERP · Finance</span></span>
+            </div>
+            <div class="stat">
+              <span class="stat-num stat-tba"><span class="lang-en">TBD</span><span class="lang-zh">暂定</span></span>
+              <span class="stat-label"><span class="lang-en">Held-out accuracy lift from skills</span><span class="lang-zh">skill 带来的 held-out 准确率提升</span></span>
+            </div>
+            <div class="stat">
+              <span class="stat-num stat-tba"><span class="lang-en">TBD</span><span class="lang-zh">暂定</span></span>
+              <span class="stat-label"><span class="lang-en">Token cost — fewer, not more</span><span class="lang-zh">token 成本 —— 更少，而非更多</span></span>
+            </div>
           </div>
         </div>
-        <div class="hero-copy">
-          <p class="eyebrow">Public site in progress</p>
-          <h1 id="hero-title">Agent Learn Bench</h1>
-          <p class="hero-lede">
-            The public website is being prepared. Content and visual design will be finalized
-            after the release narrative is settled.
+      </section>
+
+      <!-- ===================== RESULTS ===================== -->
+      <section class="section" id="results">
+        <div class="wrap results-wrap">
+          <h2 class="h2">
+            <span class="lang-en">Skills make agents more accurate while spending <span class="accent">fewer</span> tokens.</span>
+            <span class="lang-zh">Skill 让 agent 更准,同时花<span class="accent">更少</span>的 token。</span>
+          </h2>
+          <p class="lead">
+            <span class="lang-en">Each group has 5 train and 5 held-out test tasks. We compare a cold-start baseline
+              (<code>base</code>) against two skill-writers — <code>demo</code> (learn from worked examples) and
+              <code>reflect</code> (learn from its own mistakes) — and measure the lift on tasks the skill-writer never saw.</span>
+            <span class="lang-zh">每组有 5 个 train、5 个 held-out test。我们用冷启动基线（<code>base</code>）对比两种 skill-writer ——
+              <code>demo</code>（从样例中学）和 <code>reflect</code>（从自己的错误中学）—— 衡量在 skill-writer 没见过的任务上的提升。</span>
           </p>
-          <div class="hero-actions" aria-label="Primary actions">
-            <a class="button primary" href="https://github.com/Prism-Shadow/agent-learn-bench">Open GitHub</a>
+
+          <div class="htables">
+            <div class="htable">
+              <div class="ht-cap">
+                <span class="lang-en">Codex · GPT-5.5</span><span class="lang-zh">Codex · GPT-5.5</span>
+                <small><span class="lang-en">xhigh · avg@3 over 12 task groups</span><span class="lang-zh">xhigh · 12 个 task group 的 avg@3</span></small>
+              </div>
+              <div class="ht-row ht-head">
+                <span><span class="lang-en">Mode</span><span class="lang-zh">模式</span></span>
+                <span class="num">avg@3</span><span class="num"><span class="lang-en">Tokens (k)</span><span class="lang-zh">Tokens (k)</span></span><span class="num">USD</span>
+              </div>
+              <div class="ht-row"><code>base</code><span class="num">48.35%</span><span class="num">709.2</span><span class="num">1.08</span></div>
+              <div class="ht-row"><code>demo</code><span class="num">65.99%</span><span class="num">466.1</span><span class="num">0.81</span></div>
+              <div class="ht-row best"><code>reflect</code><span class="num">67.13%</span><span class="num">458.7</span><span class="num">0.79</span></div>
+            </div>
+            <div class="htable">
+              <div class="ht-cap">
+                <span class="lang-en">Claude Code · Opus 4.8</span><span class="lang-zh">Claude Code · Opus 4.8</span>
+                <small><span class="lang-en">xhigh · avg@3 over 12 task groups</span><span class="lang-zh">xhigh · 12 个 task group 的 avg@3</span></small>
+              </div>
+              <div class="ht-row ht-head">
+                <span><span class="lang-en">Mode</span><span class="lang-zh">模式</span></span>
+                <span class="num">avg@3</span><span class="num"><span class="lang-en">Tokens (k)</span><span class="lang-zh">Tokens (k)</span></span><span class="num">USD</span>
+              </div>
+              <div class="ht-row"><code>base</code><span class="num">49.11%</span><span class="num">376.8</span><span class="num">0.61</span></div>
+              <div class="ht-row best"><code>demo</code><span class="num">70.90%</span><span class="num">340.8</span><span class="num">0.55</span></div>
+              <div class="ht-row"><code>reflect</code><span class="num">67.94%</span><span class="num">331.9</span><span class="num">0.56</span></div>
+            </div>
+            <div class="htable">
+              <div class="ht-cap">
+                <span class="lang-en">Panofy · Opus 4.6</span><span class="lang-zh">Panofy · Opus 4.6</span>
+                <small><span class="lang-en">high · avg@3 over 12 task groups</span><span class="lang-zh">high · 12 个 task group 的 avg@3</span></small>
+              </div>
+              <div class="ht-row ht-head">
+                <span><span class="lang-en">Mode</span><span class="lang-zh">模式</span></span>
+                <span class="num">avg@3</span><span class="num"><span class="lang-en">Tokens (k)</span><span class="lang-zh">Tokens (k)</span></span><span class="num">USD</span>
+              </div>
+              <div class="ht-row"><code>base</code><span class="num">50.17%</span><span class="num">318.9</span><span class="num">0.72</span></div>
+              <div class="ht-row best"><code>demo</code><span class="num">68.24%</span><span class="num">383.5</span><span class="num">0.80</span></div>
+              <div class="ht-row"><code>reflect</code><span class="num">67.98%</span><span class="num">365.2</span><span class="num">0.79</span></div>
+            </div>
           </div>
+
+          <figure class="panel chart merged-chart" id="chart">
+            <figcaption class="panel-head">
+              <span class="panel-title"><span class="lang-en">Held-out accuracy by task group (avg@3, %)</span><span class="lang-zh">各 task group 的 held-out 准确率 (avg@3, %)</span></span>
+              <span class="legend">
+                <span class="leg"><i class="sw sw-base"></i>base</span>
+                <span class="leg"><i class="sw sw-demo"></i>demo</span>
+                <span class="leg"><i class="sw sw-reflect"></i>reflect</span>
+              </span>
+            </figcaption>
+            <div class="combined-bars" id="combined-bars"></div>
+          </figure>
+          <p class="note">
+            <span class="lang-en"><strong>avg@3</strong> = mean held-out accuracy over 3 attempts per task. The task-group chart below keeps Codex, Claude Code, and Panofy side by side under the same base, demo, and reflect settings.</span>
+            <span class="lang-zh"><strong>avg@3</strong> = 每个任务 3 次尝试的 held-out 准确率均值。下面的 task-group 图并排展示 Codex、Claude Code 与 Panofy 在 base、demo、reflect 下的结果。</span>
+          </p>
+          <p class="note">
+            <span class="lang-en">Board summaries: <strong>+20.31 pp / −8.69% cost</strong> (Claude Code) · <strong>+18.21 pp / −25.75% cost</strong> (Codex) · <strong>+17.94 pp / +11.82% cost</strong> (Panofy).</span>
+            <span class="lang-zh">Board 汇总:<strong>+20.31 pp / −8.69% cost</strong>（Claude Code）· <strong>+18.21 pp / −25.75% cost</strong>（Codex）· <strong>+17.94 pp / +11.82% cost</strong>（Panofy）。</span>
+          </p>
+          <p class="note">
+            <span class="lang-en">Full per-task reports under <code>experiments/codex_gpt5_5_xhigh/</code>, <code>experiments/claude_code_opus_4_8_xhigh/</code>, and <code>experiments/panofy_claude_opus_4_6_high/</code>.</span>
+            <span class="lang-zh">完整逐任务报告见 <code>experiments/codex_gpt5_5_xhigh/</code>、<code>experiments/claude_code_opus_4_8_xhigh/</code> 与 <code>experiments/panofy_claude_opus_4_6_high/</code>。</span>
+          </p>
+          <p class="note">
+            <a href="blog.html#cost"><span class="lang-en">Why do skills cost less? Read the blog →</span><span class="lang-zh">skill 为什么反而更省？阅读博客 →</span></a>
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== TASKS ===================== -->
+      <section class="section band" id="tasks">
+        <div class="wrap">
+          <h2 class="h2">
+            <span class="lang-en">Real company interfaces — CRM, ERP, Finance.</span>
+            <span class="lang-zh">真实的公司业务接口 —— CRM、ERP、Finance。</span>
+          </h2>
+          <p class="lead">
+            <span class="lang-en">Each group is one shared business world with lookalike records mixed in, seeded from real-job
+              sources such as <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener">GDPVal</a> and
+              <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener">SOP-Bench</a>.</span>
+            <span class="lang-zh">每组都是一个共享的业务世界,混入了大量"长得很像"的干扰记录;场景来自像
+              <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener">GDPVal</a> 和
+              <a href="https://github.com/amazon-science/SOP-Bench" target="_blank" rel="noopener">SOP-Bench</a> 这样的真实工作任务源。</span>
+          </p>
+          <div class="tg-table">
+            <div class="tg-row tg-head">
+              <span><span class="lang-en">Group</span><span class="lang-zh">编号</span></span>
+              <span><span class="lang-en">Domain</span><span class="lang-zh">领域</span></span>
+              <span><span class="lang-en">Business focus</span><span class="lang-zh">业务场景</span></span>
+            </div>
+            <div class="tg-row" data-task-group="001"><span class="tg-id">01</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">Marketing lead capture</span><span class="lang-zh">市场营销线索捕获</span></span></div>
+            <div class="tg-row" data-task-group="002"><span class="tg-id">02</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">B2B quote &amp; account response</span><span class="lang-zh">B2B 报价与客户响应</span></span></div>
+            <div class="tg-row" data-task-group="003"><span class="tg-id">03</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">Service ticket resolution</span><span class="lang-zh">服务工单处理</span></span></div>
+            <div class="tg-row" data-task-group="004"><span class="tg-id">04</span><span><i class="chip crm">CRM</i></span><span><span class="lang-en">Retention &amp; churn analytics</span><span class="lang-zh">留存与流失分析</span></span></div>
+            <div class="tg-row" data-task-group="005"><span class="tg-id">05</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">Finance expense control &amp; close</span><span class="lang-zh">费用控制与账务结算</span></span></div>
+            <div class="tg-row" data-task-group="006"><span class="tg-id">06</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">Procurement, supplier &amp; receiving</span><span class="lang-zh">采购、供应商与收货</span></span></div>
+            <div class="tg-row" data-task-group="007"><span class="tg-id">07</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">Inventory &amp; order fulfillment</span><span class="lang-zh">库存与订单履约</span></span></div>
+            <div class="tg-row" data-task-group="008"><span class="tg-id">08</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Personal advisory, tax &amp; estate</span><span class="lang-zh">个人理财、税务与遗产规划</span></span></div>
+            <div class="tg-row" data-task-group="009"><span class="tg-id">09</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Operational modeling &amp; reporting</span><span class="lang-zh">运营建模与管理报表</span></span></div>
+            <div class="tg-row" data-task-group="010"><span class="tg-id">10</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Investment strategy &amp; portfolio risk</span><span class="lang-zh">投资策略与组合风险</span></span></div>
+            <div class="tg-row" data-task-group="011"><span class="tg-id">11</span><span><i class="chip fin">Finance</i></span><span><span class="lang-en">Credit risk &amp; lending committee</span><span class="lang-zh">信用风险与信贷委员会</span></span></div>
+            <div class="tg-row" data-task-group="012"><span class="tg-id">12</span><span><i class="chip erp">ERP</i></span><span><span class="lang-en">HR employee lifecycle &amp; policy</span><span class="lang-zh">HR 员工生命周期与制度</span></span></div>
+          </div>
+          <p class="note">
+            <span class="lang-en">How the hidden rules are planted, how the data is built and graded by agents, and why cost goes
+              down — <a href="blog.html"><strong>read the blog →</strong></a></span>
+            <span class="lang-zh">隐藏规则怎么埋、数据怎么由 agent 构造与评分、成本为什么会下降 ——
+              <a href="blog.html"><strong>阅读博客 →</strong></a></span>
+          </p>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <span>Agent Learn Bench</span>
-      <a href="https://github.com/Prism-Shadow/agent-learn-bench">GitHub repository</a>
+    <footer class="footer">
+      <div class="wrap footer-inner">
+        <div class="brand"><span class="brand-name">GDP<span class="brand-accent">evo</span></span></div>
+        <p class="footer-tag"><span class="lang-en">Measuring agent self-evolution on GDP-worthy work.</span><span class="lang-zh">在真实业务工作上衡量 Agent 的自我进化。</span></p>
+        <a class="footer-link" href="https://github.com/Prism-Shadow/GDPevo">github.com/Prism-Shadow/GDPevo</a>
+      </div>
     </footer>
+
+    <script>
+      (function () {
+        // Language toggle
+        function setLang(lang) {
+          document.documentElement.setAttribute('data-lang', lang);
+          document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-Hans' : 'en');
+          document.querySelectorAll('[data-lang-choice]').forEach(function (b) {
+            var on = b.getAttribute('data-lang-choice') === lang;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          try { localStorage.setItem('gdpevo-lang', lang); } catch (e) {}
+        }
+        document.querySelectorAll('[data-lang-choice]').forEach(function (b) {
+          b.addEventListener('click', function () { setLang(b.getAttribute('data-lang-choice')); });
+        });
+        setLang(document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en');
+
+        // Theme segmented control
+        var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+        function resolveTheme(choice) {
+          return choice === 'system' ? ((mq && mq.matches) ? 'dark' : 'light') : choice;
+        }
+        function setThemeChoice(choice) {
+          if (choice !== 'light' && choice !== 'dark' && choice !== 'system') choice = 'system';
+          document.documentElement.setAttribute('data-theme', resolveTheme(choice));
+          document.documentElement.setAttribute('data-theme-choice', choice);
+          document.querySelectorAll('[data-theme-choice]').forEach(function (b) {
+            var on = b.getAttribute('data-theme-choice') === choice;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          try { localStorage.setItem('gdpevo-theme', choice); } catch (e) {}
+        }
+        document.querySelectorAll('[data-theme-choice]').forEach(function (b) {
+          b.addEventListener('click', function () { setThemeChoice(b.getAttribute('data-theme-choice')); });
+        });
+        setThemeChoice(document.documentElement.getAttribute('data-theme-choice') || 'system');
+        if (mq && mq.addEventListener) {
+          mq.addEventListener('change', function () {
+            if (document.documentElement.getAttribute('data-theme-choice') === 'system') setThemeChoice('system');
+          });
+        }
+
+        // Combined per-group chart
+        var holder = document.getElementById('combined-bars');
+        var groups = [
+          { id: '01', domain: 'CRM', en: 'Lead capture', zh: '线索捕获', codex: [44.43, 48.12, 57.46], claude: [48.75, 81.96, 75.47], panofy: [63.74, 85.28, 82.26] },
+          { id: '02', domain: 'CRM', en: 'B2B quote', zh: 'B2B 报价', codex: [41.62, 51.17, 60.41], claude: [42.74, 58.48, 46.53], panofy: [43.85, 58.93, 51.51] },
+          { id: '03', domain: 'CRM', en: 'Service ticket', zh: '服务工单', codex: [57.84, 78.11, 71.69], claude: [46.69, 70.89, 63.92], panofy: [58.58, 73.41, 58.00] },
+          { id: '04', domain: 'CRM', en: 'Churn analytics', zh: '流失分析', codex: [31.73, 60.94, 59.95], claude: [25.24, 54.55, 54.28], panofy: [18.82, 59.53, 57.06] },
+          { id: '05', domain: 'ERP', en: 'Expense control', zh: '费用控制', codex: [35.09, 52.45, 46.51], claude: [51.15, 57.96, 59.26], panofy: [41.05, 60.51, 62.85] },
+          { id: '06', domain: 'ERP', en: 'Procurement', zh: '采购收货', codex: [66.28, 72.39, 71.76], claude: [67.98, 72.98, 72.54], panofy: [64.83, 72.24, 70.39] },
+          { id: '07', domain: 'ERP', en: 'Inventory', zh: '库存履约', codex: [38.40, 54.31, 54.49], claude: [39.54, 55.76, 57.10], panofy: [36.39, 41.88, 51.15] },
+          { id: '08', domain: 'Finance', en: 'Advisory & tax', zh: '理财税务', codex: [70.57, 93.18, 93.05], claude: [66.89, 93.60, 90.94], panofy: [49.18, 73.36, 79.36] },
+          { id: '09', domain: 'Finance', en: 'Ops modeling', zh: '运营建模', codex: [42.76, 92.47, 80.94], claude: [51.76, 100.00, 80.00], panofy: [62.39, 89.73, 92.47] },
+          { id: '10', domain: 'Finance', en: 'Investment', zh: '投资策略', codex: [60.76, 71.05, 73.77], claude: [58.60, 63.45, 75.07], panofy: [50.73, 65.18, 63.90] },
+          { id: '11', domain: 'Finance', en: 'Credit risk', zh: '信用风险', codex: [45.68, 56.48, 65.41], claude: [41.56, 63.48, 60.82], panofy: [48.91, 56.38, 61.07] },
+          { id: '12', domain: 'ERP', en: 'HR lifecycle', zh: 'HR 生命周期', codex: [45.08, 61.24, 70.10], claude: [48.41, 77.66, 79.30], panofy: [63.59, 82.43, 85.77] }
+        ];
+        function lang(en, zh) {
+          return '<span class="lang-en">' + en + '</span><span class="lang-zh">' + zh + '</span>';
+        }
+        function meter(v, mode) {
+          return '<div class="ob-meter mode-' + mode + '">' +
+            '<div class="ob-track"><span class="fl ' + mode + '" style="--w:' + v.toFixed(2) + '%"></span></div>' +
+            '<b>' + v.toFixed(1) + '</b>' +
+          '</div>';
+        }
+        function harnessRows(harness, model, thinking, values) {
+          var modes = ['base', 'demo', 'reflect'];
+          return '<div class="ob-harness-block">' +
+            '<span class="ob-harness">' + harness + '</span>' +
+            '<span class="ob-model">' + model + '</span>' +
+            '<span class="ob-thinking">' + thinking + '</span>' +
+            '<div class="ob-condition-rows">' +
+              modes.map(function (mode, i) {
+                return '<div class="ob-row">' +
+                  '<code>' + mode + '</code>' +
+                  meter(values[i], mode) +
+                '</div>';
+              }).join('') +
+            '</div>' +
+          '</div>';
+        }
+        if (holder) {
+          holder.innerHTML =
+            '<div class="ob-head">' +
+              '<span>' + lang('Task group', 'Task group') + '</span>' +
+              '<span>Harness</span>' +
+              '<span>Model</span>' +
+              '<span>Thinking level</span>' +
+              '<span>' + lang('Setting', '设定') + '</span>' +
+              '<span>Accuracy</span>' +
+            '</div>' +
+            groups.map(function (g) {
+              var chip = g.domain === 'Finance' ? 'fin' : g.domain.toLowerCase();
+              return '<div class="ob-group">' +
+                '<div class="ob-name"><strong>' + g.id + '</strong><i class="chip ' + chip + '">' + g.domain + '</i><span>' + lang(g.en, g.zh) + '</span></div>' +
+                '<div class="ob-rows">' +
+                  harnessRows('Codex', 'GPT-5.5', 'xhigh', g.codex) +
+                  harnessRows('Claude Code', 'Opus 4.8', 'xhigh', g.claude) +
+                  harnessRows('Panofy', 'Opus 4.6', 'high', g.panofy) +
+                '</div>' +
+              '</div>';
+            }).join('');
+        }
+
+        // Expandable task-group summaries
+        var taskTopics = {
+          '001': [
+            ['train_001', 'Train', 'Event sponsor handoff', 'Validate event attendance, sponsor status, qualified leads, and the next CRM follow-up.'],
+            ['train_002', 'Train', 'Exhibitor lead qualification', 'Rank booth leads by fit, urgency, and account context before assigning sales ownership.'],
+            ['train_003', 'Train', 'Webinar import cleanup', 'Deduplicate imported attendees and reconcile form answers with existing company records.'],
+            ['train_004', 'Train', 'Field-day campaign review', 'Turn scattered event activity into clean campaign outcomes and follow-up queues.'],
+            ['train_005', 'Train', 'Target-account prospecting', 'Identify the strongest prospects in a niche segment and prepare CRM-ready outreach notes.'],
+            ['test_001', 'Test', 'Executive forum handoff', 'Audit a new event pipeline and decide which accounts deserve immediate sales action.'],
+            ['test_002', 'Test', 'Partner expo qualification', 'Separate real opportunities from lookalike records after a partner-led marketing event.'],
+            ['test_003', 'Test', 'Imported lead normalization', 'Clean a messy lead import and connect attendees to the right companies and campaigns.'],
+            ['test_004', 'Test', 'Industrial demo follow-up', 'Reconcile demo attendance, sponsor signals, and account history into follow-up priorities.'],
+            ['test_005', 'Test', 'Regional account shortlist', 'Build a prioritized prospect list using firmographic clues and recent engagement signals.']
+          ],
+          '002': [
+            ['train_001', 'Train', 'Renewal quote triage', 'Review a customer request and assemble the right quote details from account context.'],
+            ['train_002', 'Train', 'Enterprise upsell response', 'Check contract terms, usage signals, and open opportunities before drafting a response.'],
+            ['train_003', 'Train', 'Procurement email routing', 'Classify buyer questions and attach the right commercial owner and next step.'],
+            ['train_004', 'Train', 'Discount exception review', 'Decide whether a requested discount fits policy, deal stage, and customer history.'],
+            ['train_005', 'Train', 'Account expansion brief', 'Summarize renewal risk, expansion fit, and quote blockers for the account team.'],
+            ['test_001', 'Test', 'Quote revision request', 'Resolve a changed scope request while preserving pricing, approval, and CRM consistency.'],
+            ['test_002', 'Test', 'Buyer objection response', 'Use account records to answer procurement concerns without inventing commercial terms.'],
+            ['test_003', 'Test', 'Contract-change handoff', 'Find the correct owner and required evidence for a contract or quote adjustment.'],
+            ['test_004', 'Test', 'Multi-site account quote', 'Combine subsidiary records, seat counts, and timing into a clean quote recommendation.'],
+            ['test_005', 'Test', 'Escalation-ready account note', 'Prepare a concise response plan for a customer whose quote needs extra approval.']
+          ],
+          '003': [
+            ['train_001', 'Train', 'Priority ticket routing', 'Read a support case and assign severity, owner, and the next customer action.'],
+            ['train_002', 'Train', 'SLA breach investigation', 'Use ticket history to explain whether a service-level deadline was missed.'],
+            ['train_003', 'Train', 'Bug-report consolidation', 'Merge related complaints into a clean support summary without losing customer impact.'],
+            ['train_004', 'Train', 'Escalation evidence pack', 'Collect reproduction steps, account details, and recent support notes for engineering.'],
+            ['train_005', 'Train', 'Resolution quality check', 'Verify whether a proposed response actually addresses the customer issue.'],
+            ['test_001', 'Test', 'Refund-risk support case', 'Identify support history, promised actions, and the right path to preserve the account.'],
+            ['test_002', 'Test', 'Outage communication draft', 'Summarize customer impact and produce a grounded update from service records.'],
+            ['test_003', 'Test', 'Duplicate-ticket cleanup', 'Find duplicate cases and consolidate status, ownership, and customer-facing commitments.'],
+            ['test_004', 'Test', 'Technical escalation triage', 'Decide if a case requires engineering escalation and list the missing diagnostics.'],
+            ['test_005', 'Test', 'Close-ready ticket audit', 'Check whether a ticket can be closed or needs one more customer-confirmed step.']
+          ],
+          '004': [
+            ['train_001', 'Train', 'At-risk account scan', 'Detect churn risk from usage drops, support history, renewal timing, and stakeholder signals.'],
+            ['train_002', 'Train', 'Retention playbook selection', 'Choose a save motion based on contract value, adoption pattern, and open issues.'],
+            ['train_003', 'Train', 'Customer health explanation', 'Turn mixed account signals into a clear health score rationale.'],
+            ['train_004', 'Train', 'Renewal objection map', 'Connect cancellation language to the right product, price, or support concern.'],
+            ['train_005', 'Train', 'Win-back segmenting', 'Identify which former customers are realistic candidates for reactivation.'],
+            ['test_001', 'Test', 'Executive churn brief', 'Summarize why a customer may leave and which actions are most time-sensitive.'],
+            ['test_002', 'Test', 'Usage-cohort comparison', 'Compare similar customers to separate normal seasonality from real disengagement.'],
+            ['test_003', 'Test', 'Retention owner assignment', 'Route each account to the correct success, sales, or support owner.'],
+            ['test_004', 'Test', 'Cancellation pattern review', 'Extract repeated churn drivers from a set of recent customer records.'],
+            ['test_005', 'Test', 'Save-plan prioritization', 'Rank at-risk customers by revenue impact and probability of recovery.']
+          ],
+          '005': [
+            ['train_001', 'Train', 'Expense-policy audit', 'Check employee expenses against category rules, limits, receipts, and approval status.'],
+            ['train_002', 'Train', 'Month-end close cleanup', 'Find close blockers caused by unmatched invoices, late approvals, or miscoded items.'],
+            ['train_003', 'Train', 'Vendor invoice exception', 'Resolve invoice mismatches by comparing purchase, receipt, and payment records.'],
+            ['train_004', 'Train', 'Card-spend reconciliation', 'Match card transactions to employees, projects, and policy-compliant documentation.'],
+            ['train_005', 'Train', 'Accrual review', 'Identify expenses that should be accrued before the reporting period closes.'],
+            ['test_001', 'Test', 'Late expense triage', 'Decide which late claims can be approved and which need finance follow-up.'],
+            ['test_002', 'Test', 'Close variance explanation', 'Explain budget variance using invoices, expense categories, and timing differences.'],
+            ['test_003', 'Test', 'Duplicate payment check', 'Detect duplicate or suspicious payments across similar vendor records.'],
+            ['test_004', 'Test', 'Department spend review', 'Summarize spend exceptions for a department head before close.'],
+            ['test_005', 'Test', 'Approval-chain repair', 'Find missing approvals and route finance items to the correct approver.']
+          ],
+          '006': [
+            ['train_001', 'Train', 'Purchase-order matching', 'Match requested items, POs, receipts, and supplier invoices.'],
+            ['train_002', 'Train', 'Supplier onboarding check', 'Verify required vendor records, tax forms, risk flags, and payment terms.'],
+            ['train_003', 'Train', 'Receiving discrepancy', 'Resolve quantity or item mismatches between warehouse receipt and purchase order.'],
+            ['train_004', 'Train', 'Vendor performance review', 'Compare late deliveries, defect notes, and contract terms for supplier follow-up.'],
+            ['train_005', 'Train', 'Emergency reorder decision', 'Determine whether a rush purchase is justified by demand and stock status.'],
+            ['test_001', 'Test', 'Invoice hold release', 'Decide what evidence is needed before releasing a blocked supplier invoice.'],
+            ['test_002', 'Test', 'Supplier substitution request', 'Evaluate an alternate supplier using price, availability, and compliance context.'],
+            ['test_003', 'Test', 'Partial receipt reconciliation', 'Update receiving status when only part of a purchase order arrives.'],
+            ['test_004', 'Test', 'Procurement exception summary', 'Prepare a clean exception list for finance and operations review.'],
+            ['test_005', 'Test', 'Contract-term validation', 'Check whether a purchasing decision follows negotiated supplier terms.']
+          ],
+          '007': [
+            ['train_001', 'Train', 'Stockout prevention', 'Spot items at risk of stockout and recommend reorder priorities.'],
+            ['train_002', 'Train', 'Order allocation review', 'Allocate limited inventory across customer orders using priority and due dates.'],
+            ['train_003', 'Train', 'Warehouse transfer plan', 'Move stock between locations to cover demand without creating new gaps.'],
+            ['train_004', 'Train', 'Backorder communication', 'Summarize delayed orders and prepare accurate customer-facing status updates.'],
+            ['train_005', 'Train', 'Fulfillment exception audit', 'Identify orders blocked by address, payment, inventory, or shipping issues.'],
+            ['test_001', 'Test', 'Demand spike response', 'Decide how to fulfill urgent demand when inventory is split across sites.'],
+            ['test_002', 'Test', 'Aged inventory cleanup', 'Find slow-moving items and suggest transfer, markdown, or hold actions.'],
+            ['test_003', 'Test', 'Shipment priority queue', 'Rank open shipments by service level, customer importance, and promised date.'],
+            ['test_004', 'Test', 'Inventory count variance', 'Explain count differences using recent receipts, shipments, and adjustments.'],
+            ['test_005', 'Test', 'Order rescue plan', 'Create the next best action for orders that are close to missing fulfillment SLA.']
+          ],
+          '008': [
+            ['train_001', 'Train', 'Tax-sensitive income review', 'Assess income, deductions, and deadlines before recommending planning steps.'],
+            ['train_002', 'Train', 'Estate document checklist', 'Identify missing estate-planning documents and beneficiary conflicts.'],
+            ['train_003', 'Train', 'Retirement cash-flow snapshot', 'Summarize assets, spending, and timeline to guide retirement advice.'],
+            ['train_004', 'Train', 'Capital-gains planning', 'Evaluate realized gains, holding periods, and tax-loss harvesting opportunities.'],
+            ['train_005', 'Train', 'Family advisory brief', 'Turn scattered household records into an adviser-ready planning memo.'],
+            ['test_001', 'Test', 'Year-end tax action list', 'Prioritize tax moves before filing or year-end deadlines.'],
+            ['test_002', 'Test', 'Trust and beneficiary review', 'Spot mismatches between estate wishes, account titling, and beneficiary records.'],
+            ['test_003', 'Test', 'Liquidity-needs analysis', 'Determine whether planned withdrawals can cover spending without disrupting strategy.'],
+            ['test_004', 'Test', 'Charitable giving scenario', 'Compare charitable options using tax impact, timing, and portfolio context.'],
+            ['test_005', 'Test', 'Adviser meeting prep', 'Prepare the key questions and recommendations for a personal finance review.']
+          ],
+          '009': [
+            ['train_001', 'Train', 'Revenue-forecast refresh', 'Update a forecast from actuals, pipeline changes, and seasonality notes.'],
+            ['train_002', 'Train', 'Operating KPI deck', 'Choose the right metrics and explain movement for a management update.'],
+            ['train_003', 'Train', 'Budget variance bridge', 'Explain the difference between plan and actuals across drivers.'],
+            ['train_004', 'Train', 'Scenario model check', 'Evaluate upside and downside assumptions for a business scenario.'],
+            ['train_005', 'Train', 'Monthly report QA', 'Find inconsistent totals, stale assumptions, and narrative gaps in a report.'],
+            ['test_001', 'Test', 'Board metric summary', 'Turn operating data into a concise performance narrative for leadership.'],
+            ['test_002', 'Test', 'Forecast-risk callout', 'Identify which assumptions create the largest risk to the next forecast.'],
+            ['test_003', 'Test', 'Department model reconciliation', 'Align headcount, spend, and revenue assumptions across operating teams.'],
+            ['test_004', 'Test', 'Executive variance note', 'Explain a surprising variance without overclaiming from incomplete data.'],
+            ['test_005', 'Test', 'Report correction plan', 'Prioritize corrections needed before a financial model can be shared.']
+          ],
+          '010': [
+            ['train_001', 'Train', 'Portfolio risk scan', 'Measure concentration, drawdown exposure, and asset-class imbalance.'],
+            ['train_002', 'Train', 'Rebalancing recommendation', 'Suggest trades that bring a portfolio closer to target allocation.'],
+            ['train_003', 'Train', 'Investment memo review', 'Compare thesis, risk, valuation, and time horizon before recommending action.'],
+            ['train_004', 'Train', 'Stress-scenario summary', 'Explain how a portfolio might behave under rate, inflation, or market shocks.'],
+            ['train_005', 'Train', 'Manager due-diligence notes', 'Summarize performance, fees, mandate fit, and red flags for a fund manager.'],
+            ['test_001', 'Test', 'Risk-budget adjustment', 'Decide how to adjust exposure when risk budget or client constraints change.'],
+            ['test_002', 'Test', 'Portfolio drift diagnosis', 'Find which positions caused allocation drift and what to do next.'],
+            ['test_003', 'Test', 'Strategy comparison brief', 'Compare candidate strategies using return drivers and downside controls.'],
+            ['test_004', 'Test', 'Liquidity stress review', 'Check whether portfolio liquidity matches expected withdrawal needs.'],
+            ['test_005', 'Test', 'Committee-ready recommendation', 'Prepare an investment action with supporting risk and rationale.']
+          ],
+          '011': [
+            ['train_001', 'Train', 'Borrower risk summary', 'Review financials, collateral, covenants, and recent performance for credit risk.'],
+            ['train_002', 'Train', 'Loan exception triage', 'Identify missing documents and policy exceptions before committee review.'],
+            ['train_003', 'Train', 'Covenant breach analysis', 'Explain whether a borrower has breached terms and what mitigation is needed.'],
+            ['train_004', 'Train', 'Lending memo preparation', 'Condense borrower strengths, weaknesses, and proposed terms into a committee memo.'],
+            ['train_005', 'Train', 'Portfolio watchlist update', 'Rank credits by deterioration signals and required monitoring actions.'],
+            ['test_001', 'Test', 'Renewal credit review', 'Assess whether a loan renewal fits risk appetite and updated borrower data.'],
+            ['test_002', 'Test', 'Collateral sufficiency check', 'Evaluate collateral coverage under updated values and outstanding exposure.'],
+            ['test_003', 'Test', 'Committee question pack', 'Prepare likely committee questions from weaknesses in the credit file.'],
+            ['test_004', 'Test', 'Risk-rating adjustment', 'Decide whether borrower risk rating should change based on new signals.'],
+            ['test_005', 'Test', 'Approval-condition drafting', 'Write clear conditions needed before credit approval can proceed.']
+          ],
+          '012': [
+            ['train_001', 'Train', 'Onboarding readiness audit', 'Check whether a new hire has the right documents, systems, and manager actions.'],
+            ['train_002', 'Train', 'Leave-policy interpretation', 'Apply company policy to a leave request with timing and eligibility constraints.'],
+            ['train_003', 'Train', 'Compensation-change routing', 'Route a pay or role change through the correct approval and record updates.'],
+            ['train_004', 'Train', 'Employee-relations case summary', 'Summarize a sensitive HR case with facts, dates, and required next steps.'],
+            ['train_005', 'Train', 'Offboarding checklist repair', 'Find missing offboarding actions across IT, payroll, manager, and compliance.'],
+            ['test_001', 'Test', 'Internal transfer review', 'Validate transfer eligibility and identify changes needed in HR systems.'],
+            ['test_002', 'Test', 'Policy exception decision', 'Decide whether an exception request fits documented HR policy and precedent.'],
+            ['test_003', 'Test', 'Performance-cycle cleanup', 'Identify missing reviews, calibration blockers, and manager follow-ups.'],
+            ['test_004', 'Test', 'Benefits enrollment case', 'Resolve benefit eligibility and enrollment timing from employee records.'],
+            ['test_005', 'Test', 'Termination-risk handoff', 'Prepare a compliant handoff for a complex employee exit.']
+          ]
+        };
+        function closeTaskDetails() {
+          document.querySelectorAll('.tg-row.is-open').forEach(function (row) {
+            row.classList.remove('is-open');
+            row.setAttribute('aria-expanded', 'false');
+          });
+          document.querySelectorAll('.tg-detail').forEach(function (detail) { detail.remove(); });
+        }
+        function appendTaskText(parent, text, className) {
+          var node = document.createElement('span');
+          node.className = className;
+          node.textContent = text;
+          parent.appendChild(node);
+        }
+        function openTaskDetails(row) {
+          var groupId = row.getAttribute('data-task-group');
+          var tasks = taskTopics[groupId] || [];
+          var wasOpen = row.classList.contains('is-open');
+          closeTaskDetails();
+          if (wasOpen || !tasks.length) return;
+
+          row.classList.add('is-open');
+          row.setAttribute('aria-expanded', 'true');
+
+          var detail = document.createElement('div');
+          detail.className = 'tg-detail';
+          detail.id = 'task-detail-' + groupId;
+
+          var head = document.createElement('div');
+          head.className = 'tg-detail-head';
+          head.innerHTML = '<strong>' + lang('Task themes', 'Task 主题') + '</strong><span>' + lang('5 train · 5 test', '5 个 train · 5 个 test') + '</span>';
+          detail.appendChild(head);
+
+          var sets = document.createElement('div');
+          sets.className = 'task-sets';
+          [
+            ['Train', lang('train', 'train'), lang('5 examples', '5 个样例')],
+            ['Test', lang('test', 'test'), lang('5 held-out', '5 个 held-out')]
+          ].forEach(function (setInfo) {
+            var set = document.createElement('section');
+            set.className = 'task-set task-set-' + setInfo[0].toLowerCase();
+            var setHead = document.createElement('div');
+            setHead.className = 'task-set-head';
+            setHead.innerHTML = '<strong>' + setInfo[1] + '</strong><span>' + setInfo[2] + '</span>';
+            set.appendChild(setHead);
+
+            var list = document.createElement('div');
+            list.className = 'task-list';
+            tasks.filter(function (task) { return task[1] === setInfo[0]; }).forEach(function (task) {
+              var item = document.createElement('div');
+              var taskNo = String(parseInt(task[0].split('_')[1], 10)).padStart(2, '0');
+              item.className = 'task-item';
+              appendTaskText(item, 'task ' + taskNo, 'task-id');
+              appendTaskText(item, task[2], 'task-title');
+              appendTaskText(item, task[3], 'task-desc');
+              list.appendChild(item);
+            });
+            set.appendChild(list);
+            sets.appendChild(set);
+          });
+          detail.appendChild(sets);
+          row.setAttribute('aria-controls', detail.id);
+          row.insertAdjacentElement('afterend', detail);
+        }
+        document.querySelectorAll('.tg-row[data-task-group]').forEach(function (row) {
+          row.setAttribute('role', 'button');
+          row.setAttribute('tabindex', '0');
+          row.setAttribute('aria-expanded', 'false');
+          row.addEventListener('click', function () { openTaskDetails(row); });
+          row.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              openTaskDetails(row);
+            }
+          });
+        });
+
+        // Reveal bar chart on scroll
+        var chart = document.getElementById('chart');
+        if (chart && 'IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) { if (e.isIntersecting) { chart.classList.add('shown'); io.disconnect(); } });
+          }, { threshold: 0.2 });
+          io.observe(chart);
+        } else if (chart) {
+          chart.classList.add('shown');
+        }
+      })();
+    </script>
   </body>
 </html>

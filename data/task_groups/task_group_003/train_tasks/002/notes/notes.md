@@ -13,6 +13,3 @@ Material map: `/api/cases/<id>` maps cases to customer, line, and device IDs. `/
 Solution and evaluation basis: The correct actions are `RESEAT_SIM`, `SEND_PAYMENT_REQUEST` plus `RESUME_LINE_REBOOT`, `TOGGLE_ROAMING`, `GRANT_MESSAGING_PERMISSION` for storage, and `DISCONNECT_VPN`. There are 8 exact-match scoring points.
 
 Transfer design: As a train task, it exposes the distinction between phone-state fixes, billing recovery, and transfer/carrier routes. It reinforces that mobile-data and MMS issues depend on lower-layer connectivity and device state.
-
-Construction record: Created by Codex on 2026-06-01. Major change: initial task construction for `task_group_003`.
-

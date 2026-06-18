@@ -56,8 +56,3 @@ All scoring is deterministic and exact-match after normalization of list orderin
 This test is anchored by `train_002` and `train_004`. From `train_002`, a solver can infer the effective availability convention, same-warehouse timely PO coverage, purchase requisition costing, overstock/timely-PO exclusions, and transfer-before-purchase workflow. From `train_004`, a solver can transfer inter-warehouse allocation habits and the need to keep warehouse-specific availability separate.
 
 Transfer-dependent scoring points are `SP002`, `SP003`, `SP004`, `SP005`, `SP006`, and `SP007`. Task-specific exploration remains substantial because this task uses different BOMs, two target warehouses, a component that appears in different warehouse contexts, different PO timing, and a larger component set than the replenishment train task.
-
-### Construction Record
-
-Author: task-builder subagent `test_002`. Created: 2026-06-01. Updated: 2026-06-01. Major changes: created a complete test task for service-parts campaign replenishment with BOM demand, two warehouses, PO timing, shortages, transfers, purchase requisitions, exclusions, aggregate purchase cost, and an 8-point exact-match evaluator.
-

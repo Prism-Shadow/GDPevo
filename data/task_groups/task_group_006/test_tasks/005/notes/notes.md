@@ -26,6 +26,3 @@ Scoring points use seven exact-match checks with train-design weights:
 - `SP7_actions_and_summary`, weight 2.
 
 Transfer design: train task `train_001` anchors nomination readiness, conditional evidence, supplier-risk context, and as-of evidence handling. Train task `train_003` anchors NOVA invoice and payment-control reconciliation, including `AP-HEXEL-3309` as releasable evidence. Train task `train_004` anchors post-nomination change-control calculations: contract usage from non-cancelled POs, budget exposure with tax, approval-state checks, and structured hold/release decisions. The test changes the entity set to NOVA, uses an indexed price-delta amendment rather than a fixed-price quantity amendment, and adds an unmatched price-variance invoice that must be controlled without blocking the commercial amendment.
-
-Construction record: created by Codex for `task_group_006/test_tasks/005` on 2026-06-01. The task-specific `scratch/task_group_design.md` was not present in `6.1/006/task_factory/scratch`; construction used the workspace builder context, available guides, train anchors, and shared environment records. Solver-visible files are English-only and do not include scoring weights, hidden derivation, or SOP steps.
-

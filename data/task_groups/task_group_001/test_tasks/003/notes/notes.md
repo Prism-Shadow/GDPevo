@@ -1,5 +1,4 @@
-# test_003 Hidden Notes
-
+# test_003 Notes
 ## English
 
 This task belongs to source scenario `SCN_001_crm_marketing_lead_capture`, using source examples `E001`, `E002`, and especially `E003` for CRM contact-import hygiene. It implements the task-group design brief for `test_003`: prepare the HarborCRM raw import batch `q1_partner_import` for CRM import while respecting existing CRM records and suppression. The shared environment data is in `task_group/task_group_001/env/data/harborcrm_data.json`; public solver access is through the HarborCRM API endpoints for import batches, raw contacts, suppression, CRM accounts, CRM contacts, and policies. The only task-local solver payload is `input/payloads/answer_template.json`.
@@ -31,6 +30,3 @@ The evaluator has six scoring points, matching the design:
 Likely pitfalls include choosing the higher-priority but older `q1_001` over `q1_002`, mixing the winning Hana row's email with the losing row's phone, keeping the suppressed Lia Foster row because it does not match the existing TerraLens opt-out contact exactly, dropping phone-only `q1_004`, treating LakeHealth Robotics as a new account despite existing CRM account `acct_lakehealth`, and counting duplicate removals as suppressions rather than `no_import`.
 
 Transfer anchors: SP001 through SP004 are anchored by `train_003` and `train_004`. The relevant transferable knowledge is to normalize before matching, dedupe by normalized email before phone-company keys, prefer the most recent source record with source priority as the tie-breaker, preserve contacts with either email or phone, and remove suppressed or opted-out contacts before final import. SP005 and SP006 also benefit from `train_003` because that task establishes the import action counting convention, but they require task-local exploration of q1-specific existing accounts and the new source label. This test keeps the same contact-hygiene operation family while changing the batch, duplicate conflicts, existing-contact overlap, and suppression pattern.
-
-Construction record: created by Codex task-builder for `test_003` on 2026-06-01. Initial version created `prompt.txt`, `answer_template.json`, `answer.json`, `eval.sh`, `evaluator.py`, and these notes.
-

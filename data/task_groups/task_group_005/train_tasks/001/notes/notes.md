@@ -2,7 +2,7 @@
 
 ## English
 
-This task belongs to `task_group_005`, a shared finance-operations environment for Northwind-style ERP work. The assigned brief is `train_001, Expense-to-AP control`: the solver receives a small reimbursement batch and must use the public API base URL, not hidden environment files, to classify claims for close readiness. The required claims are `CLM-2025-OPS-017`, `CLM-2025-FIN-042`, `CLM-2025-0090`, `CLM-2025-0080`, `CLM-2025-0038`, and `CLM-2025-0037`.
+This task belongs to `task_group_005`, a shared finance-operations environment for Northwind-style ERP work. The assigned brief is `train_001, Expense-to-AP control`: the solver receives a small reimbursement batch and must use the public API base URL, not environment files, to classify claims for close readiness. The required claims are `CLM-2025-OPS-017`, `CLM-2025-FIN-042`, `CLM-2025-0090`, `CLM-2025-0080`, `CLM-2025-0038`, and `CLM-2025-0037`.
 
 Visible inputs are `input/prompt.txt` and `input/payloads/answer_template.json`. The useful public API surfaces are `/api/claims/{claim_id}`, `/api/ap/bills`, and `/api/ap/payments` on `http://127.0.0.1:8005`. The task intentionally includes distractor AP records: `CLM-2025-FIN-042` has one valid paid AP bill and one unrelated scheduled AP bill; several other claims have AP bills whose amount, vendor, status, or existence does not support reimbursement release.
 
@@ -13,6 +13,3 @@ The evaluator has eight exact-match scoring points with raw weights totaling 16:
 Likely model pitfalls include trusting claim `status` alone, counting every AP bill linked by `claim_id`, treating processing payments as cleared, accepting scheduled bills with mismatched amount/vendor, or excluding partial-support claims even when a matching paid bill and cleared payment already settle the claim. These pitfalls are deliberate because the broader task group expects agents to learn that effective close status must be reconstructed from multiple ERP objects rather than copied from one field.
 
 Transfer design: as a train task, this is a real calibration sample rather than a tutorial. By attempting it and comparing against the answer, a solver can infer reusable habits for later tasks: use the public API endpoints, join objects by stable IDs, verify amount/vendor/status before treating AP records as valid, distinguish paid from payable from blocked, treat mismatched AP links as cleanup cases, and compute close-level totals only from valid open items. These habits should transfer to later expense/AP, prepaid, compliance, and close-readiness tasks without exposing a full SOP in the solver-visible prompt.
-
-Construction record: created by the task-builder subagent for `train_001` on 2026-06-01. The final files were written only under `task_group/task_group_005/train_tasks/001/`. The task aligns to `scratch/task_group_design.md` and the shared API blueprint in `scratch/env_blueprint.md`; generated environment JSON was inspected only to determine the hidden standard answer.
-

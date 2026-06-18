@@ -13,6 +13,3 @@ Solution basis: Summit has seven adversely rated loans totaling 7,675,179.41. CD
 Scoring basis: Seven exact-match points are used: SP001 adverse count/balance weight 2; SP002 risk classes weight 3; SP003 stressed DSCR breach set and DSCR values weight 3; SP004 largest problem exposure/action weight 2; SP005 projected-loss classification weight 2; SP006 severe bucket counts weight 2; SP007 monitoring cadence weight 1. Common pitfalls are using all Summit loans instead of adverse-rated loans, treating DSCR-missing loans as stress breaches, forgetting the underwater projected-loss override, or mis-sorting the severe bucket counts.
 
 Transfer design: As a train task, this teaches by answer comparison how the shared policy fields, CDFI factor-score bins, watch-list stress formula, action enums, and payment-status/risk-rating cross-tabs are expected to be operationalized. It anchors later Central-branch watch-list stress work without exposing those test answers.
-
-Construction record: Author `train_004_builder`; created and updated 2026-06-03. Major changes: created minimum complete prompt, template, standard answer, evaluator, and notes.
-

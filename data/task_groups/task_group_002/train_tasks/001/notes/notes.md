@@ -19,4 +19,3 @@ This task is the recurring NGO quote revision for wound-care stabilization kits.
 - Freight reconfirmation required: true
 
 The evaluator has 8 scoring points with total weight 14: quantity and tier price, lead time and EXW total, air cost and grand total, sea cost and grand total, road risk flag, recommendation, freight validity and reconfirmation, and account policy terms.
-

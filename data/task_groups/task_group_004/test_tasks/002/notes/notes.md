@@ -4,7 +4,7 @@
 
 ### Data lineage
 - Source service: ApexCloud Retention Operations API on port 8074.
-- Source files used for construction: `accounts.json`, `account_metrics.json`, `support_tickets.json`, and `nps_responses.json`.
+- Source files: `accounts.json`, `account_metrics.json`, `support_tickets.json`, and `nps_responses.json`.
 - Account scope: `acct_lumen_rail`, legal name `Lumen Rail Systems Ltd.`.
 - Period scope: 2026-Q3, months `2026-07`, `2026-08`, `2026-09`, date range `2026-07-01` through `2026-09-30`.
 
@@ -35,9 +35,3 @@
 ### Transfer design
 - The task transfers the same QBR monthly rollup and metric source conventions as `train_002`.
 - The client agenda transfers the risk-aware selection pattern from `train_005` while using this test task's own agenda and risk theme enums.
-
-### Construction record
-- Built inside `test_tasks/002/` only.
-- No environment source data was copied into solver-visible payloads.
-- `eval/eval.sh` evaluates the bundled answer by default and supports a caller-provided prediction JSON path.
-

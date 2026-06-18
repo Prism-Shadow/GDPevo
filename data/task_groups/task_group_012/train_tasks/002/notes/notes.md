@@ -20,6 +20,3 @@ Transferable SOP and field conventions: This task teaches that final approval do
 Likely pitfalls: Treating the final approval as enough to close; overlooking the missing required file; writing prose for `approval_closeout_gate`; confusing `next_action` with `escalation_action`; omitting `supporting_audit_event_ids`; or using a broad audit scope instead of `document_notice_findings_only`.
 
 Evaluator/scoring basis: `eval/rubric.json` scores six exact-match checks: case/approval, folder readiness, notice quality, approval gate/blockers, source order/audit, and remediation. The audit check includes `audit_event_id`, `supporting_audit_event_ids`, `excluded_audit_event_ids`, and `audit_scope`.
-
-Construction/rework note: This notes file was expanded after the notes review to reflect the current reworked answer and rubric, especially the added audit-scope fields and normalized remediation labels.
-

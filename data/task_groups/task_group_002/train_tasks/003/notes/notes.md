@@ -1,10 +1,7 @@
-# train_003 Hidden Notes
-
+# train_003 Notes
 ## English
 
 ### Data lineage and task definition
-
-This task belongs to `task_group_002`, scenario `SCN_002_crm_b2b_quote_account_response`, and is anchored most directly in source example `E003` plus the milestone engagement response family described in `task_factory/scratch/task_group_design.md`. It uses the shared MedBridge Sales Ops API described in `task_factory/scratch/env_blueprint.md`; no task-local business data payload is provided other than `input/payloads/answer_template.json`.
 
 The solver-visible prompt asks for an account-ready reconciliation for Helios Health Alliance using opportunity `OPP-TR-HELIOS`, customer `CUST-HELIOS`, and contact Mara Okafor. The expected work is to pull CRM opportunity/customer/contact records, invoice and payment records, revenue journal records, event records, and voucher records from the shared API, then return the structured JSON required by the template.
 
@@ -27,8 +24,3 @@ Likely pitfalls include treating the won opportunity as complete and missing the
 ### Transfer design
 
 As a train task, this should teach reusable conventions for the milestone engagement family: opportunity value should match the sum of milestone invoice totals; collection work follows unpaid or due milestones, not paid milestones; revenue recognition is separate from payment receipt and applies to completed paid milestones; customer engagement events and vouchers must feed CRM invitation tasks; and account follow-ups need stable linkage to customer, opportunity, and contact. These conventions transfer to later milestone reconciliation test tasks without making them simple copies, because those tasks vary phase counts, overdue states, missing journals, and event/voucher conditions.
-
-### Construction record
-
-Author: Codex main agent. Created: 2026-06-01. Updated: 2026-06-01. Major changes: created the train_003 prompt, answer template, canonical answer, notes, and exact-match evaluator within the assigned write scope.
-

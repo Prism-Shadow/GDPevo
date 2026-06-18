@@ -13,6 +13,3 @@ Material map: `escalation_board_request.json` lists candidate records. `/api/tic
 Solution and evaluation basis: The highest-risk records combine current critical enterprise credit exposure and unresolved service escalations according to the visible score policy. The evaluator has 6 exact-match points over ranking, the visible score policy, credit review, owner notifications, summaries, and candidate/environment audits.
 
 Transfer design: This test requires transfer across families. Service status and team mapping come from `train_001`/`train_004`; enterprise SLA-credit and owner conventions come from `train_003`. The ranking output is new, so task-specific aggregation is still required.
-
-Construction record: Created by Codex on 2026-06-01. Major change: initial test task construction for `task_group_003`.
-

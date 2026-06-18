@@ -3,7 +3,7 @@ scenario_id: SCN_011_bank_branch_credit_risk_lending_committee
 model: gpt-5.5, xhigh
 harness: codex
 conditions:
-  no_skill:
+  base:
     overall_avg_at_3: 0.4568
     efficiency:
       cached_input_tokens_avg_3: 811033.6
@@ -61,7 +61,7 @@ conditions:
         input_tokens_avg_3: 897570.667
         output_tokens_avg_3: 23549.667
         seconds_avg_3: 688.011
-  demonstration_skill:
+  demo:
     skill_dirs:
       attempt_01: skills/task_group_011/demonstration_skill/demonstration_skill_attempt_01
       attempt_02: skills/task_group_011/demonstration_skill/demonstration_skill_attempt_02
@@ -123,7 +123,7 @@ conditions:
         input_tokens_avg_3: 499343.333
         output_tokens_avg_3: 17986.333
         seconds_avg_3: 521.359
-  reflection_skill:
+  reflect:
     skill_dirs:
       attempt_01: skills/task_group_011/reflection_skill/reflection_skill_attempt_01
       attempt_02: skills/task_group_011/reflection_skill/reflection_skill_attempt_02

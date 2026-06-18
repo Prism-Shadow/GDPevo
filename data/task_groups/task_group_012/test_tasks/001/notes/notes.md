@@ -13,6 +13,3 @@ Solution and evaluation basis: The gold answer identifies `EMP-255`, sets `clear
 Transfer design: This is a test task. Transfer should come from train tasks that teach authoritative submitted/approved record selection, exclusion of draft or stale lifecycle data, and compliance hold decisions when required documents or notice controls are defective. High-value scoring depends on transferring that SOP to a larger evidence set rather than merely copying fields from one page.
 
 Likely pitfalls: A model may approve the clearance because leave and payroll are valid, choose a draft payroll or obsolete leave record, ignore the missing folder file, treat the notice message as adequate despite no acknowledgement deadline, or cite a non-controlling audit event.
-
-Construction record: Author: Codex task-builder. Created: 2026-06-05. Updated: 2026-06-05. Major changes: created the complete `test_tasks/001` prompt, schema, gold answer, notes, rubric, and evaluator.
-

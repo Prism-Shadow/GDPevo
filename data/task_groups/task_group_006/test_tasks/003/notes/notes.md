@@ -13,6 +13,3 @@ Nomination gate basis: the memo's signoff tracker shows ER, Finance, and Quality
 Train anchors: `train_tasks/001` anchors the nomination-readiness structure, as-of supplier risk handling, shortlist/hold style decisions, and budget-headroom convention. `train_tasks/002` anchors supplier risk and blocker-code reconciliation against operational records. `train_tasks/003` anchors use of invoice, receipt, and payment evidence to support release-style business decisions.
 
 Evaluation: seven exact-match scoring points use raw weights `1, 2, 2, 2, 2, 2, 1`. Lists are normalized as sets, candidate rows are matched by `supplier_id`, and USD fields are rounded to cents. The scoring points cover scope and requirement; program budget and shortlist sets; candidate API status and risk; sourcing decisions and blockers; selected supplier commercial support; nomination gate signoffs and decision; and recommended actions/source records.
-
-Construction record: the requested `scratch/task_group_design.md` was not present under this task factory's scratch directory at build time. The available workspace-level `scratch/task_builder_context.md`, the seed E003 sourcing-rubric anchors, existing train tasks, and the shared environment data were used. Files were created only under `task_group/task_group_006/test_tasks/003/`.
-

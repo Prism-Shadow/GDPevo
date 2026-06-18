@@ -1,4 +1,4 @@
-# Hidden Notes: train_001
+# Notes: train_001
 
 ## English
 
@@ -22,4 +22,3 @@ Expected resolution:
 - Lead follow-up due date is event end date 2026-09-16 plus 7 days = 2026-09-23, with 2 lead tasks.
 - Sponsor finance follow-up due date is event end date plus 3 days = 2026-09-19, with BluePeak Systems and Copperline Robotics as finance follow-up accounts.
 - CRM action counts: create 1 account, update 1 account, create 2 contacts, update 0 contacts, create 2 campaign members, update 0 campaign members.
-

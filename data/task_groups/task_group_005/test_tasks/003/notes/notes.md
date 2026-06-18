@@ -1,10 +1,8 @@
-# Hidden Notes: test_003
+# Notes: test_003
 
 ## English
 
-This task belongs to `task_group_005` for `SCN_005_erp_finance_expense_control`, using source examples `E001`, `E002`, and especially `E003` for prepaid amortization and GL close reconciliation. The task-builder brief is the April prepaid reconciliation test task: a controller-facing close review over shared ERP finance records, scoped by a small local invoice list but solved through the runner-provided shared API.
-
-Solver-visible inputs are `input/prompt.txt`, `input/payloads/prepaid_april_scope.json`, and `input/payloads/answer_template.json`. The scope payload gives only the entity, period, accounts, and ten target invoice IDs. It does not provide the amortization schedule, GL balances, exception flags, priority rules, scoring weights, or answer values. The shared environment records used for construction are prepaid invoices and GL balances exposed through the finance API; the hidden standard answer is stored in `output/answer.json`.
+Solver-visible inputs are `input/prompt.txt`, `input/payloads/prepaid_april_scope.json`, and `input/payloads/answer_template.json`. The scope payload gives only the entity, period, accounts, and ten target invoice IDs. It does not provide the amortization schedule, GL balances, exception flags, priority rules, scoring weights, or answer values. The shared environment records used for the reference answer are prepaid invoices and GL balances exposed through the finance API; the reference answer is stored in `output/answer.json`.
 
 The business task is to reconcile Aurisic US April 2025 prepaid activity for accounts `1250` and `1251`. The selected invoices are `PPD-2025-0025` through `PPD-2025-0034`. The expected output includes the selected invoice population, account rollups, invoice-level prepaid results, default or missing-term invoice IDs, all exception invoice IDs, the controller priority list, and final close status. Account `1250` is Prepaid Expenses and account `1251` is Prepaid Insurance.
 
@@ -19,6 +17,3 @@ The evaluator has nine exact-match scoring points with raw weights `1,1,1,1,2,2,
 Transfer design: `train_003` anchors the reusable prepaid close method, especially using current API records, separating scoped schedules from full ledger balances, carrying cumulative amortization through the close month, using `schedule - GL` variance sign, mapping data-quality flags to exception sets, and treating missing contract dates as default/missing-term flags. This test changes the period, invoice population, account mix, exception combination, and priority ranking so it is not a clone. High-value scoring points that depend on transfer are the variance decision, invoice results, flag/default interpretation, priority list, and close-status judgment. Task-specific difficulty comes from querying the new April records and computing all ten invoice outcomes.
 
 Likely model pitfalls include using all prepaid invoices instead of the scoped IDs, reversing the variance sign, treating April as a daily prorated month rather than using the source monthly amount, assuming the scoped schedule must equal the full GL balance, including duplicate-only flags in the priority list, or omitting flagged invoices from amortization totals.
-
-Construction record: rebuilt by the clean-context task-builder owner for `task_group_005` test task `003` on 2026-06-02. Major changes were replacing mojibake Chinese notes, expanding the answer template to match the prepaid close distribution, aligning variance sign with the train anchor, adding invoice-level answer detail, and rebuilding the deterministic evaluator.
-

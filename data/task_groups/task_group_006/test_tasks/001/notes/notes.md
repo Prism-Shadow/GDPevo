@@ -11,6 +11,3 @@ Solution basis: `RCV-GOLD-27` belongs to `PO-NOVA-3107`, `PRG-NOVA-31`, and `SUP
 Evaluation uses eight exact-match scoring points with weights `[3, 3, 2, 2, 3, 2, 2, 1]`: target IDs/date; receipt controls; quantity/price reconciliation; invoice decisions; financial and payment totals; invoice receipt scope; source precedence plus supplier risk; follow-up actions. Lists are normalized as sets and currency is rounded to cents.
 
 Transfer anchors: `train_002` anchors posted receipt to PO/AP reconciliation and separating receipt acceptance from AP release; `train_003` anchors invoice-to-receipt matching and scheduled payment treatment; `train_005` anchors same-PO receipt exclusion and source-precedence behavior. The test changes the target receipt, program, supplier risk as-of date, and duplicate invoice pattern.
-
-Construction record: created by task-builder subagent for `task_group_006/test_tasks/001` on 2026-06-01. Files were created only for this task folder.
-

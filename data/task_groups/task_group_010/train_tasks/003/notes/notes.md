@@ -23,8 +23,3 @@ The evaluator has eight exact-match scoring points with raw weights: lineage fie
 ### Transfer Design
 
 As a train task, `train_003` lets solvers infer recurring allocation-view conventions for later allocation tasks: current macro signals override stale or prior positioning, prior-quarter rows establish lineage and change direction, signal magnitude controls conviction, rationale codes remain controlled enums, and cross-asset rows should be keyed by exact opportunity-set names. It is a real task rather than a worked example; the solver-visible prompt does not reveal the mapping procedure or scoring rubric, and the transfer is intended to emerge from attempting the task and comparing against this answer.
-
-### Construction Record
-
-Author: task-builder 3. Created: 2026-06-03. Updated: 2026-06-03. Major changes: created the full `train_tasks/003` task package, including visible inputs, notes, standard answer, and exact-match evaluator.
-

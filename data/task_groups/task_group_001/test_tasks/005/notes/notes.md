@@ -1,10 +1,9 @@
-# test_005 Hidden Notes
-
+# test_005 Notes
 ## English
 
 This task belongs to `task_group_001`, source scenario `SCN_001_crm_marketing_lead_capture`, with design lineage from source examples `E001`, `E002`, and `E003`. The concrete test brief is the prospecting-plus-event-import task from the group design: convert `BlueTech Demo Day 2027` (`show_id` `bluetech_demo_2027`) exhibitor and meeting-interest data into a CRM-ready target account plan.
 
-The visible inputs are `input/prompt.txt`, `input/payloads/answer_template.json`, and the shared HarborCRM API under `task_group_001/env/`. The relevant generated data is in `env/data/harborcrm_data.json` and is publicly reachable through `/api/tradeshows`, `/api/tradeshows/bluetech_demo_2027/exhibitors`, `/api/tradeshows/bluetech_demo_2027/meeting_interest`, `/api/crm/accounts`, `/api/crm/contacts`, and `/api/policies`. No task-local answer endpoint or hidden answer payload is exposed to solvers.
+The visible inputs are `input/prompt.txt`, `input/payloads/answer_template.json`, and the shared HarborCRM API under `task_group_001/env/`. The relevant generated data is in `env/data/harborcrm_data.json` and is publicly reachable through `/api/tradeshows`, `/api/tradeshows/bluetech_demo_2027/exhibitors`, `/api/tradeshows/bluetech_demo_2027/meeting_interest`, `/api/crm/accounts`, `/api/crm/contacts`, and `/api/policies`. No task-local answer endpoint or reference answer payload is exposed to solvers.
 
 The business task is to prepare a structured target-account plan for field sales after a marine technology demo day. The output must identify qualified platform makers, rank them by meeting-interest signals, assign controlled platform and product-fit enums, decide CRM import action, retain non-qualified exhibitors in an exclusion list, and summarize meeting, overlap, action, platform, and pipeline totals.
 
@@ -19,6 +18,3 @@ Exclusion basis: `PortSide Marine Sales` is a distributor/dealer and remains exc
 Evaluation basis: six scoring points are used. SP001 weight 3 checks the ranked target-account order and key row facts. SP002 weight 3 checks platform coverage, product-fit enums, and platform/product-fit aggregate counts. SP003 weight 2 checks CRM action and account ID per target account, plus create count. SP004 weight 2 checks the excluded reseller and sensor-only accounts, reasons, meeting fields, and no-import action. SP005 weight 3 checks total pipeline, meeting-interest counts, priority tiers, and per-account estimates using the transferable robotics prospecting tier convention from `train_005` (`A` = 120000 USD, `B` = 90000 USD, `C` = 50000 USD). SP006 weight 1 checks existing CRM overlap account IDs, overlap count, and update count. All scoring is exact-match after structural normalization; no free-text explanation is scored.
 
 Transfer design: this test is anchored by `train_002` and `train_005`. From those tasks, a solver should transfer the distinction between manufacturers/OEMs and resellers/service/sensor-only firms, the controlled platform labels `AUV`, `ROV`, and `Underwater Camera`, the habit of keeping excluded near-misses visible with controlled reasons, and the CRM action convention that existing accounts are updates while absent accounts are creates. The task-specific exploration is the BlueTech-specific meeting-interest ordering, product-fit mapping, absence of CRM overlap, and pipeline total. The high-value transfer-dependent goals are SP001 through SP004; SP005 and SP006 require local data exploration and arithmetic.
-
-Construction record: authored by Codex task-builder for `test_005` on 2026-06-01. Created the prompt, answer template, hidden notes, standard answer, evaluator helper, and eval entry point. The shared environment data was not modified.
-

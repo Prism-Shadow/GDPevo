@@ -19,6 +19,3 @@ Transferable SOP and field conventions: This train task teaches that current app
 Likely pitfalls: Using the draft leave or payroll record because it appears newer; omitting excluded IDs; returning a free-text closeout explanation instead of normalized labels; or approving closeout without verifying both leave and payroll sources.
 
 Evaluator/scoring basis: `eval/rubric.json` has eight exact-match scoring points covering identity, leave policy, leave source and days, assignment ID, excluded leave records, submitted payroll assignment, payroll salary/status, excluded payroll record, closeout action, approval gate, and final control result. Lists are compared as normalized sets by the shared evaluator helper.
-
-Construction/rework note: This notes file was synchronized after the transfer-matrix rework so it now covers all current `output/answer.json` and rubric fields, including `leave_precedence_source`, `payroll_source_status`, `approval_closeout_gate`, and `final_control_result`.
-

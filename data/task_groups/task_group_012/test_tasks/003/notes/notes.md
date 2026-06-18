@@ -11,6 +11,3 @@ Solution and evaluation basis: Gold identifies `CAND-OPS-1902` as selected, `CAN
 Transfer design: This task deliberately combines 2-3 train anchors. `train_003` transfers candidate outcome reconstruction, accepted-offer use, recruitment cost summing, and notice follow-up conventions. `train_005` transfers submitted-versus-draft payroll assignment handling. `train_002` transfers formal notice defect review and use of audit evidence. The test-specific work is finding the new opening's evidence and applying those conventions across more modules.
 
 Likely pitfalls: Copying the recruitment summary without opening the review panels; treating the waitlisted candidate as offer-eligible; accepting a draft payroll precheck; omitting one rejected candidate; taking notice quality from status alone without inspecting the message; or citing the case instead of the audit event.
-
-Construction record: Author: Codex task-builder. Created: 2026-06-05. Updated: 2026-06-05 after rework to remove prompt leakage and make the recruitment task Web-first.
-

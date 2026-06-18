@@ -12,7 +12,4 @@ Scoring points: the evaluator has ten exact-match scoring points with raw weight
 
 Train anchors: `train_002` anchors receipt, PO, AP invoice, and supplier-risk joins plus the distinction between receipt acceptance and AP release. `train_003` anchors AP close conventions, controlled hold codes, and invoice-to-receipt matching. `train_005` anchors invoice-linked receipt selection, same-PO receipt exclusion, net release versus hold decisions, and precedence of authoritative system/register data over request notes. This test changes the shape into a regional dashboard correction with a stale export and as-of filtering.
 
-Construction record: created by the `test_004` task-builder subagent on 2026-06-01. Only files under `task_group/task_group_006/test_tasks/004/` were created or edited. The task-specific `scratch/task_group_design.md` file was not present in this workspace, so the task follows the available shared builder context, the explicit user brief, and the existing train-task transfer anchors.
-
 Final calibration note: the last scoring point separately checks completeness of the chargeback, payment, and no-receipt transfer policies. It is supported by train-task AP release, chargeback, and source-precedence rules.
-

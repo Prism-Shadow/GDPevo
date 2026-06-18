@@ -1,15 +1,12 @@
-# Agent Learn Bench Site
+# GDPevo Site
 
-This directory contains the static GitHub Pages site for Agent Learn Bench.
+This directory contains the static GitHub Pages scaffold for GDPevo.
 
 The site is intentionally dependency-free: GitHub Pages publishes the files in
-this directory directly. The current pages are placeholders for the public
-landing page and blog.
+this directory directly.
 
 ## Contents
 
 | Path | Purpose |
 | --- | --- |
-| `index.html` | Public landing page placeholder. |
-| `blog/` | Reserved placeholder for future writing. |
 | `styles.css` | Shared site styling. |
