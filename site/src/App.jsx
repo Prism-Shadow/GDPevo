@@ -296,7 +296,7 @@ function BlogBenchmarkFigure() {
             <Lang en="Agent performance — all harnesses" zh="三套 harness 的 agent 表现" />
           </strong>
           <span>
-            <Lang en="12 task groups · avg@3 · three evaluation modes" zh="12 个 task group · avg@3 · 三种评估模式" />
+            <Lang en="All metrics are avg@3, then averaged over 12 task groups" zh="所有指标均为 avg@3，再跨 12 个 task group 取均值" />
           </span>
         </div>
         <span className="blog-benchmark-legend" aria-label="Chart legend">
@@ -310,9 +310,10 @@ function BlogBenchmarkFigure() {
       </figcaption>
       <div className="blog-benchmark-cols">
         <span>Harness</span>
+        <span>Model</span>
         <span>Mode</span>
         <span>avg@3</span>
-        <span>Tokens (k)</span>
+        <span>Tokens</span>
         <span>USD</span>
       </div>
       <div className="blog-benchmark-rows">
@@ -322,7 +323,9 @@ function BlogBenchmarkFigure() {
             <div className="blog-benchmark-group" key={card.title}>
               <div className="blog-benchmark-name">
                 <strong>{harness}</strong>
-                <span>{model}</span>
+              </div>
+              <div className="blog-benchmark-model">
+                <strong>{model}</strong>
                 <small>{card.thinking}</small>
               </div>
               <div className="blog-benchmark-bars">
@@ -335,8 +338,8 @@ function BlogBenchmarkFigure() {
                       </div>
                       <b>{row.avg}</b>
                     </div>
-                    <span className="blog-benchmark-token">{row.tokens}</span>
-                    <span className="blog-benchmark-usd">{row.usd}</span>
+                    <span className="blog-benchmark-token">{row.tokens}k</span>
+                    <span className="blog-benchmark-usd">${row.usd}</span>
                   </div>
                 ))}
               </div>
