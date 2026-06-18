@@ -590,7 +590,8 @@ export default function App() {
   useEffect(() => {
     if (!window.location.hash) return;
     requestAnimationFrame(() => {
-      document.querySelector(window.location.hash)?.scrollIntoView();
+      const id = window.location.hash.slice(1);
+      document.getElementById(id)?.scrollIntoView();
     });
   }, []);
 
