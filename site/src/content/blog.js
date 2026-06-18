@@ -26,11 +26,11 @@ export const blogIntro = {
     {
       key: "evaluation",
       en: "We follow three principles in evaluation. First, we use a **rule-based** grading strategy rather than model-based evaluation (LLM-as-a-judge). The final score is composed of multiple distinct rubrics, ensuring that every score is **reproducible** while also making it possible to identify the specific cause of each result. Second, we treat both **accuracy** and **cost** as first-class citizens. A good self-evolution strategy should not only become more accurate over time, but also become more cost-efficient. Third, we do not design a separate evaluation framework; instead, we use an **end-to-end** natural-language-driven evaluation process. You describe the experiment to run and the chart you want in one sentence, and Claude Code/Codex can generate the evaluation results and charts on the spot, with no manual code adaptation or writing required.",
-      zh: "我们在评估过程中遵循三个原则。第一，采用**基于规则**的打分策略，而非使用基于模型的评估（LLM-as-a-judge）。最终分数由多个不同的打分点（rubrics）组成，保证每个分数都是**可复现**的，同时还能定位到具体的原因。第二，我们将**准确率**和**成本**都看作一等公民。一个好的自进化策略不仅要越来越准确，还要越来越省成本。第三，我们不设计评估框架，而是采用**端到端**自然语言驱动的评估流程。你用一句话描述要跑的实验和想要的图表，Claude code/Codex 就能当场生成评估结果和图表，全程无需人工进行任何代码适配和编写。"
+      zh: "我们在评估过程中遵循三个原则。第一，采用**基于规则**的打分策略，而非使用基于模型的评估（LLM-as-a-judge）。最终分数由多个不同的打分点（rubrics）组成，保证每个分数都是**可复现**的，同时还能定位到具体的原因。第二，我们将**准确率**和**成本**都看作一等公民。一个好的自进化策略不仅要越来越准确，还要越来越省成本。第三，我们不设计评估框架，而是采用**端到端**自然语言驱动的评估流程。你用一句话描述要跑的实验和想要的图表，Claude Code/Codex 就能当场生成评估结果和图表，全程无需人工进行任何代码适配和编写。"
     },
     {
       key: "findings",
-      en: "We tested the self-evolution capability of three different Agents. Test-set accuracy generally improved by **17-22%**, and two of the Agents also showed significant reductions in token consumption. These results suggest that current Agents already have a degree of self-evolution capability: they can effectively learn from past experience and transfer that knowledge to new tasks. This finding is similar in spirit to conclusions from several existing works ([[1]](https://trinkle23897.github.io/learning-beyond-gradients/) [[2]](https://www.recursive.com/articles/first-steps-toward-automated-ai-research)).",
+      en: "We tested the self-evolution capability of three different Agents. Test-set accuracy generally improve by **17-22%**, and two of the Agents also showed significant reductions in token consumption. These results suggest that current Agents already have a degree of self-evolution capability: they can effectively learn from past experience and transfer that knowledge to new tasks. This finding is similar in spirit to conclusions from several existing works ([[1]](https://trinkle23897.github.io/learning-beyond-gradients/) [[2]](https://www.recursive.com/articles/first-steps-toward-automated-ai-research)).",
       zh: "我们测试了三个不同 Agent 的自进化能力，测试集准确率普遍都提升了 **17-22%**，其中两个 Agent 的 Token 消耗也有显著减少。这个结果意味着当前的 Agent 已经具备一定的自进化能力，能有效从过往经验中学习并迁移知识到新的任务上，这个发现和一些已有工作（[[1]](https://trinkle23897.github.io/learning-beyond-gradients/) [[2]](https://www.recursive.com/articles/first-steps-toward-automated-ai-research)）的结论有着相似点。"
     }
   ]
@@ -78,91 +78,91 @@ export const blogUsage = {
     zh: "评估方法"
   },
   lead: {
-    en: "Two things we want from an evaluation harness: it should grade in a way you can audit; and it should treat *cost* as a first-class citizen alongside accuracy. Each one motivated a specific design.",
-    zh: "我们对评估 harness 有两个要求：评分必须可被人审计；*cost* 要和 accuracy 同等重要。下面两块就是为了满足这两个要求。"
+    en: "We follow two rules when evaluating: scores must be reproducible; **cost** and **accuracy** are equally important.",
+    zh: "我们在评估时有两项守则：分数必须可复现；**成本**和**准确率**同等重要。"
   },
   gradingHeading: {
-    en: "Rule-based grading, not \"ask another LLM\".",
-    zh: "基于规则的评分，而不是\"再叫一个 LLM 来判\"。"
+    en: "Rule-based grading, not LLM-as-a-Judge",
+    zh: "采用基于规则的评分，而非 LLM-as-a-Judge"
   },
   grading: {
-    en: "GDPevo grades with deterministic, rule-based checkers. For example, was the right set of records returned, did the amount round to the right precision. Two things follow. First, the score is **reproducible**: the same answer always gets the same grade, regardless of who runs it or when. Second, every failure is **traceable**: instead of a vague verdict, you see exactly which rule was violated and by how much. That trace is what makes the benchmark useful for diagnosis: you can read it back to find weak spots in your agent and feed those weak spots into the next round of memory or procedure updates.",
-    zh: "GDPevo 用确定性的 rule-based checker 打分，比如返回的记录集对不对、金额是否遵守了要求的精度。这带来两个好处。第一，评分是**可复现**的：同一份答案，谁跑、什么时候跑，得到的分都一样。第二，每一次失败都是**可追溯**的：你看到的不是一个含糊的整体结论，而是具体哪一条规则被违反、扣了多少分。这种可追溯性让 benchmark 成为诊断工具：你可以反过来读这些 trace，找到你的 agent 短板在哪儿，再把这些短板喂回下一轮 memory 或 procedure 更新。"
+    en: "GDPevo uses deterministic rule-based graders, with each score composed of multiple scoring points. This brings two benefits. First, scores are **reproducible**: the same answer receives the same score across repeated runs. Second, every failure is **traceable**: instead of a vague overall verdict, you see exactly which rule failed and how many points were deducted. This traceability turns the benchmark into a diagnostic tool for Agents. You can read the Agent's action traces backward to find where your Agent is weak, then use those weaknesses as the basis for the next optimization.",
+    zh: "GDPevo 使用确定性的规则打分器，每个分数都由多个打分点组成。这会带来两个好处，首先，分数是**可复现**的：同一份答案多次跑得到的分都一样。其次，每一次失败都是**可追溯**的：你看到的不是一个含糊的整体结论，而是具体哪一条规则没通过、扣了多少分。这种可追溯性让基准成为 Agent 诊断工具，你可以反过来读 Agent 的操作记录，从而找到你的 Agent 短板在哪里，再将这些短板作为下一次的优化依据。"
   },
   costHeading: {
-    en: "Cost and accuracy, both first-class.",
-    zh: "cost 和 accuracy 都是一等公民。"
+    en: "Cost and accuracy are equally important",
+    zh: "成本和准确率同等重要"
   },
   cost: {
-    en: "A useful agent isn't just one that gets the right answer. It is one that *stops redoing* the same legwork every time a similar task comes in. Self-evolution should look like a human getting fluent: more accurate *and* faster, with fewer tokens, fewer steps, and cleaner moves. So we instrument every run end-to-end: per-agent total token spend, plus a breakdown by reasoning, tool calls, and stage. That observability isn't only for our analysis; those traces also become raw material for the agent's next evolution update.",
-    zh: "一个有用的 agent 不仅要答得对，还得*不再每次都把同样的活儿重做一遍*。Self-evolution 应该像人变熟练：更准、*更快*，用更少的 token、更少的步数、更干净的做法。所以我们对每一次运行都做端到端打点：每个 agent 的总 token 消耗，以及按 reasoning、工具调用、不同阶段的 breakdown。这套 observability 不只服务我们自己的分析，这些 trace 本身也是 agent 下一次 self-evolve 的材料。"
+    en: "A good self-evolution strategy should not only become more accurate over time, but also become more cost-efficient, just like a person becoming more skilled: faster execution with better results. Therefore, in every test, we record total Token consumption and task accuracy. Detailed result logs help us analyze the Agent's behavior, identify where problems occur, and use those findings to optimize the strategy.",
+    zh: "一个好的自进化策略不仅要越来越准确，还要越来越省成本，就像人一样做事越来越熟练，时间快效果好。因此我们在每次测试中都会记录总 Token 消耗和任务准确率。详细的结果记录可以帮助我们分析 Agent 的行为，找到问题所在，从而优化策略。"
   }
 };
 
 export const blogFindings = {
   heading: {
-    en: "Evaluations and findings.",
-    zh: "实测与结果。"
+    en: "Evaluations and findings",
+    zh: "实验结果与发现"
   },
   intro: [
     {
       key: "workflow",
-      en: "Every run below was driven by natural language: we pointed a coding agent (Codex or Claude Code) at the evaluation workspace, a folder of plain Markdown guides, prompts, and directory conventions, typed one sentence describing the experiment and the chart we wanted, and the agent generated the analysis code, called the graders, and wrote the report. No hand-written harness, no SDK to learn.",
-      zh: "下面这些实验都是用自然语言驱动跑出来的：我们把一个 coding agent（Codex 或 Claude Code）指向评估工作区，也就是一个装满纯 Markdown 指南、prompt 和目录约定的文件夹；用一句话说清要跑什么实验、想要什么样的图，agent 就会自己生成分析代码、调 grader、写 report。没有手写的 harness，也没有要学的 SDK。"
+      en: "We use a purely natural-language-driven evaluation method and do not design a separate evaluation framework. We open the **evaluation workspace** with Claude Code or Codex. This workspace is a folder containing Markdown guides and instructions. We then describe the desired result format in natural language, and the entire evaluation process can run automatically to produce a result report, with no code adaptation or framework learning required.",
+      zh: "我们采用纯自然语言驱动的评估方法，不设计评估框架。我们使用 Claude Code 或者 Codex 打开**评估工作区**，这是一个包含 Markdown 指南和说明的文件夹。我们使用自然语言描述结果展现形式，整个评估流程就可以全自动进行，得到结果报告，无需进行代码适配或学习框架。"
     },
     {
       key: "settings",
-      en: "We ran the same 12 task groups under three settings, on three different agent harnesses:",
-      zh: "我们在同样的 12 组 task group 上跑了三种设定，跨三套不同的 agent harness："
+      en: "We evaluated three different Agents on 12 task groups, totaling 120 tasks, and compared three different settings:",
+      zh: "我们使用三个不同的 Agent 在 12 个任务组，共 120 个任务上进行了评估，分别对比了三种不同的方案："
     }
   ],
   modes: [
     {
       key: "base",
-      en: "`base`: the agent solves the 5 test tasks cold, with no prior exposure to the 5 train tasks.",
-      zh: "`base`：agent 直接做 5 个 test，没接触过 5 个 train。"
+      en: "`base`: The Agent answers the test questions directly without seeing the training set.",
+      zh: "`base`：Agent 不接触训练集，直接解答测试题目。"
     },
     {
       key: "demo",
-      en: "`demo`: the agent reads the 5 train tasks *with their gold answers* first, turns them into an evolution update, and then takes the test. (Analogous to SFT.)",
-      zh: "`demo`：agent 先读 5 个 train 的题目和*标准答案*，把它们转成一次 evolution update，再去做 test。（类似 SFT。）"
+      en: "`demo`: The Agent first reads the training questions and gold answers, summarizes experience from the examples, and then answers the test questions. (Analogous to SFT.)",
+      zh: "`demo`：Agent 先读一遍训练集的题目和标准答案，根据案例归纳经验，再去解答测试题目。（类似 SFT）"
     },
     {
       key: "reflect",
-      en: "`reflect`: the agent attempts the 5 train tasks *without* seeing answers, gets back graded reward and feedback, updates its memory or procedure from what it got wrong, then takes the test. (Analogous to RL.)",
-      zh: "`reflect`：agent *看不到答案*，自己做 5 个 train，事后拿到 reward 和反馈，更新自己的 memory 或 procedure，再去做 test。（类似 RL。）"
+      en: "`reflect`: The Agent first attempts the training questions without seeing the gold answers, then receives feedback on whether its answers were correct, reflects on the results to summarize the rules, and then answers the test questions. (Analogous to RL.)",
+      zh: "`reflect`：Agent 先不看标准答案，自己尝试解答训练集的题目，然后再告诉它是否解答正确，从而反思总结规则，再去解答测试题目。（类似 RL）"
     }
   ],
   note: {
-    en: "The shape is the same on all three harnesses: self-evolution lifts held-out accuracy by **~17–22 points**, and on the GPT-5.5 / Opus 4.8 setups tokens go *down*, not up. This is the fluency story, not just a higher score. On one task group (operational financial modeling), Codex went from **42.76% to 92.47%** with fewer tokens than the baseline; on the same group, Claude Code's `demo` reached **100%, up from 51.76%**, and Panofy's `reflect` reached **92.47%, up from 62.39%**.",
-    zh: "三套 harness 形状一致：self-evolution 让 held-out 准确率提升 **约 17–22 个百分点**，且在 GPT-5.5 / Opus 4.8 这两套上，*花的 token 反而更少*。这正是\"变熟练\"，而不仅仅是分数更高。在 operational financial modeling 这一组上，Codex 从 **42.76% 升到 92.47%**，token 比基线还少；同一组上，Claude Code 的 `demo` 直接到了 **100%，起点是 51.76%**，Panofy 的 `reflect` 达到 **92.47%，起点是 62.39%**。"
+    en: "The three Agents produced similar conclusions: self-evolution can improve test-set accuracy by **about 17-22%**, while Claude Code and Codex also use fewer **tokens**. In the operational financial modeling scenario, Codex improved from **42.76% to 92.47%** with fewer tokens than the baseline; Claude Code's `demo` rose directly to **100%, starting from 51.76%**, and Panofy's `reflect` reached **92.47%, starting from 62.39%**.",
+    zh: "三个 Agent 产生了相似的结论：自进化可以让测试集准确率提升**约 17-22%**，同时 Claude Code 和 Codex 的 **token 消耗量**更低。在 operational financial modeling 这个场景里，Codex 从 **42.76% 提升到了 92.47%**，token 比基线还少；而Claude Code 的 `demo` 直接上升到了 **100%，起点是 51.76%**，Panofy 的 `reflect` 达到 **92.47%，起点是 62.39%**。"
   }
 };
 
 export const blogBenchmark = {
   caption: {
-    en: "Each metric averages 3 attempts, then 12 task groups",
-    zh: "每个指标先跨 3 次 attempt 取均值，再跨 12 个 task group 取均值"
+    en: "Each metric is the mean across 12 task groups, with each task averaged over 3 runs",
+    zh: "指标是 12 个任务组的均值，其中每个任务跑 3 遍后取平均"
   },
   columns: {
-    harness: "Harness",
+    harness: "Agent Harness",
     model: "Model",
     mode: "Mode"
   },
   breakdownLink: {
     en: "See the per-group breakdown on the homepage →",
-    zh: "在首页查看逐组的明细 →"
+    zh: "在首页查看各任务组的明细 →"
   }
 };
 
 export const blogInvite = {
   heading: {
-    en: "GDPevo is a seed, not a finished product.",
-    zh: "GDPevo 是一颗种子，不是一件成品。"
+    en: "GDPevo is a seed for agent self-evolution, not simply a result.",
+    zh: "GDPevo 是一颗 Agent 自进化的种子，不是一个结果。"
   },
   paragraph: {
-    en: "The tasks, environments, graders, generated updates, and full reports are open. Bring your own agents and scenarios. Submit harder hidden rules. The goal is not a leaderboard, but a public interface where agents that actually do productive work can be trained, with evidence of that improvement open to inspection.",
-    zh: "任务、环境、grader、生成的更新、完整 report 都是开放的。欢迎带上你自己的 agent、你自己的业务场景，欢迎来挑战、欢迎提交更难的隐藏规则。我们的目标不是一张 leaderboard，而是一个公共接口：让真正能干生产力工作的 agent 在这里被训练出来，并且这种\"它真的变好了\"的证据可以被任何人审计。"
+    en: "The complete process, artifacts, and results of this project are fully open. We welcome you to participate with your own Agent or business scenario. Our goal is not to build a leaderboard, but to provide momentum for self-evolving Agents. Through this project, we hope to make Agent self-evolution truly scalable and free humans from labor.",
+    zh: "这个项目中完整的流程、产物和结果都是完全开放的，欢迎带上你自己的 Agent 或者业务场景来参与其中。我们的目标不是一个排行榜，而是给自进化 Agent 提供动力。我们希望通过这个项目，能让 Agent 的自进化真正实现规模化，将人类从劳动中解放出来。"
   },
   actions: {
     github: "GitHub",
