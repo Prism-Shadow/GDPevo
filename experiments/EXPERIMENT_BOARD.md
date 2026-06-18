@@ -5,16 +5,16 @@ Languages: [English](EXPERIMENT_BOARD.md) | [Chinese](EXPERIMENT_BOARD.zh.md)
 This board summarizes the released evaluation results for GDPevo's public
 benchmark runs. The released run compares a stateless `base` baseline with
 two evolve methods, `demo` and `reflect`, to
-measure whether agent experience improves later GDP-valued business tasks.
+measure whether agent self-evolution improves later GDP-valued business tasks.
 Full structured reports are stored under released experiment directories, such
 as `codex_gpt5_5_xhigh/reports/`, `claude_code_opus_4_8_xhigh/reports/`,
 and `panofy_claude_opus_4_6_high/reports/`.
 
-In the released Codex GPT-5.5 xhigh run, skill-based evolution improves accuracy
+In the released Codex GPT-5.5 xhigh run, self-evolution improves accuracy
 by 18.21 percentage points on average and reduces token cost by 25.75% on
 average.
 
-Efficiency metrics only count test solver subagent answer-writing. They are averaged across the 3 attempts for each test task first, then averaged across the 5 test tasks. Skill generation, environment startup, evaluator execution, and main-agent aggregation are outside these metrics.
+Efficiency metrics only count test solver subagent answer-writing. They are averaged across the 3 attempts for each test task first, then averaged across the 5 test tasks. Artifact generation, environment startup, evaluator execution, and main-agent aggregation are outside these metrics.
 
 This board displays `avg@3` as a percentage and token metrics in thousands (`k`). Cost is calculated from the raw token counts in the report YAML files, then rounded to two decimals for display.
 
@@ -83,7 +83,7 @@ cost_USD_avg_3 =
 
 ## Claude Code (Opus 4.8, xhigh)
 
-In the released Claude Code Opus 4.8 xhigh run, skill-based evolution improves
+In the released Claude Code Opus 4.8 xhigh run, self-evolution improves
 accuracy by 20.31 percentage points on average and reduces token cost by 8.69%
 on average (averaged over the two methods across the 12 task groups).
 
@@ -151,7 +151,7 @@ The Claude Code token columns are the four Anthropic usage buckets (uncached inp
 
 ## Panofy (Claude Opus 4.6, high)
 
-In the released Panofy Claude Opus 4.6 high run, skill-based evolution improves accuracy by 17.94 percentage points on average and increases token cost by 11.82% on average (averaged over the two methods across the 12 task groups).
+In the released Panofy Claude Opus 4.6 high run, self-evolution improves accuracy by 17.94 percentage points on average and increases token cost by 11.82% on average (averaged over the two methods across the 12 task groups).
 
 For the released `claude-opus-4-6, high` run, this board uses the Claude Opus 4.6 prices for the three token buckets exposed by Panofy:
 

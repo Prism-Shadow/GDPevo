@@ -5,7 +5,8 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 This directory contains released GDPevo evaluation methods and result artifacts.
 The evaluation compares a stateless baseline with two evolve methods:
 `demo` and `reflect`. It can be used to study
-self-evolving agents, skill creators, and end-to-end agent memory systems.
+self-evolving agents, evolution-update mechanisms, and end-to-end agent memory
+systems.
 
 ## Contents
 
@@ -19,4 +20,4 @@ self-evolving agents, skill creators, and end-to-end agent memory systems.
 | `panofy_claude_opus_4_6_high/` | Released Panofy Claude Opus 4.6 high evaluation run |
 
 Each released experiment directory contains a `config.yaml`, structured report
-YAML files, and any generated skill packages referenced by those reports.
+YAML files, and any generated artifacts referenced by those reports.

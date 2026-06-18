@@ -2,11 +2,11 @@
 
 语言：[English](EXPERIMENT_BOARD.md) | [中文](EXPERIMENT_BOARD.zh.md)
 
-本看板汇总 GDPevo 公开 benchmark 运行的已发布评估结果。当前运行将无状态 `base` baseline 与 `demo`、`reflect` 两种 evolve 方法进行对比，用于衡量 agent 经验是否能提升后续具有经济价值的业务任务。完整结构化 reports 存放在已发布实验目录下，例如 `codex_gpt5_5_xhigh/reports/`。
+本看板汇总 GDPevo 公开 benchmark 运行的已发布评估结果。当前运行将无状态 `base` baseline 与 `demo`、`reflect` 两种 evolve 方法进行对比，用于衡量 agent self-evolution 是否能提升后续具有经济价值的业务任务。完整结构化 reports 存放在已发布实验目录下，例如 `codex_gpt5_5_xhigh/reports/`。
 
-在已发布的 Codex GPT-5.5 xhigh 运行中，skill-based evolution 平均带来 18.21 个百分点的准确率提升，并让 token 成本平均下降 25.75%。
+在已发布的 Codex GPT-5.5 xhigh 运行中，self-evolution 平均带来 18.21 个百分点的准确率提升，并让 token 成本平均下降 25.75%。
 
-效率指标只统计 test solver agent 写答案的过程。计算时先对每个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。Skill 生成、环境启动、evaluator 执行和主 agent 汇总不计入这些指标。
+效率指标只统计 test solver agent 写答案的过程。计算时先对每个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。Artifact 生成、环境启动、evaluator 执行和主 agent 汇总不计入这些指标。
 
 看板中的 `avg@3` 以百分比展示，token 指标以 `k` 为单位展示。Cost 仍使用 report YAML 中的原始 token 数计算，并在看板中四舍五入到两位小数展示。
 
@@ -74,7 +74,7 @@ cost_USD_avg_3 =
 
 ## Claude Code (Opus 4.8, xhigh)
 
-在已发布的 Claude Code Opus 4.8 xhigh 运行中，skill-based evolution 平均带来 20.31 个百分点的准确率提升，并让 token 成本平均下降 8.69%（对两种 evolve 方法、跨 12 个 task group 取平均）。
+在已发布的 Claude Code Opus 4.8 xhigh 运行中，self-evolution 平均带来 20.31 个百分点的准确率提升，并让 token 成本平均下降 8.69%（对两种 evolve 方法、跨 12 个 task group 取平均）。
 
 对于已发布的 `claude-opus-4-8, xhigh` 运行，本看板使用 Claude Opus 4.8 价格：
 

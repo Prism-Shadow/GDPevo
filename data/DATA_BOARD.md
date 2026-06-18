@@ -5,8 +5,8 @@ Languages: [English](DATA_BOARD.md) | [Chinese](DATA_BOARD.zh.md)
 This board summarizes the released GDPevo task groups: 120 tasks across 12
 stateful benchmark units. Each task group has one shared business environment,
 five train tasks, and five held-out test tasks, allowing the benchmark to
-measure whether experience from earlier work improves later work in the same
-environment. Full definitions are available in each task group's
+measure whether self-evolution from earlier tasks improves later work in the
+same environment. Full definitions are available in each task group's
 `task_group.yaml`.
 
 | task_group_id | scenario_id | domain | focus | train | test | path |
