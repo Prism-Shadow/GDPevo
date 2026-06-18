@@ -1,11 +1,11 @@
 export const homeContent = {
   documentTitle: {
     home: {
-      en: "GDPevo: Evaluating agent self-evolution on real business tasks",
+      en: "GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks",
       zh: "GDPevo：在真实企业任务上评估 Agent 自进化能力"
     },
     blog: {
-      en: "GDPevo: Evaluating agent self-evolution on real business tasks",
+      en: "GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks",
       zh: "GDPevo：在真实企业任务上评估 Agent 自进化能力"
     }
   },
@@ -29,7 +29,7 @@ export const homeContent = {
   hero: {
     title: {
       brand: "GDPevo",
-      en: ["Evaluating agent", "self-evolution on real business tasks"],
+      en: ["Evaluating Agent Self-Evolution on", "Real Business Tasks"],
       zh: ["在真实企业任务上", "评估 Agent 的自进化能力"]
     },
     subtitle: {
