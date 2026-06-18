@@ -407,10 +407,10 @@ function ResultsSection() {
         </h2>
         <p className="lead">
           <span className="lang-en">
-            Each group has 5 train and 5 held-out test tasks. We compare a cold-start baseline (<code>base</code>) against two learning modes: <code>demo</code> learns from worked examples, while <code>reflect</code> learns from its own mistakes. The score measures lift on tasks the agent never saw.
+            Each group has 5 train and 5 held-out test tasks. We compare a baseline (<code>base</code>) against two learning modes: <code>demo</code> learns from worked examples, while <code>reflect</code> learns from its own mistakes. The score measures lift on tasks the agent never saw.
           </span>
           <span className="lang-zh">
-            每组有 5 个 train、5 个 held-out test。我们用冷启动基线（<code>base</code>）对比两种学习模式：<code>demo</code> 从样例中学，<code>reflect</code> 从自己的错误中学；分数衡量的是 agent 在没见过的任务上的提升。
+            每组有 5 个 train、5 个 held-out test。我们用基线（<code>base</code>）对比两种学习模式：<code>demo</code> 从样例中学，<code>reflect</code> 从自己的错误中学；分数衡量的是 agent 在没见过的任务上的提升。
           </span>
         </p>
         <div className="htables">
@@ -726,8 +726,8 @@ function BlogFindings() {
           </div>
         </div>
         <p className="note">
-          <span className="lang-en">The shape is the same on all three harnesses: skills lift held-out accuracy by <strong>~17–22 points</strong>, and on the GPT-5.5 / Opus 4.8 setups tokens go <em>down</em>, not up — the fluency story, not just a higher score. On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than cold start; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>.</span>
-          <span className="lang-zh">三套 harness 形状一致：skill 让 held-out 准确率提升 <strong>约 17–22 个百分点</strong>，且在 GPT-5.5 / Opus 4.8 这两套上，<em>花的 token 反而更少</em>——这正是"变熟练"，而不仅仅是分数更高。在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比冷启动还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>。</span>
+          <span className="lang-en">The shape is the same on all three harnesses: skills lift held-out accuracy by <strong>~17–22 points</strong>, and on the GPT-5.5 / Opus 4.8 setups tokens go <em>down</em>, not up — the fluency story, not just a higher score. On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than the baseline; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>.</span>
+          <span className="lang-zh">三套 harness 形状一致：skill 让 held-out 准确率提升 <strong>约 17–22 个百分点</strong>，且在 GPT-5.5 / Opus 4.8 这两套上，<em>花的 token 反而更少</em>——这正是"变熟练"，而不仅仅是分数更高。在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比基线还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>。</span>
         </p>
         <p className="prose-link">
           <a href="index.html#results">
