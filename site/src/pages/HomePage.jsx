@@ -70,20 +70,20 @@ function Hero() {
           <div className="stat">
             <span className="stat-num">12</span>
             <span className="stat-label">
-              <Lang en="Task groups · CRM · ERP · Finance" zh="任务组 · CRM · ERP · Finance" />
+              <Lang en="Task groups" zh="任务组" />
             </span>
           </div>
-          <div className="stat">
-            <span className="stat-num stat-tba">
-              <Lang en="TBD" zh="暂定" />
+          <div className="stat stat-pos">
+            <span className="stat-num">
+              +18.82<i>pp</i>
             </span>
             <span className="stat-label">
               <Lang en="Held-out accuracy lift from self-evolution" zh="自我进化带来的 held-out 准确率提升" />
             </span>
           </div>
-          <div className="stat">
-            <span className="stat-num stat-tba">
-              <Lang en="TBD" zh="暂定" />
+          <div className="stat stat-pos">
+            <span className="stat-num">
+              −7.54<i>%</i>
             </span>
             <span className="stat-label">
               <Lang en="Token cost: fewer, not more" zh="token 成本：更少，而非更多" />

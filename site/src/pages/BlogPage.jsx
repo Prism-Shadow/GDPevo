@@ -8,31 +8,76 @@ function metricValue(value) {
   return Number.parseFloat(String(value).replace(/[^\d.-]/g, ""));
 }
 
+const benchmarkMetrics = [
+  {
+    key: "avg",
+    label: "AVG@3",
+    column: "AVG@3",
+    value: (row) => metricValue(row.avg),
+    display: (row) => row.avg,
+    max: 100
+  },
+  {
+    key: "tokens",
+    label: "TOKENS",
+    column: "TOKENS (K)",
+    value: (row) => metricValue(row.tokens),
+    display: (row) => `${row.tokens}k`
+  },
+  {
+    key: "usd",
+    label: "USD",
+    column: "USD",
+    value: (row) => metricValue(row.usd),
+    display: (row) => `$${row.usd}`
+  }
+];
+
 function BlogBenchmarkFigure() {
+  const [metricKey, setMetricKey] = useState("avg");
+  const metric = benchmarkMetrics.find((item) => item.key === metricKey) ?? benchmarkMetrics[0];
+  const metricMax = metric.max ?? Math.max(...summaryCards.flatMap((card) => card.rows.map(metric.value)), 1);
+
   return (
     <figure className="blog-benchmark-figure">
       <figcaption className="blog-benchmark-head">
-        <div>
+        <div className="blog-benchmark-copy">
           <span>
-            <Lang en="All metrics are avg@3, then averaged over 12 task groups" zh="所有指标均为 avg@3，再跨 12 个 task group 取均值" />
+            <Lang
+              en="Each metric averages 3 attempts, then 12 task groups"
+              zh="每个指标先跨 3 次 attempt 取均值，再跨 12 个 task group 取均值"
+            />
           </span>
         </div>
-        <span className="blog-benchmark-legend" aria-label="Chart legend">
-          {modes.map((mode) => (
-            <i key={mode}>
-              <b className={`sw sw-${mode}`} />
-              {mode}
-            </i>
-          ))}
-        </span>
+        <div className="blog-benchmark-tools">
+          <div className="blog-metric-toggle" role="group" aria-label="Metric">
+            {benchmarkMetrics.map((item) => (
+              <button
+                type="button"
+                key={item.key}
+                className={item.key === metric.key ? "is-active" : ""}
+                aria-pressed={item.key === metric.key}
+                onClick={() => setMetricKey(item.key)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <span className="blog-benchmark-legend" aria-label="Chart legend">
+            {modes.map((mode) => (
+              <i key={mode}>
+                <b className={`sw sw-${mode}`} />
+                {mode}
+              </i>
+            ))}
+          </span>
+        </div>
       </figcaption>
       <div className="blog-benchmark-cols">
         <span>Harness</span>
         <span>Model</span>
         <span>Mode</span>
-        <span>avg@3</span>
-        <span>Tokens</span>
-        <span>USD</span>
+        <span>{metric.column}</span>
       </div>
       <div className="blog-benchmark-rows">
         {summaryCards.map((card) => {
@@ -52,12 +97,10 @@ function BlogBenchmarkFigure() {
                     <code>{row.mode}</code>
                     <div className="blog-benchmark-measure">
                       <div className="blog-benchmark-track">
-                        <span style={{ "--w": `${metricValue(row.avg)}%` }} />
+                        <span style={{ "--w": `${(metric.value(row) / metricMax) * 100}%` }} />
                       </div>
-                      <b>{row.avg}</b>
+                      <b>{metric.display(row)}</b>
                     </div>
-                    <span className="blog-benchmark-token">{row.tokens}k</span>
-                    <span className="blog-benchmark-usd">${row.usd}</span>
                   </div>
                 ))}
               </div>

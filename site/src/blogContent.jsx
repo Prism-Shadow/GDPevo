@@ -342,13 +342,13 @@ export const blogFindings = {
     en: (
       <>
         The shape is the same on all three harnesses: self-evolution lifts held-out accuracy by <strong>~17–22 points</strong>, and on the GPT-5.5 / Opus 4.8 setups tokens go <em>down</em>, not up. This is the fluency story, not just a higher score.
-        On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than the baseline; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>.
+        On one task group (operational financial modeling), Codex went from <strong>42.76% to 92.47%</strong> with fewer tokens than the baseline; on the same group, Claude Code's <code>demo</code> reached <strong>100%, up from 51.76%</strong>, and Panofy's <code>reflect</code> reached <strong>92.47%, up from 62.39%</strong>.
       </>
     ),
     zh: (
       <>
         三套 harness 形状一致：self-evolution 让 held-out 准确率提升 <strong>约 17–22 个百分点</strong>，且在 GPT-5.5 / Opus 4.8 这两套上，<em>花的 token 反而更少</em>。这正是"变熟练"，而不仅仅是分数更高。
-        在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比基线还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>。
+        在 operational financial modeling 这一组上，Codex 从 <strong>42.76% 升到 92.47%</strong>，token 比基线还少；同一组上，Claude Code 的 <code>demo</code> 直接到了 <strong>100%，起点是 51.76%</strong>，Panofy 的 <code>reflect</code> 达到 <strong>92.47%，起点是 62.39%</strong>。
       </>
     )
   }
