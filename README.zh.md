@@ -52,7 +52,7 @@ npm run preview
 
 | 阶段 | 工作区 | 功能 | 提示语 |
 | --- | --- | --- | --- |
-| 场景发现 | [`data_construction/Stage_1_Scenario_Discovery/`](data_construction/Stage_1_Scenario_Discovery/) | 从真实业务基准样例中发现可复用业务场景。本阶段目前提供流程说明和场景记录格式。 | `阅读 README.md，从来源样例写出一条场景记录。` |
+| 场景发现 | [`data_construction/Stage_1_Scenario_Discovery/`](data_construction/Stage_1_Scenario_Discovery/) | 根据给定业务场景搜寻可归并的来源数据集原始数据。 | `阅读 README.md，根据 <target_scenario> 搜寻来源数据集原始数据，并在 scenario/<scenario_id>/ 下写出场景数据。` |
 | 任务组生成 | [`data_construction/Stage_2_Task_Group_Synthesis/`](data_construction/Stage_2_Task_Group_Synthesis/) | 从一个场景生成完整任务组。 | `阅读 README.md 和 guides/，生成 task_group/<task_group_id>/。` |
 | 质量过滤 | [`data_construction/Stage_3_Quality_Filtering/`](data_construction/Stage_3_Quality_Filtering/) | 对一个完成构建的任务组做结构检查，并组织独立审核智能体投票。 | `阅读 README.md 和 guides/，审核一个 task_group/，收集 6 票，并写出 ../reports/<task_group_id>.yaml。` |
 | 分数评测 | [`data_construction/Stage_4_Score_Evaluation/eval_workspace/`](data_construction/Stage_4_Score_Evaluation/eval_workspace/) | 对一个发布任务组运行正式评测，统计 `acc@3`、token 和费用。目录下包含 Codex、Claude Code、Panofy 以及中文镜像工作区。 | `使用 Codex GPT-5.5 xhigh、Claude Code Opus 4.8 xhigh 或 Panofy，运行分数评测，并写出 report/<task_group_id>.yaml。` Panofy 先加载 `.env`。 |
