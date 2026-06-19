@@ -69,7 +69,7 @@ conditions:
         cost_usd_avg_3: 0.6164
         input_tokens_avg_3: 2810.7
         output_tokens_avg_3: 9458.3
-  demo:
+  fewshot:
     skill_dirs:
       attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
       attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
@@ -218,7 +218,7 @@ risks_and_notes:
     0 tokens; retried successfully after server restart. No effect on final skills.
 - id: platform_session_limit
   detail: |
-    A platform session limit (reset 07:00 Asia/Shanghai) killed 5 demo solvers
+    A platform session limit (reset 07:00 Asia/Shanghai) killed 5 fewshot solvers
     mid-batch. 2 of them (test_003 a01/a02) had already written valid answer.json and were kept; 3
     (test_002 a03, test_003 a03, test_004 a01) produced no answer and were retried after reset.
     Token backfill attributed each of those 3 attempts to its COMPLETED retry transcript and
