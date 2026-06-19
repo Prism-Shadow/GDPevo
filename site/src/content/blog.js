@@ -126,7 +126,7 @@ export const blogFindings = {
     {
       key: "workflow",
       en: "We use a purely natural-language-driven evaluation method instead of using an evaluation SDK. We open the **evaluation workspace** with Claude Code or Codex. This workspace is a folder containing Markdown guides and instructions. We then describe the desired result format in natural language, and the entire evaluation process can run automatically to produce a result report, with no code adaptation or SDK learning required.",
-      zh: "我们采用纯自然语言驱动的评估方法，而不用一个评估SDK。我们使用 Claude Code 或者 Codex 打开**评估工作区**，这是一个包含 Markdown 指南和说明的文件夹。我们使用自然语言描述结果展现形式，整个评估流程就可以全自动进行，得到结果报告，无需进行代码适配或学习框架。"
+      zh: "我们采用纯自然语言驱动的评估方法，而不用一个评估 SDK。我们使用 Claude Code 或者 Codex 打开**评估工作区**，这是一个包含 Markdown 指南和说明的文件夹。我们使用自然语言描述结果展现形式，整个评估流程就可以全自动进行，得到结果报告，无需进行代码适配或学习框架。"
     },
     {
       key: "settings",

@@ -70,40 +70,42 @@ export function BenchmarkFigure({ className = "", modeLabels = {}, caption = blo
           </span>
         </div>
       </figcaption>
-      <div className="blog-benchmark-cols">
-        <span>{blogBenchmark.columns.harness}</span>
-        <span>{blogBenchmark.columns.model}</span>
-        <span>{blogBenchmark.columns.mode}</span>
-        <span>{metric.column}</span>
-      </div>
-      <div className="blog-benchmark-rows">
-        {summaryCards.map((card) => {
-          const [harness, model] = card.title.split(" · ");
-          return (
-            <div className="blog-benchmark-group" key={card.title}>
-              <div className="blog-benchmark-name">
-                <strong>{harness}</strong>
-              </div>
-              <div className="blog-benchmark-model">
-                <strong>{model}</strong>
-                <small>{card.thinking}</small>
-              </div>
-              <div className="blog-benchmark-bars">
-                {card.rows.map((row) => (
-                  <div className={`blog-benchmark-bar mode-${row.mode}`} key={row.mode}>
-                    <code>{modeLabel(row.mode)}</code>
-                    <div className="blog-benchmark-measure">
-                      <div className="blog-benchmark-track">
-                        <span style={{ "--w": `${(metric.value(row) / metricMax) * 100}%` }} />
+      <div className="blog-benchmark-table">
+        <div className="blog-benchmark-cols">
+          <span>{blogBenchmark.columns.harness}</span>
+          <span>{blogBenchmark.columns.model}</span>
+          <span>{blogBenchmark.columns.mode}</span>
+          <span>{metric.column}</span>
+        </div>
+        <div className="blog-benchmark-rows">
+          {summaryCards.map((card) => {
+            const [harness, model] = card.title.split(" · ");
+            return (
+              <div className="blog-benchmark-group" key={card.title}>
+                <div className="blog-benchmark-name">
+                  <strong>{harness}</strong>
+                </div>
+                <div className="blog-benchmark-model">
+                  <strong>{model}</strong>
+                  <small>{card.thinking}</small>
+                </div>
+                <div className="blog-benchmark-bars">
+                  {card.rows.map((row) => (
+                    <div className={`blog-benchmark-bar mode-${row.mode}`} key={row.mode}>
+                      <code>{modeLabel(row.mode)}</code>
+                      <div className="blog-benchmark-measure">
+                        <div className="blog-benchmark-track">
+                          <span style={{ "--w": `${(metric.value(row) / metricMax) * 100}%` }} />
+                        </div>
+                        <b>{metric.display(row)}</b>
                       </div>
-                      <b>{metric.display(row)}</b>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </figure>
   );
