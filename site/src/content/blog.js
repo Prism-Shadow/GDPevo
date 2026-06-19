@@ -92,7 +92,7 @@ export const blogConstruction = {
 
 export const blogUsage = {
   heading: {
-    en: "How to evaluate with it.",
+    en: "How to evaluate with it",
     zh: "评估方法"
   },
   lead: {
@@ -141,19 +141,19 @@ export const blogFindings = {
       zh: "`base`：Agent 不接触训练集，直接解答测试题目。"
     },
     {
-      key: "demo",
-      en: "`demo`: The agent first reads the training questions and gold answers, summarizes experience from the examples, and then answers the test questions. (Analogous to SFT.)",
-      zh: "`demo`：Agent 先读一遍训练集的题目和标准答案，根据案例归纳经验，再去解答测试题目。（类似 SFT）"
+      key: "fewshot",
+      en: "`fewshot`: The agent first reads the training questions and gold answers, summarizes experience from the examples, and then answers the test questions. (Analogous to SFT.)",
+      zh: "`fewshot`（少样本进化）：Agent 先读一遍训练集的题目和标准答案，根据案例归纳经验，再去解答测试题目。（类似 SFT）"
     },
     {
       key: "reflect",
       en: "`reflect`: The agent first attempts the training questions without seeing the gold answers, then receives feedback on whether its answers were correct, reflects on the results to summarize the rules, and then answers the test questions. (Analogous to RL.)",
-      zh: "`reflect`：Agent 先不看标准答案，自己尝试解答训练集的题目，然后再告诉它是否解答正确，从而反思总结规则，再去解答测试题目。（类似 RL）"
+      zh: "`reflect`（反思进化）：Agent 先不看标准答案，自己尝试解答训练集的题目，然后再告诉它是否解答正确，从而反思总结规则，再去解答测试题目。（类似 RL）"
     }
   ],
   note: {
-    en: "The three agents produced similar conclusions: self-evolution can improve test-set accuracy by **about 17-22%**, while Claude Code and Codex also use fewer **tokens**. In the operational financial modeling scenario, Codex improved from **42.76% to 92.47%** with fewer tokens than the baseline; Claude Code's `demo` rose directly to **100%, starting from 51.76%**, and Panofy's `reflect` reached **92.47%, starting from 62.39%**.",
-    zh: "三个 Agent 产生了相似的结论：自进化可以让测试集准确率提升**约 17-22%**，同时 Claude Code 和 Codex 的 **token 消耗量**更低。在 operational financial modeling 这个场景里，Codex 从 **42.76% 提升到了 92.47%**，token 比基线还少；而Claude Code 的 `demo` 直接上升到了 **100%，起点是 51.76%**，Panofy 的 `reflect` 达到 **92.47%，起点是 62.39%**。"
+    en: "The three agents produced similar conclusions: self-evolution can improve test-set accuracy by **about 17-22%**, while Claude Code and Codex also use fewer **tokens**. In the operational financial modeling scenario, Codex improved from **42.76% to 92.47%** with fewer tokens than the baseline; Claude Code's `fewshot` rose directly to **100%, starting from 51.76%**, and Panofy's `reflect` reached **92.47%, starting from 62.39%**.",
+    zh: "三个 Agent 产生了相似的结论：自进化可以让测试集准确率提升**约 17-22%**，同时 Claude Code 和 Codex 的 **token 消耗量**更低。在 operational financial modeling 这个场景里，Codex 从 **42.76% 提升到了 92.47%**，token 比基线还少；而 Claude Code 的 `fewshot`（少样本进化）直接上升到了 **100%，起点是 51.76%**，Panofy 的 `reflect`（反思进化）达到 **92.47%，起点是 62.39%**。"
   }
 };
 
@@ -175,8 +175,8 @@ export const blogBenchmark = {
 
 export const blogInvite = {
   heading: {
-    en: "GDPevo is a seed for agent self-evolution, not simply a result.",
-    zh: "GDPevo 是一颗 Agent 自进化的种子，不是一个结果。"
+    en: "GDPevo is a seed for agent self-evolution, not simply a result",
+    zh: "GDPevo 是一颗 Agent 自进化的种子，不是一个结果"
   },
   paragraph: {
     en: "The complete process, artifacts, and results of this project are fully open. We welcome you to participate with your own agent or business scenario. Our goal is not to build a leaderboard, but to provide momentum for self-evolving agents. Through this project, we hope to make agent self-evolution truly scalable and free humans from labor.",

@@ -6,6 +6,11 @@ import { Lang, LocalizedMarkdown } from "../lib/i18n.jsx";
 import { links } from "../content/links.js";
 import { harnesses, modes, resultGroups, taskGroups, taskTopics } from "../content/benchmark.js";
 
+const modeLabels = {
+  demo: "fewshot"
+};
+const modeLabel = (mode) => modeLabels[mode] ?? mode;
+
 function Hero() {
   const { title, subtitle, meta, actions, stats } = homeContent.hero;
 
@@ -87,12 +92,14 @@ function HarnessRows({ harness, group }) {
   return (
     <div className="ob-harness-block">
       <span className="ob-harness">{harness.harness}</span>
-      <span className="ob-model">{harness.model}</span>
-      <span className="ob-thinking">{harness.thinking}</span>
+      <span className="ob-model">
+        <strong>{harness.model}</strong>
+        <small>{harness.thinking}</small>
+      </span>
       <div className="ob-condition-rows">
         {modes.map((mode, index) => (
           <div className="ob-row" key={mode}>
-            <code>{mode}</code>
+            <code>{modeLabel(mode)}</code>
             <Meter value={group[harness.key][index]} mode={mode} />
           </div>
         ))}
@@ -117,7 +124,7 @@ function ResultsChart() {
           </span>
           <span className="leg">
             <i className="sw sw-demo" />
-            demo
+            fewshot
           </span>
           <span className="leg">
             <i className="sw sw-reflect" />
@@ -132,7 +139,6 @@ function ResultsChart() {
           </span>
           <span>{chartColumns.harness}</span>
           <span>{chartColumns.model}</span>
-          <span>{chartColumns.thinking}</span>
           <span>
             <Lang {...chartColumns.setting} />
           </span>
@@ -144,9 +150,11 @@ function ResultsChart() {
             <div className="ob-group" key={group.id}>
               <div className="ob-name">
                 <strong>{group.id}</strong>
-                <i className={`chip ${chip}`}>{group.domain}</i>
-                <span>
-                  <Lang en={group.en} zh={group.zh} />
+                <span className="ob-title-line">
+                  <span>
+                    <Lang en={group.en} zh={group.zh} />
+                  </span>
+                  <i className={`chip ${chip}`}>{group.domain}</i>
                 </span>
               </div>
               <div className="ob-rows">
@@ -174,7 +182,7 @@ function ResultsSection() {
         <p className="lead">
           <LocalizedMarkdown copy={results.lead} />
         </p>
-        <BenchmarkFigure className="results-benchmark-figure" />
+        <BenchmarkFigure className="results-benchmark-figure" modeLabels={modeLabels} />
         <ResultsChart />
         {results.notes.map((note) => (
           <p className="note" key={note.key}>
@@ -253,14 +261,6 @@ function TasksSection() {
         <h2 className="h2">
           <LocalizedMarkdown copy={tasks.heading} />
         </h2>
-        <p className="domain-definitions" aria-label="Domain definitions">
-          {tasks.domainDefinitions.map((domain) => (
-            <span key={domain.term}>
-              <strong>{domain.term}:</strong>{" "}
-              <Lang en={domain.en} zh={domain.zh} />
-            </span>
-          ))}
-        </p>
         <p className="lead">
           <LocalizedMarkdown copy={tasks.lead} />
         </p>
