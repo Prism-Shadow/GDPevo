@@ -1,7 +1,7 @@
 # Evaluation Workspace — Panofy
 
 This workspace evaluates **one task group** on the **Panofy agent platform**,
-using `avg@3` across three conditions.
+using `acc@3` across three conditions.
 
 You are the **main evaluation agent**. You run the evaluation by **calling the
 Panofy SDK directly** (`train`, `predict`) and running each task's official
@@ -37,7 +37,7 @@ Read in order before evaluating:
 
 1. `guides/workflow.md` — the end-to-end train → predict → score → aggregate flow you drive
 2. `guides/evolve_modes.md` — the three conditions, realised through training, and the information boundary
-3. `guides/metric_and_scoring.md` — `avg@3`, scoring via `eval/eval.sh`, and Panofy point/token accounting
+3. `guides/metric_and_scoring.md` — `acc@3`, scoring via `eval/eval.sh`, and Panofy point/token accounting
 4. `guides/report_format.md` — the final report YAML
 
 ## Connection inputs (`.env`)
@@ -72,7 +72,7 @@ Run any script you stage under `scratch/` with `uv run python scratch/<script>.p
 ```text
 Evaluate task_group/<task_group_id> on Panofy using README.md and guides/.
 Panofy base URL: <url>   API key: <da_...>   Env API URL: <url>
-Run all three conditions with avg@3 and write report/<task_group_id>.yaml.
+Run all three conditions with acc@3 and write report/<task_group_id>.yaml.
 ```
 
 ## Boundaries

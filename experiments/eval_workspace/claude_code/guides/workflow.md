@@ -162,7 +162,7 @@ Each solver subagent has its own transcript:
 
 One API response is logged across several content-block records: `input`/`cache_creation`/`cache_read` are identical, but `output_tokens` is cumulative (streamed). **Deduplicate by `message.id`** — keep the input/cache buckets from any record and take the **max `output_tokens`** per `message.id`; summing every record over-counts input/cache ~2-3x and keeping the first record under-counts output. Sum the four buckets (`input_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`, `output_tokens`) across the deduped responses, and compute `cost_usd` with the per-response formula in `metric_and_scoring.md`. Do not use the parent's `toolUseResult.totalTokens` as the billed total — it is a context-size measure that excludes cache reads.
 
-After all runs complete, aggregate `avg@3`, average per-bucket tokens, and average `cost_usd` for the three conditions. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization.
+After all runs complete, aggregate `acc@3`, average per-bucket tokens, and average `cost_usd` for the three conditions. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization.
 
 Temporary checking code, aggregation code, or environment startup notes may be placed under `scratch/`. These materials are not formal evaluation data.
 
@@ -170,7 +170,7 @@ Temporary checking code, aggregation code, or environment startup notes may be p
 
 In the report, explain:
 
-- Overall `avg@3` for all three conditions.
+- Overall `acc@3` for all three conditions.
 - Improvement from each skill condition over base.
 - Whether reflection skill outperforms demonstration skill.
 - Which test tasks improved clearly and which did not.

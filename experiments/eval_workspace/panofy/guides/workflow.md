@@ -61,7 +61,7 @@ hidden `env/` fields to the agent; it only ever sees the remote URL.
 ## 4. Train The Agents
 
 Train **3 independent agents for each condition** — `attempt_<nn>` → one agent —
-so avg@3 captures training variance. What differs per condition is only the
+so acc@3 captures training variance. What differs per condition is only the
 training materials and the training instruction (see `evolve_modes.md`).
 
 Stage each condition's materials into a dedicated directory, for example:
@@ -149,11 +149,11 @@ Token usage and points come straight from the SDK — no transcript parsing.
 <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
 ```
 
-After all `score.yaml` files exist, aggregate per-task `avg@3`, overall `avg@3`,
+After all `score.yaml` files exist, aggregate per-task `acc@3`, overall `acc@3`,
 and the average points / per-bucket tokens for each condition. These efficiency
 metrics only count **test-task `predict()`** work — never training (the
 evolution step), environment startup, or evaluator execution. Aggregate
-the same way as `avg@3`: average the 3 attempts for one test task, then average
+the same way as `acc@3`: average the 3 attempts for one test task, then average
 the 5 test tasks. Put any temporary aggregation code under `scratch/`. Write the
 final report to `report/<task_group_id>.yaml` per `report_format.md`.
 
@@ -161,7 +161,7 @@ final report to `report/<task_group_id>.yaml` per `report_format.md`.
 
 In the report (or accompanying notes), explain:
 
-- Overall `avg@3` for all three conditions.
+- Overall `acc@3` for all three conditions.
 - Improvement from each evolve condition over base.
 - Whether reflect outperforms demo.
 - Which test tasks improved clearly and which did not.
@@ -177,5 +177,5 @@ Record as failures and explain in the report: `predict()` raises, the agent
 returns no parseable `answer.json`, or the evaluator fails / returns no `[0,1]`
 score. After a failure, retry until one valid scoreable attempt is obtained, and
 preserve the failed record in the attempt directory. Do not score a failed
-attempt as `0`, and do not drop it while still computing `avg@3`. If retries
+attempt as `0`, and do not drop it while still computing `acc@3`. If retries
 still cannot produce a valid score, stop and report the issue.

@@ -2,7 +2,7 @@
 
 语言：[English](README.md) | [中文](README.zh.md)
 
-本目录包含已发布的 GDPevo 评估方法和结果产物。评估将无状态 baseline 与两种 evolve 方法进行对比：`demo` 和 `reflect`。它可以用于观察自进化 agent、Skill Creator / SkillOpt，以及 Agent Memory 的端到端效果。
+本目录包含已发布的 GDPevo 评估方法和结果产物。评估将无状态 baseline 与两种 evolve 方法进行对比：`demo` 和 `reflect`。它可以用于观察自进化 agent、evolution update 机制，以及 Agent Memory 的端到端效果。
 
 ## 内容
 
@@ -15,4 +15,4 @@
 | `claude_code_opus_4_8_xhigh/` | 已发布的 Claude Code Opus 4.8 xhigh 评估运行 |
 | `panofy_claude_opus_4_6_high/` | 已发布的 Panofy Claude Opus 4.6 high 评估运行 |
 
-每个已发布实验目录都包含 `config.yaml`、结构化 report YAML 文件，以及这些 reports 引用的生成 skill packages（如果有）。
+每个已发布实验目录都包含 `config.yaml`、结构化 report YAML 文件，以及这些 reports 引用的生成 artifacts（如果有）。

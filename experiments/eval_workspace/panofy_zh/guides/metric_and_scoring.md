@@ -1,6 +1,6 @@
 # 指标与打分
 
-主指标是 `avg@3`。成本与准确率一并报告，但用 Panofy 的原生单位（points + 三桶 token），直接从 SDK 读取（无需解析 transcript）。
+主指标是 `acc@3`。成本与准确率一并报告，但用 Panofy 的原生单位（points + 三桶 token），直接从 SDK 读取（无需解析 transcript）。
 
 ## 单次运行
 
@@ -58,15 +58,15 @@ token_usage:
   points_consumed: <int>
 ```
 
-## avg@3
+## acc@3
 
 同一 test task、同一条件下跑 3 次独立 attempt，其中 `attempt_<nn>` 由独立训练的 agent `attempt_<nn>` 作答：
 
 ```text
-task avg@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
+task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 ```
 
-一个条件的整体 `avg@3` 是 5 个 test-task `avg@3` 的平均。
+一个条件的整体 `acc@3` 是 5 个 test-task `acc@3` 的平均。
 
 ## 分数范围
 
@@ -81,10 +81,10 @@ task avg@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 - evaluator 失败、超时，或返回不了 `[0, 1]` 分。
 - 远程环境不可用，导致 agent 无法作答。
 
-失败后重试，直到拿到一次有效可打分的 attempt；把失败记录保留在 attempt 目录。不要把失败 attempt 记 `0` 分，也不要丢掉它继续算 `avg@3`。如果重试仍拿不到有效分，停下并报告问题。
+失败后重试，直到拿到一次有效可打分的 attempt；把失败记录保留在 attempt 目录。不要把失败 attempt 记 `0` 分，也不要丢掉它继续算 `acc@3`。如果重试仍拿不到有效分，停下并报告问题。
 
 ## 聚合要求
 
-所有 `score.yaml` 就绪后，检查三种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `avg@3`、整体 `avg@3`、条件间提升，以及平均 points 和各桶 token。
+所有 `score.yaml` 就绪后，检查三种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `acc@3`、整体 `acc@3`、条件间提升，以及平均 points 和各桶 token。
 
-这些效率指标只统计 **test-task 的 `predict()`** 工作，不含训练（进化步骤）、环境启动或 evaluator 执行。聚合方式同 `avg@3`：先对同一 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。临时聚合代码可放 `scratch/`。
+这些效率指标只统计 **test-task 的 `predict()`** 工作，不含训练（进化步骤）、环境启动或 evaluator 执行。聚合方式同 `acc@3`：先对同一 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。临时聚合代码可放 `scratch/`。

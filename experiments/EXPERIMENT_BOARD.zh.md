@@ -2,13 +2,13 @@
 
 语言：[English](EXPERIMENT_BOARD.md) | [中文](EXPERIMENT_BOARD.zh.md)
 
-本看板汇总 GDPevo 公开 benchmark 运行的已发布评估结果。当前运行将无状态 `base` baseline 与 `demo`、`reflect` 两种 evolve 方法进行对比，用于衡量 agent 经验是否能提升后续具有经济价值的业务任务。完整结构化 reports 存放在已发布实验目录下，例如 `codex_gpt5_5_xhigh/reports/`。
+本看板汇总 GDPevo 公开 benchmark 运行的已发布评估结果。当前运行将无状态 `base` baseline 与 `demo`、`reflect` 两种 evolve 方法进行对比，用于衡量 agent self-evolution 是否能提升后续具有经济价值的业务任务。完整结构化 reports 存放在已发布实验目录下，例如 `codex_gpt5_5_xhigh/reports/`。
 
-在已发布的 Codex GPT-5.5 xhigh 运行中，skill-based evolution 平均带来 18.21 个百分点的准确率提升，并让 token 成本平均下降 25.75%。
+在已发布的 Codex GPT-5.5 xhigh 运行中，self-evolution 平均带来 18.21 个百分点的准确率提升，并让 token 成本平均下降 25.75%。
 
-效率指标只统计 test solver agent 写答案的过程。计算时先对每个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。Skill 生成、环境启动、evaluator 执行和主 agent 汇总不计入这些指标。
+效率指标只统计 test solver agent 写答案的过程。计算时先对每个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。Artifact 生成、环境启动、evaluator 执行和主 agent 汇总不计入这些指标。
 
-看板中的 `avg@3` 以百分比展示，token 指标以 `k` 为单位展示。Cost 仍使用 report YAML 中的原始 token 数计算，并在看板中四舍五入到两位小数展示。
+看板中的 `acc@3` 以百分比展示，token 指标以 `k` 为单位展示。Cost 仍使用 report YAML 中的原始 token 数计算，并在看板中四舍五入到两位小数展示。
 
 `cost USD avg@3` 是看板层面的派生字段，由 report 中的 token 指标和该运行使用的模型价格计算得到，不存放在正式 report YAML 文件中。
 
@@ -31,7 +31,7 @@ cost_USD_avg_3 =
    + output_tokens_avg_3 * 30.00) / 1_000_000
 ```
 
-| task_group_id | scenario_id | model | harness | mode | overall avg@3 (%) | cached tokens avg@3 (k) | input tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | seconds avg@3 | report |
+| task_group_id | scenario_id | model | harness | mode | overall acc@3 (%) | cached tokens avg@3 (k) | input tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | seconds avg@3 | report |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `gpt-5.5, xhigh` | `codex` | `base` | 44.43% | 403.2k | 457.0k | 14.2k | 0.90 | 309.779 | [task_group_001.yaml](codex_gpt5_5_xhigh/reports/task_group_001.yaml) |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `gpt-5.5, xhigh` | `codex` | `demo` | 48.12% | 366.0k | 412.6k | 13.2k | 0.81 | 282.567 | [task_group_001.yaml](codex_gpt5_5_xhigh/reports/task_group_001.yaml) |
@@ -74,7 +74,7 @@ cost_USD_avg_3 =
 
 ## Claude Code (Opus 4.8, xhigh)
 
-在已发布的 Claude Code Opus 4.8 xhigh 运行中，skill-based evolution 平均带来 20.31 个百分点的准确率提升，并让 token 成本平均下降 8.69%（对两种 evolve 方法、跨 12 个 task group 取平均）。
+在已发布的 Claude Code Opus 4.8 xhigh 运行中，self-evolution 平均带来 20.31 个百分点的准确率提升，并让 token 成本平均下降 8.69%（对两种 evolve 方法、跨 12 个 task group 取平均）。
 
 对于已发布的 `claude-opus-4-8, xhigh` 运行，本看板使用 Claude Opus 4.8 价格：
 
@@ -97,7 +97,7 @@ cost_USD_avg_3 =
 
 Claude Code 的 token 列是 Anthropic 的四个 usage 桶（未缓存 input、写缓存、读缓存、output）。
 
-| task_group_id | scenario_id | model | harness | mode | overall avg@3 (%) | input(uncached) tokens avg@3 (k) | cache write tokens avg@3 (k) | cache read tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
+| task_group_id | scenario_id | model | harness | mode | overall acc@3 (%) | input(uncached) tokens avg@3 (k) | cache write tokens avg@3 (k) | cache read tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-8, xhigh` | `claude_code` | `base` | 48.75% | 2.8k | 29.4k | 205.0k | 10.0k | 0.55 | [task_group_001.yaml](claude_code_opus_4_8_xhigh/reports/task_group_001.yaml) |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-8, xhigh` | `claude_code` | `demo` | 81.96% | 2.8k | 28.1k | 138.1k | 5.1k | 0.39 | [task_group_001.yaml](claude_code_opus_4_8_xhigh/reports/task_group_001.yaml) |

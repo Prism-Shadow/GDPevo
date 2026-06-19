@@ -160,7 +160,7 @@ Codex traces are usually located at:
 
 The `token_count` event records token usage.
 
-After all runs complete, aggregate `avg@3` and average cached/input/output tokens for the three conditions. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization.
+After all runs complete, aggregate `acc@3` and average cached/input/output tokens for the three conditions. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization.
 
 Temporary checking code, aggregation code, or environment startup notes may be placed under `scratch/`. These materials are not formal evaluation data.
 
@@ -168,7 +168,7 @@ Temporary checking code, aggregation code, or environment startup notes may be p
 
 In the report, explain:
 
-- Overall `avg@3` for all three conditions.
+- Overall `acc@3` for all three conditions.
 - Improvement from each skill condition over base.
 - Whether reflection skill outperforms demonstration skill.
 - Which test tasks improved clearly and which did not.

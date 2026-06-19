@@ -2,49 +2,55 @@
 
 语言：[English](README.md) | [中文](README.zh.md)
 
-GDPevo 是一个面向真实业务场景的公开 agent benchmark，用于评估自进化 agent 在具有经济价值的任务中学习和迁移规则的能力。据我们所知，它是首个面向 GDP-valued tasks 的 stateful benchmark：agent 先完成一组相关 train tasks，将经验沉淀为可复用 skill，再在同一业务环境下的 held-out test tasks 上接受评估。
+**GDPevo** 是一个公开基准，用来评估智能体在真实企业任务上的自进化能力。当前版本包含 120 个任务，覆盖客户关系管理（CRM）、企业资源计划（ERP）和金融三类业务，共 12 个任务组；每个任务组都有一个共享业务环境、5 个训练任务和 5 个保留测试任务。完整动机、构建流程和结果分析见[项目博客](https://prism-shadow.github.io/GDPevo/blog.html)。
 
-多数现有 agent benchmark 仍然评估“无状态”的单次任务完成。GDPevo 关注的是另一类能力：agent 能否从早期任务中学习业务规则、信息来源优先级、操作流程和输出规范，并让后续任务在准确率和执行成本上获得提升。
+## 评测结果
 
-这个 benchmark 可以用于：
+准确率使用 `acc@3`，并在 12 个任务组上取均值。费用以美元计。
 
-- 评估带有自进化或持续学习能力的 agent。
-- 评估 Skill Creator / SkillOpt 的能力。
-- 评估 Agent Memory 的端到端效果。
+| 评测框架 | 模型 | 思考强度 | `base` 准确率 | `demo` 准确率 | `reflect` 准确率 | 准确率提升 | 费用变化 |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Codex | GPT-5.5 | xhigh | 48.35% | 65.99% | 67.13% | +18.21 个百分点 | -25.75% |
+| Claude Code | Opus 4.8 | xhigh | 49.11% | 70.90% | 67.94% | +20.31 个百分点 | -8.69% |
+| Panofy | Opus 4.6 | high | 50.17% | 68.24% | 67.98% | +17.94 个百分点 | +11.82% |
 
-首个公开版本包含 120 个任务，并组织为 12 个 task groups。每个 task group 包含一个共享业务环境、5 个 train tasks 和 5 个 test tasks。任务组从具有经济价值的产业工作流构造而来，例如金融、企业 CRM 和 ERP 自动化。
+完整汇总见 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md)。
 
-在已发布的 Codex GPT-5.5 xhigh 运行中，自进化后的 agent 在归纳学习后平均获得 18.21 个百分点的准确率提升，同时 token 成本平均节省 25.75%。当前公开内容包括可执行 task groups、评估报告、生成的 skill packages，以及可复用的 evaluation workspace，用于自动执行完整评估流程并生成最终分数。
+逐任务报告见：
 
-## 仓库结构
+- [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
+- [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
+- [`experiments/panofy_claude_opus_4_6_high/`](experiments/panofy_claude_opus_4_6_high/)
 
-| 路径 | 用途 |
+## 目录结构
+
+| 路径 | 内容 |
 | --- | --- |
-| `data/` | 已发布的 task group 数据、数据看板、共享环境、train/test tasks、答案、评测器和数据说明。 |
-| `experiments/` | 已发布的评估协议、evaluation workspaces、结果报告、生成 skills 和实验看板。 |
-| `site/` | GitHub Pages 站点脚手架和公开展示资源。 |
-| `assets/` | 已发布材料使用的图片、logo 和视觉资源。 |
+| [`data/`](data/) | 已发布的基准数据，包括任务组、共享环境、训练与测试任务、参考答案和基于规则的评测器。 |
+| [`experiments/`](experiments/) | 已发布的评测结果、可复用评测工作区、报告文件和实验汇总表。 |
+| [`site/`](site/) | 基准发布用的公开网站与博客。 |
 
-## 数据
+## 如何使用这个仓库
 
-每个 task group 包含一个共享业务环境、5 个 train tasks 和 5 个 test tasks。Train tasks 提供经验来源，test tasks 用于衡量生成的 skills 是否能让同一业务环境下的后续任务获得提升。
+- 基准数据：阅读 [`data/DATA_BOARD.zh.md`](data/DATA_BOARD.zh.md) 了解任务组概览，再查看 [`data/task_groups/`](data/task_groups/) 中的具体任务。
+- 评测结果：在 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md) 查看汇总结果，再进入三个实验目录阅读逐任务报告。
+- 评测工作区：如果要重新运行或改造评测流程，从 [`experiments/eval_workspace/`](experiments/eval_workspace/) 开始。每个工作区都包含说明文档、任务组输入、运行产物和报告目录。
+- 本地预览公开网站：
 
-已发布 task groups 汇总在 [data/DATA_BOARD.zh.md](data/DATA_BOARD.zh.md)。
+```bash
+cd site
+npm ci
+npm run build
+npm run preview
+```
 
-数据目录说明和 task group 格式见 [data/README.zh.md](data/README.zh.md)。
+## 引用
 
-## 实验
-
-当前公开的评估运行比较三种条件：
-
-- `no_skill`
-- `demonstration_skill`
-- `reflection_skill`
-
-结果汇总在 [experiments/EXPERIMENT_BOARD.zh.md](experiments/EXPERIMENT_BOARD.zh.md)。
-
-详细说明见 [experiments/README.zh.md](experiments/README.zh.md)。
-
-## Evaluation Workspace
-
-中文 evaluation workspace 位于 [experiments/eval_workspace_zh/](experiments/eval_workspace_zh/)，英文版本位于 [experiments/eval_workspace/](experiments/eval_workspace/)。它说明了如何使用 Codex 组织完整评估流程：生成 skill、运行 solver、聚合 `avg@3`、记录 token 和 cost 指标，并写出最终报告。
+```bibtex
+@misc{gdpevo2026,
+  title  = {GDPevo: Measuring agent self-evolution on real business work},
+  author = {PrismShadow Team},
+  year   = {2026},
+  url    = {https://github.com/Prism-Shadow/GDPevo}
+}
+```

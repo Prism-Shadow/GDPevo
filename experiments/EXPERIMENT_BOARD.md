@@ -5,18 +5,18 @@ Languages: [English](EXPERIMENT_BOARD.md) | [Chinese](EXPERIMENT_BOARD.zh.md)
 This board summarizes the released evaluation results for GDPevo's public
 benchmark runs. The released run compares a stateless `base` baseline with
 two evolve methods, `demo` and `reflect`, to
-measure whether agent experience improves later GDP-valued business tasks.
+measure whether agent self-evolution improves later GDP-valued business tasks.
 Full structured reports are stored under released experiment directories, such
 as `codex_gpt5_5_xhigh/reports/`, `claude_code_opus_4_8_xhigh/reports/`,
 and `panofy_claude_opus_4_6_high/reports/`.
 
-In the released Codex GPT-5.5 xhigh run, skill-based evolution improves accuracy
+In the released Codex GPT-5.5 xhigh run, self-evolution improves accuracy
 by 18.21 percentage points on average and reduces token cost by 25.75% on
 average.
 
-Efficiency metrics only count test solver subagent answer-writing. They are averaged across the 3 attempts for each test task first, then averaged across the 5 test tasks. Skill generation, environment startup, evaluator execution, and main-agent aggregation are outside these metrics.
+Efficiency metrics only count test solver subagent answer-writing. They are averaged across the 3 attempts for each test task first, then averaged across the 5 test tasks. Artifact generation, environment startup, evaluator execution, and main-agent aggregation are outside these metrics.
 
-This board displays `avg@3` as a percentage and token metrics in thousands (`k`). Cost is calculated from the raw token counts in the report YAML files, then rounded to two decimals for display.
+This board displays `acc@3` as a percentage and token metrics in thousands (`k`). Cost is calculated from the raw token counts in the report YAML files, then rounded to two decimals for display.
 
 `cost USD avg@3` is calculated from report token metrics and the model price used for the run. Some report YAMLs store the calculated field directly; the board rounds it to two decimals for display.
 
@@ -40,7 +40,7 @@ cost_USD_avg_3 =
    + output_tokens_avg_3 * 30.00) / 1_000_000
 ```
 
-| task_group_id | scenario_id | model | harness | mode | overall avg@3 (%) | cached tokens avg@3 (k) | input tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | seconds avg@3 | report |
+| task_group_id | scenario_id | model | harness | mode | overall acc@3 (%) | cached tokens avg@3 (k) | input tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | seconds avg@3 | report |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `gpt-5.5, xhigh` | `codex` | `base` | 44.43% | 403.2k | 457.0k | 14.2k | 0.90 | 309.779 | [task_group_001.yaml](codex_gpt5_5_xhigh/reports/task_group_001.yaml) |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `gpt-5.5, xhigh` | `codex` | `demo` | 48.12% | 366.0k | 412.6k | 13.2k | 0.81 | 282.567 | [task_group_001.yaml](codex_gpt5_5_xhigh/reports/task_group_001.yaml) |
@@ -83,7 +83,7 @@ cost_USD_avg_3 =
 
 ## Claude Code (Opus 4.8, xhigh)
 
-In the released Claude Code Opus 4.8 xhigh run, skill-based evolution improves
+In the released Claude Code Opus 4.8 xhigh run, self-evolution improves
 accuracy by 20.31 percentage points on average and reduces token cost by 8.69%
 on average (averaged over the two methods across the 12 task groups).
 
@@ -108,7 +108,7 @@ cost_USD_avg_3 =
 
 The Claude Code token columns are the four Anthropic usage buckets (uncached input, cache write, cache read, output).
 
-| task_group_id | scenario_id | model | harness | mode | overall avg@3 (%) | input(uncached) tokens avg@3 (k) | cache write tokens avg@3 (k) | cache read tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
+| task_group_id | scenario_id | model | harness | mode | overall acc@3 (%) | input(uncached) tokens avg@3 (k) | cache write tokens avg@3 (k) | cache read tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-8, xhigh` | `claude_code` | `base` | 48.75% | 2.8k | 29.4k | 205.0k | 10.0k | 0.55 | [task_group_001.yaml](claude_code_opus_4_8_xhigh/reports/task_group_001.yaml) |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-8, xhigh` | `claude_code` | `demo` | 81.96% | 2.8k | 28.1k | 138.1k | 5.1k | 0.39 | [task_group_001.yaml](claude_code_opus_4_8_xhigh/reports/task_group_001.yaml) |
@@ -151,7 +151,7 @@ The Claude Code token columns are the four Anthropic usage buckets (uncached inp
 
 ## Panofy (Claude Opus 4.6, high)
 
-In the released Panofy Claude Opus 4.6 high run, skill-based evolution improves accuracy by 17.94 percentage points on average and increases token cost by 11.82% on average (averaged over the two methods across the 12 task groups).
+In the released Panofy Claude Opus 4.6 high run, self-evolution improves accuracy by 17.94 percentage points on average and increases token cost by 11.82% on average (averaged over the two methods across the 12 task groups).
 
 For the released `claude-opus-4-6, high` run, this board uses the Claude Opus 4.6 prices for the three token buckets exposed by Panofy:
 
@@ -172,7 +172,7 @@ cost_USD_avg_3 =
 
 The Panofy token columns are the three available Anthropic usage buckets returned by the harness: 5-minute cache writes, cache hits, and output tokens.
 
-| task_group_id | scenario_id | model | harness | mode | overall avg@3 (%) | 5m cache write tokens avg@3 (k) | cache hit tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
+| task_group_id | scenario_id | model | harness | mode | overall acc@3 (%) | 5m cache write tokens avg@3 (k) | cache hit tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-6, high` | `panofy` | `base` | 63.74% | 23.8k | 155.1k | 11.9k | 0.52 | [task_group_001.yaml](panofy_claude_opus_4_6_high/reports/task_group_001.yaml) |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-6, high` | `panofy` | `demo` | 85.28% | 27.4k | 209.2k | 11.5k | 0.56 | [task_group_001.yaml](panofy_claude_opus_4_6_high/reports/task_group_001.yaml) |

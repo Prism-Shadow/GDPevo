@@ -160,7 +160,7 @@ Codex traces 通常位于：
 
 `token_count` event 记录 token 用量。
 
-所有 runs 完成后，聚合三种条件的 `avg@3` 和平均 cached/input/output tokens。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。
+所有 runs 完成后，聚合三种条件的 `acc@3` 和平均 cached/input/output tokens。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。
 
 临时检查代码、聚合代码或环境启动 notes 可以放在 `scratch/`。这些材料不是正式评估数据。
 
@@ -168,7 +168,7 @@ Codex traces 通常位于：
 
 在报告中解释：
 
-- 三种条件的整体 `avg@3`。
+- 三种条件的整体 `acc@3`。
 - 每种 skill 条件相对 base 的提升。
 - Reflection skill 是否优于 demonstration skill。
 - 哪些 test tasks 提升明显，哪些没有。

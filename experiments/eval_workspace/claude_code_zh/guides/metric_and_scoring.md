@@ -1,6 +1,6 @@
 # Metric And Scoring
 
-主评估指标是 `avg@3`。
+主评估指标是 `acc@3`。
 
 ## 单次运行
 
@@ -62,15 +62,15 @@ token_usage:                          # 按 message.id 去重、跨响应求和
 
 如果 transcript 不能被唯一匹配，应在 `match_status` 中写入 `missing` 或 `ambiguous`，将对应 token 字段设为 `null`，不要手动估算。
 
-## avg@3
+## acc@3
 
 同一个 test task 在同一种条件下运行 3 次独立 attempts。
 
 ```text
-task avg@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
+task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 ```
 
-某一条件的整体 `avg@3` 是 5 个 test-task `avg@3` 的平均值。
+某一条件的整体 `acc@3` 是 5 个 test-task `acc@3` 的平均值。
 
 ## 分数范围
 
@@ -89,14 +89,14 @@ task avg@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 失败后，主 agent 应重试，直到获得一次有效、可打分的 attempt。重试原因和失败记录应保留在对应 attempt 目录中。
 
-如果重试后仍无法获得有效分数，应停止评估并报告问题。不要把失败 attempt 记为 `0`，也不要丢弃失败 attempt 后继续计算 `avg@3`。
+如果重试后仍无法获得有效分数，应停止评估并报告问题。不要把失败 attempt 记为 `0`，也不要丢弃失败 attempt 后继续计算 `acc@3`。
 
 ## 聚合要求
 
-所有 `score.yaml` 准备完成后，主 agent 应检查三种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `avg@3`、整体 `avg@3`，以及条件之间的提升。
+所有 `score.yaml` 准备完成后，主 agent 应检查三种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `acc@3`、整体 `acc@3`，以及条件之间的提升。
 
 主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 cached/input/output tokens，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
 
-这些效率指标只统计 test solver subagents 写答案的过程。不包括 skill 生成、环境启动、evaluator 执行或主 agent 汇总。它们不能替代 `avg@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
+这些效率指标只统计 test solver subagents 写答案的过程。不包括 skill 生成、环境启动、evaluator 执行或主 agent 汇总。它们不能替代 `acc@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
 
 评估 agent 可以根据当前 task group 的 evaluator 形态，在 `scratch/` 中编写临时聚合或检查代码。

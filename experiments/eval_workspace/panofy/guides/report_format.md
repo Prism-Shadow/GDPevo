@@ -16,7 +16,7 @@ harness: panofy
 
 conditions:
   base:
-    overall_avg_at_3: <float>
+    overall_acc_at_3: <float>
     efficiency:
       cache_read_tokens_avg_3: <float or null>
       cache_write_tokens_avg_3: <float or null>
@@ -28,7 +28,7 @@ conditions:
           - <float>
           - <float>
           - <float>
-        avg_at_3: <float>
+        acc_at_3: <float>
         cache_read_tokens_avg_3: <float or null>
         cache_write_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
@@ -42,11 +42,11 @@ conditions:
       test_005:
         <same shape as test_001>
   demo:
-    overall_avg_at_3: <float>
+    overall_acc_at_3: <float>
     efficiency: <same shape as base.efficiency>
     tasks: <same shape as base.tasks>
   reflect:
-    overall_avg_at_3: <float>
+    overall_acc_at_3: <float>
     efficiency: <same shape as base.efficiency>
     tasks: <same shape as base.tasks>
 
@@ -54,7 +54,7 @@ conditions:
 
 ## Requirements
 
-- Keep reasonable decimal precision for `overall_avg_at_3` and each `avg_at_3`;
+- Keep reasonable decimal precision for `overall_acc_at_3` and each `acc_at_3`;
   4 decimal places is recommended.
 - `scores` must contain all 3 raw run scores (one per attempt). Write it as a
   block list with one score per line.
@@ -71,7 +71,7 @@ cost_USD_avg_3 =
    + output_tokens_avg_3 * output_price) / 1_000_000
 ```
 - `conditions.<mode>.efficiency.*_avg_3` is the average across the 5 test tasks
-  for that mode. Efficiency follows the same aggregation shape as `avg@3`:
+  for that mode. Efficiency follows the same aggregation shape as `acc@3`:
   average the 3 attempts for one test task, then average the 5 test tasks.
 - Efficiency metrics only count test-task `predict()` work. Do not include
   training, environment startup, or evaluator execution.

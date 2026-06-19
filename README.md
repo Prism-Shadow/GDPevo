@@ -2,73 +2,55 @@
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
-GDPevo is a public benchmark for evaluating self-evolving agents on
-economically valuable, real business tasks. To our knowledge, it is the first
-GDP-valued benchmark that treats agent evaluation as a stateful process: an
-agent first works through related train tasks, turns experience into reusable
-skills, and is then evaluated on held-out tasks from the same business
-environment.
+**GDPevo** is a public benchmark for evaluating agent self-evolution on real business work. The release contains 120 tasks across 12 task groups in customer relationship management (CRM), enterprise resource planning (ERP), and Finance; each group has one shared business environment, 5 train tasks, and 5 held-out test tasks. For the full motivation, construction pipeline, and findings, read the [project blog](https://prism-shadow.github.io/GDPevo/blog.html).
 
-Most agent benchmarks still evaluate stateless task completion. GDPevo instead
-asks whether agents can improve through experience: can they learn business
-rules, source precedence, operating procedures, and output discipline from
-earlier work, and can that learning make later work more accurate and cheaper
-to execute?
+## Evaluation Results
 
-The benchmark can be used to evaluate:
+Accuracy is reported as `acc@3`, averaged over 12 task groups. Cost is reported in USD.
 
-- self-evolving or continual-learning agents;
-- skill creators and skill optimizers;
-- end-to-end agent memory systems.
+| Harness | Model | Thinking level | `base` acc@3 | `demo` acc@3 | `reflect` acc@3 | Accuracy lift | Cost change |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Codex | GPT-5.5 | xhigh | 48.35% | 65.99% | 67.13% | +18.21 pp | -25.75% |
+| Claude Code | Opus 4.8 | xhigh | 49.11% | 70.90% | 67.94% | +20.31 pp | -8.69% |
+| Panofy | Opus 4.6 | high | 50.17% | 68.24% | 67.98% | +17.94 pp | +11.82% |
 
-The first release contains 120 tasks organized into 12 task groups. Each task
-group has one shared business environment, five train tasks, and five test
-tasks. The task groups are constructed from economically meaningful industry
-workflows, including finance, enterprise CRM, and ERP automation.
+See the full experiment board in [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md).
 
-In the released Codex GPT-5.5 xhigh run, evolved agents improve accuracy by
-18.21 percentage points on average after inductive learning, while reducing
-token cost by 25.75% on average. The released artifacts include executable task
-groups, evaluation reports, generated skill packages, and a reusable evaluation
-workspace that can automate the full scoring flow.
+Per-task reports are under:
+
+- [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
+- [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
+- [`experiments/panofy_claude_opus_4_6_high/`](experiments/panofy_claude_opus_4_6_high/)
 
 ## Repository Layout
 
 | Path | Purpose |
 | --- | --- |
-| `data/` | Released task group data, data board, shared environments, train/test tasks, answers, evaluators, and data notes. |
-| `experiments/` | Released evaluation protocol, evaluation workspaces, result reports, generated skills, and experiment board. |
-| `site/` | GitHub Pages scaffold and public site assets. |
-| `assets/` | Figures, logos, and visual assets used by released materials. |
+| [`data/`](data/) | Released benchmark data, including task groups, shared environments, train/test tasks, reference answers, and rule-based evaluators. |
+| [`experiments/`](experiments/) | Released evaluation results, reusable evaluation workspaces, report YAMLs, and the aggregate experiment board. |
+| [`site/`](site/) | Public website and blog for the benchmark release. |
 
-## Data
+## How To Use This Repo
 
-Each task group contains one shared business environment, five train tasks, and
-five test tasks. Train tasks provide the experience source, and test tasks
-measure whether the resulting skills improve later work in the same business
-environment.
+- Benchmark data: read the summary in [`data/DATA_BOARD.md`](data/DATA_BOARD.md), then inspect task groups under [`data/task_groups/`](data/task_groups/).
+- Evaluation results: read [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md), then open the per-task reports under the three experiment directories.
+- Evaluation workspace: start from [`experiments/eval_workspace/`](experiments/eval_workspace/) to rerun or adapt the workflow. Each workspace contains its own guides, task group inputs, run artifacts, and report directory.
+- Local site preview:
 
-Released task groups are summarized in [data/DATA_BOARD.md](data/DATA_BOARD.md).
-See [data/README.md](data/README.md) for the data layout and task group format.
+```bash
+cd site
+npm ci
+npm run build
+npm run preview
+```
 
-## Experiments
+## Citation
 
-The released evaluation run compares three conditions:
-
-- `no_skill`
-- `demonstration_skill`
-- `reflection_skill`
-
-Results are summarized in
-[experiments/EXPERIMENT_BOARD.md](experiments/EXPERIMENT_BOARD.md).
-
-See [experiments/README.md](experiments/README.md) for details.
-
-## Evaluation Workspace
-
-The reusable evaluation workspace is available at
-[experiments/eval_workspace/](experiments/eval_workspace/). A Chinese mirror is
-available at [experiments/eval_workspace_zh/](experiments/eval_workspace_zh/).
-The workspace describes how Codex can run the full evaluation workflow with
-clean-context skill-generation and solver agents, aggregate `avg@3`, record
-token and cost metrics, and write the final report.
+```bibtex
+@misc{gdpevo2026,
+  title  = {GDPevo: Measuring agent self-evolution on real business work},
+  author = {PrismShadow Team},
+  year   = {2026},
+  url    = {https://github.com/Prism-Shadow/GDPevo}
+}
+```
