@@ -1,0 +1,61 @@
+# 环境与数据
+
+## Env 设计
+
+`env/` 应根据整个 task group 的场景开发，而不是为单个 task 临时拼工具。
+
+环境表示共享的公共数据与办公场景：业务系统、公开目录、CRM 类记录、数据库、文件、dashboard、API 和 Web 页面，可以被多个 task 使用。它应该像一个连贯的工作环境，而不是 API 后面挂着 10 个互相独立的 task 文件夹。
+
+可以包含：
+
+- Web 应用或页面。
+- 本地 API 服务。
+- 开放给 solver 使用的 PostgreSQL 或其他数据库。
+- 业务系统数据、生成脚本、初始化脚本和配置文件。
+- 与任务相关但不直接给出答案的查询、筛选、状态检查或操作接口。
+
+环境应体现真实生产系统的复杂性，包括足够多的对象、状态、历史记录、噪声数据、相似接口和无关但合理的干扰信息。不要创建一个可以直接返回答案的接口。
+
+solver-facing env 不能按 task 切分。避免 per-task 数据包、per-task 数据库，或 `/api/tasks/<task_id>/data` 这类直接把某条 task 相关数据打包给 solver 的 endpoint。generator 可以保留给构造和 review 使用的隐藏元数据，但 solver-facing services 应暴露共享业务对象和正常办公接口，例如 `/events`、`/crm/accounts`、`/campaign-members`、`/exhibitors`、`/finance/invoices`、SQL tables 或共享文件。
+
+`env/` 本身不是 solver 可见输入。solver、direct-test 和 post-skill agents 只能通过暴露出来的环境入口访问环境，例如浏览器 URL、API base URL 或数据库连接串。如果任务使用 PostgreSQL 或其他数据库，应把数据库作为运行中的服务暴露出来，并提供连接信息；不能让 solver agents 直接查看 `env/` 文件、migration 脚本、生成数据文件、数据库 dump、seed、manifest 或 setup 脚本。
+
+## Env-Builder 对 env 的责任
+
+主 agent 负责 env blueprint、task group 一致性和最终集成。实际 env 实现应由一个上下文干净的 env-builder coding subagent 根据 blueprint 完成。
+
+blueprint 应在实现前写好，并放在：
+
+```text
+scratch/env_blueprint.md
+```
+
+blueprint 应说明业务系统、公开入口、数据契约、需要的表或 API、随机种子、生成数据预期、setup 行为和 manifest 要求。
+
+env-builder coding subagent 应实现：
+
+- `env/setup.sh` 可以准备或启动需要的环境。
+- Web、API、数据库和数据文件服务于整个 task group。
+- 共享数据模型和公开接口应按业务领域组织，而不是按 task id 组织。
+- train/test 使用同一套业务基础设施，形成可迁移的环境经验。
+- solver 能通过公开入口访问必要能力，但不能直接看到标准答案、隐藏说明或 `env/` 实现文件。
+- 程序化数据生成脚本、固定种子、生成数据和 manifest 都应保留在 `env/` 中。
+
+task-builder subagents 可以通过主 agent 提出额外接口、表或数据需求，但不应各自实现独立 env。
+
+## 程序化造数
+
+大量数据必须通过程序和随机数生成，不应手写生产规模数据。
+
+要求：
+
+- 在 `env/` 中保留数据生成脚本，例如 `generate_data.py`。
+- 使用固定随机种子，保证可复现。
+- 输出数据应有清单或 manifest，说明生成了哪些文件、表或记录。
+- 底层业务数据、大表、数据库、图谱、系统状态和 API 后端数据应放在 `env/` 中，通过环境接口访问。
+- 生成数据可以包含供构造和 review 使用的 task-relevance metadata，但 solver-facing 数据应保持为共享办公环境，而不是 per-task slices。
+- 数据应包含真实任务中常见的杂质，例如缺失字段、重复记录、过期导出、口径差异、相似实体、冲突状态或无关记录。
+
+payload 中可以放 solver 可见的小型导出、邮件、表格、日志、模板或局部材料。不要把完整底层数据库、API 源码或大规模业务系统数据直接放入 `input/payloads/`。
+
+数据生成脚本不能变成完整 task group builder。`env/` 脚本可以生成共享业务记录、manifest、数据库初始化文件或服务 fixtures，但不能同时生成所有 task prompts、隐藏 notes、标准答案、evaluators、`task_group.yaml`、scratch 设计文档或校准 skill。环境生成必须和任务构造分开。

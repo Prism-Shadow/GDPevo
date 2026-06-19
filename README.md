@@ -2,13 +2,15 @@
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
+[![Blog](https://img.shields.io/badge/Blog-Read%20the%20blog-0f7b5f?style=flat&logo=readthedocs&logoColor=white)](https://prism-shadow.github.io/GDPevo/blog.html)
+
 **GDPevo** is a public benchmark for evaluating agent self-evolution on real business work. The release contains 120 tasks across 12 task groups in customer relationship management (CRM), enterprise resource planning (ERP), and Finance; each group has one shared business environment, 5 train tasks, and 5 held-out test tasks. For the full motivation, construction pipeline, and findings, read the [project blog](https://prism-shadow.github.io/GDPevo/blog.html).
 
 ## Evaluation Results
 
 Accuracy is reported as `acc@3`, averaged over 12 task groups. Cost is reported in USD.
 
-| Harness | Model | Thinking level | `base` acc@3 | `demo` acc@3 | `reflect` acc@3 | Accuracy lift | Cost change |
+| Harness | Model | Thinking level | `base` acc@3 | `fewshot` acc@3 | `reflect` acc@3 | Accuracy lift | Cost change |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | Codex | GPT-5.5 | xhigh | 48.35% | 65.99% | 67.13% | +18.21 pp | -25.75% |
 | Claude Code | Opus 4.8 | xhigh | 49.11% | 70.90% | 67.94% | +20.31 pp | -8.69% |
@@ -27,14 +29,16 @@ Per-task reports are under:
 | Path | Purpose |
 | --- | --- |
 | [`data/`](data/) | Released benchmark data, including task groups, shared environments, train/test tasks, reference answers, and rule-based evaluators. |
-| [`experiments/`](experiments/) | Released evaluation results, reusable evaluation workspaces, report YAMLs, and the aggregate experiment board. |
+| [`data_construction/`](data_construction/) | Four-stage construction and evaluation workspaces, from scenario discovery through score evaluation. |
+| [`experiments/`](experiments/) | Released evaluation results, report YAMLs, and the aggregate experiment board. |
 | [`site/`](site/) | Public website and blog for the benchmark release. |
 
 ## How To Use This Repo
 
 - Benchmark data: read the summary in [`data/DATA_BOARD.md`](data/DATA_BOARD.md), then inspect task groups under [`data/task_groups/`](data/task_groups/).
 - Evaluation results: read [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md), then open the per-task reports under the three experiment directories.
-- Evaluation workspace: start from [`experiments/eval_workspace/`](experiments/eval_workspace/) to rerun or adapt the workflow. Each workspace contains its own guides, task group inputs, run artifacts, and report directory.
+- Construction and evaluation workspaces: use the four-stage workflow under [`data_construction/`](data_construction/). Each workspace has its own README and guides.
+- Stages 1-3 are written for Codex workflows. Other agent frameworks can reuse the same structure, but may need light adaptation.
 - Local site preview:
 
 ```bash
@@ -43,6 +47,15 @@ npm ci
 npm run build
 npm run preview
 ```
+
+## Workspace Usage Guide
+
+| Stage | Workspace | Purpose | Prompt |
+| --- | --- | --- | --- |
+| Scenario Discovery | [`data_construction/Stage_1_Scenario_Discovery/`](data_construction/Stage_1_Scenario_Discovery/) | Collect raw source-dataset data items that fit a given business scenario. | `Read README.md, search raw data in source benchmark datasets according to <target_scenario>, and write scenario data under scenario/<scenario_id>/.` |
+| Task Group Synthesis | [`data_construction/Stage_2_Task_Group_Synthesis/task_factory/`](data_construction/Stage_2_Task_Group_Synthesis/task_factory/) | Build one full task group from one scenario. The Chinese mirror is [`task_factory_zh/`](data_construction/Stage_2_Task_Group_Synthesis/task_factory_zh/). | `Read README.md and guides/, then build task_group/<task_group_id>/ for one complete task group.` |
+| Quality Filtering | [`data_construction/Stage_3_Quality_Filtering/review_workspace/`](data_construction/Stage_3_Quality_Filtering/review_workspace/) | Review one completed task group with script checks and independent reviewer-agent votes. The Chinese mirror is [`review_workspace_zh/`](data_construction/Stage_3_Quality_Filtering/review_workspace_zh/). | `Read README.md and guides/, review one task_group/ with scratch/, collect 6 votes, and write ../reports/<task_group_id>.yaml.` |
+| Score Evaluation | [`data_construction/Stage_4_Score_Evaluation/eval_workspace/`](data_construction/Stage_4_Score_Evaluation/eval_workspace/) | Run formal `acc@3`, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces. | `Use Codex GPT-5.5 xhigh, Claude Code Opus 4.8 xhigh, or Panofy; run score evaluation and write report/<task_group_id>.yaml.` For Panofy, load `.env` first. |
 
 ## Citation
 

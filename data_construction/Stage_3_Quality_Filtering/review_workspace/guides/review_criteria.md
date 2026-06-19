@@ -1,0 +1,59 @@
+# Review Criteria
+
+## Scripted Check Scope
+
+`check_task_group.py` checks deterministic conditions only:
+
+- `task_group.yaml` parses and contains `task_group`, `env`, `train_tasks`, and `test_tasks`.
+- `train_tasks` and `test_tasks` each contain 5 tasks.
+- Each declared task contains `input/`, `prompt.txt`, `payloads/answer_template.json`, `notes/notes.md`, `output/answer.json`, `eval/eval.sh`, and evaluator files.
+- Environment files declared in `env.setup` and `env.files` exist.
+- All JSON/YAML files parse.
+- Each task's `eval.rubric` is a non-empty list, and each item has `goal` and positive `weight`.
+- Each task evaluator gives full credit to the reference answer. The script only requires evaluator stdout to be JSON and supports common full-credit fields such as `score`, `normalized_score`, `earned_score/max_score`, `earned_weight/total_weight`, `passed`, `points`, or `checks`.
+- `notes/notes.md` contains at least Chinese notes; Chinese should appear only in `notes/notes.md`.
+
+The script does not judge business realism, task difficulty, transfer design, scoring-point count, rubric weight quality, leakage risk, or evaluation design quality. Reviewer subagents must judge those.
+
+## Reviewer Inputs
+
+Each reviewer must read both:
+
+```text
+task_group/<task_group_id>/
+scratch/
+```
+
+`task_group/` is the formal benchmark data. `scratch/` is a copy of the Stage 2 `task_factory/scratch` material; it is not solver-visible input and is not part of the final evaluation tasks. Reviewers may use it to inspect design, calibration, attempts, and rework history.
+
+`scratch/` may contain reference answers, construction truth, blind-run results, reflection notes, calibration logs, and rework history. These do not count as leakage by themselves. Leakage checks only apply to solver-visible formal task group surfaces: `input/prompt.txt`, `input/payloads/`, `answer_template.json`, public APIs, public web pages, public databases, or other runtime entry points. If answers, SOPs, or construction truth from `scratch/` are copied into those solver-visible surfaces, mark it as leakage.
+
+## Reviewer Checks
+
+Each reviewer must independently check:
+
+| Check | Focus |
+| --- | --- |
+| `scenario_lineage` | Whether the task group comes from examples under one scenario and preserves the difficulty drivers from the source examples. |
+| `train_predict_design` | Whether train/test are all real tasks; train tasks are not tutorials; test tasks require transferable experience from train. |
+| `transfer_band` | Whether diversity sits within a transferable band, with 2-3 recurring operation families rather than unrelated one-off SOPs. |
+| `environment_design` | Whether `env/` is a shared public data and workspace environment; solvers can only access public entry points and cannot inspect env source files or truth. |
+| `leakage_control` | Whether solver-visible formal task group surfaces leak answers, complete SOPs, scoring points, construction truth, or solution steps; drafts and answers in `scratch/` do not count as leakage evidence. |
+| `notes_interpretability` | Whether each task has bilingual `notes/notes.md` explaining the problem, answer basis, transfer source, common pitfalls, and scoring standard. |
+| `evaluation_design` | Whether evaluation uses exact checks around key business outcomes, avoiding schema friction, free-text matching, and point stuffing. |
+| `difficulty_calibration` | Whether direct `acc@2` is roughly below `0.60`, evolved attempts improve by about `0.15+`, and results avoid broad full-score saturation. |
+| `construction_process` | Whether records show env-builder, task-builder, solver calibration, review/rework, and other multi-agent construction steps. |
+| `overall` | Whether the task group is ready for the final evaluation pool. |
+
+The reviewer's `decision` should reflect overall quality. Small issues that do not harm benchmark validity can be `pass` with `concerns`. Answer leakage, untrustworthy evaluation, invalid train/test transfer, missing structure, or invalid calibration should be `fail`.
+
+## Common Fail Reasons
+
+- Solver-visible prompts, payloads, answer templates, or public environment entry points directly include SOPs, answer facts, scoring points, or solution steps.
+- Answers, construction truth, or calibration logs from `scratch/` are copied into solver-visible surfaces.
+- `env/` provides an answer calculator, task-specific data package, or near-answer endpoint such as `/api/tasks/<task_id>/data`.
+- Test tasks can score well without transfer from train tasks.
+- Evolved attempts show no meaningful improvement, or results saturate near full score across many tasks.
+- Evaluation scores free text, evidence phrasing, format friction, or unrelated fields instead of key business outcomes.
+- Notes omit transfer source, answer basis, or scoring standard, making the data hard to interpret.
+- Multi-agent construction records are missing, or all env/task/answer/notes/eval assets were clearly generated by one monolithic script.

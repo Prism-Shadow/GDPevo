@@ -68,7 +68,7 @@ conditions:
         cost_usd_avg_3: 0.2813
         input_tokens_avg_3: 2792
         output_tokens_avg_3: 3360.3
-  demo:
+  fewshot:
     skill_dirs:
       attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
       attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
@@ -210,7 +210,7 @@ conditions:
 # ---------------------------------------------------------------------------
 evaluation_setup:
   metric: acc@3 (mean of 3 independent clean-context solver attempts per test task)
-  conditions: [base, demo, reflect]
+  conditions: [base, fewshot, reflect]
   test_tasks: 5
   attempts_per_task: 3
   total_solver_runs: 45
