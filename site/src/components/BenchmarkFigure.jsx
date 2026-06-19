@@ -32,17 +32,18 @@ const benchmarkMetrics = [
   }
 ];
 
-export function BenchmarkFigure({ className = "" }) {
+export function BenchmarkFigure({ className = "", modeLabels = {}, caption = blogBenchmark.caption }) {
   const [metricKey, setMetricKey] = useState("acc");
   const metric = benchmarkMetrics.find((item) => item.key === metricKey) ?? benchmarkMetrics[0];
   const metricMax = metric.max ?? Math.max(...summaryCards.flatMap((card) => card.rows.map(metric.value)), 1);
+  const modeLabel = (mode) => modeLabels[mode] ?? mode;
 
   return (
     <figure className={["blog-benchmark-figure", className].filter(Boolean).join(" ")}>
       <figcaption className="blog-benchmark-head">
         <div className="blog-benchmark-copy">
           <span>
-            <Lang {...blogBenchmark.caption} />
+            <Lang {...caption} />
           </span>
         </div>
         <div className="blog-benchmark-tools">
@@ -63,7 +64,7 @@ export function BenchmarkFigure({ className = "" }) {
             {modes.map((mode) => (
               <i key={mode}>
                 <b className={`sw sw-${mode}`} />
-                {mode}
+                {modeLabel(mode)}
               </i>
             ))}
           </span>
@@ -90,7 +91,7 @@ export function BenchmarkFigure({ className = "" }) {
               <div className="blog-benchmark-bars">
                 {card.rows.map((row) => (
                   <div className={`blog-benchmark-bar mode-${row.mode}`} key={row.mode}>
-                    <code>{row.mode}</code>
+                    <code>{modeLabel(row.mode)}</code>
                     <div className="blog-benchmark-measure">
                       <div className="blog-benchmark-track">
                         <span style={{ "--w": `${(metric.value(row) / metricMax) * 100}%` }} />

@@ -38,10 +38,10 @@ function BlogIntro() {
           <Lang {...blogIntro.title} />
         </h1>
         <div className="blog-meta">
-          <span>
+          <span className="blog-meta-date">
             <Lang {...meta.date} />
           </span>
-          <span>{meta.author}</span>
+          <span className="blog-meta-author">{meta.author}</span>
           <button type="button" className={`blog-share-btn ${copied ? "copied" : ""}`} aria-label={share.ariaLabel} onClick={copyBlogLink}>
             <Lang {...(copied ? share.copiedLabel : share.label)} />
           </button>
@@ -142,7 +142,7 @@ function BlogFindings() {
           </ul>
         </div>
 
-        <BenchmarkFigure />
+        <BenchmarkFigure modeLabels={{ demo: "fewshot" }} />
         <p className="note">
           <LocalizedMarkdown copy={blogFindings.note} />
         </p>
