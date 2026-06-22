@@ -1,4 +1,4 @@
-# GDPevo
+# GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
@@ -39,15 +39,6 @@ Per-task reports are under:
 - Evaluation results: read [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md), then open the per-task reports under the three experiment directories.
 - Construction and evaluation workspaces: use the four-stage workflow under [`data_construction/`](data_construction/). Each workspace has its own README and guides.
 - Stages 1-3 are written for Codex workflows. Other agent frameworks can reuse the same structure, but may need light adaptation.
-- Local site preview:
-
-```bash
-cd site
-npm ci
-npm run build
-npm run preview
-```
-
 ## Workspace Usage Guide
 
 | Stage | Workspace | Purpose | Prompt |

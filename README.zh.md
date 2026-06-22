@@ -1,4 +1,4 @@
-# GDPevo
+# GDPevo: 在真实企业任务上评估 Agent 的自进化能力
 
 语言：[English](README.md) | [中文](README.zh.md)
 
@@ -39,15 +39,6 @@
 - 评测结果：在 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md) 查看汇总结果，再进入三个实验目录阅读逐任务报告。
 - 构建与评测工作区：四阶段流程都在 [`data_construction/`](data_construction/) 下。每个工作区都有自己的 README 和 guides。
 - 前三阶段默认通过 Codex 工作流实现。其他智能体框架可以复用整体结构，但需要适度改写。
-- 本地预览公开网站：
-
-```bash
-cd site
-npm ci
-npm run build
-npm run preview
-```
-
 ## 工作区使用指南
 
 | 阶段 | 工作区 | 功能 | 提示语 |
