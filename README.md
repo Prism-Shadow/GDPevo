@@ -1,4 +1,4 @@
-# GDPevo
+# GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
@@ -29,7 +29,8 @@ Per-task reports are under:
 | Path | Purpose |
 | --- | --- |
 | [`data/`](data/) | Released benchmark data, including task groups, shared environments, train/test tasks, reference answers, and rule-based evaluators. |
-| [`data_construction/`](data_construction/) | Four-stage construction and evaluation workspaces, from scenario discovery through score evaluation. |
+| [`data_construction/`](data_construction/) | Construction workspaces for scenario discovery, task group synthesis, and quality filtering. |
+| [`evaluation/`](evaluation/) | Reusable score evaluation workspaces for released task groups. |
 | [`experiments/`](experiments/) | Released evaluation results, report YAMLs, and the aggregate experiment board. |
 | [`site/`](site/) | Public website and blog for the benchmark release. |
 
@@ -37,25 +38,37 @@ Per-task reports are under:
 
 - Benchmark data: read the summary in [`data/DATA_BOARD.md`](data/DATA_BOARD.md), then inspect task groups under [`data/task_groups/`](data/task_groups/).
 - Evaluation results: read [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md), then open the per-task reports under the three experiment directories.
-- Construction and evaluation workspaces: use the four-stage workflow under [`data_construction/`](data_construction/). Each workspace has its own README and guides.
+- Construction workspaces: use the three-stage workflow under [`data_construction/`](data_construction/).
+- Score evaluation workspaces: use [`evaluation/eval_workspace/`](evaluation/eval_workspace/).
 - Stages 1-3 are written for Codex workflows. Other agent frameworks can reuse the same structure, but may need light adaptation.
-- Local site preview:
-
-```bash
-cd site
-npm ci
-npm run build
-npm run preview
-```
 
 ## Workspace Usage Guide
 
-| Stage | Workspace | Purpose | Prompt |
-| --- | --- | --- | --- |
-| Scenario Discovery | [`data_construction/Stage_1_Scenario_Discovery/`](data_construction/Stage_1_Scenario_Discovery/) | Collect raw source-dataset data items that fit a given business scenario. | `Read README.md, search raw data in source benchmark datasets according to <target_scenario>, and write scenario data under scenario/<scenario_id>/.` |
-| Task Group Synthesis | [`data_construction/Stage_2_Task_Group_Synthesis/task_factory/`](data_construction/Stage_2_Task_Group_Synthesis/task_factory/) | Build one full task group from one scenario. The Chinese mirror is [`task_factory_zh/`](data_construction/Stage_2_Task_Group_Synthesis/task_factory_zh/). | `Read README.md and guides/, then build task_group/<task_group_id>/ for one complete task group.` |
-| Quality Filtering | [`data_construction/Stage_3_Quality_Filtering/review_workspace/`](data_construction/Stage_3_Quality_Filtering/review_workspace/) | Review one completed task group with script checks and independent reviewer-agent votes. The Chinese mirror is [`review_workspace_zh/`](data_construction/Stage_3_Quality_Filtering/review_workspace_zh/). | `Read README.md and guides/, review one task_group/ with scratch/, collect 6 votes, and write ../reports/<task_group_id>.yaml.` |
-| Score Evaluation | [`data_construction/Stage_4_Score_Evaluation/eval_workspace/`](data_construction/Stage_4_Score_Evaluation/eval_workspace/) | Run formal `acc@3`, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces. | `Use Codex GPT-5.5 xhigh, Claude Code Opus 4.8 xhigh, or Panofy; run score evaluation and write report/<task_group_id>.yaml.` For Panofy, load `.env` first. |
+These workspaces are agent-ready folders for building, reviewing, and evaluating GDPevo. To use one, open the corresponding folder with an agent, place the input data required by that stage, then send the prompt to trigger the workflow.
+
+- **Scenario Discovery**: [`data_construction/Stage_1_Scenario_Discovery/`](data_construction/Stage_1_Scenario_Discovery/)
+
+  - **Purpose**: Collect raw source-dataset data items that fit a given business scenario.
+  - **Input data**: a target business scenario (`<target_scenario>`) and raw source benchmark data to search.
+  - **Prompt**: `Read README.md, search raw data in source benchmark datasets according to <target_scenario>, and write scenario data under scenario/<scenario_id>/.`
+
+- **Task Group Synthesis**: [`data_construction/Stage_2_Task_Group_Synthesis/task_factory/`](data_construction/Stage_2_Task_Group_Synthesis/task_factory/)
+
+  - **Purpose**: Build one full task group from one scenario. The Chinese mirror is [`task_factory_zh/`](data_construction/Stage_2_Task_Group_Synthesis/task_factory_zh/).
+  - **Input data**: one Stage 1 scenario copied into `seed_scenario/`, including `scenario.yaml`, notes, and attachments.
+  - **Prompt**: `Read README.md and guides/, then build task_group/<task_group_id>/ for one complete task group.`
+
+- **Quality Filtering**: [`data_construction/Stage_3_Quality_Filtering/review_workspace/`](data_construction/Stage_3_Quality_Filtering/review_workspace/)
+
+  - **Purpose**: Review one completed task group with script checks and independent reviewer-agent votes. The Chinese mirror is [`review_workspace_zh/`](data_construction/Stage_3_Quality_Filtering/review_workspace_zh/).
+  - **Input data**: one completed task group copied into `task_group/`, plus the matching Stage 2 scratch material in `scratch/`.
+  - **Prompt**: `Read README.md and guides/, review one task_group/ with scratch/, collect 6 votes, and write ../reports/<task_group_id>.yaml.`
+
+- **Score Evaluation**: [`evaluation/eval_workspace/`](evaluation/eval_workspace/)
+
+  - **Purpose**: Run formal `acc@3`, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces.
+  - **Input data**: one released task group copied into the selected evaluator workspace, plus the credentials or config required by that workspace.
+  - **Prompt**: `Read README.md and guides/, run score evaluation for the staged task group, and write report/<task_group_id>.yaml.`
 
 ## Citation
 

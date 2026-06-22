@@ -1,4 +1,4 @@
-# GDPevo
+# GDPevo: 在真实企业任务上评估 Agent 的自进化能力
 
 语言：[English](README.md) | [中文](README.zh.md)
 
@@ -10,7 +10,7 @@
 
 准确率使用 `acc@3`，并在 12 个任务组上取均值。费用以美元计。
 
-| 评测框架 | 模型 | 思考强度 | 基线准确率 | 少样本进化准确率 | 反思进化准确率 | 准确率提升 | 费用变化 |
+| 评测框架 | 模型 | 思考强度 | `base` 准确率 | `fewshot` 准确率 | `reflect` 准确率 | 准确率提升 | 费用变化 |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | Codex | GPT-5.5 | xhigh | 48.35% | 65.99% | 67.13% | +18.21 个百分点 | -25.75% |
 | Claude Code | Opus 4.8 | xhigh | 49.11% | 70.90% | 67.94% | +20.31 个百分点 | -8.69% |
@@ -29,7 +29,8 @@
 | 路径 | 内容 |
 | --- | --- |
 | [`data/`](data/) | 已发布的基准数据，包括任务组、共享环境、训练与测试任务、参考答案和基于规则的评测器。 |
-| [`data_construction/`](data_construction/) | 四阶段构建与评测工作区，覆盖场景发现、任务组生成、质量过滤和分数评测。 |
+| [`data_construction/`](data_construction/) | 构建工作区，包括场景发现、任务组生成和质量过滤。 |
+| [`evaluation/`](evaluation/) | 面向已发布任务组的可复用分数评测工作区。 |
 | [`experiments/`](experiments/) | 已发布的评测结果、报告文件和实验汇总表。 |
 | [`site/`](site/) | 基准发布用的公开网站与博客。 |
 
@@ -37,25 +38,37 @@
 
 - 基准数据：阅读 [`data/DATA_BOARD.zh.md`](data/DATA_BOARD.zh.md) 了解任务组概览，再查看 [`data/task_groups/`](data/task_groups/) 中的具体任务。
 - 评测结果：在 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md) 查看汇总结果，再进入三个实验目录阅读逐任务报告。
-- 构建与评测工作区：四阶段流程都在 [`data_construction/`](data_construction/) 下。每个工作区都有自己的 README 和 guides。
+- 构建工作区：前三阶段流程在 [`data_construction/`](data_construction/) 下。
+- 分数评测工作区：使用 [`evaluation/eval_workspace/`](evaluation/eval_workspace/)。
 - 前三阶段默认通过 Codex 工作流实现。其他智能体框架可以复用整体结构，但需要适度改写。
-- 本地预览公开网站：
-
-```bash
-cd site
-npm ci
-npm run build
-npm run preview
-```
 
 ## 工作区使用指南
 
-| 阶段 | 工作区 | 功能 | 提示语 |
-| --- | --- | --- | --- |
-| 场景发现 | [`data_construction/Stage_1_Scenario_Discovery/`](data_construction/Stage_1_Scenario_Discovery/) | 根据给定业务场景搜寻可归并的来源数据集原始数据。 | `阅读 README.md，根据 <target_scenario> 搜寻来源数据集原始数据，并在 scenario/<scenario_id>/ 下写出场景数据。` |
-| 任务组生成 | [`data_construction/Stage_2_Task_Group_Synthesis/`](data_construction/Stage_2_Task_Group_Synthesis/) | 从一个场景生成完整任务组。 | `阅读 README.md 和 guides/，生成 task_group/<task_group_id>/。` |
-| 质量过滤 | [`data_construction/Stage_3_Quality_Filtering/`](data_construction/Stage_3_Quality_Filtering/) | 对一个完成构建的任务组做结构检查，并组织独立审核智能体投票。 | `阅读 README.md 和 guides/，审核一个 task_group/，收集 6 票，并写出 ../reports/<task_group_id>.yaml。` |
-| 分数评测 | [`data_construction/Stage_4_Score_Evaluation/eval_workspace/`](data_construction/Stage_4_Score_Evaluation/eval_workspace/) | 对一个发布任务组运行正式评测，统计 `acc@3`、token 和费用。目录下包含 Codex、Claude Code、Panofy 以及中文镜像工作区。 | `使用 Codex GPT-5.5 xhigh、Claude Code Opus 4.8 xhigh 或 Panofy，运行分数评测，并写出 report/<task_group_id>.yaml。` Panofy 先加载 `.env`。 |
+这些工作区是可直接用 agent 运行的文件夹，用来构建、审核和评测 GDPevo。使用时，用 agent 打开对应文件夹，放入该阶段需要的输入数据，然后输入提示词触发流程。
+
+- **场景发现**：[`data_construction/Stage_1_Scenario_Discovery/`](data_construction/Stage_1_Scenario_Discovery/)
+
+  - **用途**：根据给定业务场景搜寻可归并的来源数据集原始数据。
+  - **输入数据**：给定业务场景（`<target_scenario>`）和可检索的来源 benchmark 原始数据。
+  - **提示词**：`阅读 README.md，根据 <target_scenario> 搜寻来源数据集原始数据，并在 scenario/<scenario_id>/ 下写出场景数据。`
+
+- **任务组生成**：[`data_construction/Stage_2_Task_Group_Synthesis/`](data_construction/Stage_2_Task_Group_Synthesis/)
+
+  - **用途**：从一个场景生成完整任务组。
+  - **输入数据**：放入 `seed_scenario/` 的一条 Stage 1 场景数据，包括 `scenario.yaml`、notes 和 attachments。
+  - **提示词**：`阅读 README.md 和 guides/，生成 task_group/<task_group_id>/。`
+
+- **质量过滤**：[`data_construction/Stage_3_Quality_Filtering/`](data_construction/Stage_3_Quality_Filtering/)
+
+  - **用途**：对一个完成构建的任务组做结构检查，并组织独立审核智能体投票。
+  - **输入数据**：放入 `task_group/` 的一个完整任务组；对应的 Stage 2 构建记录放入 `scratch/`。
+  - **提示词**：`阅读 README.md 和 guides/，审核一个 task_group/，收集 6 票，并写出 ../reports/<task_group_id>.yaml。`
+
+- **分数评测**：[`evaluation/eval_workspace/`](evaluation/eval_workspace/)
+
+  - **用途**：对一个发布任务组运行正式评测，统计 `acc@3`、token 和费用。目录下包含 Codex、Claude Code、Panofy 以及中文镜像工作区。
+  - **输入数据**：放入所选评测工作区的一个已发布任务组，以及该工作区需要的密钥或配置。
+  - **提示词**：`阅读 README.md 和 guides/，对已放入的任务组运行分数评测，并写出 report/<task_group_id>.yaml。`
 
 ## 引用
 
