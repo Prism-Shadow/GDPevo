@@ -114,15 +114,18 @@ For each attempt directory, stage only:
 - `environment_access.md` with the remote environment URL.
 - The matching skill for non-base modes.
 
-Do not stage `env/`, train tasks, test answers, task notes, evaluator files,
-other test tasks, generated skills from other attempts, prior runs, or judge
-instructions for test solvers.
+Do not stage `env/`, train tasks, source answer files, test answers, task notes,
+evaluator files, other test tasks, generated skills from other attempts, prior
+runs, or judge instructions for test solvers. This does not prohibit fewshot
+skill generation from reading staged train gold answers; the restriction here
+applies to test solver attempt staging.
 
 If a solver accesses, lists, or reports seeing forbidden material such as
-`env/`, `output/answer.json`, notes, evaluator files, disallowed train tasks, or
-another attempt's files, stop using that result. Mark the attempt contaminated,
-record the reason in that attempt directory, report it to the user, and rerun
-the affected test in a new clean attempt directory. Do not score or aggregate a
+`env/`, a source `output/answer.json` during test solving, notes, evaluator
+files, train tasks or train answers outside the allowed mode/stage, or another
+attempt's files, stop using that result. Mark the attempt contaminated, record
+the reason in that attempt directory, report it to the user, and rerun the
+affected test in a new clean attempt directory. Do not score or aggregate a
 contaminated attempt.
 
 The solver writes `answer.json` in its own attempt directory.

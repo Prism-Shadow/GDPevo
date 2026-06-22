@@ -107,13 +107,15 @@ reflect-3
 - 包含远程环境 URL 的 `environment_access.md`。
 - 非 base 模式下与 attempt 编号匹配的 skill。
 
-不要 staging `env/`、train tasks、test answers、task notes、evaluator files、
-其他 test tasks、其他 attempt 的 generated skills、prior runs，或给 test
-solver 的 judge 调用说明。
+不要给 test solver staging `env/`、train tasks、源 answer files、test answers、
+task notes、evaluator files、其他 test tasks、其他 attempt 的 generated skills、
+prior runs，或 judge 调用说明。这个限制不禁止 fewshot skill 生成阶段读取
+已 staging 的 train 标准答案；这里约束的是 test solver attempt 的 staging。
 
-如果 solver 访问、列出或报告看到了禁止材料，例如 `env/`、`output/answer.json`、
-notes、evaluator files、不允许的 train tasks 或其它 attempt 的文件，停止使用该结果。
-将该 attempt 标记为污染，在 attempt 目录记录原因，及时报告给用户，并在新的干净
+如果 solver 访问、列出或报告看到了禁止材料，例如 `env/`、test solving 阶段
+的源 `output/answer.json`、notes、evaluator files、当前模式/阶段不允许的
+train tasks 或 train answers，或其它 attempt 的文件，停止使用该结果。将该
+attempt 标记为污染，在 attempt 目录记录原因，及时报告给用户，并在新的干净
 attempt 目录中重新测试受影响任务。污染 attempt 不打分、不纳入聚合。
 
 Solver 在自己的 attempt 目录中写 `answer.json`。

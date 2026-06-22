@@ -129,12 +129,16 @@ The test `FUNC_INPUT` is identical across conditions; only the trained agent
 differs. Never include test gold answers, notes, evaluator details, train
 materials, or judge endpoint instructions in test `FUNC_INPUT`.
 
+Mode-allowed training exposure is not contamination: for example, fewshot
+training may use train gold answers. The contamination check below applies to
+test-time inputs, instructions, responses, and run artifacts.
+
 If a test agent response or run artifact shows that forbidden material leaked
-into `FUNC_INPUT`, or that the agent saw answers, notes, evaluator details, env
-source, judge instructions, train material, or another run's files, stop using
-that result. Mark the attempt contaminated, report it to the user, exclude it
-from aggregation, and rerun the affected test with corrected input in a new clean
-run directory.
+into `FUNC_INPUT`, or that the test-time agent saw test answers, notes,
+evaluator details, env source, judge instructions, disallowed train material, or
+another run's files, stop using that result. Mark the attempt contaminated,
+report it to the user, exclude it from aggregation, and rerun the affected test
+with corrected input in a new clean run directory.
 
 Run one question per call and run sequentially: answer exactly one test task per
 `predict()` call, and run the 5 test tasks one at a time. Do not put multiple

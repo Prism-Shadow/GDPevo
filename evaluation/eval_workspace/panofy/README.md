@@ -88,11 +88,15 @@ Run all four conditions with acc@3 and write report/<task_group_id>.yaml.
   train-only judge feedback during training. Never include any test task, test
   answer, note, evaluator source, or judge API usage instruction in test-time
   material.
+- Mode-allowed training exposure is not contamination: for example, fewshot
+  training may use train gold answers. Contamination is about forbidden material
+  leaking into test-time inputs, instructions, responses, or run artifacts.
 - The hosted agent only sees the **remote** env URL. Confirm that URL exposes
   the same public projection as `task_group/env` — do not expose hidden fields.
 - Store every test call under a fresh `runs/<condition>/<task_id>/attempt_<nn>/`
   directory. If a test agent response or run artifact shows that forbidden
-  material leaked into `FUNC_INPUT` or the agent saw an answer, note, evaluator,
-  env source, judge instruction, train material, or another run's files, report
-  it immediately, mark that attempt contaminated, exclude it from aggregation,
-  and rerun the affected test with corrected input in a new clean run directory.
+  material leaked into `FUNC_INPUT` or the test-time agent saw a test answer,
+  note, evaluator, env source, judge instruction, disallowed train material, or
+  another run's files, report it immediately, mark that attempt contaminated,
+  exclude it from aggregation, and rerun the affected test with corrected input
+  in a new clean run directory.

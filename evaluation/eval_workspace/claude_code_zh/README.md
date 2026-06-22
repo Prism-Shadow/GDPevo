@@ -92,7 +92,9 @@ Skill-generation subagents 只负责生成 skills，不参与 test 解题。
 
 Solver subagents 只能看到当前条件允许的信息。Solver 不应该看到 test 标准答案、test notes、evaluator 实现细节或 `env/` 源码。Skill-generation 和 solver subagents 不能进入、列出或读取 `env/`；它们只能通过主 agent 明确暴露的远程 Web/API URL 或数据库连接使用共享环境。只有 reflect skill-generation subagents 应收到 train-only judge API 说明，且该 API 对 test-time solving 无效。
 
-如果 solver/test subagent 误访问、列出或报告看到了禁止材料，例如 `env/`、`output/answer.json`、task notes、evaluator files、该模式不允许的 train tasks，或其它 attempt 的 run files，该 attempt 视为污染。主 agent 必须及时报告给用户，不要打分或纳入聚合，在 attempt 目录记录原因，并用新的干净 attempt 目录重新测试受影响任务。
+模式允许的训练阶段暴露不算污染：例如 fewshot skill 生成可以读取 train `output/answer.json`。但在 test-solving attempt 中，除当前 attempt 目录内 solver 自己写出的答案文件外，直接访问任何源任务的 `output/answer.json` 都是禁止的。
+
+如果 solver/test subagent 误访问、列出或报告看到了禁止材料，例如 `env/`、test solving 阶段的源 `output/answer.json`、task notes、evaluator files、当前模式/阶段不允许的 train tasks 或 train answers，或其它 attempt 的 run files，该 attempt 视为污染。主 agent 必须及时报告给用户，不要打分或纳入聚合，在 attempt 目录记录原因，并用新的干净 attempt 目录重新测试受影响任务。
 
 对于每次 solver attempt，主 agent 把允许的文件 staging 到一个全新的专属 attempt 目录（例如 `runs/base/test_001/attempt_01/`），并启动一个干净上下文 subagent，将其限定在该目录内：subagent 只能读写该目录下的文件，不得访问该目录之外的任何路径。staging 当前 task 的 `input/`、环境访问说明，以及（仅 skill 条件下）与 attempt 编号匹配的 skill 副本。重跑不能复用旧 attempt 目录；应创建新的干净目录，并保留被判污染的 run 供审计。Skill 生成则把该模式允许的 train 材料 staging 到 `scratch/skill_generation/` 下的专属目录，并以同样方式将 subagent 限定在自己的目录内。
 

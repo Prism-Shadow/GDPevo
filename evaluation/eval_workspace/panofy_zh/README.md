@@ -63,9 +63,10 @@ Run all four conditions with acc@3 and write report/<task_group_id>.yaml.
 
 - 你可以读取完整 task group 以 staging 训练材料、打分和聚合——但 **test** 的 `FUNC_INPUT` 只能携带 `task_id`、`prompt`、`api_base_url`、`answer_template`，**绝不**包含标准答案、task notes 或 evaluator。
 - 训练材料遵循 `guides/evolve_modes.md`：`fewshot` 可以包含 train 标准答案；`self` 不可以；`reflect-3` 只能在训练期间使用 train inputs 和 train-only judge feedback。test-time material 绝不能包含任何 test task、test 答案、note、evaluator 源码或 judge API 调用说明。
+- 模式允许的训练阶段暴露不算污染：例如 fewshot 训练可以使用 train 标准答案。污染检查关注的是禁止材料泄漏到 test-time inputs、instructions、responses 或 run artifacts。
 - 远端 agent 只看到**远程** env URL。确认该 URL 暴露的是与 `task_group/env` 相同的**公开投影**——不要暴露隐藏字段。
 - 每次 test call 都写入全新的 `runs/<condition>/<task_id>/attempt_<nn>/`
   目录。如果 test agent 的回复或 run artifact 显示 `FUNC_INPUT` 泄漏了禁止材料，
-  或 agent 看到了答案、note、evaluator、env 源码、judge 调用说明、train 材料或
-  其它 run files，必须及时报告，标记该 attempt 为污染，排除出聚合，并用修正后的
-  input 在新的干净 run 目录中重跑受影响任务。
+  或 test-time agent 看到了 test 答案、note、evaluator、env 源码、judge 调用说明、
+  当前模式/阶段不允许的 train 材料或其它 run files，必须及时报告，标记该 attempt
+  为污染，排除出聚合，并用修正后的 input 在新的干净 run 目录中重跑受影响任务。
