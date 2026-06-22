@@ -66,7 +66,6 @@ These workspaces are agent-ready folders for building, reviewing, and evaluating
 
   - **Purpose**: Run formal `acc@3`, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces.
   - **Input data**: one released task group copied into the selected evaluator workspace, plus the credentials or config required by that workspace.
-  - **Panofy setup**: load `.env` before starting evaluation in the Panofy workspace.
   - **Prompt**: `Read README.md and guides/, run score evaluation for the staged task group, and write report/<task_group_id>.yaml.`
 
 ## Citation

@@ -66,7 +66,6 @@
 
   - **用途**：对一个发布任务组运行正式评测，统计 `acc@3`、token 和费用。目录下包含 Codex、Claude Code、Panofy 以及中文镜像工作区。
   - **输入数据**：放入所选评测工作区的一个已发布任务组，以及该工作区需要的密钥或配置。
-  - **Panofy 设置**：在 Panofy 工作区开始评测前先加载 `.env`。
   - **提示词**：`阅读 README.md 和 guides/，对已放入的任务组运行分数评测，并写出 report/<task_group_id>.yaml。`
 
 ## 引用
