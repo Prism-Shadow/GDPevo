@@ -99,7 +99,7 @@ def judge_answer_request(raw_body: bytes) -> tuple[int, dict[str, Any]]:
 
     try:
         body = json.loads(raw_body.decode("utf-8") if raw_body else "{}")
-    except json.JSONDecodeError as exc:
+    except ValueError as exc:
         return _response(400, {"ok": False, "error": "invalid_json", "message": str(exc)})
     if not isinstance(body, dict):
         return _response(400, {"ok": False, "error": "invalid_request", "message": "request body must be a JSON object"})
@@ -116,11 +116,12 @@ def judge_answer_request(raw_body: bytes) -> tuple[int, dict[str, Any]]:
     if not eval_script.is_file():
         return _response(500, {"ok": False, "error": "missing_evaluator", "message": "train evaluator not found"})
 
-    with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".json", delete=False) as handle:
-        json.dump(candidate, handle, ensure_ascii=False)
-        candidate_path = Path(handle.name)
-
+    candidate_path: Path | None = None
     try:
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".json", delete=False) as handle:
+            candidate_path = Path(handle.name)
+            json.dump(candidate, handle, ensure_ascii=False)
+
         result = subprocess.run(
             [str(eval_script.resolve()), str(candidate_path)],
             cwd=str(ROOT),
@@ -131,8 +132,13 @@ def judge_answer_request(raw_body: bytes) -> tuple[int, dict[str, Any]]:
         )
     except subprocess.TimeoutExpired:
         return _response(504, {"ok": False, "error": "judge_timeout", "message": f"evaluator exceeded {JUDGE_TIMEOUT}s"})
+    except (TypeError, ValueError) as exc:
+        return _response(400, {"ok": False, "error": "invalid_answer", "message": f"answer is not JSON serializable: {exc}"})
+    except OSError:
+        return _response(500, {"ok": False, "error": "judge_error", "message": "failed to run evaluator"})
     finally:
-        candidate_path.unlink(missing_ok=True)
+        if candidate_path is not None:
+            candidate_path.unlink(missing_ok=True)
 
     try:
         evaluator_payload = json.loads(result.stdout)
