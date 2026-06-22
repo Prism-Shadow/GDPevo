@@ -68,9 +68,13 @@ Content-Type: application/json
 {"task_id": "train_001", "answer": <candidate answer JSON>}
 ```
 
-The judge response contains `correct` and normalized `score`; it rejects test
-task ids. Reflect training must not include train gold answers, test tasks, test
-answers, notes, or evaluator source.
+The judge response contains `correct`, normalized `score`, `scope: train_only`,
+and a `notice` reminding the agent that this endpoint is only for train-task
+feedback. It rejects test task ids. The judge API is valid only during reflect
+training on train tasks; it is not a test-time tool, and final agent
+instructions must not tell test agents to call it. Reflect training must not
+include train gold answers, test tasks, test answers, notes, or evaluator
+source.
 
 The reflect instruction should require the agent to attempt all 5 train tasks in
 each of 3 epochs, submit candidate answers to the judge, use the returned score

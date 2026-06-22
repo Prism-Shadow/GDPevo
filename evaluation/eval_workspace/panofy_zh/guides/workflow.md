@@ -49,8 +49,9 @@ task prompt 中点名的公开 GET 端点。运行前确认 env 的 health / ind
 能返回 HTTP 200，且暴露端点与本地 `task_group/env` server 的**公开投影**
 一致。隐藏 / 构造字段不得暴露。
 
-只有 reflect 训练会收到 judge 端点。judge 端点绝不能放入 test
-`FUNC_INPUT`，test solver 也不能使用它。
+只有 reflect 训练会收到 judge 端点。它只在 reflect 训练期间对 train tasks
+有效，绝不能放入 test `FUNC_INPUT`，也不能写入最终 test-time agent
+instructions。
 
 ## 4. 训练 Agent
 

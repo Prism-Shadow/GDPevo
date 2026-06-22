@@ -44,7 +44,9 @@ in `scratch/environment.md`.
 Skill-generation and solver subagents must not enter, list, or read `env/`.
 They may use only the remote environment entrypoint staged by the main agent.
 
-The judge endpoint is train-only. Only reflect skill-generation subagents should
+The judge endpoint is train-only and valid only during reflect skill generation
+on train tasks. It must not be staged to test solvers or written into generated
+skills as a test-time tool. Only reflect skill-generation subagents should
 receive its usage instructions:
 
 ```text

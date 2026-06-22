@@ -90,7 +90,7 @@ runs/reflect-3/
 
 Skill-generation subagents 只负责生成 skills，不参与 test 解题。
 
-Solver subagents 只能看到当前条件允许的信息。Solver 不应该看到 test 标准答案、test notes、evaluator 实现细节或 `env/` 源码。Skill-generation 和 solver subagents 不能进入、列出或读取 `env/`；它们只能通过主 agent 明确暴露的远程 Web/API URL 或数据库连接使用共享环境。只有 reflect skill-generation subagents 应收到 train-only judge API 说明。
+Solver subagents 只能看到当前条件允许的信息。Solver 不应该看到 test 标准答案、test notes、evaluator 实现细节或 `env/` 源码。Skill-generation 和 solver subagents 不能进入、列出或读取 `env/`；它们只能通过主 agent 明确暴露的远程 Web/API URL 或数据库连接使用共享环境。只有 reflect skill-generation subagents 应收到 train-only judge API 说明，且该 API 对 test-time solving 无效。
 
 对于每次 solver attempt，主 agent 把允许的文件 staging 到一个专属 attempt 目录（例如 `runs/base/test_001/attempt_01/`），并启动一个干净上下文 subagent，将其限定在该目录内：subagent 只能读写该目录下的文件，不得访问该目录之外的任何路径。staging 当前 task 的 `input/`、环境访问说明，以及（仅 skill 条件下）与 attempt 编号匹配的 skill 副本。Skill 生成则把该模式允许的 train 材料 staging 到 `scratch/skill_generation/` 下的专属目录，并以同样方式将 subagent 限定在自己的目录内。
 

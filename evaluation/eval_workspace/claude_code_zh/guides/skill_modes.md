@@ -35,7 +35,10 @@ Content-Type: application/json
 {"task_id": "train_001", "answer": <candidate answer JSON>}
 ```
 
-响应包含 `correct` 和归一化 `score`。接口会拒绝 test task id。
+响应包含 `correct`、归一化 `score`、`scope: train_only`，以及提醒 agent
+该接口只用于 train-task feedback 的 `notice`。接口会拒绝 test task id。
+Judge API 只在基于 train tasks 生成 reflect skills 的阶段有效；它不是
+test-time 工具，生成的 `SKILL.md` 不能要求 solver 调用它。
 
 ## base
 
@@ -141,4 +144,5 @@ Skill 不能包含：
 
 - Test task 答案或推导。
 - 从 train `output/answer.json` 复制出的标准答案；fewshot 模式中 solved train examples 可以用于归纳 skill。
+- Judge endpoint 调用说明、judge feedback 记录，或任何要求 test solving 时调用 judge API 的指令。
 - 暴露或猜测 evaluator internals 的推测性内容。

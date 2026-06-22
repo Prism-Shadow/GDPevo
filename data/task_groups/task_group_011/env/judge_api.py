@@ -15,6 +15,16 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 TRAIN_TASKS = ROOT / "train_tasks"
 JUDGE_TIMEOUT = int(os.environ.get("JUDGE_TIMEOUT", "30"))
+JUDGE_SCOPE = "train_only"
+JUDGE_NOTICE = (
+    "This judge API is only valid for train-task feedback during reflect skill "
+    "generation/training. It is not a test-time tool and must not be used for "
+    "test tasks or test solving."
+)
+
+
+def _response(status: int, payload: dict[str, Any]) -> tuple[int, dict[str, Any]]:
+    return status, {**payload, "scope": JUDGE_SCOPE, "notice": JUDGE_NOTICE}
 
 
 def _number(value: Any) -> float | None:
@@ -55,7 +65,7 @@ def _score_from_evaluator(payload: Any) -> float | None:
 def _task_dir(task_id: Any) -> tuple[Path | None, str | None]:
     raw = str(task_id or "").strip()
     if raw.startswith("test_"):
-        return None, "judge_api only scores train tasks"
+        return None, "judge_api only scores train tasks during reflect training"
     if raw.startswith("train_"):
         suffix = raw.removeprefix("train_")
     else:
@@ -82,28 +92,29 @@ def judge_answer_request(raw_body: bytes) -> tuple[int, dict[str, Any]]:
     Expected JSON body:
       {"task_id": "train_001", "answer": {...}}
 
-    The endpoint intentionally rejects test task ids. It returns normalized score
-    and correctness only; evaluator internals and gold answers remain hidden.
+    The endpoint intentionally rejects test task ids. It returns normalized score,
+    correctness, and a train-only usage notice; evaluator internals and gold
+    answers remain hidden.
     """
 
     try:
         body = json.loads(raw_body.decode("utf-8") if raw_body else "{}")
     except json.JSONDecodeError as exc:
-        return 400, {"ok": False, "error": "invalid_json", "message": str(exc)}
+        return _response(400, {"ok": False, "error": "invalid_json", "message": str(exc)})
     if not isinstance(body, dict):
-        return 400, {"ok": False, "error": "invalid_request", "message": "request body must be a JSON object"}
+        return _response(400, {"ok": False, "error": "invalid_request", "message": "request body must be a JSON object"})
 
     task_dir, error = _task_dir(body.get("task_id"))
     if error:
-        return 400, {"ok": False, "error": "invalid_task", "message": error}
+        return _response(400, {"ok": False, "error": "invalid_task", "message": error})
 
     candidate, error = _candidate_from_request(body)
     if error:
-        return 400, {"ok": False, "error": "invalid_request", "message": error}
+        return _response(400, {"ok": False, "error": "invalid_request", "message": error})
 
     eval_script = task_dir / "eval" / "eval.sh"
     if not eval_script.is_file():
-        return 500, {"ok": False, "error": "missing_evaluator", "message": "train evaluator not found"}
+        return _response(500, {"ok": False, "error": "missing_evaluator", "message": "train evaluator not found"})
 
     with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".json", delete=False) as handle:
         json.dump(candidate, handle, ensure_ascii=False)
@@ -119,32 +130,32 @@ def judge_answer_request(raw_body: bytes) -> tuple[int, dict[str, Any]]:
             check=False,
         )
     except subprocess.TimeoutExpired:
-        return 504, {"ok": False, "error": "judge_timeout", "message": f"evaluator exceeded {JUDGE_TIMEOUT}s"}
+        return _response(504, {"ok": False, "error": "judge_timeout", "message": f"evaluator exceeded {JUDGE_TIMEOUT}s"})
     finally:
         candidate_path.unlink(missing_ok=True)
 
     try:
         evaluator_payload = json.loads(result.stdout)
     except json.JSONDecodeError:
-        return 500, {
+        return _response(500, {
             "ok": False,
             "error": "judge_parse_error",
             "message": "evaluator did not return JSON",
-        }
+        })
 
     score = _score_from_evaluator(evaluator_payload)
     if score is None:
-        return 500, {
+        return _response(500, {
             "ok": False,
             "error": "judge_score_error",
             "message": "evaluator output did not contain a normalized score",
-        }
+        })
 
     normalized = round(score, 6)
     task_id = f"train_{task_dir.name}"
-    return 200, {
+    return _response(200, {
         "ok": True,
         "task_id": task_id,
         "score": normalized,
         "correct": math.isclose(normalized, 1.0, abs_tol=1e-6),
-    }
+    })

@@ -85,7 +85,8 @@ Run all four conditions with acc@3 and write report/<task_group_id>.yaml.
   or the evaluator.
 - Training materials follow `guides/evolve_modes.md`: `fewshot` may include
   train gold answers; `self` may not; `reflect-3` may use only train inputs plus
-  the train-only judge feedback. Never include any test task, test answer, note,
-  or evaluator source.
+  train-only judge feedback during training. Never include any test task, test
+  answer, note, evaluator source, or judge API usage instruction in test-time
+  material.
 - The hosted agent only sees the **remote** env URL. Confirm that URL exposes
   the same public projection as `task_group/env` — do not expose hidden fields.

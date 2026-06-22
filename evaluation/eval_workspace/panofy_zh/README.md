@@ -62,5 +62,5 @@ Run all four conditions with acc@3 and write report/<task_group_id>.yaml.
 ## 边界
 
 - 你可以读取完整 task group 以 staging 训练材料、打分和聚合——但 **test** 的 `FUNC_INPUT` 只能携带 `task_id`、`prompt`、`api_base_url`、`answer_template`，**绝不**包含标准答案、task notes 或 evaluator。
-- 训练材料遵循 `guides/evolve_modes.md`：`fewshot` 可以包含 train 标准答案；`self` 不可以；`reflect-3` 只能使用 train inputs 和 train-only judge feedback。绝不能包含任何 test task、test 答案、note 或 evaluator 源码。
+- 训练材料遵循 `guides/evolve_modes.md`：`fewshot` 可以包含 train 标准答案；`self` 不可以；`reflect-3` 只能在训练期间使用 train inputs 和 train-only judge feedback。test-time material 绝不能包含任何 test task、test 答案、note、evaluator 源码或 judge API 调用说明。
 - 远端 agent 只看到**远程** env URL。确认该 URL 暴露的是与 `task_group/env` 相同的**公开投影**——不要暴露隐藏字段。

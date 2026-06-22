@@ -39,7 +39,11 @@ Content-Type: application/json
 {"task_id": "train_001", "answer": <candidate answer JSON>}
 ```
 
-The response contains `correct` and normalized `score`. It rejects test task ids.
+The response contains `correct`, normalized `score`, `scope: train_only`, and a
+`notice` reminding the agent that this endpoint is only for train-task feedback.
+It rejects test task ids. The judge API is valid only while generating reflect
+skills on train tasks; it is not a test-time tool, and generated `SKILL.md`
+files must not tell solvers to call it.
 
 ## base
 
@@ -157,4 +161,6 @@ A skill must not include:
 - Test task answers or derivations.
 - Train standard answers copied from `output/answer.json`, except in fewshot
   mode where solved train examples may inform the skill.
+- Judge endpoint instructions, judge feedback transcripts, or any instruction
+  to call the judge API during test solving.
 - Speculative statements that reveal or guess evaluator internals.

@@ -41,8 +41,9 @@ Codex 评估不再本地启动 `task_group/env` 服务。确认远程环境的 h
 Skill-generation 和 solver subagents 不得进入、列出或读取 `env/`。它们只能
 使用主 agent staging 的远程环境入口。
 
-Judge endpoint 只用于 train 阶段。只有 reflect skill-generation subagents
-能收到它的调用说明：
+Judge endpoint 只用于 reflect skill generation 中的 train tasks。它不能
+staging 给 test solver，也不能作为 test-time 工具写入生成的 skill。只有
+reflect skill-generation subagents 能收到它的调用说明：
 
 ```text
 POST {GDPEVO_ENV_BASE_URL}{GDPEVO_JUDGE_PATH}

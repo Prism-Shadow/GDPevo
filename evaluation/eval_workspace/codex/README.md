@@ -88,7 +88,7 @@ The main agent may read the full task group in order to verify the remote enviro
 
 Skill-generation subagents only generate skills. They do not solve test tasks.
 
-Solver subagents may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver subagents must not enter, list, or read `env/`; they may use the shared environment only through the remote Web/API URL or database connection explicitly exposed by the main agent. Only reflect skill-generation subagents should receive the train-only judge API instructions.
+Solver subagents may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver subagents must not enter, list, or read `env/`; they may use the shared environment only through the remote Web/API URL or database connection explicitly exposed by the main agent. Only reflect skill-generation subagents should receive the train-only judge API instructions, and that API is not valid for test-time solving.
 
 For solver attempts, use the corresponding attempt directory as the subagent workspace/cwd, such as `runs/base/test_001/attempt_01/`. Stage the current task `input/`, environment access instructions, and, for skill modes only, the matching skill copy for the same attempt number. For skill generation, use a dedicated directory under `scratch/skill_generation/` and stage only the allowed train materials for that mode.
 

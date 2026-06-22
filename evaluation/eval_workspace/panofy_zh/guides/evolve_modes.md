@@ -58,7 +58,10 @@ Content-Type: application/json
 {"task_id": "train_001", "answer": <candidate answer JSON>}
 ```
 
-judge 响应包含 `correct` 和归一化 `score`，并拒绝 test task id。Reflect 训练不得包含 train gold answers、test tasks、test answers、notes 或 evaluator source。
+judge 响应包含 `correct`、归一化 `score`、`scope: train_only`，以及提醒
+agent 该接口只用于 train-task feedback 的 `notice`，并拒绝 test task id。
+Judge API 只在 reflect 训练的 train tasks 上有效；它不是 test-time 工具，
+最终 agent instruction 不能要求 test agent 调用它。Reflect 训练不得包含 train gold answers、test tasks、test answers、notes 或 evaluator source。
 
 Reflect instruction 应要求 agent 在 3 个 epochs 中每轮尝试全部 5 个 train tasks，将 candidate answers 提交给 judge，用返回的 score 做反馈，修订内部流程，并在 test-time 应用最终流程。
 

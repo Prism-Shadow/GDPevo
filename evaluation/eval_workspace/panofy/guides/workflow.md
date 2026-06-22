@@ -53,8 +53,9 @@ running, confirm that the env health / index endpoint answers with HTTP 200 and
 that exposed endpoints return the same public projection as the local
 `task_group/env` server. Hidden construction fields must not be exposed.
 
-Only reflect training receives the judge endpoint. The judge endpoint must never
-be placed in test `FUNC_INPUT`, and test solvers must not use it.
+Only reflect training receives the judge endpoint. It is valid only for train
+tasks during reflect training, must never be placed in test `FUNC_INPUT`, and
+must not be written into final test-time agent instructions.
 
 ## 4. Train The Agents
 
