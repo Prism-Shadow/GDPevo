@@ -1,6 +1,6 @@
 # Evaluation Workspace
 
-This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc@3` across three skill conditions.
+This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc@3` across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
 
 This workspace evaluates one task group at a time. Do not modify the task group under evaluation. If you find that the task group itself is invalid, record the risk in the report and send the data back to an earlier stage.
 
@@ -10,7 +10,7 @@ This workspace evaluates one task group at a time. Do not modify the task group 
 | --- | --- |
 | `guides/` | Evaluation workflow, skill modes, metrics, scoring, and report format |
 | `task_group/` | The single official task group currently under evaluation |
-| `skills/` | Generated `fewshot` and `reflect` files |
+| `skills/` | Generated `fewshot`, `self`, and `reflect-3` files |
 | `runs/` | Solver outputs and scoring records for each condition, test task, and attempt |
 | `scratch/` | Temporary scripts, environment notes, and intermediate checks created by the main evaluation agent |
 | `report/` | The final evaluation report for the current task group |
@@ -20,7 +20,7 @@ This workspace evaluates one task group at a time. Do not modify the task group 
 Read these files in order before starting evaluation:
 
 1. `guides/workflow.md` - main-agent evaluation workflow
-2. `guides/skill_modes.md` - the three skill conditions and information boundaries
+2. `guides/skill_modes.md` - the four conditions and information boundaries
 3. `guides/metric_and_scoring.md` - `acc@3`, single-attempt scoring, and aggregation rules
 4. `guides/report_format.md` - final report format
 
@@ -29,7 +29,14 @@ Read these files in order before starting evaluation:
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: <model>.
-Run all three modes with acc@3 and write report/<task_group_id>.yaml.
+Run all four modes with acc@3 and write report/<task_group_id>.yaml.
+```
+
+Use `.env` for the remote task environment:
+
+```text
+GDPEVO_ENV_BASE_URL=https://your-env-host.example/
+GDPEVO_JUDGE_PATH=/api/judge
 ```
 
 ## Workflow
@@ -46,40 +53,44 @@ task_group/<task_group_id>/
 
 2. Check that the workspace contains only one task group and that the task group includes 5 train tasks, 5 test tasks, a shared environment, standard answers, and evaluators.
 
-3. Start or prepare the task-group environment. If a port is needed, roll a random candidate in `8000-8100`; if it is occupied, roll another one. Do not scan upward from `8000`. Record the start command, port, and environment notes.
+3. Confirm the remote task-group environment from `.env`. Do not start a local env service for Claude Code evaluation. Record the base URL, health-check result, and any remote environment notes.
 
-4. Generate 3 independent skills for each skill condition:
+4. Generate 3 independent skills for each non-base condition:
 
 ```text
 skills/fewshot/fewshot_attempt_01/SKILL.md
 skills/fewshot/fewshot_attempt_02/SKILL.md
 skills/fewshot/fewshot_attempt_03/SKILL.md
-skills/reflect/reflect_attempt_01/SKILL.md
-skills/reflect/reflect_attempt_02/SKILL.md
-skills/reflect/reflect_attempt_03/SKILL.md
+skills/self/self_attempt_01/SKILL.md
+skills/self/self_attempt_02/SKILL.md
+skills/self/self_attempt_03/SKILL.md
+skills/reflect-3/reflect-3_attempt_01/SKILL.md
+skills/reflect-3/reflect-3_attempt_02/SKILL.md
+skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
-5. Run test tasks under all three conditions:
+5. Run test tasks under all four conditions:
 
 ```text
 runs/base/
 runs/fewshot/
-runs/reflect/
+runs/self/
+runs/reflect-3/
 ```
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context solver subagent. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
 
 6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, the matched session-transcript reference, and token usage.
 
-7. After all score records are ready, aggregate `acc@3` for the three conditions, plus average cached/input/output tokens for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
+7. After all score records are ready, aggregate `acc@3` for the four conditions, plus average token and cost fields for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
 
 ## Agent Boundaries
 
-The main agent may read the full task group in order to start the environment, call evaluators, and aggregate results, but it must not solve test tasks directly.
+The main agent may read the full task group in order to verify the remote environment contract, call evaluators, and aggregate results, but it must not solve test tasks directly.
 
 Skill-generation subagents only generate skills. They do not solve test tasks.
 
-Solver subagents may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver subagents must not enter, list, or read `env/`; they may use the shared environment only through the port, Web/API URL, or database connection explicitly exposed by the main agent.
+Solver subagents may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver subagents must not enter, list, or read `env/`; they may use the shared environment only through the remote Web/API URL or database connection explicitly exposed by the main agent. Only reflect skill-generation subagents should receive the train-only judge API instructions.
 
 For each solver attempt, the main agent stages the allowed files into a dedicated attempt directory, such as `runs/base/test_001/attempt_01/`, and launches a clean-context subagent that is restricted to that directory: the subagent must only read and write files under it and must not access any path outside it. Stage the current task `input/`, environment access instructions, and, for skill modes only, the matching skill copy for the same attempt number. For skill generation, stage only the allowed train materials for that mode into a dedicated directory under `scratch/skill_generation/`, and restrict that subagent to its own directory in the same way.
 

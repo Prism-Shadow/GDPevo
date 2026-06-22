@@ -1,177 +1,144 @@
 # Evaluation Workflow
 
-本文说明主评估 agent 应如何运行一次完整评估。
+本文说明主评估 agent 如何运行一次完整 Claude Code 评估。
 
-当用户要求你在这个工作区中运行评估时，该请求即视为允许使用 Claude Code subagents（Task / Agent 工具）。主 agent 可以启动干净上下文的 skill-generation subagents 和 solver subagents 来生成 skills 并完成 test attempts。
+评估现在使用远程 task 环境和四种条件：
 
-Solver 和 skill-generation subagents 使用与主 agent 相同的模型和 reasoning/effort 设置——这会自动继承，无需额外设置。
+```text
+base
+fewshot
+self
+reflect-3
+```
 
-如果所需 subagent 数量超过 subagent 并发上限，应分批运行。分批执行仍必须保证每次 solver attempt 都是干净上下文、拥有唯一 `eval_attempt_id`，并保存完整运行记录。不要减少 attempt 数量，不要让一个 solver 解多个 test tasks，也不要让主 agent 直接解 test tasks。
-
-启动任何 skill-generation 或 solver subagent 之前，主 agent 必须为该 subagent 准备一个只包含其允许文件的专属目录，并要求 subagent 只读写该目录内的文件。不要让 subagent 访问 workspace 根目录、`task_group/` 根目录，或任何包含该 subagent 信息边界之外文件的目录。
+当用户要求你在这个工作区中运行评估时，该请求即视为允许使用 Claude Code
+subagents（Task / Agent 工具）。每个 skill-generation 和 solver run 都必须
+放在干净、专属的目录中，并将对应 subagent 限定在该目录内。
 
 ## 1. 准备 Task Group
 
-本工作区一次评估一个 task group。待评估 task group 应位于：
+待评估 task group 应位于：
 
 ```text
 task_group/<task_group_id>/
 ```
 
-该 task group 必须已经通过质量审核。
+确认它包含 5 个 train tasks、5 个 test tasks、`env/`、每个 task 的正式
+input、标准答案和 `eval/eval.sh`。不要修改 task group。
 
-## 2. 检查工作区
+## 2. 配置远程环境
 
-主 agent 首先确认工作区只包含一个 task group，并且它包含：
-
-- 5 个 train tasks。
-- 5 个 test tasks。
-- task-group 级别共享环境。
-- 每个 task 的正式输入、标准答案和 evaluator。
-
-## 3. 启动共享环境
-
-主 agent 准备 task-group 环境，并总结 solver 可见的环境入口。
-
-如果需要 Web/API 服务，应在 `8000-8100` 中随机 roll 一个候选端口；如果该端口被占用，再重新 roll。不要从 `8000` 开始向上扫描。记录：
-
-- 启动命令。
-- 端口。
-- Solver 可见端口、Web/API URL 或数据库连接说明。
-- 环境错误或重启记录。
-
-Skill-generation 和 solver subagents 不能进入、列出或读取 `env/`。它们只能通过主 agent 明确暴露的端口、Web/API URL 或数据库连接使用共享环境。
-
-## 4. 生成 Skills
-
-主 agent 为每种 skill 条件生成 3 个独立 skills。每个 skill 都必须由干净上下文的 skill-generation subagent 使用 `skill-creator` skill 生成。
-
-每个 skill-generation subagent 应分配一个专属工作目录，并限定在该目录内，例如：
+读取 `.env`：
 
 ```text
-scratch/skill_generation/fewshot_attempt_01/
-scratch/skill_generation/reflect_attempt_01/
+GDPEVO_ENV_BASE_URL=<remote task environment>
+GDPEVO_JUDGE_PATH=/api/judge
 ```
 
-主 agent 只把该模式允许的 train inputs、train answers 和暴露的环境入口 staging 到这个目录中。对于 `reflect`，在 blind train attempts 保存之前，不要 staging train answers。Skill-generation subagent 在自己的目录中写 draft skill；主 agent 再将接受的 skill 复制到 `skills/`。
+Claude Code 评估不再本地启动 `task_group/env` 服务。确认远程环境的 health /
+index 端点可访问，并把 URL 记录到 `scratch/environment.md`。
 
-推荐布局：
+Skill-generation 和 solver subagents 不得进入、列出或读取 `env/`。它们只能
+使用主 agent staging 的远程环境入口。
+
+Judge endpoint 只用于 train 阶段。只有 reflect skill-generation subagents
+能收到它的调用说明：
+
+```text
+POST {GDPEVO_ENV_BASE_URL}{GDPEVO_JUDGE_PATH}
+{"task_id": "train_001", "answer": <candidate answer JSON>}
+```
+
+## 3. 生成 Skills
+
+为每个非 base 条件生成 3 个独立 skills：
 
 ```text
 skills/fewshot/fewshot_attempt_01/SKILL.md
 skills/fewshot/fewshot_attempt_02/SKILL.md
 skills/fewshot/fewshot_attempt_03/SKILL.md
-skills/reflect/reflect_attempt_01/SKILL.md
-skills/reflect/reflect_attempt_02/SKILL.md
-skills/reflect/reflect_attempt_03/SKILL.md
+skills/self/self_attempt_01/SKILL.md
+skills/self/self_attempt_02/SKILL.md
+skills/self/self_attempt_03/SKILL.md
+skills/reflect-3/reflect-3_attempt_01/SKILL.md
+skills/reflect-3/reflect-3_attempt_02/SKILL.md
+skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
-生成规则见 `skill_modes.md`。
+使用专属 workspace，例如：
 
-每个生成的 skill 应是一个 skill directory，markdown 入口文件为 `SKILL.md`。
+```text
+scratch/skill_generation/fewshot_attempt_01/
+scratch/skill_generation/self_attempt_01/
+scratch/skill_generation/reflect-3_attempt_03/
+```
+
+只 staging `skill_modes.md` 允许的材料。
+
+- `fewshot`：train inputs、train 标准答案、远程环境入口。
+- `self`：train inputs 和远程环境入口；无 train answers、无 judge feedback。
+- `reflect-3`：train inputs、远程环境入口、judge API 调用说明；无 train
+  answers。对 5 个 train tasks 精确运行 3 个 epochs，将每个 candidate 提交给
+  judge，再从累积反馈中提炼最终 skill。
 
 Skill-generation token 用量不计入 solver 效率指标。
 
-## 5. 运行 Base 实验
+## 4. 运行 Test Solvers
 
-每个 test task 独立运行 3 次。Solver 只接收该 test task 的正式输入和允许的环境入口。
-
-推荐记录布局：
+每种条件、每个 test task、每次 attempt 都独立运行：
 
 ```text
-runs/base/test_001/attempt_01/answer.json
-runs/base/test_001/attempt_01/score.yaml
-runs/base/test_001/attempt_01/run_metadata.yaml
+runs/<condition>/test_001/attempt_01/
 ```
 
-启动每个 solver subagent，并将其限定在对应 attempt 目录内：
+条件：
 
 ```text
-runs/base/test_001/attempt_01/
+base
+fewshot
+self
+reflect-3
 ```
 
-启动前，只将允许文件 staging 到该 attempt 目录：
+每个 attempt 目录只 staging：
 
-- 从当前 test task 正式 `input/` 复制出的 `input/`。
-- `environment_access.md` 或等价的简明说明，用于说明暴露的 Web/API/database 入口。
+- 当前 test task 的 `input/`。
+- 包含远程环境 URL 的 `environment_access.md`。
+- 非 base 模式下与 attempt 编号匹配的 skill。
 
-不要 staging `env/`、task outputs、task notes、evaluator files、train tasks、其他 test tasks、generated skills 或 base runs 的 prior run outputs。Solver 在自己的 attempt 目录中写入 `answer.json`。
+不要 staging `env/`、train tasks、test answers、task notes、evaluator files、
+其他 test tasks、其他 attempt 的 generated skills、prior runs，或给 test
+solver 的 judge 调用说明。
 
-## 6. 运行 Fewshot（少样本进化）实验
+Solver 在自己的 attempt 目录中写 `answer.json`。
 
-每个 test task 独立运行 3 次。Solver 接收该 test task 的正式输入、允许的环境入口，以及对应的独立生成 fewshot skill：
+## 5. 打分与聚合
 
-```text
-attempt_01 uses skills/fewshot/fewshot_attempt_01/SKILL.md
-attempt_02 uses skills/fewshot/fewshot_attempt_02/SKILL.md
-attempt_03 uses skills/fewshot/fewshot_attempt_03/SKILL.md
-```
+每个 solver 写出 `answer.json` 后，主 agent 调用当前 test task 的
+`eval/eval.sh`，把 prediction 路径传入，并保存 `score.yaml`。
 
-每次运行仍然需要干净上下文。不要让一个 solver 解多个 test tasks。
-
-启动每个 solver，并将其限定在各自 attempt 目录内，例如：
-
-```text
-runs/fewshot/test_001/attempt_01/
-```
-
-只 staging 当前 test task 的 `input/`、环境入口，以及与 attempt 编号匹配的 generated skill 副本。不要暴露完整 `skills/` 目录，也不要暴露其他 attempt 编号的 skills。
-
-## 7. 运行 Reflect（反思进化）实验
-
-每个 test task 独立运行 3 次。Solver 接收该 test task 的正式输入、允许的环境入口，以及对应的独立生成 reflect skill：
-
-```text
-attempt_01 uses skills/reflect/reflect_attempt_01/SKILL.md
-attempt_02 uses skills/reflect/reflect_attempt_02/SKILL.md
-attempt_03 uses skills/reflect/reflect_attempt_03/SKILL.md
-```
-
-每次运行仍然需要干净上下文。不要让一个 solver 解多个 test tasks。
-
-启动每个 solver，并将其限定在各自 attempt 目录内，例如：
-
-```text
-runs/reflect/test_001/attempt_01/
-```
-
-只 staging 当前 test task 的 `input/`、环境入口，以及与 attempt 编号匹配的 generated skill 副本。不要暴露完整 `skills/` 目录，也不要暴露其他 attempt 编号的 skills。
-
-## 8. 打分和聚合
-
-每个 solver 写出 `answer.json` 后，主 agent 调用对应 task evaluator，并写入 `score.yaml`。
-
-每个 solver attempt 都必须有唯一 `eval_attempt_id`，并且该 ID 必须出现在 solver prompt、attempt 目录和 `run_metadata.yaml` 中。推荐格式：
+每个 solver attempt 都必须有唯一 `eval_attempt_id`：
 
 ```text
 <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
 ```
 
-主 agent 从 session transcript 中回填 token 用量。不要只用“最新一条记录”来归属用量；应确认以下全部条件：
+该 ID 必须出现在 solver prompt、attempt 目录和 `run_metadata.yaml` 中。
 
-- 这些 turns 属于一次 subagent 调用，而不是主 agent。
-- 该 subagent 由当前主评估 agent 启动（其 `parent_tool_use_id` 与你为该 attempt 发起的 Agent 工具调用一致）。
-- 该 attempt 的 `answer.json` 写在预期的 attempt 目录下，例如 `runs/<condition>/test_<nn>/attempt_<mm>/`。
-- subagent prompt 中包含对应 `eval_attempt_id`。
+主 agent 从匹配到的 Claude Code subagent transcript 中回填 token 用量。
+按 `message.id` 去重：input/cache 桶取任一条记录，`output_tokens` 取同一
+message id 的最大值，然后跨响应求和。
 
-每个 solver subagent 有自己独立的 transcript：
+所有 runs 完成后，聚合四种条件的 `acc@3`、各桶 token 和 `cost_usd`。效率
+指标只统计 test solver 写答案的过程：先对同一个 test task 的 3 次 attempts
+取平均，再对 5 个 test tasks 取平均。不要包含 skill generation、远程环境
+检查、evaluator 执行或主 agent 汇总。
 
-```text
-~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
-```
-
-一条 API 响应会被拆成多条 content-block 记录:`input`/`cache_creation`/`cache_read` 完全相同,但 `output_tokens` 是流式累计的。**按 `message.id` 去重**——input/cache 三桶取任一条,`output_tokens` 取该 id 的**最大值**;逐行求和会把 input/cache 放大约 2-3 倍,只取第一条又会低估 output。对去重后的响应,把四个桶(`input_tokens`、`cache_creation_input_tokens`、`cache_read_input_tokens`、`output_tokens`)分别求和,并用 `metric_and_scoring.md` 里的逐响应公式算出 `cost_usd`。不要拿父会话 `toolUseResult.totalTokens` 当计费总量——它是"上下文规模"口径且不含 cache_read。
-
-所有 runs 完成后，聚合三种条件的 `acc@3`、平均各桶 token 和平均 `cost_usd`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。
-
-临时检查代码、聚合代码或环境启动 notes 可以放在 `scratch/`。这些材料不是正式评估数据。
-
-## 9. 解释结果
+## 6. 解释结果
 
 在报告中解释：
 
-- 三种条件的整体 `acc@3`。
-- 每种 skill 条件相对 base 的提升。
-- Reflect skill 是否优于 fewshot skill。
+- 四种条件的整体 `acc@3`。
+- `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升。
 - 哪些 test tasks 提升明显，哪些没有。
 - 任何环境不稳定、输出 schema 摩擦、evaluator 问题或可疑泄漏风险。

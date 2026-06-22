@@ -1,40 +1,68 @@
 # Skill Modes
 
-This evaluation compares three conditions. All three conditions must use the same task group, the same test tasks, the same model configuration, and the same evaluators.
+This evaluation compares four conditions over the same task group, test tasks,
+model configuration, remote environment, and evaluators:
 
-The main agent should stage the allowed materials for each subagent into that subagent's dedicated workspace/cwd. Do not give skill-generation or solver subagents the full task group directory as their workspace.
+```text
+base
+fewshot
+self
+reflect-3
+```
+
+Use `fewshot` as the report/directory key for the few-shot condition.
+
+The main agent stages the allowed materials for each skill-generation or solver
+subagent into that subagent's dedicated workspace/cwd. Do not give subagents the
+full task group directory.
+
+All non-reflect staging should expose only the remote environment URL from
+`.env`:
+
+```text
+GDPEVO_ENV_BASE_URL=<remote task environment>
+```
+
+The main agent may also read the train-only judge path from `.env`, but it must
+stage that value only for reflect skill-generation subagents:
+
+```text
+GDPEVO_JUDGE_PATH=/api/judge
+```
+
+Reflect skill-generation prompts should include this interface:
+
+```text
+POST {GDPEVO_ENV_BASE_URL}{GDPEVO_JUDGE_PATH}
+Content-Type: application/json
+
+{"task_id": "train_001", "answer": <candidate answer JSON>}
+```
+
+The response contains `correct` and normalized `score`. It rejects test task ids.
 
 ## base
 
 No skill is generated.
 
-The solver may see:
+The solver may see only:
 
 - The current test task `input/`.
-- Allowed environment entrypoints, such as exposed ports, Web/API URLs, or database connections.
+- The remote environment entrypoint.
 
-The solver must not see:
-
-- Train tasks.
-- Test standard answers.
-- Test notes.
-- Evaluator implementation details.
+The solver must not see train tasks, test answers, test notes, evaluator files,
+generated skills, or judge instructions.
 
 ## fewshot
 
-For this condition, generate 3 independent skills with 3 clean-context skill-generation subagents. Each generator should use the Codex `skill-creator` skill.
-
-The skill generator may see:
+Generate 3 independent skills with 3 clean-context skill-generation subagents.
+Each generator may see:
 
 - Official `input/` for the 5 train tasks.
 - Standard `output/answer.json` for the 5 train tasks.
-- Allowed exposed ports, Web/API URLs, or database connections.
+- The remote environment entrypoint.
 
-The skill generator must not see:
-
-- Test standard answers.
-- Test notes.
-- Evaluator implementation details.
+The generator must not see test answers, test notes, or evaluator files.
 
 Save the generated skills as:
 
@@ -44,37 +72,73 @@ skills/fewshot/fewshot_attempt_02/SKILL.md
 skills/fewshot/fewshot_attempt_03/SKILL.md
 ```
 
-The solver may see:
+The solver receives the current test input, remote environment entrypoint, and
+the matching fewshot skill.
 
-- The current test task `input/`.
-- Allowed exposed ports, Web/API URLs, or database connections.
-- The fewshot skill whose attempt number matches the solver attempt number.
+## self
 
-## reflect
+Generate 3 independent skills with 3 clean-context skill-generation subagents.
+This mode is self-evolution without train outputs or judge feedback.
 
-For this condition, generate 3 independent skills with 3 clean-context skill-generation subagents. Each generator should use the Codex `skill-creator` skill, and each skill is generated through independent attempts, answer comparison, and error reflection.
+The generator may see:
 
-Generation process:
+- Official `input/` for the 5 train tasks.
+- The remote environment entrypoint.
 
-1. Read only the official `input/` for the 5 train tasks and allowed exposed ports, Web/API URLs, or database connections.
-2. Independently complete the 5 train tasks and save blind attempts.
-3. Read the standard `output/answer.json` for the 5 train tasks.
-4. Compare its own answers against the standard answers and reflect on error sources.
-5. Summarize transferable SOPs, field definitions, environment usage, business judgment rules, and common pitfalls.
+The generator must not see:
 
-Save the generated skills as:
+- Train `output/answer.json`.
+- The judge endpoint or judge feedback.
+- Test answers, test notes, or evaluator files.
+
+The generator should solve or reason through the train tasks from its own work,
+then distill transferable SOPs, field conventions, environment usage habits,
+and pitfalls into:
 
 ```text
-skills/reflect/reflect_attempt_01/SKILL.md
-skills/reflect/reflect_attempt_02/SKILL.md
-skills/reflect/reflect_attempt_03/SKILL.md
+skills/self/self_attempt_01/SKILL.md
+skills/self/self_attempt_02/SKILL.md
+skills/self/self_attempt_03/SKILL.md
 ```
 
-The solver may see:
+The solver receives the current test input, remote environment entrypoint, and
+the matching self skill.
 
-- The current test task `input/`.
-- Allowed exposed ports, Web/API URLs, or database connections.
-- The reflect skill whose attempt number matches the solver attempt number.
+## reflect-3
+
+Generate 3 independent reflect skills. `reflect-3` runs 3 epochs over the five
+train tasks.
+
+The generator may see:
+
+- Official `input/` for the 5 train tasks.
+- The remote environment entrypoint.
+- The train-only judge API description above.
+
+The generator must not see:
+
+- Train `output/answer.json`.
+- Test answers, test notes, or evaluator files.
+
+For each epoch, the generator should:
+
+1. Attempt all 5 train tasks from the visible inputs and remote environment.
+2. Submit each candidate answer to `POST /api/judge`.
+3. Record the returned `score` and `correct` values.
+4. Reflect on errors, revise its working rules, and carry those lessons into the
+   next epoch.
+
+After the third epoch, distill the learned transferable procedure into the
+matching skill:
+
+```text
+skills/reflect-3/reflect-3_attempt_01/SKILL.md
+skills/reflect-3/reflect-3_attempt_02/SKILL.md
+skills/reflect-3/reflect-3_attempt_03/SKILL.md
+```
+
+The solver receives the current test input, remote environment entrypoint, and
+the matching `reflect-3` skill.
 
 ## Skill Quality Requirements
 
@@ -83,13 +147,14 @@ A skill should be executable experience, not a restatement of train answers.
 A good skill should include:
 
 - Transferable business rules.
-- How to use the exposed Web/API or database environment.
+- How to use the remote Web/API or database environment.
 - Output field definitions.
 - Common misjudgments and exclusion rules.
-- SOPs learned from train tasks that must be re-applied to test tasks.
+- SOPs learned from train tasks that should transfer to test tasks.
 
 A skill must not include:
 
 - Test task answers or derivations.
-- Non-transferable restatements of individual train examples.
-- Speculative statements that reveal or guess evaluator checkpoints.
+- Train standard answers copied from `output/answer.json`, except in fewshot
+  mode where solved train examples may inform the skill.
+- Speculative statements that reveal or guess evaluator internals.

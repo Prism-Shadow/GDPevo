@@ -11,6 +11,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -64,6 +66,16 @@ class CreditOfficeHandler(BaseHTTPRequestHandler):
             self.send_error_json(500, f"database error: {exc}")
         except Exception as exc:
             self.send_error_json(500, str(exc))
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        path_parts = [unquote(part) for part in parsed.path.strip("/").split("/") if part]
+        if path_parts == ["api", "judge"]:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            status, payload = judge_answer_request(self.rfile.read(length))
+            self.send_json(status, payload)
+            return
+        self.send_error_json(404, "endpoint not found")
 
     def route_get(self):
         parsed = urlparse(self.path)

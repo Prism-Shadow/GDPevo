@@ -93,10 +93,10 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 ## 聚合要求
 
-所有 `score.yaml` 准备完成后，主 agent 应检查三种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `acc@3`、整体 `acc@3`，以及条件之间的提升。
+所有 `score.yaml` 准备完成后，主 agent 应检查四种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `acc@3`、整体 `acc@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升。
 
-主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 cached/input/output tokens，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
+主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 token 和 cost 字段，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
 
-这些效率指标只统计 test solver subagents 写答案的过程。不包括 skill 生成、环境启动、evaluator 执行或主 agent 汇总。它们不能替代 `acc@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
+这些效率指标只统计 test solver subagents 写答案的过程。不包括 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总。它们不能替代 `acc@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
 
 评估 agent 可以根据当前 task group 的 evaluator 形态，在 `scratch/` 中编写临时聚合或检查代码。

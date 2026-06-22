@@ -9,6 +9,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_PATH = BASE_DIR / "data" / "business_data.json"
@@ -144,6 +146,16 @@ class Handler(BaseHTTPRequestHandler):
 
         self.send_json(404, {"error": "not_found", "message": "Endpoint not found."})
 
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        path_parts = [unquote(part) for part in parsed.path.strip("/").split("/") if part]
+        if path_parts == ["api", "judge"]:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            status, payload = judge_answer_request(self.rfile.read(length))
+            self.send_json(status, payload)
+            return
+        self.send_json(404, {"error": "not_found", "message": "Endpoint not found."})
+
     def do_OPTIONS(self) -> None:
         self.send_response(204)
         self.send_cors_headers()
@@ -212,7 +224,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def send_cors_headers(self) -> None:
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
 
     def log_message(self, format: str, *args) -> None:

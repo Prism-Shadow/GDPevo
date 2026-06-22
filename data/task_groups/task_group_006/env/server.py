@@ -9,6 +9,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -154,6 +156,16 @@ class ProcureOpsHandler(BaseHTTPRequestHandler):
 
         filtered = [record for record in records if record_matches(record, collection_name, query)]
         self.send_json(200, {"count": len(filtered), "results": filtered})
+
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        path_parts = [unquote(part) for part in parsed.path.strip("/").split("/") if part]
+        if path_parts == ["api", "judge"]:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            status, payload = judge_answer_request(self.rfile.read(length))
+            self.send_json(status, payload)
+            return
+        self.send_json(404, {"error": "unknown endpoint"})
 
 
 def main() -> None:

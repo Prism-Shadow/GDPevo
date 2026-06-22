@@ -93,10 +93,10 @@ If retries still cannot produce a valid score, stop the evaluation and report th
 
 ## Aggregation Requirements
 
-After all `score.yaml` files are ready, the main agent should check that all three conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3`, overall `acc@3`, and condition-to-condition improvements.
+After all `score.yaml` files are ready, the main agent should check that all four conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3`, overall `acc@3`, and improvements from `fewshot`, `self`, and `reflect-3` over `base`.
 
-The main agent should also aggregate average cached/input/output tokens from each `run_metadata.yaml`, first per test task and then per condition. The aggregation follows the same shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
+The main agent should also aggregate average token and cost fields from each `run_metadata.yaml`, first per test task and then per condition. The aggregation follows the same shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
 
-These efficiency metrics only count the answer-writing work of test solver subagents. They do not include skill generation, environment startup, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
+These efficiency metrics only count the answer-writing work of test solver subagents. They do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
 
 The evaluation agent may write temporary aggregation or checking code in `scratch/` according to the current task group's evaluator shape.
