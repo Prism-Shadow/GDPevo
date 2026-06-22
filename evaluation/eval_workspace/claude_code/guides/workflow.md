@@ -92,7 +92,8 @@ Skill-generation token usage is not included in solver efficiency metrics.
 
 ## 4. Run Test Solvers
 
-Run every condition, every test task, and every attempt independently:
+Run every condition, every test task, and every attempt independently in a fresh
+directory:
 
 ```text
 runs/<condition>/test_001/attempt_01/
@@ -116,6 +117,13 @@ For each attempt directory, stage only:
 Do not stage `env/`, train tasks, test answers, task notes, evaluator files,
 other test tasks, generated skills from other attempts, prior runs, or judge
 instructions for test solvers.
+
+If a solver accesses, lists, or reports seeing forbidden material such as
+`env/`, `output/answer.json`, notes, evaluator files, disallowed train tasks, or
+another attempt's files, stop using that result. Mark the attempt contaminated,
+record the reason in that attempt directory, report it to the user, and rerun
+the affected test in a new clean attempt directory. Do not score or aggregate a
+contaminated attempt.
 
 The solver writes `answer.json` in its own attempt directory.
 

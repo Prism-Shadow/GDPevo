@@ -86,7 +86,7 @@ Skill-generation token 用量不计入 solver 效率指标。
 
 ## 4. 运行 Test Solvers
 
-每种条件、每个 test task、每次 attempt 都独立运行：
+每种条件、每个 test task、每次 attempt 都在全新的目录中独立运行：
 
 ```text
 runs/<condition>/test_001/attempt_01/
@@ -110,6 +110,11 @@ reflect-3
 不要 staging `env/`、train tasks、test answers、task notes、evaluator files、
 其他 test tasks、其他 attempt 的 generated skills、prior runs，或给 test
 solver 的 judge 调用说明。
+
+如果 solver 访问、列出或报告看到了禁止材料，例如 `env/`、`output/answer.json`、
+notes、evaluator files、不允许的 train tasks 或其它 attempt 的文件，停止使用该结果。
+将该 attempt 标记为污染，在 attempt 目录记录原因，及时报告给用户，并在新的干净
+attempt 目录中重新测试受影响任务。污染 attempt 不打分、不纳入聚合。
 
 Solver 在自己的 attempt 目录中写 `answer.json`。
 

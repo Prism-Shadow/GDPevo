@@ -90,7 +90,9 @@ Skill-generation subagents only generate skills. They do not solve test tasks.
 
 Solver subagents may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver subagents must not enter, list, or read `env/`; they may use the shared environment only through the remote Web/API URL or database connection explicitly exposed by the main agent. Only reflect skill-generation subagents should receive the train-only judge API instructions, and that API is not valid for test-time solving.
 
-For solver attempts, use the corresponding attempt directory as the subagent workspace/cwd, such as `runs/base/test_001/attempt_01/`. Stage the current task `input/`, environment access instructions, and, for skill modes only, the matching skill copy for the same attempt number. For skill generation, use a dedicated directory under `scratch/skill_generation/` and stage only the allowed train materials for that mode.
+If a solver/test subagent accidentally accesses, lists, or reports seeing forbidden material such as `env/`, `output/answer.json`, task notes, evaluator files, train tasks outside the allowed mode, or another attempt's run files, treat that attempt as contaminated. Report the incident to the user, do not score or aggregate that attempt, record the reason in the attempt directory, and rerun the affected test in a fresh clean attempt directory.
+
+For solver attempts, use the corresponding fresh attempt directory as the subagent workspace/cwd, such as `runs/base/test_001/attempt_01/`. Stage the current task `input/`, environment access instructions, and, for skill modes only, the matching skill copy for the same attempt number. Do not reuse an attempt directory for a rerun; create a new clean directory and keep the invalidated run for audit. For skill generation, use a dedicated directory under `scratch/skill_generation/` and stage only the allowed train materials for that mode.
 
 ## Solver Prompt
 
@@ -99,7 +101,7 @@ Keep the solver subagent prompt short and explicit:
 ```text
 eval_attempt_id: <unique_eval_attempt_id>
 
-Please solve this single test task from the current workspace only. Use only the staged task input, allowed environment access, and the skill file if one is provided. Write the final answer as answer.json following input/payloads/answer_template.json.
+Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
 ```
 
 The main agent later uses `eval_attempt_id` to match the corresponding Codex session trace and backfill `token_count`.

@@ -15,6 +15,8 @@ task_group_id: <task_group_id>
 scenario_id: <scenario_id or null>
 model: <model_id, e.g. claude-opus-4-6>
 harness: panofy
+contamination_incidents:
+  - <empty list if none; otherwise list contaminated attempts and reruns>
 
 conditions:
   base:
@@ -65,3 +67,6 @@ conditions:
   attempts for one test task, then average the 5 test tasks.
 - Efficiency metrics only count test-task `predict()` work. Do not include
   training, remote environment checks, or evaluator execution.
+- If any test attempt was contaminated by forbidden material access or leakage,
+  list it under `contamination_incidents` with the condition, task id, attempt
+  id, what was exposed, and which fresh rerun replaced it.

@@ -90,3 +90,9 @@ Run all four conditions with acc@3 and write report/<task_group_id>.yaml.
   material.
 - The hosted agent only sees the **remote** env URL. Confirm that URL exposes
   the same public projection as `task_group/env` — do not expose hidden fields.
+- Store every test call under a fresh `runs/<condition>/<task_id>/attempt_<nn>/`
+  directory. If a test agent response or run artifact shows that forbidden
+  material leaked into `FUNC_INPUT` or the agent saw an answer, note, evaluator,
+  env source, judge instruction, train material, or another run's files, report
+  it immediately, mark that attempt contaminated, exclude it from aggregation,
+  and rerun the affected test with corrected input in a new clean run directory.

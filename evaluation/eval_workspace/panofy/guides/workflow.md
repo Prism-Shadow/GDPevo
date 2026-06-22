@@ -129,11 +129,19 @@ The test `FUNC_INPUT` is identical across conditions; only the trained agent
 differs. Never include test gold answers, notes, evaluator details, train
 materials, or judge endpoint instructions in test `FUNC_INPUT`.
 
+If a test agent response or run artifact shows that forbidden material leaked
+into `FUNC_INPUT`, or that the agent saw answers, notes, evaluator details, env
+source, judge instructions, train material, or another run's files, stop using
+that result. Mark the attempt contaminated, report it to the user, exclude it
+from aggregation, and rerun the affected test with corrected input in a new clean
+run directory.
+
 Run one question per call and run sequentially: answer exactly one test task per
 `predict()` call, and run the 5 test tasks one at a time. Do not put multiple
 tasks in a single input and do not fire predicts concurrently.
 
-Recommended record layout:
+Recommended record layout. Use a fresh directory for every attempt and rerun;
+do not overwrite a previous attempt directory:
 
 ```text
 runs/<condition>/test_001/attempt_01/func_input.json
