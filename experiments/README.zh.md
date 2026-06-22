@@ -14,4 +14,4 @@
 | `panofy_claude_opus_4_6_high/` | 已发布的 Panofy Claude Opus 4.6 high 评估运行 |
 
 每个已发布实验目录都包含 `config.yaml`、结构化 report YAML 文件，以及这些 reports 引用的生成 artifacts（如果有）。
-可复用评测工作区位于 [`../data_construction/Stage_4_Score_Evaluation/eval_workspace/`](../data_construction/Stage_4_Score_Evaluation/eval_workspace/)。
+可复用评测工作区位于 [`../evaluation/eval_workspace/`](../evaluation/eval_workspace/)。

@@ -20,4 +20,4 @@ systems.
 Each released experiment directory contains a `config.yaml`, structured report
 YAML files, and any generated artifacts referenced by those reports.
 Reusable evaluation workspaces live under
-[`../data_construction/Stage_4_Score_Evaluation/eval_workspace/`](../data_construction/Stage_4_Score_Evaluation/eval_workspace/).
+[`../evaluation/eval_workspace/`](../evaluation/eval_workspace/).

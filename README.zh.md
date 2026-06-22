@@ -29,7 +29,8 @@
 | 路径 | 内容 |
 | --- | --- |
 | [`data/`](data/) | 已发布的基准数据，包括任务组、共享环境、训练与测试任务、参考答案和基于规则的评测器。 |
-| [`data_construction/`](data_construction/) | 四阶段构建与评测工作区，覆盖场景发现、任务组生成、质量过滤和分数评测。 |
+| [`data_construction/`](data_construction/) | 构建工作区，包括场景发现、任务组生成和质量过滤。 |
+| [`evaluation/`](evaluation/) | 面向已发布任务组的可复用分数评测工作区。 |
 | [`experiments/`](experiments/) | 已发布的评测结果、报告文件和实验汇总表。 |
 | [`site/`](site/) | 基准发布用的公开网站与博客。 |
 
@@ -37,7 +38,8 @@
 
 - 基准数据：阅读 [`data/DATA_BOARD.zh.md`](data/DATA_BOARD.zh.md) 了解任务组概览，再查看 [`data/task_groups/`](data/task_groups/) 中的具体任务。
 - 评测结果：在 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md) 查看汇总结果，再进入三个实验目录阅读逐任务报告。
-- 构建与评测工作区：四阶段流程都在 [`data_construction/`](data_construction/) 下。每个工作区都有自己的 README 和 guides。
+- 构建工作区：前三阶段流程在 [`data_construction/`](data_construction/) 下。
+- 分数评测工作区：使用 [`evaluation/eval_workspace/`](evaluation/eval_workspace/)。
 - 前三阶段默认通过 Codex 工作流实现。其他智能体框架可以复用整体结构，但需要适度改写。
 
 ## 工作区使用指南
@@ -62,7 +64,7 @@
   - **输入数据**：放入 `task_group/` 的一个完整任务组；对应的 Stage 2 构建记录放入 `scratch/`。
   - **提示词**：`阅读 README.md 和 guides/，审核一个 task_group/，收集 6 票，并写出 ../reports/<task_group_id>.yaml。`
 
-- **分数评测**：[`data_construction/Stage_4_Score_Evaluation/eval_workspace/`](data_construction/Stage_4_Score_Evaluation/eval_workspace/)
+- **分数评测**：[`evaluation/eval_workspace/`](evaluation/eval_workspace/)
 
   - **用途**：对一个发布任务组运行正式评测，统计 `acc@3`、token 和费用。目录下包含 Codex、Claude Code、Panofy 以及中文镜像工作区。
   - **输入数据**：放入所选评测工作区的一个已发布任务组，以及该工作区需要的密钥或配置。

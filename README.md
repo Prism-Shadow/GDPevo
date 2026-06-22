@@ -29,7 +29,8 @@ Per-task reports are under:
 | Path | Purpose |
 | --- | --- |
 | [`data/`](data/) | Released benchmark data, including task groups, shared environments, train/test tasks, reference answers, and rule-based evaluators. |
-| [`data_construction/`](data_construction/) | Four-stage construction and evaluation workspaces, from scenario discovery through score evaluation. |
+| [`data_construction/`](data_construction/) | Construction workspaces for scenario discovery, task group synthesis, and quality filtering. |
+| [`evaluation/`](evaluation/) | Reusable score evaluation workspaces for released task groups. |
 | [`experiments/`](experiments/) | Released evaluation results, report YAMLs, and the aggregate experiment board. |
 | [`site/`](site/) | Public website and blog for the benchmark release. |
 
@@ -37,7 +38,8 @@ Per-task reports are under:
 
 - Benchmark data: read the summary in [`data/DATA_BOARD.md`](data/DATA_BOARD.md), then inspect task groups under [`data/task_groups/`](data/task_groups/).
 - Evaluation results: read [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md), then open the per-task reports under the three experiment directories.
-- Construction and evaluation workspaces: use the four-stage workflow under [`data_construction/`](data_construction/). Each workspace has its own README and guides.
+- Construction workspaces: use the three-stage workflow under [`data_construction/`](data_construction/).
+- Score evaluation workspaces: use [`evaluation/eval_workspace/`](evaluation/eval_workspace/).
 - Stages 1-3 are written for Codex workflows. Other agent frameworks can reuse the same structure, but may need light adaptation.
 
 ## Workspace Usage Guide
@@ -62,7 +64,7 @@ These workspaces are agent-ready folders for building, reviewing, and evaluating
   - **Input data**: one completed task group copied into `task_group/`, plus the matching Stage 2 scratch material in `scratch/`.
   - **Prompt**: `Read README.md and guides/, review one task_group/ with scratch/, collect 6 votes, and write ../reports/<task_group_id>.yaml.`
 
-- **Score Evaluation**: [`data_construction/Stage_4_Score_Evaluation/eval_workspace/`](data_construction/Stage_4_Score_Evaluation/eval_workspace/)
+- **Score Evaluation**: [`evaluation/eval_workspace/`](evaluation/eval_workspace/)
 
   - **Purpose**: Run formal `acc@3`, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces.
   - **Input data**: one released task group copied into the selected evaluator workspace, plus the credentials or config required by that workspace.
