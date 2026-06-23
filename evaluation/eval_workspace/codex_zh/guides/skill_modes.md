@@ -98,10 +98,9 @@ Solver 接收当前 test input、远程环境入口，以及匹配的 self skill
 
 ## reflect-3
 
-生成 3 个独立 reflect skills。每次 reflect skill generation run 都要处理
-全部 5 个 train tasks，但应逐题进行：每道 train task 先完成 3 轮
-judge-feedback，再进入下一道 train task。这不是对全部 5 题做全局 3 个
-epochs。
+生成 3 个独立 reflect skills。每次 reflect skill generation run 按顺序遍历
+5 个 train tasks。对每道 train task，连续完成 3 轮 judge-feedback 后，再进入
+下一道 train task。
 
 Generator 可以看到：
 

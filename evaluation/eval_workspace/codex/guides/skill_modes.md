@@ -110,10 +110,10 @@ the matching self skill.
 
 ## reflect-3
 
-Generate 3 independent reflect skills. Each reflect skill generation run should
-process all 5 train tasks one task at a time. For each train task, complete
-exactly 3 judge-feedback rounds on that task before moving to the next train
-task. This is not a global 3-epoch loop over all 5 tasks.
+Generate 3 independent reflect skills. In each reflect skill generation run,
+process the 5 train tasks in order. For each train task, complete exactly 3
+consecutive judge-feedback rounds on that task before moving to the next train
+task.
 
 The generator may see:
 

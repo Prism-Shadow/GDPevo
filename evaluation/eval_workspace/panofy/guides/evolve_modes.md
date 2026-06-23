@@ -52,10 +52,9 @@ answers, notes, or evaluator source.
 
 ## reflect-3
 
-Train 3 independent agents for `reflect-3`. Each independent agent processes all
-5 train tasks one task at a time. For each train task, it runs exactly 3
-judge-feedback rounds on that task before moving to the next train task. This is
-not a global 3-epoch loop over all 5 tasks.
+Train 3 independent agents for `reflect-3`. Each independent agent processes the
+5 train tasks in order. For each train task, it runs exactly 3 consecutive
+judge-feedback rounds on that task before moving to the next train task.
 
 Reflect training materials may include:
 
