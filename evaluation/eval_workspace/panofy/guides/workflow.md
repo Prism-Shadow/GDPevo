@@ -155,9 +155,8 @@ runs/<condition>/test_001/attempt_01/run_metadata.yaml
 ```
 
 Call `predict(func_input)` with `resolve_files=False` and `output_dir=None`.
-Use `predict_with_metadata()` to capture `run.usage`; derive `cost_usd` from the
-token buckets and configured model price table. `answer.json` is the parsed
-`FUNC_OUTPUT`.
+Use `predict_with_metadata()` to capture `run.usage`. `answer.json` is the
+parsed `FUNC_OUTPUT`.
 
 ## 6. Score And Aggregate
 
@@ -166,19 +165,18 @@ After each `predict()` writes `answer.json`, score it by running the task's
 already in `[0,1]`; if needed, derive a normalized score from earned / max
 fields. Write `score.yaml`.
 
-Record token usage and derived `cost_usd` in `run_metadata.yaml` with a unique
-`eval_attempt_id`:
+Record token usage in `run_metadata.yaml` with a unique `eval_attempt_id`:
 
 ```text
 <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
 ```
 
 After all `score.yaml` files exist, aggregate per-task `acc@3`, overall
-`acc@3`, and average `cost_usd` / token buckets for each condition. Efficiency
-metrics only count **test-task `predict()`** work; never include training,
-remote environment checks, or evaluator execution. Aggregate the same way as
-`acc@3`: average the 3 attempts for one test task, then average the 5 test
-tasks. Write the final report to `report/<task_group_id>.yaml` per
+`acc@3`, and average token buckets for each condition. Efficiency metrics only
+count **test-task `predict()`** work; never include training, remote environment
+checks, or evaluator execution. Aggregate the same way as `acc@3`: average the
+3 attempts for one test task, then average the 5 test tasks. Write the final
+report to `report/<task_group_id>.yaml` per
 `report_format.md`.
 
 ## 7. Interpret Results
@@ -188,7 +186,7 @@ In the report or accompanying notes, explain:
 - Overall `acc@3` for all four conditions.
 - Improvement from `fewshot`, `self`, and `reflect-3` over `base`.
 - Which test tasks improved clearly and which did not.
-- The USD price and token cost per condition.
+- Token usage per condition.
 - Any environment instability, output-schema friction, evaluator issue, or
   suspicious leakage risk.
 

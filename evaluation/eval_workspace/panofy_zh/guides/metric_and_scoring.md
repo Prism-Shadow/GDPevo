@@ -1,6 +1,6 @@
 # 指标与打分
 
-主指标是 `acc@3`。价格与准确率一并报告为 `cost_usd`，由 SDK 返回的三桶 token 用量和配置的模型价格表推导；无需解析 transcript。
+主指标是 `acc@3`。效率信息记录 SDK 返回的三桶 token 用量。
 
 ## 单次运行
 
@@ -15,7 +15,7 @@ runs/<condition>/<task_id>/attempt_<nn>/score.yaml
 runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 ```
 
-`func_input.json` 是发给 `predict()` 的确切内容。`answer.json` 是解析后的 `FUNC_OUTPUT`。`score.yaml` 在运行 task evaluator 后写出。`run_metadata.yaml` 记录唯一 attempt id、SDK 返回的 token 用量和推导出的 `cost_usd`。
+`func_input.json` 是发给 `predict()` 的确切内容。`answer.json` 是解析后的 `FUNC_OUTPUT`。`score.yaml` 在运行 task evaluator 后写出。`run_metadata.yaml` 记录唯一 attempt id 和 SDK 返回的 token 用量。
 
 ## 打分
 
@@ -29,13 +29,13 @@ bash task_group/<id>/test_tasks/00N/eval/eval.sh <answer.json 的绝对路径>
 
 agent 必须返回严格匹配 `answer_template` 的 JSON——键、类型或枚举拼写错了，会在 evaluator 处丢分。
 
-## 成本计量（Panofy）
+## Token 计量（Panofy）
 
 `predict_with_metadata()` 每次运行返回：
 
 - `run.usage` —— 三桶 token：`cache_read`、`cache_write`、`output_token`。记为 `cache_read_tokens`、`cache_write_tokens`、`output_tokens`。
 
-Panofy 没有单独的「未缓存 input」桶。用三桶 token 和配置的模型价格表计算 `cost_usd`；如果无法取得价格表，则写 `null` 并在 run record 中保留原因。token 数值来自 SDK，绝不手数。建议的 `run_metadata.yaml`：
+Panofy 没有单独的「未缓存 input」桶。记录 SDK 返回的三桶 token；如果某个桶无法取得，则写 `null` 并在 run record 中保留原因。token 数值来自 SDK，绝不手数。建议的 `run_metadata.yaml`：
 
 ```yaml
 eval_attempt_id: <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
@@ -53,9 +53,6 @@ token_usage:
   cache_read_tokens: <int>
   cache_write_tokens: <int>
   output_tokens: <int>
-price:
-  source: configured_model_price_table
-  cost_usd: <float or null>
 ```
 
 ## acc@3
@@ -85,6 +82,6 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 ## 聚合要求
 
-所有 `score.yaml` 就绪后，检查四种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `acc@3`、整体 `acc@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升，并汇总平均 `cost_usd` 和各桶 token。
+所有 `score.yaml` 就绪后，检查四种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `acc@3`、整体 `acc@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升，并汇总各桶 token 平均值。
 
 这些效率指标只统计 **test-task 的 `predict()`** 工作，不含训练（进化步骤）、远程环境检查或 evaluator 执行。聚合方式同 `acc@3`：先对同一 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。临时聚合代码可放 `scratch/`。

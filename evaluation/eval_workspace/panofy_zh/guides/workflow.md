@@ -100,7 +100,7 @@ POST {PANOFY_ENV_BASE_URL}{PANOFY_JUDGE_PATH}
 
 不要把任何 test task、test 答案、test note 或 evaluator 放进训练材料。
 对每个 `(condition, attempt)` 使用 SDK 的异步一站式 `train()`，将返回的
-`agent_id` 记录到 `agents/registry.json`。训练成本不计入 solver 效率指标。
+`agent_id` 记录到 `agents/registry.json`。训练用量不计入 solver 效率指标。
 
 ## 5. 运行 Test 实验
 
@@ -141,8 +141,8 @@ runs/<condition>/test_001/attempt_01/run_metadata.yaml
 ```
 
 调用 `predict(func_input)` 时使用 `resolve_files=False` 和 `output_dir=None`。
-用 `predict_with_metadata()` 捕获 `run.usage`；再用 token buckets 和配置的模型
-价格表推导 `cost_usd`。`answer.json` 是解析后的 `FUNC_OUTPUT`。
+用 `predict_with_metadata()` 捕获 `run.usage`。`answer.json` 是解析后的
+`FUNC_OUTPUT`。
 
 ## 6. 打分与聚合
 
@@ -150,18 +150,17 @@ runs/<condition>/test_001/attempt_01/run_metadata.yaml
 prediction 路径作为 `$1` 传入来打分。读取已归一到 `[0,1]` 的
 `total_score`；必要时从 earned / max 字段推导归一分数。写入 `score.yaml`。
 
-将 SDK 返回的 token 用量和推导出的 `cost_usd` 写入 `run_metadata.yaml`，并带唯一
-`eval_attempt_id`：
+将 SDK 返回的 token 用量写入 `run_metadata.yaml`，并带唯一 `eval_attempt_id`：
 
 ```text
 <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
 ```
 
 所有 `score.yaml` 就绪后，聚合每个 task 的 `acc@3`、整体 `acc@3`，以及每个
-条件的平均 `cost_usd` / token buckets。效率指标只统计 **test-task 的
-`predict()`** 工作；不包含训练、远程环境检查或 evaluator 执行。聚合方式同
-`acc@3`：先对同一 test task 的 3 次 attempts 取平均，再对 5 个 test tasks
-取平均。最终报告按 `report_format.md` 写入 `report/<task_group_id>.yaml`。
+条件的平均 token buckets。效率指标只统计 **test-task 的 `predict()`** 工作；
+不包含训练、远程环境检查或 evaluator 执行。聚合方式同 `acc@3`：先对同一
+test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。最终报告按
+`report_format.md` 写入 `report/<task_group_id>.yaml`。
 
 ## 7. 解读结果
 
@@ -170,7 +169,7 @@ prediction 路径作为 `$1` 传入来打分。读取已归一到 `[0,1]` 的
 - 四种条件各自的整体 `acc@3`。
 - `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升。
 - 哪些 test tasks 明显提升、哪些没有。
-- 每个条件的 USD 价格和 token 成本。
+- 每个条件的 token 用量。
 - 任何环境不稳、输出 schema 摩擦、evaluator 问题或可疑泄漏风险。
 
 ## 失败处理

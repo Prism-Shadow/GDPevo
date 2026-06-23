@@ -24,7 +24,6 @@ conditions:
       cache_creation_tokens_avg_3: <float or null>
       cache_read_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
-      cost_usd_avg_3: <float or null>
     tasks:
       test_001:
         scores:
@@ -36,7 +35,6 @@ conditions:
         cache_creation_tokens_avg_3: <float or null>
         cache_read_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
-        cost_usd_avg_3: <float or null>
       test_002: <same shape as test_001>
       test_003: <same shape as test_001>
       test_004: <same shape as test_001>
@@ -73,7 +71,7 @@ conditions:
 - `scores` 必须保留 3 次原始运行分数，不能只保留平均值。
 - `skill_dirs` 只用于非 base 条件。路径相对于 report YAML 所在目录，attempt
   编号必须和使用该 skill 的 solver attempt 编号一致。
-- Token 和 cost 字段来自按 `message.id` 去重后的 Claude Code subagent
+- Token 字段来自按 `message.id` 去重后的 Claude Code subagent
   transcripts。如果 transcript 不能被唯一匹配，应写 `null`，并在对应 run
   record 中保留问题。
 - 效率指标和 `acc@3` 使用相同聚合方式：先对同一个 test task 的 3 次

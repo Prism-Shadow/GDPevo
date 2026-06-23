@@ -136,10 +136,10 @@ Solver 在自己的 attempt 目录中写 `answer.json`。
 按 `message.id` 去重：input/cache 桶取任一条记录，`output_tokens` 取同一
 message id 的最大值，然后跨响应求和。
 
-所有 runs 完成后，聚合四种条件的 `acc@3`、各桶 token 和 `cost_usd`。效率
-指标只统计 test solver 写答案的过程：先对同一个 test task 的 3 次 attempts
-取平均，再对 5 个 test tasks 取平均。不要包含 skill generation、远程环境
-检查、evaluator 执行或主 agent 汇总。
+所有 runs 完成后，聚合四种条件的 `acc@3` 和各桶 token。效率指标只统计
+test solver 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对
+5 个 test tasks 取平均。不要包含 skill generation、远程环境检查、evaluator
+执行或主 agent 汇总。
 
 ## 6. 解释结果
 

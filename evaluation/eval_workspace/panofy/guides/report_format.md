@@ -23,7 +23,6 @@ conditions:
       cache_read_tokens_avg_3: <float or null>
       cache_write_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
-      cost_usd_avg_3: <float or null>
     tasks:
       test_001:
         scores:
@@ -34,7 +33,6 @@ conditions:
         cache_read_tokens_avg_3: <float or null>
         cache_write_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
-        cost_usd_avg_3: <float or null>
       test_002: <same shape as test_001>
       test_003: <same shape as test_001>
       test_004: <same shape as test_001>
@@ -60,7 +58,6 @@ conditions:
 - `scores` must contain all 3 raw run scores.
 - The three token buckets come from each attempt's `run_metadata.yaml` SDK
   usage. If any attempt is missing a value, write the average as `null`.
-- `cost_usd_avg_3` is derived from averaged token buckets using the model prices.
 - Efficiency follows the same aggregation shape as `acc@3`: average the 3
   attempts for one test task, then average the 5 test tasks.
 - Efficiency metrics only count test-task `predict()` work. Do not include

@@ -1,8 +1,7 @@
 # Metric And Scoring
 
-The main evaluation metric is `acc@3`. Price is reported alongside accuracy as
-`cost_usd`, derived from the SDK-reported 3-bucket token usage and the configured
-model price table. No transcript parsing is needed.
+The main evaluation metric is `acc@3`. Efficiency information is the
+SDK-reported 3-bucket token usage.
 
 ## Single Run
 
@@ -20,8 +19,7 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 
 `func_input.json` is exactly what was sent to `predict()`. `answer.json` is the
 parsed `FUNC_OUTPUT`. `score.yaml` is written after running the task evaluator.
-`run_metadata.yaml` records the unique attempt id, SDK-reported token usage, and
-derived `cost_usd`.
+`run_metadata.yaml` records the unique attempt id and SDK-reported token usage.
 
 ## Scoring
 
@@ -41,7 +39,7 @@ and some take extra arguments that `eval.sh` already supplies.
 The agent must return JSON matching `answer_template` exactly — wrong keys,
 types, or enum spellings lose evaluator score.
 
-## Cost Accounting (Panofy)
+## Token Accounting (Panofy)
 
 `predict_with_metadata()` returns, per run:
 
@@ -49,10 +47,10 @@ types, or enum spellings lose evaluator score.
   `output_token`. Record as `cache_read_tokens`, `cache_write_tokens`,
   `output_tokens`.
 
-Panofy exposes no separate uncached-input bucket. Compute `cost_usd` from the
-three token buckets and the configured model price table; if the price table is
-unavailable, write `null` and preserve the reason in the run record. Token values
-come from the SDK, never from manual counting. Recommended `run_metadata.yaml`:
+Panofy exposes no separate uncached-input bucket. Record the three token buckets
+from the SDK; if any bucket is unavailable, write `null` and preserve the reason
+in the run record. Token values come from the SDK, never from manual counting.
+Recommended `run_metadata.yaml`:
 
 ```yaml
 eval_attempt_id: <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
@@ -70,9 +68,6 @@ token_usage:
   cache_read_tokens: <int>
   cache_write_tokens: <int>
   output_tokens: <int>
-price:
-  source: configured_model_price_table
-  cost_usd: <float or null>
 ```
 
 ## acc@3
@@ -113,7 +108,7 @@ a valid score, stop and report the issue.
 After all `score.yaml` files are ready, check that all four conditions, 5 test
 tasks, and 3 runs per task are complete. Then compute per-task `acc@3`, overall
 `acc@3`, and improvements from `fewshot`, `self`, and `reflect-3` over
-`base`, plus average `cost_usd` and per-bucket tokens.
+`base`, plus average per-bucket tokens.
 
 These efficiency metrics only count the **test-task `predict()`** work. They do
 not include training (the evolution step), remote environment checks, or
