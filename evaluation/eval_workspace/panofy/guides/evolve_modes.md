@@ -52,9 +52,13 @@ answers, notes, or evaluator source.
 
 ## reflect-3
 
-Train 3 independent agents for `reflect-3`. Each independent agent processes the
-5 train tasks in order. For each train task, it runs exactly 3 consecutive
-judge-feedback rounds on that task before moving to the next train task.
+Train 3 independent agents for `reflect-3`. Each independent agent processes
+`train_001` through `train_005` in order.
+
+A judge-feedback round means: produce a candidate answer for the current train
+task, submit it to the train-only judge, receive only `score` and `correct`
+feedback, and use that feedback to adjust the next attempt on the same train
+task.
 
 Reflect training materials may include:
 
@@ -77,12 +81,20 @@ instructions must not tell test agents to call it. Reflect training must not
 include train gold answers, test tasks, test answers, notes, or evaluator
 source.
 
-The reflect instruction should require the agent to process the train tasks
-sequentially. For each train task, the agent should submit a candidate answer to
-the judge, use the returned score as feedback, revise its internal procedure,
-and retry the same train task until it has made exactly 3 judge submissions for
-that task. After all 5 train tasks have completed this 3-round loop, the final
-procedure is applied at test-time.
+The reflect instruction should require the agent to run this 3-round loop for
+each train task before moving to the next one:
+
+1. Read only the current train task input, the remote environment URL, and the
+   judge API instruction.
+2. Produce a candidate answer for the current train task.
+3. Submit that candidate answer to the judge.
+4. Record the returned `score` and `correct` values.
+5. Use the judge feedback to adjust the next attempt on the same train task.
+6. Repeat until exactly 3 judge submissions have been made for that train task.
+
+After all 5 train tasks have completed this loop, the final procedure is applied
+at test-time. It should not include candidate answers, train gold answers, or
+test-time judge instructions.
 
 ## Evolution Quality
 

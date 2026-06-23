@@ -89,9 +89,9 @@ Training material boundaries:
 - `self`: train inputs plus remote environment URL; no train answers and no
   judge feedback.
 - `reflect-3`: train inputs plus remote environment URL and judge API
-  instructions; no train answers. Process the 5 train tasks sequentially; for
-  each train task, run exactly 3 judge-feedback rounds on that task before moving
-  to the next task.
+  instructions; no train answers. Process the 5 train tasks sequentially. For
+  each train task, run 3 judge-feedback rounds: candidate answer -> judge
+  `score`/`correct` -> adjusted retry on the same train task.
 
 For reflect training, the agent first answers a train task from the visible
 input, then calls:

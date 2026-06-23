@@ -98,9 +98,12 @@ Solver 接收当前 test input、远程环境入口，以及匹配的 self skill
 
 ## reflect-3
 
-生成 3 个独立 reflect skills。每次 reflect skill generation run 按顺序遍历
-5 个 train tasks。对每道 train task，连续完成 3 轮 judge-feedback 后，再进入
-下一道 train task。
+生成 3 个独立 reflect skills。每次 reflect skill generation run 按
+`train_001` 到 `train_005` 的顺序处理。
+
+一轮 judge-feedback 指：对当前 train task 生成一个 candidate answer，提交给
+`POST /api/judge`，只接收 `score` 和 `correct` 反馈，并用该反馈调整同一道
+train task 的下一次尝试。
 
 Generator 可以看到：
 
@@ -113,16 +116,17 @@ Generator 不能看到：
 - Train `output/answer.json`。
 - Test 标准答案、test notes 或 evaluator files。
 
-每次 reflect skill generation run 中，对每一道 train task，generator 应：
+每次 reflect skill generation run 中，对每一道 train task，generator 应先完成
+以下 3 轮循环，再进入下一道 train task：
 
-1. 基于当前 train task 的可见输入和远程环境尝试作答。
-2. 将 candidate answer 提交给 `POST /api/judge`。
-3. 记录返回的 `score` 和 `correct`。
-4. 反思错误、修订工作规则，并在同一道 train task 上再次尝试。
-5. 重复直到当前 train task 正好完成 3 次 judge 提交。
-6. 再进入下一道 train task，并重复同样的 3 轮流程。
+1. 只读取当前 train task 的 input、远程环境入口和 judge API 调用说明。
+2. 为当前 train task 生成一个 candidate answer。
+3. 将该 candidate answer 提交给 `POST /api/judge`。
+4. 记录返回的 `score` 和 `correct`。
+5. 使用 judge feedback 调整同一道 train task 的下一次尝试。
+6. 重复直到该 train task 正好完成 3 次 judge 提交。
 
-全部 5 个 train tasks 都各自完成 3 轮 judge-feedback 后，将可迁移流程沉淀为对应 skill：
+全部 5 个 train tasks 都各自完成 3 轮 judge-feedback 后，将累积的可迁移经验沉淀为对应 skill。Skill 应包含可复用工作规则，不应包含 candidate answers、train gold answers 或 test-time judge 调用指令：
 
 ```text
 skills/reflect-3/reflect-3_attempt_01/SKILL.md

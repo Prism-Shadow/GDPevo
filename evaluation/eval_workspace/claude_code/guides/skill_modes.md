@@ -111,8 +111,11 @@ the matching self skill.
 ## reflect-3
 
 Generate 3 independent reflect skills. In each reflect skill generation run,
-process the 5 train tasks in order. For each train task, complete exactly 3
-consecutive judge-feedback rounds on that task before moving to the next train
+process `train_001` through `train_005` in order.
+
+A judge-feedback round means: produce a candidate answer for the current train
+task, submit it to `POST /api/judge`, receive only `score` and `correct`
+feedback, and use that feedback to adjust the next attempt on the same train
 task.
 
 The generator may see:
@@ -126,17 +129,21 @@ The generator must not see:
 - Train `output/answer.json`.
 - Test answers, test notes, or evaluator files.
 
-For each train task in a reflect skill generation run, the generator should:
+For each train task in a reflect skill generation run, the generator should run
+this 3-round loop before moving to the next train task:
 
-1. Attempt the current train task from the visible input and remote environment.
-2. Submit the candidate answer to `POST /api/judge`.
-3. Record the returned `score` and `correct` values.
-4. Reflect on errors, revise the working rules, and retry the same train task.
-5. Repeat until exactly 3 judge submissions have been made for that train task.
-6. Move to the next train task and repeat the same 3-round loop.
+1. Read only the current train task input, the remote environment entrypoint,
+   and the judge API instructions.
+2. Produce a candidate answer for the current train task.
+3. Submit that candidate answer to `POST /api/judge`.
+4. Record the returned `score` and `correct` values.
+5. Use the judge feedback to adjust the next attempt on the same train task.
+6. Repeat until exactly 3 judge submissions have been made for that train task.
 
 After all 5 train tasks have each completed their 3 judge-feedback rounds,
-distill the learned transferable procedure into the matching skill:
+distill the accumulated transferable lessons into the matching skill. The skill
+should contain reusable workflow rules, not candidate answers, train gold
+answers, or test-time judge instructions:
 
 ```text
 skills/reflect-3/reflect-3_attempt_01/SKILL.md
