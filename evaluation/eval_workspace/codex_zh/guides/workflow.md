@@ -79,9 +79,7 @@ scratch/skill_generation/reflect-3_attempt_03/
 - `fewshot`：train inputs、train 标准答案、远程环境入口。
 - `self`：train inputs 和远程环境入口；无 train answers、无 judge feedback。
 - `reflect-3`：train inputs、远程环境入口、judge API 调用说明；无 train
-  answers。按顺序处理 5 个 train tasks；对每道 train task，运行 3 轮
-  judge-feedback：candidate answer -> judge `score`/`correct` -> 根据反馈重试同一道题。
-  最后从累积反馈中提炼最终 skill。
+  answers。
 
 Skill-generation token 用量不计入 solver 效率指标。
 
