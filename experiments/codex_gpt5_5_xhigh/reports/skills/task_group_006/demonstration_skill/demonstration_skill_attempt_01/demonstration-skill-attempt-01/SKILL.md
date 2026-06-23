@@ -13,7 +13,7 @@ Use this skill when a task asks for a ProcureOps sourcing, receiving, invoice/AP
    - target IDs: program, SKU, requisition, PO, receipt, invoice, contract, supplier, packet/change IDs
    - dates: `as_of`, close date, review date, memo date, payment cutoff
    - any local-only registers or business controls, such as chargebacks, tax rate, freight treatment, approval-good actions, or alias notes
-2. Query the ProcureOps API. Use the runner-provided base URL when present; otherwise use `http://127.0.0.1:8006`. First call `/` to confirm endpoint names. In this task group the collections are:
+2. Query the ProcureOps API. Use the runner-provided base URL when present; otherwise use `<environment_base_url>`. First call `/` to confirm endpoint names. In this task group the collections are:
    - `/programs`
    - `/suppliers`
    - `/items`
