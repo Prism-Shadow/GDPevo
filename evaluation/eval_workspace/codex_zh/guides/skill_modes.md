@@ -98,7 +98,10 @@ Solver 接收当前 test input、远程环境入口，以及匹配的 self skill
 
 ## reflect-3
 
-生成 3 个独立 reflect skills。`reflect-3` 对 5 个 train tasks 跑 3 个 epochs。
+生成 3 个独立 reflect skills。每次 reflect skill generation run 都要处理
+全部 5 个 train tasks，但应逐题进行：每道 train task 先完成 3 轮
+judge-feedback，再进入下一道 train task。这不是对全部 5 题做全局 3 个
+epochs。
 
 Generator 可以看到：
 
@@ -111,14 +114,16 @@ Generator 不能看到：
 - Train `output/answer.json`。
 - Test 标准答案、test notes 或 evaluator files。
 
-每个 epoch 中，generator 应：
+每次 reflect skill generation run 中，对每一道 train task，generator 应：
 
-1. 基于可见输入和远程环境尝试完成全部 5 个 train tasks。
-2. 将每个 candidate answer 提交给 `POST /api/judge`。
+1. 基于当前 train task 的可见输入和远程环境尝试作答。
+2. 将 candidate answer 提交给 `POST /api/judge`。
 3. 记录返回的 `score` 和 `correct`。
-4. 反思错误、修订工作规则，并把经验带入下一个 epoch。
+4. 反思错误、修订工作规则，并在同一道 train task 上再次尝试。
+5. 重复直到当前 train task 正好完成 3 次 judge 提交。
+6. 再进入下一道 train task，并重复同样的 3 轮流程。
 
-第三个 epoch 后，将可迁移流程沉淀为对应 skill：
+全部 5 个 train tasks 都各自完成 3 轮 judge-feedback 后，将可迁移流程沉淀为对应 skill：
 
 ```text
 skills/reflect-3/reflect-3_attempt_01/SKILL.md

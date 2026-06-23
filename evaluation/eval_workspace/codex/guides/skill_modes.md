@@ -110,8 +110,10 @@ the matching self skill.
 
 ## reflect-3
 
-Generate 3 independent reflect skills. `reflect-3` runs 3 epochs over the five
-train tasks.
+Generate 3 independent reflect skills. Each reflect skill generation run should
+process all 5 train tasks one task at a time. For each train task, complete
+exactly 3 judge-feedback rounds on that task before moving to the next train
+task. This is not a global 3-epoch loop over all 5 tasks.
 
 The generator may see:
 
@@ -124,16 +126,17 @@ The generator must not see:
 - Train `output/answer.json`.
 - Test answers, test notes, or evaluator files.
 
-For each epoch, the generator should:
+For each train task in a reflect skill generation run, the generator should:
 
-1. Attempt all 5 train tasks from the visible inputs and remote environment.
-2. Submit each candidate answer to `POST /api/judge`.
+1. Attempt the current train task from the visible input and remote environment.
+2. Submit the candidate answer to `POST /api/judge`.
 3. Record the returned `score` and `correct` values.
-4. Reflect on errors, revise its working rules, and carry those lessons into the
-   next epoch.
+4. Reflect on errors, revise the working rules, and retry the same train task.
+5. Repeat until exactly 3 judge submissions have been made for that train task.
+6. Move to the next train task and repeat the same 3-round loop.
 
-After the third epoch, distill the learned transferable procedure into the
-matching skill:
+After all 5 train tasks have each completed their 3 judge-feedback rounds,
+distill the learned transferable procedure into the matching skill:
 
 ```text
 skills/reflect-3/reflect-3_attempt_01/SKILL.md

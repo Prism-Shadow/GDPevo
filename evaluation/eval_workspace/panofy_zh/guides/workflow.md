@@ -82,7 +82,8 @@ scratch/materials/reflect-3/attempt_03/
 - `fewshot`：train inputs 加 train 标准答案。
 - `self`：train inputs 加远程环境 URL；不含 train answers，也不含 judge feedback。
 - `reflect-3`：train inputs、远程环境 URL 和 judge API 调用说明；不含 train
-  answers。对 5 个 train tasks 跑 3 个 epochs。
+  answers。按顺序处理 5 个 train tasks；每道 train task 先在同一道题上完成
+  3 轮 judge-feedback，再进入下一道题。
 
 Reflect 训练中，agent 先根据可见 input 作答某个 train task，然后调用：
 

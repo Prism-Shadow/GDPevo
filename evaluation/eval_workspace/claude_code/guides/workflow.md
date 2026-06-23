@@ -84,9 +84,9 @@ Stage only the materials allowed by `skill_modes.md`.
 - `self`: train inputs and remote environment entrypoint; no train answers and
   no judge feedback.
 - `reflect-3`: train inputs, remote environment entrypoint, and judge API
-  instructions; no train answers. Run exactly 3 epochs over the five train tasks,
-  submit each candidate to the judge, and distill the final skill from the
-  accumulated feedback.
+  instructions; no train answers. Process the 5 train tasks sequentially; for
+  each train task, run exactly 3 judge-feedback rounds on that task before moving
+  to the next task. Distill the final skill from the accumulated feedback.
 
 Skill-generation token usage is not included in solver efficiency metrics.
 

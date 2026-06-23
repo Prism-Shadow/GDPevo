@@ -52,8 +52,10 @@ answers, notes, or evaluator source.
 
 ## reflect-3
 
-Train 3 independent agents for `reflect-3`. This condition runs 3 epochs over
-the five train tasks.
+Train 3 independent agents for `reflect-3`. Each independent agent processes all
+5 train tasks one task at a time. For each train task, it runs exactly 3
+judge-feedback rounds on that task before moving to the next train task. This is
+not a global 3-epoch loop over all 5 tasks.
 
 Reflect training materials may include:
 
@@ -76,10 +78,12 @@ instructions must not tell test agents to call it. Reflect training must not
 include train gold answers, test tasks, test answers, notes, or evaluator
 source.
 
-The reflect instruction should require the agent to attempt all 5 train tasks in
-each of 3 epochs, submit candidate answers to the judge, use the returned score
-as feedback, revise its internal procedure, and apply the final procedure at
-test-time.
+The reflect instruction should require the agent to process the train tasks
+sequentially. For each train task, the agent should submit a candidate answer to
+the judge, use the returned score as feedback, revise its internal procedure,
+and retry the same train task until it has made exactly 3 judge submissions for
+that task. After all 5 train tasks have completed this 3-round loop, the final
+procedure is applied at test-time.
 
 ## Evolution Quality
 
