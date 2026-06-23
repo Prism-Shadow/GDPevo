@@ -15,8 +15,6 @@ task_group_id: <task_group_id>
 scenario_id: <scenario_id or null>
 model: <model_id, e.g. claude-opus-4-6>
 harness: panofy
-contamination_incidents:
-  - <如果没有则为空列表；否则列出污染 attempts 和重跑信息>
 
 conditions:
   base:
@@ -66,6 +64,6 @@ conditions:
   attempts 取平均，再对 5 个 test tasks 取平均。
 - 效率指标只统计 test-task 的 `predict()` 工作。不包含训练、远程环境检查或
   evaluator 执行。
-- 如果任何 test attempt 因访问或泄漏禁止材料而污染，应在
-  `contamination_incidents` 中列出 condition、task id、attempt id、暴露内容，
-  以及用哪个新的干净 rerun 替代。
+- 如果任何 test attempt 因访问或泄漏禁止材料而污染，应将其排除出 report
+  分数和聚合。污染原因与替代 attempt 记录在对应 run record 中，不写入正式
+  report YAML。

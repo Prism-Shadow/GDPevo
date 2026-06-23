@@ -15,8 +15,6 @@ task_group_id: <task_group_id>
 scenario_id: <scenario_id>
 model: <model_name_or_config>
 harness: codex
-contamination_incidents:
-  - <empty list if none; otherwise list contaminated attempts and reruns>
 
 conditions:
   base:
@@ -82,5 +80,6 @@ conditions:
   include skill generation, remote environment checks, evaluator execution, or
   main-agent summarization.
 - If any test attempt was contaminated by forbidden material access or leakage,
-  list it under `contamination_incidents` with the condition, task id, attempt
-  id, what was exposed, and which fresh rerun replaced it.
+  exclude it from report scores and aggregation. Preserve the contamination
+  reason and replacement attempt in the corresponding run record instead of the
+  formal report YAML.
