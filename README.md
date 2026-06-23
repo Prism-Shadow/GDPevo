@@ -10,11 +10,11 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 Accuracy is reported as `acc@3`, averaged over 12 task groups. Cost is reported in USD.
 
-| Harness | Model | Thinking level | `base` acc@3 | `fewshot` acc@3 | `reflect` acc@3 | Accuracy lift | Cost change |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Codex | GPT-5.5 | xhigh | 48.35% | 65.99% | 67.13% | +18.21 pp | -25.75% |
-| Claude Code | Opus 4.8 | xhigh | 49.11% | 70.90% | 67.94% | +20.31 pp | -8.69% |
-| Panofy | Opus 4.6 | high | 50.17% | 68.24% | 67.98% | +17.94 pp | +11.82% |
+| Harness | Model | Thinking level | `base` acc@3 | `fewshot` acc@3 | `self` acc@3 | `reflect` acc@3 | `reflect-3` acc@3 | Accuracy lift | Cost change |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Codex | GPT-5.5 | xhigh | 48.35% | 65.99% | 54.99% | n/a | 57.45% | +11.12 pp | -25.07% |
+| Claude Code | Opus 4.8 | xhigh | 49.11% | 70.90% | n/a | 67.94% | n/a | +20.31 pp | -8.69% |
+| Panofy | Opus 4.6 | high | 50.17% | 68.24% | n/a | 67.98% | n/a | +17.94 pp | +11.82% |
 
 See the full experiment board in [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md).
 
