@@ -21,8 +21,8 @@ conditions:
     overall_acc_at_3: <float>
     efficiency:
       input_tokens_avg_3: <float or null>
-      cache_creation_input_tokens_avg_3: <float or null>
-      cache_read_input_tokens_avg_3: <float or null>
+      cache_creation_tokens_avg_3: <float or null>
+      cache_read_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
       cost_usd_avg_3: <float or null>
     tasks:
@@ -33,8 +33,8 @@ conditions:
           - <float>
         acc_at_3: <float>
         input_tokens_avg_3: <float or null>
-        cache_creation_input_tokens_avg_3: <float or null>
-        cache_read_input_tokens_avg_3: <float or null>
+        cache_creation_tokens_avg_3: <float or null>
+        cache_read_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
         cost_usd_avg_3: <float or null>
       test_002: <same shape as test_001>
