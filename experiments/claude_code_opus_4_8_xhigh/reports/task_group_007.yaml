@@ -1,8 +1,7 @@
 task_group_id: task_group_007
 scenario_id: SCN_007_erp_inventory_order_fulfillment
-model: claude-opus-4-8[1m] (Opus 4.8, 1M context)
+model: claude-opus-4-8, xhigh
 harness: claude_code
-
 conditions:
   base:
     overall_acc_at_3: 0.3954
@@ -37,10 +36,10 @@ conditions:
         output_tokens_avg_3: 7393.3
       test_003:
         scores:
-        - 1.0000
-        - 1.0000
-        - 1.0000
-        acc_at_3: 1.0000
+        - 1.0
+        - 1.0
+        - 1.0
+        acc_at_3: 1.0
         cache_creation_tokens_avg_3: 17126.7
         cache_read_tokens_avg_3: 115724.7
         cost_usd_avg_3: 0.3257
@@ -70,9 +69,9 @@ conditions:
         output_tokens_avg_3: 12398.7
   fewshot:
     skill_dirs:
-      attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
-      attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
-      attempt_03: ../skills/demonstration_skill/demonstration_skill_attempt_03
+      attempt_01: skills/task_group_007/demonstration_skill/demonstration_skill_attempt_01
+      attempt_02: skills/task_group_007/demonstration_skill/demonstration_skill_attempt_02
+      attempt_03: skills/task_group_007/demonstration_skill/demonstration_skill_attempt_03
     overall_acc_at_3: 0.5576
     efficiency:
       cache_creation_tokens_avg_3: 43275.9
@@ -105,10 +104,10 @@ conditions:
         output_tokens_avg_3: 9652.7
       test_003:
         scores:
-        - 1.0000
-        - 1.0000
-        - 1.0000
-        acc_at_3: 1.0000
+        - 1.0
+        - 1.0
+        - 1.0
+        acc_at_3: 1.0
         cache_creation_tokens_avg_3: 29090.7
         cache_read_tokens_avg_3: 142051.7
         cost_usd_avg_3: 0.3455
@@ -136,110 +135,139 @@ conditions:
         cost_usd_avg_3: 0.7536
         input_tokens_avg_3: 2802
         output_tokens_avg_3: 7639.3
-  reflect:
+  self:
     skill_dirs:
-      attempt_01: ../skills/reflection_skill/reflection_skill_attempt_01
-      attempt_02: ../skills/reflection_skill/reflection_skill_attempt_02
-      attempt_03: ../skills/reflection_skill/reflection_skill_attempt_03
-    overall_acc_at_3: 0.5710
+      attempt_01: skills/task_group_007/self/self_attempt_01
+      attempt_02: skills/task_group_007/self/self_attempt_02
+      attempt_03: skills/task_group_007/self/self_attempt_03
+    overall_acc_at_3: 0.3738
     efficiency:
-      cache_creation_tokens_avg_3: 39296.6
-      cache_read_tokens_avg_3: 353719.9
-      cost_usd_avg_3: 0.6731
-      input_tokens_avg_3: 2799.5
-      output_tokens_avg_3: 9465.3
+      input_tokens_avg_3: 3519.9
+      cache_creation_tokens_avg_3: 43992.1
+      cache_read_tokens_avg_3: 524181.2
+      output_tokens_avg_3: 9227.1
+      cost_usd_avg_3: 0.7853
     tasks:
       test_001:
         scores:
         - 0.0625
-        - 0.3125
-        - 0.3125
-        acc_at_3: 0.2292
-        cache_creation_tokens_avg_3: 45511.7
-        cache_read_tokens_avg_3: 439208.3
-        cost_usd_avg_3: 0.833
-        input_tokens_avg_3: 2803.3
-        output_tokens_avg_3: 12596
+        - 0.0625
+        - 0.1875
+        acc_at_3: 0.1042
+        input_tokens_avg_3: 3832.0
+        cache_creation_tokens_avg_3: 72885.3
+        cache_read_tokens_avg_3: 891022.3
+        output_tokens_avg_3: 14554.3
+        cost_usd_avg_3: 1.2841
       test_002:
         scores:
-        - 0.8947
-        - 0.8947
-        - 0.8947
-        acc_at_3: 0.8947
-        cache_creation_tokens_avg_3: 36803.3
-        cache_read_tokens_avg_3: 275876.7
-        cost_usd_avg_3: 0.6247
-        input_tokens_avg_3: 2796
-        output_tokens_avg_3: 9712
+        - 0.1053
+        - 0.1053
+        - 0.3684
+        acc_at_3: 0.193
+        input_tokens_avg_3: 3344.3
+        cache_creation_tokens_avg_3: 35825.0
+        cache_read_tokens_avg_3: 347465.3
+        output_tokens_avg_3: 5008.3
+        cost_usd_avg_3: 0.5396
       test_003:
         scores:
-        - 1.0000
-        - 1.0000
-        - 1.0000
-        acc_at_3: 1.0000
-        cache_creation_tokens_avg_3: 27658.3
-        cache_read_tokens_avg_3: 199780
-        cost_usd_avg_3: 0.4637
-        input_tokens_avg_3: 2792.7
-        output_tokens_avg_3: 7078.7
+        - 1.0
+        - 1.0
+        - 1.0
+        acc_at_3: 1.0
+        input_tokens_avg_3: 3247.3
+        cache_creation_tokens_avg_3: 26600.3
+        cache_read_tokens_avg_3: 263776.3
+        output_tokens_avg_3: 6844.7
+        cost_usd_avg_3: 0.4855
+      test_004:
+        scores:
+        - 0.2353
+        - 0.2353
+        - 0.4118
+        acc_at_3: 0.2941
+        input_tokens_avg_3: 3540.3
+        cache_creation_tokens_avg_3: 41446.7
+        cache_read_tokens_avg_3: 539887.3
+        output_tokens_avg_3: 9900.3
+        cost_usd_avg_3: 0.7942
+      test_005:
+        scores:
+        - 0.2778
+        - 0.2778
+        - 0.2778
+        acc_at_3: 0.2778
+        input_tokens_avg_3: 3635.3
+        cache_creation_tokens_avg_3: 43203.0
+        cache_read_tokens_avg_3: 578754.7
+        output_tokens_avg_3: 9828.0
+        cost_usd_avg_3: 0.8233
+  reflect-3:
+    skill_dirs:
+      attempt_01: skills/task_group_007/reflect-3/reflect-3_attempt_01
+      attempt_02: skills/task_group_007/reflect-3/reflect-3_attempt_02
+      attempt_03: skills/task_group_007/reflect-3/reflect-3_attempt_03
+    overall_acc_at_3: 0.5145
+    efficiency:
+      input_tokens_avg_3: 3578.7
+      cache_creation_tokens_avg_3: 39493.6
+      cache_read_tokens_avg_3: 547029.7
+      output_tokens_avg_3: 8896.7
+      cost_usd_avg_3: 0.7607
+    tasks:
+      test_001:
+        scores:
+        - 0.3125
+        - 0.3125
+        - 0.1875
+        acc_at_3: 0.2708
+        input_tokens_avg_3: 3831.3
+        cache_creation_tokens_avg_3: 48190.0
+        cache_read_tokens_avg_3: 785060.0
+        output_tokens_avg_3: 13289.3
+        cost_usd_avg_3: 1.0451
+      test_002:
+        scores:
+        - 0.2632
+        - 0.7895
+        - 0.8947
+        acc_at_3: 0.6491
+        input_tokens_avg_3: 3440.7
+        cache_creation_tokens_avg_3: 35786.0
+        cache_read_tokens_avg_3: 388092.3
+        output_tokens_avg_3: 7918.0
+        cost_usd_avg_3: 0.6329
+      test_003:
+        scores:
+        - 1.0
+        - 1.0
+        - 1.0
+        acc_at_3: 1.0
+        input_tokens_avg_3: 3248.0
+        cache_creation_tokens_avg_3: 26611.3
+        cache_read_tokens_avg_3: 268754.7
+        output_tokens_avg_3: 5448.3
+        cost_usd_avg_3: 0.4531
       test_004:
         scores:
         - 0.4118
-        - 0.5294
-        - 0.5294
-        acc_at_3: 0.4902
-        cache_creation_tokens_avg_3: 39587.3
-        cache_read_tokens_avg_3: 366036.3
-        cost_usd_avg_3: 0.691
-        input_tokens_avg_3: 2799.3
-        output_tokens_avg_3: 9862
+        - 0.4118
+        - 0.4118
+        acc_at_3: 0.4118
+        input_tokens_avg_3: 3636.0
+        cache_creation_tokens_avg_3: 44540.0
+        cache_read_tokens_avg_3: 583113.3
+        output_tokens_avg_3: 9108.3
+        cost_usd_avg_3: 0.8158
       test_005:
         scores:
+        - 0.2778
         - 0.1667
         - 0.2778
-        - 0.2778
         acc_at_3: 0.2407
-        cache_creation_tokens_avg_3: 46922.3
-        cache_read_tokens_avg_3: 487698
-        cost_usd_avg_3: 0.7531
-        input_tokens_avg_3: 2806
-        output_tokens_avg_3: 8077.7
-
-evaluation:
-  metric: acc@3
-  attempts_per_condition: 15
-  total_solver_runs: 45
-  failures: 0
-  retries: 0
-  all_runs_clean_context: true
-  notes: >-
-    Every test attempt was completed by a dedicated clean-context solver subagent
-    restricted to its own attempt directory. Each was staged with only the test task
-    input/, environment access instructions, and (for skill conditions) the matching
-    attempt-numbered skill. All 45 produced parseable answer.json, all evaluators ran,
-    and all scores fell in [0, 1]; no failures, so no retries were needed.
-
-environment:
-  start_command: python3 server.py --host 127.0.0.1 --port 8015
-  port: 8015
-  port_selection: random candidate rolled in 8000-8100 (not scanned upward from 8000)
-  base_url: http://127.0.0.1:8015
-  data_seed: 7007
-  data_generation_timestamp: "2026-06-01T00:00:00Z"
-  stability: >-
-    Healthy (/health ok) throughout all 45 solves; every solver in every batch
-    successfully queried the API and produced a validated answer. The background
-    server wrapper reported exit code 144 only after the final solver batch had
-    already completed, so no run was affected.
-
-token_accounting:
-  source: per-turn usage in each solver subagent transcript (<session>/subagents/agent-<id>.jsonl)
-  match_method: >-
-    eval_attempt_id embedded in each solver prompt (also in the subagent's first user
-    message) plus meta.json toolUseId as parent_tool_use_id; all 45 matched uniquely.
-  input_tokens: usage.input_tokens + usage.cache_creation_input_tokens (fresh / uncached input)
-  cached_input_tokens: usage.cache_read_input_tokens
-  output_tokens: usage.output_tokens
-  scope: >-
-    Test solver subagents only. Excludes skill generation, environment startup,
-    evaluator execution, and main-agent summarization.
+        input_tokens_avg_3: 3737.7
+        cache_creation_tokens_avg_3: 42340.7
+        cache_read_tokens_avg_3: 710128.0
+        output_tokens_avg_3: 8719.7
+        cost_usd_avg_3: 0.8564

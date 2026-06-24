@@ -1,8 +1,7 @@
 task_group_id: task_group_003
 scenario_id: SCN_003_crm_service_ticket_resolution
-model: Opus 4.8 (claude-opus-4-8[1m])
+model: claude-opus-4-8, xhigh
 harness: claude_code
-
 conditions:
   base:
     overall_acc_at_3: 0.4669
@@ -70,9 +69,9 @@ conditions:
         output_tokens_avg_3: 20091.7
   fewshot:
     skill_dirs:
-      attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
-      attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
-      attempt_03: ../skills/demonstration_skill/demonstration_skill_attempt_03
+      attempt_01: skills/task_group_003/demonstration_skill/demonstration_skill_attempt_01
+      attempt_02: skills/task_group_003/demonstration_skill/demonstration_skill_attempt_02
+      attempt_03: skills/task_group_003/demonstration_skill/demonstration_skill_attempt_03
     overall_acc_at_3: 0.7089
     efficiency:
       cache_creation_tokens_avg_3: 38661.4
@@ -136,71 +135,139 @@ conditions:
         cost_usd_avg_3: 0.8346
         input_tokens_avg_3: 2809.3
         output_tokens_avg_3: 10671.3
-  reflect:
+  self:
     skill_dirs:
-      attempt_01: ../skills/reflection_skill/reflection_skill_attempt_01
-      attempt_02: ../skills/reflection_skill/reflection_skill_attempt_02
-      attempt_03: ../skills/reflection_skill/reflection_skill_attempt_03
-    overall_acc_at_3: 0.6392
+      attempt_01: skills/task_group_003/self/self_attempt_01
+      attempt_02: skills/task_group_003/self/self_attempt_02
+      attempt_03: skills/task_group_003/self/self_attempt_03
+    overall_acc_at_3: 0.5721
     efficiency:
-      cache_creation_tokens_avg_3: 41068.9
-      cache_read_tokens_avg_3: 450819.2
-      cost_usd_avg_3: 0.7405
-      input_tokens_avg_3: 2804.3
-      output_tokens_avg_3: 9775.1
+      input_tokens_avg_3: 3663.4
+      cache_creation_tokens_avg_3: 45717.53
+      cache_read_tokens_avg_3: 618675.13
+      output_tokens_avg_3: 10937.4
+      cost_usd_avg_3: 0.8868
     tasks:
       test_001:
         scores:
-        - 0.7647
-        - 0.8235
-        - 0.7059
-        acc_at_3: 0.7647
-        cache_creation_tokens_avg_3: 29870.7
-        cache_read_tokens_avg_3: 190268
-        cost_usd_avg_3: 0.4709
-        input_tokens_avg_3: 2791.3
-        output_tokens_avg_3: 7005
+        - 0.764706
+        - 0.705882
+        - 1.0
+        acc_at_3: 0.8235
+        input_tokens_avg_3: 3476.33
+        cache_creation_tokens_avg_3: 31742.0
+        cache_read_tokens_avg_3: 394642.0
+        output_tokens_avg_3: 7537.67
+        cost_usd_avg_3: 0.6015
+      test_002:
+        scores:
+        - 0.166667
+        - 0.555556
+        - 0.166667
+        acc_at_3: 0.2963
+        input_tokens_avg_3: 3581.67
+        cache_creation_tokens_avg_3: 56266.0
+        cache_read_tokens_avg_3: 679487.67
+        output_tokens_avg_3: 11091.67
+        cost_usd_avg_3: 0.9866
+      test_003:
+        scores:
+        - 0.705882
+        - 0.705882
+        - 0.705882
+        acc_at_3: 0.7059
+        input_tokens_avg_3: 3477.67
+        cache_creation_tokens_avg_3: 40887.33
+        cache_read_tokens_avg_3: 493285.33
+        output_tokens_avg_3: 4263.67
+        cost_usd_avg_3: 0.6262
+      test_004:
+        scores:
+        - 0.545455
+        - 0.545455
+        - 0.727273
+        acc_at_3: 0.6061
+        input_tokens_avg_3: 3992.33
+        cache_creation_tokens_avg_3: 52022.33
+        cache_read_tokens_avg_3: 827372.0
+        output_tokens_avg_3: 16308.33
+        cost_usd_avg_3: 1.1665
+      test_005:
+        scores:
+        - 0.428571
+        - 0.428571
+        - 0.428571
+        acc_at_3: 0.4286
+        input_tokens_avg_3: 3789.0
+        cache_creation_tokens_avg_3: 47670.0
+        cache_read_tokens_avg_3: 698588.67
+        output_tokens_avg_3: 15485.67
+        cost_usd_avg_3: 1.0533
+  reflect-3:
+    skill_dirs:
+      attempt_01: skills/task_group_003/reflect-3/reflect-3_attempt_01
+      attempt_02: skills/task_group_003/reflect-3/reflect-3_attempt_02
+      attempt_03: skills/task_group_003/reflect-3/reflect-3_attempt_03
+    overall_acc_at_3: 0.5648
+    efficiency:
+      input_tokens_avg_3: 3641.13
+      cache_creation_tokens_avg_3: 43872.2
+      cache_read_tokens_avg_3: 552146.2
+      output_tokens_avg_3: 10581.33
+      cost_usd_avg_3: 0.833
+    tasks:
+      test_001:
+        scores:
+        - 1.0
+        - 0.411765
+        - 0.705882
+        acc_at_3: 0.7059
+        input_tokens_avg_3: 3373.0
+        cache_creation_tokens_avg_3: 32484.33
+        cache_read_tokens_avg_3: 320811.33
+        output_tokens_avg_3: 8648.67
+        cost_usd_avg_3: 0.5965
       test_002:
         scores:
         - 0.5
-        - 0.6667
         - 0.5
-        acc_at_3: 0.5556
-        cache_creation_tokens_avg_3: 50977.7
-        cache_read_tokens_avg_3: 551182
-        cost_usd_avg_3: 0.9011
-        input_tokens_avg_3: 2806.7
-        output_tokens_avg_3: 11714
+        - 0.555556
+        acc_at_3: 0.5185
+        input_tokens_avg_3: 3579.67
+        cache_creation_tokens_avg_3: 52358.0
+        cache_read_tokens_avg_3: 564644.33
+        output_tokens_avg_3: 13406.33
+        cost_usd_avg_3: 0.9626
       test_003:
         scores:
-        - 0.7059
-        - 1.0
-        - 1.0
-        acc_at_3: 0.902
-        cache_creation_tokens_avg_3: 30534.3
-        cache_read_tokens_avg_3: 323485.7
-        cost_usd_avg_3: 0.508
-        input_tokens_avg_3: 2800.7
-        output_tokens_avg_3: 5654.7
+        - 0.823529
+        - 0.529412
+        - 0.705882
+        acc_at_3: 0.6863
+        input_tokens_avg_3: 3371.67
+        cache_creation_tokens_avg_3: 32732.0
+        cache_read_tokens_avg_3: 328283.33
+        output_tokens_avg_3: 5513.33
+        cost_usd_avg_3: 0.5234
       test_004:
         scores:
-        - 0.5455
-        - 0.5455
-        - 0.5455
-        acc_at_3: 0.5455
-        cache_creation_tokens_avg_3: 50461.3
-        cache_read_tokens_avg_3: 631881.3
-        cost_usd_avg_3: 0.9795
-        input_tokens_avg_3: 2811.3
-        output_tokens_avg_3: 13366.7
+        - 0.545455
+        - 0.363636
+        - 0.545455
+        acc_at_3: 0.4848
+        input_tokens_avg_3: 3989.0
+        cache_creation_tokens_avg_3: 51783.67
+        cache_read_tokens_avg_3: 758911.67
+        output_tokens_avg_3: 11023.67
+        cost_usd_avg_3: 0.9986
       test_005:
         scores:
-        - 0.4286
-        - 0.4286
-        - 0.4286
+        - 0.571429
+        - 0.285714
+        - 0.428571
         acc_at_3: 0.4286
-        cache_creation_tokens_avg_3: 43500.3
-        cache_read_tokens_avg_3: 557279
-        cost_usd_avg_3: 0.843
-        input_tokens_avg_3: 2811.3
-        output_tokens_avg_3: 11135.3
+        input_tokens_avg_3: 3892.33
+        cache_creation_tokens_avg_3: 50003.0
+        cache_read_tokens_avg_3: 788080.33
+        output_tokens_avg_3: 14314.67
+        cost_usd_avg_3: 1.0839
