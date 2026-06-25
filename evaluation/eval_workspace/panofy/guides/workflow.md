@@ -91,6 +91,17 @@ Training material boundaries:
 - `reflect-3`: train inputs plus remote environment URL and judge API
   instructions; no train answers.
 
+Build train and test inputs from the same official task input packet: `task_id`,
+`prompt`, `api_base_url`, `answer_template`, and every declared input payload
+file for that task, excluding `answer_template.json`. If the task prompt
+references a longer relative path such as
+`input/payloads/month_end_exception_scope.json`, add the same short runner note
+to the prompt wherever that packet is used: `Runner note: the official input
+payload input/payloads/month_end_exception_scope.json is uploaded and available
+to the agent as month_end_exception_scope.json.` This packet excludes notes,
+evaluator files, and gold outputs unless the mode explicitly allows gold
+outputs.
+
 For reflect training, the agent first answers a train task from the visible
 input, then calls:
 
@@ -110,13 +121,17 @@ gold answers or evaluator details.
 Do not put any test task, test answer, test note, or evaluator into training
 materials. Use the SDK's async one-shot `train()` for each `(condition,
 attempt)`, record each returned `agent_id` in `agents/registry.json`, and do not
-count training cost in solver efficiency metrics.
+count training cost in solver efficiency metrics. If a training call fails or
+the returned agent cannot be confirmed as trained, start a fresh independent
+`train()` for the same `(condition, attempt)` and preserve the failed record
+separately. Do not use the SDK `retrain` endpoint for recovery.
 
 ## 5. Run Test Experiments
 
 For every condition, run each test task independently 3 times. The solver for
 `attempt_<nn>` is the agent trained for the same condition and attempt number.
-Each `predict()` receives only the official test `FUNC_INPUT`:
+Each `predict()` receives the official test `FUNC_INPUT` with exactly these
+top-level keys:
 
 ```text
 task_id
@@ -128,6 +143,12 @@ answer_template
 The test `FUNC_INPUT` is identical across conditions; only the trained agent
 differs. Never include test gold answers, notes, evaluator details, train
 materials, or judge endpoint instructions in test `FUNC_INPUT`.
+
+Before each test `predict()`, the runner must collect the official input payload
+files from that task input packet and upload them in the same SDK call with the
+`files=` argument, or an equivalent SDK-supported file input mechanism that
+records/uploads the same files. Upload only official input payloads. Official
+input payload files are allowed test input, not contamination.
 
 Mode-allowed training exposure is not contamination: for example, fewshot
 training may use train gold answers. The contamination check below applies to
@@ -154,9 +175,12 @@ runs/<condition>/test_001/attempt_01/score.yaml
 runs/<condition>/test_001/attempt_01/run_metadata.yaml
 ```
 
-Call `predict(func_input)` with `resolve_files=False` and `output_dir=None`.
-Use `predict_with_metadata()` to capture `run.usage`. `answer.json` is the
-parsed `FUNC_OUTPUT`.
+Use `predict_with_metadata()` to capture `run.usage`, with `output_dir=None`.
+For tasks that have additional official input payload files, call
+`predict_with_metadata(func_input, files=<official_payload_paths>,
+output_dir=None)` or the SDK-equivalent form, and leave file resolution enabled.
+If there are no additional payload files, `resolve_files=False` is acceptable.
+`answer.json` is the parsed `FUNC_OUTPUT`.
 
 ## 6. Score And Aggregate
 

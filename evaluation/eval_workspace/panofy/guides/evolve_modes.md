@@ -16,6 +16,13 @@ conditions share one test-time contract:
 - `FUNC_INPUT` = `{ task_id, prompt, api_base_url, answer_template }`
 - `FUNC_OUTPUT` = a single JSON object matching `answer_template` exactly.
 
+Train and test tasks use the same official task input packet: `task_id`,
+`prompt`, `api_base_url`, `answer_template`, and every declared input payload
+file for that task, excluding `answer_template.json`. Payload files are not extra
+top-level `FUNC_INPUT` keys, so the top-level contract remains unchanged. Gold
+outputs, notes, and evaluator files are excluded unless the mode explicitly
+allows gold outputs.
+
 The agent reads `prompt`, issues live requests against `api_base_url`, applies
 the rules, and returns the answer JSON.
 

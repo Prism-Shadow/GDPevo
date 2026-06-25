@@ -14,6 +14,12 @@ reflect-3
 - `FUNC_INPUT` = `{ task_id, prompt, api_base_url, answer_template }`
 - `FUNC_OUTPUT` = 一个严格匹配 `answer_template` 的 JSON 对象。
 
+train 和 test task 使用同一种官方 task input packet：`task_id`、`prompt`、
+`api_base_url`、`answer_template`，以及该 task 声明的所有 input payload 文件，排除
+`answer_template.json`。payload 文件不是额外 top-level `FUNC_INPUT` key，因此 top-level
+契约保持不变。标准答案、notes 和 evaluator 文件不包含在该 packet 中，除非当前模式明确
+允许使用标准答案。
+
 agent 读取 `prompt`，对 `api_base_url` 发起实时请求，应用规则，并返回 answer JSON。
 
 ## base
