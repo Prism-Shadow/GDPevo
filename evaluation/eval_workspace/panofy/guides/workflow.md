@@ -91,10 +91,16 @@ Training material boundaries:
 - `reflect-3`: train inputs plus remote environment URL and judge API
   instructions; no train answers.
 
-When staging train inputs, official train `FUNC_INPUT` includes the prompt,
-`answer_template`, `api_base_url`, and every declared input payload file for that
-train task. It excludes notes, evaluator files, and gold outputs unless the mode
-explicitly allows gold outputs.
+Build train and test inputs from the same official task input packet: `task_id`,
+`prompt`, `api_base_url`, `answer_template`, and every declared input payload
+file for that task, excluding `answer_template.json`. If the task prompt
+references a longer relative path such as
+`input/payloads/month_end_exception_scope.json`, add the same short runner note
+to the prompt wherever that packet is used: `Runner note: the official input
+payload input/payloads/month_end_exception_scope.json is uploaded and available
+to the agent as month_end_exception_scope.json.` This packet excludes notes,
+evaluator files, and gold outputs unless the mode explicitly allows gold
+outputs.
 
 For reflect training, the agent first answers a train task from the visible
 input, then calls:
@@ -138,17 +144,11 @@ The test `FUNC_INPUT` is identical across conditions; only the trained agent
 differs. Never include test gold answers, notes, evaluator details, train
 materials, or judge endpoint instructions in test `FUNC_INPUT`.
 
-Before each test `predict()`, the runner must collect every official input
-payload file declared for that test task, excluding `answer_template.json`, and
-upload those files in the same SDK call with the `files=` argument, or an
-equivalent SDK-supported file input mechanism that records/uploads the same
-files. Because uploaded input files are keyed by basename, make the prompt
-unambiguous if the task text uses a longer relative path. For example, if the
-task prompt references `input/payloads/month_end_exception_scope.json`, append a
-short runner note before `predict()`: `Runner note: the official input payload
-input/payloads/month_end_exception_scope.json is uploaded and available to the
-agent as month_end_exception_scope.json.` Upload only official input payloads.
-Official input payload files are allowed test input, not contamination.
+Before each test `predict()`, the runner must collect the official input payload
+files from that task input packet and upload them in the same SDK call with the
+`files=` argument, or an equivalent SDK-supported file input mechanism that
+records/uploads the same files. Upload only official input payloads. Official
+input payload files are allowed test input, not contamination.
 
 Mode-allowed training exposure is not contamination: for example, fewshot
 training may use train gold answers. The contamination check below applies to

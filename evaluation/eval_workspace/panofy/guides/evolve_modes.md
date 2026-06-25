@@ -16,15 +16,12 @@ conditions share one test-time contract:
 - `FUNC_INPUT` = `{ task_id, prompt, api_base_url, answer_template }`
 - `FUNC_OUTPUT` = a single JSON object matching `answer_template` exactly.
 
-When a test task declares official input payload files besides
-`answer_template.json`, the runner supplies them through the SDK `files=` upload
-path. They are not extra top-level `FUNC_INPUT` keys, so the top-level contract
-remains unchanged.
-
-For train tasks, "Official train `FUNC_INPUT`" includes the prompt,
-`answer_template`, `api_base_url`, and every declared input payload file for that
-train task. It excludes notes, evaluator files, and gold outputs unless the mode
-explicitly allows gold outputs.
+Train and test tasks use the same official task input packet: `task_id`,
+`prompt`, `api_base_url`, `answer_template`, and every declared input payload
+file for that task, excluding `answer_template.json`. Payload files are not extra
+top-level `FUNC_INPUT` keys, so the top-level contract remains unchanged. Gold
+outputs, notes, and evaluator files are excluded unless the mode explicitly
+allows gold outputs.
 
 The agent reads `prompt`, issues live requests against `api_base_url`, applies
 the rules, and returns the answer JSON.
