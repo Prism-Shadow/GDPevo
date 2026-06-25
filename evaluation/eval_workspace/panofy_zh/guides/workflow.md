@@ -84,6 +84,10 @@ scratch/materials/reflect-3/attempt_03/
 - `reflect-3`：train inputs、远程环境 URL 和 judge API 调用说明；不含 train
   answers。
 
+暂存 train inputs 时，官方 train `FUNC_INPUT` 包括 prompt、`answer_template`、
+`api_base_url`，以及该 train task 声明的所有 input payload 文件；不包括 notes、
+evaluator 文件，也不包括标准答案，除非当前模式明确允许使用标准答案。
+
 Reflect 训练中，agent 先根据可见 input 作答某个 train task，然后调用：
 
 ```text
@@ -101,12 +105,15 @@ POST {PANOFY_ENV_BASE_URL}{PANOFY_JUDGE_PATH}
 不要把任何 test task、test 答案、test note 或 evaluator 放进训练材料。
 对每个 `(condition, attempt)` 使用 SDK 的异步一站式 `train()`，将返回的
 `agent_id` 记录到 `agents/registry.json`。训练用量不计入 solver 效率指标。
+如果一次训练调用失败，或返回的 agent 无法确认已完成训练，就为同一个
+`(condition, attempt)` 重新发起一次全新的独立 `train()`，并单独保留失败记录。
+不要使用 SDK 的 `retrain` 接口来恢复失败训练。
 
 ## 5. 运行 Test 实验
 
 对每个条件，每个 test task 独立运行 3 次。`attempt_<nn>` 的 solver 使用同一
 条件、同一 attempt 编号训练出的 agent。每次 `predict()` 只收到官方 test
-`FUNC_INPUT`：
+`FUNC_INPUT`，且 top-level keys 固定为：
 
 ```text
 task_id
@@ -118,6 +125,15 @@ answer_template
 test `FUNC_INPUT` 在所有条件下相同；唯一变化是训练好的 agent。不要把 test
 标准答案、notes、evaluator 细节、train 材料或 judge 端点说明放进 test
 `FUNC_INPUT`。
+
+每次 test `predict()` 前，runner 必须收集该 test task 声明的所有官方 input payload
+文件，排除 `answer_template.json`，并在同一次 SDK 调用里通过 `files=` 参数上传，或使用
+等价的 SDK 文件输入机制并确保记录/上传的是同一批文件。上传后的 input 文件按 basename
+暴露；如果 task prompt 引用了 `input/payloads/month_end_exception_scope.json` 这类相对路径，
+runner 应在 `predict()` 前给 prompt 追加一条简短说明，例如：`Runner note: 官方 input
+payload input/payloads/month_end_exception_scope.json 已上传，agent 可按文件名
+month_end_exception_scope.json 访问。` 只上传官方 input payload。官方 input payload
+文件属于允许的 test 输入，不算污染。
 
 模式允许的训练阶段暴露不算污染：例如 fewshot 训练可以使用 train 标准答案。下面的污染检查
 只针对 test-time inputs、instructions、responses 和 run artifacts。
@@ -140,8 +156,10 @@ runs/<condition>/test_001/attempt_01/score.yaml
 runs/<condition>/test_001/attempt_01/run_metadata.yaml
 ```
 
-调用 `predict(func_input)` 时使用 `resolve_files=False` 和 `output_dir=None`。
-用 `predict_with_metadata()` 捕获 `run.usage`。`answer.json` 是解析后的
+使用 `predict_with_metadata()` 捕获 `run.usage`，并设置 `output_dir=None`。如果 task
+有额外官方 input payload 文件，调用形式应为 `predict_with_metadata(func_input,
+files=<official_payload_paths>, output_dir=None)` 或 SDK 等价形式，并保持文件解析开启；
+没有额外 payload 文件时才可以使用 `resolve_files=False`。`answer.json` 是解析后的
 `FUNC_OUTPUT`。
 
 ## 6. 打分与聚合

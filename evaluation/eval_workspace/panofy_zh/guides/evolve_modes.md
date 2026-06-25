@@ -14,6 +14,14 @@ reflect-3
 - `FUNC_INPUT` = `{ task_id, prompt, api_base_url, answer_template }`
 - `FUNC_OUTPUT` = 一个严格匹配 `answer_template` 的 JSON 对象。
 
+当 test task 声明了 `answer_template.json` 之外的其它官方 input payload 文件时，
+runner 通过 SDK 的 `files=` 上传路径提供它们；它们不是额外 top-level `FUNC_INPUT`
+key，因此 top-level 契约保持不变。
+
+对 train task，“官方 train `FUNC_INPUT`”包括 prompt、`answer_template`、`api_base_url`，
+以及该 train task 声明的所有 input payload 文件；不包括 notes、evaluator 文件，也不包括
+标准答案，除非当前模式明确允许使用标准答案。
+
 agent 读取 `prompt`，对 `api_base_url` 发起实时请求，应用规则，并返回 answer JSON。
 
 ## base
