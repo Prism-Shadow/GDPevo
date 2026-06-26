@@ -19,6 +19,7 @@ harness: codex
 conditions:
   base:
     overall_acc_at_3: <float>
+    overall_std_at_3: <float>
     efficiency:
       cached_input_tokens_avg_3: <float or null>
       input_tokens_avg_3: <float or null>
@@ -30,6 +31,7 @@ conditions:
           - <float>
           - <float>
         acc_at_3: <float>
+        std_at_3: <float>
         cached_input_tokens_avg_3: <float or null>
         input_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
@@ -43,6 +45,7 @@ conditions:
       attempt_02: ../skills/fewshot/fewshot_attempt_02
       attempt_03: ../skills/fewshot/fewshot_attempt_03
     overall_acc_at_3: <float>
+    overall_std_at_3: <float>
     efficiency: <same shape as base.efficiency>
     tasks: <same shape as base.tasks>
   self:
@@ -51,6 +54,7 @@ conditions:
       attempt_02: ../skills/self/self_attempt_02
       attempt_03: ../skills/self/self_attempt_03
     overall_acc_at_3: <float>
+    overall_std_at_3: <float>
     efficiency: <same shape as base.efficiency>
     tasks: <same shape as base.tasks>
   reflect-3:
@@ -59,14 +63,18 @@ conditions:
       attempt_02: ../skills/reflect-3/reflect-3_attempt_02
       attempt_03: ../skills/reflect-3/reflect-3_attempt_03
     overall_acc_at_3: <float>
+    overall_std_at_3: <float>
     efficiency: <same shape as base.efficiency>
     tasks: <same shape as base.tasks>
 ```
 
 ## 要求
 
-- `overall_acc_at_3` 和每个 `acc_at_3` 保留合理小数精度；推荐 4 位。
+- `overall_acc_at_3`、`overall_std_at_3`、每个 `acc_at_3` 和
+  `std_at_3` 保留合理小数精度；推荐 4 位。
 - `scores` 必须保留 3 次原始运行分数，不能只保留平均值。
+- `std_at_3` 是同一 test task 三次原始分数的 population std；
+  `overall_std_at_3` 是 5 个 test-task `std_at_3` 的平均值。
 - `skill_dirs` 只用于非 base 条件。路径相对于 report YAML 所在目录，attempt
   编号必须和使用该 skill 的 solver attempt 编号一致。
 - Token 字段来自 Codex session traces。如果 trace 不能被唯一匹配，应写

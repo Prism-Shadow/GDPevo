@@ -146,7 +146,7 @@ Codex traces 通常位于：
 ~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
 ```
 
-所有 runs 完成后，聚合四种条件的 `acc@3` 和平均 cached/input/output tokens。
+所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3` 和平均 cached/input/output tokens。
 效率指标只统计 test solver 写答案的过程：先对同一个 test task 的 3 次
 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill generation、
 远程环境检查、evaluator 执行或主 agent 汇总。
@@ -155,7 +155,7 @@ attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill gene
 
 在报告中解释：
 
-- 四种条件的整体 `acc@3`。
+- 四种条件的整体 `acc@3` 和 population `std@3`。
 - `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升。
 - 哪些 test tasks 提升明显，哪些没有。
 - 任何环境不稳定、输出 schema 摩擦、evaluator 问题或可疑泄漏风险。

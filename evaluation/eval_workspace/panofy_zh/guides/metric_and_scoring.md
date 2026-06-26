@@ -1,6 +1,6 @@
 # 指标与打分
 
-主指标是 `acc@3`。效率信息记录 SDK 返回的三桶 token 用量。
+主指标是 `acc@3` 和 population `std@3`。效率信息记录 SDK 返回的三桶 token 用量。
 
 ## 单次运行
 
@@ -65,6 +65,22 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 一个条件的整体 `acc@3` 是 5 个 test-task `acc@3` 的平均。
 
+## std@3
+
+`std@3` 用来记录同一组 3 次 attempts 的分数稳定性，使用 population standard
+deviation。对单个 test task：
+
+```text
+task std@3 = sqrt(((s1 - task_acc@3)^2 + (s2 - task_acc@3)^2 + (s3 - task_acc@3)^2) / 3)
+```
+
+一个条件的整体 `std@3` 使用和 `acc@3` 一致的聚合形状：先计算每个 test
+task 的 `std@3`，再对 5 个 test-task `std@3` 取平均。
+
+```text
+overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
+```
+
 ## 分数范围
 
 所有分数归一到 `[0, 1]`。若 evaluator 输出非归一分数，找 `earned / max` 或等价字段。若无法确定归一分数，把该次运行记为失败；不要手动猜分。
@@ -82,6 +98,6 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 ## 聚合要求
 
-所有 `score.yaml` 就绪后，检查四种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `acc@3`、整体 `acc@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升，并汇总各桶 token 平均值。
+所有 `score.yaml` 就绪后，检查四种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `acc@3` 和 `std@3`、整体 `acc@3` 和 `std@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升，并汇总各桶 token 平均值。
 
 这些效率指标只统计 **test-task 的 `predict()`** 工作，不含训练（进化步骤）、远程环境检查或 evaluator 执行。聚合方式同 `acc@3`：先对同一 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。临时聚合代码可放 `scratch/`。

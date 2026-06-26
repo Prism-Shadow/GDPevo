@@ -195,8 +195,8 @@ Record token usage in `run_metadata.yaml` with a unique `eval_attempt_id`:
 <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
 ```
 
-After all `score.yaml` files exist, aggregate per-task `acc@3`, overall
-`acc@3`, and average token buckets for each condition. Efficiency metrics only
+After all `score.yaml` files exist, aggregate per-task `acc@3` and `std@3`, overall
+`acc@3` and `std@3`, and average token buckets for each condition. Efficiency metrics only
 count **test-task `predict()`** work; never include training, remote environment
 checks, or evaluator execution. Aggregate the same way as `acc@3`: average the
 3 attempts for one test task, then average the 5 test tasks. Write the final
@@ -207,7 +207,7 @@ report to `report/<task_group_id>.yaml` per
 
 In the report or accompanying notes, explain:
 
-- Overall `acc@3` for all four conditions.
+- Overall `acc@3` and population `std@3` for all four conditions.
 - Improvement from `fewshot`, `self`, and `reflect-3` over `base`.
 - Which test tasks improved clearly and which did not.
 - Token usage per condition.

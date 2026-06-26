@@ -1,6 +1,6 @@
 # Metric And Scoring
 
-主评估指标是 `acc@3`。
+主评估指标是 `acc@3` 和 population `std@3`。
 
 ## 单次运行
 
@@ -55,6 +55,22 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 某一条件的整体 `acc@3` 是 5 个 test-task `acc@3` 的平均值。
 
+## std@3
+
+`std@3` 用来记录同一组 3 次 attempts 的分数稳定性，使用 population standard
+deviation。对单个 test task：
+
+```text
+task std@3 = sqrt(((s1 - task_acc@3)^2 + (s2 - task_acc@3)^2 + (s3 - task_acc@3)^2) / 3)
+```
+
+一个条件的整体 `std@3` 使用和 `acc@3` 一致的聚合形状：先计算每个 test
+task 的 `std@3`，再对 5 个 test-task `std@3` 取平均。
+
+```text
+overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
+```
+
 ## 分数范围
 
 所有分数都应归一化到 `[0, 1]`。
@@ -76,7 +92,7 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 ## 聚合要求
 
-所有 `score.yaml` 准备完成后，主 agent 应检查四种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `acc@3`、整体 `acc@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升。
+所有 `score.yaml` 准备完成后，主 agent 应检查四种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `acc@3` 和 `std@3`、整体 `acc@3` 和 `std@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升。
 
 主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 cached/input/output tokens，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
 

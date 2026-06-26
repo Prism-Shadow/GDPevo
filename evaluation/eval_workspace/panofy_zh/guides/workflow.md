@@ -175,7 +175,7 @@ prediction 路径作为 `$1` 传入来打分。读取已归一到 `[0,1]` 的
 <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
 ```
 
-所有 `score.yaml` 就绪后，聚合每个 task 的 `acc@3`、整体 `acc@3`，以及每个
+所有 `score.yaml` 就绪后，聚合每个 task 的 `acc@3` 和 `std@3`、整体 `acc@3` 和 `std@3`，以及每个
 条件的平均 token buckets。效率指标只统计 **test-task 的 `predict()`** 工作；
 不包含训练、远程环境检查或 evaluator 执行。聚合方式同 `acc@3`：先对同一
 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。最终报告按
@@ -185,7 +185,7 @@ test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。最
 
 在报告或附带说明中解释：
 
-- 四种条件各自的整体 `acc@3`。
+- 四种条件各自的整体 `acc@3` 和 population `std@3`。
 - `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升。
 - 哪些 test tasks 明显提升、哪些没有。
 - 每个条件的 token 用量。

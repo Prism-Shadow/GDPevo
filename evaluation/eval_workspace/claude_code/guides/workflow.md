@@ -146,7 +146,7 @@ Backfill token usage from the matched Claude Code subagent transcript. Deduplica
 by `message.id`: keep input/cache buckets from any record and the max
 `output_tokens` per message id, then sum across responses.
 
-After all runs complete, aggregate `acc@3` and per-bucket tokens for all four
+After all runs complete, aggregate `acc@3`, population `std@3`, and per-bucket tokens for all four
 conditions. Efficiency metrics count only test solver answer writing: average
 the 3 attempts for the same test task, then average the 5 test tasks. Do not
 include skill generation, remote environment checks, evaluator execution, or
@@ -156,7 +156,7 @@ main-agent summarization.
 
 In the report, explain:
 
-- Overall `acc@3` for all four conditions.
+- Overall `acc@3` and population `std@3` for all four conditions.
 - Improvement from `fewshot`, `self`, and `reflect-3` over `base`.
 - Which test tasks improved clearly and which did not.
 - Any environment instability, output-schema friction, evaluator issue, or

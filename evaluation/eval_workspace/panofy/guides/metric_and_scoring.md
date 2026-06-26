@@ -1,7 +1,7 @@
 # Metric And Scoring
 
-The main evaluation metric is `acc@3`. Efficiency information is the
-SDK-reported 3-bucket token usage.
+The main evaluation metrics are `acc@3` and population `std@3`. Efficiency
+information is the SDK-reported 3-bucket token usage.
 
 ## Single Run
 
@@ -83,6 +83,23 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 The overall `acc@3` for a condition is the average of the 5 test-task `acc@3`
 values.
 
+## std@3
+
+`std@3` records score stability across the same 3 attempts and uses
+population standard deviation. For one test task:
+
+```text
+task std@3 = sqrt(((s1 - task_acc@3)^2 + (s2 - task_acc@3)^2 + (s3 - task_acc@3)^2) / 3)
+```
+
+The overall `std@3` for a condition uses the same aggregation shape as
+`acc@3`: first compute each test task's `std@3`, then average the 5 test-task
+`std@3` values.
+
+```text
+overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
+```
+
 ## Score Range
 
 All scores are normalised to `[0, 1]`. If an evaluator outputs a non-normalised
@@ -106,9 +123,9 @@ a valid score, stop and report the issue.
 ## Aggregation Requirements
 
 After all `score.yaml` files are ready, check that all four conditions, 5 test
-tasks, and 3 runs per task are complete. Then compute per-task `acc@3`, overall
-`acc@3`, and improvements from `fewshot`, `self`, and `reflect-3` over
-`base`, plus average per-bucket tokens.
+tasks, and 3 runs per task are complete. Then compute per-task `acc@3` and `std@3`, overall `acc@3` and `std@3`,
+and improvements from `fewshot`, `self`, and `reflect-3` over `base`, plus
+average per-bucket tokens.
 
 These efficiency metrics only count the **test-task `predict()`** work. They do
 not include training (the evolution step), remote environment checks, or

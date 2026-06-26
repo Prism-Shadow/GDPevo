@@ -19,6 +19,7 @@ harness: claude_code
 conditions:
   base:
     overall_acc_at_3: <float>
+    overall_std_at_3: <float>
     efficiency:
       input_tokens_avg_3: <float or null>
       cache_creation_tokens_avg_3: <float or null>
@@ -31,6 +32,7 @@ conditions:
           - <float>
           - <float>
         acc_at_3: <float>
+        std_at_3: <float>
         input_tokens_avg_3: <float or null>
         cache_creation_tokens_avg_3: <float or null>
         cache_read_tokens_avg_3: <float or null>
@@ -45,6 +47,7 @@ conditions:
       attempt_02: ../skills/fewshot/fewshot_attempt_02
       attempt_03: ../skills/fewshot/fewshot_attempt_03
     overall_acc_at_3: <float>
+    overall_std_at_3: <float>
     efficiency: <same shape as base.efficiency>
     tasks: <same shape as base.tasks>
   self:
@@ -53,6 +56,7 @@ conditions:
       attempt_02: ../skills/self/self_attempt_02
       attempt_03: ../skills/self/self_attempt_03
     overall_acc_at_3: <float>
+    overall_std_at_3: <float>
     efficiency: <same shape as base.efficiency>
     tasks: <same shape as base.tasks>
   reflect-3:
@@ -61,15 +65,20 @@ conditions:
       attempt_02: ../skills/reflect-3/reflect-3_attempt_02
       attempt_03: ../skills/reflect-3/reflect-3_attempt_03
     overall_acc_at_3: <float>
+    overall_std_at_3: <float>
     efficiency: <same shape as base.efficiency>
     tasks: <same shape as base.tasks>
 ```
 
 ## Requirements
 
-- Keep reasonable decimal precision for `overall_acc_at_3` and each
-  `acc_at_3`; 4 decimal places is recommended.
+- Keep reasonable decimal precision for `overall_acc_at_3`,
+  `overall_std_at_3`, each `acc_at_3`, and each `std_at_3`; 4 decimal
+  places is recommended.
 - `scores` must preserve the 3 raw run scores, not only the average.
+- `std_at_3` is the population standard deviation of the 3 raw scores for
+  one test task. `overall_std_at_3` is the average of the 5 test-task
+  `std_at_3` values.
 - `skill_dirs` is only used for non-base conditions. Paths are relative to the
   directory containing the report YAML, and attempt numbers must match the solver
   attempt number that used that skill.

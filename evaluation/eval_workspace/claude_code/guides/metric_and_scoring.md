@@ -1,6 +1,6 @@
 # Metric And Scoring
 
-The main evaluation metric is `acc@3`.
+The main evaluation metrics are `acc@3` and population `std@3`.
 
 ## Single Run
 
@@ -72,6 +72,23 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 The overall `acc@3` for a condition is the average of the 5 test-task `acc@3` values.
 
+## std@3
+
+`std@3` records score stability across the same 3 attempts and uses
+population standard deviation. For one test task:
+
+```text
+task std@3 = sqrt(((s1 - task_acc@3)^2 + (s2 - task_acc@3)^2 + (s3 - task_acc@3)^2) / 3)
+```
+
+The overall `std@3` for a condition uses the same aggregation shape as
+`acc@3`: first compute each test task's `std@3`, then average the 5 test-task
+`std@3` values.
+
+```text
+overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
+```
+
 ## Score Range
 
 All scores should be normalized to `[0, 1]`.
@@ -93,7 +110,7 @@ If retries still cannot produce a valid score, stop the evaluation and report th
 
 ## Aggregation Requirements
 
-After all `score.yaml` files are ready, the main agent should check that all four conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3`, overall `acc@3`, and improvements from `fewshot`, `self`, and `reflect-3` over `base`.
+After all `score.yaml` files are ready, the main agent should check that all four conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3` and `std@3`, overall `acc@3` and `std@3`, and improvements from `fewshot`, `self`, and `reflect-3` over `base`.
 
 The main agent should also aggregate average token fields from each
 `run_metadata.yaml`, first per test task and then per condition. The aggregation

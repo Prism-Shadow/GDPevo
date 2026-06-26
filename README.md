@@ -8,16 +8,16 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 ## Evaluation Results
 
-Accuracy is reported as `acc@3`, averaged over 12 task groups. Cost is reported in USD; lift and cost change are relative to `base`.
+Accuracy is reported as `acc@3`, averaged over 12 task groups. Stability is reported as population `std@3`. Cost is reported in USD; lift and cost change are relative to `base`.
 
-| Harness | Model | Thinking level | `base` acc@3 | `fewshot` acc@3 | `self` acc@3 | `reflect-3` acc@3 | `fewshot` lift | `self` lift | `reflect-3` lift | `fewshot` cost change | `self` cost change | `reflect-3` cost change |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Codex | GPT-5.5 | xhigh | 46.72% | 64.91% | 54.99% | 57.45% | +18.19 pp | +8.27 pp | +10.73 pp | -29.24% | -32.18% | -25.74% |
-| Claude Code | Opus 4.8 | xhigh | 49.11% | 70.90% | 57.37% | 62.72% | +21.79 pp | +8.26 pp | +13.62 pp | -9.61% | +0.53% | -0.35% |
+| Harness | Model | Thinking level | `base` acc@3 | `base` std@3 | `fewshot` acc@3 | `fewshot` std@3 | `self` acc@3 | `self` std@3 | `reflect-3` acc@3 | `reflect-3` std@3 | `fewshot` lift | `self` lift | `reflect-3` lift | `fewshot` cost change | `self` cost change | `reflect-3` cost change |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Codex | GPT-5.5 | xhigh | 46.72% | 5.13% | 64.91% | 6.36% | 54.99% | 8.73% | 57.45% | 7.62% | +18.19 pp | +8.27 pp | +10.73 pp | -29.24% | -32.18% | -25.74% |
+| Claude Code | Opus 4.8 | xhigh | 49.11% | 5.25% | 70.90% | 6.38% | 57.37% | 6.79% | 62.72% | 6.68% | +21.79 pp | +8.26 pp | +13.62 pp | -9.61% | +0.53% | -0.34% |
 
-| Harness | Model | Thinking level | `base` acc@3 | `fewshot` acc@3 | `fewshot` lift | `fewshot` cost change |
-| --- | --- | --- | ---: | ---: | ---: | ---: |
-| Panofy | Opus 4.6 | high | 50.17% | 68.24% | +18.07 pp | +11.05% |
+| Harness | Model | Thinking level | `base` acc@3 | `base` std@3 | `fewshot` acc@3 | `fewshot` std@3 | `fewshot` lift | `fewshot` cost change |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Panofy | Opus 4.6 | high | 50.17% | 6.68% | 68.24% | 7.33% | +18.07 pp | +11.06% |
 
 See the full experiment board in [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md).
 
