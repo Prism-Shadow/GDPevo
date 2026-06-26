@@ -4,8 +4,8 @@ Languages: [English](EXPERIMENT_BOARD.md) | [Chinese](EXPERIMENT_BOARD.zh.md)
 
 This board summarizes the released evaluation results for GDPevo's public
 benchmark runs. Released runs compare a stateless `base` baseline with
-evolution modes. The Codex, Claude Code, and Panofy runs report `fewshot`, `self`, and
-`reflect-3`. Token/cost data is available for all released modes. Full structured reports
+evolution modes. The Codex and Claude Code runs report `fewshot`, `self`, and
+`reflect-3`; Panofy reports `fewshot`. Full structured reports
 are stored under released experiment directories, such as
 `codex_gpt5_5_xhigh/reports/`, `claude_code_opus_4_8_xhigh/reports/`,
 and `panofy_claude_opus_4_6_high/reports/`.
@@ -175,9 +175,9 @@ The Claude Code token columns are the four Anthropic usage buckets (uncached inp
 
 ## Panofy (Claude Opus 4.6, high)
 
-In the released Panofy Claude Opus 4.6 high run, `fewshot` improves accuracy by +18.07 pp on average. The newly reported `self` and `reflect-3` modes average -2.31 pp and -0.77 pp relative to `base`, respectively. Their token costs change by +11.06%, +40.82%, and +36.90% relative to `base` for `fewshot`, `self`, and `reflect-3`.
+In the released Panofy Claude Opus 4.6 high run, the reported fewshot mode improves accuracy by +18.07 percentage points and changes token cost by +11.05% on average across the 12 task groups.
 
-For the released `claude-opus-4-6, high` run, this board uses Claude Opus 4.6 pricing and Panofy's three exposed token buckets:
+For the released `claude-opus-4-6, high` run, this board uses the Claude Opus 4.6 prices for the three token buckets exposed by Panofy:
 
 | Token type | Price |
 | --- | ---: |
@@ -185,7 +185,7 @@ For the released `claude-opus-4-6, high` run, this board uses Claude Opus 4.6 pr
 | Cache Hits | $0.50 / 1M tokens |
 | Output Tokens | $25.00 / 1M tokens |
 
-The board/report-level cost formula is:
+The board-level and report-level cost formula is:
 
 ```text
 cost_USD_avg_3 =
@@ -194,55 +194,31 @@ cost_USD_avg_3 =
    + output_tokens_avg_3      * 25.00) / 1_000_000
 ```
 
-Panofy token columns are the three Anthropic usage buckets returned by the harness: 5-minute cache writes, cache hits, and output tokens.
+The Panofy token columns are the three available Anthropic usage buckets returned by the harness: 5-minute cache writes, cache hits, and output tokens.
 
 | task_group_id | scenario_id | model | harness | mode | overall acc@3 (%) | 5m cache write tokens avg@3 (k) | cache hit tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-6, high` | `panofy` | `base` | 63.74% | 23.8k | 155.1k | 11.9k | 0.52 | [task_group_001.yaml](panofy_claude_opus_4_6_high/reports/task_group_001.yaml) |
 | `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 85.28% | 27.4k | 209.2k | 11.5k | 0.56 | [task_group_001.yaml](panofy_claude_opus_4_6_high/reports/task_group_001.yaml) |
-| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-6, high` | `panofy` | `self` | 71.22% | 39.9k | 312.3k | 18.2k | 0.86 | [task_group_001.yaml](panofy_claude_opus_4_6_high/reports/task_group_001.yaml) |
-| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 72.22% | 33.5k | 193.2k | 15.1k | 0.68 | [task_group_001.yaml](panofy_claude_opus_4_6_high/reports/task_group_001.yaml) |
 | `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `claude-opus-4-6, high` | `panofy` | `base` | 43.85% | 18.5k | 148.6k | 5.8k | 0.34 | [task_group_002.yaml](panofy_claude_opus_4_6_high/reports/task_group_002.yaml) |
 | `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 58.93% | 21.4k | 218.5k | 6.8k | 0.41 | [task_group_002.yaml](panofy_claude_opus_4_6_high/reports/task_group_002.yaml) |
-| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `claude-opus-4-6, high` | `panofy` | `self` | 41.07% | 30.5k | 280.3k | 9.8k | 0.57 | [task_group_002.yaml](panofy_claude_opus_4_6_high/reports/task_group_002.yaml) |
-| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 46.55% | 21.9k | 208.9k | 8.3k | 0.45 | [task_group_002.yaml](panofy_claude_opus_4_6_high/reports/task_group_002.yaml) |
 | `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `claude-opus-4-6, high` | `panofy` | `base` | 58.58% | 36.9k | 472.6k | 13.7k | 0.81 | [task_group_003.yaml](panofy_claude_opus_4_6_high/reports/task_group_003.yaml) |
 | `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 73.41% | 45.5k | 625.3k | 16.3k | 1.00 | [task_group_003.yaml](panofy_claude_opus_4_6_high/reports/task_group_003.yaml) |
-| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `claude-opus-4-6, high` | `panofy` | `self` | 51.07% | 71.6k | 1083.2k | 33.2k | 1.82 | [task_group_003.yaml](panofy_claude_opus_4_6_high/reports/task_group_003.yaml) |
-| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 45.35% | 60.8k | 959.7k | 27.0k | 1.54 | [task_group_003.yaml](panofy_claude_opus_4_6_high/reports/task_group_003.yaml) |
 | `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `claude-opus-4-6, high` | `panofy` | `base` | 18.82% | 42.0k | 456.8k | 19.3k | 0.97 | [task_group_004.yaml](panofy_claude_opus_4_6_high/reports/task_group_004.yaml) |
 | `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 59.53% | 40.0k | 445.5k | 17.8k | 0.92 | [task_group_004.yaml](panofy_claude_opus_4_6_high/reports/task_group_004.yaml) |
-| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `claude-opus-4-6, high` | `panofy` | `self` | 17.61% | 53.6k | 435.2k | 23.2k | 1.13 | [task_group_004.yaml](panofy_claude_opus_4_6_high/reports/task_group_004.yaml) |
-| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 23.00% | 55.7k | 455.5k | 24.0k | 1.18 | [task_group_004.yaml](panofy_claude_opus_4_6_high/reports/task_group_004.yaml) |
 | `task_group_005` | `SCN_005_erp_finance_expense_control` | `claude-opus-4-6, high` | `panofy` | `base` | 41.05% | 31.0k | 242.0k | 17.8k | 0.76 | [task_group_005.yaml](panofy_claude_opus_4_6_high/reports/task_group_005.yaml) |
 | `task_group_005` | `SCN_005_erp_finance_expense_control` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 60.51% | 33.1k | 317.4k | 17.8k | 0.81 | [task_group_005.yaml](panofy_claude_opus_4_6_high/reports/task_group_005.yaml) |
-| `task_group_005` | `SCN_005_erp_finance_expense_control` | `claude-opus-4-6, high` | `panofy` | `self` | 23.91% | 63.5k | 852.7k | 29.3k | 1.56 | [task_group_005.yaml](panofy_claude_opus_4_6_high/reports/task_group_005.yaml) |
-| `task_group_005` | `SCN_005_erp_finance_expense_control` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 29.72% | 58.8k | 754.3k | 24.3k | 1.35 | [task_group_005.yaml](panofy_claude_opus_4_6_high/reports/task_group_005.yaml) |
 | `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `claude-opus-4-6, high` | `panofy` | `base` | 64.83% | 33.0k | 239.9k | 12.2k | 0.63 | [task_group_006.yaml](panofy_claude_opus_4_6_high/reports/task_group_006.yaml) |
 | `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 72.24% | 40.4k | 352.1k | 14.3k | 0.79 | [task_group_006.yaml](panofy_claude_opus_4_6_high/reports/task_group_006.yaml) |
-| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `claude-opus-4-6, high` | `panofy` | `self` | 68.54% | 44.0k | 252.6k | 20.0k | 0.90 | [task_group_006.yaml](panofy_claude_opus_4_6_high/reports/task_group_006.yaml) |
-| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 67.54% | 43.0k | 305.6k | 20.5k | 0.93 | [task_group_006.yaml](panofy_claude_opus_4_6_high/reports/task_group_006.yaml) |
 | `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `claude-opus-4-6, high` | `panofy` | `base` | 36.39% | 48.6k | 446.2k | 20.2k | 1.03 | [task_group_007.yaml](panofy_claude_opus_4_6_high/reports/task_group_007.yaml) |
 | `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 41.88% | 56.8k | 522.9k | 25.8k | 1.26 | [task_group_007.yaml](panofy_claude_opus_4_6_high/reports/task_group_007.yaml) |
-| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `claude-opus-4-6, high` | `panofy` | `self` | 29.91% | 63.3k | 507.4k | 30.8k | 1.42 | [task_group_007.yaml](panofy_claude_opus_4_6_high/reports/task_group_007.yaml) |
-| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 23.62% | 82.4k | 542.8k | 36.5k | 1.70 | [task_group_007.yaml](panofy_claude_opus_4_6_high/reports/task_group_007.yaml) |
 | `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `claude-opus-4-6, high` | `panofy` | `base` | 49.18% | 20.5k | 189.2k | 10.9k | 0.49 | [task_group_008.yaml](panofy_claude_opus_4_6_high/reports/task_group_008.yaml) |
 | `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 73.36% | 25.9k | 268.5k | 16.2k | 0.70 | [task_group_008.yaml](panofy_claude_opus_4_6_high/reports/task_group_008.yaml) |
-| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `claude-opus-4-6, high` | `panofy` | `self` | 23.14% | 13.5k | 139.7k | 4.2k | 0.26 | [task_group_008.yaml](panofy_claude_opus_4_6_high/reports/task_group_008.yaml) |
-| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 26.95% | 11.8k | 122.5k | 5.5k | 0.27 | [task_group_008.yaml](panofy_claude_opus_4_6_high/reports/task_group_008.yaml) |
 | `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `claude-opus-4-6, high` | `panofy` | `base` | 62.39% | 23.8k | 155.3k | 11.7k | 0.52 | [task_group_009.yaml](panofy_claude_opus_4_6_high/reports/task_group_009.yaml) |
 | `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 89.73% | 26.2k | 234.6k | 14.4k | 0.64 | [task_group_009.yaml](panofy_claude_opus_4_6_high/reports/task_group_009.yaml) |
-| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `claude-opus-4-6, high` | `panofy` | `self` | 54.81% | 30.8k | 233.5k | 14.8k | 0.68 | [task_group_009.yaml](panofy_claude_opus_4_6_high/reports/task_group_009.yaml) |
-| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 61.52% | 30.6k | 208.9k | 14.5k | 0.66 | [task_group_009.yaml](panofy_claude_opus_4_6_high/reports/task_group_009.yaml) |
 | `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `claude-opus-4-6, high` | `panofy` | `base` | 50.73% | 49.7k | 471.3k | 21.3k | 1.08 | [task_group_010.yaml](panofy_claude_opus_4_6_high/reports/task_group_010.yaml) |
 | `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 65.18% | 52.0k | 491.3k | 21.1k | 1.10 | [task_group_010.yaml](panofy_claude_opus_4_6_high/reports/task_group_010.yaml) |
-| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `claude-opus-4-6, high` | `panofy` | `self` | 68.05% | 66.5k | 365.5k | 23.4k | 1.18 | [task_group_010.yaml](panofy_claude_opus_4_6_high/reports/task_group_010.yaml) |
-| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 68.47% | 58.0k | 395.0k | 23.6k | 1.15 | [task_group_010.yaml](panofy_claude_opus_4_6_high/reports/task_group_010.yaml) |
 | `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `claude-opus-4-6, high` | `panofy` | `base` | 48.91% | 58.4k | 304.3k | 25.5k | 1.15 | [task_group_011.yaml](panofy_claude_opus_4_6_high/reports/task_group_011.yaml) |
 | `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 56.38% | 51.9k | 331.3k | 24.1k | 1.09 | [task_group_011.yaml](panofy_claude_opus_4_6_high/reports/task_group_011.yaml) |
-| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `claude-opus-4-6, high` | `panofy` | `self` | 44.87% | 68.8k | 428.1k | 31.3k | 1.43 | [task_group_011.yaml](panofy_claude_opus_4_6_high/reports/task_group_011.yaml) |
-| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 47.29% | 73.3k | 417.4k | 33.3k | 1.50 | [task_group_011.yaml](panofy_claude_opus_4_6_high/reports/task_group_011.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `claude-opus-4-6, high` | `panofy` | `base` | 63.59% | 18.9k | 140.1k | 5.8k | 0.33 | [task_group_012.yaml](panofy_claude_opus_4_6_high/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 82.43% | 18.0k | 146.9k | 4.9k | 0.31 | [task_group_012.yaml](panofy_claude_opus_4_6_high/reports/task_group_012.yaml) |
-| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `claude-opus-4-6, high` | `panofy` | `self` | 80.14% | 20.6k | 173.5k | 5.9k | 0.36 | [task_group_012.yaml](panofy_claude_opus_4_6_high/reports/task_group_012.yaml) |
-| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 80.54% | 23.9k | 197.5k | 7.0k | 0.42 | [task_group_012.yaml](panofy_claude_opus_4_6_high/reports/task_group_012.yaml) |
