@@ -1,67 +1,98 @@
 # Evolution Modes
 
-本评估对比三种条件。三种都用同一个 task group、同一批 test tasks、同一个模型和同一套 evaluators。它们之间唯一不同的是 **Panofy 训练配置**——上传的材料和训练 instruction。instruction 让 agent **根据这些 train task 进行 evolve**:从它们身上学习、在这一类任务上变得更强。**不导出任何东西**——进化烤进训练好的 agent 里,测试时的调用就是 `predict()`。
+本评估比较四种条件。四种条件使用同一个 task group、同一批 test tasks、同一个模型、同一个远程环境和同一套 evaluators：
 
-每个条件训练 3 个独立 agent(`attempt_01..03`)。
+```text
+base
+fewshot
+self
+reflect-3
+```
 
-三种条件共用同一套输入/输出契约,写在你 staging 的 `function_definition.md` 训练材料里:
+每个条件训练 3 个独立 agent（`attempt_01..03`）。所有条件共用同一套 test-time 契约：
 
 - `FUNC_INPUT` = `{ task_id, prompt, api_base_url, answer_template }`
 - `FUNC_OUTPUT` = 一个严格匹配 `answer_template` 的 JSON 对象。
 
-agent 读 `prompt`,对 `api_base_url` 上 prompt 点名的端点发起实时 GET,应用规则,返回答案 JSON。
+train 和 test task 使用同一种官方 task input packet：`task_id`、`prompt`、
+`api_base_url`、`answer_template`，以及该 task 声明的所有 input payload 文件，排除
+`answer_template.json`。payload 文件不是额外 top-level `FUNC_INPUT` key，因此 top-level
+契约保持不变。标准答案、notes 和 evaluator 文件不包含在该 packet 中，除非当前模式明确
+允许使用标准答案。
 
-## base(基线)
+agent 读取 `prompt`，对 `api_base_url` 发起实时请求，应用规则，并返回 answer JSON。
 
-不进化。**只用契约**训练 agent:`function_definition.md` 加一个仅含 schema 的示例,其 `FUNC_OUTPUT` 就是 `answer_template` 的形状(空串、0、枚举拼写)——不暴露任何真实 train task。instruction 说明要直接从输入作答、没有任何已解示例。这是算提升时的分母。
+## base
 
-solver(这个训练好的 agent)可以看到:
-
-- 当前 test task 的 `FUNC_INPUT`(`prompt`、`api_base_url`、`answer_template`)。
-- 允许的远程 env URL。
-
-solver 不能看到:
-
-- train tasks、test 标准答案、test notes、evaluator 细节。
+不进化。只用 `function_definition.md` 和一个 schema-only 示例训练 agent，不暴露真实 train task。
 
 ## fewshot（少样本进化）
 
-用**5 个已解 train task**作为示例对训练 3 个独立 agent(`FUNC_INPUT.json` / `FUNC_OUTPUT.json` 加 `train_example_02..05_{INPUT,OUTPUT}.json`),其中每个 `OUTPUT` 是该 train task 的标准 `answer.json`。训练 instruction 让 agent **根据这些 train task 进行 evolve**:研究这些已解示例、内化**可迁移**流程——SOP、字段定义、纳入/排除规则、取整、排序、常见陷阱——并把它应用到新输入上。目标是掌握可复用、能迁移的流程。
+用 5 个已解 train tasks 作为示例对训练 3 个独立 agent。训练材料可以包含：
 
-训练(进化)可以看到:
+- 官方 train `FUNC_INPUT`。
+- 来自 `output/answer.json` 的 train gold `FUNC_OUTPUT`。
+- 远程环境 URL。
 
-- 5 个 train task 的官方 `FUNC_INPUT`。
-- 5 个 train task 的标准 `output/answer.json`。
-- 允许的远程 env URL。
+训练不得包含 test tasks、test answers、notes 或 evaluator source。
 
-训练不能看到:
+## self
 
-- test 标准答案、test notes、evaluator 细节。
+用 train inputs 训练 3 个独立 agent，但不提供 train outputs 或 judge feedback。训练 instruction 要求 agent 基于自己的推理完成/复盘 train tasks，并内化可迁移 SOP、字段定义、环境使用习惯和常见陷阱。
 
-solver 可见的与 `base` 相同(test `FUNC_INPUT` + env URL);区别在于由哪个训练好的 agent 作答。
+训练材料可以包含：
 
-## reflect（反思进化）
+- 官方 train `FUNC_INPUT`。
+- 远程环境 URL。
 
-训练 3 个独立 agent。材料是**同样的 5 个已解 train task**;只有 instruction 不同。它要求 agent **通过反思根据这些 train task 进行 evolve**:
+训练不得包含 train gold answers、judge feedback、test tasks、test answers、notes 或 evaluator source。
 
-1. 对每个 train 输入,先自己从 prompt 和 API 规则推出答案。
-2. 与提供的标准答案对比。
-3. 找出究竟在哪里、为什么出现偏差(看错规则、过滤错、取整、排序、枚举)。
-4. 把这些纠正提炼成带明确陷阱的可迁移流程。
-5. 把这套纠正后的流程应用到新输入。
+## reflect-3
 
-盲做 / 对比 / 反思的循环在**训练 instruction** 里被要求、在训练中执行。
+为 `reflect-3` 训练 3 个独立 agent。每个独立 agent 按 `train_001` 到
+`train_005` 的顺序处理。
+
+一轮 judge-feedback 指：对当前 train task 生成一个 candidate answer，提交给
+train-only judge，只接收 `score` 和 `correct` 反馈，并用该反馈调整同一道 train
+task 的下一次尝试。
+
+Reflect 训练材料可以包含：
+
+- 官方 train `FUNC_INPUT`。
+- 远程环境 URL。
+- Train-only judge API 说明：
+
+```text
+POST {PANOFY_ENV_BASE_URL}{PANOFY_JUDGE_PATH}
+Content-Type: application/json
+
+{"task_id": "train_001", "answer": <candidate answer JSON>}
+```
+
+judge 响应包含 `correct`、归一化 `score`、`scope: train_only`，以及提醒
+agent 该接口只用于 train-task feedback 的 `notice`，并拒绝 test task id。
+Judge API 只在 reflect 训练的 train tasks 上有效；它不是 test-time 工具，
+最终 agent instruction 不能要求 test agent 调用它。Reflect 训练不得包含 train gold answers、test tasks、test answers、notes 或 evaluator source。
+
+Reflect instruction 应要求 agent 对每一道 train task 先完成以下 3 轮循环，
+再进入下一道 train task：
+
+1. 只读取当前 train task 的 input、远程环境 URL 和 judge API 调用说明。
+2. 为当前 train task 生成一个 candidate answer。
+3. 将该 candidate answer 提交给 judge。
+4. 记录返回的 `score` 和 `correct`。
+5. 使用 judge feedback 调整同一道 train task 的下一次尝试。
+6. 重复直到该 train task 正好完成 3 次 judge 提交。
+
+全部 5 个 train tasks 都完成这 3 轮流程后，再将最终流程用于 test-time。最终流程不应包含 candidate answers、train gold answers 或 test-time judge 调用指令。
 
 ## 进化质量
 
-好的进化产出的是可执行、可迁移的经验。训练 instruction 应驱动 agent 内化:
+好的进化应产生可执行、可迁移的经验：
 
-- 能复用到 test tasks 的可迁移业务规则和 SOP。
-- 如何使用暴露的 env API 端点。
+- 可迁移业务规则和 SOP。
+- 如何使用暴露的 env API endpoints。
 - 输出字段定义和确切枚举拼写。
-- 常见误判与排除规则。
+- 常见误判和排除规则。
 
-训练不得引入:
-
-- 任何来自 test task、test 答案、note 或 evaluator 的东西。
-- 对特定 train 数值的死记硬背。
+训练不得引入任何来自 test task、test answer、note 或 evaluator 的东西。

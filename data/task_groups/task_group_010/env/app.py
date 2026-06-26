@@ -10,6 +10,8 @@ from pathlib import Path
 
 from flask import Flask, abort, jsonify, request
 
+from judge_api import judge_answer_request
+
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
@@ -178,6 +180,12 @@ def prior_views():
 def macro_signals():
     rows = load_json("macro_signals.json")
     return jsonify(filter_rows(rows, {"quarter", "opportunity_set", "rationale_code"}))
+
+
+@app.post("/api/judge")
+def judge():
+    status, payload = judge_answer_request(request.get_data())
+    return jsonify(payload), status
 
 
 def parse_args():
