@@ -36,7 +36,7 @@ Run all three modes with acc@3 and write report/<task_group_id>.yaml.
 
 When a user asks you to run evaluation in this workspace, that request is considered permission to use Claude Code subagents (the Task / Agent tool), including skill-generation subagents and solver subagents. If the required number of subagents exceeds the subagent concurrency limit, run them in batches until all required attempts are complete. Do not reduce the attempt count, merge multiple test tasks into one solver run, or solve test tasks directly as the main agent.
 
-Solver and skill-generation subagents run with the same model and reasoning/effort setting as the main agent — this is inherited automatically and does not need to be set.
+Solver and skill-generation subagents run with the same DeepSeek V4 Pro configuration as the main agent. Start the main agent with the Claude Code + DeepSeek V4 Pro configuration first; the subagents should inherit that configuration and do not need separate model flags.
 
 1. Confirm that `task_group/` contains exactly one task group:
 
@@ -69,9 +69,9 @@ runs/reflect/
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context solver subagent. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
 
-6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, the matched session-transcript reference, and token usage.
+6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, the matched session-transcript reference, DeepSeek token usage, and the DeepSeek V4 Pro pricing basis.
 
-7. After all score records are ready, aggregate `acc@3` for the three conditions, plus average cached/input/output tokens for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
+7. After all score records are ready, aggregate `acc@3` for the three conditions, plus DeepSeek V4 Pro cache-miss input tokens, cache-hit input tokens, output tokens, and cost for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
 
 ## Agent Boundaries
 

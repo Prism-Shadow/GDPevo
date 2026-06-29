@@ -18,7 +18,7 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 
 `run_metadata.yaml` records the unique attempt ID, the matched transcript reference, and token usage. Token values come from the subagent's session transcript, not from manual counting inside the agent prompt.
 
-### Token accounting (read carefully — easy to get wrong)
+### Token accounting (read carefully - easy to get wrong)
 
 Each solver subagent has its own transcript at:
 
@@ -26,16 +26,37 @@ Each solver subagent has its own transcript at:
 ~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
 ```
 
-A single API response is logged across **multiple content-block records**. Across those records `input_tokens`, `cache_creation_input_tokens`, and `cache_read_input_tokens` are **identical**, but `output_tokens` is **streamed (cumulative)** — later records show a larger value. So deduplicate by `message.id`: keep the input/cache buckets from any record, and take the **max `output_tokens`** (the final record) per `message.id`. Naively summing every record over-counts input/cache ~2-3x; keeping the first record under-counts output. After deduping, sum the four buckets across responses:
+This workspace is configured for Claude Code + DeepSeek V4 Pro only. Inspect the
+actual subagent transcript for one pilot run before bulk aggregation, then apply
+the same DeepSeek token rule to every attempt in the run. Use the DeepSeek usage
+buckets exposed by the transcript or API response:
 
-- `input_tokens` — uncached input (full price)
-- `cache_creation_input_tokens` — cache writes
-- `cache_read_input_tokens` — cache reads (discounted)
-- `output_tokens` — generated tokens
+- `prompt_cache_miss_tokens` - input tokens billed at the cache-miss rate
+- `prompt_cache_hit_tokens` - input tokens billed at the cache-hit rate
+- `output_tokens` or `completion_tokens` - generated tokens
 
-Cost per response (Opus 4.8 / Opus 4.5 tier, USD) = `input/1e6 * 5 + cache_creation/1e6 * 6.25 + cache_read/1e6 * 0.5 + output/1e6 * 25`; sum over the deduped responses for the attempt's cost. (This is exactly Claude Code's own per-response cost, applied to each response and summed.)
+If DeepSeek responses are streamed into multiple transcript records, deduplicate
+by the stable response/message id before summing. Keep the cache hit/miss input
+buckets from a single final/deduped response record and take the max cumulative
+output tokens for that response. If no stable id exists, record the transcript
+match as `ambiguous` and do not estimate billing manually.
 
-Do NOT use the parent's `toolUseResult.totalTokens` for cost or for billed-token totals — that field is `latest-response (input + cache) + cumulative output` (a final-context-size measure) and excludes cache reads, so it is not the billing total. It is fine only as a quick cross-check or a "context size" KPI.
+For `deepseek-v4-pro`, use the DeepSeek V4 Pro rate card for cost:
+
+```text
+cost_usd =
+  (prompt_cache_miss_tokens * 0.435
+   + prompt_cache_hit_tokens * 0.003625
+   + output_tokens * 0.87) / 1_000_000
+```
+
+Recheck the DeepSeek pricing page before publishing a billing-grade report; if
+DeepSeek changes the rate card, update both the formula and the `pricing` block
+in `run_metadata.yaml`.
+
+Do NOT use the parent's `toolUseResult.totalTokens` for cost or billed-token
+totals. It is only a quick context-size cross-check and may not contain the
+DeepSeek cache billing buckets.
 
 Recommended format:
 
@@ -51,13 +72,16 @@ transcript:
   parent_tool_use_id: <tool_use_id of the Agent call for this attempt>
   match_status: matched
 
-token_usage:                          # deduped by message.id, summed across responses
+token_usage:                          # DeepSeek usage, deduped, summed across responses
   source: subagent_transcript
-  input_tokens: <int>                 # uncached
-  cache_creation_input_tokens: <int>
-  cache_read_input_tokens: <int>
+  prompt_cache_miss_tokens: <int or null>
+  prompt_cache_hit_tokens: <int or null>
   output_tokens: <int>
   cost_usd: <float>
+  pricing:
+    prompt_cache_miss_usd_per_million: 0.435
+    prompt_cache_hit_usd_per_million: 0.003625
+    output_usd_per_million: 0.87
 ```
 
 If the transcript cannot be matched uniquely, write `missing` or `ambiguous` in `match_status`, set the corresponding token fields to `null`, and do not estimate them manually.
@@ -95,7 +119,7 @@ If retries still cannot produce a valid score, stop the evaluation and report th
 
 After all `score.yaml` files are ready, the main agent should check that all three conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3`, overall `acc@3`, and condition-to-condition improvements.
 
-The main agent should also aggregate average cached/input/output tokens from each `run_metadata.yaml`, first per test task and then per condition. The aggregation follows the same shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
+The main agent should also aggregate average DeepSeek token buckets from each `run_metadata.yaml`, first per test task and then per condition. Aggregate `prompt_cache_miss_tokens`, `prompt_cache_hit_tokens`, `output_tokens`, and `cost_usd`. The aggregation follows the same shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
 
 These efficiency metrics only count the answer-writing work of test solver subagents. They do not include skill generation, environment startup, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
 

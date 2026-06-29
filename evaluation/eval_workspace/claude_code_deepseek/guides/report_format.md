@@ -20,9 +20,8 @@ conditions:
   base:
     overall_acc_at_3: <float>
     efficiency:
-      input_tokens_avg_3: <float or null>            # uncached
-      cache_creation_tokens_avg_3: <float or null>
-      cache_read_tokens_avg_3: <float or null>
+      prompt_cache_miss_tokens_avg_3: <float or null>
+      prompt_cache_hit_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
       cost_usd_avg_3: <float or null>
     tasks:
@@ -32,9 +31,8 @@ conditions:
           - <float>
           - <float>
         acc_at_3: <float>
-        input_tokens_avg_3: <float or null>
-        cache_creation_tokens_avg_3: <float or null>
-        cache_read_tokens_avg_3: <float or null>
+        prompt_cache_miss_tokens_avg_3: <float or null>
+        prompt_cache_hit_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
         cost_usd_avg_3: <float or null>
       test_002:
@@ -69,7 +67,7 @@ conditions:
 - Follow the YAML shape above: keep top-level strings unquoted unless YAML requires quotes, and write `scores` as a block list with one score per line.
 - `scores` must preserve the 3 raw run scores, not only the average.
 - `skill_dirs` is only used for skill conditions. Paths are relative to the directory containing the report YAML, and `attempt_01` / `attempt_02` / `attempt_03` must match the solver attempt number that used that skill.
-- The four token buckets (`input_tokens` uncached, `cache_creation_tokens`, `cache_read_tokens`, `output_tokens`) and `cost_usd_avg_3` come from the 3 attempts' subagent transcripts, **deduplicated by `message.id`** — see `metric_and_scoring.md` for the dedup rule and the per-response cost formula. If a transcript cannot be matched uniquely, write `null` and preserve the issue in the corresponding workspace run record.
+- Token buckets and `cost_usd_avg_3` come from the 3 attempts' subagent transcripts after applying the DeepSeek V4 Pro dedup and pricing rule in `metric_and_scoring.md`. Report `prompt_cache_miss_tokens_avg_3`, `prompt_cache_hit_tokens_avg_3`, `output_tokens_avg_3`, and `cost_usd_avg_3`. If a transcript cannot be matched uniquely, write `null` and preserve the issue in the corresponding workspace run record.
 - `conditions.<mode>.efficiency.*_avg_3` is the average efficiency summary across all test tasks for that mode.
 - Efficiency metrics follow the same aggregation shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
 - Efficiency metrics only count answer-writing by test solver subagents. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization.

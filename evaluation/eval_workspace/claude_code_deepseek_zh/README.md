@@ -36,7 +36,7 @@ Run all three modes with acc@3 and write report/<task_group_id>.yaml.
 
 当用户要求你在这个工作区中运行评估时，该请求即视为允许使用 Claude Code subagents（Task / Agent 工具），包括 skill-generation subagents 和 solver subagents。如果需要的 subagent 数量超过 subagent 并发上限，应分批运行，直到所有 attempts 完成。不要减少 attempt 数量，不要把多个 test tasks 合并成一次 solver 运行，也不要让主 agent 直接解 test tasks。
 
-Solver 和 skill-generation subagents 使用与主 agent 相同的模型和 reasoning/effort 设置——这会自动继承，无需额外设置。
+Solver 和 skill-generation subagents 使用与主 agent 相同的 DeepSeek V4 Pro 配置。应先用 Claude Code + DeepSeek V4 Pro 配置启动主 agent；subagents 应继承该配置，无需单独传模型参数。
 
 1. 确认 `task_group/` 下只包含一个 task group：
 
@@ -69,9 +69,9 @@ runs/reflect/
 
 每种条件下，每个 test task 独立运行 3 次。每次运行都必须由干净上下文的 solver subagent 完成。对于 skill 条件，solver 的 `attempt_<nn>` 使用相同编号的独立生成 skill。
 
-6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、匹配到的 session transcript 引用，以及 token 用量。
+6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、匹配到的 session transcript 引用、DeepSeek token 用量，以及 DeepSeek V4 Pro 计价依据。
 
-7. 所有 score records 准备完成后，聚合三种条件的 `acc@3`，并聚合每种条件的平均 cached/input/output tokens。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
+7. 所有 score records 准备完成后，聚合三种条件的 `acc@3`，并聚合每种条件的 DeepSeek V4 Pro cache-miss input tokens、cache-hit input tokens、output tokens 和 cost。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
 
 ## Agent 边界
 
