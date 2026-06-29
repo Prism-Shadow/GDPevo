@@ -9,7 +9,7 @@ Use this skill when a task asks for finance/AP close, prepaid reconciliation, ve
 
 ## API workflow
 
-- Use the API base URL from the prompt or runner. Local variants observed include `http://127.0.0.1:8005`; in this environment the same API may be served on another loopback port.
+- Use the API base URL from the prompt or runner. Local variants observed include `<environment_base_url>`; in this environment the same API may be served on another loopback port.
 - First call `/endpoints`. The API advertises exact-match query parameters by field name plus `limit` and `offset`.
 - Prefer current API records over local snapshots or source review statuses. Local CSV/JSON payloads define scope and output shape; they are not the system of record.
 - Common endpoints: `/api/claims`, `/api/ap/bills`, `/api/ap/payments`, `/api/ap/aging`, `/api/close/logs`, `/api/vendors`, `/api/compliance/objects`, `/api/prepaids/invoices`, `/api/prepaids/gl-balances`. Non-`/api` aliases may also exist.

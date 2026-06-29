@@ -7,6 +7,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
 from advisory_rules import load_data
+from judge_api import judge_answer_request
 
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
@@ -105,6 +106,15 @@ class Handler(BaseHTTPRequestHandler):
             <p>Use API links for planning documents, retirement accounts, life insurance, and trust candidates.</p>
             """
             return html_response(self, html)
+        return json_response(self, {"error": "unknown endpoint", "path": path}, 404)
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        path = parsed.path.rstrip("/")
+        if path == "/api/judge":
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            status, payload = judge_answer_request(self.rfile.read(length))
+            return json_response(self, payload, status)
         return json_response(self, {"error": "unknown endpoint", "path": path}, 404)
 
 

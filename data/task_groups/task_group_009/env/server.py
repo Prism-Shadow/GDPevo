@@ -5,6 +5,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from judge_api import judge_answer_request
+
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
@@ -107,6 +109,16 @@ class FinanceOpsHandler(BaseHTTPRequestHandler):
             self.send_json(productions)
             return
 
+        self.send_json({"error": "not found", "path": path}, status=404)
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        path = parsed.path.rstrip("/") or "/"
+        if path == "/api/judge":
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            status, payload = judge_answer_request(self.rfile.read(length))
+            self.send_json(payload, status=status)
+            return
         self.send_json({"error": "not found", "path": path}, status=404)
 
 

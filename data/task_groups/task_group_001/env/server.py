@@ -10,6 +10,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_FILE = BASE_DIR / "data" / "harborcrm_data.json"
@@ -119,6 +121,16 @@ class HarborHandler(BaseHTTPRequestHandler):
             self.not_found()
             return
         self.send_json(200, payload)
+
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        path = parsed.path.rstrip("/") or "/"
+        if path == "/api/judge":
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            status, payload = judge_answer_request(self.rfile.read(length))
+            self.send_json(status, payload)
+            return
+        self.not_found()
 
     def route(self, parts: list[str], params: dict[str, list[str]]) -> object | None:
         if parts == ["health"]:

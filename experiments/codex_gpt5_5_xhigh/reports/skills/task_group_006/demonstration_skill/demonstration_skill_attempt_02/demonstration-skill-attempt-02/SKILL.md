@@ -17,7 +17,7 @@ Use this skill for tasks that provide local `input/payloads/*` files plus an `an
 
 ## API Workflow
 
-Base URL is usually provided by the runner; otherwise use `http://127.0.0.1:8006`.
+Base URL is usually provided by the runner; otherwise use `<environment_base_url>`.
 
 Probe the service:
 

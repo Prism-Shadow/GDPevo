@@ -1,6 +1,6 @@
 # Metric And Scoring
 
-The main evaluation metric is `acc@3`.
+The main evaluation metrics are `acc@3` and population `std@3`.
 
 ## Single Run
 
@@ -28,14 +28,15 @@ Each solver subagent has its own transcript at:
 
 A single API response is logged across **multiple content-block records**. Across those records `input_tokens`, `cache_creation_input_tokens`, and `cache_read_input_tokens` are **identical**, but `output_tokens` is **streamed (cumulative)** — later records show a larger value. So deduplicate by `message.id`: keep the input/cache buckets from any record, and take the **max `output_tokens`** (the final record) per `message.id`. Naively summing every record over-counts input/cache ~2-3x; keeping the first record under-counts output. After deduping, sum the four buckets across responses:
 
-- `input_tokens` — uncached input (full price)
+- `input_tokens` — uncached input
 - `cache_creation_input_tokens` — cache writes
-- `cache_read_input_tokens` — cache reads (discounted)
+- `cache_read_input_tokens` — cache reads
 - `output_tokens` — generated tokens
 
-Cost per response (Opus 4.8 / Opus 4.5 tier, USD) = `input/1e6 * 5 + cache_creation/1e6 * 6.25 + cache_read/1e6 * 0.5 + output/1e6 * 25`; sum over the deduped responses for the attempt's cost. (This is exactly Claude Code's own per-response cost, applied to each response and summed.)
-
-Do NOT use the parent's `toolUseResult.totalTokens` for cost or for billed-token totals — that field is `latest-response (input + cache) + cumulative output` (a final-context-size measure) and excludes cache reads, so it is not the billing total. It is fine only as a quick cross-check or a "context size" KPI.
+Do NOT use the parent's `toolUseResult.totalTokens` for token totals — that
+field is `latest-response (input + cache) + cumulative output` (a
+final-context-size measure) and excludes cache reads, so it is not the complete
+token total. It is fine only as a quick cross-check or a "context size" KPI.
 
 Recommended format:
 
@@ -57,7 +58,6 @@ token_usage:                          # deduped by message.id, summed across res
   cache_creation_input_tokens: <int>
   cache_read_input_tokens: <int>
   output_tokens: <int>
-  cost_usd: <float>
 ```
 
 If the transcript cannot be matched uniquely, write `missing` or `ambiguous` in `match_status`, set the corresponding token fields to `null`, and do not estimate them manually.
@@ -71,6 +71,23 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 ```
 
 The overall `acc@3` for a condition is the average of the 5 test-task `acc@3` values.
+
+## std@3
+
+`std@3` records score stability across the same 3 attempts and uses
+population standard deviation. For one test task:
+
+```text
+task std@3 = sqrt(((s1 - task_acc@3)^2 + (s2 - task_acc@3)^2 + (s3 - task_acc@3)^2) / 3)
+```
+
+The overall `std@3` for a condition uses the same aggregation shape as
+`acc@3`: first compute each test task's `std@3`, then average the 5 test-task
+`std@3` values.
+
+```text
+overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
+```
 
 ## Score Range
 
@@ -93,10 +110,13 @@ If retries still cannot produce a valid score, stop the evaluation and report th
 
 ## Aggregation Requirements
 
-After all `score.yaml` files are ready, the main agent should check that all three conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3`, overall `acc@3`, and condition-to-condition improvements.
+After all `score.yaml` files are ready, the main agent should check that all four conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3` and `std@3`, overall `acc@3` and `std@3`, and improvements from `fewshot`, `self`, and `reflect-3` over `base`.
 
-The main agent should also aggregate average cached/input/output tokens from each `run_metadata.yaml`, first per test task and then per condition. The aggregation follows the same shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
+The main agent should also aggregate average token fields from each
+`run_metadata.yaml`, first per test task and then per condition. The aggregation
+follows the same shape as `acc@3`: average the 3 attempts for the same test task,
+then average the 5 test tasks.
 
-These efficiency metrics only count the answer-writing work of test solver subagents. They do not include skill generation, environment startup, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
+These efficiency metrics only count the answer-writing work of test solver subagents. They do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
 
 The evaluation agent may write temporary aggregation or checking code in `scratch/` according to the current task group's evaluator shape.
