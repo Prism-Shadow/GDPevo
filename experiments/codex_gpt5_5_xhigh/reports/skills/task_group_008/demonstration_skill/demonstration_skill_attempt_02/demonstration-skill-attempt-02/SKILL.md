@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-02
+name: task-group-008-fewshot-attempt-02
 description: Solve private wealth advisory benchmark tasks that ask for structured JSON planning outputs using the advisory API, local request memo, and answer template. Use for Roth conversion/RMD summaries, ILIT Crummey funding cycles, GRAT versus CRAT comparisons, and combined estate liquidity action plans where source records may conflict.
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: task-group-010-asteria-portfolio-risk
+name: task-group-010-fewshot-attempt-03
 description: Solve PanofyBench task_group_010 Asteria Investment Office input-output tasks. Use when producing JSON answers from local request payloads and the public Asteria API at http://127.0.0.1:8036 for credit trade packages, fixed-income risk rotations, equity index correlations, allocation views, and multi-asset committee files.
 ---
 

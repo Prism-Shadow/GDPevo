@@ -1,5 +1,5 @@
 ---
-name: demonstration-finance-ops
+name: task-group-009-fewshot-attempt-02
 description: SOP for Crescent Finance Ops benchmark tasks involving branch and regional management reporting, current-year and forecast compensation summaries, and weekly payroll reviews using local Finance Ops API payloads. Use when Codex must read task prompt/payloads, fetch allowed Finance Ops API endpoints, compute finance, compensation, payroll, ranking, rounding, and answer-template JSON fields, while avoiding restricted test outputs, notes, evaluator files, and environment internals.
 ---
 

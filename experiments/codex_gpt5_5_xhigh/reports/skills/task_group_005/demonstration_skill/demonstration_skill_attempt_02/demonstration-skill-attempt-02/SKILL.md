@@ -1,6 +1,6 @@
 ---
-name: demonstration-skill-attempt-02
-description: Solve PanofyBench task_group_005 finance/API demonstration tasks for reimbursement/AP close, stale AP batch refresh, vendor onboarding/release risk, prepaid close reconciliation, and account-change payment release. Use when Codex must read local scope/template payloads, query the shared ERP/compliance API, apply finance-control rules, and return strict JSON matching an answer_template.json.
+name: task-group-005-fewshot-attempt-02
+description: Solve PanofyBench task_group_005 finance/API fewshot tasks for reimbursement/AP close, stale AP batch refresh, vendor onboarding/release risk, prepaid close reconciliation, and account-change payment release. Use when Codex must read local scope/template payloads, query the shared ERP/compliance API, apply finance-control rules, and return strict JSON matching an answer_template.json.
 ---
 
 # Task Group 005 Input/Output Solver

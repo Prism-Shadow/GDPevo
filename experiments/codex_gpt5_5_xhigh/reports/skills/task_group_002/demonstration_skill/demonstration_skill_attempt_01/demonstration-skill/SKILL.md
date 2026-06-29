@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill
+name: task-group-002-fewshot-attempt-01
 description: Use this skill for MedBridge Sales Ops input/output tasks that require reading a prompt and answer_template.json, calling the shared local API, and returning account-ready JSON for quote pricing, freight decisions, RFQs, milestone reconciliation, revenue recognition, event invitations, or voucher controls. Trigger whenever the task mentions MedBridge Sales Ops, quote/RFQ decisions, product catalog tiers, freight options, opportunity reconciliation, invoices, payments, revenue journals, events, vouchers, or asks for JSON matching an input template.
 ---
 

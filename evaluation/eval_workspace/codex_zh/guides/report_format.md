@@ -77,8 +77,8 @@ conditions:
   `overall_std_at_3` 是 5 个 test-task `std_at_3` 的平均值。
 - `skill_dirs` 只用于非 base 条件。路径相对于 report YAML 所在目录，attempt
   编号必须和使用该 skill 的 solver attempt 编号一致。
-- Token 字段来自 Codex session traces。如果 trace 不能被唯一匹配，应写
-  `null`，并在对应 run record 中保留 trace 问题。
+- Token 字段来自复制到 `original_traces/` 下的 Codex session traces。如果
+  trace 不能被唯一匹配，应写 `null`，并在对应 run record 中保留 trace 问题。
 - 效率指标和 `acc@3` 使用相同聚合方式：先对同一个 test task 的 3 次
   attempts 取平均，再对 5 个 test tasks 取平均。
 - 效率指标只统计 test solver subagents 写答案的过程。不要包含 skill

@@ -12,6 +12,7 @@
 | `task_group/` | 当前正在评估的单个正式 task group |
 | `skills/` | 生成的 `fewshot`、`self` 和 `reflect-3` 文件 |
 | `runs/` | 每种条件、每个 test task、每次 attempt 的 solver 输出和打分记录 |
+| `original_traces/` | 每个 solver attempt 跑完后复制进来的 Codex 原始 session trace |
 | `scratch/` | 主评估 agent 创建的临时脚本、环境记录和中间检查 |
 | `report/` | 当前 task group 的最终评估报告 |
 
@@ -78,7 +79,7 @@ runs/reflect-3/
 
 每种条件下，每个 test task 独立运行 3 次。每次运行都必须由干净上下文的 solver subagent 完成。对于 skill 条件，solver 的 `attempt_<nn>` 使用相同编号的独立生成 skill。
 
-6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、Codex session trace 和 token 用量。
+6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、Codex session trace、复制进工作区的原始 trace 路径和 token 用量。将匹配到的 Codex 原始 trace 从 `~/.codex/sessions/` 复制到 `original_traces/<condition>/<task_id>/attempt_<nn>/`，用于后续审计。
 
 7. 所有 score records 准备完成后，聚合四种条件的 `acc@3` 和 population `std@3`，并聚合每种条件的平均 cached/input/output tokens。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
 
@@ -106,4 +107,4 @@ eval_attempt_id: <unique_eval_attempt_id>
 Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
 ```
 
-主 agent 之后使用 `eval_attempt_id` 匹配对应 Codex session trace，并回填 `token_count`。
+主 agent 之后使用 `eval_attempt_id` 匹配对应 Codex session trace，将原始 trace 复制到 `original_traces/`，并回填 `token_count`。

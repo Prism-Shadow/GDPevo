@@ -49,6 +49,7 @@ model: <model_name_or_config>
 
 transcript:
   subagent_file: <path to .../subagents/agent-<agent_id>.jsonl or null>
+  copied_trace_file: <path under original_traces/ or null>
   parent_tool_use_id: <tool_use_id of the Agent call for this attempt>
   match_status: matched
 
@@ -60,7 +61,7 @@ token_usage:                          # deduped by message.id, summed across res
   output_tokens: <int>
 ```
 
-If the transcript cannot be matched uniquely, write `missing` or `ambiguous` in `match_status`, set the corresponding token fields to `null`, and do not estimate them manually.
+If the transcript cannot be matched uniquely, write `missing` or `ambiguous` in `match_status`, set `copied_trace_file` and the corresponding token fields to `null`, and do not estimate them manually.
 
 ## acc@3
 

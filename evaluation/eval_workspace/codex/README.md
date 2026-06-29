@@ -12,6 +12,7 @@ This workspace evaluates one task group at a time. Do not modify the task group 
 | `task_group/` | The single official task group currently under evaluation |
 | `skills/` | Generated `fewshot`, `self`, and `reflect-3` files |
 | `runs/` | Solver outputs and scoring records for each condition, test task, and attempt |
+| `original_traces/` | Raw Codex session trace files copied after each solver attempt |
 | `scratch/` | Temporary scripts, environment notes, and intermediate checks created by the main evaluation agent |
 | `report/` | The final evaluation report for the current task group |
 
@@ -78,7 +79,7 @@ runs/reflect-3/
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context solver subagent. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
 
-6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, Codex session trace, and token usage.
+6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, Codex session trace, copied raw trace path, and token usage. Copy the matched raw Codex trace from `~/.codex/sessions/` into `original_traces/<condition>/<task_id>/attempt_<nn>/` for audit.
 
 7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average cached/input/output tokens for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
 
@@ -106,4 +107,4 @@ eval_attempt_id: <unique_eval_attempt_id>
 Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
 ```
 
-The main agent later uses `eval_attempt_id` to match the corresponding Codex session trace and backfill `token_count`.
+The main agent later uses `eval_attempt_id` to match the corresponding Codex session trace, copies that raw trace into `original_traces/`, and backfills `token_count`.

@@ -82,9 +82,9 @@ conditions:
 - `skill_dirs` is only used for non-base conditions. Paths are relative to the
   directory containing the report YAML, and attempt numbers must match the solver
   attempt number that used that skill.
-- Token fields come from the deduped Claude Code subagent transcripts. If a
-  transcript cannot be matched uniquely, write `null` and preserve the issue in
-  the corresponding run record.
+- Token fields come from the deduped Claude Code subagent transcripts copied
+  under `original_traces/`. If a transcript cannot be matched uniquely, write
+  `null` and preserve the issue in the corresponding run record.
 - Efficiency metrics follow the same aggregation shape as `acc@3`: average the
   3 attempts for the same test task, then average the 5 test tasks.
 - Efficiency metrics only count answer-writing by test solver subagents. Do not
