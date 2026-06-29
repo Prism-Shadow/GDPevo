@@ -76,8 +76,8 @@ token_usage:                          # DeepSeek usage, deduped, summed across r
   source: subagent_transcript
   prompt_cache_miss_tokens: <int or null>
   prompt_cache_hit_tokens: <int or null>
-  output_tokens: <int>
-  cost_usd: <float>
+  output_tokens: <int or null>
+  cost_usd: <float or null>
   pricing:
     prompt_cache_miss_usd_per_million: 0.435
     prompt_cache_hit_usd_per_million: 0.003625
