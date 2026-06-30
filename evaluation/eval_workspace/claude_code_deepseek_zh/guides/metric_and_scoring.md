@@ -26,16 +26,29 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 ~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
 ```
 
-**一条 API 响应会被拆成多条 content-block 记录。** 这些记录里 `input_tokens` / `cache_creation_input_tokens` / `cache_read_input_tokens` **完全相同**,但 `output_tokens` 是**流式累计**的——后面的记录值更大。所以按 `message.id` 去重时:input/cache 三桶取任一条,`output_tokens` 取该 `message.id` 的**最大值(最后一条)**。逐行求和会把 input/cache 放大约 2-3 倍;只取第一条又会低估 output。去重后,四个桶分别在响应间求和:
+本 workspace 只用于 Claude Code + DeepSeek V4 Pro。效率指标的权威来源是 Claude Code subagent transcript，而不是 DeepSeek 原始 API response schema。当前观察到的 `deepseek-v4-pro` Claude Code transcript 会用 Claude Code 风格字段保存 usage：
 
-- `input_tokens` —— 未缓存 input（全价）
-- `cache_creation_input_tokens` —— 写缓存
-- `cache_read_input_tokens` —— 读缓存（折扣价）
-- `output_tokens` —— 生成 token
+- `input_tokens`：非缓存 input tokens
+- `cache_creation_input_tokens`：写入 prompt cache 的 input tokens
+- `cache_read_input_tokens`：从 prompt cache 读取的 input tokens
+- `output_tokens`：生成 token
 
-每条响应的成本（Opus 4.8 / Opus 4.5 档，USD）= `input/1e6 * 5 + cache_creation/1e6 * 6.25 + cache_read/1e6 * 0.5 + output/1e6 * 25`；对去重后的响应求和即为该 attempt 成本。（这正是 Claude Code 自己的逐响应成本公式，逐条套用再累加。）
+DeepSeek API 文档中的字段是 `prompt_cache_hit_tokens` 和 `prompt_cache_miss_tokens`，但 Claude Code 目前不会在 session logs 中保存这两个字段名。不要在 `run_metadata.yaml` 中把 Claude Code transcript 字段重命名成 DeepSeek API 字段。正式批量聚合前仍应检查一次 pilot run，以防未来 Claude Code 版本调整落盘 schema。
 
-**不要**用父会话 `toolUseResult.totalTokens` 当成本或计费总量——它是 `最后一条响应(input+cache) + 累计 output`（一个"最终上下文规模"口径），且**不含 cache_read**，不是计费总量。只能当快速校验或"上下文规模"KPI 用。
+如果 Claude Code transcript 将同一响应拆成多条流式记录，应先按稳定的 response/message id 去重再求和。input token 字段从单条最终/去重后的响应记录中取值，output tokens 取该响应的最大累计值。如果没有稳定 id，应把 transcript match 标记为 `ambiguous`，不要手动估算计费。
+
+对于 `deepseek-v4-pro`，使用 DeepSeek V4 Pro 价格计算成本：
+
+```text
+cost_usd =
+  ((input_tokens + cache_creation_input_tokens) * 0.435
+   + cache_read_input_tokens * 0.003625
+   + output_tokens * 0.87) / 1_000_000
+```
+
+发布可计费报告前应重新核对 DeepSeek pricing 页面；如果 DeepSeek 调整价格，需要同步更新公式和 `run_metadata.yaml` 中的 `pricing` block。
+
+**不要**用父会话 `toolUseResult.totalTokens` 当成本或计费总量。它只能作为上下文规模的快速交叉检查，而且可能不包含 Claude Code transcript usage 字段。
 
 推荐格式：
 
@@ -51,13 +64,20 @@ transcript:
   parent_tool_use_id: <tool_use_id of the Agent call for this attempt>
   match_status: matched
 
-token_usage:                          # 按 message.id 去重、跨响应求和
+token_usage:                          # Claude Code usage，去重后跨响应求和
   source: subagent_transcript
-  input_tokens: <int>                 # 未缓存
-  cache_creation_input_tokens: <int>
-  cache_read_input_tokens: <int>
-  output_tokens: <int>
-  cost_usd: <float>
+  input_tokens: <int or null>
+  cache_creation_input_tokens: <int or null>
+  cache_read_input_tokens: <int or null>
+  output_tokens: <int or null>
+  cost_usd: <float or null>
+  billing_mapping:
+    full_price_input_tokens: input_tokens + cache_creation_input_tokens
+    cache_hit_input_tokens: cache_read_input_tokens
+  pricing:
+    full_price_input_usd_per_million: 0.435
+    cache_read_input_usd_per_million: 0.003625
+    output_usd_per_million: 0.87
 ```
 
 如果 transcript 不能被唯一匹配，应在 `match_status` 中写入 `missing` 或 `ambiguous`，将对应 token 字段设为 `null`，不要手动估算。
@@ -95,7 +115,7 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 所有 `score.yaml` 准备完成后，主 agent 应检查三种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `acc@3`、整体 `acc@3`，以及条件之间的提升。
 
-主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 cached/input/output tokens，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
+主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 Claude Code transcript token 字段，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。聚合 `input_tokens`、`cache_creation_input_tokens`、`cache_read_input_tokens`、`output_tokens` 和 `cost_usd`。
 
 这些效率指标只统计 test solver subagents 写答案的过程。不包括 skill 生成、环境启动、evaluator 执行或主 agent 汇总。它们不能替代 `acc@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
 

@@ -4,7 +4,7 @@
 
 当用户要求你在这个工作区中运行评估时，该请求即视为允许使用 Claude Code subagents（Task / Agent 工具）。主 agent 可以启动干净上下文的 skill-generation subagents 和 solver subagents 来生成 skills 并完成 test attempts。
 
-Solver 和 skill-generation subagents 使用与主 agent 相同的模型和 reasoning/effort 设置——这会自动继承，无需额外设置。
+Solver 和 skill-generation subagents 使用与主 agent 相同的 DeepSeek V4 Pro 配置。应先用 Claude Code + DeepSeek V4 Pro 配置启动主 agent；subagents 应继承该配置，无需单独传模型参数。
 
 如果所需 subagent 数量超过 subagent 并发上限，应分批运行。分批执行仍必须保证每次 solver attempt 都是干净上下文、拥有唯一 `eval_attempt_id`，并保存完整运行记录。不要减少 attempt 数量，不要让一个 solver 解多个 test tasks，也不要让主 agent 直接解 test tasks。
 
@@ -160,9 +160,9 @@ runs/reflect/test_001/attempt_01/
 ~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
 ```
 
-一条 API 响应会被拆成多条 content-block 记录:`input`/`cache_creation`/`cache_read` 完全相同,但 `output_tokens` 是流式累计的。**按 `message.id` 去重**——input/cache 三桶取任一条,`output_tokens` 取该 id 的**最大值**;逐行求和会把 input/cache 放大约 2-3 倍,只取第一条又会低估 output。对去重后的响应,把四个桶(`input_tokens`、`cache_creation_input_tokens`、`cache_read_input_tokens`、`output_tokens`)分别求和,并用 `metric_and_scoring.md` 里的逐响应公式算出 `cost_usd`。不要拿父会话 `toolUseResult.totalTokens` 当计费总量——它是"上下文规模"口径且不含 cache_read。
+本 workspace 使用 Claude Code 实际写入 subagent transcript 的 usage 字段：`input_tokens`、`cache_creation_input_tokens`、`cache_read_input_tokens` 和 `output_tokens`。DeepSeek API 文档使用 `prompt_cache_hit_tokens` 和 `prompt_cache_miss_tokens`，但 Claude Code logs 会保留 Claude Code 风格字段名。如果 Claude Code transcript 将同一响应拆成多条流式记录，应先按稳定的 response/message id 去重再求和。用 `metric_and_scoring.md` 中的 DeepSeek V4 Pro 公式计算 `cost_usd`，并在 `run_metadata.yaml` 中记录公式和费率。不要拿父会话 `toolUseResult.totalTokens` 当计费总量；它只能作为上下文规模的快速交叉检查。
 
-所有 runs 完成后，聚合三种条件的 `acc@3`、平均各桶 token 和平均 `cost_usd`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。
+所有 runs 完成后，聚合三种条件的 `acc@3`、平均 Claude Code transcript token 字段和平均 `cost_usd`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。
 
 临时检查代码、聚合代码或环境启动 notes 可以放在 `scratch/`。这些材料不是正式评估数据。
 

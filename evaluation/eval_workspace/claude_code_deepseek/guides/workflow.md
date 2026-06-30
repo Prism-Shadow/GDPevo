@@ -4,7 +4,7 @@ This file explains how the main evaluation agent should run one complete evaluat
 
 When a user asks you to run evaluation in this workspace, that request is considered permission to use Claude Code subagents (the Task / Agent tool). The main agent may start clean-context skill-generation subagents and solver subagents to generate skills and complete test attempts.
 
-Solver and skill-generation subagents run with the same model and reasoning/effort setting as the main agent — this is inherited automatically and does not need to be set.
+Solver and skill-generation subagents run with the same DeepSeek V4 Pro configuration as the main agent. Start the main agent with the Claude Code + DeepSeek V4 Pro configuration first; the subagents should inherit that configuration and do not need separate model flags.
 
 If the required number of subagents exceeds the subagent concurrency limit, run them in batches. Batched execution must still preserve clean context for every solver attempt, unique `eval_attempt_id` values, and complete run records. Do not reduce the attempt count, let one solver solve multiple test tasks, or let the main agent solve test tasks directly.
 
@@ -160,9 +160,9 @@ Each solver subagent has its own transcript:
 ~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
 ```
 
-One API response is logged across several content-block records: `input`/`cache_creation`/`cache_read` are identical, but `output_tokens` is cumulative (streamed). **Deduplicate by `message.id`** — keep the input/cache buckets from any record and take the **max `output_tokens`** per `message.id`; summing every record over-counts input/cache ~2-3x and keeping the first record under-counts output. Sum the four buckets (`input_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`, `output_tokens`) across the deduped responses, and compute `cost_usd` with the per-response formula in `metric_and_scoring.md`. Do not use the parent's `toolUseResult.totalTokens` as the billed total — it is a context-size measure that excludes cache reads.
+For this workspace, use the usage fields that Claude Code actually persists in the subagent transcript: `input_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`, and `output_tokens`. DeepSeek API docs use `prompt_cache_hit_tokens` and `prompt_cache_miss_tokens`, but Claude Code logs keep Claude Code-style field names. If the Claude Code transcript streams multiple records for one response, deduplicate by the stable response/message id before summing. Compute `cost_usd` with the DeepSeek V4 Pro formula in `metric_and_scoring.md`, and record the formula/rates in `run_metadata.yaml`. Do not use the parent's `toolUseResult.totalTokens` as the billed total; it is only a quick context-size cross-check.
 
-After all runs complete, aggregate `acc@3`, average per-bucket tokens, and average `cost_usd` for the three conditions. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization.
+After all runs complete, aggregate `acc@3`, average Claude Code transcript token fields, and average `cost_usd` for the three conditions. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization.
 
 Temporary checking code, aggregation code, or environment startup notes may be placed under `scratch/`. These materials are not formal evaluation data.
 
