@@ -26,27 +26,36 @@ Each solver subagent has its own transcript at:
 ~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
 ```
 
-This workspace is configured for Claude Code + DeepSeek V4 Pro only. Inspect the
-actual subagent transcript for one pilot run before bulk aggregation, then apply
-the same DeepSeek token rule to every attempt in the run. Use the DeepSeek usage
-buckets exposed by the transcript or API response:
+This workspace is configured for Claude Code + DeepSeek V4 Pro only. The
+authoritative source for efficiency metrics is the Claude Code subagent
+transcript, not the raw DeepSeek API response schema. In observed Claude Code
+transcripts for `deepseek-v4-pro`, usage is persisted with Claude Code-style
+fields:
 
-- `prompt_cache_miss_tokens` - input tokens billed at the cache-miss rate
-- `prompt_cache_hit_tokens` - input tokens billed at the cache-hit rate
-- `output_tokens` or `completion_tokens` - generated tokens
+- `input_tokens` - non-cached input tokens
+- `cache_creation_input_tokens` - input tokens written to the prompt cache
+- `cache_read_input_tokens` - input tokens read from the prompt cache
+- `output_tokens` - generated tokens
 
-If DeepSeek responses are streamed into multiple transcript records, deduplicate
-by the stable response/message id before summing. Keep the cache hit/miss input
-buckets from a single final/deduped response record and take the max cumulative
-output tokens for that response. If no stable id exists, record the transcript
-match as `ambiguous` and do not estimate billing manually.
+DeepSeek API docs expose `prompt_cache_hit_tokens` and
+`prompt_cache_miss_tokens`, but Claude Code does not currently persist those
+field names in its session logs. Do not rename Claude Code transcript fields to
+the DeepSeek API names in `run_metadata.yaml`. Still inspect one pilot run before
+bulk aggregation in case a future Claude Code release changes its persisted
+usage schema.
+
+If Claude Code streams one response into multiple transcript records,
+deduplicate by the stable response/message id before summing. Keep the input
+token fields from a single final/deduped response record and take the max
+cumulative output tokens for that response. If no stable id exists, record the
+transcript match as `ambiguous` and do not estimate billing manually.
 
 For `deepseek-v4-pro`, use the DeepSeek V4 Pro rate card for cost:
 
 ```text
 cost_usd =
-  (prompt_cache_miss_tokens * 0.435
-   + prompt_cache_hit_tokens * 0.003625
+  ((input_tokens + cache_creation_input_tokens) * 0.435
+   + cache_read_input_tokens * 0.003625
    + output_tokens * 0.87) / 1_000_000
 ```
 
@@ -56,7 +65,7 @@ in `run_metadata.yaml`.
 
 Do NOT use the parent's `toolUseResult.totalTokens` for cost or billed-token
 totals. It is only a quick context-size cross-check and may not contain the
-DeepSeek cache billing buckets.
+Claude Code transcript usage fields.
 
 Recommended format:
 
@@ -72,15 +81,19 @@ transcript:
   parent_tool_use_id: <tool_use_id of the Agent call for this attempt>
   match_status: matched
 
-token_usage:                          # DeepSeek usage, deduped, summed across responses
+token_usage:                          # Claude Code usage, deduped, summed across responses
   source: subagent_transcript
-  prompt_cache_miss_tokens: <int or null>
-  prompt_cache_hit_tokens: <int or null>
+  input_tokens: <int or null>
+  cache_creation_input_tokens: <int or null>
+  cache_read_input_tokens: <int or null>
   output_tokens: <int or null>
   cost_usd: <float or null>
+  billing_mapping:
+    full_price_input_tokens: input_tokens + cache_creation_input_tokens
+    cache_hit_input_tokens: cache_read_input_tokens
   pricing:
-    prompt_cache_miss_usd_per_million: 0.435
-    prompt_cache_hit_usd_per_million: 0.003625
+    full_price_input_usd_per_million: 0.435
+    cache_read_input_usd_per_million: 0.003625
     output_usd_per_million: 0.87
 ```
 
@@ -119,7 +132,7 @@ If retries still cannot produce a valid score, stop the evaluation and report th
 
 After all `score.yaml` files are ready, the main agent should check that all three conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3`, overall `acc@3`, and condition-to-condition improvements.
 
-The main agent should also aggregate average DeepSeek token buckets from each `run_metadata.yaml`, first per test task and then per condition. Aggregate `prompt_cache_miss_tokens`, `prompt_cache_hit_tokens`, `output_tokens`, and `cost_usd`. The aggregation follows the same shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
+The main agent should also aggregate average Claude Code transcript token fields from each `run_metadata.yaml`, first per test task and then per condition. Aggregate `input_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`, `output_tokens`, and `cost_usd`. The aggregation follows the same shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
 
 These efficiency metrics only count the answer-writing work of test solver subagents. They do not include skill generation, environment startup, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
 

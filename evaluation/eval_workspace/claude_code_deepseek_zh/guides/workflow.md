@@ -160,9 +160,9 @@ runs/reflect/test_001/attempt_01/
 ~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
 ```
 
-本 workspace 只使用 DeepSeek V4 Pro cache 口径：`prompt_cache_miss_tokens`、`prompt_cache_hit_tokens` 和 output/completion tokens。如果 Claude Code transcript 将同一响应拆成多条流式记录，应先按稳定的 response/message id 去重再求和。用 `metric_and_scoring.md` 中的 DeepSeek V4 Pro 公式计算 `cost_usd`，并在 `run_metadata.yaml` 中记录公式和费率。不要拿父会话 `toolUseResult.totalTokens` 当计费总量；它只能作为上下文规模的快速交叉检查。
+本 workspace 使用 Claude Code 实际写入 subagent transcript 的 usage 字段：`input_tokens`、`cache_creation_input_tokens`、`cache_read_input_tokens` 和 `output_tokens`。DeepSeek API 文档使用 `prompt_cache_hit_tokens` 和 `prompt_cache_miss_tokens`，但 Claude Code logs 会保留 Claude Code 风格字段名。如果 Claude Code transcript 将同一响应拆成多条流式记录，应先按稳定的 response/message id 去重再求和。用 `metric_and_scoring.md` 中的 DeepSeek V4 Pro 公式计算 `cost_usd`，并在 `run_metadata.yaml` 中记录公式和费率。不要拿父会话 `toolUseResult.totalTokens` 当计费总量；它只能作为上下文规模的快速交叉检查。
 
-所有 runs 完成后，聚合三种条件的 `acc@3`、平均 DeepSeek token buckets 和平均 `cost_usd`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。
+所有 runs 完成后，聚合三种条件的 `acc@3`、平均 Claude Code transcript token 字段和平均 `cost_usd`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。
 
 临时检查代码、聚合代码或环境启动 notes 可以放在 `scratch/`。这些材料不是正式评估数据。
 

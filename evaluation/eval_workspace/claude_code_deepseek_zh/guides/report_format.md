@@ -20,8 +20,9 @@ conditions:
   base:
     overall_acc_at_3: <float>
     efficiency:
-      prompt_cache_miss_tokens_avg_3: <float or null>
-      prompt_cache_hit_tokens_avg_3: <float or null>
+      input_tokens_avg_3: <float or null>
+      cache_creation_input_tokens_avg_3: <float or null>
+      cache_read_input_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
       cost_usd_avg_3: <float or null>
     tasks:
@@ -31,8 +32,9 @@ conditions:
           - <float>
           - <float>
         acc_at_3: <float>
-        prompt_cache_miss_tokens_avg_3: <float or null>
-        prompt_cache_hit_tokens_avg_3: <float or null>
+        input_tokens_avg_3: <float or null>
+        cache_creation_input_tokens_avg_3: <float or null>
+        cache_read_input_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
         cost_usd_avg_3: <float or null>
       test_002:
@@ -67,7 +69,7 @@ conditions:
 - 遵循上面的 YAML 结构：顶层字符串在 YAML 不要求时不加引号，`scores` 写成 block list，每行一个分数。
 - `scores` 必须保留 3 次原始运行分数，不能只保留平均值。
 - `skill_dirs` 只用于 skill 条件。路径相对于 report YAML 所在目录，且 `attempt_01` / `attempt_02` / `attempt_03` 必须和使用该 skill 的 solver attempt 编号一致。
-- Token buckets 和 `cost_usd_avg_3` 来自 3 次 attempts 的 subagent transcripts，并按 `metric_and_scoring.md` 中的 DeepSeek V4 Pro 去重和计价规则处理。报告 `prompt_cache_miss_tokens_avg_3`、`prompt_cache_hit_tokens_avg_3`、`output_tokens_avg_3` 和 `cost_usd_avg_3`。如果 transcript 不能被唯一匹配，应写 `null`，并在对应 workspace run record 中保留问题。
+- Token 字段和 `cost_usd_avg_3` 来自 3 次 attempts 的 subagent transcripts，并按 `metric_and_scoring.md` 中的 Claude Code transcript 去重规则和 DeepSeek V4 Pro 计价规则处理。报告 `input_tokens_avg_3`、`cache_creation_input_tokens_avg_3`、`cache_read_input_tokens_avg_3`、`output_tokens_avg_3` 和 `cost_usd_avg_3`。如果 transcript 不能被唯一匹配，应写 `null`，并在对应 workspace run record 中保留问题。
 - `conditions.<mode>.efficiency.*_avg_3` 是该模式下所有 test tasks 的平均效率汇总。
 - 效率指标和 `acc@3` 使用相同聚合方式：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。
 - 效率指标只统计 test solver subagents 写答案的过程。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。

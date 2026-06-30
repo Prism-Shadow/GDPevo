@@ -160,9 +160,9 @@ Each solver subagent has its own transcript:
 ~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
 ```
 
-For this workspace, use only the DeepSeek V4 Pro cache accounting fields: `prompt_cache_miss_tokens`, `prompt_cache_hit_tokens`, and output/completion tokens. If the Claude Code transcript streams multiple records for one response, deduplicate by the stable response/message id before summing. Compute `cost_usd` with the DeepSeek V4 Pro formula in `metric_and_scoring.md`, and record the formula/rates in `run_metadata.yaml`. Do not use the parent's `toolUseResult.totalTokens` as the billed total; it is only a quick context-size cross-check.
+For this workspace, use the usage fields that Claude Code actually persists in the subagent transcript: `input_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`, and `output_tokens`. DeepSeek API docs use `prompt_cache_hit_tokens` and `prompt_cache_miss_tokens`, but Claude Code logs keep Claude Code-style field names. If the Claude Code transcript streams multiple records for one response, deduplicate by the stable response/message id before summing. Compute `cost_usd` with the DeepSeek V4 Pro formula in `metric_and_scoring.md`, and record the formula/rates in `run_metadata.yaml`. Do not use the parent's `toolUseResult.totalTokens` as the billed total; it is only a quick context-size cross-check.
 
-After all runs complete, aggregate `acc@3`, average DeepSeek token buckets, and average `cost_usd` for the three conditions. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization.
+After all runs complete, aggregate `acc@3`, average Claude Code transcript token fields, and average `cost_usd` for the three conditions. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, environment startup, evaluator execution, or main-agent summarization.
 
 Temporary checking code, aggregation code, or environment startup notes may be placed under `scratch/`. These materials are not formal evaluation data.
 

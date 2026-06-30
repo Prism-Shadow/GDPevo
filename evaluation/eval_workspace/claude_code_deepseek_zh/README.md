@@ -69,9 +69,9 @@ runs/reflect/
 
 每种条件下，每个 test task 独立运行 3 次。每次运行都必须由干净上下文的 solver subagent 完成。对于 skill 条件，solver 的 `attempt_<nn>` 使用相同编号的独立生成 skill。
 
-6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、匹配到的 session transcript 引用、DeepSeek token 用量，以及 DeepSeek V4 Pro 计价依据。
+6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、匹配到的 session transcript 引用、Claude Code transcript token 用量，以及 DeepSeek V4 Pro 计价依据。
 
-7. 所有 score records 准备完成后，聚合三种条件的 `acc@3`，并聚合每种条件的 DeepSeek V4 Pro cache-miss input tokens、cache-hit input tokens、output tokens 和 cost。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
+7. 所有 score records 准备完成后，聚合三种条件的 `acc@3`，并聚合每种条件的 Claude Code transcript input、cache-creation input、cache-read input、output tokens 和 DeepSeek V4 Pro cost。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境启动、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
 
 ## Agent 边界
 
@@ -93,4 +93,4 @@ eval_attempt_id: <unique_eval_attempt_id>
 Please solve this single test task. You may only read and write files inside this attempt directory; do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. Write the final answer as answer.json following input/payloads/answer_template.json.
 ```
 
-主 agent 之后使用 `eval_attempt_id` 在 session transcript 中定位该 subagent 的 turns，并回填 `token_count`。
+主 agent 之后使用 `eval_attempt_id` 在 session transcript 中定位该 subagent 的 turns，并回填 `token_usage`。
