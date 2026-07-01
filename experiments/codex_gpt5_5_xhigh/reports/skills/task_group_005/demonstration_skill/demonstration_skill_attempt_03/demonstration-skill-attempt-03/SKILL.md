@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-03
+name: task-group-005-fewshot-attempt-03
 description: Solve PanofyBench task_group_005 ERP, AP, prepaid close, vendor onboarding, and account-change release tasks by using the shared JSON API and returning schema-exact JSON outputs.
 ---
 

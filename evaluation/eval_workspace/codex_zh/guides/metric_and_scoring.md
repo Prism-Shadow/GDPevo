@@ -29,6 +29,7 @@ model: <model_name_or_config>
 
 trace:
   session_file: <path to rollout-*.jsonl or null>
+  copied_trace_file: <path under original_traces/ or null>
   session_id: <session_id>
   parent_thread_id: <parent_thread_id>
   agent_nickname: <agent_nickname>
@@ -43,7 +44,7 @@ token_usage:
   total_tokens: <int>
 ```
 
-如果 trace 不能被唯一匹配，应在 `match_status` 中写入 `missing` 或 `ambiguous`，将对应 token 字段设为 `null`，不要手动估算。
+如果 trace 不能被唯一匹配，应在 `match_status` 中写入 `missing` 或 `ambiguous`，将 `copied_trace_file` 和对应 token 字段设为 `null`，不要手动估算。
 
 ## acc@3
 

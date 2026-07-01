@@ -1,5 +1,5 @@
 ---
-name: credit-office-json
+name: task-group-011-fewshot-attempt-03
 description: Produce committee-ready JSON answers for credit-office API tasks involving branch loan regrades, lending allocation decisions, CRE application comparisons, watch-list stress packets, and credit-union segment posture reviews. Use when a prompt provides a credit office public API base URL, branch_id or segment_id, and an answer_template.json with required fields, enum choices, ordering, and precision rules.
 ---
 

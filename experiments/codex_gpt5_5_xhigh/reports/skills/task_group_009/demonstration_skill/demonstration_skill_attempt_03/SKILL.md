@@ -1,5 +1,5 @@
 ---
-name: task-group-009-finance-ops
+name: task-group-009-fewshot-attempt-03
 description: Transferable SOP for Crescent Arts Collective Finance Ops API tasks in task_group_009 requiring branch close reporting, regional finance reporting, current-year ensemble compensation summaries, compensation forecasts, or touring theatre payroll/CBA review. Use when Codex must read input payloads, query the localhost Finance Ops API, calculate rounded JSON outputs, rank branches or regions, apply roster/scenario compensation rules, or compute payroll premiums, guarantees, vacation, substitute adjustments, and conflict flags.
 ---
 

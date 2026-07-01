@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-01
+name: task-group-006-fewshot-attempt-01
 description: Solve ProcureOps procurement, receiving, AP close, change-control, and AP release benchmark tasks by combining task-local payload anchors with the ProcureOps API and returning exact JSON matching the provided answer template.
 ---
 

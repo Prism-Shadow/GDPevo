@@ -146,6 +146,23 @@ Backfill token usage from the matched Claude Code subagent transcript. Deduplica
 by `message.id`: keep input/cache buckets from any record and the max
 `output_tokens` per message id, then sum across responses.
 
+Claude Code subagent transcripts are usually under:
+
+```text
+~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
+```
+
+After matching the transcript, copy or hard-link the raw `agent-*.jsonl` file
+into:
+
+```text
+original_traces/<condition>/<task_id>/attempt_<nn>/
+```
+
+Record both the source transcript path and the copied workspace trace path in
+`run_metadata.yaml`. If no unique transcript can be matched, set the copied
+trace path to `null`, keep the token fields `null`, and report the trace issue.
+
 After all runs complete, aggregate `acc@3`, population `std@3`, and per-bucket tokens for all four
 conditions. Efficiency metrics count only test solver answer writing: average
 the 3 attempts for the same test task, then average the 5 test tasks. Do not

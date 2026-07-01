@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-02
+name: task-group-007-fewshot-attempt-02
 description: Use for Northwind Components ERP tasks that require JSON answers for dispatch expedite queues, warehouse allocation and transfer waves, kit replenishment planning, supplier incident scorecards, or procurement quality-hold reviews using the local ERP API.
 ---
 

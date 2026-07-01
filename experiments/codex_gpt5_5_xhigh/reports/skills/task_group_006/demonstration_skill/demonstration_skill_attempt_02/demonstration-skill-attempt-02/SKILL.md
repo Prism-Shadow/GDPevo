@@ -1,6 +1,6 @@
 ---
-name: demonstration-skill-attempt-02
-description: Solve ProcureOps demonstration benchmark tasks that require reading task-local payloads, querying the ProcureOps API, reconciling procurement/AP/receiving records, and returning only schema-conformant JSON.
+name: task-group-006-fewshot-attempt-02
+description: Solve ProcureOps fewshot benchmark tasks that require reading task-local payloads, querying the ProcureOps API, reconciling procurement/AP/receiving records, and returning only schema-conformant JSON.
 ---
 
 # ProcureOps Input-Output Skill

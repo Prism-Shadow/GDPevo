@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-03
+name: task-group-006-fewshot-attempt-03
 description: Solve ProcureOps procurement, receiving, AP close, change-control, and release-decision tasks that provide local input payloads plus a shared ProcureOps API, returning strict JSON matching the task answer template.
 ---
 

@@ -146,6 +146,17 @@ Codex traces 通常位于：
 ~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
 ```
 
+匹配到 trace 后，将原始 `rollout-*.jsonl` 复制或硬链接到：
+
+```text
+original_traces/<condition>/<task_id>/attempt_<nn>/
+```
+
+在 `run_metadata.yaml` 中同时记录原始 trace 路径和复制进工作区后的 trace
+路径。如果不能唯一匹配 trace，将复制后的 trace 路径写为 `null`，token
+字段也保持 `null`，并报告 trace 问题。正式 attempt 不要使用
+`codex exec --ephemeral` 这类不会留下可追溯 trace 的启动方式。
+
 所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3` 和平均 cached/input/output tokens。
 效率指标只统计 test solver 写答案的过程：先对同一个 test task 的 3 次
 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill generation、

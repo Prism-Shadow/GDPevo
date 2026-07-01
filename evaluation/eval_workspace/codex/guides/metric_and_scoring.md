@@ -29,6 +29,7 @@ model: <model_name_or_config>
 
 trace:
   session_file: <path to rollout-*.jsonl or null>
+  copied_trace_file: <path under original_traces/ or null>
   session_id: <session_id>
   parent_thread_id: <parent_thread_id>
   agent_nickname: <agent_nickname>
@@ -43,7 +44,7 @@ token_usage:
   total_tokens: <int>
 ```
 
-If the trace cannot be matched uniquely, write `missing` or `ambiguous` in `match_status`, set the corresponding token fields to `null`, and do not estimate them manually.
+If the trace cannot be matched uniquely, write `missing` or `ambiguous` in `match_status`, set `copied_trace_file` and the corresponding token fields to `null`, and do not estimate them manually.
 
 ## acc@3
 

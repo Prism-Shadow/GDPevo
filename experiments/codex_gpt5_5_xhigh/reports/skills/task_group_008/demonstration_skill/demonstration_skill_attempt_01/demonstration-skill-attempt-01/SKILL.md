@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-01
+name: task-group-008-fewshot-attempt-01
 description: Solve private wealth advisory input/output tasks that require reading a request memo and answer template, querying the local advisory API, resolving conflicting client sources, calculating Roth/RMD, ILIT Crummey, GRAT/CRAT, and estate-liquidity outputs, and returning strict JSON.
 ---
 

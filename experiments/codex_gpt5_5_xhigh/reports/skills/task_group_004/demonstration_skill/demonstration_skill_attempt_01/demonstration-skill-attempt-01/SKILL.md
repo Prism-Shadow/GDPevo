@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-01
+name: task-group-004-fewshot-attempt-01
 description: Build ApexCloud CRM retention analytics outputs from the ApexCloud Retention Operations API and strict JSON answer templates. Use for tasks involving renewal risk queues, QBR metrics packets, receivables and pipeline operations reviews, churn model validation, candidate outreach ranking, high-touch retention action boards, or any ApexCloud CRM retention workflow requiring controlled labels, policy codes, deterministic rounding, and JSON-only output.
 ---
 

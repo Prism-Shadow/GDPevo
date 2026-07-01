@@ -1,5 +1,5 @@
 ---
-name: demonstration_skill_attempt_03
+name: task-group-012-fewshot-attempt-03
 description: Use for Northwind PeopleOps Console tasks that require reconciling HR lifecycle records, leave/payroll source precedence, recruitment outcomes, folder/notice readiness, audit evidence, and writing evaluator-ready answer.json files from a provided answer_template.json.
 ---
 
