@@ -15,6 +15,7 @@ Accuracy is reported as `acc@3`, averaged over 12 task groups. Stability is repo
 | Codex | GPT-5.5 | xhigh | 46.72% | 5.13% | 64.91% | 6.36% | 54.99% | 8.73% | 57.45% | 7.62% | -29.24% | -32.18% | -25.74% | +18.19 pp | +8.27 pp | +10.73 pp |
 | Claude Code | Opus 4.8 | xhigh | 49.11% | 5.25% | 70.90% | 6.38% | 57.37% | 6.79% | 62.72% | 6.68% | -9.61% | +0.53% | -0.34% | +21.79 pp | +8.26 pp | +13.62 pp |
 | Panofy | Opus 4.6 | high | 50.40% | 6.99% | 71.47% | 4.93% | 58.39% | 5.74% | 59.82% | 7.31% | +8.27% | -6.00% | +1.99% | +21.07 pp | +7.99 pp | +9.41 pp |
+| Claude Code | GLM-5.2 | max | 47.73% | 5.21% | 69.55% | 8.85% | 55.91% | 7.84% | 63.35% | 7.51% | -12.28% | -10.23% | -16.50% | +21.83 pp | +8.18 pp | +15.62 pp |
 
 See the full experiment board in [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md).
 
@@ -23,6 +24,7 @@ Per-task reports are under:
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
 - [`experiments/panofy_claude_opus_4_6_high/`](experiments/panofy_claude_opus_4_6_high/)
+- [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
 
 ## Repository Layout
 
@@ -37,7 +39,7 @@ Per-task reports are under:
 ## How To Use This Repo
 
 - Benchmark data: read the summary in [`data/DATA_BOARD.md`](data/DATA_BOARD.md), then inspect task groups under [`data/task_groups/`](data/task_groups/).
-- Evaluation results: read [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md), then open the per-task reports under the three experiment directories.
+- Evaluation results: read [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md), then open the per-task reports under the released experiment directories.
 - Construction workspaces: use the three-stage workflow under [`data_construction/`](data_construction/).
 - Score evaluation workspaces: use [`evaluation/eval_workspace/`](evaluation/eval_workspace/).
 - Stages 1-3 are written for Codex workflows. Other agent frameworks can reuse the same structure, but may need light adaptation.

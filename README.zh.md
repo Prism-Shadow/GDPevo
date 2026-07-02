@@ -15,6 +15,7 @@
 | Codex | GPT-5.5 | xhigh | 46.72% | 5.13% | 64.91% | 6.36% | 54.99% | 8.73% | 57.45% | 7.62% | -29.24% | -32.18% | -25.74% | +18.19 个百分点 | +8.27 个百分点 | +10.73 个百分点 |
 | Claude Code | Opus 4.8 | xhigh | 49.11% | 5.25% | 70.90% | 6.38% | 57.37% | 6.79% | 62.72% | 6.68% | -9.61% | +0.53% | -0.34% | +21.79 个百分点 | +8.26 个百分点 | +13.62 个百分点 |
 | Panofy | Opus 4.6 | high | 50.40% | 6.99% | 71.47% | 4.93% | 58.39% | 5.74% | 59.82% | 7.31% | +8.27% | -6.00% | +1.99% | +21.07 个百分点 | +7.99 个百分点 | +9.41 个百分点 |
+| Claude Code | GLM-5.2 | max | 47.73% | 5.21% | 69.55% | 8.85% | 55.91% | 7.84% | 63.35% | 7.51% | -12.28% | -10.23% | -16.50% | +21.83 个百分点 | +8.18 个百分点 | +15.62 个百分点 |
 
 完整汇总见 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md)。
 
@@ -23,6 +24,7 @@
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
 - [`experiments/panofy_claude_opus_4_6_high/`](experiments/panofy_claude_opus_4_6_high/)
+- [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
 
 ## 目录结构
 
@@ -37,7 +39,7 @@
 ## 如何使用这个仓库
 
 - 基准数据：阅读 [`data/DATA_BOARD.zh.md`](data/DATA_BOARD.zh.md) 了解任务组概览，再查看 [`data/task_groups/`](data/task_groups/) 中的具体任务。
-- 评测结果：在 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md) 查看汇总结果，再进入三个实验目录阅读逐任务报告。
+- 评测结果：在 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md) 查看汇总结果，再进入已发布实验目录阅读逐任务报告。
 - 构建工作区：前三阶段流程在 [`data_construction/`](data_construction/) 下。
 - 分数评测工作区：使用 [`evaluation/eval_workspace/`](evaluation/eval_workspace/)。
 - 前三阶段默认通过 Codex 工作流实现。其他智能体框架可以复用整体结构，但需要适度改写。

@@ -8,7 +8,8 @@ evolution modes. The Codex, Claude Code, and Panofy runs report `fewshot`, `self
 `reflect-3`. Full structured reports
 are stored under released experiment directories, such as
 `codex_gpt5_5_xhigh/reports/`, `claude_code_opus_4_8_xhigh/reports/`,
-and `panofy_claude_opus_4_6_high/reports/`.
+`panofy_claude_opus_4_6_high/reports/`, and
+`claude_code_glm_5_2_max/reports/`.
 
 In the released Codex GPT-5.5 xhigh run, the three Codex evolution modes improve
 accuracy by +12.39 pp on average and change token cost by
@@ -172,7 +173,6 @@ The Claude Code token columns are the four Anthropic usage buckets (uncached inp
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `claude-opus-4-8, xhigh` | `claude_code` | `self` | 73.48% | 2.62% | 3.1k | 21.1k | 158.2k | 2.9k | 0.30 | [task_group_012.yaml](claude_code_opus_4_8_xhigh/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `claude-opus-4-8, xhigh` | `claude_code` | `reflect-3` | 74.70% | 3.75% | 3.1k | 21.1k | 170.1k | 3.2k | 0.31 | [task_group_012.yaml](claude_code_opus_4_8_xhigh/reports/task_group_012.yaml) |
 
-
 ---
 
 ## Panofy (Claude Opus 4.6, high)
@@ -248,3 +248,83 @@ The Panofy token columns are the three available Anthropic usage buckets returne
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `claude-opus-4-6, high` | `panofy` | `fewshot` | 87.58% | 1.05% | 11.7k | 134.7k | 3.5k | 0.23 | [task_group_012.yaml](panofy_claude_opus_4_6_high/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `claude-opus-4-6, high` | `panofy` | `self` | 84.91% | 6.35% | 10.8k | 144.1k | 3.6k | 0.23 | [task_group_012.yaml](panofy_claude_opus_4_6_high/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `claude-opus-4-6, high` | `panofy` | `reflect-3` | 83.23% | 5.31% | 13.3k | 128.9k | 4.2k | 0.25 | [task_group_012.yaml](panofy_claude_opus_4_6_high/reports/task_group_012.yaml) |
+
+---
+
+## Claude Code (GLM-5.2, max)
+
+In the released Claude Code GLM-5.2 max run, the three evolution modes improve accuracy by +15.21 pp on average and change token cost by -13.00% on average across the 12 task groups. Individually, `fewshot`, `self`, and `reflect-3` improve accuracy by +21.83 pp, +8.18 pp, and +15.62 pp, respectively.
+
+For the released `glm-5.2, max` run, this board uses the Z.AI GLM-5.2 prices:
+
+| Token type | Price |
+| --- | ---: |
+| Input | $1.40 / 1M tokens |
+| Cached input | $0.26 / 1M tokens |
+| Cached input storage | $0.00 / 1M tokens (limited-time free) |
+| Output | $4.40 / 1M tokens |
+
+The board-level and report-level cost formula is:
+
+```text
+cost_USD_avg_3 =
+  (input_tokens_avg_3          * 1.40
+   + cache_creation_tokens_avg_3 * 0.00
+   + cache_read_tokens_avg_3     * 0.26
+   + output_tokens_avg_3         * 4.40) / 1_000_000
+```
+
+The GLM token columns are the four usage buckets normalized from the Claude Code run metadata: input, cached input storage, cached input, and output. `cache_creation_tokens_avg_3` maps to cached input storage and is currently priced at 0.00.
+
+| task_group_id | scenario_id | model | harness | mode | overall acc@3 (%) | overall std@3 (%) | input tokens avg@3 (k) | cached input storage tokens avg@3 (k) | cached input tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
+| --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `glm-5.2, max` | `claude_code` | `base` | 42.94% | 4.65% | 56.5k | 0.0k | 532.5k | 32.1k | 0.36 | [task_group_001.yaml](claude_code_glm_5_2_max/reports/task_group_001.yaml) |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `glm-5.2, max` | `claude_code` | `fewshot` | 81.65% | 7.09% | 45.0k | 0.0k | 507.6k | 20.7k | 0.29 | [task_group_001.yaml](claude_code_glm_5_2_max/reports/task_group_001.yaml) |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `glm-5.2, max` | `claude_code` | `self` | 61.77% | 6.16% | 49.1k | 0.0k | 522.3k | 26.6k | 0.32 | [task_group_001.yaml](claude_code_glm_5_2_max/reports/task_group_001.yaml) |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `glm-5.2, max` | `claude_code` | `reflect-3` | 78.38% | 13.71% | 38.6k | 0.0k | 429.6k | 21.5k | 0.26 | [task_group_001.yaml](claude_code_glm_5_2_max/reports/task_group_001.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `glm-5.2, max` | `claude_code` | `base` | 40.92% | 0.00% | 27.1k | 0.0k | 302.1k | 14.7k | 0.18 | [task_group_002.yaml](claude_code_glm_5_2_max/reports/task_group_002.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `glm-5.2, max` | `claude_code` | `fewshot` | 56.27% | 7.00% | 34.6k | 0.0k | 329.8k | 15.3k | 0.20 | [task_group_002.yaml](claude_code_glm_5_2_max/reports/task_group_002.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `glm-5.2, max` | `claude_code` | `self` | 42.43% | 2.01% | 35.1k | 0.0k | 339.8k | 15.4k | 0.21 | [task_group_002.yaml](claude_code_glm_5_2_max/reports/task_group_002.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `glm-5.2, max` | `claude_code` | `reflect-3` | 47.71% | 7.28% | 29.1k | 0.0k | 325.0k | 11.8k | 0.18 | [task_group_002.yaml](claude_code_glm_5_2_max/reports/task_group_002.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `glm-5.2, max` | `claude_code` | `base` | 61.56% | 7.81% | 59.4k | 0.0k | 459.8k | 34.7k | 0.36 | [task_group_003.yaml](claude_code_glm_5_2_max/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `glm-5.2, max` | `claude_code` | `fewshot` | 74.90% | 10.36% | 55.5k | 0.0k | 468.1k | 25.4k | 0.31 | [task_group_003.yaml](claude_code_glm_5_2_max/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `glm-5.2, max` | `claude_code` | `self` | 65.65% | 9.87% | 57.6k | 0.0k | 527.9k | 28.2k | 0.34 | [task_group_003.yaml](claude_code_glm_5_2_max/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `glm-5.2, max` | `claude_code` | `reflect-3` | 63.15% | 4.72% | 53.5k | 0.0k | 452.7k | 30.4k | 0.33 | [task_group_003.yaml](claude_code_glm_5_2_max/reports/task_group_003.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `glm-5.2, max` | `claude_code` | `base` | 19.68% | 3.19% | 71.8k | 0.0k | 663.1k | 50.7k | 0.50 | [task_group_004.yaml](claude_code_glm_5_2_max/reports/task_group_004.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `glm-5.2, max` | `claude_code` | `fewshot` | 60.15% | 3.83% | 65.5k | 0.0k | 636.3k | 40.4k | 0.43 | [task_group_004.yaml](claude_code_glm_5_2_max/reports/task_group_004.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `glm-5.2, max` | `claude_code` | `self` | 28.61% | 7.26% | 49.2k | 0.0k | 460.2k | 26.5k | 0.31 | [task_group_004.yaml](claude_code_glm_5_2_max/reports/task_group_004.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `glm-5.2, max` | `claude_code` | `reflect-3` | 42.93% | 18.53% | 47.7k | 0.0k | 378.4k | 27.5k | 0.29 | [task_group_004.yaml](claude_code_glm_5_2_max/reports/task_group_004.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `glm-5.2, max` | `claude_code` | `base` | 48.07% | 2.25% | 58.2k | 0.0k | 435.4k | 39.9k | 0.37 | [task_group_005.yaml](claude_code_glm_5_2_max/reports/task_group_005.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `glm-5.2, max` | `claude_code` | `fewshot` | 62.44% | 12.04% | 57.7k | 0.0k | 434.7k | 36.8k | 0.36 | [task_group_005.yaml](claude_code_glm_5_2_max/reports/task_group_005.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `glm-5.2, max` | `claude_code` | `self` | 54.97% | 15.52% | 52.5k | 0.0k | 448.6k | 31.2k | 0.33 | [task_group_005.yaml](claude_code_glm_5_2_max/reports/task_group_005.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `glm-5.2, max` | `claude_code` | `reflect-3` | 59.38% | 4.27% | 53.4k | 0.0k | 444.3k | 37.5k | 0.36 | [task_group_005.yaml](claude_code_glm_5_2_max/reports/task_group_005.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `glm-5.2, max` | `claude_code` | `base` | 58.37% | 7.34% | 67.0k | 0.0k | 499.2k | 41.7k | 0.41 | [task_group_006.yaml](claude_code_glm_5_2_max/reports/task_group_006.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `glm-5.2, max` | `claude_code` | `fewshot` | 70.41% | 7.11% | 57.9k | 0.0k | 446.9k | 34.6k | 0.35 | [task_group_006.yaml](claude_code_glm_5_2_max/reports/task_group_006.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `glm-5.2, max` | `claude_code` | `self` | 61.15% | 5.14% | 64.8k | 0.0k | 469.7k | 35.4k | 0.37 | [task_group_006.yaml](claude_code_glm_5_2_max/reports/task_group_006.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `glm-5.2, max` | `claude_code` | `reflect-3` | 62.07% | 6.69% | 56.4k | 0.0k | 499.0k | 32.5k | 0.35 | [task_group_006.yaml](claude_code_glm_5_2_max/reports/task_group_006.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `glm-5.2, max` | `claude_code` | `base` | 33.36% | 5.65% | 64.5k | 0.0k | 613.7k | 46.1k | 0.45 | [task_group_007.yaml](claude_code_glm_5_2_max/reports/task_group_007.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `glm-5.2, max` | `claude_code` | `fewshot` | 55.84% | 5.84% | 60.1k | 0.0k | 585.4k | 35.1k | 0.39 | [task_group_007.yaml](claude_code_glm_5_2_max/reports/task_group_007.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `glm-5.2, max` | `claude_code` | `self` | 35.21% | 5.39% | 64.5k | 0.0k | 732.2k | 35.7k | 0.44 | [task_group_007.yaml](claude_code_glm_5_2_max/reports/task_group_007.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `glm-5.2, max` | `claude_code` | `reflect-3` | 55.03% | 8.67% | 62.6k | 0.0k | 679.7k | 37.2k | 0.43 | [task_group_007.yaml](claude_code_glm_5_2_max/reports/task_group_007.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `glm-5.2, max` | `claude_code` | `base` | 56.27% | 7.53% | 48.6k | 0.0k | 356.7k | 35.0k | 0.31 | [task_group_008.yaml](claude_code_glm_5_2_max/reports/task_group_008.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `glm-5.2, max` | `claude_code` | `fewshot` | 77.94% | 19.38% | 31.8k | 0.0k | 284.1k | 15.0k | 0.18 | [task_group_008.yaml](claude_code_glm_5_2_max/reports/task_group_008.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `glm-5.2, max` | `claude_code` | `self` | 63.09% | 10.98% | 31.2k | 0.0k | 301.8k | 12.6k | 0.18 | [task_group_008.yaml](claude_code_glm_5_2_max/reports/task_group_008.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `glm-5.2, max` | `claude_code` | `reflect-3` | 76.41% | 4.94% | 28.6k | 0.0k | 296.8k | 9.7k | 0.16 | [task_group_008.yaml](claude_code_glm_5_2_max/reports/task_group_008.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `glm-5.2, max` | `claude_code` | `base` | 55.10% | 7.41% | 44.1k | 0.0k | 310.0k | 31.8k | 0.28 | [task_group_009.yaml](claude_code_glm_5_2_max/reports/task_group_009.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `glm-5.2, max` | `claude_code` | `fewshot` | 88.31% | 8.26% | 40.1k | 0.0k | 358.0k | 20.8k | 0.24 | [task_group_009.yaml](claude_code_glm_5_2_max/reports/task_group_009.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `glm-5.2, max` | `claude_code` | `self` | 63.45% | 10.95% | 40.5k | 0.0k | 367.3k | 18.3k | 0.23 | [task_group_009.yaml](claude_code_glm_5_2_max/reports/task_group_009.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `glm-5.2, max` | `claude_code` | `reflect-3` | 78.35% | 2.05% | 37.3k | 0.0k | 287.7k | 18.4k | 0.21 | [task_group_009.yaml](claude_code_glm_5_2_max/reports/task_group_009.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `glm-5.2, max` | `claude_code` | `base` | 61.54% | 8.58% | 72.4k | 0.0k | 541.0k | 46.4k | 0.45 | [task_group_010.yaml](claude_code_glm_5_2_max/reports/task_group_010.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `glm-5.2, max` | `claude_code` | `fewshot` | 72.11% | 9.69% | 66.6k | 0.0k | 525.7k | 35.6k | 0.39 | [task_group_010.yaml](claude_code_glm_5_2_max/reports/task_group_010.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `glm-5.2, max` | `claude_code` | `self` | 69.60% | 6.15% | 68.0k | 0.0k | 602.9k | 39.6k | 0.43 | [task_group_010.yaml](claude_code_glm_5_2_max/reports/task_group_010.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `glm-5.2, max` | `claude_code` | `reflect-3` | 64.61% | 7.13% | 68.9k | 0.0k | 528.3k | 41.3k | 0.42 | [task_group_010.yaml](claude_code_glm_5_2_max/reports/task_group_010.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `glm-5.2, max` | `claude_code` | `base` | 47.59% | 8.16% | 74.5k | 0.0k | 574.3k | 51.7k | 0.48 | [task_group_011.yaml](claude_code_glm_5_2_max/reports/task_group_011.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `glm-5.2, max` | `claude_code` | `fewshot` | 54.40% | 8.41% | 71.4k | 0.0k | 595.0k | 44.0k | 0.45 | [task_group_011.yaml](claude_code_glm_5_2_max/reports/task_group_011.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `glm-5.2, max` | `claude_code` | `self` | 46.38% | 7.08% | 72.9k | 0.0k | 603.3k | 45.4k | 0.46 | [task_group_011.yaml](claude_code_glm_5_2_max/reports/task_group_011.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `glm-5.2, max` | `claude_code` | `reflect-3` | 52.00% | 4.10% | 69.5k | 0.0k | 552.1k | 41.2k | 0.42 | [task_group_011.yaml](claude_code_glm_5_2_max/reports/task_group_011.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `base` | 47.30% | 0.00% | 101.3k | 0.0k | 1125.4k | 16.4k | 0.51 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `fewshot` | 80.21% | 7.20% | 104.0k | 0.0k | 1074.7k | 15.1k | 0.49 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `self` | 78.58% | 7.61% | 122.6k | 0.0k | 1198.3k | 20.5k | 0.57 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `reflect-3` | 80.16% | 8.00% | 109.1k | 0.0k | 1015.8k | 17.5k | 0.49 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
+
+
