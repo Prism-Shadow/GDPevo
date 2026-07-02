@@ -1,10 +1,10 @@
 # Claude Code GLM 5.2 Evaluation Workspace
 
-This workspace is the evaluation entrypoint for running `GLM-5.2` with `xhigh`
-reasoning through the Claude Code harness. You are the main evaluation agent for
-this stage. Your goal is to formally evaluate one task group that has already
-passed quality review, using `acc@3` and population `std@3` across four
-conditions: `base`, `fewshot`, `self`, and `reflect-3`.
+This workspace is the evaluation entrypoint for running the Claude Code harness
+at `xhigh` reasoning while using `GLM-5.2` with the `max` model setting. You are
+the main evaluation agent for this stage. Your goal is to formally evaluate one
+task group that has already passed quality review, using `acc@3` and population
+`std@3` across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
 
 This workspace evaluates one task group at a time. Do not modify the task group under evaluation. If you find that the task group itself is invalid, record the risk in the report and send the data back to an earlier stage.
 
@@ -49,10 +49,10 @@ GDPEVO_JUDGE_PATH=/api/judge
 When a user asks you to run evaluation in this workspace, that request is considered permission to use Claude Code subagents (the Task / Agent tool), including skill-generation subagents and solver subagents. If the required number of subagents exceeds the subagent concurrency limit, run them in batches until all required attempts are complete. Do not reduce the attempt count, merge multiple test tasks into one solver run, or solve test tasks directly as the main agent.
 
 Before starting the run, confirm that the main Claude Code session is configured
-to `GLM-5.2` with `xhigh` reasoning/effort. Solver and skill-generation
-subagents run with the same model and reasoning/effort setting as the main
-agent; this is inherited automatically and does not need to be set again inside
-each subagent prompt.
+for `GLM-5.2`: Claude Code runs at `xhigh` effort, while the GLM model setting
+reported for the released run is `max`. Solver and skill-generation subagents
+run with the same model and effort setting as the main agent; this is inherited
+automatically and does not need to be set again inside each subagent prompt.
 
 1. Confirm that `task_group/` contains exactly one task group:
 

@@ -1,7 +1,8 @@
 # Evaluation Workflow
 
 This file explains how the main evaluation agent should run one complete Claude
-Code evaluation with `GLM-5.2` at `xhigh` reasoning/effort.
+Code evaluation with `GLM-5.2`: Claude Code uses `xhigh` effort, and the GLM
+model setting reported for the released run is `max`.
 
 The evaluation now uses a remote task environment and four conditions:
 
@@ -18,8 +19,9 @@ run in a clean, dedicated directory, and restrict each subagent to that
 directory.
 
 Before launching any subagents, confirm that the main Claude Code session is
-using `GLM-5.2` with `xhigh` reasoning/effort. Subagents inherit the main
-session model and effort setting, so do not override the model per attempt.
+using `GLM-5.2` with Claude Code `xhigh` effort and the GLM `max` model setting.
+Subagents inherit the main session model and effort setting, so do not override
+the model per attempt.
 
 ## 1. Prepare The Task Group
 
