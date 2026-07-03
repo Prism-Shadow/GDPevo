@@ -12,7 +12,7 @@ Accuracy is reported as `acc@3`, averaged over 12 task groups. Stability is repo
 
 | Harness | Model | Thinking level | `base` acc@3 | `base` std@3 | `fewshot` acc@3 | `fewshot` std@3 | `self` acc@3 | `self` std@3 | `reflect-3` acc@3 | `reflect-3` std@3 | `base` rounds@3 | `fewshot` rounds@3 | `self` rounds@3 | `reflect-3` rounds@3 | `fewshot` cost change | `self` cost change | `reflect-3` cost change | `fewshot` lift | `self` lift | `reflect-3` lift |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Codex | GPT-5.5 | xhigh | 46.72% | 5.13% | 64.91% | 6.36% | 54.99% | 8.73% | 57.45% | 7.62% | n/a | n/a | n/a | n/a | -29.24% | -32.18% | -25.74% | +18.19 pp | +8.27 pp | +10.73 pp |
+| Codex | GPT-5.5 | xhigh | 46.72% | 5.13% | 64.91% | 6.36% | 54.99% | 8.73% | 57.45% | 7.62% | 14.21 | 11.17 | 9.71 | 10.83 | -29.24% | -32.18% | -25.74% | +18.19 pp | +8.27 pp | +10.73 pp |
 | Claude Code | Opus 4.8 | xhigh | 49.11% | 5.25% | 70.90% | 6.38% | 57.37% | 6.79% | 62.72% | 6.68% | 14.62 | 11.10 | 11.78 | 12.15 | -9.61% | +0.53% | -0.34% | +21.79 pp | +8.26 pp | +13.62 pp |
 | Panofy | Opus 4.6 | high | 50.40% | 6.99% | 71.47% | 4.93% | 58.39% | 5.74% | 59.82% | 7.31% | 15.16 | 13.48 | 12.51 | 14.37 | +8.27% | -6.00% | +1.99% | +21.07 pp | +7.99 pp | +9.41 pp |
 | Claude Code | GLM-5.2 | max | 47.73% | 5.21% | 69.55% | 8.85% | 55.91% | 7.84% | 63.35% | 7.51% | 17.57 | 15.49 | 15.98 | 15.36 | -12.28% | -10.23% | -16.50% | +21.83 pp | +8.18 pp | +15.62 pp |
