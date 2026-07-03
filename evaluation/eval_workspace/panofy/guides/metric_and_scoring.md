@@ -19,7 +19,8 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 
 `func_input.json` is exactly what was sent to `predict()`. `answer.json` is the
 parsed `FUNC_OUTPUT`. `score.yaml` is written after running the task evaluator.
-`run_metadata.yaml` records the unique attempt id, SDK-reported token usage, and solver turn count.
+`run_metadata.yaml` records the unique attempt id, SDK-reported token usage,
+and Panofy agent / run identifiers.
 
 ## Scoring
 
@@ -68,9 +69,6 @@ token_usage:
   cache_read_tokens: <int>
   cache_write_tokens: <int>
   output_tokens: <int>
-turn_count:
-  source: panofy_predict_trace
-  assistant_turns: <int>
 ```
 
 ## acc@3
@@ -106,14 +104,19 @@ overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std
 
 ## rounds@3 / turn count
 
-`rounds_avg_3` counts solver assistant/model-response turns. For Codex and Claude Code, count assistant responses in the matched solver trace; if one response is split into multiple content-block records, deduplicate by response or message id. For Panofy, count assistant messages in the formal scored `predict()` trace history. Do not count the main agent, skill generation, evaluator execution, environment checks, or failed attempts that were replaced.
+`rounds_avg_3` counts solver assistant/model-response turns. During evaluation,
+record the Panofy `agent_id`, SDK run id, task id, and SDK usage metadata; leave
+turn counts as `null` unless a packaged service log has already been supplied
+to the workspace. Panofy service logs are archived after the experiment and can
+be used to backfill `rounds_avg_3`.
 
 ```text
 task rounds@3 = (attempt_01_turns + attempt_02_turns + attempt_03_turns) / 3
 overall rounds@3 = (test_001_rounds@3 + test_002_rounds@3 + test_003_rounds@3 + test_004_rounds@3 + test_005_rounds@3) / 5
 ```
 
-If a formal attempt trace cannot be matched, write the turn count as `null` and preserve the reason in the run record; do not estimate it manually.
+If the packaged service log for a formal attempt is unavailable, write the turn
+count as `null`; do not estimate it manually.
 
 ## Score Range
 
@@ -138,12 +141,14 @@ a valid score, stop and report the issue.
 ## Aggregation Requirements
 
 After all `score.yaml` files are ready, check that all four conditions, 5 test
-tasks, and 3 runs per task are complete. Then compute per-task `acc@3` and `std@3`, overall `acc@3` and `std@3`,
-and improvements from `fewshot`, `self`, and `reflect-3` over `base`, plus
-average per-bucket tokens and solver turns.
+tasks, and 3 runs per task are complete. Then compute per-task `acc@3` and
+`std@3`, overall `acc@3` and `std@3`, improvements from `fewshot`, `self`, and
+`reflect-3` over `base`, plus average per-bucket tokens. Include solver turns
+only when packaged service logs are available.
 
 These efficiency metrics only count the **test-task `predict()`** work. They do
 not include training (the evolution step), remote environment checks, or
-evaluator execution. They aggregate the same way as `acc@3`: average the 3
-attempts for one test task, then average the 5 test tasks. Temporary aggregation
-code may live under `scratch/`.
+evaluator execution. Token metrics come from the SDK during evaluation. Turn
+metrics, when available after log archival, aggregate the same way as `acc@3`:
+average the 3 attempts for one test task, then average the 5 test tasks.
+Temporary aggregation code may live under `scratch/`.

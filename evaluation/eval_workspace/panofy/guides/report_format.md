@@ -67,7 +67,9 @@ conditions:
 - `std_at_3` is the population standard deviation of the 3 raw scores for
   one test task. `overall_std_at_3` is the average of the 5 test-task
   `std_at_3` values.
-- `rounds_avg_3` counts solver assistant/model-response turns. At the task level, average the 3 attempts for the same test task; at the condition `efficiency.rounds_avg_3` level, average the 5 test tasks. If a formal attempt trace cannot be matched, write the turn field as `null` and preserve the reason in the corresponding run record.
+- `rounds_avg_3` counts solver assistant/model-response turns when packaged
+  Panofy service logs are available after the experiment. If the log package is
+  unavailable during report generation, write the turn field as `null`.
 - The three token buckets come from each attempt's `run_metadata.yaml` SDK
   usage. If any attempt is missing a value, write the average as `null`.
 - Efficiency follows the same aggregation shape as `acc@3`: average the 3

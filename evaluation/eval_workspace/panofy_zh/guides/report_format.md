@@ -65,7 +65,9 @@ conditions:
 - `scores` 必须保留 3 个原始 run 分数。
 - `std_at_3` 是同一 test task 三次原始分数的 population std；
   `overall_std_at_3` 是 5 个 test-task `std_at_3` 的平均值。
-- `rounds_avg_3` 统计 solver 的 assistant/model-response turns。task 层面先对同一 test task 的 3 次 attempts 取平均；condition 的 `efficiency.rounds_avg_3` 再对 5 个 test tasks 取平均。若某个正式 attempt 的 trace 不能匹配，turn 字段写 `null`，并在对应 run record 中保留原因。
+- `rounds_avg_3` 在实验后已有打包 Panofy 服务日志时，统计 solver 的
+  assistant/model-response turns。如果生成报告时没有可用日志包，turn 字段写
+  `null`。
 - 三桶 token 来自每次 attempt 的 `run_metadata.yaml` SDK usage。若任一
   attempt 缺值，该平均写 `null`。
 - 效率指标遵循与 `acc@3` 相同的聚合方式：先对同一 test task 的 3 次

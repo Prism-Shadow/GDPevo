@@ -189,18 +189,21 @@ After each `predict()` writes `answer.json`, score it by running the task's
 already in `[0,1]`; if needed, derive a normalized score from earned / max
 fields. Write `score.yaml`.
 
-Record token usage and solver turn count in `run_metadata.yaml` with a unique `eval_attempt_id`:
+Record SDK token usage and Panofy agent / run identifiers in
+`run_metadata.yaml` with a unique `eval_attempt_id`:
 
 ```text
 <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
 ```
 
-After all `score.yaml` files exist, aggregate per-task `acc@3` and `std@3`, overall
-`acc@3` and `std@3`, average token buckets, and solver turn counts for each condition. Efficiency metrics only
-count **test-task `predict()`** work; never include training, remote environment
-checks, or evaluator execution. Aggregate the same way as `acc@3`: average the
-3 attempts for one test task, then average the 5 test tasks. Write the final
-report to `report/<task_group_id>.yaml` per
+After all `score.yaml` files exist, aggregate per-task `acc@3` and `std@3`,
+overall `acc@3` and `std@3`, and average token buckets for each condition. Do
+If packaged service logs have already been supplied, also aggregate solver turn
+counts; otherwise write `rounds_avg_3: null` and let post-run archival backfill
+it. Efficiency metrics only count **test-task `predict()`** work; never include
+training, remote environment checks, or evaluator execution. Aggregate the same
+way as `acc@3`: average the 3 attempts for one test task, then average the 5
+test tasks. Write the final report to `report/<task_group_id>.yaml` per
 `report_format.md`.
 
 ## 7. Interpret Results
