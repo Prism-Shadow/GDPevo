@@ -15,7 +15,7 @@ runs/<condition>/<task_id>/attempt_<nn>/score.yaml
 runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 ```
 
-`func_input.json` 是发给 `predict()` 的确切内容。`answer.json` 是解析后的 `FUNC_OUTPUT`。`score.yaml` 在运行 task evaluator 后写出。`run_metadata.yaml` 记录唯一 attempt id 和 SDK 返回的 token 用量。
+`func_input.json` 是发给 `predict()` 的确切内容。`answer.json` 是解析后的 `FUNC_OUTPUT`。`score.yaml` 在运行 task evaluator 后写出。`run_metadata.yaml` 记录唯一 attempt id、SDK 返回的 token 用量和 solver turn count。
 
 ## 打分
 
@@ -53,6 +53,9 @@ token_usage:
   cache_read_tokens: <int>
   cache_write_tokens: <int>
   output_tokens: <int>
+turn_count:
+  source: panofy_predict_trace
+  assistant_turns: <int>
 ```
 
 ## acc@3
@@ -81,6 +84,18 @@ task 的 `std@3`，再对 5 个 test-task `std@3` 取平均。
 overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
 ```
 
+
+## rounds@3 / turn count
+
+`rounds_avg_3` 统计 solver 的 assistant/model-response turns。Codex 和 Claude Code 从匹配到的 solver trace 中统计 assistant 响应；如果一轮响应被拆成多条 content-block 记录，应按响应或 message id 去重。Panofy 从正式 scored `predict()` trace 的 history 中统计 assistant 消息。不要统计 main agent、skill generation、evaluator、环境检查或被替换的失败 attempt。
+
+```text
+task rounds@3 = (attempt_01_turns + attempt_02_turns + attempt_03_turns) / 3
+overall rounds@3 = (test_001_rounds@3 + test_002_rounds@3 + test_003_rounds@3 + test_004_rounds@3 + test_005_rounds@3) / 5
+```
+
+如果某个正式 attempt 的 trace 无法匹配，turn count 写 `null`，并在 run record 中保留原因；不要手动估算。
+
 ## 分数范围
 
 所有分数归一到 `[0, 1]`。若 evaluator 输出非归一分数，找 `earned / max` 或等价字段。若无法确定归一分数，把该次运行记为失败；不要手动猜分。
@@ -98,6 +113,6 @@ overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std
 
 ## 聚合要求
 
-所有 `score.yaml` 就绪后，检查四种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `acc@3` 和 `std@3`、整体 `acc@3` 和 `std@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升，并汇总各桶 token 平均值。
+所有 `score.yaml` 就绪后，检查四种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `acc@3` 和 `std@3`、整体 `acc@3` 和 `std@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升，并汇总各桶 token 平均值和 solver turns。
 
 这些效率指标只统计 **test-task 的 `predict()`** 工作，不含训练（进化步骤）、远程环境检查或 evaluator 执行。聚合方式同 `acc@3`：先对同一 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。临时聚合代码可放 `scratch/`。

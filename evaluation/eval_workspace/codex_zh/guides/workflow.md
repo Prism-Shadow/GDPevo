@@ -157,7 +157,7 @@ original_traces/<condition>/<task_id>/attempt_<nn>/
 字段也保持 `null`，并报告 trace 问题。正式 attempt 不要使用
 `codex exec --ephemeral` 这类不会留下可追溯 trace 的启动方式。
 
-所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3` 和平均 cached/input/output tokens。
+所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3`、平均 cached/input/output tokens 和 solver turn counts。
 效率指标只统计 test solver 写答案的过程：先对同一个 test task 的 3 次
 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill generation、
 远程环境检查、evaluator 执行或主 agent 汇总。

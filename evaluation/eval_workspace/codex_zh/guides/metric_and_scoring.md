@@ -16,7 +16,7 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 
 `answer.json` 是 solver 的最终答案。`score.yaml` 由主 agent 调用 task evaluator 后生成。
 
-`run_metadata.yaml` 记录唯一 attempt ID、trace 来源和 token 用量。token 值应尽量来自 Codex session trace，而不是让 agent 在 prompt 内手动统计。
+`run_metadata.yaml` 记录唯一 attempt ID、trace 来源、token 用量和 solver turn count。token 值应尽量来自 Codex session trace，而不是让 agent 在 prompt 内手动统计。
 
 推荐格式：
 
@@ -42,9 +42,12 @@ token_usage:
   output_tokens: <int>
   reasoning_output_tokens: <int>
   total_tokens: <int>
+turn_count:
+  source: codex_session_trace
+  assistant_turns: <int>
 ```
 
-如果 trace 不能被唯一匹配，应在 `match_status` 中写入 `missing` 或 `ambiguous`，将 `copied_trace_file` 和对应 token 字段设为 `null`，不要手动估算。
+如果 trace 不能被唯一匹配，应在 `match_status` 中写入 `missing` 或 `ambiguous`，将 `copied_trace_file` 和对应 token/turn 字段设为 `null`，不要手动估算。
 
 ## acc@3
 
@@ -72,6 +75,18 @@ task 的 `std@3`，再对 5 个 test-task `std@3` 取平均。
 overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
 ```
 
+
+## rounds@3 / turn count
+
+`rounds_avg_3` 统计 solver 的 assistant/model-response turns。Codex 和 Claude Code 从匹配到的 solver trace 中统计 assistant 响应；如果一轮响应被拆成多条 content-block 记录，应按响应或 message id 去重。Panofy 从正式 scored `predict()` trace 的 history 中统计 assistant 消息。不要统计 main agent、skill generation、evaluator、环境检查或被替换的失败 attempt。
+
+```text
+task rounds@3 = (attempt_01_turns + attempt_02_turns + attempt_03_turns) / 3
+overall rounds@3 = (test_001_rounds@3 + test_002_rounds@3 + test_003_rounds@3 + test_004_rounds@3 + test_005_rounds@3) / 5
+```
+
+如果某个正式 attempt 的 trace 无法匹配，turn count 写 `null`，并在 run record 中保留原因；不要手动估算。
+
 ## 分数范围
 
 所有分数都应归一化到 `[0, 1]`。
@@ -95,7 +110,7 @@ overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std
 
 所有 `score.yaml` 准备完成后，主 agent 应检查四种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `acc@3` 和 `std@3`、整体 `acc@3` 和 `std@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升。
 
-主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 cached/input/output tokens，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
+主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 cached/input/output tokens 和 solver turns，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
 
 这些效率指标只统计 test solver subagents 写答案的过程。不包括 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总。它们不能替代 `acc@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
 

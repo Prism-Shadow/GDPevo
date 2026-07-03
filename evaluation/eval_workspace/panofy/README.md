@@ -1,7 +1,7 @@
 # Evaluation Workspace — Panofy
 
 This workspace evaluates **one task group** on the **Panofy agent platform**,
-using `acc@3` and population `std@3` across four conditions: `base`, `fewshot`, `self`, and
+using `acc@3`, population `std@3`, and solver turn-count efficiency metrics across four conditions: `base`, `fewshot`, `self`, and
 `reflect-3`.
 
 You are the **main evaluation agent**. You run the evaluation by **calling the
@@ -38,7 +38,7 @@ Read in order before evaluating:
 
 1. `guides/workflow.md` — the end-to-end train → predict → score → aggregate flow you drive
 2. `guides/evolve_modes.md` — the four conditions, realised through training, and the information boundary
-3. `guides/metric_and_scoring.md` — `acc@3`, population `std@3`, scoring via `eval/eval.sh`, and Panofy token accounting
+3. `guides/metric_and_scoring.md` — `acc@3`, population `std@3`, scoring via `eval/eval.sh`, and Panofy token/turn accounting
 4. `guides/report_format.md` — the final report YAML
 
 ## Connection inputs (`.env`)

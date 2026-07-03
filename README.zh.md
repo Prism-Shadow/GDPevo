@@ -68,7 +68,7 @@
 
 - **分数评测**：[`evaluation/eval_workspace/`](evaluation/eval_workspace/)
 
-  - **用途**：对一个发布任务组运行正式评测，统计 `acc@3`、token 和费用。目录下包含 Codex、Claude Code、Panofy 以及中文镜像工作区。
+  - **用途**：对一个发布任务组运行正式评测，统计 `acc@3`、population `std@3`、turn-count、token 和费用。目录下包含 Codex、Claude Code、Panofy 以及中文镜像工作区。
   - **输入数据**：放入所选评测工作区的一个已发布任务组，以及该工作区需要的密钥或配置。
   - **提示词**：`阅读 README.md 和 guides/，对已放入的任务组运行分数评测，并写出 report/<task_group_id>.yaml。`
 

@@ -25,6 +25,7 @@ conditions:
       cache_creation_tokens_avg_3: <float or null>
       cache_read_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
+      rounds_avg_3: <float or null>
     tasks:
       test_001:
         scores:
@@ -37,6 +38,7 @@ conditions:
         cache_creation_tokens_avg_3: <float or null>
         cache_read_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
+        rounds_avg_3: <float or null>
       test_002: <same shape as test_001>
       test_003: <same shape as test_001>
       test_004: <same shape as test_001>
@@ -77,6 +79,7 @@ conditions:
 - `scores` 必须保留 3 次原始运行分数，不能只保留平均值。
 - `std_at_3` 是同一 test task 三次原始分数的 population std；
   `overall_std_at_3` 是 5 个 test-task `std_at_3` 的平均值。
+- `rounds_avg_3` 统计 solver 的 assistant/model-response turns。task 层面先对同一 test task 的 3 次 attempts 取平均；condition 的 `efficiency.rounds_avg_3` 再对 5 个 test tasks 取平均。若某个正式 attempt 的 trace 不能匹配，turn 字段写 `null`，并在对应 run record 中保留原因。
 - `skill_dirs` 只用于非 base 条件。路径相对于 report YAML 所在目录，attempt
   编号必须和使用该 skill 的 solver attempt 编号一致。
 - Token 字段来自复制到 `original_traces/` 下、并按 `message.id` 去重后的

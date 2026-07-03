@@ -1,6 +1,6 @@
 # Evaluation Workspace
 
-本 workspace 是评估入口。你是这一阶段的主评估 agent。你的目标是对一个已经通过质量审核的 task group 进行正式评估，并在四种条件下使用 `acc@3` 和 population `std@3` 指标：`base`、`fewshot`、`self`、`reflect-3`。
+本 workspace 是评估入口。你是这一阶段的主评估 agent。你的目标是对一个已经通过质量审核的 task group 进行正式评估，并在四种条件下使用 `acc@3`、population `std@3` 和 solver turn-count 效率指标：`base`、`fewshot`、`self`、`reflect-3`。
 
 本工作区一次只评估一个 task group。不要修改正在评估的 task group。如果你发现 task group 本身无效，应在报告中记录风险，并将数据退回到更早阶段。
 
@@ -22,7 +22,7 @@
 
 1. `guides/workflow.md` - 主 agent 评估流程
 2. `guides/skill_modes.md` - 四种条件和信息边界
-3. `guides/metric_and_scoring.md` - `acc@3`、population `std@3`、单次 attempt 打分和聚合规则
+3. `guides/metric_and_scoring.md` - `acc@3`、population `std@3`、turn-count 记录、单次 attempt 打分和聚合规则
 4. `guides/report_format.md` - 最终报告格式
 
 ## 启动 Prompt
@@ -30,7 +30,7 @@
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: <model>.
-Run all four modes with acc@3/std@3 and write report/<task_group_id>.yaml.
+Run all four modes with acc@3/std@3, collect solver turn counts, and write report/<task_group_id>.yaml.
 ```
 
 使用 `.env` 配置远程任务环境：
@@ -81,9 +81,9 @@ runs/reflect-3/
 
 每种条件下，每个 test task 独立运行 3 次。每次运行都必须由干净上下文的 solver subagent 完成。对于 skill 条件，solver 的 `attempt_<nn>` 使用相同编号的独立生成 skill。
 
-6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、匹配到的 session transcript 引用、复制进工作区的原始 transcript 路径，以及 token 用量。将匹配到的 Claude Code 原始 subagent transcript 从 `~/.claude/` 复制到 `original_traces/<condition>/<task_id>/attempt_<nn>/`，用于后续审计。
+6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、匹配到的 session transcript 引用、复制进工作区的原始 transcript 路径、token 用量和 solver turn count。将匹配到的 Claude Code 原始 subagent transcript 从 `~/.claude/` 复制到 `original_traces/<condition>/<task_id>/attempt_<nn>/`，用于后续审计。
 
-7. 所有 score records 准备完成后，聚合四种条件的 `acc@3` 和 population `std@3`，并聚合每种条件的平均 token 和 cost 字段。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
+7. 所有 score records 准备完成后，聚合四种条件的 `acc@3` 和 population `std@3`，并聚合每种条件的平均 token、turn 和 cost 字段。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
 
 ## Agent 边界
 
@@ -109,4 +109,4 @@ eval_attempt_id: <unique_eval_attempt_id>
 Please solve this single test task. You may only read and write files inside this attempt directory; do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
 ```
 
-主 agent 之后使用 `eval_attempt_id` 在 session transcript 中定位该 subagent 的 turns，将原始 transcript 复制到 `original_traces/`，并回填 `token_count`。
+主 agent 之后使用 `eval_attempt_id` 在 session transcript 中定位该 subagent 的 turns，将原始 transcript 复制到 `original_traces/`，并回填 token 和 turn 字段。

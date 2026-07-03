@@ -68,7 +68,7 @@ These workspaces are agent-ready folders for building, reviewing, and evaluating
 
 - **Score Evaluation**: [`evaluation/eval_workspace/`](evaluation/eval_workspace/)
 
-  - **Purpose**: Run formal `acc@3`, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces.
+  - **Purpose**: Run formal `acc@3`, population `std@3`, turn-count, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces.
   - **Input data**: one released task group copied into the selected evaluator workspace, plus the credentials or config required by that workspace.
   - **Prompt**: `Read README.md and guides/, run score evaluation for the staged task group, and write report/<task_group_id>.yaml.`
 

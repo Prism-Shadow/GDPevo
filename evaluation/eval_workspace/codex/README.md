@@ -1,6 +1,6 @@
 # Evaluation Workspace
 
-This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc@3` and population `std@3` across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
+This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc@3`, population `std@3`, and solver turn-count efficiency metrics across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
 
 This workspace evaluates one task group at a time. Do not modify the task group under evaluation. If you find that the task group itself is invalid, record the risk in the report and send the data back to an earlier stage.
 
@@ -22,7 +22,7 @@ Read these files in order before starting evaluation:
 
 1. `guides/workflow.md` - main-agent evaluation workflow
 2. `guides/skill_modes.md` - the four conditions and information boundaries
-3. `guides/metric_and_scoring.md` - `acc@3`, population `std@3`, single-attempt scoring, and aggregation rules
+3. `guides/metric_and_scoring.md` - `acc@3`, population `std@3`, turn-count tracking, single-attempt scoring, and aggregation rules
 4. `guides/report_format.md` - final report format
 
 ## Launch Prompt
@@ -30,7 +30,7 @@ Read these files in order before starting evaluation:
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: <model>, <reasoning_effort>.
-Run all four modes with acc@3/std@3 and write report/<task_group_id>.yaml.
+Run all four modes with acc@3/std@3, collect solver turn counts, and write report/<task_group_id>.yaml.
 ```
 
 Use `.env` for the remote task environment:
@@ -79,9 +79,9 @@ runs/reflect-3/
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context solver subagent. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
 
-6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, Codex session trace, copied raw trace path, and token usage. Copy the matched raw Codex trace from `~/.codex/sessions/` into `original_traces/<condition>/<task_id>/attempt_<nn>/` for audit.
+6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, Codex session trace, copied raw trace path, token usage, and solver turn count. Copy the matched raw Codex trace from `~/.codex/sessions/` into `original_traces/<condition>/<task_id>/attempt_<nn>/` for audit.
 
-7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average cached/input/output tokens for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
+7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average cached/input/output tokens and solver turns for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
 
 ## Agent Boundaries
 
@@ -107,4 +107,4 @@ eval_attempt_id: <unique_eval_attempt_id>
 Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
 ```
 
-The main agent later uses `eval_attempt_id` to match the corresponding Codex session trace, copies that raw trace into `original_traces/`, and backfills `token_count`.
+The main agent later uses `eval_attempt_id` to match the corresponding Codex session trace, copies that raw trace into `original_traces/`, and backfills token and turn fields.

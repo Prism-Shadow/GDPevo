@@ -24,6 +24,7 @@ conditions:
       cache_read_tokens_avg_3: <float or null>
       cache_write_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
+      rounds_avg_3: <float or null>
     tasks:
       test_001:
         scores:
@@ -35,6 +36,7 @@ conditions:
         cache_read_tokens_avg_3: <float or null>
         cache_write_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
+        rounds_avg_3: <float or null>
       test_002: <same shape as test_001>
       test_003: <same shape as test_001>
       test_004: <same shape as test_001>
@@ -63,6 +65,7 @@ conditions:
 - `scores` 必须保留 3 个原始 run 分数。
 - `std_at_3` 是同一 test task 三次原始分数的 population std；
   `overall_std_at_3` 是 5 个 test-task `std_at_3` 的平均值。
+- `rounds_avg_3` 统计 solver 的 assistant/model-response turns。task 层面先对同一 test task 的 3 次 attempts 取平均；condition 的 `efficiency.rounds_avg_3` 再对 5 个 test tasks 取平均。若某个正式 attempt 的 trace 不能匹配，turn 字段写 `null`，并在对应 run record 中保留原因。
 - 三桶 token 来自每次 attempt 的 `run_metadata.yaml` SDK usage。若任一
   attempt 缺值，该平均写 `null`。
 - 效率指标遵循与 `acc@3` 相同的聚合方式：先对同一 test task 的 3 次

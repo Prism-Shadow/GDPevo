@@ -19,7 +19,7 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 
 `func_input.json` is exactly what was sent to `predict()`. `answer.json` is the
 parsed `FUNC_OUTPUT`. `score.yaml` is written after running the task evaluator.
-`run_metadata.yaml` records the unique attempt id and SDK-reported token usage.
+`run_metadata.yaml` records the unique attempt id, SDK-reported token usage, and solver turn count.
 
 ## Scoring
 
@@ -68,6 +68,9 @@ token_usage:
   cache_read_tokens: <int>
   cache_write_tokens: <int>
   output_tokens: <int>
+turn_count:
+  source: panofy_predict_trace
+  assistant_turns: <int>
 ```
 
 ## acc@3
@@ -100,6 +103,18 @@ The overall `std@3` for a condition uses the same aggregation shape as
 overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
 ```
 
+
+## rounds@3 / turn count
+
+`rounds_avg_3` counts solver assistant/model-response turns. For Codex and Claude Code, count assistant responses in the matched solver trace; if one response is split into multiple content-block records, deduplicate by response or message id. For Panofy, count assistant messages in the formal scored `predict()` trace history. Do not count the main agent, skill generation, evaluator execution, environment checks, or failed attempts that were replaced.
+
+```text
+task rounds@3 = (attempt_01_turns + attempt_02_turns + attempt_03_turns) / 3
+overall rounds@3 = (test_001_rounds@3 + test_002_rounds@3 + test_003_rounds@3 + test_004_rounds@3 + test_005_rounds@3) / 5
+```
+
+If a formal attempt trace cannot be matched, write the turn count as `null` and preserve the reason in the run record; do not estimate it manually.
+
 ## Score Range
 
 All scores are normalised to `[0, 1]`. If an evaluator outputs a non-normalised
@@ -125,7 +140,7 @@ a valid score, stop and report the issue.
 After all `score.yaml` files are ready, check that all four conditions, 5 test
 tasks, and 3 runs per task are complete. Then compute per-task `acc@3` and `std@3`, overall `acc@3` and `std@3`,
 and improvements from `fewshot`, `self`, and `reflect-3` over `base`, plus
-average per-bucket tokens.
+average per-bucket tokens and solver turns.
 
 These efficiency metrics only count the **test-task `predict()`** work. They do
 not include training (the evolution step), remote environment checks, or
