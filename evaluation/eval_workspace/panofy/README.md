@@ -74,7 +74,7 @@ Run any script you stage under `scratch/` with `uv run python scratch/<script>.p
 ```text
 Evaluate task_group/<task_group_id> on Panofy using README.md and guides/.
 Panofy base URL: <url>   API key: <da_...>   Env API URL: <url>
-Run all four conditions with acc@3/std@3 and write report/<task_group_id>.yaml.
+Run all four conditions with acc@3/std@3, collect solver turn counts, and write report/<task_group_id>.yaml.
 ```
 
 ## Boundaries
