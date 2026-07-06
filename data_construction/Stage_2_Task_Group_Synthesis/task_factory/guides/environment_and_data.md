@@ -20,6 +20,11 @@ Do not partition the solver-facing environment by task. Avoid per-task data pack
 
 `env/` itself is not solver-visible input. Solver, direct-test, and post-skill agents should access the environment only through exposed entry points, such as a browser URL, API base URL, or database connection string. If a task uses PostgreSQL or another database, expose it as a running service with connection details; do not let solver agents inspect `env/` files, migration scripts, generated data files, database dumps, seeds, manifests, or setup scripts directly.
 
+In solver-visible task inputs, refer to the running environment base URL only as
+`<TASK_ENV_BASE_URL>`. Keep real localhost addresses, private IPs, public host
+names, ports, and setup commands out of `prompt.txt` and `input/payloads/`; those
+values belong in the evaluation workspace `.env` file for the actual run.
+
 ## Env-Builder Ownership
 
 The main agent owns the environment blueprint, task-group coherence, and final integration. The actual environment implementation should be done by a clean-context env-builder coding subagent based on that blueprint.

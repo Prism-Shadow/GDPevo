@@ -1,5 +1,5 @@
 Northwind Components needs the allocation desk decision file for order wave TRAIN_TRANSFER_B.
 
-Use the shared ERP API described in the task group environment README. The expected local service is normally available at http://127.0.0.1:8007 after the environment is started. Inspect the live ERP records for the wave, customers, products, warehouses, and inventory as needed. A short desk memo is available in input/payloads/allocation_memo.md.
+Use the shared ERP API described in the task group environment README. Use the API base URL supplied by the runner as `<TASK_ENV_BASE_URL>`. Inspect the live ERP records for the wave, customers, products, warehouses, and inventory as needed. A short desk memo is available in input/payloads/allocation_memo.md.
 
 Return a single JSON object matching input/payloads/answer_template.json. The decision file should classify every order line in TRAIN_TRANSFER_B as one of the allowed actions, include transfer requests where internal movement can clear the shortage, identify account-blocked orders, and summarize the wave.

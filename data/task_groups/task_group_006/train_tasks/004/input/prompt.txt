@@ -1,5 +1,5 @@
 Northwind Components needs the change-control decision file for the AX17 tail-lamp module variant.
 
-Use the shared ProcureOps API described in the task group environment. The expected local service is normally available at http://127.0.0.1:8006 after the environment is started. Inspect the live records for contracts, programs, approvals, budgets, suppliers, and purchase orders as needed. The local change memo is available at input/payloads/change_memo.json.
+Use the shared ProcureOps API described in the task group environment. Use the API base URL supplied by the runner as `<TASK_ENV_BASE_URL>`. Inspect the live records for contracts, programs, approvals, budgets, suppliers, and purchase orders as needed. The local change memo is available at input/payloads/change_memo.json.
 
 Return a single JSON object matching input/payloads/answer_template.json. The decision file should determine whether the requested modular change can be released as an amendment against CR-LMP-228, quantify the contract and program-budget impact, identify the approval state, include supplier-risk context, and list any required hold actions. Do not include prose outside the JSON object.
