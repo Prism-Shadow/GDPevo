@@ -150,9 +150,9 @@ original_traces/<condition>/<task_id>/attempt_<nn>/
 
 在 `run_metadata.yaml` 中同时记录原始 transcript 路径和复制进工作区后的
 trace 路径。如果不能唯一匹配 transcript，将复制后的 trace 路径写为
-`null`，token 和 turn 字段也保持 `null`，并报告 trace 问题。
+`null`，token、turn 和 tool-call 字段也保持 `null`，并报告 trace 问题。
 
-所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3`、各桶 token 和 solver turn counts。效率指标只统计
+所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3`、各桶 token 和 solver turn count 和 tool-call counts。效率指标只统计
 test solver 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对
 5 个 test tasks 取平均。不要包含 skill generation、远程环境检查、evaluator
 执行或主 agent 汇总。

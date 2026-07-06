@@ -25,6 +25,7 @@ conditions:
       cache_write_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
       rounds_avg_3: <float or null>
+      tool_calls_avg_3: <float or null>
     tasks:
       test_001:
         scores:
@@ -37,6 +38,7 @@ conditions:
         cache_write_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
         rounds_avg_3: <float or null>
+        tool_calls_avg_3: <float or null>
       test_002: <same shape as test_001>
       test_003: <same shape as test_001>
       test_004: <same shape as test_001>
@@ -68,8 +70,10 @@ conditions:
   one test task. `overall_std_at_3` is the average of the 5 test-task
   `std_at_3` values.
 - `rounds_avg_3` counts solver assistant/model-response turns when packaged
-  Panofy service logs are available after the experiment. If the log package is
-  unavailable during report generation, write the turn field as `null`.
+  Panofy service logs are available after the experiment; `tool_calls_avg_3`
+  counts solver tool-call requests from the formal scored predict trace. If the
+  log package is unavailable during report generation, write both fields as
+  `null`.
 - The three token buckets come from each attempt's `run_metadata.yaml` SDK
   usage. If any attempt is missing a value, write the average as `null`.
 - Efficiency follows the same aggregation shape as `acc@3`: average the 3

@@ -163,12 +163,12 @@ original_traces/<condition>/<task_id>/attempt_<nn>/
 
 Record both the source trace path and the copied workspace trace path in
 `run_metadata.yaml`. If no unique trace can be matched, set the copied trace path
-to `null`, keep the token and turn fields `null`, and report the trace issue. Do not use
+to `null`, keep the token, turn, and tool-call fields `null`, and report the trace issue. Do not use
 trace-discarding solver launches such as `codex exec --ephemeral` for formal
 attempts.
 
 After all runs complete, aggregate `acc@3`, population `std@3`, average cached/input/output
-tokens, and solver turn counts for all four conditions. Efficiency metrics count only test solver answer
+tokens, and solver turn count and tool-call counts for all four conditions. Efficiency metrics count only test solver answer
 writing: average the 3 attempts for the same test task, then average the 5 test
 tasks. Do not include skill generation, remote environment checks, evaluator
 execution, or main-agent summarization.

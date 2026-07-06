@@ -25,6 +25,7 @@ conditions:
       cache_write_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
       rounds_avg_3: <float or null>
+      tool_calls_avg_3: <float or null>
     tasks:
       test_001:
         scores:
@@ -37,6 +38,7 @@ conditions:
         cache_write_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
         rounds_avg_3: <float or null>
+        tool_calls_avg_3: <float or null>
       test_002: <same shape as test_001>
       test_003: <same shape as test_001>
       test_004: <same shape as test_001>
@@ -66,7 +68,8 @@ conditions:
 - `std_at_3` 是同一 test task 三次原始分数的 population std；
   `overall_std_at_3` 是 5 个 test-task `std_at_3` 的平均值。
 - `rounds_avg_3` 在实验后已有打包 Panofy 服务日志时，统计 solver 的
-  assistant/model-response turns。如果生成报告时没有可用日志包，turn 字段写
+  assistant/model-response turns；`tool_calls_avg_3` 统计正式 predict trace 中的
+  solver 工具调用次数。如果生成报告时没有可用日志包，两个字段都写
   `null`。
 - 三桶 token 来自每次 attempt 的 `run_metadata.yaml` SDK usage。若任一
   attempt 缺值，该平均写 `null`。

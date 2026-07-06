@@ -26,6 +26,7 @@ conditions:
       cache_read_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
       rounds_avg_3: <float or null>
+      tool_calls_avg_3: <float or null>
     tasks:
       test_001:
         scores:
@@ -39,6 +40,7 @@ conditions:
         cache_read_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
         rounds_avg_3: <float or null>
+        tool_calls_avg_3: <float or null>
       test_002: <same shape as test_001>
       test_003: <same shape as test_001>
       test_004: <same shape as test_001>
@@ -81,7 +83,7 @@ conditions:
 - `std_at_3` is the population standard deviation of the 3 raw scores for
   one test task. `overall_std_at_3` is the average of the 5 test-task
   `std_at_3` values.
-- `rounds_avg_3` counts solver assistant/model-response turns. At the task level, average the 3 attempts for the same test task; at the condition `efficiency.rounds_avg_3` level, average the 5 test tasks. If a formal attempt trace cannot be matched, write the turn field as `null` and preserve the reason in the corresponding run record.
+- `rounds_avg_3` counts solver assistant/model-response turns; `tool_calls_avg_3` counts solver tool-call requests. At the task level, average the 3 attempts for the same test task; at the condition efficiency level, average the 5 test tasks. If a formal attempt trace cannot be matched, write the corresponding field as `null` and preserve the reason in the corresponding run record.
 - `skill_dirs` is only used for non-base conditions. Paths are relative to the
   directory containing the report YAML, and attempt numbers must match the solver
   attempt number that used that skill.

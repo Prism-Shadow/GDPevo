@@ -102,21 +102,21 @@ overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std
 ```
 
 
-## rounds@3 / turn count
+## rounds@3 and tool calls@3 / trace efficiency
 
-`rounds_avg_3` counts solver assistant/model-response turns. During evaluation,
-record the Panofy `agent_id`, SDK run id, task id, and SDK usage metadata; leave
-turn counts as `null` unless a packaged service log has already been supplied
-to the workspace. Panofy service logs are archived after the experiment and can
-be used to backfill `rounds_avg_3`.
+`rounds_avg_3` counts solver assistant/model-response turns. During evaluation, record the Panofy `agent_id`, SDK run id, task id, and SDK usage metadata; leave turn and tool-call counts as `null` unless a packaged service log has already been supplied to the workspace. Panofy service logs are archived after the experiment and can be used to backfill `rounds_avg_3` and `tool_calls_avg_3`.
+
+When packaged service logs are available, `tool_calls_avg_3` counts assistant `tool_call` content items in the formal scored `predict()` trace. Do not count tool results, training traces, evaluator execution, or replaced failed attempts.
 
 ```text
 task rounds@3 = (attempt_01_turns + attempt_02_turns + attempt_03_turns) / 3
 overall rounds@3 = (test_001_rounds@3 + test_002_rounds@3 + test_003_rounds@3 + test_004_rounds@3 + test_005_rounds@3) / 5
+
+task tool calls@3 = (attempt_01_tool_calls + attempt_02_tool_calls + attempt_03_tool_calls) / 3
+overall tool calls@3 = (test_001_tool_calls@3 + test_002_tool_calls@3 + test_003_tool_calls@3 + test_004_tool_calls@3 + test_005_tool_calls@3) / 5
 ```
 
-If the packaged service log for a formal attempt is unavailable, write the turn
-count as `null`; do not estimate it manually.
+If a formal attempt has no available packaged service log, write the turn count and tool-call count as `null`; do not estimate them manually.
 
 ## Score Range
 

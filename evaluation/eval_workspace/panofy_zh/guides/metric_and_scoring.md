@@ -82,37 +82,24 @@ overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std
 ```
 
 
-## rounds@3 / turn count
+## rounds@3 and tool calls@3 / trace efficiency
 
-`rounds_avg_3` 统计 solver 的 assistant/model-response turns。评估阶段只记录
-Panofy `agent_id`、SDK run id、task id 和 SDK usage metadata；除非工作区已经
-提供打包好的服务日志，否则 turn count 写 `null`。Panofy 服务日志会在实验结束
-后统一归档，并据此回填 `rounds_avg_3`。
+`rounds_avg_3` 统计 solver 的 assistant/model-response turns。评估阶段只记录 Panofy `agent_id`、SDK run id、task id 和 SDK usage metadata；除非工作区已经提供打包好的服务日志，否则 turn count 和 tool-call count 写 `null`。Panofy 服务日志会在实验结束后统一归档，并据此回填 `rounds_avg_3` 和 `tool_calls_avg_3`。
+
+已有打包服务日志时，`tool_calls_avg_3` 统计正式 scored `predict()` trace 中 assistant 的 `tool_call` content item。不要统计 tool result、训练 trace、evaluator 执行或被替换的失败 attempt。
 
 ```text
 task rounds@3 = (attempt_01_turns + attempt_02_turns + attempt_03_turns) / 3
 overall rounds@3 = (test_001_rounds@3 + test_002_rounds@3 + test_003_rounds@3 + test_004_rounds@3 + test_005_rounds@3) / 5
+
+task tool calls@3 = (attempt_01_tool_calls + attempt_02_tool_calls + attempt_03_tool_calls) / 3
+overall tool calls@3 = (test_001_tool_calls@3 + test_002_tool_calls@3 + test_003_tool_calls@3 + test_004_tool_calls@3 + test_005_tool_calls@3) / 5
 ```
 
-如果某个正式 attempt 没有可用的打包服务日志，turn count 写 `null`；不要手动估算。
-
-## 分数范围
-
-所有分数归一到 `[0, 1]`。若 evaluator 输出非归一分数，找 `earned / max` 或等价字段。若无法确定归一分数，把该次运行记为失败；不要手动猜分。
-
-## 失败处理
-
-以下情况记为失败并在报告中说明：
-
-- `predict()` 抛错（`FAIL_AT_PLAN`、`FAIL_AT_ANSWER`、超时等）。
-- agent 返回无法解析的 `answer.json`。
-- evaluator 失败、超时，或返回不了 `[0, 1]` 分。
-- 远程环境不可用，导致 agent 无法作答。
-
-失败后重试，直到拿到一次有效可打分的 attempt；把失败记录保留在 attempt 目录。不要把失败 attempt 记 `0` 分，也不要丢掉它继续算 `acc@3`。如果重试仍拿不到有效分，停下并报告问题。
+如果某个正式 attempt 没有可用的打包服务日志，turn count 和 tool-call count 写 `null`；不要手动估算。
 
 ## 聚合要求
 
-所有 `score.yaml` 就绪后，检查四种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `acc@3` 和 `std@3`、整体 `acc@3` 和 `std@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升，并汇总各桶 token 平均值；只有在已有打包服务日志时才汇总 solver turns。
+所有 `score.yaml` 就绪后，检查四种条件、5 个 test tasks、每个 task 3 次运行是否齐全。然后计算每个 task 的 `acc@3` 和 `std@3`、整体 `acc@3` 和 `std@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升，并汇总各桶 token 平均值；只有在已有打包服务日志时才汇总 solver turns 和 tool calls。
 
 这些效率指标只统计 **test-task 的 `predict()`** 工作，不含训练（进化步骤）、远程环境检查或 evaluator 执行。token 指标在评估阶段来自 SDK；turn 指标若在日志归档后可用，聚合方式同 `acc@3`：先对同一 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。临时聚合代码可放 `scratch/`。

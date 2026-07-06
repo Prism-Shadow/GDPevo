@@ -16,7 +16,7 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 
 `answer.json` 是 solver 的最终答案。`score.yaml` 由主 agent 调用 task evaluator 后生成。
 
-`run_metadata.yaml` 记录唯一 attempt ID、匹配到的 transcript 引用、token 用量和 solver turn count。token 值来自该 subagent 的 session transcript，而不是让 agent 在 prompt 内手动统计。
+`run_metadata.yaml` 记录唯一 attempt ID、匹配到的 transcript 引用、token 用量、solver turn count 和 tool-call count。token 值来自该 subagent 的 session transcript，而不是让 agent 在 prompt 内手动统计。
 
 ### Token 口径(务必看清，极易算错)
 
@@ -61,7 +61,7 @@ turn_count:
   assistant_turns: <int>
 ```
 
-如果 transcript 不能被唯一匹配，应在 `match_status` 中写入 `missing` 或 `ambiguous`，将 `copied_trace_file` 和对应 token/turn 字段设为 `null`，不要手动估算。
+如果 transcript 不能被唯一匹配，应在 `match_status` 中写入 `missing` 或 `ambiguous`，将 `copied_trace_file` 和对应 token/turn/tool-call 字段设为 `null`，不要手动估算。
 
 ## acc@3
 
@@ -90,35 +90,21 @@ overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std
 ```
 
 
-## rounds@3 / turn count
+## rounds@3 and tool calls@3 / trace efficiency
 
-`rounds_avg_3` 统计 solver 的 assistant/model-response turns。Codex 和 Claude Code 从匹配到的 solver trace 中统计 assistant 响应；如果一轮响应被拆成多条 content-block 记录，应按响应或 message id 去重。Panofy 从正式 scored `predict()` trace 的 history 中统计 assistant 消息。不要统计 main agent、skill generation、evaluator、环境检查或被替换的失败 attempt。
+`rounds_avg_3` 统计 solver 的 assistant/model-response turns。Codex 和 Claude Code 从匹配到的 solver trace 中统计 assistant 响应；如果一轮响应被拆成多条 content-block 记录，应按响应或 message id 去重。Panofy 从正式 scored `predict()` trace 的 history 中统计 assistant 消息。
+
+`tool_calls_avg_3` 统计同一条正式 solver trace 中 solver 发起的工具调用次数。Codex trace 统计 `function_call` 和 `custom_tool_call` response item；Claude Code / GLM trace 统计 assistant `tool_use` content block；Panofy trace 统计正式 scored `predict()` history 中 assistant 的 `tool_call` content item。不要统计 tool result、main agent、skill generation、evaluator、环境检查或被替换的失败 attempt。
 
 ```text
 task rounds@3 = (attempt_01_turns + attempt_02_turns + attempt_03_turns) / 3
 overall rounds@3 = (test_001_rounds@3 + test_002_rounds@3 + test_003_rounds@3 + test_004_rounds@3 + test_005_rounds@3) / 5
+
+task tool calls@3 = (attempt_01_tool_calls + attempt_02_tool_calls + attempt_03_tool_calls) / 3
+overall tool calls@3 = (test_001_tool_calls@3 + test_002_tool_calls@3 + test_003_tool_calls@3 + test_004_tool_calls@3 + test_005_tool_calls@3) / 5
 ```
 
-如果某个正式 attempt 的 trace 无法匹配，turn count 写 `null`，并在 run record 中保留原因；不要手动估算。
-
-## 分数范围
-
-所有分数都应归一化到 `[0, 1]`。
-
-如果 evaluator 输出的是非归一化分数，主 agent 应找到 `earned / max` 或等价字段，并转换为归一化分数。如果无法确定归一化分数，应将该运行标记为失败，而不是手动猜测分数。
-
-## 失败处理
-
-以下情况应记录为失败，并在报告中解释：
-
-- Solver 没有产出可解析的 `answer.json`。
-- Evaluator 失败或超时。
-- Evaluator 输出无法解析为 `[0, 1]` 分数。
-- 环境不可用，导致 solver 无法完成任务。
-
-失败后，主 agent 应重试，直到获得一次有效、可打分的 attempt。重试原因和失败记录应保留在对应 attempt 目录中。
-
-如果重试后仍无法获得有效分数，应停止评估并报告问题。不要把失败 attempt 记为 `0`，也不要丢弃失败 attempt 后继续计算 `acc@3`。
+如果某个正式 attempt 的 trace 无法匹配，turn count 和 tool-call count 写 `null`，并在 run record 中保留原因；不要手动估算。
 
 ## 聚合要求
 
