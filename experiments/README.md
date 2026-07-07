@@ -17,6 +17,7 @@ systems.
 | `claude_code_opus_4_8_xhigh/` | Released Claude Code Opus 4.8 xhigh evaluation run |
 | `panofy_claude_opus_4_6_high/` | Released Panofy Claude Opus 4.6 high evaluation run |
 | `claude_code_glm_5_2_max/` | Released Claude Code GLM-5.2 max evaluation run |
+| `claude_code_kimi2_6_enabled/` | Released Claude Code Kimi K2.6 enabled evaluation run |
 
 Each released experiment directory contains a `config.yaml`, structured report
 YAML files, and any generated artifacts referenced by those reports.

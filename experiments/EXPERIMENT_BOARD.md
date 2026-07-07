@@ -8,8 +8,9 @@ evolution modes. The Codex, Claude Code, and Panofy runs report `fewshot`, `self
 `reflect-3`. Full structured reports
 are stored under released experiment directories, such as
 `codex_gpt5_5_xhigh/reports/`, `claude_code_opus_4_8_xhigh/reports/`,
-`panofy_claude_opus_4_6_high/reports/`, and
-`claude_code_glm_5_2_max/reports/`.
+`panofy_claude_opus_4_6_high/reports/`,
+`claude_code_glm_5_2_max/reports/`, and
+`claude_code_kimi2_6_enabled/reports/`.
 
 In the released Codex GPT-5.5 xhigh run, the three Codex evolution modes improve
 accuracy by +12.39 pp on average and change token cost by
@@ -326,5 +327,79 @@ The GLM token columns are the four usage buckets normalized from the Claude Code
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `fewshot` | 80.21% | 7.20% | 13.73 | 20.60 | 104.0k | 0.0k | 1074.7k | 15.1k | 0.49 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `self` | 78.58% | 7.61% | 14.40 | 20.20 | 122.6k | 0.0k | 1198.3k | 20.5k | 0.57 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `reflect-3` | 80.16% | 8.00% | 12.80 | 17.40 | 109.1k | 0.0k | 1015.8k | 17.5k | 0.49 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
+---
 
+## Claude Code (Kimi K2.6, enabled)
+
+In the released Claude Code Kimi K2.6 enabled run, the three evolution modes improve accuracy by +5.63 pp on average and change token cost by -19.39% on average across the 12 task groups. Individually, `fewshot`, `self`, and `reflect-3` improve accuracy by +5.34 pp, +4.02 pp, and +7.54 pp, respectively.
+
+For the released `kimi-k2.6, enabled` run, this board uses the Kimi K2.6 prices:
+
+| Token type | Price |
+| --- | ---: |
+| Cache miss input | $0.95 / 1M tokens |
+| Cache hit input | $0.16 / 1M tokens |
+| Output | $4.00 / 1M tokens |
+
+The board-level and report-level cost formula is:
+
+```text
+cost_USD_avg_3 =
+  (input_tokens_avg_3      * 0.95
+   + cache_read_tokens_avg_3 * 0.16
+   + output_tokens_avg_3     * 4.00) / 1_000_000
+```
+
+The Kimi token columns are the three usage buckets exposed by the Claude Code run metadata: cache miss input, cache hit input, and output.
+
+| task_group_id | scenario_id | model | harness | mode | overall acc@3 (%) | overall std@3 (%) | rounds avg@3 | tool calls avg@3 | cache miss input tokens avg@3 (k) | cache hit input tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
+| --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `kimi-k2.6, enabled` | `claude_code` | `base` | 32.04% | 13.36% | 38.53 | 42.47 | 75.8k | 508.0k | 25.3k | 0.25 | [task_group_001.yaml](claude_code_kimi2_6_enabled/reports/task_group_001.yaml) |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 44.24% | 16.76% | 42.20 | 58.33 | 73.4k | 653.6k | 23.0k | 0.27 | [task_group_001.yaml](claude_code_kimi2_6_enabled/reports/task_group_001.yaml) |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `kimi-k2.6, enabled` | `claude_code` | `self` | 22.43% | 11.83% | 21.33 | 32.73 | 44.0k | 202.0k | 15.5k | 0.14 | [task_group_001.yaml](claude_code_kimi2_6_enabled/reports/task_group_001.yaml) |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 64.39% | 11.86% | 34.20 | 44.47 | 53.2k | 396.9k | 15.5k | 0.18 | [task_group_001.yaml](claude_code_kimi2_6_enabled/reports/task_group_001.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `kimi-k2.6, enabled` | `claude_code` | `base` | 30.29% | 13.65% | 30.20 | 46.33 | 42.8k | 796.3k | 8.2k | 0.20 | [task_group_002.yaml](claude_code_kimi2_6_enabled/reports/task_group_002.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 44.00% | 10.94% | 32.33 | 60.67 | 58.6k | 803.1k | 11.0k | 0.23 | [task_group_002.yaml](claude_code_kimi2_6_enabled/reports/task_group_002.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `kimi-k2.6, enabled` | `claude_code` | `self` | 34.55% | 14.20% | 23.53 | 37.40 | 43.3k | 528.5k | 9.1k | 0.16 | [task_group_002.yaml](claude_code_kimi2_6_enabled/reports/task_group_002.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 33.63% | 7.60% | 28.27 | 44.47 | 47.9k | 712.1k | 9.7k | 0.20 | [task_group_002.yaml](claude_code_kimi2_6_enabled/reports/task_group_002.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `base` | 18.15% | 15.26% | n/a | n/a | 93.7k | 1396.2k | 31.4k | 0.44 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 29.19% | 15.26% | n/a | n/a | 91.8k | 1152.8k | 29.9k | 0.39 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `self` | 19.54% | 17.07% | 63.43 | 89.23 | 86.9k | 1100.9k | 28.9k | 0.37 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 20.16% | 21.16% | 44.77 | 65.80 | 94.5k | 1106.0k | 26.8k | 0.37 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `kimi-k2.6, enabled` | `claude_code` | `base` | 22.56% | 3.88% | 68.60 | 119.93 | 107.1k | 3046.6k | 26.2k | 0.69 | [task_group_004.yaml](claude_code_kimi2_6_enabled/reports/task_group_004.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 23.97% | 16.01% | 51.60 | 85.80 | 106.7k | 1990.0k | 25.9k | 0.52 | [task_group_004.yaml](claude_code_kimi2_6_enabled/reports/task_group_004.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `kimi-k2.6, enabled` | `claude_code` | `self` | 16.51% | 9.99% | 48.60 | 68.47 | 83.7k | 1746.9k | 20.7k | 0.44 | [task_group_004.yaml](claude_code_kimi2_6_enabled/reports/task_group_004.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 15.85% | 6.00% | 54.07 | 77.47 | 103.6k | 2345.2k | 31.9k | 0.60 | [task_group_004.yaml](claude_code_kimi2_6_enabled/reports/task_group_004.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `kimi-k2.6, enabled` | `claude_code` | `base` | 15.73% | 10.36% | 37.40 | 54.20 | 36.2k | 199.8k | 9.8k | 0.11 | [task_group_005.yaml](claude_code_kimi2_6_enabled/reports/task_group_005.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 11.19% | 10.36% | 18.33 | 21.87 | 26.2k | 159.6k | 8.1k | 0.08 | [task_group_005.yaml](claude_code_kimi2_6_enabled/reports/task_group_005.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `kimi-k2.6, enabled` | `claude_code` | `self` | 20.93% | 18.89% | 14.87 | 19.67 | 27.1k | 127.1k | 10.0k | 0.09 | [task_group_005.yaml](claude_code_kimi2_6_enabled/reports/task_group_005.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 24.95% | 12.76% | 14.60 | 15.73 | 25.2k | 110.0k | 8.1k | 0.07 | [task_group_005.yaml](claude_code_kimi2_6_enabled/reports/task_group_005.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `kimi-k2.6, enabled` | `claude_code` | `base` | 25.00% | 15.10% | 33.33 | 62.53 | 70.8k | 1062.9k | 18.8k | 0.31 | [task_group_006.yaml](claude_code_kimi2_6_enabled/reports/task_group_006.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 18.22% | 16.03% | 32.67 | 74.20 | 84.4k | 1079.9k | 21.1k | 0.34 | [task_group_006.yaml](claude_code_kimi2_6_enabled/reports/task_group_006.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `kimi-k2.6, enabled` | `claude_code` | `self` | 26.30% | 25.72% | 39.20 | 85.07 | 86.2k | 1446.3k | 18.6k | 0.39 | [task_group_006.yaml](claude_code_kimi2_6_enabled/reports/task_group_006.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 27.35% | 19.04% | 29.40 | 53.33 | 87.9k | 993.9k | 24.8k | 0.34 | [task_group_006.yaml](claude_code_kimi2_6_enabled/reports/task_group_006.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `kimi-k2.6, enabled` | `claude_code` | `base` | 6.28% | 6.46% | 25.67 | 37.93 | 78.6k | 886.5k | 16.6k | 0.28 | [task_group_007.yaml](claude_code_kimi2_6_enabled/reports/task_group_007.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 8.50% | 9.40% | 36.00 | 52.00 | 103.2k | 1478.4k | 19.5k | 0.41 | [task_group_007.yaml](claude_code_kimi2_6_enabled/reports/task_group_007.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `kimi-k2.6, enabled` | `claude_code` | `self` | 12.34% | 12.34% | 31.07 | 45.27 | 75.2k | 1000.1k | 14.2k | 0.29 | [task_group_007.yaml](claude_code_kimi2_6_enabled/reports/task_group_007.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 5.31% | 5.94% | 26.07 | 36.73 | 84.6k | 967.7k | 17.4k | 0.30 | [task_group_007.yaml](claude_code_kimi2_6_enabled/reports/task_group_007.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `kimi-k2.6, enabled` | `claude_code` | `base` | 15.73% | 8.20% | 122.87 | 184.93 | 144.9k | 3718.0k | 51.8k | 0.94 | [task_group_008.yaml](claude_code_kimi2_6_enabled/reports/task_group_008.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 15.70% | 9.16% | 74.67 | 110.87 | 90.7k | 1387.0k | 28.5k | 0.42 | [task_group_008.yaml](claude_code_kimi2_6_enabled/reports/task_group_008.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `kimi-k2.6, enabled` | `claude_code` | `self` | 11.77% | 8.70% | 47.60 | 65.27 | 60.7k | 905.5k | 24.6k | 0.30 | [task_group_008.yaml](claude_code_kimi2_6_enabled/reports/task_group_008.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 15.46% | 10.61% | 83.13 | 112.33 | 92.7k | 1824.1k | 28.4k | 0.49 | [task_group_008.yaml](claude_code_kimi2_6_enabled/reports/task_group_008.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `kimi-k2.6, enabled` | `claude_code` | `base` | 44.83% | 12.46% | 9.60 | 9.40 | 25.3k | 213.8k | 11.0k | 0.10 | [task_group_009.yaml](claude_code_kimi2_6_enabled/reports/task_group_009.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 49.38% | 7.44% | 10.33 | 9.47 | 28.9k | 252.5k | 12.8k | 0.12 | [task_group_009.yaml](claude_code_kimi2_6_enabled/reports/task_group_009.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `kimi-k2.6, enabled` | `claude_code` | `self` | 58.93% | 11.53% | 10.27 | 9.87 | 30.2k | 245.9k | 9.9k | 0.11 | [task_group_009.yaml](claude_code_kimi2_6_enabled/reports/task_group_009.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 53.98% | 12.80% | 9.80 | 9.00 | 27.4k | 222.2k | 12.7k | 0.11 | [task_group_009.yaml](claude_code_kimi2_6_enabled/reports/task_group_009.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `kimi-k2.6, enabled` | `claude_code` | `base` | 23.22% | 23.62% | 24.67 | 41.93 | 71.1k | 744.2k | 19.4k | 0.26 | [task_group_010.yaml](claude_code_kimi2_6_enabled/reports/task_group_010.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 22.85% | 19.81% | 29.00 | 42.20 | 69.8k | 892.5k | 17.3k | 0.28 | [task_group_010.yaml](claude_code_kimi2_6_enabled/reports/task_group_010.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `kimi-k2.6, enabled` | `claude_code` | `self` | 35.95% | 22.16% | 28.33 | 44.93 | 73.9k | 878.1k | 23.6k | 0.31 | [task_group_010.yaml](claude_code_kimi2_6_enabled/reports/task_group_010.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 35.89% | 31.03% | 24.13 | 42.93 | 64.7k | 761.7k | 19.7k | 0.26 | [task_group_010.yaml](claude_code_kimi2_6_enabled/reports/task_group_010.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `kimi-k2.6, enabled` | `claude_code` | `base` | 26.60% | 14.44% | 45.07 | 51.60 | 83.4k | 413.6k | 29.2k | 0.26 | [task_group_011.yaml](claude_code_kimi2_6_enabled/reports/task_group_011.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 40.49% | 13.90% | 37.20 | 48.73 | 79.9k | 383.7k | 24.7k | 0.24 | [task_group_011.yaml](claude_code_kimi2_6_enabled/reports/task_group_011.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `kimi-k2.6, enabled` | `claude_code` | `self` | 37.08% | 10.78% | 25.60 | 38.13 | 85.5k | 363.8k | 30.3k | 0.26 | [task_group_011.yaml](claude_code_kimi2_6_enabled/reports/task_group_011.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 36.10% | 16.03% | 1.00 | 0.00 | 81.0k | 637.3k | 26.0k | 0.28 | [task_group_011.yaml](claude_code_kimi2_6_enabled/reports/task_group_011.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `base` | 41.26% | 9.03% | 40.47 | 53.00 | 70.2k | 576.7k | 10.3k | 0.20 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 58.06% | 13.53% | 33.93 | 48.60 | 64.2k | 382.0k | 9.0k | 0.16 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `self` | 53.55% | 6.98% | 33.33 | 52.20 | 55.4k | 348.1k | 9.0k | 0.14 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 59.05% | 16.16% | 25.67 | 35.73 | 56.7k | 279.0k | 10.0k | 0.14 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
 
