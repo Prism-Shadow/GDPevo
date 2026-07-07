@@ -114,26 +114,21 @@ directory and write the final answer as `answer.json`.
 
 ## Running Claude Code
 
-For this Kimi 2.6 rerun, Claude Code must run with Docker isolation unless the
-user explicitly approves a fallback later. Do not start any scored or
-skill-generation Claude run with direct host `claude -p` fallback.
+Use the most isolated Claude Code execution mode available for the run. Docker
+is recommended when the execution host supports it, but this reusable workspace
+must not assume host-specific Docker permissions or command wrappers.
 
-On this server, direct `docker` access may fail because the user is not in the
-`docker` group. Use `sudo docker` for Docker commands. `sudo docker ps` is
-expected to work without an interactive password prompt. If `sudo docker` is not
-usable, stop before launching Claude Code, record the blocker in `scratch/`, and
-report it to the user.
+If Docker is used, the container must have network access because Claude Code
+needs the SiliconFlow API and tasks may need `GDPEVO_ENV_BASE_URL`. Mount only
+the current staged working directory and the trace/output directories into the
+container. Do not mount the full task group, full evaluation workspace, parent
+`work/` directory, repository root, or home directory. This file isolation is
+the main protection against `notes/`, `eval/`, `env/`, source answers, and
+previous runs leaking into Claude Code.
 
-The container must have network access because Claude Code needs the
-SiliconFlow API and tasks may need `GDPEVO_ENV_BASE_URL`. Do not use a
-network-disabled container unless an equivalent working proxy is explicitly
-configured.
-
-Mount only the current staged working directory and the trace/output
-directories into the container. Do not mount the full task group, full
-evaluation workspace, parent `work/` directory, repository root, or home
-directory. This file isolation is the main protection against `notes/`, `eval/`,
-`env/`, source answers, and previous runs leaking into Claude Code.
+If Docker is not used, direct host execution is acceptable only from the clean
+staged skill-generation or solver-attempt directory, with the same file-access
+boundaries and trace-preservation requirements.
 
 Launch Claude Code with bypass permissions, for example:
 
@@ -148,9 +143,9 @@ If the `claude` executable is not on `PATH`, locate it before running the
 experiment. Do not hard-code a host-specific path in reusable scripts; record
 the resolved executable path in `scratch/`.
 
-Do not use direct host execution as an automatic fallback. If a Dockerized
-Claude command cannot be constructed, stop and report the blocker instead of
-running `claude -p` on the host.
+Do not run Claude Code from the full task group or full evaluation workspace as
+a fallback. If the selected execution mode cannot preserve answer artifacts and
+raw traces, stop and report the blocker instead of launching a scored run.
 
 ## Scoring, Traces, Tokens, Report
 
@@ -203,7 +198,8 @@ report/task_group_XXX.yaml
 ```
 
 It must include `acc@3`, population `std@3`, failures/invalid attempts, trace
-coverage, token coverage, and main artifact paths for all four conditions:
+coverage, token coverage, solver turn/tool-call coverage, and main artifact
+paths for all four conditions:
 
 ```text
 base

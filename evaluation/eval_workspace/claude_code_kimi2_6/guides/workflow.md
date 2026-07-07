@@ -197,7 +197,9 @@ The ID must appear in the solver prompt, attempt directory, and
 
 Backfill token usage from the matched Claude Code subagent transcript. Deduplicate
 by `message.id`: keep input/cache buckets from any record and the max
-`output_tokens` per message id, then sum across responses.
+`output_tokens` per message id, then sum across responses. Count solver
+assistant/model-response turns and assistant `tool_use` content blocks from the
+same matched formal solver trace.
 
 Claude Code subagent transcripts are usually under:
 
@@ -214,9 +216,11 @@ original_traces/<condition>/<task_id>/attempt_<nn>/
 
 Record both the source transcript path and the copied workspace trace path in
 `run_metadata.yaml`. If no unique transcript can be matched, set the copied
-trace path to `null`, keep the token fields `null`, and report the trace issue.
+trace path to `null`, keep the token, turn, and tool-call fields `null`, and
+report the trace issue.
 
-After all runs complete, aggregate `acc@3`, population `std@3`, and per-bucket tokens for all four
+After all runs complete, aggregate `acc@3`, population `std@3`, per-bucket
+tokens, solver turn counts, and solver tool-call counts for all four
 conditions. Efficiency metrics count only test solver answer writing: average
 the 3 attempts for the same test task, then average the 5 test tasks. Do not
 include skill generation, remote environment checks, evaluator execution, or
@@ -225,9 +229,9 @@ environment notes must be placed under `scratch/`, not in the workspace root.
 
 Before marking the evaluation complete, check that each scored solver attempt
 has a matched raw subagent transcript copied under `original_traces/` and that
-the report token fields were aggregated from those copied traces. If any trace
-or token field is missing, preserve the reason in `run_metadata.yaml` and call
-it out in the final report.
+the report token, turn-count, and tool-call fields were aggregated from those
+copied traces. If any trace or efficiency field is missing, preserve the reason
+in `run_metadata.yaml` and call it out in the final report.
 
 ## 6. Interpret Results
 
