@@ -168,9 +168,10 @@ specific Claude skill-generation or solver run copied under:
 original_traces/<condition>/<test_id>/attempt_<nn>/
 ```
 
-Populate token usage in `run_metadata.yaml` and final report from the matched
-trace. Deduplicate usage by `message.id` before summing. If a trace cannot be
-matched, record the issue explicitly and do not invent token numbers.
+Populate token usage, round count, and tool-call count in `run_metadata.yaml`
+and the final report from the matched trace. Deduplicate token usage by
+`message.id` before summing. If a trace cannot be matched, record the issue
+explicitly and do not invent efficiency numbers.
 
 For `claude -p`, save stdout as a machine-readable trace when possible, such as
 `--output-format stream-json --verbose`, under the matching `original_traces/`
