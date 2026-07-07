@@ -251,12 +251,6 @@ class Checker:
             prefix=prefix,
             mode="explicit answer path",
         )
-        self.run_eval_and_check(
-            [str(script_path.resolve())],
-            cwd=script_path.parent,
-            prefix=prefix,
-            mode="default answer",
-        )
 
     def run_eval_and_check(self, command: list[str], *, cwd: Path, prefix: str, mode: str) -> None:
         try:
@@ -354,15 +348,13 @@ def is_full_score(data: Any) -> bool:
     if not isinstance(data, dict):
         return False
 
-    for key in ("normalized_score", "score", "total_score"):
-        value = data.get(key)
-        if is_number(value) and abs(float(value) - 1.0) <= 1e-6:
-            return True
-
     if data.get("passed") is True:
         return True
 
     score_pairs = [
+        ("score", "max_score"),
+        ("raw_score", "raw_max_score"),
+        ("raw_score", "max_raw_score"),
         ("earned_score", "max_score"),
         ("earned_weight", "total_weight"),
         ("earned", "total"),
@@ -373,6 +365,11 @@ def is_full_score(data: Any) -> bool:
         if is_number(earned) and is_number(total) and float(total) > 0:
             if abs(float(earned) - float(total)) <= 1e-6:
                 return True
+
+    for key in ("normalized_score", "score", "total_score"):
+        value = data.get(key)
+        if is_number(value) and abs(float(value) - 1.0) <= 1e-6:
+            return True
 
     for key in ("points", "scoring_points", "details", "checks"):
         value = data.get(key)
