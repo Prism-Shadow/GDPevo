@@ -34,6 +34,7 @@ reflect-3
 
 | Path | Purpose |
 | --- | --- |
+| `CODEX_ORCHESTRATOR.md` | Codex 主控、Docker 隔离、`codex exec` 命令形态和 trace 保存 |
 | `RUN_SCOPE.md` | 本次 3x3 迁移实验的固定范围 |
 | `heatmap_scope.json` | 脚本读取的 task group、mode、label 定义 |
 | `guides/` | 运行流程、skill mode、评分和报告格式 |
@@ -48,7 +49,7 @@ reflect-3
 ## 推荐启动 prompt
 
 ```text
-请阅读 README.md、RUN_SCOPE.md 和 guides/。只运行 Codex 的 3x3 跨任务 skill
+请阅读 README.md、CODEX_ORCHESTRATOR.md、RUN_SCOPE.md 和 guides/。只运行 Codex 的 3x3 跨任务 skill
 迁移实验，mode 只包括 fewshot 和 reflect-3。每个 source task group 使用 3 个既有独立
 skill 计算 @3。每个 solver attempt 都隔离在 runs/ 下。将每个 cell report 写入
 report/cells/，最后在 heatmaps/ 下生成两张热力图。将每个匹配到的 Codex
@@ -58,14 +59,15 @@ Model: GPT-5.5, reasoning_effort: xhigh.
 
 ## 环境
 
-不要启动本地 env service。这个 workspace 不重新生成 skill。solver 子 agent 不能进入、
+不要启动本地 env service。这个 workspace 不重新生成 skill。solver run 不能进入、
 列出或读取 `task_groups/*/env/`，只能使用主 agent staging 给它们的远程环境入口。
 
-## Codex Subagents
+## 隔离 Solver Runs
 
-当用户要求运行这个 workspace 时，该请求视为允许使用 Codex solver subagents。
-所有 test attempts 都应由 clean-context solver subagents 完成。如果所需 solver
-subagents 数量超过当前 Codex 并发限制，就分批运行，直到所有 attempts 完成。
+当用户要求运行这个 workspace 时，该请求视为允许 Codex 作为主控组织实验，并用
+Docker 内的 `codex exec` 启动隔离 solver run。所有 test attempts 都应由干净、
+隔离的 Docker run 完成。如果所需 runs 数量超过实际并发能力，就分批运行，直到
+所有 attempts 完成。
 
 除非用户明确覆盖，否则使用 `heatmap_scope.json` 里的模型配置：
 
@@ -76,6 +78,10 @@ reasoning_effort: xhigh
 
 不要减少 attempt 数量，不要把多道 test tasks 合并到同一个 solver run，也不要由
 main agent 直接解题。
+
+使用 `CODEX_ORCHESTRATOR.md` 中的命令形态，并在启动 solver 进程时临时设置每个
+attempt 专用的 `CODEX_HOME=/codex_home`。`CODEX_HOME` 不是任务 `.env` 配置。
+正式 attempt 不要使用 `codex exec --ephemeral`。
 
 ## 产出
 

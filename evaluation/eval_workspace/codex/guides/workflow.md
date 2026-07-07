@@ -1,7 +1,7 @@
 # Evaluation Workflow
 
-This file explains how the main evaluation agent should run one complete Codex
-evaluation.
+This file explains how the Codex main evaluation orchestrator should run one
+complete Codex evaluation.
 
 The evaluation now uses a remote task environment and four conditions:
 
@@ -13,8 +13,20 @@ reflect-3
 ```
 
 When a user asks you to run evaluation in this workspace, that request is
-permission to use Codex subagents. Keep every skill-generation and solver run in
-a clean, dedicated workspace/cwd.
+permission for Codex to orchestrate the experiment and launch Dockerized Codex
+runs. Keep every skill-generation and solver run in a clean, dedicated staged
+directory mounted as `/work` inside Docker.
+
+Read `CODEX_ORCHESTRATOR.md` before launching isolated agent runs. The formal
+Codex command shape is:
+
+```bash
+CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
+```
+
+`CODEX_HOME` is a runtime-only temporary environment variable for that agent
+process, not a task `.env` setting. Do not use `codex exec --ephemeral` for
+formal attempts.
 
 ## 1. Prepare The Task Group
 
@@ -40,12 +52,12 @@ Do not start the local `task_group/env` service for Codex evaluation. Confirm th
 remote environment health/index endpoint answers and record the URL in
 `scratch/environment.md`.
 
-Skill-generation and solver subagents must not enter, list, or read `env/`.
-They may use only the remote environment entrypoint staged by the main agent.
+Skill-generation and solver runs must not enter, list, or read `env/`. They may
+use only the remote environment entrypoint staged by the main agent.
 
 The judge endpoint is train-only and valid only during reflect skill generation
 on train tasks. It must not be staged to test solvers or written into generated
-skills as a test-time tool. Only reflect skill-generation subagents should
+skills as a test-time tool. Only reflect skill-generation runs should
 receive its usage instructions:
 
 ```text
@@ -127,6 +139,11 @@ contaminated attempt.
 
 The solver writes `answer.json` in its own attempt directory.
 
+Each solver attempt is launched by the Codex orchestrator as a Dockerized Codex
+process from that attempt directory. Mount only the attempt directory and the
+per-attempt Codex home used for `CODEX_HOME`; do not mount the full workspace or
+task group.
+
 ## 5. Score And Aggregate
 
 After each solver writes `answer.json`, call the current test task's
@@ -141,31 +158,19 @@ Every solver attempt must have a unique `eval_attempt_id`:
 The ID must appear in the solver prompt, attempt directory, and
 `run_metadata.yaml`.
 
-Backfill token usage from the Codex session trace. Do not match traces using
-only "the newest file"; confirm:
+Backfill token usage, solver turn count, and tool-call count from the raw Codex
+session trace written into the attempt-mounted `CODEX_HOME`. Confirm the trace
+uses the expected attempt directory and contains the matching `eval_attempt_id`.
 
-- `thread_source` is `subagent`.
-- `parent_thread_id` belongs to the current main evaluation agent.
-- `cwd` is the expected attempt directory.
-- The trace contains the matching `eval_attempt_id`.
-
-Codex traces are usually under:
+Codex raw session traces should be under:
 
 ```text
-~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
 ```
 
-After matching the trace, copy or hard-link the raw `rollout-*.jsonl` file into:
-
-```text
-original_traces/<condition>/<task_id>/attempt_<nn>/
-```
-
-Record both the source trace path and the copied workspace trace path in
-`run_metadata.yaml`. If no unique trace can be matched, set the copied trace path
-to `null`, keep the token, turn, and tool-call fields `null`, and report the trace issue. Do not use
-trace-discarding solver launches such as `codex exec --ephemeral` for formal
-attempts.
+Record the raw session trace path in `run_metadata.yaml`. If the raw session
+trace is missing, keep the raw trace path `null`, leave trace-derived efficiency
+fields `null`, and report the trace issue.
 
 After all runs complete, aggregate `acc@3`, population `std@3`, average cached/input/output
 tokens, and solver turn count and tool-call counts for all four conditions. Efficiency metrics count only test solver answer

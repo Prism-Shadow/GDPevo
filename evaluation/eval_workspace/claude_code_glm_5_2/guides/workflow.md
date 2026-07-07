@@ -1,8 +1,8 @@
 # Evaluation Workflow
 
-This file explains how the main evaluation agent should run one complete Claude
-Code evaluation with `GLM-5.2`: Claude Code uses `xhigh` effort, and the GLM
-model setting reported for the released run is `max`.
+This file explains how the Codex main evaluation orchestrator should run one
+complete Claude Code evaluation with `GLM-5.2`: Claude Code uses `xhigh` effort,
+and the GLM model setting reported for the released run is `max`.
 
 The evaluation now uses a remote task environment and four conditions:
 
@@ -14,14 +14,24 @@ reflect-3
 ```
 
 When a user asks you to run evaluation in this workspace, that request is
-permission to use Claude Code subagents. Keep every skill-generation and solver
-run in a clean, dedicated directory, and restrict each subagent to that
-directory.
+permission for Codex to orchestrate the experiment and launch Dockerized Claude
+Code runs configured for GLM-5.2. Keep every skill-generation and solver run in
+a clean, dedicated staged directory mounted as `/work` inside Docker.
 
-Before launching any subagents, confirm that the main Claude Code session is
-using `GLM-5.2` with Claude Code `xhigh` effort and the GLM `max` model setting.
-Subagents inherit the main session model and effort setting, so do not override
-the model per attempt.
+Read `CODEX_ORCHESTRATOR.md` before launching isolated agent runs. The formal
+Claude Code command shape is:
+
+```bash
+CLAUDE_CONFIG_DIR=/claude_config claude -p --permission-mode bypassPermissions --session-id "$CLAUDE_SESSION_ID" "$PROMPT"
+```
+
+`CLAUDE_CONFIG_DIR` is a runtime-only temporary environment variable for that
+agent process, not a task `.env` setting. Do not use `--no-session-persistence`
+for formal attempts.
+
+Before launching any runs, confirm that the Dockerized Claude Code configuration
+uses `GLM-5.2` with Claude Code `xhigh` effort and the GLM `max` model setting.
+Record the observed model and effort under `scratch/`.
 
 ## 1. Prepare The Task Group
 
@@ -47,12 +57,12 @@ Do not start the local `task_group/env` service for Claude Code evaluation.
 Confirm the remote environment health/index endpoint answers and record the URL
 in `scratch/environment.md`.
 
-Skill-generation and solver subagents must not enter, list, or read `env/`.
-They may use only the remote environment entrypoint staged by the main agent.
+Skill-generation and solver runs must not enter, list, or read `env/`. They may
+use only the remote environment entrypoint staged by the main agent.
 
 The judge endpoint is train-only and valid only during reflect skill generation
 on train tasks. It must not be staged to test solvers or written into generated
-skills as a test-time tool. Only reflect skill-generation subagents should
+skills as a test-time tool. Only reflect skill-generation runs should
 receive its usage instructions:
 
 ```text
@@ -134,6 +144,11 @@ contaminated attempt.
 
 The solver writes `answer.json` in its own attempt directory.
 
+Each solver attempt is launched by the Codex orchestrator as a Dockerized
+Claude Code process from that attempt directory. Mount only the attempt
+directory and the per-attempt Claude config directory used for
+`CLAUDE_CONFIG_DIR`; do not mount the full workspace or task group.
+
 ## 5. Score And Aggregate
 
 After each solver writes `answer.json`, call the current test task's
@@ -150,26 +165,20 @@ The ID must appear in the solver prompt, attempt directory, and
 
 Set `model: glm-5.2, max` in each run metadata file.
 
-Backfill token usage from the matched Claude Code subagent transcript. Deduplicate
-by `message.id`: keep input/cache buckets from any record and the max
-`output_tokens` per message id, then sum across responses.
+Backfill token usage, solver turn count, and tool-call count from the raw Claude
+Code session trace written into the attempt-mounted `CLAUDE_CONFIG_DIR`.
+Deduplicate by `message.id`: keep input/cache buckets from any record and the
+max `output_tokens` per message id, then sum across responses.
 
-Claude Code subagent transcripts are usually under:
-
-```text
-~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
-```
-
-After matching the transcript, copy or hard-link the raw `agent-*.jsonl` file
-into:
+Claude Code session traces should be under:
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/
+original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
 ```
 
-Record both the source transcript path and the copied workspace trace path in
-`run_metadata.yaml`. If no unique transcript can be matched, set the copied
-trace path to `null`, keep the token, turn, and tool-call fields `null`, and report the trace issue.
+Record the raw session trace path in `run_metadata.yaml`. If the raw session
+trace is missing, set the trace path to `null`, keep the token, turn, and
+tool-call fields `null`, and report the trace issue.
 
 After all runs complete, aggregate `acc@3`, population `std@3`, per-bucket tokens, and solver turn count and tool-call counts for all four
 conditions. Efficiency metrics count only test solver answer writing: average

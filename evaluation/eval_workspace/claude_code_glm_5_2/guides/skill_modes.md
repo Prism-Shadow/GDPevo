@@ -13,8 +13,8 @@ reflect-3
 Use `fewshot` as the report/directory key for the few-shot condition.
 
 The main agent stages the allowed materials for each skill-generation or solver
-subagent into that subagent's dedicated directory. Do not give subagents the full
-task group directory.
+run into that run's dedicated directory. Do not give isolated runs the full task
+group directory.
 
 All non-reflect staging should expose only the remote environment URL from
 `.env`:
@@ -24,7 +24,7 @@ GDPEVO_ENV_BASE_URL=<remote task environment>
 ```
 
 The main agent may also read the train-only judge path from `.env`, but it must
-stage that value only for reflect skill-generation subagents:
+stage that value only for reflect skill-generation runs:
 
 ```text
 GDPEVO_JUDGE_PATH=/api/judge
@@ -59,7 +59,7 @@ generated skills, or judge instructions.
 
 ## fewshot
 
-Generate 3 independent skills with 3 clean-context skill-generation subagents.
+Generate 3 independent skills with 3 clean-context skill-generation runs.
 Each generator may see:
 
 - Official `input/` for the 5 train tasks.
@@ -81,7 +81,7 @@ the matching fewshot skill.
 
 ## self
 
-Generate 3 independent skills with 3 clean-context skill-generation subagents.
+Generate 3 independent skills with 3 clean-context skill-generation runs.
 This mode is self-evolution without train outputs or judge feedback.
 
 The generator may see:

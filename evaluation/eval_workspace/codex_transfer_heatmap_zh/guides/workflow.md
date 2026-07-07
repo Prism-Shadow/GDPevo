@@ -2,11 +2,21 @@
 
 本工作区只运行 Codex harness 的跨 task group skill 迁移实验，不重新生成 skill。
 
-当用户要求运行这个 workspace 时，该请求视为允许使用 Codex solver subagents。每个
-solver run 都必须在干净、独立的 workspace/cwd 中完成。如果所需 solver subagents
-数量超过当前 Codex 并发限制，就分批运行，直到所有 attempts 完成。不要减少
+当用户要求运行这个 workspace 时，该请求视为允许 Codex 作为主控组织实验，并用
+Docker 内的 `codex exec` 启动隔离 solver run。每个 solver run 都必须在干净、
+独立的 attempt 目录中完成，并将该目录作为 Docker 内 `/work` 挂载。如果所需
+runs 数量超过实际并发能力，就分批运行，直到所有 attempts 完成。不要减少
 attempt 数量，不要把多道 test tasks 合并到同一个 solver run，也不要由 main agent
 直接解题。
+
+启动 solver run 前先读 `CODEX_ORCHESTRATOR.md`。正式命令形态为：
+
+```bash
+CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
+```
+
+`CODEX_HOME` 是该 solver 进程运行时临时设置的环境变量，不是任务 `.env` 配置。
+正式 attempt 不要使用 `codex exec --ephemeral`。
 
 除非用户明确覆盖，否则使用 `heatmap_scope.json` 里的模型配置：
 
@@ -98,8 +108,8 @@ answer.json
 run_metadata.yaml
 ```
 
-每个 solver attempt 都必须由 clean-context Codex solver subagent 使用配置好的模型和
-思考强度完成。main agent 负责 staging attempt 目录、启动 solver subagent，并在
+每个 solver attempt 都必须由 clean-context Dockerized Codex run 使用配置好的模型和
+思考强度完成。main agent 负责 staging attempt 目录、启动隔离 solver run，并在
 solver 写出 `answer.json` 后评分和聚合。
 
 solver prompt 保持短而明确：
@@ -131,22 +141,15 @@ runs/<mode>/<source>__to__<target>/test_001/attempt_01/score.yaml
 transfer__<mode>__<source>__to__<target>__<test_id>__attempt_<nn>__<timestamp>
 ```
 
-评分后，从下面的位置匹配 solver subagent 的 Codex 原始 session trace：
+评分后，从 attempt 专用 `CODEX_HOME` 读取 solver 的 Codex 原始 session trace：
 
 ```text
-~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
 ```
 
-不要只拿最新文件来匹配。应确认 trace 属于 subagent、使用预期 attempt
-目录，并且包含匹配的 `eval_attempt_id`。将原始 trace 复制或硬链接到：
-
-```text
-original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/
-```
-
-在 `run_metadata.yaml` 中同时记录原始 trace 路径和复制进工作区后的 trace
-路径。如果不能唯一匹配 trace，将复制后的 trace 路径写为 `null`，并报告问题。
-正式 attempt 不要使用 `codex exec --ephemeral` 这类不会留下可追溯 trace 的启动方式。
+应确认 trace 使用预期 attempt 目录，并且包含匹配的 `eval_attempt_id`。这个原始
+session 文件是主 trace。在 `run_metadata.yaml` 中记录原始 session trace 路径。
+如果原始 session trace 缺失，将 trace 路径写为 `null`，并报告问题。
 
 token usage 可以在 `run_metadata.yaml` 里记录，但 heatmap 默认只使用 score。
 
