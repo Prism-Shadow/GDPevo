@@ -314,6 +314,7 @@ GLM 的 token 列使用从 Claude Code run metadata 归一化后的四个 usage 
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `fewshot` | 80.21% | 7.20% | 13.73 | 20.60 | 104.0k | 0.0k | 1074.7k | 15.1k | 0.49 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `self` | 78.58% | 7.61% | 14.40 | 20.20 | 122.6k | 0.0k | 1198.3k | 20.5k | 0.57 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `glm-5.2, max` | `claude_code` | `reflect-3` | 80.16% | 8.00% | 12.80 | 17.40 | 109.1k | 0.0k | 1015.8k | 17.5k | 0.49 | [task_group_012.yaml](claude_code_glm_5_2_max/reports/task_group_012.yaml) |
+
 ---
 
 ## Claude Code（Kimi K2.6，enabled）
@@ -349,10 +350,10 @@ Kimi 的 token 列是 Claude Code 运行元数据中暴露的三类 usage 桶：
 | `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 44.00% | 10.94% | 32.33 | 60.67 | 58.6k | 803.1k | 11.0k | 0.23 | [task_group_002.yaml](claude_code_kimi2_6_enabled/reports/task_group_002.yaml) |
 | `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `kimi-k2.6, enabled` | `claude_code` | `self` | 34.55% | 14.20% | 23.53 | 37.40 | 43.3k | 528.5k | 9.1k | 0.16 | [task_group_002.yaml](claude_code_kimi2_6_enabled/reports/task_group_002.yaml) |
 | `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 33.63% | 7.60% | 28.27 | 44.47 | 47.9k | 712.1k | 9.7k | 0.20 | [task_group_002.yaml](claude_code_kimi2_6_enabled/reports/task_group_002.yaml) |
-| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `base` | 18.15% | 15.26% | n/a | n/a | 93.7k | 1396.2k | 31.4k | 0.44 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
-| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 29.19% | 15.26% | n/a | n/a | 91.8k | 1152.8k | 29.9k | 0.39 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
-| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `self` | 19.54% | 17.07% | 63.43 | 89.23 | 86.9k | 1100.9k | 28.9k | 0.37 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
-| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 20.16% | 21.16% | 44.77 | 65.80 | 94.5k | 1106.0k | 26.8k | 0.37 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `base` | 18.15% | 15.26% | 78.50 | 103.40 | 93.7k | 1396.2k | 31.4k | 0.44 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 29.19% | 15.26% | 56.13 | 67.07 | 91.8k | 1152.8k | 29.9k | 0.39 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `self` | 19.54% | 17.07% | 68.33 | 95.40 | 86.9k | 1100.9k | 28.9k | 0.37 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 20.16% | 21.16% | 49.80 | 71.47 | 94.5k | 1106.0k | 26.8k | 0.37 | [task_group_003.yaml](claude_code_kimi2_6_enabled/reports/task_group_003.yaml) |
 | `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `kimi-k2.6, enabled` | `claude_code` | `base` | 22.56% | 3.88% | 68.60 | 119.93 | 107.1k | 3046.6k | 26.2k | 0.69 | [task_group_004.yaml](claude_code_kimi2_6_enabled/reports/task_group_004.yaml) |
 | `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 23.97% | 16.01% | 51.60 | 85.80 | 106.7k | 1990.0k | 25.9k | 0.52 | [task_group_004.yaml](claude_code_kimi2_6_enabled/reports/task_group_004.yaml) |
 | `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `kimi-k2.6, enabled` | `claude_code` | `self` | 16.51% | 9.99% | 48.60 | 68.47 | 83.7k | 1746.9k | 20.7k | 0.44 | [task_group_004.yaml](claude_code_kimi2_6_enabled/reports/task_group_004.yaml) |
@@ -389,4 +390,3 @@ Kimi 的 token 列是 Claude Code 运行元数据中暴露的三类 usage 桶：
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 58.06% | 13.53% | 33.93 | 48.60 | 64.2k | 382.0k | 9.0k | 0.16 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `self` | 53.55% | 6.98% | 33.33 | 52.20 | 55.4k | 348.1k | 9.0k | 0.14 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 59.05% | 16.16% | 25.67 | 35.73 | 56.7k | 279.0k | 10.0k | 0.14 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
-
