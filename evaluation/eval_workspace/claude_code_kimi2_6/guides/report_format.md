@@ -87,8 +87,8 @@ conditions:
 - `skill_dirs` is only used for non-base conditions. Paths are relative to the
   directory containing the report YAML, and attempt numbers must match the solver
   attempt number that used that skill.
-- Token fields come from the deduped Claude Code subagent transcripts copied
-  under `original_traces/`. If a transcript cannot be matched uniquely, write
+- Token fields come from the deduped Dockerized Claude Code solver traces copied
+  under `original_traces/`. If a trace cannot be matched uniquely, write
   `null` and preserve the issue in the corresponding run record.
 - The required token fields are `input_tokens_avg_3`,
   `cache_creation_tokens_avg_3`, `cache_read_tokens_avg_3`, and
@@ -99,9 +99,9 @@ conditions:
   agreed Kimi/SiliconFlow rate card.
 - Efficiency metrics follow the same aggregation shape as `acc@3`: average the
   3 attempts for the same test task, then average the 5 test tasks.
-- Efficiency metrics only count answer-writing by test solver subagents. Do not
+- Efficiency metrics only count answer-writing by test solver Claude processes. Do not
   include skill generation, remote environment checks, evaluator execution, or
-  main-agent summarization.
+  orchestrator summarization.
 - If any test attempt was contaminated by forbidden material access or leakage,
   exclude it from report scores and aggregation. Preserve the contamination
   reason and replacement attempt in the corresponding run record instead of the

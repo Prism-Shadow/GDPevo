@@ -23,14 +23,17 @@ CLAUDE_CODE_EFFORT_LEVEL=xhigh
 permissions.defaultMode=bypassPermissions
 ```
 
-Run `/status` in Claude Code and record the observed model/effort in
-`scratch/environment.md`. Skill-generation and solver subagents inherit the
-main session configuration; do not pass a different model to subagents.
+Record the observed model, Claude Code effort, Kimi model-side thinking mode,
+and permission mode in `scratch/environment.md`. Treat these as two separate
+inference-control levels: Claude Code effort is `xhigh`, while Kimi thinking
+should be recorded as `enabled`; do not describe Kimi itself as using an
+`xhigh` thinking level.
 
 When a user asks you to run evaluation in this workspace, that request is
-permission to use Claude Code subagents. Keep every skill-generation and solver
-run in a clean, dedicated directory, and restrict each subagent to that
-directory.
+permission for Codex to orchestrate Dockerized `claude -p` subprocesses. Keep
+every skill-generation and solver run in a clean, dedicated directory, and mount
+only that staged directory plus the matching trace/output directory into the
+container.
 
 ## 1. Prepare The Task Group
 
@@ -70,12 +73,12 @@ If any task text mentions a local env URL, this environment_access.md overrides
 that local reference.
 ```
 
-Skill-generation and solver subagents must not enter, list, or read `env/`.
+Skill-generation and solver Claude runs must not enter, list, or read `env/`.
 They may use only the remote environment entrypoint staged by the main agent.
 
 The judge endpoint is train-only and valid only during reflect skill generation
 on train tasks. It must not be staged to test solvers or written into generated
-skills as a test-time tool. Only reflect skill-generation subagents should
+skills as a test-time tool. Only reflect skill-generation runs should
 receive its usage instructions:
 
 ```text
@@ -195,30 +198,30 @@ Every solver attempt must have a unique `eval_attempt_id`:
 The ID must appear in the solver prompt, attempt directory, and
 `run_metadata.yaml`.
 
-Backfill token usage from the matched Claude Code subagent transcript. Deduplicate
-by `message.id`: keep input/cache buckets from any record and the max
-`output_tokens` per message id, then sum across responses.
+Backfill token usage from the matched Dockerized Claude Code solver trace.
+The preferred sources are the preserved `stdout.stream.jsonl` emitted by
+`claude -p --output-format stream-json --verbose` and the matching
+`.claude/projects/.../*.jsonl` session trace captured from the container's
+Claude home. Deduplicate by `message.id`: keep input/cache buckets from any
+record and the max `output_tokens` per message id, then sum across responses.
 From the same matched solver trace, also count solver assistant/model-response
 turns and assistant `tool_use` content blocks. Store these raw counts in
 `run_metadata.yaml` as `rounds` and `tool_calls`.
 
-Claude Code subagent transcripts are usually under:
+Each Dockerized Claude run should also write a `docker_run_manifest.yaml` under
+the matching trace directory, recording the staged working directory, trace
+directory, session id when available, model, effort, Kimi thinking mode,
+permission mode, timeout, exit code, and copied session trace files.
 
-```text
-~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
-```
-
-After matching the transcript, copy or hard-link the raw `agent-*.jsonl` file
-into:
+After matching the trace, copy or preserve the raw trace files under:
 
 ```text
 original_traces/<condition>/<task_id>/attempt_<nn>/
 ```
 
-Record both the source transcript path and the copied workspace trace path in
-`run_metadata.yaml`. If no unique transcript can be matched, set the copied
-trace path to `null`, keep the token, round-count, and tool-call fields `null`,
-and report the trace issue.
+Record the copied workspace trace paths in `run_metadata.yaml`. If no unique
+trace can be matched, set the copied trace path to `null`, keep the token,
+round-count, and tool-call fields `null`, and report the trace issue.
 
 After all runs complete, aggregate `acc@3`, population `std@3`, per-bucket
 tokens, `rounds_avg_3`, and `tool_calls_avg_3` for all four conditions. Raw
@@ -232,7 +235,7 @@ checking code, aggregation code, and environment notes must be placed under
 `scratch/`, not in the workspace root.
 
 Before marking the evaluation complete, check that each scored solver attempt
-has a matched raw subagent transcript copied under `original_traces/` and that
+has a matched raw Claude Code trace copied under `original_traces/` and that
 the report token, round-count, and tool-call fields were aggregated from those
 copied traces. If any trace or efficiency field is missing, preserve the reason
 in `run_metadata.yaml` and call it out in the final report.

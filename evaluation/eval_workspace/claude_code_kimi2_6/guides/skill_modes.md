@@ -1,8 +1,8 @@
 # Skill Modes
 
 This evaluation compares four conditions over the same task group, test tasks,
-Kimi 2.6 model configuration, `xhigh` effort setting, remote environment, and
-evaluators:
+Kimi 2.6 model configuration, Claude Code `xhigh` effort setting, Kimi
+model-side thinking `enabled`, remote environment, and evaluators:
 
 ```text
 base
@@ -13,13 +13,13 @@ reflect-3
 
 Use `fewshot` as the report/directory key for the few-shot condition.
 
-The main agent stages the allowed materials for each skill-generation or solver
-subagent into that subagent's dedicated directory. Do not give subagents the full
-task group directory.
+Codex stages the allowed materials for each skill-generation or solver Claude
+run into that run's dedicated directory. Do not give Claude the full task group
+directory.
 
 Never stage an entire train task or test task directory. Stage only the
 allowlisted files for the current mode. `notes/`, `eval/`, `env/`, unrelated
-tasks, and previous run outputs are never allowlisted for subagents.
+tasks, and previous run outputs are never allowlisted for Claude runs.
 
 All non-reflect staging should expose only the remote environment URL from
 `.env`:
@@ -29,7 +29,7 @@ GDPEVO_ENV_BASE_URL=<remote task environment>
 ```
 
 The main agent may also read the train-only judge path from `.env`, but it must
-stage that value only for reflect skill-generation subagents:
+stage that value only for reflect skill-generation Claude runs:
 
 ```text
 GDPEVO_JUDGE_PATH=/api/judge
@@ -64,7 +64,8 @@ generated skills, or judge instructions.
 
 ## fewshot
 
-Generate 3 independent skills with 3 clean-context skill-generation subagents.
+Generate 3 independent skills with 3 clean-context Dockerized skill-generation
+Claude runs.
 Each generator may see:
 
 - Official `input/` for the 5 train tasks.
@@ -87,7 +88,8 @@ the matching fewshot skill.
 
 ## self
 
-Generate 3 independent skills with 3 clean-context skill-generation subagents.
+Generate 3 independent skills with 3 clean-context Dockerized skill-generation
+Claude runs.
 This mode is self-evolution without train outputs or judge feedback.
 
 The generator may see:

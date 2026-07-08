@@ -1,7 +1,8 @@
 # Codex Orchestrator Guide for Kimi 2.6 Claude Code Evaluation
 
 You are the evaluation orchestrator for one task group. Claude Code is only a
-subprocess/subagent used to generate skills or solve a single staged attempt.
+Dockerized `claude -p` subprocess used to generate skills or solve a single
+staged attempt.
 Do not let Claude Code work from the full evaluation workspace or the full
 task_group directory.
 
@@ -24,7 +25,8 @@ Read `README.md` and `guides/` first. Use `.env` for the remote task
 environment. Do not start the local `task_group/env` service.
 
 Before running any Claude Code command, confirm the active Claude Code
-configuration is Kimi 2.6 with xhigh effort and bypass permissions:
+configuration is Kimi 2.6 with Claude Code `xhigh` effort, Kimi model-side
+thinking `enabled`, and bypass permissions:
 
 ```text
 ANTHROPIC_BASE_URL=https://api.siliconflow.cn/
@@ -34,7 +36,9 @@ CLAUDE_CODE_EFFORT_LEVEL=xhigh
 permissions.defaultMode=bypassPermissions
 ```
 
-Record this check in the evaluation workspace under `scratch/`.
+Record this check in the evaluation workspace under `scratch/`. Keep the two
+levels separate in notes and reports: `xhigh` describes Claude Code's outer
+effort setting, while Kimi thinking is recorded as `enabled`.
 
 ## Core Rule
 
