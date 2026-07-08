@@ -38,7 +38,6 @@ Each solver attempt should preserve these trace files under
 
 ```text
 docker_run_manifest.yaml
-stdout.stream.jsonl
 home/.claude/projects/.../<session_id>.jsonl
 debug.log                    # optional
 stderr.log                   # optional
@@ -51,9 +50,10 @@ A single API response is logged across **multiple content-block records**. Acros
 - `cache_read_input_tokens` — cache reads
 - `output_tokens` — generated tokens
 
-If both stdout-stream and session JSONL traces are present, compute from the
-source that contains the complete response-usage records and record that source
-in `run_metadata.yaml`. The other trace may be used as an audit cross-check.
+Compute token usage, rounds, and tool calls from the preserved Claude Code
+session JSONL under `.claude/projects/.../<session_id>.jsonl`, and record that
+source in `run_metadata.yaml`. If an auxiliary stdout stream is present, keep it
+only as supporting evidence outside the required metadata shape.
 
 Recommended format:
 
@@ -66,18 +66,17 @@ model: <model_name_or_config>
 
 trace:
   docker_run_manifest: <path under original_traces/ or null>
-  stdout_stream_file: <path under original_traces/ or null>
   session_trace_file: <path under original_traces/ or null>
   match_status: matched
 
 token_usage:                          # deduped by message.id, summed across responses
-  source: claude_session_trace        # or stdout_stream_trace
+  source: claude_session_trace
   input_tokens: <int>                 # uncached
   cache_creation_input_tokens: <int>
   cache_read_input_tokens: <int>
   output_tokens: <int>
 trace_efficiency:
-  source: claude_session_trace        # or stdout_stream_trace
+  source: claude_session_trace
   rounds: <int>
   tool_calls: <int>
 ```

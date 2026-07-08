@@ -179,11 +179,12 @@ explicitly and do not invent efficiency numbers.
 
 For `claude -p`, save stdout as a machine-readable trace when possible, such as
 `--output-format stream-json --verbose`, under the matching `original_traces/`
-directory. Also locate and preserve the Claude Code session trace files from the
-active `.claude` directory when they are available. This means the Claude run
-itself, or the Codex orchestrator immediately after that run, must find the
-matching `.claude/projects/.../*.jsonl` or equivalent session file for the
-current staged directory/session and copy it into `original_traces/`.
+directory. This stdout stream is auxiliary. The primary trace for token usage,
+rounds, and tool-call counting is the Claude Code session JSONL from the active
+`.claude` directory. This means the Claude run itself, or the Codex orchestrator
+immediately after that run, must find the matching
+`.claude/projects/.../*.jsonl` or equivalent session file for the current staged
+directory/session and copy it into `original_traces/`.
 
 If running inside Docker, the relevant `.claude` directory may be inside the
 container rather than the host. Mount a host trace directory as the container's
@@ -196,8 +197,8 @@ Before deleting or replacing any Docker container, verify that all required
 artifacts have been written to the host workspace:
 
 - `answer.json` or `SKILL.md`
-- stdout stream/json trace
 - Claude Code session trace, when available
+- optional stdout stream/json trace, when captured
 - debug logs, when used
 - score and metadata files after Codex scoring
 

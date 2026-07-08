@@ -57,7 +57,7 @@ Run all four modes with acc@3/std@3 plus token, rounds, and tool-call efficiency
 Use `.env` for the remote task environment:
 
 ```text
-GDPEVO_ENV_BASE_URL=https://your-env-host.example/
+GDPEVO_ENV_BASE_URL=https://your-env-host.example
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
@@ -122,7 +122,7 @@ runs/reflect-3/
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context Dockerized solver subprocess. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
 
-6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, the matched session-trace reference, copied raw trace path, token usage, solver round count, and tool-call count. Copy the matched raw Dockerized Claude Code trace, including preserved stdout stream and available `.claude/projects/.../*.jsonl` session files, into `original_traces/<condition>/<task_id>/attempt_<nn>/` for audit.
+6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, the matched session-trace reference, copied raw trace path, token usage, solver round count, and tool-call count. Copy the matched raw Dockerized Claude Code session JSONL from `.claude/projects/.../*.jsonl` into `original_traces/<condition>/<task_id>/attempt_<nn>/` for audit. A stdout stream or debug log may also be preserved as auxiliary evidence, but the session JSONL is the primary trace source.
 
 The run layout is mandatory. Do not invent flattened files such as
 `runs/base/test_001_attempt_01_answer.json`.
@@ -133,7 +133,7 @@ runs/<condition>/<test_id>/attempt_<nn>/score.yaml
 runs/<condition>/<test_id>/attempt_<nn>/run_metadata.yaml
 ```
 
-7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average token, round-count, and tool-call fields for each condition. Write the final report to `report/<task_group_id>.yaml`. The formal report field names are `input_tokens_avg_3`, `cache_creation_tokens_avg_3`, `cache_read_tokens_avg_3`, `output_tokens_avg_3`, `rounds_avg_3`, and `tool_calls_avg_3`. Raw `run_metadata.yaml` may preserve provider-specific token names such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the report schema must use the normalized field names above. These efficiency metrics only count answer-writing by test solver Claude subprocesses: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, remote environment checks, evaluator execution, or orchestrator summarization. Temporary checking or aggregation code must be placed under `scratch/`, not in the workspace root.
+7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average token, round-count, and tool-call fields for each condition. Write the final report to `report/<task_group_id>.yaml`. The report must include a `model_config` block with `claude_code_effort: xhigh` and `kimi_thinking: enabled`. The formal report field names are `input_tokens_avg_3`, `cache_creation_tokens_avg_3`, `cache_read_tokens_avg_3`, `output_tokens_avg_3`, `rounds_avg_3`, and `tool_calls_avg_3`. Raw `run_metadata.yaml` may preserve provider-specific token names such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the report schema must use the normalized field names above. These efficiency metrics only count answer-writing by test solver Claude subprocesses: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, remote environment checks, evaluator execution, or orchestrator summarization. Temporary checking or aggregation code must be placed under `scratch/`, not in the workspace root.
 
 8. Before reporting completion, verify that every scored solver attempt has a
 matched raw Claude Code trace copied under `original_traces/`, and that the

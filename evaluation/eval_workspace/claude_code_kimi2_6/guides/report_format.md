@@ -14,6 +14,10 @@ Use the same task shape for all four conditions:
 task_group_id: <task_group_id>
 scenario_id: <scenario_id>
 model: <model_name_or_config>
+model_config:
+  provider: siliconflow
+  claude_code_effort: xhigh
+  kimi_thinking: enabled
 harness: claude_code_kimi2_6
 
 conditions:
@@ -83,6 +87,9 @@ conditions:
 - `std_at_3` is the population standard deviation of the 3 raw scores for
   one test task. `overall_std_at_3` is the average of the 5 test-task
   `std_at_3` values.
+- `model_config.kimi_thinking` must be `enabled`. Keep it separate from
+  `model_config.claude_code_effort`, which records Claude Code's outer
+  orchestration effort level as `xhigh`.
 - `rounds_avg_3` counts solver assistant/model-response turns; `tool_calls_avg_3` counts solver tool-call requests. At the task level, average the 3 attempts for the same test task; at the condition efficiency level, average the 5 test tasks. If a formal attempt trace cannot be matched, write the corresponding field as `null` and preserve the reason in the corresponding run record.
 - `skill_dirs` is only used for non-base conditions. Paths are relative to the
   directory containing the report YAML, and attempt numbers must match the solver

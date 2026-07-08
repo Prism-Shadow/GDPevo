@@ -198,19 +198,18 @@ Every solver attempt must have a unique `eval_attempt_id`:
 The ID must appear in the solver prompt, attempt directory, and
 `run_metadata.yaml`.
 
-Backfill token usage from the matched Dockerized Claude Code solver trace.
-The preferred sources are the preserved `stdout.stream.jsonl` emitted by
-`claude -p --output-format stream-json --verbose` and the matching
-`.claude/projects/.../*.jsonl` session trace captured from the container's
-Claude home. Deduplicate by `message.id`: keep input/cache buckets from any
-record and the max `output_tokens` per message id, then sum across responses.
+Backfill token usage from the matched Dockerized Claude Code solver session
+trace captured from the container's Claude home under
+`.claude/projects/.../*.jsonl`. Deduplicate by `message.id`: keep input/cache
+buckets from any record and the max `output_tokens` per message id, then sum
+across responses.
 From the same matched solver trace, also count solver assistant/model-response
 turns and assistant `tool_use` content blocks. Store these raw counts in
 `run_metadata.yaml` as `rounds` and `tool_calls`.
 
 Each Dockerized Claude run should also write a `docker_run_manifest.yaml` under
 the matching trace directory, recording the staged working directory, trace
-directory, session id when available, model, effort, Kimi thinking mode,
+directory, session id when available, model, Claude Code effort, Kimi thinking mode,
 permission mode, timeout, exit code, and copied session trace files.
 
 After matching the trace, copy or preserve the raw trace files under:
@@ -233,6 +232,10 @@ task, then average the 5 test tasks. Do not include skill generation, remote
 environment checks, evaluator execution, or main-agent summarization. Temporary
 checking code, aggregation code, and environment notes must be placed under
 `scratch/`, not in the workspace root.
+
+The final report must also include `model_config.claude_code_effort: xhigh` and
+`model_config.kimi_thinking: enabled`. Do not encode Kimi's thinking mode as
+`xhigh`; `xhigh` refers only to Claude Code's outer effort setting.
 
 Before marking the evaluation complete, check that each scored solver attempt
 has a matched raw Claude Code trace copied under `original_traces/` and that
