@@ -1,25 +1,22 @@
 # Evaluation Workflow
 
 This file explains how the main evaluation agent should run one complete
-evaluation, on the Panofy platform.
+evaluation on the Panofy platform.
 
-The solver here is a **trained Panofy agent reached over the SDK**. You drive
-the evaluation by calling the SDK directly
-(`train`, `predict`) and running each task's official `eval/eval.sh`. Each
-`predict()` is already an isolated function-mode run that sees only its own
-`FUNC_INPUT`, so there are no subagents to stage or restrict. Write small,
-throwaway SDK / aggregation scripts under `scratch/` as needed, and run them in a
-`uv`-managed environment (see Setup in `README.md`). The `panofy` package's own
-README documents the exact call signatures.
+The solver is a **trained Panofy agent reached over the SDK**. Drive the
+evaluation by calling the SDK (`train`, `predict`) and each task's official
+`eval/eval.sh`. Each `predict()` is already an isolated function-mode run that
+sees only its own `FUNC_INPUT`, so there are no subagents to stage or restrict.
+Write small SDK / aggregation scripts under `scratch/` as needed, and run them
+in the `uv`-managed environment described in `README.md`.
 
 The agent **evolves during training**: the training instruction tells it to
-**evolve from the train tasks** — learn from them and get better at this family
-of tasks. Nothing is extracted; the evolution is baked into the trained agent.
-So a condition is just a particular set of training materials + instruction.
+learn from the train tasks and improve on this task family. A condition is a
+particular set of training materials plus a training instruction.
 
 ## 1. Prepare The Task Group
 
-This workspace evaluates one task group at a time, located at:
+This workspace evaluates one task group at a time:
 
 ```text
 task_group/<task_group_id>/
@@ -36,146 +33,195 @@ Confirm the workspace contains exactly one task group and that it includes:
 - A task-group-level shared environment (`env/`).
 - Official input, standard answer, and evaluator (`eval/eval.sh`) for each task.
 
-Also confirm Panofy connectivity with the run-time base URL + API key by listing
-agents (`panofy.agents.list()`; this spends no points).
+Also confirm Panofy connectivity with the run-time base URL and API key by
+listing agents (`panofy.agents.list()`; this is not a test-task `predict()` run).
 
 ## 3. Point At The Remote Environment
 
-The trained agent runs remotely and **can make outbound HTTP requests**, but it
-cannot reach a local server. The task environment is therefore served at a
-**remote URL supplied in the launch prompt**. You inject that URL into every
-`FUNC_INPUT` as `api_base_url`; the agent issues the GET calls named in each
-task prompt against it.
+Panofy agents run remotely and **can make outbound HTTP requests**, but they
+cannot reach a local server. The task environment must therefore be served at a
+remote URL supplied through `.env`:
 
-Before running, confirm:
+```text
+PANOFY_ENV_BASE_URL=<remote task-group environment URL>
+PANOFY_JUDGE_PATH=/api/judge
+```
 
-- The env's health / index endpoint answers with HTTP 200. The path is not
-  uniform across task groups — it may be `/health`, `/api/health`, or just `/`
-  (the HTML index); check `task_group/env` to see which one this group uses.
-- The exposed endpoints return the same **public projection** as the local
-  `task_group/env` server — hidden / construction fields must not be exposed.
+Inject the env base URL into every `FUNC_INPUT` as `api_base_url`; the agent
+issues the public GET calls named in each task prompt against it. Before
+running, confirm that the env health / index endpoint answers with HTTP 200 and
+that exposed endpoints return the same public projection as the local
+`task_group/env` server. Hidden construction fields must not be exposed.
 
-Record the env URL and any restart notes in `scratch/`. Do not enter or expose
-hidden `env/` fields to the agent; it only ever sees the remote URL.
+Only reflect training receives the judge endpoint. It is valid only for train
+tasks during reflect training, must never be placed in test `FUNC_INPUT`, and
+must not be written into final test-time agent instructions.
 
 ## 4. Train The Agents
 
-Train **3 independent agents for each condition** — `attempt_<nn>` → one agent —
-so acc@3 captures training variance. What differs per condition is only the
-training materials and the training instruction (see `evolve_modes.md`).
+Train **3 independent agents for each condition**:
+
+```text
+base
+fewshot
+self
+reflect-3
+```
+
+`attempt_<nn>` maps to one trained agent, so acc@3 captures training variance.
+What differs per condition is only the training materials and training
+instruction; see `evolve_modes.md`.
 
 Stage each condition's materials into a dedicated directory, for example:
 
 ```text
 scratch/materials/base/attempt_01/
 scratch/materials/fewshot/attempt_01/
-scratch/materials/reflect/attempt_01/
+scratch/materials/self/attempt_01/
+scratch/materials/reflect-3/attempt_03/
 ```
 
-For `reflect`, the materials still include the train gold answers (the
-agent needs them to reflect); the difference is the instruction, which requests
-the blind-attempt / compare / reflect loop. Then train each (condition, attempt)
-with the SDK's **async** one-shot `train()` (wrap it in `asyncio.run`); it creates
-the agent, uploads the materials, trains to completion, and returns the new
-`agent_id`. Record each `agent_id` in `agents/registry.json`. Training cost is
-**not** counted in solver efficiency metrics.
+Training material boundaries:
+
+- `base`: no task-specific train material beyond the generic instruction and
+  remote environment URL.
+- `fewshot`: train inputs plus train gold answers.
+- `self`: train inputs plus remote environment URL; no train answers and no
+  judge feedback.
+- `reflect-3`: train inputs plus remote environment URL and judge API
+  instructions; no train answers.
+
+Build train and test inputs from the same official task input packet: `task_id`,
+`prompt`, `api_base_url`, `answer_template`, and every declared input payload
+file for that task, excluding `answer_template.json`. If the task prompt
+references a longer relative path such as
+`input/payloads/month_end_exception_scope.json`, add the same short runner note
+to the prompt wherever that packet is used: `Runner note: the official input
+payload input/payloads/month_end_exception_scope.json is uploaded and available
+to the agent as month_end_exception_scope.json.` This packet excludes notes,
+evaluator files, and gold outputs unless the mode explicitly allows gold
+outputs.
+
+For reflect training, the agent first answers a train task from the visible
+input, then calls:
+
+```text
+POST {PANOFY_ENV_BASE_URL}{PANOFY_JUDGE_PATH}
+```
+
+with:
+
+```json
+{"task_id": "train_001", "answer": <candidate answer JSON>}
+```
+
+The response contains only score / correctness feedback. It does not expose
+gold answers or evaluator details.
 
 Do not put any test task, test answer, test note, or evaluator into training
-materials. Only train inputs and train gold answers are allowed.
+materials. Use the SDK's async one-shot `train()` for each `(condition,
+attempt)`, record each returned `agent_id` in `agents/registry.json`, and do not
+count training cost in solver efficiency metrics. If a training call fails or
+the returned agent cannot be confirmed as trained, start a fresh independent
+`train()` for the same `(condition, attempt)` and preserve the failed record
+separately. Do not use the SDK `retrain` endpoint for recovery.
 
-## 5. Run The Base Experiment
+## 5. Run Test Experiments
 
-Run each test task independently 3 times. The solver for `attempt_<nn>` is the
-`base` agent trained as `attempt_<nn>`. Each `predict()` receives only the
-official test `FUNC_INPUT` — `task_id`, `prompt`, `api_base_url`,
-`answer_template` — and the allowed remote env URL.
-
-**One question per call, run sequentially (applies to all three conditions):**
-answer exactly one test task per `predict()` call, and run the 5 test tasks one
-at a time — do not put multiple tasks in a single input, and do not fire
-predicts concurrently. The platform caps concurrent tasks, so overlapping runs
-fail.
-
-Recommended record layout:
+For every condition, run each test task independently 3 times. The solver for
+`attempt_<nn>` is the agent trained for the same condition and attempt number.
+Each `predict()` receives the official test `FUNC_INPUT` with exactly these
+top-level keys:
 
 ```text
-runs/base/test_001/attempt_01/func_input.json
-runs/base/test_001/attempt_01/answer.json
-runs/base/test_001/attempt_01/score.yaml
-runs/base/test_001/attempt_01/run_metadata.yaml
+task_id
+prompt
+api_base_url
+answer_template
 ```
 
-Do not place gold answers, notes, or evaluator details into any test
-`FUNC_INPUT`. Answer with a `Panofy(base_url, api_key, agent_id)` client: call
-`predict(func_input)` (the FUNC_INPUT as a single positional dict) with
-`resolve_files=False` and `output_dir=None`, since the inputs are plain JSON, not
-files; use `predict_with_metadata()` to also capture `run.usage` and
-`run.points_consumed`. `answer.json` is the parsed `FUNC_OUTPUT` it returns.
+The test `FUNC_INPUT` is identical across conditions; only the trained agent
+differs. Never include test gold answers, notes, evaluator details, train
+materials, or judge endpoint instructions in test `FUNC_INPUT`.
 
-## 6. Run The Fewshot Experiment
+Before each test `predict()`, the runner must collect the official input payload
+files from that task input packet and upload them in the same SDK call with the
+`files=` argument, or an equivalent SDK-supported file input mechanism that
+records/uploads the same files. Upload only official input payloads. Official
+input payload files are allowed test input, not contamination.
 
-Run each test task independently 3 times. `attempt_<nn>` is answered by the
-`fewshot` agent trained as `attempt_<nn>`:
+Mode-allowed training exposure is not contamination: for example, fewshot
+training may use train gold answers. The contamination check below applies to
+test-time inputs, instructions, responses, and run artifacts.
+
+If a test agent response or run artifact shows that forbidden material leaked
+into `FUNC_INPUT`, or that the test-time agent saw test answers, notes,
+evaluator details, env source, judge instructions, disallowed train material, or
+another run's files, stop using that result. Mark the attempt contaminated,
+report it to the user, exclude it from aggregation, and rerun the affected test
+with corrected input in a new clean run directory.
+
+Run one question per call and run sequentially: answer exactly one test task per
+`predict()` call, and run the 5 test tasks one at a time. Do not put multiple
+tasks in a single input and do not fire predicts concurrently.
+
+Recommended record layout. Use a fresh directory for every attempt and rerun;
+do not overwrite a previous attempt directory:
 
 ```text
-attempt_01 -> fewshot agent attempt_01
-attempt_02 -> fewshot agent attempt_02
-attempt_03 -> fewshot agent attempt_03
+runs/<condition>/test_001/attempt_01/func_input.json
+runs/<condition>/test_001/attempt_01/answer.json
+runs/<condition>/test_001/attempt_01/score.yaml
+runs/<condition>/test_001/attempt_01/run_metadata.yaml
 ```
 
-The test `FUNC_INPUT` is identical to the base condition; only the agent
-differs (it was trained on the 5 solved train tasks). Record under
-`runs/fewshot/test_00N/attempt_0M/`.
+Use `predict_with_metadata()` to capture `run.usage`, with `output_dir=None`.
+For tasks that have additional official input payload files, call
+`predict_with_metadata(func_input, files=<official_payload_paths>,
+output_dir=None)` or the SDK-equivalent form, and leave file resolution enabled.
+If there are no additional payload files, `resolve_files=False` is acceptable.
+`answer.json` is the parsed `FUNC_OUTPUT`.
 
-## 7. Run The Reflect Experiment
-
-Same as §6, with the `reflect` agents (trained with the reflection
-instruction). Record under `runs/reflect/test_00N/attempt_0M/`.
-
-## 8. Score And Aggregate
+## 6. Score And Aggregate
 
 After each `predict()` writes `answer.json`, score it by running the task's
-**`eval/eval.sh`** with the prediction path as `$1` — that one entrypoint is
-present on every task and routes to whatever evaluator it uses
-(`evaluate.py` / `eval.py` / `evaluator.py` / a rubric). Read `total_score`
-(already in `[0,1]`) and write `score.yaml`.
+**`eval/eval.sh`** with the prediction path as `$1`. Read `total_score`
+already in `[0,1]`; if needed, derive a normalized score from earned / max
+fields. Write `score.yaml`.
 
-Token usage and points come straight from the SDK — no transcript parsing.
-`predict_with_metadata()` returns `run.points_consumed` and `run.usage`
-(`cache_read`, `cache_write`, `output_token`). Record them in
+Record SDK token usage and Panofy agent / run identifiers in
 `run_metadata.yaml` with a unique `eval_attempt_id`:
 
 ```text
 <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
 ```
 
-After all `score.yaml` files exist, aggregate per-task `acc@3`, overall `acc@3`,
-and the average points / per-bucket tokens for each condition. These efficiency
-metrics only count **test-task `predict()`** work — never training (the
-evolution step), environment startup, or evaluator execution. Aggregate
-the same way as `acc@3`: average the 3 attempts for one test task, then average
-the 5 test tasks. Put any temporary aggregation code under `scratch/`. Write the
-final report to `report/<task_group_id>.yaml` per `report_format.md`.
+After all `score.yaml` files exist, aggregate per-task `acc@3` and `std@3`,
+overall `acc@3` and `std@3`, and average token buckets for each condition. Do
+If packaged service logs have already been supplied, also aggregate solver turn
+counts; otherwise write `rounds_avg_3: null` and let post-run archival backfill
+it. Efficiency metrics only count **test-task `predict()`** work; never include
+training, remote environment checks, or evaluator execution. Aggregate the same
+way as `acc@3`: average the 3 attempts for one test task, then average the 5
+test tasks. Write the final report to `report/<task_group_id>.yaml` per
+`report_format.md`.
 
-## 9. Interpret Results
+## 7. Interpret Results
 
-In the report (or accompanying notes), explain:
+In the report or accompanying notes, explain:
 
-- Overall `acc@3` for all three conditions.
-- Improvement from each evolve condition over base.
-- Whether reflect outperforms fewshot.
+- Overall `acc@3` and population `std@3` for all four conditions.
+- Improvement from `fewshot`, `self`, and `reflect-3` over `base`.
 - Which test tasks improved clearly and which did not.
-- The point / token cost per condition — does training buy accuracy while
-  spending fewer points, or more?
-- Any environment instability, output-schema friction (the agent must return
-  JSON matching `answer_template` exactly), evaluator issue, or suspicious
-  leakage risk.
+- Token usage per condition.
+- Any environment instability, output-schema friction, evaluator issue, or
+  suspicious leakage risk.
 
 ## Failure Handling
 
 Record as failures and explain in the report: `predict()` raises, the agent
-returns no parseable `answer.json`, or the evaluator fails / returns no `[0,1]`
-score. After a failure, retry until one valid scoreable attempt is obtained, and
-preserve the failed record in the attempt directory. Do not score a failed
-attempt as `0`, and do not drop it while still computing `acc@3`. If retries
-still cannot produce a valid score, stop and report the issue.
+returns no parseable `answer.json`, the evaluator fails, or no `[0,1]` score can
+be determined. After a failure, retry until one valid scoreable attempt is
+obtained, and preserve the failed record in the attempt directory. Do not score
+a failed attempt as `0`, and do not drop it while still computing `acc@3`. If
+retries still cannot produce a valid score, stop and report the issue.

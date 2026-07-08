@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-03
+name: task-group-001-fewshot-attempt-03
 description: HarborCRM JSON-output procedures for event sponsor/lead reconciliation, tradeshow prospecting, and CRM import-batch cleanup using HarborCRM API data and answer templates. Use when a task asks Codex to produce structured JSON from HarborCRM events, sponsor packages/orders, badges, invoices, CRM accounts/contacts/opportunities, campaign members, tradeshow exhibitors/meeting interest, import batches/raw contacts/suppression, or policy metadata.
 ---
 

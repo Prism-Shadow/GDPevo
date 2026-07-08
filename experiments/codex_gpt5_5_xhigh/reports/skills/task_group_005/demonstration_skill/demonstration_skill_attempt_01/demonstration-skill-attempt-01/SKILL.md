@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-01
+name: task-group-005-fewshot-attempt-01
 description: Solve task_group_005 finance/API JSON-output tasks involving reimbursement AP close, stale AP snapshots, prepaid close reconciliation, vendor onboarding controls, and account-change payment release risk reviews.
 ---
 

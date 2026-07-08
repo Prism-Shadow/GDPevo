@@ -1,5 +1,5 @@
 ---
-name: northwind-peopleops-verification
+name: task-group-012-fewshot-attempt-02
 description: Execute Northwind PeopleOps Console verification tasks involving onboarding closeout, leave source precedence, payroll assignment readiness, policy-case folder and notice controls, and recruitment reconciliation. Use when a task asks Codex to inspect the local PeopleOps web/API environment and return normalized JSON matching an answer_template.
 ---
 

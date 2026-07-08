@@ -7,6 +7,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE = Path(__file__).resolve().parent
 DATA = json.loads((BASE / "data" / "support_data.json").read_text(encoding="utf-8"))
@@ -145,6 +147,15 @@ class Handler(BaseHTTPRequestHandler):
             rows = [r for r in DATA["sla_contracts"] if r["enterprise_account_id"] == ent_id]
             return self.send_json(rows[0] if rows else {})
 
+        self.not_found()
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        path = unquote(parsed.path).rstrip("/") or "/"
+        if path == "/api/judge":
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            status, payload = judge_answer_request(self.rfile.read(length))
+            return self.send_json(payload, status=status)
         self.not_found()
 
 

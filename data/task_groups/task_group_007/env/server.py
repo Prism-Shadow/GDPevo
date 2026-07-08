@@ -10,6 +10,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 DATA_FILES = {
@@ -93,6 +95,16 @@ class ERPHandler(BaseHTTPRequestHandler):
             self.send_error_json(HTTPStatus.BAD_REQUEST, str(exc))
             return
         self.send_json(payload)
+
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        parts = [unquote(part) for part in parsed.path.rstrip("/").split("/") if part]
+        if parts == ["api", "judge"]:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            status, payload = judge_answer_request(self.rfile.read(length))
+            self.send_json(payload, HTTPStatus(status))
+            return
+        self.send_error_json(HTTPStatus.NOT_FOUND, "endpoint not found")
 
     def route(self, parts: list[str], query: dict[str, list[str]]) -> object:
         if not parts and query == {}:

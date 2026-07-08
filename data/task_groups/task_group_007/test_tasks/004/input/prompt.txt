@@ -1,5 +1,5 @@
 Northwind Components release control needs a decision file for order wave TEST_QUALITY_E.
 
-Use the shared ERP API at http://127.0.0.1:8007 and the local release memo in input/payloads/release_control_memo.md. The API contains the current order records, customer account state, product master, warehouse inventory, supplier quality status, and incident history.
+Use the shared ERP API at `<TASK_ENV_BASE_URL>` and the local release memo in input/payloads/release_control_memo.md. The API contains the current order records, customer account state, product master, warehouse inventory, supplier quality status, and incident history.
 
 Return one JSON object that follows input/payloads/answer_template.json. Include every order in the wave, classify the release outcome, identify inventory blockers and controlled reason codes, and list the supplier-risk rollup for ordered SKUs affected by supplier quality holds or active severe incidents.

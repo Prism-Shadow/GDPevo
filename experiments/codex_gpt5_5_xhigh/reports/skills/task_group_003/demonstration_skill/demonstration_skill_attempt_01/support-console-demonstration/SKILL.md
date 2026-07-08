@@ -1,5 +1,5 @@
 ---
-name: support-console-demonstration
+name: task-group-003-fewshot-attempt-01
 description: Use this skill for task_group_003 support-console tasks that require producing answer.json from ticket batches, mobile support case queues, mobile data worklists, or enterprise export complaints. It gives the API lookup order, routing rules, output field meanings, and common pitfalls learned from official input/output examples.
 ---
 

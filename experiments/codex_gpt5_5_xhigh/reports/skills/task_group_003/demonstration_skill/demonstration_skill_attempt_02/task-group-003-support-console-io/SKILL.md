@@ -1,6 +1,6 @@
 ---
-name: task-group-003-support-console-io
-description: Use this skill when solving task_group_003 support-console tasks involving residential service tickets, mobile support cases, mobile-data recovery worklists, or enterprise export-complaint response packages. It gives the learned demonstration rules, API lookup sequence, JSON field definitions, summary counting rules, and common pitfalls for this task group.
+name: task-group-003-fewshot-attempt-02
+description: Use this skill when solving task_group_003 support-console tasks involving residential service tickets, mobile support cases, mobile-data recovery worklists, or enterprise export-complaint response packages. It gives the learned fewshot rules, API lookup sequence, JSON field definitions, summary counting rules, and common pitfalls for this task group.
 ---
 
 # Task Group 003 Support Console SOP

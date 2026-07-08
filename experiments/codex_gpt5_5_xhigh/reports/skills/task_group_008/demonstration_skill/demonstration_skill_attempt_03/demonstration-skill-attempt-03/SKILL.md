@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-03
+name: task-group-008-fewshot-attempt-03
 description: Solve private-wealth advisory input/output JSON tasks that require reading a local request memo and answer template, querying the advisory API, resolving conflicting client sources, and computing Roth/RMD, ILIT Crummey, GRAT/CRAT, or estate-liquidity planning outputs.
 ---
 

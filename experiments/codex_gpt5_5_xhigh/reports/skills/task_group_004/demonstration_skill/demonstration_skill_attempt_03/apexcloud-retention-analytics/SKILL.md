@@ -1,5 +1,5 @@
 ---
-name: apexcloud-retention-analytics
+name: task-group-004-fewshot-attempt-03
 description: Use for ApexCloud CRM retention analytics tasks that call the ApexCloud Retention Operations API and must return strict JSON for renewal risk queues, QBR metrics packets, receivables and pipeline reviews, churn validation/ranking, or high-touch retention action boards. Captures reusable endpoint usage, source-of-truth choices, data hygiene rules, controlled enum mappings, policy-code conventions, and output formatting pitfalls.
 ---
 

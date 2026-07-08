@@ -85,6 +85,11 @@ test 难度来源包括两类：
 
 prompt 应像真实用户请求：说明目标、必要上下文、可用材料或环境入口、输出要求，但不教 solver 如何一步步完成。
 
+如果任务需要共享 API、Web app 或其他运行中的环境，solver 可见的 prompt
+和 payload 只能使用 `<TASK_ENV_BASE_URL>` 作为 base URL 占位符。不要在
+`prompt.txt` 或 `input/payloads/` 中写死 localhost、私有 IP、公开部署
+URL、端口或启动命令；真实 endpoint 由评估 workspace 的 `.env` 配置。
+
 `input/payloads/` 应包含真实感强、来源多样、体量充足且可能有噪声的数据材料。payload 可以放 solver 可见的小型导出、邮件、表格、日志、模板或局部材料，但不应变成解题手册。
 
 每个 train/test task 都必须包含 `input/payloads/answer_template.json`。该模板应定义输出 JSON schema、字段类型、数值精度、单位、稳定标识符、列表排序规则和可选枚举值。它用于降低格式摩擦，但不能泄露答案。

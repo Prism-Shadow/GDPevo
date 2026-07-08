@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill
+name: task-group-002-fewshot-attempt-03
 description: Use this skill for MedBridge Sales Ops evaluation tasks that ask for account-ready JSON from a local API and an input/payloads/answer_template.json file. It covers quote/RFQ pricing, freight decisions, customer payment policies, opportunity milestone reconciliation, revenue recognition, invoice follow-ups, events, and vouchers. Always use this when the task mentions MedBridge Sales Ops, API_BASE_URL or BASE_URL, quote/RFQ IDs, freight options, opportunities, milestones, revenue journals, or JSON matching an answer template.
 ---
 

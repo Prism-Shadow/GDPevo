@@ -9,6 +9,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from judge_api import judge_answer_request
+
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
@@ -140,6 +142,16 @@ class Handler(BaseHTTPRequestHandler):
                 "data": page,
             }
         )
+
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        route = parsed.path.rstrip("/") or "/"
+        if route == "/api/judge":
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            status, payload = judge_answer_request(self.rfile.read(length))
+            self.send_json(payload, status=status)
+            return
+        self.send_json({"error": "not_found", "path": route}, status=404)
 
     def first_match(self, dataset_route, key, value):
         rows = [row for row in STORE.data[dataset_route] if str(row.get(key, "")).lower() == value.lower()]

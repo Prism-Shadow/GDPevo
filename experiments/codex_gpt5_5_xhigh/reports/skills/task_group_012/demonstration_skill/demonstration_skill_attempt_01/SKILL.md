@@ -1,5 +1,5 @@
 ---
-name: peopleops-lifecycle-reconciliation
+name: task-group-012-fewshot-attempt-01
 description: Use for Northwind PeopleOps Console tasks that require reconciling employee leave, payroll assignment, onboarding closeout, remote-work case folders/notices, recruitment outcomes, audit evidence, and JSON answers that must match an answer_template with normalized enum labels.
 ---
 

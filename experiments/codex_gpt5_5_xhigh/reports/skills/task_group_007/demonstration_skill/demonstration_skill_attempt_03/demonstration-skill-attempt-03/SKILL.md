@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-03
+name: task-group-007-fewshot-attempt-03
 description: Use for Northwind Components ERP decision tasks that require JSON answers built from task memos/templates plus the shared ERP API, including expedite dispatch, transfer allocation, kit replenishment, supplier incident scorecards, and procurement quality holds.
 ---
 

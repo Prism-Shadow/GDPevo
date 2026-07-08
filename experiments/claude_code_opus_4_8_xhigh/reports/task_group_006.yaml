@@ -1,18 +1,19 @@
 task_group_id: task_group_006
 scenario_id: SCN_006_erp_procurement_supplier_receiving
-model: "claude-opus-4-8[1m] (Opus 4.8)"
+model: claude-opus-4-8, xhigh
 harness: claude_code
-metric: acc@3
-
 conditions:
   base:
     overall_acc_at_3: 0.6798
+    overall_std_at_3: 0.0249
     efficiency:
       cache_creation_tokens_avg_3: 28625.9
       cache_read_tokens_avg_3: 284631.6
       cost_usd_avg_3: 0.5675
       input_tokens_avg_3: 2803.9
       output_tokens_avg_3: 9288.7
+      rounds_avg_3: 14.9333
+      tool_calls_avg_3: 18.0667
     tasks:
       test_001:
         scores:
@@ -20,67 +21,85 @@ conditions:
         - 0.791667
         - 0.666667
         acc_at_3: 0.7083
+        std_at_3: 0.0589
         cache_creation_tokens_avg_3: 20704.3
         cache_read_tokens_avg_3: 201719.7
         cost_usd_avg_3: 0.4146
         input_tokens_avg_3: 2800
         output_tokens_avg_3: 6814.3
+        rounds_avg_3: 13.0
+        tool_calls_avg_3: 16.3333
       test_002:
         scores:
         - 0.333333
         - 0.333333
         - 0.333333
         acc_at_3: 0.3333
+        std_at_3: 0.0
         cache_creation_tokens_avg_3: 30002.7
         cache_read_tokens_avg_3: 204540.7
         cost_usd_avg_3: 0.4956
         input_tokens_avg_3: 2798
         output_tokens_avg_3: 7673.7
+        rounds_avg_3: 12.0
+        tool_calls_avg_3: 15.3333
       test_003:
         scores:
         - 0.833333
         - 0.888889
         - 0.833333
         acc_at_3: 0.8519
+        std_at_3: 0.0262
         cache_creation_tokens_avg_3: 33326.7
         cache_read_tokens_avg_3: 374273.7
         cost_usd_avg_3: 0.6746
         input_tokens_avg_3: 2808
         output_tokens_avg_3: 10606.3
+        rounds_avg_3: 17.0
+        tool_calls_avg_3: 21.3333
       test_004:
         scores:
         - 1.0
         - 0.916667
         - 1.0
         acc_at_3: 0.9722
+        std_at_3: 0.0393
         cache_creation_tokens_avg_3: 30046
         cache_read_tokens_avg_3: 274054.7
         cost_usd_avg_3: 0.6361
         input_tokens_avg_3: 2802.7
         output_tokens_avg_3: 11891
+        rounds_avg_3: 14.3333
+        tool_calls_avg_3: 16.6667
       test_005:
         scores:
         - 0.533333
         - 0.533333
         - 0.533333
         acc_at_3: 0.5333
+        std_at_3: 0.0
         cache_creation_tokens_avg_3: 29050
         cache_read_tokens_avg_3: 368569
         cost_usd_avg_3: 0.6164
         input_tokens_avg_3: 2810.7
         output_tokens_avg_3: 9458.3
+        rounds_avg_3: 18.3333
+        tool_calls_avg_3: 20.6667
   fewshot:
     skill_dirs:
-      attempt_01: ../skills/demonstration_skill/demonstration_skill_attempt_01
-      attempt_02: ../skills/demonstration_skill/demonstration_skill_attempt_02
-      attempt_03: ../skills/demonstration_skill/demonstration_skill_attempt_03
+      attempt_01: skills/task_group_006/demonstration_skill/demonstration_skill_attempt_01
+      attempt_02: skills/task_group_006/demonstration_skill/demonstration_skill_attempt_02
+      attempt_03: skills/task_group_006/demonstration_skill/demonstration_skill_attempt_03
     overall_acc_at_3: 0.7298
+    overall_std_at_3: 0.0131
     efficiency:
       cache_creation_tokens_avg_3: 38615.6
       cache_read_tokens_avg_3: 356525.7
       cost_usd_avg_3: 0.6509
       input_tokens_avg_3: 2800.4
       output_tokens_avg_3: 8692.6
+      rounds_avg_3: 13.3333
+      tool_calls_avg_3: 18.4
     tasks:
       test_001:
         scores:
@@ -88,175 +107,239 @@ conditions:
         - 0.791667
         - 0.875
         acc_at_3: 0.8194
+        std_at_3: 0.0393
         cache_creation_tokens_avg_3: 34160.3
         cache_read_tokens_avg_3: 280485
         cost_usd_avg_3: 0.5329
         input_tokens_avg_3: 2796.7
         output_tokens_avg_3: 6606.3
+        rounds_avg_3: 11.3333
+        tool_calls_avg_3: 17.0
       test_002:
         scores:
         - 0.611111
         - 0.611111
         - 0.611111
         acc_at_3: 0.6111
+        std_at_3: 0.0
         cache_creation_tokens_avg_3: 43761
         cache_read_tokens_avg_3: 370397
         cost_usd_avg_3: 0.6883
         input_tokens_avg_3: 2801.3
         output_tokens_avg_3: 8625
+        rounds_avg_3: 13.6667
+        tool_calls_avg_3: 19.6667
       test_003:
         scores:
         - 0.833333
         - 0.888889
         - 0.833333
         acc_at_3: 0.8519
+        std_at_3: 0.0262
         cache_creation_tokens_avg_3: 34920.7
         cache_read_tokens_avg_3: 323510.3
         cost_usd_avg_3: 0.6099
         input_tokens_avg_3: 2799.3
         output_tokens_avg_3: 8635
+        rounds_avg_3: 13.3333
+        tool_calls_avg_3: 18.0
       test_004:
         scores:
         - 0.833333
         - 0.833333
         - 0.833333
         acc_at_3: 0.8333
+        std_at_3: 0.0
         cache_creation_tokens_avg_3: 41945.3
         cache_read_tokens_avg_3: 401622
         cost_usd_avg_3: 0.7268
         input_tokens_avg_3: 2802
         output_tokens_avg_3: 9993
+        rounds_avg_3: 14.0
+        tool_calls_avg_3: 18.3333
       test_005:
         scores:
         - 0.533333
         - 0.533333
         - 0.533333
         acc_at_3: 0.5333
+        std_at_3: 0.0
         cache_creation_tokens_avg_3: 38290.7
         cache_read_tokens_avg_3: 406614.3
         cost_usd_avg_3: 0.6967
         input_tokens_avg_3: 2802.7
         output_tokens_avg_3: 9603.7
-  reflect:
+        rounds_avg_3: 14.3333
+        tool_calls_avg_3: 19.0
+  self:
     skill_dirs:
-      attempt_01: ../skills/reflection_skill/reflection_skill_attempt_01
-      attempt_02: ../skills/reflection_skill/reflection_skill_attempt_02
-      attempt_03: ../skills/reflection_skill/reflection_skill_attempt_03
-    overall_acc_at_3: 0.7254
+      attempt_01: skills/task_group_006/self/self_attempt_01
+      attempt_02: skills/task_group_006/self/self_attempt_02
+      attempt_03: skills/task_group_006/self/self_attempt_03
+    overall_acc_at_3: 0.7472
+    overall_std_at_3: 0.0
     efficiency:
-      cache_creation_tokens_avg_3: 40506.8
-      cache_read_tokens_avg_3: 400535.7
-      cost_usd_avg_3: 0.7083
-      input_tokens_avg_3: 2802.4
-      output_tokens_avg_3: 9633.7
+      input_tokens_avg_3: 3356.5
+      cache_creation_tokens_avg_3: 31996.5
+      cache_read_tokens_avg_3: 355649.5
+      output_tokens_avg_3: 7878.5
+      cost_usd_avg_3: 0.5915
+      rounds_avg_3: 12.3333
+      tool_calls_avg_3: 15.5333
     tasks:
       test_001:
         scores:
         - 0.791667
-        - 0.666667
-        - 0.666667
-        acc_at_3: 0.7083
-        cache_creation_tokens_avg_3: 35668
-        cache_read_tokens_avg_3: 346333.7
-        cost_usd_avg_3: 0.5603
-        input_tokens_avg_3: 2800.7
-        output_tokens_avg_3: 6006.3
+        - 0.791667
+        - 0.791667
+        acc_at_3: 0.7917
+        std_at_3: 0.0
+        input_tokens_avg_3: 3335.0
+        cache_creation_tokens_avg_3: 25544.0
+        cache_read_tokens_avg_3: 285685.3
+        output_tokens_avg_3: 5416.0
+        cost_usd_avg_3: 0.4546
+        rounds_avg_3: 11.0
+        tool_calls_avg_3: 14.0
       test_002:
         scores:
         - 0.611111
-        - 0.5
         - 0.611111
-        acc_at_3: 0.5741
-        cache_creation_tokens_avg_3: 43172
-        cache_read_tokens_avg_3: 385963
-        cost_usd_avg_3: 0.771
-        input_tokens_avg_3: 2801.3
-        output_tokens_avg_3: 11766
+        - 0.611111
+        acc_at_3: 0.6111
+        std_at_3: 0.0
+        input_tokens_avg_3: 3338.3
+        cache_creation_tokens_avg_3: 37175.3
+        cache_read_tokens_avg_3: 381914.7
+        output_tokens_avg_3: 11477.0
+        cost_usd_avg_3: 0.7269
+        rounds_avg_3: 12.6667
+        tool_calls_avg_3: 16.6667
       test_003:
         scores:
         - 0.833333
         - 0.833333
         - 0.833333
         acc_at_3: 0.8333
-        cache_creation_tokens_avg_3: 40538
-        cache_read_tokens_avg_3: 419549
-        cost_usd_avg_3: 0.6997
-        input_tokens_avg_3: 2803.3
-        output_tokens_avg_3: 8903.3
+        std_at_3: 0.0
+        input_tokens_avg_3: 3336.3
+        cache_creation_tokens_avg_3: 30960.3
+        cache_read_tokens_avg_3: 330347.7
+        output_tokens_avg_3: 6279.7
+        cost_usd_avg_3: 0.5323
+        rounds_avg_3: 11.6667
+        tool_calls_avg_3: 15.3333
       test_004:
         scores:
         - 0.833333
-        - 0.916667
-        - 0.916667
-        acc_at_3: 0.8889
-        cache_creation_tokens_avg_3: 42308.3
-        cache_read_tokens_avg_3: 428190.7
-        cost_usd_avg_3: 0.7761
-        input_tokens_avg_3: 2803.3
-        output_tokens_avg_3: 11344.3
+        - 0.833333
+        - 0.833333
+        acc_at_3: 0.8333
+        std_at_3: 0.0
+        input_tokens_avg_3: 3433.0
+        cache_creation_tokens_avg_3: 34432.0
+        cache_read_tokens_avg_3: 394435.3
+        output_tokens_avg_3: 7078.3
+        cost_usd_avg_3: 0.6065
+        rounds_avg_3: 13.0
+        tool_calls_avg_3: 16.3333
       test_005:
         scores:
-        - 0.533333
         - 0.666667
         - 0.666667
-        acc_at_3: 0.6222
-        cache_creation_tokens_avg_3: 40847.7
-        cache_read_tokens_avg_3: 422642
-        cost_usd_avg_3: 0.7344
-        input_tokens_avg_3: 2803.3
-        output_tokens_avg_3: 10148.7
-
-risks_and_notes:
-- id: environment_durability
-  detail: |
-    Initial servers launched with `nohup &` were reaped between turns; restarted both the rolled
-    port 8056 and the 8006 compatibility mirror as harness-managed background tasks, which then
-    persisted. Health re-confirmed. No data change.
-- id: transient_api_rate_limit
-  detail: |
-    The first reflect Phase-B batch (3 generators) died on a server-side rate limit with
-    0 tokens; retried successfully after server restart. No effect on final skills.
-- id: platform_session_limit
-  detail: |
-    A platform session limit (reset 07:00 Asia/Shanghai) killed 5 fewshot solvers
-    mid-batch. 2 of them (test_003 a01/a02) had already written valid answer.json and were kept; 3
-    (test_002 a03, test_003 a03, test_004 a01) produced no answer and were retried after reset.
-    Token backfill attributed each of those 3 attempts to its COMPLETED retry transcript and
-    discarded the failed run, so efficiency is not inflated by the platform interruption.
-- id: data_regeneration_formatting
-  detail: |
-    Running env/setup.sh -> generate_data.py (required to start the env) overwrote
-    env/data/procureops_data.json; the file's byte size changed (133273 -> 128183) but record
-    counts and seed (6006) are unchanged and gold-derived values reconcile exactly (e.g. PRG-AX17
-    headroom 285000.0-216430.4=68569.6 matches train_001 gold). Data is canonical and consistent
-    with all gold answers. RISK BACK TO EARLIER STAGE (minor): the committed data file is not
-    byte-stable under regeneration; recommend pinning a data snapshot or making generate_data.py
-    output byte-identical so the shipped file is not silently replaced.
-- id: test_005_identity_and_decision_concerns
-  detail: |
-    Two issues cap test_005 for EVERY condition. (1) Schema friction: its answer_template.json
-    carries `task_id: null` (a placeholder) unlike the train templates which hardcode the literal
-    task_id; gold expects 'task_group_006_test_005', which is not derivable from the inputs. (2)
-    Substantive divergence: gold's decision is `release_price_amendment`, but all 15 attempts
-    (base + both skills) concluded a `hold_*` decision because they read invoice AP-00002 (new
-    price, no linked receipt) as an unmatched price-variance blocker. The SP1 point bundles
-    task_id AND decision, so it is effectively unwinnable here, and SP6 (risk/invoice-control)
-    also fails for all. SEND BACK TO EARLIER STAGE for review: (a) embed the literal task_id in
-    the test_005 template, and (b) re-examine whether the release-vs-hold decision is
-    unambiguously derivable from the memo + API, since a consistent, model-independent miss across
-    15 attempts suggests possible under-determination.
-- id: test_002_systematic_plateau
-  detail: |
-    test_002 scores are identical across all 3 attempts in every condition. The base model always
-    fails receipt-cutoff matching, supplier_release_summary, program_summary, and payment ID
-    buckets; skills only recover payment linkage + release/hold. The persistent, deterministic
-    miss on the summary/bucket sub-structures suggests an under-specified output definition worth
-    a quality re-check, though the gold itself is internally consistent.
-- id: no_leakage_observed
-  detail: |
-    Solver and skill-generation subagents were each confined to a dedicated staged directory with
-    only allowed files (no env/ source, no notes/, no eval/, no test answers, no cross-attempt
-    skills). reflect train answers were withheld until blind train attempts were saved.
-    All 45 attempts produced parseable answer.json; all evaluators returned normalized [0,1]
-    scores; all 45 transcripts matched uniquely by eval_attempt_id with parent_tool_use_id
-    verified in the main session.
+        - 0.666667
+        acc_at_3: 0.6667
+        std_at_3: 0.0
+        input_tokens_avg_3: 3339.7
+        cache_creation_tokens_avg_3: 31871.0
+        cache_read_tokens_avg_3: 385864.3
+        output_tokens_avg_3: 9141.3
+        cost_usd_avg_3: 0.6374
+        rounds_avg_3: 13.3333
+        tool_calls_avg_3: 15.3333
+  reflect-3:
+    skill_dirs:
+      attempt_01: skills/task_group_006/reflect-3/reflect-3_attempt_01
+      attempt_02: skills/task_group_006/reflect-3/reflect-3_attempt_02
+      attempt_03: skills/task_group_006/reflect-3/reflect-3_attempt_03
+    overall_acc_at_3: 0.7352
+    overall_std_at_3: 0.0589
+    efficiency:
+      input_tokens_avg_3: 3662.8
+      cache_creation_tokens_avg_3: 32593.3
+      cache_read_tokens_avg_3: 346469.5
+      output_tokens_avg_3: 8185.9
+      cost_usd_avg_3: 0.5999
+      rounds_avg_3: 12.4667
+      tool_calls_avg_3: 16.0667
+    tasks:
+      test_001:
+        scores:
+        - 0.791667
+        - 0.791667
+        - 0.666667
+        acc_at_3: 0.75
+        std_at_3: 0.0589
+        input_tokens_avg_3: 3336.3
+        cache_creation_tokens_avg_3: 24836.3
+        cache_read_tokens_avg_3: 294994.0
+        output_tokens_avg_3: 5916.3
+        cost_usd_avg_3: 0.4673
+        rounds_avg_3: 11.6667
+        tool_calls_avg_3: 14.6667
+      test_002:
+        scores:
+        - 0.333333
+        - 0.611111
+        - 0.611111
+        acc_at_3: 0.5185
+        std_at_3: 0.1309
+        input_tokens_avg_3: 4773.3
+        cache_creation_tokens_avg_3: 35121.0
+        cache_read_tokens_avg_3: 334007.7
+        output_tokens_avg_3: 9084.7
+        cost_usd_avg_3: 0.6375
+        rounds_avg_3: 12.0
+        tool_calls_avg_3: 16.0
+      test_003:
+        scores:
+        - 0.833333
+        - 0.833333
+        - 0.888889
+        acc_at_3: 0.8519
+        std_at_3: 0.0262
+        input_tokens_avg_3: 3432.3
+        cache_creation_tokens_avg_3: 34699.3
+        cache_read_tokens_avg_3: 366895.0
+        output_tokens_avg_3: 5078.0
+        cost_usd_avg_3: 0.5444
+        rounds_avg_3: 12.6667
+        tool_calls_avg_3: 18.3333
+      test_004:
+        scores:
+        - 0.833333
+        - 1.0
+        - 0.833333
+        acc_at_3: 0.8889
+        std_at_3: 0.0786
+        input_tokens_avg_3: 3335.0
+        cache_creation_tokens_avg_3: 36427.3
+        cache_read_tokens_avg_3: 312000.3
+        output_tokens_avg_3: 11380.7
+        cost_usd_avg_3: 0.6849
+        rounds_avg_3: 11.0
+        tool_calls_avg_3: 14.3333
+      test_005:
+        scores:
+        - 0.666667
+        - 0.666667
+        - 0.666667
+        acc_at_3: 0.6667
+        std_at_3: 0.0
+        input_tokens_avg_3: 3437.0
+        cache_creation_tokens_avg_3: 31882.7
+        cache_read_tokens_avg_3: 424450.7
+        output_tokens_avg_3: 9469.7
+        cost_usd_avg_3: 0.6654
+        rounds_avg_3: 15.0
+        tool_calls_avg_3: 17.0

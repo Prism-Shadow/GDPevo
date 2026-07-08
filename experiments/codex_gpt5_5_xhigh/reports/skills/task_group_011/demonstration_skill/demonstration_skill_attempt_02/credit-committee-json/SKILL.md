@@ -1,5 +1,5 @@
 ---
-name: credit-committee-json
+name: task-group-011-fewshot-attempt-02
 description: Produce strict JSON answers for credit-office committee tasks using only public API data and the provided answer_template.json. Use for branch loan regrades, watch-list stress packets, pending-application allocations, competing CRE decisions, and credit-union segment posture recommendations that require policies, branch or segment metrics, FDIC/NCUA benchmarks, controlled enums, sorted lists, and reconciled numeric totals.
 ---
 

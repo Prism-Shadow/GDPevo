@@ -1,5 +1,5 @@
 ---
-name: task-group-010-input-output
+name: task-group-010-fewshot-attempt-01
 description: Solve PanofyBench task_group_010 Asteria Investment Office input-output tasks that require reading local request/template JSON, using the public Asteria API at http://127.0.0.1:8036 as the current book of record, computing portfolio credit metrics, index correlations, active allocation views, and returning only schema-conforming JSON.
 ---
 

@@ -1,6 +1,6 @@
 ---
-name: demonstration-skill-attempt-02
-description: Solve ProcureOps demonstration benchmark tasks that require reading task-local payloads, querying the ProcureOps API, reconciling procurement/AP/receiving records, and returning only schema-conformant JSON.
+name: task-group-006-fewshot-attempt-02
+description: Solve ProcureOps fewshot benchmark tasks that require reading task-local payloads, querying the ProcureOps API, reconciling procurement/AP/receiving records, and returning only schema-conformant JSON.
 ---
 
 # ProcureOps Input-Output Skill
@@ -17,7 +17,7 @@ Use this skill for tasks that provide local `input/payloads/*` files plus an `an
 
 ## API Workflow
 
-Base URL is usually provided by the runner; otherwise use `http://127.0.0.1:8006`.
+Base URL is usually provided by the runner; otherwise use `<environment_base_url>`.
 
 Probe the service:
 

@@ -8,13 +8,15 @@
 
 ## 评测结果
 
-准确率使用 `acc@3`，并在 12 个任务组上取均值。费用以美元计。
+准确率使用 `acc@3`，并在 12 个任务组上取均值。稳定性使用 population `std@3`。`rounds@3` 表示 solver 每次 attempt 的平均模型响应轮次，`tool calls@3` 表示 solver 每次 attempt 的平均工具调用次数；仅在 solver trace 完整的运行中展示。费用以美元计；准确率提升和费用变化均相对 `base` 计算。
 
-| 评测框架 | 模型 | 思考强度 | `base` 准确率 | `fewshot` 准确率 | `reflect` 准确率 | 准确率提升 | 费用变化 |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Codex | GPT-5.5 | xhigh | 48.35% | 65.99% | 67.13% | +18.21 个百分点 | -25.75% |
-| Claude Code | Opus 4.8 | xhigh | 49.11% | 70.90% | 67.94% | +20.31 个百分点 | -8.69% |
-| Panofy | Opus 4.6 | high | 50.17% | 68.24% | 67.98% | +17.94 个百分点 | +11.82% |
+| 评测框架 | 模型 | 思考强度 | `base` acc@3 | `base` std@3 | `fewshot` acc@3 | `fewshot` std@3 | `self` acc@3 | `self` std@3 | `reflect-3` acc@3 | `reflect-3` std@3 | `base` 轮次@3 | `base` 工具调用@3 | `fewshot` 轮次@3 | `fewshot` 工具调用@3 | `self` 轮次@3 | `self` 工具调用@3 | `reflect-3` 轮次@3 | `reflect-3` 工具调用@3 | `fewshot` 费用变化 | `self` 费用变化 | `reflect-3` 费用变化 | `fewshot` 提升 | `self` 提升 | `reflect-3` 提升 |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Codex | GPT-5.5 | xhigh | 46.72% | 5.13% | 64.91% | 6.36% | 54.99% | 8.73% | 57.45% | 7.62% | 14.91 | 35.89 | 11.58 | 26.70 | 9.71 | 22.74 | 10.83 | 24.42 | -29.24% | -32.18% | -25.74% | +18.19 个百分点 | +8.27 个百分点 | +10.73 个百分点 |
+| Claude Code | Opus 4.8 | xhigh | 49.11% | 5.25% | 70.90% | 6.38% | 57.37% | 6.79% | 62.72% | 6.68% | 14.62 | 17.17 | 11.10 | 15.02 | 11.78 | 15.84 | 12.15 | 16.26 | -9.61% | +0.53% | -0.34% | +21.79 个百分点 | +8.26 个百分点 | +13.62 个百分点 |
+| Panofy | Opus 4.6 | high | 50.40% | 6.99% | 71.47% | 4.93% | 58.39% | 5.74% | 59.82% | 7.31% | 15.16 | 19.53 | 13.48 | 16.84 | 12.51 | 16.32 | 14.37 | 17.79 | +8.27% | -6.00% | +1.99% | +21.07 个百分点 | +7.99 个百分点 | +9.41 个百分点 |
+| Claude Code | GLM-5.2 | max | 47.73% | 5.21% | 69.55% | 8.85% | 55.91% | 7.84% | 63.35% | 7.51% | 17.57 | 26.01 | 15.49 | 22.81 | 15.98 | 23.87 | 15.36 | 22.67 | -12.28% | -10.23% | -16.50% | +21.83 个百分点 | +8.18 个百分点 | +15.62 个百分点 |
+| Claude Code | Kimi K2.6 | enabled | 25.14% | 12.15% | 30.48% | 13.22% | 29.16% | 14.18% | 32.68% | 14.25% | 46.24 | 67.31 | 37.87 | 56.65 | 32.67 | 49.53 | 31.68 | 45.31 | -14.79% | -26.18% | -17.19% | +5.34 个百分点 | +4.02 个百分点 | +7.54 个百分点 |
 
 完整汇总见 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md)。
 
@@ -23,6 +25,8 @@
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
 - [`experiments/panofy_claude_opus_4_6_high/`](experiments/panofy_claude_opus_4_6_high/)
+- [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
+- [`experiments/claude_code_kimi2_6_enabled/`](experiments/claude_code_kimi2_6_enabled/)
 
 ## 目录结构
 
@@ -37,7 +41,7 @@
 ## 如何使用这个仓库
 
 - 基准数据：阅读 [`data/DATA_BOARD.zh.md`](data/DATA_BOARD.zh.md) 了解任务组概览，再查看 [`data/task_groups/`](data/task_groups/) 中的具体任务。
-- 评测结果：在 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md) 查看汇总结果，再进入三个实验目录阅读逐任务报告。
+- 评测结果：在 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md) 查看汇总结果，再进入已发布实验目录阅读逐任务报告。
 - 构建工作区：前三阶段流程在 [`data_construction/`](data_construction/) 下。
 - 分数评测工作区：使用 [`evaluation/eval_workspace/`](evaluation/eval_workspace/)。
 - 前三阶段默认通过 Codex 工作流实现。其他智能体框架可以复用整体结构，但需要适度改写。
@@ -66,7 +70,7 @@
 
 - **分数评测**：[`evaluation/eval_workspace/`](evaluation/eval_workspace/)
 
-  - **用途**：对一个发布任务组运行正式评测，统计 `acc@3`、token 和费用。目录下包含 Codex、Claude Code、Panofy 以及中文镜像工作区。
+  - **用途**：对一个发布任务组运行正式评测，统计 `acc@3`、population `std@3`、turn-count、token 和费用。目录下包含 Codex、Claude Code、Panofy 以及中文镜像工作区。
   - **输入数据**：放入所选评测工作区的一个已发布任务组，以及该工作区需要的密钥或配置。
   - **提示词**：`阅读 README.md 和 guides/，对已放入的任务组运行分数评测，并写出 report/<task_group_id>.yaml。`
 
