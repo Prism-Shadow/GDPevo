@@ -122,7 +122,7 @@ runs/reflect-3/
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context Dockerized solver subprocess. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
 
-6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, the matched session-trace reference, copied raw trace path, token usage, solver round count, and tool-call count. Copy the matched raw Dockerized Claude Code session JSONL from `.claude/projects/.../*.jsonl` into `original_traces/<condition>/<task_id>/attempt_<nn>/` for audit. A stdout stream or debug log may also be preserved as auxiliary evidence, but the session JSONL is the primary trace source.
+6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, the matched session-trace reference, copied raw trace path, token usage, solver round count, and tool-call count. Copy the matched raw Dockerized Claude Code session JSONL from `.claude/projects/.../*.jsonl` into `original_traces/<condition>/<task_id>/attempt_<nn>/` for audit. The session JSONL is the primary trace source.
 
 The run layout is mandatory. Do not invent flattened files such as
 `runs/base/test_001_attempt_01_answer.json`.

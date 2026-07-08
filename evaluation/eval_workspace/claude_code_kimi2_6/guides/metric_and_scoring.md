@@ -52,8 +52,7 @@ A single API response is logged across **multiple content-block records**. Acros
 
 Compute token usage, rounds, and tool calls from the preserved Claude Code
 session JSONL under `.claude/projects/.../<session_id>.jsonl`, and record that
-source in `run_metadata.yaml`. If an auxiliary stdout stream is present, keep it
-only as supporting evidence outside the required metadata shape.
+source in `run_metadata.yaml`.
 
 Recommended format:
 
