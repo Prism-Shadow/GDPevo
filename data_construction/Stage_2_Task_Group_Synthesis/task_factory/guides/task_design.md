@@ -85,6 +85,12 @@ Do not plainly write these in the prompt or input files:
 
 The prompt should read like a real user request: state the goal, necessary context, available materials or environment entry points, and output requirements, without teaching the solver how to complete the task step by step.
 
+When a task uses a shared API, web app, or other running environment, solver-visible
+prompts and payloads must use the placeholder `<TASK_ENV_BASE_URL>` for the base
+URL. Do not write hard-coded localhost URLs, private IPs, public deployment URLs,
+ports, or setup commands into `prompt.txt` or `input/payloads/`. The concrete
+endpoint is configured by the evaluation workspace through `.env`.
+
 `input/payloads/` should contain realistic, diverse, sufficiently large, and potentially noisy materials. Payloads may include solver-visible small exports, emails, spreadsheets, logs, templates, or local materials, but they must not become solution manuals.
 
 Every train and test task must include `input/payloads/answer_template.json`. The template should define the output JSON schema, field types, numeric precision, units, stable identifiers, list ordering rules, and allowed enum choices. It should prevent format friction while avoiding answer leakage.

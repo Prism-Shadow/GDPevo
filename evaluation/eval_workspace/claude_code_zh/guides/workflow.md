@@ -1,6 +1,6 @@
 # Evaluation Workflow
 
-本文说明主评估 agent 如何运行一次完整 Claude Code 评估。
+本文说明 Codex 主控评估 agent 如何运行一次完整 Claude Code 评估。
 
 评估现在使用远程 task 环境和四种条件：
 
@@ -11,9 +11,19 @@ self
 reflect-3
 ```
 
-当用户要求你在这个工作区中运行评估时，该请求即视为允许使用 Claude Code
-subagents（Task / Agent 工具）。每个 skill-generation 和 solver run 都必须
-放在干净、专属的目录中，并将对应 subagent 限定在该目录内。
+当用户要求你在这个工作区中运行评估时，该请求视为允许 Codex 作为主控组织实验，并用
+Docker 内的 `claude -p` 启动隔离 Claude Code run。每个 skill-generation 和 solver
+run 都必须放在干净、专属的 staged 目录中，并将该目录作为 Docker 内 `/work`
+挂载。
+
+启动隔离 agent run 前先读 `CODEX_ORCHESTRATOR.md`。正式 Claude Code 命令形态为：
+
+```bash
+CLAUDE_CONFIG_DIR=/claude_config claude -p --permission-mode bypassPermissions --session-id "$CLAUDE_SESSION_ID" "$PROMPT"
+```
+
+`CLAUDE_CONFIG_DIR` 是该 agent 进程运行时临时设置的环境变量，不是任务 `.env`
+配置。正式 attempt 不要使用 `--no-session-persistence`。
 
 ## 1. 准备 Task Group
 
@@ -38,12 +48,12 @@ GDPEVO_JUDGE_PATH=/api/judge
 Claude Code 评估不再本地启动 `task_group/env` 服务。确认远程环境的 health /
 index 端点可访问，并把 URL 记录到 `scratch/environment.md`。
 
-Skill-generation 和 solver subagents 不得进入、列出或读取 `env/`。它们只能
+Skill-generation 和 solver runs 不得进入、列出或读取 `env/`。它们只能
 使用主 agent staging 的远程环境入口。
 
 Judge endpoint 只用于 reflect skill generation 中的 train tasks。它不能
 staging 给 test solver，也不能作为 test-time 工具写入生成的 skill。只有
-reflect skill-generation subagents 能收到它的调用说明：
+reflect skill-generation runs 能收到它的调用说明：
 
 ```text
 POST {GDPEVO_ENV_BASE_URL}{GDPEVO_JUDGE_PATH}
@@ -119,6 +129,10 @@ attempt 目录中重新测试受影响任务。污染 attempt 不打分、不纳
 
 Solver 在自己的 attempt 目录中写 `answer.json`。
 
+每次 solver attempt 都由 Codex 主控从该 attempt 目录启动一个 Dockerized Claude
+Code 进程。只挂载 attempt 目录和供 `CLAUDE_CONFIG_DIR` 使用的专用 Claude
+config 目录，不要挂载完整 workspace 或 task group。
+
 ## 5. 打分与聚合
 
 每个 solver 写出 `answer.json` 后，主 agent 调用当前 test task 的
@@ -132,27 +146,22 @@ Solver 在自己的 attempt 目录中写 `answer.json`。
 
 该 ID 必须出现在 solver prompt、attempt 目录和 `run_metadata.yaml` 中。
 
-主 agent 从匹配到的 Claude Code subagent transcript 中回填 token 用量。
-按 `message.id` 去重：input/cache 桶取任一条记录，`output_tokens` 取同一
-message id 的最大值，然后跨响应求和。
+主 agent 从 attempt 专用 `CLAUDE_CONFIG_DIR` 里的 Claude Code 原始 session
+trace 中回填 token 用量、solver turn count 和 tool-call count。按 `message.id`
+去重：input/cache 桶取任一条记录，`output_tokens` 取同一 message id 的最大值，
+然后跨响应求和。
 
-Claude Code subagent transcripts 通常位于：
-
-```text
-~/.claude/projects/<project>/<session-id>/subagents/agent-<agent_id>.jsonl
-```
-
-匹配到 transcript 后，将原始 `agent-*.jsonl` 复制或硬链接到：
+Claude Code session traces 应位于：
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/
+original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
 ```
 
-在 `run_metadata.yaml` 中同时记录原始 transcript 路径和复制进工作区后的
-trace 路径。如果不能唯一匹配 transcript，将复制后的 trace 路径写为
-`null`，token 字段也保持 `null`，并报告 trace 问题。
+在 `run_metadata.yaml` 中记录原始 session trace 路径。如果原始 session trace
+缺失，将 trace 路径写为 `null`，token、turn 和 tool-call 字段也保持 `null`，并
+报告 trace 问题。
 
-所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3` 和各桶 token。效率指标只统计
+所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3`、各桶 token 和 solver turn count 和 tool-call counts。效率指标只统计
 test solver 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对
 5 个 test tasks 取平均。不要包含 skill generation、远程环境检查、evaluator
 执行或主 agent 汇总。

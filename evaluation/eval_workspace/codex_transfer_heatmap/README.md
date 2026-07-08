@@ -35,6 +35,7 @@ Do not run `base`, `self`, or any non-Codex harness in this workspace.
 
 | Path | Purpose |
 | --- | --- |
+| `CODEX_ORCHESTRATOR.md` | Codex orchestration, Docker isolation, `codex exec` command shape, and trace preservation |
 | `RUN_SCOPE.md` | Fixed scope for this 3x3 transfer experiment |
 | `heatmap_scope.json` | Machine-readable task group, mode, and label definition |
 | `guides/` | Workflow, skill modes, scoring, and report format |
@@ -49,7 +50,7 @@ Do not run `base`, `self`, or any non-Codex harness in this workspace.
 ## Launch Prompt
 
 ```text
-Read README.md, RUN_SCOPE.md, and guides/. Run the Codex-only 3x3 cross-task
+Read README.md, CODEX_ORCHESTRATOR.md, RUN_SCOPE.md, and guides/. Run the Codex-only 3x3 cross-task
 skill transfer experiment for fewshot and reflect-3. Use three independent
 pre-generated skills per source task group for @3. Keep every solver attempt isolated under
 runs/. Write per-cell reports under report/cells/, then build the two heatmaps
@@ -61,18 +62,18 @@ Model: GPT-5.5, reasoning_effort: xhigh.
 
 Use the configured `.env` remote environment URL for each task group.
 
-Do not start a local env service. Do not use skill-generation subagents in this
-workspace. Solver subagents must not enter, list, or read
+Do not start a local env service. Do not regenerate skills in this
+workspace. Solver runs must not enter, list, or read
 `task_groups/*/env/`; they may only use the remote environment entrypoint staged
 by the main agent.
 
-## Codex Subagents
+## Isolated Solver Runs
 
-When a user asks you to run this workspace, that request is considered
-permission to use Codex solver subagents. Use clean-context solver subagents for
-all test attempts. If the required number of solver subagents exceeds the
-current Codex concurrency limit, run them in batches until all required attempts
-are complete.
+When a user asks you to run this workspace, that request is permission for Codex
+to orchestrate the experiment and launch Dockerized Codex solver runs with
+`codex exec`. Use clean, isolated Docker runs for all test attempts. If the
+required number of runs exceeds practical concurrency, run them in batches until
+all required attempts are complete.
 
 Use the model configuration in `heatmap_scope.json` unless the user explicitly
 overrides it:
@@ -84,6 +85,11 @@ reasoning_effort: xhigh
 
 Do not reduce the attempt count, merge multiple test tasks into one solver run,
 or solve test tasks directly as the main agent.
+
+Use the command shape in `CODEX_ORCHESTRATOR.md`, including the per-attempt
+runtime-only `CODEX_HOME=/codex_home`. `CODEX_HOME` is set only when launching
+the solver process and is not a task `.env` setting. Do not use `codex exec
+--ephemeral` for formal attempts.
 
 ## Outputs
 

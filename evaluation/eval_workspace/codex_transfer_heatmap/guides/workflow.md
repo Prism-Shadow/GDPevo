@@ -3,12 +3,24 @@
 This workspace runs only the Codex cross-task skill-transfer experiment. It
 does not generate new skills.
 
-When a user asks you to run this workspace, that request is permission to use
-Codex solver subagents. Keep every solver run in a clean, dedicated
-workspace/cwd. If the required number of solver subagents exceeds the current
-Codex concurrency limit, run them in batches until all required attempts are
-complete. Do not reduce the attempt count, merge multiple test tasks into one
-solver run, or solve test tasks directly as the main agent.
+When a user asks you to run this workspace, that request is permission for Codex
+to orchestrate the experiment and launch Dockerized Codex solver runs. Keep
+every solver run in a clean, dedicated attempt directory mounted as `/work`
+inside Docker. If the required number of runs exceeds practical concurrency,
+run them in batches until all required attempts are complete. Do not reduce the
+attempt count, merge multiple test tasks into one solver run, or solve test
+tasks directly as the main agent.
+
+Read `CODEX_ORCHESTRATOR.md` before launching solver runs. The formal command
+shape is:
+
+```bash
+CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
+```
+
+`CODEX_HOME` is a runtime-only temporary environment variable for that solver
+process, not a task `.env` setting. Do not use `codex exec --ephemeral` for
+formal attempts.
 
 Use the model configuration in `heatmap_scope.json` unless the user explicitly
 overrides it:
@@ -106,10 +118,10 @@ answer.json
 run_metadata.yaml
 ```
 
-Every solver attempt must be completed by a clean-context Codex solver subagent
+Every solver attempt must be completed by a clean-context Dockerized Codex run
 using the configured model and reasoning effort. The main agent stages the
-attempt directory, launches the solver subagent, then scores and aggregates the
-result after the solver writes `answer.json`.
+attempt directory, launches the isolated solver run, then scores and aggregates
+the result after the solver writes `answer.json`.
 
 Use this short solver prompt shape:
 
@@ -141,24 +153,17 @@ Each attempt must have a unique `eval_attempt_id`:
 transfer__<mode>__<source>__to__<target>__<test_id>__attempt_<nn>__<timestamp>
 ```
 
-After scoring, match the solver subagent's raw Codex session trace from:
+After scoring, read the solver's raw Codex session trace from the attempt-mounted
+`CODEX_HOME`:
 
 ```text
-~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
 ```
 
-Do not match by only taking the newest file. Confirm the trace belongs to a
-subagent, uses the expected attempt directory, and contains the matching
-`eval_attempt_id`. Copy or hard-link the raw trace into:
-
-```text
-original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/
-```
-
-Record both the source trace path and the copied workspace trace path in
-`run_metadata.yaml`. If no unique trace can be matched, set the copied trace
-path to `null` and report the issue. Do not use trace-discarding solver launches
-such as `codex exec --ephemeral` for formal attempts.
+Confirm the trace uses the expected attempt directory and contains the matching
+`eval_attempt_id`. This raw session file is the primary trace. Record the raw
+session trace path in `run_metadata.yaml`. If the raw session trace is missing,
+set the trace path to `null` and report the issue.
 
 Token usage may be recorded in `run_metadata.yaml`, but the heatmap uses scores
 by default.

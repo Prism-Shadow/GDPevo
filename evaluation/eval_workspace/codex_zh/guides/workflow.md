@@ -11,9 +11,19 @@ self
 reflect-3
 ```
 
-当用户要求你在这个工作区中运行评估时，该请求即视为允许使用 Codex
-subagents。每个 skill-generation 和 solver run 都必须放在干净、专属的
-workspace/cwd 中。
+当用户要求你在这个工作区中运行评估时，该请求视为允许 Codex 作为主控组织实验，并用
+Docker 内的 `codex exec` 启动隔离 agent run。每个 skill-generation 和 solver
+run 都必须放在干净、专属的 staged 目录中，并将该目录作为 Docker 内 `/work`
+挂载。
+
+启动隔离 agent run 前先读 `CODEX_ORCHESTRATOR.md`。正式 Codex 命令形态为：
+
+```bash
+CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
+```
+
+`CODEX_HOME` 是该 agent 进程运行时临时设置的环境变量，不是任务 `.env` 配置。
+正式 attempt 不要使用 `codex exec --ephemeral`。
 
 ## 1. 准备 Task Group
 
@@ -38,12 +48,12 @@ GDPEVO_JUDGE_PATH=/api/judge
 Codex 评估不再本地启动 `task_group/env` 服务。确认远程环境的 health / index
 端点可访问，并把 URL 记录到 `scratch/environment.md`。
 
-Skill-generation 和 solver subagents 不得进入、列出或读取 `env/`。它们只能
+Skill-generation 和 solver runs 不得进入、列出或读取 `env/`。它们只能
 使用主 agent staging 的远程环境入口。
 
 Judge endpoint 只用于 reflect skill generation 中的 train tasks。它不能
 staging 给 test solver，也不能作为 test-time 工具写入生成的 skill。只有
-reflect skill-generation subagents 能收到它的调用说明：
+reflect skill-generation runs 能收到它的调用说明：
 
 ```text
 POST {GDPEVO_ENV_BASE_URL}{GDPEVO_JUDGE_PATH}
@@ -119,6 +129,10 @@ attempt 目录中重新测试受影响任务。污染 attempt 不打分、不纳
 
 Solver 在自己的 attempt 目录中写 `answer.json`。
 
+每次 solver attempt 都由 Codex 主控从该 attempt 目录启动一个 Dockerized Codex
+进程。只挂载 attempt 目录和供 `CODEX_HOME` 使用的专用 Codex home，不要挂载完整
+workspace 或 task group。
+
 ## 5. 打分与聚合
 
 每个 solver 写出 `answer.json` 后，主 agent 调用当前 test task 的
@@ -132,32 +146,21 @@ Solver 在自己的 attempt 目录中写 `answer.json`。
 
 该 ID 必须出现在 solver prompt、attempt 目录和 `run_metadata.yaml` 中。
 
-主 agent 从 Codex session trace 中回填 token 用量。不要只用“最新文件”匹配
-trace；应确认：
+主 agent 从 attempt 专用 `CODEX_HOME` 里的 Codex 原始 session trace 中回填
+token 用量、solver turn count 和 tool-call count。应确认 trace 使用预期 attempt
+目录，并包含匹配的 `eval_attempt_id`。
 
-- `thread_source` 是 `subagent`。
-- `parent_thread_id` 属于当前主评估 agent。
-- `cwd` 是预期的 attempt 目录。
-- trace 中包含匹配的 `eval_attempt_id`。
-
-Codex traces 通常位于：
+Codex 原始 session traces 应位于：
 
 ```text
-~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
 ```
 
-匹配到 trace 后，将原始 `rollout-*.jsonl` 复制或硬链接到：
+在 `run_metadata.yaml` 中记录原始 session trace 路径。如果原始 session trace
+缺失，将原始 trace 路径写为 `null`，trace 派生的效率字段也保持 `null`，并报告
+trace 问题。
 
-```text
-original_traces/<condition>/<task_id>/attempt_<nn>/
-```
-
-在 `run_metadata.yaml` 中同时记录原始 trace 路径和复制进工作区后的 trace
-路径。如果不能唯一匹配 trace，将复制后的 trace 路径写为 `null`，token
-字段也保持 `null`，并报告 trace 问题。正式 attempt 不要使用
-`codex exec --ephemeral` 这类不会留下可追溯 trace 的启动方式。
-
-所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3` 和平均 cached/input/output tokens。
+所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3`、平均 cached/input/output tokens 和 solver turn count 和 tool-call counts。
 效率指标只统计 test solver 写答案的过程：先对同一个 test task 的 3 次
 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill generation、
 远程环境检查、evaluator 执行或主 agent 汇总。

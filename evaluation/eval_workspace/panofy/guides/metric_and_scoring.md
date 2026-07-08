@@ -19,7 +19,8 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 
 `func_input.json` is exactly what was sent to `predict()`. `answer.json` is the
 parsed `FUNC_OUTPUT`. `score.yaml` is written after running the task evaluator.
-`run_metadata.yaml` records the unique attempt id and SDK-reported token usage.
+`run_metadata.yaml` records the unique attempt id, SDK-reported token usage,
+and Panofy agent / run identifiers.
 
 ## Scoring
 
@@ -100,6 +101,23 @@ The overall `std@3` for a condition uses the same aggregation shape as
 overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
 ```
 
+
+## rounds@3 and tool calls@3 / trace efficiency
+
+`rounds_avg_3` counts solver assistant/model-response turns. During evaluation, record the Panofy `agent_id`, SDK run id, task id, and SDK usage metadata; leave turn and tool-call counts as `null` unless a packaged service log has already been supplied to the workspace. Panofy service logs are archived after the experiment and can be used to backfill `rounds_avg_3` and `tool_calls_avg_3`.
+
+When packaged service logs are available, `tool_calls_avg_3` counts assistant `tool_call` content items in the formal scored `predict()` trace. Do not count tool results, training traces, evaluator execution, or replaced failed attempts.
+
+```text
+task rounds@3 = (attempt_01_turns + attempt_02_turns + attempt_03_turns) / 3
+overall rounds@3 = (test_001_rounds@3 + test_002_rounds@3 + test_003_rounds@3 + test_004_rounds@3 + test_005_rounds@3) / 5
+
+task tool calls@3 = (attempt_01_tool_calls + attempt_02_tool_calls + attempt_03_tool_calls) / 3
+overall tool calls@3 = (test_001_tool_calls@3 + test_002_tool_calls@3 + test_003_tool_calls@3 + test_004_tool_calls@3 + test_005_tool_calls@3) / 5
+```
+
+If a formal attempt has no available packaged service log, write the turn count and tool-call count as `null`; do not estimate them manually.
+
 ## Score Range
 
 All scores are normalised to `[0, 1]`. If an evaluator outputs a non-normalised
@@ -123,12 +141,14 @@ a valid score, stop and report the issue.
 ## Aggregation Requirements
 
 After all `score.yaml` files are ready, check that all four conditions, 5 test
-tasks, and 3 runs per task are complete. Then compute per-task `acc@3` and `std@3`, overall `acc@3` and `std@3`,
-and improvements from `fewshot`, `self`, and `reflect-3` over `base`, plus
-average per-bucket tokens.
+tasks, and 3 runs per task are complete. Then compute per-task `acc@3` and
+`std@3`, overall `acc@3` and `std@3`, improvements from `fewshot`, `self`, and
+`reflect-3` over `base`, plus average per-bucket tokens. Include solver turns
+only when packaged service logs are available.
 
 These efficiency metrics only count the **test-task `predict()`** work. They do
 not include training (the evolution step), remote environment checks, or
-evaluator execution. They aggregate the same way as `acc@3`: average the 3
-attempts for one test task, then average the 5 test tasks. Temporary aggregation
-code may live under `scratch/`.
+evaluator execution. Token metrics come from the SDK during evaluation. Turn
+metrics, when available after log archival, aggregate the same way as `acc@3`:
+average the 3 attempts for one test task, then average the 5 test tasks.
+Temporary aggregation code may live under `scratch/`.
