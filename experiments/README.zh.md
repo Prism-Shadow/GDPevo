@@ -14,6 +14,7 @@
 | `panofy_claude_opus_4_6_high/` | 已发布的 Panofy Claude Opus 4.6 high 评估运行 |
 | `claude_code_glm_5_2_max/` | 已发布的 Claude Code GLM-5.2 max 评估运行 |
 | `claude_code_kimi2_6_enabled/` | 已发布的 Claude Code Kimi K2.6 enabled 评估运行 |
+| `claude_code_deepseek_v4_pro_max/` | 已发布的 Claude Code DeepSeek V4 Pro max 评估运行 |
 
 每个已发布实验目录都包含 `config.yaml`、结构化 report YAML 文件，以及这些 reports 引用的生成 artifacts（如果有）。
 可复用评测工作区位于 [`../evaluation/eval_workspace/`](../evaluation/eval_workspace/)。

@@ -17,6 +17,7 @@
 | Panofy | Opus 4.6 | high | 50.40% | 6.99% | 71.47% | 4.93% | 58.39% | 5.74% | 59.82% | 7.31% | 15.16 | 19.53 | 13.48 | 16.84 | 12.51 | 16.32 | 14.37 | 17.79 | +8.27% | -6.00% | +1.99% | +21.07 个百分点 | +7.99 个百分点 | +9.41 个百分点 |
 | Claude Code | GLM-5.2 | max | 47.73% | 5.21% | 69.55% | 8.85% | 55.91% | 7.84% | 63.35% | 7.51% | 17.57 | 26.01 | 15.49 | 22.81 | 15.98 | 23.87 | 15.36 | 22.67 | -12.28% | -10.23% | -16.50% | +21.83 个百分点 | +8.18 个百分点 | +15.62 个百分点 |
 | Claude Code | Kimi K2.6 | enabled | 25.14% | 12.15% | 30.48% | 13.22% | 29.16% | 14.18% | 32.68% | 14.25% | 46.24 | 67.31 | 37.87 | 56.65 | 32.67 | 49.53 | 31.68 | 45.31 | -14.79% | -26.18% | -17.19% | +5.34 个百分点 | +4.02 个百分点 | +7.54 个百分点 |
+| Claude Code | DeepSeek V4 Pro | max | 46.06% | 6.90% | 54.80% | 9.65% | 48.69% | 8.75% | 49.22% | 8.67% | 13.22 | 24.51 | 11.46 | 21.02 | 10.53 | 19.21 | 10.26 | 19.13 | +2.15% | +1.19% | -1.91% | +8.74 个百分点 | +2.63 个百分点 | +3.16 个百分点 |
 
 完整汇总见 [`experiments/EXPERIMENT_BOARD.zh.md`](experiments/EXPERIMENT_BOARD.zh.md)。
 
@@ -27,6 +28,7 @@
 - [`experiments/panofy_claude_opus_4_6_high/`](experiments/panofy_claude_opus_4_6_high/)
 - [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
 - [`experiments/claude_code_kimi2_6_enabled/`](experiments/claude_code_kimi2_6_enabled/)
+- [`experiments/claude_code_deepseek_v4_pro_max/`](experiments/claude_code_deepseek_v4_pro_max/)
 
 ## 目录结构
 

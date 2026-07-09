@@ -2,7 +2,7 @@
 
 语言：[English](EXPERIMENT_BOARD.md) | [中文](EXPERIMENT_BOARD.zh.md)
 
-本看板汇总 GDPevo 公开 benchmark 运行的已发布评估结果。已发布运行将无状态 `base` baseline 与进化模式进行对比。Codex、Claude Code 和 Panofy 运行均报告 `fewshot`、`self` 和 `reflect-3`。完整结构化 reports 存放在已发布实验目录下，例如 `codex_gpt5_5_xhigh/reports/`、`claude_code_opus_4_8_xhigh/reports/`、`panofy_claude_opus_4_6_high/reports/`、`claude_code_glm_5_2_max/reports/` 和 `claude_code_kimi2_6_enabled/reports/`。
+本看板汇总 GDPevo 公开 benchmark 运行的已发布评估结果。已发布运行将无状态 `base` baseline 与进化模式进行对比。Codex、Claude Code 和 Panofy 运行均报告 `fewshot`、`self` 和 `reflect-3`。完整结构化 reports 存放在已发布实验目录下，例如 `codex_gpt5_5_xhigh/reports/`、`claude_code_opus_4_8_xhigh/reports/`、`panofy_claude_opus_4_6_high/reports/`、`claude_code_glm_5_2_max/reports/`、`claude_code_kimi2_6_enabled/reports/` 和 `claude_code_deepseek_v4_pro_max/reports/`。
 
 在已发布的 Codex GPT-5.5 xhigh 运行中，三个 Codex 进化模式平均带来 +12.39 个百分点的准确率提升，token 成本平均变化 -29.05%。
 
@@ -390,3 +390,79 @@ Kimi 的 token 列是 Claude Code 运行元数据中暴露的三类 usage 桶：
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `fewshot` | 58.06% | 13.53% | 33.93 | 48.60 | 64.2k | 382.0k | 9.0k | 0.16 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `self` | 53.55% | 6.98% | 33.33 | 52.20 | 55.4k | 348.1k | 9.0k | 0.14 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
 | `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `kimi-k2.6, enabled` | `claude_code` | `reflect-3` | 59.05% | 16.16% | 25.67 | 35.73 | 56.7k | 279.0k | 10.0k | 0.14 | [task_group_012.yaml](claude_code_kimi2_6_enabled/reports/task_group_012.yaml) |
+
+---
+
+## Claude Code（DeepSeek V4 Pro，max）
+
+在已发布的 Claude Code DeepSeek V4 Pro max 运行中，三个进化模式在 12 个 task group 上平均带来 +4.84 个百分点 的准确率提升，token 成本平均变化 +0.48%。其中 `fewshot`、`self` 和 `reflect-3` 的准确率提升分别为 +8.74 个百分点、+2.63 个百分点 和 +3.16 个百分点。
+
+对于已发布的 `deepseek-v4-pro, max` 运行，本看板使用 DeepSeek V4 Pro API 价格：
+
+| Token 类型 | 价格 |
+| --- | ---: |
+| Cache miss input | $0.435 / 1M tokens |
+| Cache hit input | $0.003625 / 1M tokens |
+| Output | $0.87 / 1M tokens |
+
+看板层面和 report 层面的 cost 计算公式为：
+
+```text
+cost_USD_avg_3 =
+  (input_tokens_avg_3      * 0.435
+   + cache_read_tokens_avg_3 * 0.003625
+   + output_tokens_avg_3     * 0.87) / 1_000_000
+```
+
+DeepSeek 的 token 列是 Claude Code 运行元数据归一化后的几类 usage bucket：cache miss input、cache hit input 和 output。`cache_creation_tokens_avg_3` 仍保留在 report schema 中以兼容其他 Claude Code 运行，但本次为 0.0，且不参与上述计费公式。
+
+| task_group_id | scenario_id | model | harness | mode | overall acc@3 (%) | overall std@3 (%) | rounds avg@3 | tool calls avg@3 | cache miss input tokens avg@3 (k) | cache hit input tokens avg@3 (k) | output tokens avg@3 (k) | cost USD avg@3 | report |
+| --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `deepseek-v4-pro, max` | `claude_code` | `base` | 56.79% | 5.94% | 19.60 | 36.13 | 35.6k | 691.1k | 17.3k | 0.03 | [task_group_001.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_001.yaml) |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 57.97% | 8.90% | 9.00 | 18.33 | 31.3k | 239.2k | 10.8k | 0.02 | [task_group_001.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_001.yaml) |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `deepseek-v4-pro, max` | `claude_code` | `self` | 64.45% | 15.88% | 8.87 | 17.87 | 34.1k | 244.8k | 12.0k | 0.03 | [task_group_001.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_001.yaml) |
+| `task_group_001` | `SCN_001_crm_marketing_lead_capture` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 63.59% | 11.54% | 8.00 | 16.20 | 30.5k | 204.1k | 10.3k | 0.02 | [task_group_001.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_001.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `deepseek-v4-pro, max` | `claude_code` | `base` | 40.00% | 0.65% | 10.47 | 21.60 | 32.5k | 259.5k | 7.1k | 0.02 | [task_group_002.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_002.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 43.38% | 3.62% | 11.07 | 22.93 | 36.8k | 322.2k | 8.3k | 0.02 | [task_group_002.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_002.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `deepseek-v4-pro, max` | `claude_code` | `self` | 43.75% | 3.14% | 8.60 | 18.00 | 35.7k | 225.6k | 7.4k | 0.02 | [task_group_002.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_002.yaml) |
+| `task_group_002` | `SCN_002_crm_b2b_quote_account_response` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 48.34% | 1.15% | 7.27 | 15.53 | 37.8k | 193.2k | 7.3k | 0.02 | [task_group_002.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_002.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `deepseek-v4-pro, max` | `claude_code` | `base` | 49.22% | 8.42% | 11.60 | 31.93 | 37.6k | 346.1k | 14.4k | 0.03 | [task_group_003.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 38.14% | 10.51% | 11.73 | 27.27 | 39.2k | 362.1k | 12.6k | 0.03 | [task_group_003.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `deepseek-v4-pro, max` | `claude_code` | `self` | 38.63% | 5.57% | 10.00 | 24.00 | 39.0k | 303.7k | 12.9k | 0.03 | [task_group_003.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_003.yaml) |
+| `task_group_003` | `SCN_003_crm_service_ticket_resolution` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 42.48% | 9.43% | 10.53 | 27.67 | 37.8k | 312.9k | 12.3k | 0.03 | [task_group_003.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_003.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `deepseek-v4-pro, max` | `claude_code` | `base` | 22.63% | 12.17% | 28.93 | 44.47 | 54.3k | 1442.1k | 26.9k | 0.05 | [task_group_004.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_004.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 34.61% | 14.94% | 16.13 | 26.00 | 54.7k | 737.5k | 22.6k | 0.05 | [task_group_004.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_004.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `deepseek-v4-pro, max` | `claude_code` | `self` | 19.29% | 9.53% | 13.33 | 21.13 | 56.8k | 568.8k | 20.8k | 0.04 | [task_group_004.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_004.yaml) |
+| `task_group_004` | `SCN_004_crm_retention_churn_analytics` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 23.16% | 8.62% | 12.93 | 21.47 | 57.2k | 550.7k | 20.0k | 0.04 | [task_group_004.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_004.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `deepseek-v4-pro, max` | `claude_code` | `base` | 47.45% | 9.06% | 13.47 | 26.07 | 37.0k | 413.3k | 14.8k | 0.03 | [task_group_005.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_005.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 61.99% | 16.43% | 11.47 | 22.93 | 41.3k | 405.6k | 16.0k | 0.03 | [task_group_005.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_005.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `deepseek-v4-pro, max` | `claude_code` | `self` | 31.64% | 10.52% | 9.73 | 21.27 | 35.3k | 294.2k | 13.6k | 0.03 | [task_group_005.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_005.yaml) |
+| `task_group_005` | `SCN_005_erp_finance_expense_control` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 44.79% | 9.54% | 10.13 | 19.00 | 35.2k | 299.6k | 14.4k | 0.03 | [task_group_005.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_005.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `deepseek-v4-pro, max` | `claude_code` | `base` | 63.35% | 7.02% | 9.53 | 8.53 | 57.9k | 347.3k | 11.4k | 0.04 | [task_group_006.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_006.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 63.31% | 8.00% | 9.53 | 8.53 | 52.9k | 349.9k | 14.0k | 0.04 | [task_group_006.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_006.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `deepseek-v4-pro, max` | `claude_code` | `self` | 69.24% | 7.28% | 11.20 | 10.20 | 48.0k | 402.5k | 15.1k | 0.04 | [task_group_006.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_006.yaml) |
+| `task_group_006` | `SCN_006_erp_procurement_supplier_receiving` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 65.61% | 9.69% | 10.53 | 9.53 | 56.3k | 415.4k | 13.1k | 0.04 | [task_group_006.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_006.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `deepseek-v4-pro, max` | `claude_code` | `base` | 33.20% | 4.51% | 13.60 | 21.53 | 53.5k | 569.4k | 19.0k | 0.04 | [task_group_007.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_007.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 44.26% | 4.47% | 13.80 | 24.07 | 57.6k | 584.9k | 18.7k | 0.04 | [task_group_007.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_007.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `deepseek-v4-pro, max` | `claude_code` | `self` | 32.14% | 1.05% | 13.53 | 21.67 | 63.5k | 669.1k | 20.5k | 0.05 | [task_group_007.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_007.yaml) |
+| `task_group_007` | `SCN_007_erp_inventory_order_fulfillment` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 32.57% | 1.66% | 13.07 | 20.47 | 55.7k | 560.4k | 19.2k | 0.04 | [task_group_007.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_007.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `deepseek-v4-pro, max` | `claude_code` | `base` | 56.93% | 9.39% | 9.13 | 17.93 | 25.8k | 218.9k | 11.6k | 0.02 | [task_group_008.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_008.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 65.25% | 9.49% | 11.53 | 24.33 | 30.3k | 330.1k | 14.4k | 0.03 | [task_group_008.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_008.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `deepseek-v4-pro, max` | `claude_code` | `self` | 51.64% | 17.72% | 8.33 | 16.87 | 31.4k | 227.7k | 11.1k | 0.02 | [task_group_008.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_008.yaml) |
+| `task_group_008` | `SCN_008_personal_financial_advisory_tax_estate_planning` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 47.27% | 11.42% | 8.93 | 19.67 | 30.3k | 243.0k | 13.1k | 0.03 | [task_group_008.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_008.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `deepseek-v4-pro, max` | `claude_code` | `base` | 49.07% | 14.40% | 10.27 | 17.67 | 20.4k | 140.8k | 13.5k | 0.02 | [task_group_009.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_009.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 72.59% | 8.68% | 12.20 | 19.07 | 24.2k | 232.6k | 16.6k | 0.03 | [task_group_009.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_009.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `deepseek-v4-pro, max` | `claude_code` | `self` | 53.01% | 10.28% | 12.07 | 19.80 | 27.7k | 245.5k | 14.5k | 0.03 | [task_group_009.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_009.yaml) |
+| `task_group_009` | `SCN_009_finance_operational_modeling_management_reporting` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 59.93% | 13.02% | 11.00 | 18.47 | 23.1k | 178.5k | 12.1k | 0.02 | [task_group_009.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_009.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `deepseek-v4-pro, max` | `claude_code` | `base` | 40.33% | 4.47% | 9.67 | 21.33 | 46.8k | 332.7k | 13.8k | 0.03 | [task_group_010.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_010.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 52.87% | 12.21% | 9.07 | 16.33 | 43.2k | 324.7k | 16.4k | 0.03 | [task_group_010.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_010.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `deepseek-v4-pro, max` | `claude_code` | `self` | 62.42% | 9.15% | 9.47 | 18.20 | 45.9k | 348.5k | 17.3k | 0.04 | [task_group_010.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_010.yaml) |
+| `task_group_010` | `SCN_010_institutional_investment_strategy_portfolio_risk` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 51.74% | 12.20% | 9.47 | 16.47 | 42.2k | 345.1k | 16.5k | 0.03 | [task_group_010.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_010.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `deepseek-v4-pro, max` | `claude_code` | `base` | 45.75% | 5.77% | 12.40 | 21.80 | 34.5k | 384.1k | 19.8k | 0.03 | [task_group_011.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_011.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 45.07% | 7.30% | 13.27 | 22.40 | 40.9k | 481.4k | 21.2k | 0.04 | [task_group_011.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_011.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `deepseek-v4-pro, max` | `claude_code` | `self` | 41.78% | 5.12% | 12.40 | 20.53 | 39.9k | 433.3k | 21.1k | 0.04 | [task_group_011.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_011.yaml) |
+| `task_group_011` | `SCN_011_bank_branch_credit_risk_lending_committee` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 48.98% | 8.68% | 11.40 | 20.87 | 36.7k | 381.1k | 20.0k | 0.03 | [task_group_011.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_011.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `deepseek-v4-pro, max` | `claude_code` | `base` | 48.04% | 1.05% | 10.00 | 25.13 | 33.4k | 250.2k | 6.8k | 0.02 | [task_group_012.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_012.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `deepseek-v4-pro, max` | `claude_code` | `fewshot` | 78.22% | 11.25% | 8.73 | 20.07 | 37.8k | 239.9k | 6.9k | 0.02 | [task_group_012.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_012.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `deepseek-v4-pro, max` | `claude_code` | `self` | 76.27% | 9.75% | 8.87 | 21.00 | 35.9k | 237.5k | 7.8k | 0.02 | [task_group_012.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_012.yaml) |
+| `task_group_012` | `SCN_012_erp_hr_employee_lifecycle` | `deepseek-v4-pro, max` | `claude_code` | `reflect-3` | 62.20% | 7.05% | 9.80 | 24.20 | 40.7k | 272.1k | 8.4k | 0.03 | [task_group_012.yaml](claude_code_deepseek_v4_pro_max/reports/task_group_012.yaml) |
