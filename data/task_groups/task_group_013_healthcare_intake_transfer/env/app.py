@@ -28,7 +28,7 @@ SESSIONS: set[str] = set()
 def load_data() -> dict:
     if not DATA_FILE.exists():
         raise SystemExit("Missing data/generated_data.json. Run generate_data.py first.")
-    return json.loads(DATA_FILE.read_text())
+    return json.loads(DATA_FILE.read_text(encoding="utf-8"))
 
 
 DATA = load_data()
@@ -234,6 +234,17 @@ class Handler(BaseHTTPRequestHandler):
         self.redirect("/login")
         return False
 
+    def read_request_body(self) -> bytes | None:
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except (TypeError, ValueError):
+            self.send_error(400, "Invalid Content-Length")
+            return None
+        if length < 0:
+            self.send_error(400, "Invalid Content-Length")
+            return None
+        return self.rfile.read(length)
+
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
         path = unquote(parsed.path)
@@ -269,8 +280,10 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
         if parsed.path == "/api/judge":
-            length = int(self.headers.get("Content-Length", "0"))
-            status, payload = judge_answer_request(self.rfile.read(length))
+            raw_body = self.read_request_body()
+            if raw_body is None:
+                return
+            status, payload = judge_answer_request(raw_body)
             raw = json.dumps(payload, indent=2, sort_keys=True).encode("utf-8")
             self.send_response(status)
             self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -281,8 +294,14 @@ class Handler(BaseHTTPRequestHandler):
         if parsed.path != "/login":
             self.send_error(404)
             return
-        length = int(self.headers.get("Content-Length", "0"))
-        fields = parse_qs(self.rfile.read(length).decode())
+        raw_body = self.read_request_body()
+        if raw_body is None:
+            return
+        try:
+            fields = parse_qs(raw_body.decode("utf-8"))
+        except UnicodeDecodeError:
+            self.send_error(400, "Invalid request body")
+            return
         if fields.get("email", [""])[0] == EMAIL and fields.get("password", [""])[0] == PASSWORD:
             sid = secrets.token_urlsafe(24)
             SESSIONS.add(sid)

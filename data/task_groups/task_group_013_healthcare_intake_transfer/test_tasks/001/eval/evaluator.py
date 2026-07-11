@@ -20,7 +20,11 @@ def normalize_list(value):
         return value
     if all(isinstance(item, dict) and "patient_id" in item for item in value):
         return sorted((normalize(item) for item in value), key=lambda item: item["patient_id"])
-    return sorted(value)
+    normalized = [normalize(item) for item in value]
+    try:
+        return sorted(normalized)
+    except TypeError:
+        return sorted(normalized, key=lambda item: json.dumps(item, ensure_ascii=False, sort_keys=True))
 
 
 def normalize(value):

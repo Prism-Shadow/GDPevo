@@ -98,19 +98,20 @@ class Handler(BaseHTTPRequestHandler):
             if len(parts) == 4:
                 self.send_json(patient)
                 return
-            section = parts[4]
-            if section in {
-                "problems",
-                "medications",
-                "allergies",
-                "encounters",
-                "immunizations",
-                "disclosures",
-                "documents",
-            }:
-                rows = patient.get(section, [])
-                self.send_json(filter_rows(rows, query))
-                return
+            if len(parts) == 5:
+                section = parts[4]
+                if section in {
+                    "problems",
+                    "medications",
+                    "allergies",
+                    "encounters",
+                    "immunizations",
+                    "disclosures",
+                    "documents",
+                }:
+                    rows = patient.get(section, [])
+                    self.send_json(filter_rows(rows, query))
+                    return
         if path == "/api/providers":
             self.send_json(filter_rows(DATA["providers"], query))
             return

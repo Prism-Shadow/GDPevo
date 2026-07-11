@@ -597,7 +597,7 @@ def build() -> dict:
 def main() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     data = build()
-    DATA_FILE.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+    DATA_FILE.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     manifest = {
         "seed": SEED,
         "record_counts": {
@@ -640,7 +640,7 @@ def main() -> None:
         "target_ids": TARGET_IDS,
         "generation_timestamp": GENERATED_AT,
     }
-    MANIFEST_FILE.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    MANIFEST_FILE.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(f"Wrote {DATA_FILE}")
     print(f"Wrote {MANIFEST_FILE}")
 
