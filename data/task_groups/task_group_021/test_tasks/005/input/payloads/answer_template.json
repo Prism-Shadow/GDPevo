@@ -1,0 +1,227 @@
+{
+  "description": "Required JSON shape for the CLAIMS_SEP_2026 claims cost integrity audit.",
+  "output_type": "object",
+  "required_top_level_keys": [
+    "batch_id",
+    "wave_id",
+    "effective_claim_count",
+    "duplicate_business_key_count",
+    "invalid_event_ids",
+    "invalid_event_issue_types",
+    "superseded_or_void_event_ids",
+    "corrected_claim_total_usd",
+    "totals_by_claim_category_usd",
+    "claim_category_counts",
+    "top_claim_lane_by_cost",
+    "unit_count_by_source_unit",
+    "issue_type_counts",
+    "amended_event_ids_used",
+    "decision_audit"
+  ],
+  "field_specs": {
+    "batch_id": {
+      "type": "string",
+      "description": "Target claims cost batch identifier."
+    },
+    "wave_id": {
+      "type": "string",
+      "description": "Logistics wave identifier represented by the claims batch."
+    },
+    "effective_claim_count": {
+      "type": "integer",
+      "description": "Count of effective records included in corrected USD aggregation."
+    },
+    "duplicate_business_key_count": {
+      "type": "integer",
+      "description": "Count of business keys with more than one retained effective record after invalid, void, superseded, and amendment handling."
+    },
+    "invalid_event_ids": {
+      "type": "array",
+      "items": "string",
+      "ordering": "ascending by event_id",
+      "description": "Event IDs excluded for invalid data values, excluding ordinary voided or superseded records."
+    },
+    "invalid_event_issue_types": {
+      "type": "array",
+      "ordering": "ascending by event_id",
+      "items": {
+        "type": "object",
+        "required_keys": [
+          "event_id",
+          "issue_types"
+        ],
+        "field_specs": {
+          "event_id": {
+            "type": "string"
+          },
+          "issue_types": {
+            "type": "array",
+            "items": {
+              "type": "enum",
+              "allowed_values": [
+                "invalid_negative_amount",
+                "missing_amount",
+                "invalid_unit",
+                "invalid_currency"
+              ]
+            },
+            "ordering": "template enum order"
+          }
+        }
+      }
+    },
+    "superseded_or_void_event_ids": {
+      "type": "array",
+      "items": "string",
+      "ordering": "ascending by event_id",
+      "description": "Target-batch event IDs excluded because they are void records or have been superseded by a later amendment event."
+    },
+    "corrected_claim_total_usd": {
+      "type": "number",
+      "precision": "2 decimal places",
+      "unit": "USD",
+      "description": "Corrected batch total after line-level USD conversion to cents."
+    },
+    "totals_by_claim_category_usd": {
+      "type": "object",
+      "required_keys": [
+        "freight",
+        "accessorial",
+        "tax_fee",
+        "claim"
+      ],
+      "value_type": "number",
+      "precision": "2 decimal places",
+      "unit": "USD",
+      "category_enum": [
+        "freight",
+        "accessorial",
+        "tax_fee",
+        "claim"
+      ]
+    },
+    "claim_category_counts": {
+      "type": "object",
+      "required_keys": [
+        "freight",
+        "accessorial",
+        "tax_fee",
+        "claim"
+      ],
+      "value_type": "integer",
+      "category_enum": [
+        "freight",
+        "accessorial",
+        "tax_fee",
+        "claim"
+      ]
+    },
+    "top_claim_lane_by_cost": {
+      "type": "object",
+      "required_keys": [
+        "lane",
+        "amount_usd"
+      ],
+      "field_specs": {
+        "lane": {
+          "type": "string"
+        },
+        "amount_usd": {
+          "type": "number",
+          "precision": "2 decimal places",
+          "unit": "USD"
+        }
+      }
+    },
+    "unit_count_by_source_unit": {
+      "type": "object",
+      "description": "Counts of retained effective events by controlled source unit.",
+      "required_keys": [
+        "kg",
+        "lb",
+        "mile",
+        "shipment",
+        "claim"
+      ],
+      "value_type": "integer",
+      "unit_enum": [
+        "kg",
+        "lb",
+        "mile",
+        "shipment",
+        "claim"
+      ]
+    },
+    "issue_type_counts": {
+      "type": "object",
+      "required_keys": [
+        "invalid_negative_amount",
+        "missing_amount",
+        "invalid_unit",
+        "invalid_currency",
+        "void_record",
+        "superseded_record",
+        "amended_record",
+        "duplicate_business_key",
+        "non_usd_currency",
+        "advisory_note"
+      ],
+      "value_type": "integer",
+      "issue_type_enum": [
+        "invalid_negative_amount",
+        "missing_amount",
+        "invalid_unit",
+        "invalid_currency",
+        "void_record",
+        "superseded_record",
+        "amended_record",
+        "duplicate_business_key",
+        "non_usd_currency",
+        "advisory_note"
+      ]
+    },
+    "amended_event_ids_used": {
+      "type": "array",
+      "items": "string",
+      "ordering": "ascending by event_id",
+      "description": "Amendment event IDs retained in the effective set for this claims batch."
+    },
+    "decision_audit": {
+      "type": "object",
+      "required_keys": [
+        "void_event_ids",
+        "amended_event_ids",
+        "superseded_event_ids",
+        "non_usd_sample_event_ids"
+      ],
+      "field_specs": {
+        "void_event_ids": {
+          "type": "array",
+          "items": "string",
+          "ordering": "ascending by event_id"
+        },
+        "amended_event_ids": {
+          "type": "array",
+          "items": "string",
+          "ordering": "ascending by event_id"
+        },
+        "superseded_event_ids": {
+          "type": "array",
+          "items": "string",
+          "ordering": "ascending by event_id"
+        },
+        "non_usd_sample_event_ids": {
+          "type": "array",
+          "items": "string",
+          "ordering": "ascending by event_id",
+          "description": "First ten non-USD source event IDs in ascending event_id order among non-void events with an amount."
+        }
+      }
+    }
+  },
+  "numeric_rules": {
+    "currency_conversion": "Use the USD conversion rates exposed by the environment quality-rule reference.",
+    "rounding": "Round each included cost event's converted USD amount to cents before aggregation; report all USD numbers with exactly two decimal places."
+  },
+  "additional_properties": false
+}

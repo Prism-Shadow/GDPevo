@@ -1,0 +1,53 @@
+{
+  "action_label": "socioeconomic_model_sufficient",
+  "flags": {
+    "top_positive_residual_fips": [
+      "47016",
+      "54005",
+      "01011",
+      "13034",
+      "54012"
+    ]
+  },
+  "measures": {
+    "mediator_label": "No leisure-time physical activity",
+    "mediator_measure_id": "LPA",
+    "outcome_measure_id": "OBESITY"
+  },
+  "modeling": {
+    "bootstrap_ci_enum": "includes_zero",
+    "bootstrap_ci_high": 0.051,
+    "bootstrap_ci_low": -0.068,
+    "dynamic_variable_rule": "unemployment_2023_minus_2010_and_income_2023_minus_2022",
+    "indirect_effect": -0.01,
+    "mediator_to_outcome_beta": 0.328,
+    "poverty_to_mediator_beta": -0.031,
+    "rucc_handling": "categorical_dummies"
+  },
+  "scope": {
+    "analysis_year": 2024,
+    "complete_case_count": 165,
+    "exclusions_by_reason": {
+      "invalid_fips": 1,
+      "missing_health_data": 0,
+      "missing_ses": 5,
+      "outside_requested_states": 460
+    },
+    "requested_states": [
+      "AL",
+      "GA",
+      "MS",
+      "TN",
+      "KY",
+      "WV",
+      "NC"
+    ]
+  },
+  "spatial": {
+    "isolate_state_count": 2,
+    "moran_i": -0.17,
+    "moran_i_bucket": "lt_0_05",
+    "top_residual_hotspot_division": "East South Central"
+  },
+  "task_id": "train_005"
+}

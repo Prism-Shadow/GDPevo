@@ -1,0 +1,166 @@
+{
+  "task_id": "test_003",
+  "review_month": "2026-05",
+  "application_id": "AA-2026-0036",
+  "premises_id": "PM-2026-036",
+  "recommendation": "ISSUE_RESTRICTED_WITH_MONITORING",
+  "risk_assessment": {
+    "same_premises_basis": "SAME_ADDRESS_OVERLAP",
+    "prior_licensee": "Signal Hospitality LLC",
+    "prior_incident_level": "HIGH",
+    "incident_count": 6,
+    "unresolved_incident_count": 2,
+    "high_severity_incident_count": 3,
+    "unresolved_incident_ids": [
+      "AI-2026-0071",
+      "AI-2026-0097"
+    ],
+    "high_severity_incident_ids": [
+      "AI-2026-0012",
+      "AI-2026-0071",
+      "AI-2026-0111"
+    ],
+    "settlement_posture": "PRIOR_RESTRICTED_OR_DENIAL",
+    "control_overlap": "OVERLAPS_PRIOR_FAILED_CONTROLS",
+    "successor_risk_classification": "HIGH",
+    "overall_risk": "SEVERE"
+  },
+  "controls_classification": {
+    "classification_summary": {
+      "standard_obligation_count": 5,
+      "location_specific_restriction_count": 2,
+      "current_controls_overlap_prior_risk": true,
+      "standard_obligations_kept_separate": true
+    },
+    "standard_obligations": [
+      {
+        "obligation_code": "F_COM_FOOD",
+        "source_obligation_id": "AO-2026-0001",
+        "evidence_required": "menu, invoices"
+      },
+      {
+        "obligation_code": "F_COM_MINORS",
+        "source_obligation_id": "AO-2026-0003",
+        "evidence_required": "photo evidence"
+      },
+      {
+        "obligation_code": "F_COM_SERVER",
+        "source_obligation_id": "AO-2026-0002",
+        "evidence_required": "training roster"
+      },
+      {
+        "obligation_code": "INCIDENT_REPORT",
+        "source_obligation_id": "AO-2026-0014",
+        "evidence_required": "incident report log"
+      },
+      {
+        "obligation_code": "PUBLIC_RECORDS",
+        "source_obligation_id": "AO-2026-0013",
+        "evidence_required": "records binder"
+      }
+    ],
+    "location_specific_restrictions": [
+      {
+        "control_code": "NO_AFTER_MIDNIGHT_SERVICE",
+        "source_ids": [
+          "AR-2026-0024"
+        ],
+        "overlap_status": "OVERLAPS_PRIOR_FAILED_CONTROL",
+        "evidence_required": "service log",
+        "first_90_day_focus": "SERVICE_LOG_REVIEW"
+      },
+      {
+        "control_code": "SECURITY_LOG",
+        "source_ids": [
+          "AR-2026-0023"
+        ],
+        "overlap_status": "OVERLAPS_PRIOR_FAILED_CONTROL",
+        "evidence_required": "weekly log",
+        "first_90_day_focus": "SECURITY_LOG_REVIEW"
+      }
+    ]
+  },
+  "verification_gaps": [
+    {
+      "gap_code": "CONTROL_EFFECTIVENESS_EVIDENCE_NOT_VERIFIED",
+      "source_ids": [
+        "AR-2026-0023",
+        "AR-2026-0024"
+      ],
+      "status": "MONITOR_IN_FIRST_90_DAYS"
+    },
+    {
+      "gap_code": "PENDING_ASSAULT_CALL_DISPOSITION",
+      "source_ids": [
+        "AI-2026-0097"
+      ],
+      "status": "REQUEST_BEFORE_FINAL"
+    },
+    {
+      "gap_code": "PRIOR_RESTRICTED_SETTLEMENT_PACKET",
+      "source_ids": [
+        "AS-2026-0012"
+      ],
+      "status": "VERIFY_BEFORE_RELYING"
+    },
+    {
+      "gap_code": "SAME_PREMISES_SUCCESSOR_STATEMENT_MISSING",
+      "source_ids": [
+        "PM-2026-036"
+      ],
+      "status": "REQUEST_BEFORE_FINAL"
+    },
+    {
+      "gap_code": "SECURITY_PLAN_LAPSE_DISPOSITION_MISSING",
+      "source_ids": [
+        "AI-2026-0071"
+      ],
+      "status": "REQUEST_BEFORE_FINAL"
+    }
+  ],
+  "inspection_priorities": [
+    {
+      "priority_rank": 1,
+      "priority_code": "SECURITY_LOG_REVIEW",
+      "target_control_code": "SECURITY_LOG",
+      "source_ids": [
+        "AI-2026-0071",
+        "AR-2026-0023"
+      ],
+      "timing": "FIRST_30_DAYS"
+    },
+    {
+      "priority_rank": 2,
+      "priority_code": "POLICE_CALL_LOG_REVIEW",
+      "target_control_code": "ASSAULT_CALL_HISTORY",
+      "source_ids": [
+        "AI-2026-0012",
+        "AI-2026-0097",
+        "AI-2026-0111"
+      ],
+      "timing": "FIRST_30_DAYS"
+    },
+    {
+      "priority_rank": 3,
+      "priority_code": "AFTER_MIDNIGHT_SERVICE_LOG_REVIEW",
+      "target_control_code": "NO_AFTER_MIDNIGHT_SERVICE",
+      "source_ids": [
+        "AR-2026-0024"
+      ],
+      "timing": "FIRST_60_DAYS"
+    },
+    {
+      "priority_rank": 4,
+      "priority_code": "F_COM_STANDARD_OBLIGATION_CHECK",
+      "target_control_code": "F_COM_STANDARD_OBLIGATIONS",
+      "source_ids": [
+        "AO-2026-0001",
+        "AO-2026-0002",
+        "AO-2026-0003",
+        "AO-2026-0013",
+        "AO-2026-0014"
+      ],
+      "timing": "FIRST_90_DAYS"
+    }
+  ]
+}

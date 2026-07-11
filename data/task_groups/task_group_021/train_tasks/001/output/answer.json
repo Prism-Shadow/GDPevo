@@ -1,0 +1,109 @@
+{
+  "batch_id": "spring_summit_2026",
+  "retained_contact_count": 3,
+  "dropped_unreachable_count": 1,
+  "duplicate_group_count": 2,
+  "suppressed_contact_ids": [
+    "CR_SPR_004",
+    "CR_SPR_005"
+  ],
+  "canonical_contacts": [
+    {
+      "person_key": "P_SPR_001",
+      "canonical_source": "crm_verified",
+      "email": "opted@example.com",
+      "phone_digits": "3125550144",
+      "city": "Austin",
+      "contact_status": "retained"
+    },
+    {
+      "person_key": "P_SPR_003",
+      "canonical_source": "partner_roster",
+      "email": "",
+      "phone_digits": "",
+      "city": "Austin",
+      "contact_status": "dropped_unreachable"
+    },
+    {
+      "person_key": "P_SPR_004",
+      "canonical_source": "steward_override",
+      "email": "case@example.com",
+      "phone_digits": "13125550166",
+      "city": "Austin",
+      "contact_status": "retained"
+    },
+    {
+      "person_key": "P_SPR_005",
+      "canonical_source": "crm_verified",
+      "email": "revoked@example.com",
+      "phone_digits": "3125550199",
+      "city": "Austin",
+      "contact_status": "suppressed"
+    },
+    {
+      "person_key": "P_SPR_006",
+      "canonical_source": "partner_roster",
+      "email": "fresh@example.com",
+      "phone_digits": "3125550155",
+      "city": "Austin",
+      "contact_status": "retained"
+    }
+  ],
+  "source_lineage_audit": [
+    {
+      "person_key": "P_SPR_001",
+      "source_row_ids": [
+        "CR_SPR_001",
+        "CR_SPR_002"
+      ],
+      "selected_row_id": "CR_SPR_001",
+      "noncanonical_source_row_ids": [
+        "CR_SPR_002"
+      ],
+      "lineage_decision": "source_precedence_override"
+    },
+    {
+      "person_key": "P_SPR_004",
+      "source_row_ids": [
+        "CR_SPR_007",
+        "CR_SPR_008"
+      ],
+      "selected_row_id": "CR_SPR_008",
+      "noncanonical_source_row_ids": [
+        "CR_SPR_007"
+      ],
+      "lineage_decision": "active_steward_correction"
+    }
+  ],
+  "city_retained_counts": {
+    "Austin": 3
+  },
+  "decision_audit": {
+    "precedence_override_person_keys": [
+      "P_SPR_001"
+    ],
+    "suppressed_reachable_row_ids": [
+      "CR_SPR_004",
+      "CR_SPR_005"
+    ],
+    "normalization_changed_row_ids": [
+      "CR_SPR_001",
+      "CR_SPR_002",
+      "CR_SPR_005",
+      "CR_SPR_006",
+      "CR_SPR_007",
+      "CR_SPR_008"
+    ]
+  },
+  "quality_flags": {
+    "raw_row_count": 8,
+    "canonical_person_count": 5,
+    "duplicate_person_groups": 2,
+    "duplicate_source_rows": 3,
+    "missing_channel_rows": 1,
+    "suppression_rows": 2,
+    "email_normalization_rows": 3,
+    "phone_normalization_rows": 5,
+    "stale_or_inactive_rows": 1
+  }
+}

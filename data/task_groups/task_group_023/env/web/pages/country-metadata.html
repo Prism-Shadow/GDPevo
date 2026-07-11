@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Country Metadata And Income Groups | Public Health Evidence Portal</title>
+  <link rel="stylesheet" href="../assets/portal.css">
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="brand">Public Health Evidence Portal</div>
+      <nav aria-label="Main navigation">
+        <a href="../index.html">Home</a>
+<a href="state-health.html">State Health</a>
+<a href="state-ses.html">State SES</a>
+<a href="state-regions.html">Regions</a>
+<a href="county-health.html">County Health</a>
+<a href="county-ses.html">County SES</a>
+<a href="county-neighbors.html">Neighbors</a>
+<a href="country-indicators.html">Countries</a>
+<a href="country-metadata.html">Country Metadata</a>
+<a href="name-reconciliation.html">Names</a>
+<a href="methodology.html">Methodology</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    
+<section class="hero">
+  <h1>Country Metadata And Income Groups</h1>
+  <p class="lede">World Bank-like metadata provides ISO3, region, income group, and lending-category fields for country joins.</p>
+</section>
+<div class="downloads"><a class="download" href="../data/country_metadata.csv" download>country_metadata.csv</a><a class="download" href="../data/country_health_panel.csv" download>country_health_panel.csv</a></div>
+<p class="note">Lending category is included as a useful distractor and should not be confused with income group.</p>
+<input class="searchbar" type="search" data-search placeholder="Search visible sample rows">
+<div class="table-wrap"><table data-filterable><thead><tr><th>country</th><th>iso3</th><th>region</th><th>income_group</th><th>lending_category</th><th>metadata_note</th></tr></thead><tbody><tr><td>Afghanistan</td><td>AFG</td><td>South Asia</td><td>Low income</td><td>IDA</td><td></td></tr><tr><td>Albania</td><td>ALB</td><td>Europe & Central Asia</td><td>Upper middle income</td><td>IBRD</td><td></td></tr><tr><td>Algeria</td><td>DZA</td><td>Middle East & North Africa</td><td>Upper middle income</td><td>IBRD</td><td></td></tr><tr><td>Angola</td><td>AGO</td><td>Sub-Saharan Africa</td><td>Lower middle income</td><td>Blend</td><td></td></tr><tr><td>Argentina</td><td>ARG</td><td>Latin America & Caribbean</td><td>Upper middle income</td><td>IBRD</td><td></td></tr><tr><td>Armenia</td><td>ARM</td><td>Europe & Central Asia</td><td>Upper middle income</td><td>IBRD</td><td></td></tr><tr><td>Australia</td><td>AUS</td><td>East Asia & Pacific</td><td>High income</td><td>Not classified</td><td></td></tr><tr><td>Austria</td><td>AUT</td><td>Europe & Central Asia</td><td>High income</td><td>Not classified</td><td></td></tr><tr><td>Bangladesh</td><td>BGD</td><td>South Asia</td><td>Lower middle income</td><td>Blend</td><td></td></tr><tr><td>Belgium</td><td>BEL</td><td>Europe & Central Asia</td><td>High income</td><td>Not classified</td><td></td></tr><tr><td>Benin</td><td>BEN</td><td>Sub-Saharan Africa</td><td>Lower middle income</td><td>Blend</td><td></td></tr><tr><td>Bolivia</td><td>BOL</td><td>Latin America & Caribbean</td><td>Lower middle income</td><td>Blend</td><td></td></tr></tbody></table></div>
+<script>
+const search = document.querySelector('[data-search]');
+if (search) {
+  const rows = Array.from(document.querySelectorAll('table[data-filterable] tbody tr'));
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    rows.forEach(row => {
+      row.hidden = q && !row.textContent.toLowerCase().includes(q);
+    });
+  });
+}
+</script>
+
+  </main>
+  <footer class="footer">
+    <div class="wrap">Static Web portal. CSV downloads are served directly from <code>/data/</code>.</div>
+  </footer>
+</body>
+</html>

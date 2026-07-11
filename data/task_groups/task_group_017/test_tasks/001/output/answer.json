@@ -1,0 +1,363 @@
+{
+  "matter_id": "M-ALD-507",
+  "production_phase": "first_rolling",
+  "category_findings": [
+    {
+      "category_id": "A-01",
+      "finding_id": "CF-ALD-A01-PRIVILEGE-LOG-GAP",
+      "category_status": "needs_privilege_correction",
+      "blocked": true,
+      "issue_ids": [
+        "PI-ALD-PRIV-UNLOGGED"
+      ],
+      "affected_sources": [
+        "email",
+        "review platform"
+      ],
+      "source_event_ids": [
+        "PL-0022",
+        "PV-0008"
+      ],
+      "primary_action": "privilege_log_supplement",
+      "notice_required": true
+    },
+    {
+      "category_id": "A-02",
+      "finding_id": "CF-ALD-A02-BOARD-PORTAL-GAP",
+      "category_status": "needs_source_collection",
+      "blocked": true,
+      "issue_ids": [
+        "PI-ALD-BOARD-PORTAL"
+      ],
+      "affected_sources": [
+        "board portal"
+      ],
+      "source_event_ids": [
+        "CE-0018",
+        "DOC-ALD-BOARD-Q2-2022",
+        "PL-0020",
+        "QC-0008",
+        "RR-0015"
+      ],
+      "primary_action": "supplemental_collection",
+      "notice_required": false
+    },
+    {
+      "category_id": "A-04",
+      "finding_id": "CF-ALD-A04-PERSONAL-MESSAGE-GAP",
+      "category_status": "blocked",
+      "blocked": true,
+      "issue_ids": [
+        "PI-ALD-PERSONAL-MESSAGES"
+      ],
+      "affected_sources": [
+        "Signal",
+        "Telegram",
+        "personal phone"
+      ],
+      "source_event_ids": [
+        "CE-0016",
+        "PL-0018"
+      ],
+      "primary_action": "regulator_notice",
+      "notice_required": true
+    },
+    {
+      "category_id": "A-08",
+      "finding_id": "CF-ALD-A08-PRIOR-COUNSEL-OVERBROAD",
+      "category_status": "needs_privilege_review",
+      "blocked": true,
+      "issue_ids": [
+        "PI-ALD-COUNSEL-OVERBROAD"
+      ],
+      "affected_sources": [
+        "email",
+        "legal files"
+      ],
+      "source_event_ids": [
+        "PL-0021",
+        "PV-0009"
+      ],
+      "primary_action": "privilege_review",
+      "notice_required": false
+    },
+    {
+      "category_id": "A-09",
+      "finding_id": "CF-ALD-A09-IBARRA-MISCODED-COMPLAINT",
+      "category_status": "needs_supplemental_production",
+      "blocked": true,
+      "issue_ids": [
+        "PI-ALD-IBARRA-MISCODE"
+      ],
+      "affected_sources": [
+        "email"
+      ],
+      "source_event_ids": [
+        "CE-0017",
+        "DOC-ALD-IBARRA-001",
+        "PL-0019",
+        "QC-0007"
+      ],
+      "primary_action": "reprocess_qc",
+      "notice_required": false
+    }
+  ],
+  "priority_issues": [
+    {
+      "issue_id": "PI-ALD-BOARD-PORTAL",
+      "issue_type": "source_gap",
+      "severity": "high",
+      "timing_class": "recoverable_source_gap",
+      "category_ids": [
+        "A-02"
+      ],
+      "custodian_ids": [
+        "C-TP-090"
+      ],
+      "document_ids": [
+        "DOC-ALD-BOARD-Q2-2022"
+      ],
+      "source_event_ids": [
+        "CE-0018",
+        "DOC-ALD-BOARD-Q2-2022",
+        "PL-0020",
+        "QC-0008",
+        "RR-0015"
+      ],
+      "affected_sources": [
+        "board portal"
+      ],
+      "affected_count": 1,
+      "produced_count": 142,
+      "withheld_count": 11,
+      "privilege_logged_count": 11,
+      "unlogged_privilege_count": 0,
+      "primary_action": "supplemental_collection",
+      "secondary_actions": [
+        "supplemental_production"
+      ],
+      "notice_required": false
+    },
+    {
+      "issue_id": "PI-ALD-COUNSEL-OVERBROAD",
+      "issue_type": "privilege_overdesignation",
+      "severity": "medium",
+      "timing_class": "privilege_protocol_defect",
+      "category_ids": [
+        "A-08"
+      ],
+      "custodian_ids": [
+        "C-TP-090"
+      ],
+      "document_ids": [],
+      "source_event_ids": [
+        "PL-0021",
+        "PV-0009"
+      ],
+      "affected_sources": [
+        "email",
+        "legal files"
+      ],
+      "affected_count": 980,
+      "produced_count": 0,
+      "withheld_count": 980,
+      "privilege_logged_count": 0,
+      "unlogged_privilege_count": 980,
+      "primary_action": "privilege_review",
+      "secondary_actions": [
+        "produce_nonprivileged"
+      ],
+      "notice_required": false
+    },
+    {
+      "issue_id": "PI-ALD-IBARRA-MISCODE",
+      "issue_type": "review_coding_error",
+      "severity": "high",
+      "timing_class": "coding_error",
+      "category_ids": [
+        "A-09"
+      ],
+      "custodian_ids": [
+        "C-DI-091"
+      ],
+      "document_ids": [
+        "DOC-ALD-IBARRA-001"
+      ],
+      "source_event_ids": [
+        "CE-0017",
+        "DOC-ALD-IBARRA-001",
+        "PL-0019",
+        "QC-0007"
+      ],
+      "affected_sources": [
+        "email"
+      ],
+      "affected_count": 1,
+      "produced_count": 0,
+      "withheld_count": 0,
+      "privilege_logged_count": 0,
+      "unlogged_privilege_count": 0,
+      "primary_action": "reprocess_qc",
+      "secondary_actions": [
+        "supplemental_production"
+      ],
+      "notice_required": false
+    },
+    {
+      "issue_id": "PI-ALD-PERSONAL-MESSAGES",
+      "issue_type": "personal_channel_gap",
+      "severity": "critical",
+      "timing_class": "post_hold_spoliation",
+      "category_ids": [
+        "A-04"
+      ],
+      "custodian_ids": [
+        "C-TP-090"
+      ],
+      "document_ids": [],
+      "source_event_ids": [
+        "CE-0016",
+        "PL-0018"
+      ],
+      "affected_sources": [
+        "Signal",
+        "Telegram",
+        "personal phone"
+      ],
+      "affected_count": 1,
+      "produced_count": 0,
+      "withheld_count": 0,
+      "privilege_logged_count": 0,
+      "unlogged_privilege_count": 0,
+      "primary_action": "regulator_notice",
+      "secondary_actions": [
+        "custodian_declaration",
+        "forensic_recovery",
+        "hold_refresh",
+        "supplemental_collection"
+      ],
+      "notice_required": true
+    },
+    {
+      "issue_id": "PI-ALD-PRIV-UNLOGGED",
+      "issue_type": "privilege_log_gap",
+      "severity": "high",
+      "timing_class": "privilege_protocol_defect",
+      "category_ids": [
+        "A-01"
+      ],
+      "custodian_ids": [
+        "C-TP-090"
+      ],
+      "document_ids": [],
+      "source_event_ids": [
+        "PL-0022",
+        "PV-0008"
+      ],
+      "affected_sources": [
+        "email",
+        "review platform"
+      ],
+      "affected_count": 3640,
+      "produced_count": 3295,
+      "withheld_count": 3640,
+      "privilege_logged_count": 2275,
+      "unlogged_privilege_count": 1365,
+      "primary_action": "privilege_log_supplement",
+      "secondary_actions": [
+        "privilege_review",
+        "regulator_notice"
+      ],
+      "notice_required": true
+    }
+  ],
+  "disclosure_required": true,
+  "next_actions": [
+    {
+      "rank": 1,
+      "action_id": "NA-ALD-REGULATOR-NOTICE",
+      "action": "regulator_notice",
+      "issue_ids": [
+        "PI-ALD-PERSONAL-MESSAGES",
+        "PI-ALD-PRIV-UNLOGGED"
+      ],
+      "category_ids": [
+        "A-01",
+        "A-04"
+      ],
+      "owner_queue": "legal",
+      "disclosure_step": true,
+      "due_basis": "before SEC status call"
+    },
+    {
+      "rank": 2,
+      "action_id": "NA-ALD-PERSONAL-SOURCES",
+      "action": "supplemental_collection",
+      "issue_ids": [
+        "PI-ALD-PERSONAL-MESSAGES"
+      ],
+      "category_ids": [
+        "A-04"
+      ],
+      "owner_queue": "client_it",
+      "disclosure_step": false,
+      "due_basis": "immediate encrypted-phone and chat follow-up"
+    },
+    {
+      "rank": 3,
+      "action_id": "NA-ALD-BOARD-PORTAL",
+      "action": "supplemental_collection",
+      "issue_ids": [
+        "PI-ALD-BOARD-PORTAL"
+      ],
+      "category_ids": [
+        "A-02"
+      ],
+      "owner_queue": "e_discovery",
+      "disclosure_step": false,
+      "due_basis": "retrieve separate board portal package before supplement"
+    },
+    {
+      "rank": 4,
+      "action_id": "NA-ALD-QC-REPROCESS",
+      "action": "reprocess_qc",
+      "issue_ids": [
+        "PI-ALD-IBARRA-MISCODE"
+      ],
+      "category_ids": [
+        "A-09"
+      ],
+      "owner_queue": "review_vendor",
+      "disclosure_step": false,
+      "due_basis": "correct non-responsive coding before supplement"
+    },
+    {
+      "rank": 5,
+      "action_id": "NA-ALD-PRIVILEGE-LOG",
+      "action": "privilege_log_supplement",
+      "issue_ids": [
+        "PI-ALD-PRIV-UNLOGGED"
+      ],
+      "category_ids": [
+        "A-01"
+      ],
+      "owner_queue": "privilege_team",
+      "disclosure_step": true,
+      "due_basis": "supplement log before production status update"
+    },
+    {
+      "rank": 6,
+      "action_id": "NA-ALD-COUNSEL-OVERDESIGNATION",
+      "action": "privilege_review",
+      "issue_ids": [
+        "PI-ALD-COUNSEL-OVERBROAD"
+      ],
+      "category_ids": [
+        "A-08"
+      ],
+      "owner_queue": "privilege_team",
+      "disclosure_step": false,
+      "due_basis": "review zero-production counsel logistics category"
+    }
+  ]
+}

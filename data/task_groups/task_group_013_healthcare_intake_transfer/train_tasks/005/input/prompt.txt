@@ -1,0 +1,25 @@
+You are reviewing chronic-care program enrollment readiness in the Northstar Care Intake Portal.
+
+Portal: <TASK_ENV_BASE_URL>
+Email: intake.admin@northstar.example
+Password: Northstar-Intake-2026!
+
+Review these patient program records as of 2026-07-07:
+
+- CCP-4107
+- CCP-4116
+- CCP-4133
+- CCP-4144
+
+Use the portal to inspect each patient's chronic-care program record and related patient/chart details. For each patient, decide whether the proposed program can proceed, what is missing, the follow-up cadence, the consent outcome, and whether the patient belongs in the coordinator queue.
+
+Return only JSON that follows `input/payloads/answer_template.json`.
+
+Controlled values:
+
+- `enrollment_decision`: `enroll`, `enroll_with_nurse_escalation`, `hold_missing_consent`, `hold_missing_form`, `clinical_review`
+- `missing_items`: sorted array using any of `diagnosis_support`, `recent_hba1c_or_bp`, `consent_signed`, `program_form_complete`
+- `follow_up_cadence`: `weekly_nurse_call`, `biweekly_checkin`, `monthly_checkin`
+- `consent_outcome`: `signed`, `not_obtained`, `declined`
+
+Keep patient rows sorted by `patient_id` ascending. Keep ID arrays sorted ascending.

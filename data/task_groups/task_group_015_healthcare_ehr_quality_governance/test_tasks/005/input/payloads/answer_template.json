@@ -1,0 +1,180 @@
+{
+  "allowed_enums": {
+    "audit_status": [
+      "READY_FOR_MERGE",
+      "BLOCKED_ADDRESS_CONFLICT",
+      "NO_EVENT_FOUND"
+    ],
+    "boolean": [
+      true,
+      false
+    ],
+    "disposition": [
+      "MERGE_READY",
+      "NEEDS_CLARIFICATION",
+      "DO_NOT_MERGE"
+    ],
+    "priority_tier": [
+      "TIER_1_IMMEDIATE",
+      "TIER_2_SHORT_TERM",
+      "TIER_3_ADMINISTRATIVE"
+    ],
+    "readiness": [
+      "READY",
+      "READY_WITH_WARNINGS",
+      "BLOCKED_INCOMPLETE_PACKET",
+      "NEEDS_CLARIFICATION",
+      "BLOCKED_ORDER_SAFETY"
+    ],
+    "send_ready": [
+      "READY",
+      "NEEDS_CLARIFICATION",
+      "BLOCKED"
+    ]
+  },
+  "date_format": "YYYY-MM-DD for dates; ISO 8601 for timestamps.",
+  "environment_base_url_placeholder": "<TASK_ENV_BASE_URL>",
+  "instructions": "Return one JSON object. Use the keys, field types, enum casing, and list ordering defined here. Do not include explanatory prose outside JSON.",
+  "list_ordering": "Lists of stable identifiers must be sorted ascending unless a field explicitly represents a priority queue.",
+  "numeric_precision": "Counts are integers. Decimal scores or ratios, if any, should be rounded to 3 decimal places.",
+  "schema": {
+    "chart_updates": {
+      "items": {
+        "required_keys": {
+          "code": {
+            "type": "string"
+          },
+          "patient_id": {
+            "type": "string"
+          },
+          "update_type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "contact_queue": {
+      "items": {
+        "required_keys": {
+          "contact": {
+            "type": "string"
+          },
+          "fax": {
+            "type": "string"
+          },
+          "reason_code": {
+            "type": "string"
+          },
+          "referral_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "duplicate_consolidation": {
+      "required_keys": {
+        "candidate_id": {
+          "type": "string"
+        },
+        "disposition": {
+          "type": "string"
+        },
+        "reason_code": {
+          "type": "string"
+        },
+        "source_patient_id": {
+          "type": "string"
+        },
+        "target_patient_id": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "insurance_anomaly": {
+      "required_keys": {
+        "insurance_id": {
+          "type": "string"
+        },
+        "unrelated_referral_ids": {
+          "items": {
+            "type": "string"
+          },
+          "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+          "type": "list"
+        }
+      },
+      "type": "object"
+    },
+    "queue_document_id": {
+      "type": "string"
+    },
+    "queue_ready_status": {
+      "type": "string"
+    },
+    "records_requests": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "reschedule_admin_referral_ids": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "summary_counts": {
+      "required_keys": {
+        "blocked_duplicates": {
+          "type": "integer"
+        },
+        "chart_updates": {
+          "type": "integer"
+        },
+        "contacts": {
+          "type": "integer"
+        },
+        "records_requests": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "tier_assignments": {
+      "required_keys": {
+        "TIER_1_IMMEDIATE": {
+          "items": {
+            "type": "string"
+          },
+          "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+          "type": "list"
+        },
+        "TIER_2_SHORT_TERM": {
+          "items": {
+            "type": "string"
+          },
+          "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+          "type": "list"
+        },
+        "TIER_3_ADMINISTRATIVE": {
+          "items": {
+            "type": "string"
+          },
+          "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+          "type": "list"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "title": "Integrated EHR quality queue review"
+}

@@ -1,0 +1,154 @@
+{
+  "description": "Required output schema for the renewal_webinar_q3 qualified audience summary.",
+  "required_top_level_keys": [
+    "campaign_id",
+    "qualified_reachable_count",
+    "blocked_or_suppressed_ids",
+    "needs_manual_review_ids",
+    "domain_counts",
+    "segment_counts",
+    "duplicate_person_keys",
+    "decision_audit",
+    "canonical_member_sample"
+  ],
+  "fields": {
+    "campaign_id": {
+      "type": "string",
+      "description": "Campaign identifier exactly as used by the CRM campaign-member endpoint."
+    },
+    "qualified_reachable_count": {
+      "type": "integer",
+      "units": "unique people",
+      "description": "Count of unique campaign people retained as qualified and reachable after reconciliation."
+    },
+    "blocked_or_suppressed_ids": {
+      "type": "list[string]",
+      "ordering": "ascending member_id",
+      "description": "Campaign member IDs that are hard blocked by campaign status, CRM contact status, consent, or suppression notes."
+    },
+    "needs_manual_review_ids": {
+      "type": "list[string]",
+      "ordering": "ascending member_id",
+      "description": "Campaign member IDs that should not be counted in the reachable audience until a human resolves the issue."
+    },
+    "domain_counts": {
+      "type": "object",
+      "key_type": "string",
+      "value_type": "integer",
+      "key_rule": "lowercase email domain after trimming the retained canonical email",
+      "description": "Counts by email domain for retained qualified reachable members only. Include only domains with positive retained counts."
+    },
+    "segment_counts": {
+      "type": "object",
+      "required_keys": [
+        "enterprise_renewal",
+        "strategic_renewal",
+        "smb_churn_risk",
+        "partner",
+        "ops_lead",
+        "unknown"
+      ],
+      "value_type": "integer",
+      "description": "Counts by canonical segment for retained qualified reachable members only. Include all required keys, using 0 where absent."
+    },
+    "duplicate_person_keys": {
+      "type": "list[string]",
+      "ordering": "ascending person_key",
+      "description": "Person keys that appear in more than one campaign member row for this campaign."
+    },
+    "decision_audit": {
+      "type": "object",
+      "required_keys": [
+        "precedence_override_person_keys",
+        "duplicate_member_manual_review_ids",
+        "suppressed_or_bounced_member_ids"
+      ],
+      "fields": {
+        "precedence_override_person_keys": {
+          "type": "list[string]",
+          "ordering": "ascending person_key"
+        },
+        "duplicate_member_manual_review_ids": {
+          "type": "list[string]",
+          "ordering": "ascending member_id"
+        },
+        "suppressed_or_bounced_member_ids": {
+          "type": "list[string]",
+          "ordering": "ascending member_id"
+        }
+      }
+    },
+    "canonical_member_sample": {
+      "type": "list[object]",
+      "ordering": "ascending person_key",
+      "description": "Canonical retained audience members for audit sampling.",
+      "item_required_keys": [
+        "person_key",
+        "member_id",
+        "canonical_contact_row_id",
+        "email",
+        "phone_digits",
+        "domain",
+        "canonical_segment",
+        "member_status",
+        "contactability_status"
+      ],
+      "item_fields": {
+        "person_key": {
+          "type": "string"
+        },
+        "member_id": {
+          "type": "string"
+        },
+        "canonical_contact_row_id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "normalization": "trimmed lowercase"
+        },
+        "phone_digits": {
+          "type": "string",
+          "normalization": "digits only"
+        },
+        "domain": {
+          "type": "string",
+          "normalization": "lowercase email domain"
+        },
+        "canonical_segment": {
+          "type": "enum",
+          "allowed_values": [
+            "enterprise_renewal",
+            "strategic_renewal",
+            "smb_churn_risk",
+            "partner",
+            "ops_lead",
+            "unknown"
+          ]
+        },
+        "member_status": {
+          "type": "enum",
+          "allowed_values": [
+            "registered",
+            "attended",
+            "no_show",
+            "bounced",
+            "unsubscribed"
+          ]
+        },
+        "contactability_status": {
+          "type": "enum",
+          "allowed_values": [
+            "qualified_reachable",
+            "blocked_or_suppressed",
+            "needs_manual_review"
+          ]
+        }
+      }
+    }
+  },
+  "numeric_precision": {
+    "counts": "integers only"
+  },
+  "additional_properties": "allowed but not scored"
+}

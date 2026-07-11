@@ -1,0 +1,79 @@
+{
+  "incident_id": "string; required; expected incident identifier",
+  "product_id": "string; required; expected product identifier",
+  "incident_window": {
+    "started_at": "string; required; YYYY-MM-DD HH:MM:SS",
+    "resolved_at": "string; required; YYYY-MM-DD HH:MM:SS",
+    "impacted_region": "one of NA, EMEA, APAC, LATAM, GLOBAL",
+    "usage_start_date": "string; required; YYYY-MM-DD",
+    "usage_end_date": "string; required; YYYY-MM-DD"
+  },
+  "followup_window": {
+    "start_at": "string; required; YYYY-MM-DD HH:MM:SS",
+    "end_at": "string; required; YYYY-MM-DD HH:MM:SS"
+  },
+  "impacted_account_count": "integer; required; distinct qualified incident-usage accounts",
+  "total_api_calls_during_incident": "integer; required",
+  "followup_ticket_count": "integer; required",
+  "qualified_usage_accounts": [
+    {
+      "account_id": "string; required; ordered ascending by account_id",
+      "account_name": "string; required",
+      "region": "one of NA, EMEA, APAC, LATAM",
+      "usage_row_count": "integer; required",
+      "api_calls_during_incident": "integer; required"
+    }
+  ],
+  "followup_tickets": [
+    {
+      "ticket_id": "string; required; ordered by created_at ascending then ticket_id ascending",
+      "account_id": "string; required",
+      "account_name": "string; required",
+      "created_at": "string; required; YYYY-MM-DD HH:MM:SS",
+      "severity": "one of P1, P2, P3, P4",
+      "category": "one of bug, outage, performance, data_loss"
+    }
+  ],
+  "accounts_with_both_signals": [
+    {
+      "account_id": "string; required; ordered ascending by account_id",
+      "account_name": "string; required",
+      "api_calls_during_incident": "integer; required",
+      "followup_ticket_count": "integer; required"
+    }
+  ],
+  "highest_risk_accounts": [
+    {
+      "rank": "integer; required; 1-based",
+      "account_id": "string; required",
+      "account_name": "string; required",
+      "api_calls_during_incident": "integer; required",
+      "followup_ticket_count": "integer; required",
+      "p1_followup_ticket_count": "integer; required",
+      "p2_followup_ticket_count": "integer; required",
+      "p3_followup_ticket_count": "integer; required",
+      "p4_followup_ticket_count": "integer; required",
+      "risk_score": "integer; required"
+    }
+  ],
+  "highest_risk_ordering": "string; required; describe the ranking order used for highest_risk_accounts",
+  "severity_mix": {
+    "P1": "integer; required",
+    "P2": "integer; required",
+    "P3": "integer; required",
+    "P4": "integer; required"
+  },
+  "exclusions": {
+    "usage_non_production_rows_excluded": "integer; required",
+    "usage_backfill_rows_excluded": "integer; required",
+    "usage_internal_or_test_account_rows_excluded": "integer; required",
+    "usage_inactive_subscription_rows_excluded": "integer; required",
+    "usage_telemetry_v1_overlap_rows_excluded": "integer; required",
+    "followup_duplicate_tickets_excluded": "integer; required",
+    "followup_canceled_tickets_excluded": "integer; required",
+    "followup_internal_or_test_account_tickets_excluded": "integer; required",
+    "followup_non_customer_impact_tickets_excluded": "integer; required",
+    "followup_non_defect_category_tickets_excluded": "integer; required",
+    "followup_inactive_subscription_tickets_excluded": "integer; required"
+  }
+}

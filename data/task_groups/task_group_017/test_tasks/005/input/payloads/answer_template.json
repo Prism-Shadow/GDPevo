@@ -1,0 +1,224 @@
+{
+  "schema_name": "test_005_cross_matter_remediation_board",
+  "schema_version": "1.0",
+  "description": "Return one JSON object matching this contract. Do not include this schema metadata in the response.",
+  "required_top_level_keys": [
+    "task_id",
+    "board_scope",
+    "ranked_priorities",
+    "matter_action_matrix",
+    "cross_cutting_failures",
+    "deadline_risks"
+  ],
+  "top_level_order": [
+    "task_id",
+    "board_scope",
+    "ranked_priorities",
+    "matter_action_matrix",
+    "cross_cutting_failures",
+    "deadline_risks"
+  ],
+  "ordering_rules": {
+    "matter_ids": "Sort matter IDs ascending unless a ranked list controls row order.",
+    "ranked_priorities": "Sort by rank ascending, with consecutive integer ranks starting at 1.",
+    "matter_action_matrix": "Sort by matter_id ascending, then issue_id ascending.",
+    "cross_cutting_failures": "Sort by failure_code ascending.",
+    "deadline_risks": "Sort by matter_id ascending.",
+    "category_ids": "Sort category IDs ascending.",
+    "issue_ids": "Sort stable issue code strings ascending except in ranked_priorities.",
+    "secondary_actions": "Sort action enums ascending.",
+    "action_enums": "Sort action enums ascending.",
+    "deadline_issue_ids": "Sort stable issue code strings ascending.",
+    "notice_issue_ids": "Sort stable issue code strings ascending.",
+    "required_actions": "Sort action enums ascending."
+  },
+  "enums": {
+    "matter_id": [
+      "M-ALD-507",
+      "M-BAY-144",
+      "M-LYN-322"
+    ],
+    "portfolio_status": [
+      "ready",
+      "remediation_required",
+      "notice_review_required"
+    ],
+    "issue_type": [
+      "device_wipe",
+      "hold_notice_gap",
+      "personal_channel_gap",
+      "post_hold_destruction",
+      "privilege_log_gap",
+      "privilege_overdesignation",
+      "processing_failure",
+      "recoverable_external_source",
+      "retained_missing",
+      "retention_policy_gap",
+      "review_coding_error",
+      "source_deletion",
+      "third_party_forward",
+      "uncollected_source"
+    ],
+    "severity": [
+      "critical",
+      "high",
+      "medium",
+      "low"
+    ],
+    "timing_class": [
+      "coding_error",
+      "hold_notice_defect",
+      "post_hold_spoliation",
+      "pre_hold_policy",
+      "privilege_protocol_defect",
+      "privilege_waiver",
+      "processing_exception",
+      "recoverable_archive",
+      "retained_missing",
+      "uncollected_source"
+    ],
+    "action": [
+      "clawback_check",
+      "hold_refresh",
+      "privilege_review",
+      "regulator_notice",
+      "reprocess_qc",
+      "supplemental_collection",
+      "vendor_retrieval"
+    ],
+    "failure_code": [
+      "external_or_recoverable_sources",
+      "personal_or_off_platform_sources",
+      "post_hold_loss",
+      "privilege_protocol_qc",
+      "review_processing_errors"
+    ]
+  },
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_005"
+    },
+    "board_scope": {
+      "type": "object",
+      "required_keys": [
+        "matter_ids",
+        "portfolio_status",
+        "portfolio_notice_required",
+        "portfolio_deadline_risk"
+      ],
+      "object_fields": {
+        "matter_ids": "list<enum matter_id>",
+        "portfolio_status": "enum portfolio_status",
+        "portfolio_notice_required": "boolean",
+        "portfolio_deadline_risk": "boolean"
+      }
+    },
+    "ranked_priorities": {
+      "type": "list<object>",
+      "required_object_keys": [
+        "rank",
+        "issue_id",
+        "matter_id",
+        "severity",
+        "primary_action",
+        "secondary_actions",
+        "notice_risk",
+        "deadline_risk"
+      ],
+      "object_fields": {
+        "rank": "integer starting at 1",
+        "issue_id": "string stable issue code",
+        "matter_id": "enum matter_id",
+        "severity": "enum severity",
+        "primary_action": "enum action",
+        "secondary_actions": "list<enum action>",
+        "notice_risk": "boolean",
+        "deadline_risk": "boolean"
+      }
+    },
+    "matter_action_matrix": {
+      "type": "list<object>",
+      "required_object_keys": [
+        "matter_id",
+        "issue_id",
+        "category_ids",
+        "issue_type",
+        "timing_class",
+        "severity",
+        "affected_count",
+        "recovered_count",
+        "unrecovered_count",
+        "unlogged_privilege_count",
+        "primary_action",
+        "secondary_actions",
+        "regulator_notice_required",
+        "deadline_risk"
+      ],
+      "object_fields": {
+        "matter_id": "enum matter_id",
+        "issue_id": "string stable issue code",
+        "category_ids": "list<string>",
+        "issue_type": "enum issue_type",
+        "timing_class": "enum timing_class",
+        "severity": "enum severity",
+        "affected_count": "integer records or source units",
+        "recovered_count": "integer records or source units",
+        "unrecovered_count": "integer records or source units",
+        "unlogged_privilege_count": "integer; use 0 when not applicable",
+        "primary_action": "enum action",
+        "secondary_actions": "list<enum action>",
+        "regulator_notice_required": "boolean",
+        "deadline_risk": "boolean"
+      }
+    },
+    "cross_cutting_failures": {
+      "type": "list<object>",
+      "required_object_keys": [
+        "failure_code",
+        "matter_ids",
+        "issue_ids",
+        "action_enums",
+        "notice_risk"
+      ],
+      "object_fields": {
+        "failure_code": "enum failure_code",
+        "matter_ids": "list<enum matter_id>",
+        "issue_ids": "list<string stable issue code>",
+        "action_enums": "list<enum action>",
+        "notice_risk": "boolean"
+      }
+    },
+    "deadline_risks": {
+      "type": "list<object>",
+      "required_object_keys": [
+        "matter_id",
+        "deadline",
+        "deadline_risk",
+        "notice_risk",
+        "deadline_issue_ids",
+        "notice_issue_ids",
+        "required_actions"
+      ],
+      "object_fields": {
+        "matter_id": "enum matter_id",
+        "deadline": "string date in YYYY-MM-DD format from the matter record",
+        "deadline_risk": "boolean",
+        "notice_risk": "boolean",
+        "deadline_issue_ids": "list<string stable issue code>",
+        "notice_issue_ids": "list<string stable issue code>",
+        "required_actions": "list<enum action>"
+      }
+    }
+  },
+  "normalization_rules": [
+    "Use exact enum casing shown in this template.",
+    "Use JSON booleans true and false.",
+    "Use integer counts only.",
+    "Do not include unscored narrative fields.",
+    "Do not include noisy comparator issues outside the three target matters."
+  ],
+  "field_conventions": {
+    "issue_id": "Use a stable, solver-assigned issue code string such as ISSUE-001. Do not infer issue IDs from this template; IDs only need to be consistent across this response."
+  }
+}

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>County Socioeconomic Attribute-Value Tables | Public Health Evidence Portal</title>
+  <link rel="stylesheet" href="../assets/portal.css">
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="brand">Public Health Evidence Portal</div>
+      <nav aria-label="Main navigation">
+        <a href="../index.html">Home</a>
+<a href="state-health.html">State Health</a>
+<a href="state-ses.html">State SES</a>
+<a href="state-regions.html">Regions</a>
+<a href="county-health.html">County Health</a>
+<a href="county-ses.html">County SES</a>
+<a href="county-neighbors.html">Neighbors</a>
+<a href="country-indicators.html">Countries</a>
+<a href="country-metadata.html">Country Metadata</a>
+<a href="name-reconciliation.html">Names</a>
+<a href="methodology.html">Methodology</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    
+<section class="hero">
+  <h1>County Socioeconomic Attribute-Value Tables</h1>
+  <p class="lede">County SES rows are keyed by 5-digit FIPS and attribute. The metadata file includes RUCC, economic typology, census division, invalid FIPS, and old-name notes.</p>
+</section>
+<div class="downloads"><a class="download" href="../data/county_ses_long.csv" download>county_ses_long.csv</a><a class="download" href="../data/county_metadata.csv" download>county_metadata.csv</a></div>
+<p class="note">Some counties intentionally lack population or education attributes; invalid FIPS and old county names are present.</p>
+<input class="searchbar" type="search" data-search placeholder="Search visible sample rows">
+<div class="table-wrap"><table data-filterable><thead><tr><th>fips</th><th>state</th><th>county</th><th>attribute</th><th>value</th><th>unit</th><th>join_note</th></tr></thead><tbody><tr><td>01001</td><td>AL</td><td>Adams County</td><td>PCTPOVALL_2023</td><td>9.5</td><td>percent</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>MEDHHINC_2023</td><td>70045</td><td>dollars</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>Unemployment_rate_2010</td><td>7.3</td><td>percent</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>Unemployment_rate_2023</td><td>4.5</td><td>percent</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>Median_Household_Income_2022</td><td>69571</td><td>dollars</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>Percent_bachelors_or_higher_2019_23</td><td>32.7</td><td>percent</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>POP_ESTIMATE_2023</td><td>1523233</td><td>persons</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>CENSUS_2020_POP</td><td>1583898</td><td>persons</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>R_NET_MIG_2023</td><td>17.2</td><td>per 1,000</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>R_NATURAL_CHG_2023</td><td>0.1</td><td>per 1,000</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>RUCC_2023</td><td>4</td><td>code</td><td></td></tr><tr><td>01001</td><td>AL</td><td>Adams County</td><td>Economic_typology_2015</td><td>Mining</td><td>category</td><td></td></tr></tbody></table></div>
+<script>
+const search = document.querySelector('[data-search]');
+if (search) {
+  const rows = Array.from(document.querySelectorAll('table[data-filterable] tbody tr'));
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    rows.forEach(row => {
+      row.hidden = q && !row.textContent.toLowerCase().includes(q);
+    });
+  });
+}
+</script>
+
+  </main>
+  <footer class="footer">
+    <div class="wrap">Static Web portal. CSV downloads are served directly from <code>/data/</code>.</div>
+  </footer>
+</body>
+</html>

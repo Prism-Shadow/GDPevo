@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>State Socioeconomic Indicators | Public Health Evidence Portal</title>
+  <link rel="stylesheet" href="../assets/portal.css">
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="brand">Public Health Evidence Portal</div>
+      <nav aria-label="Main navigation">
+        <a href="../index.html">Home</a>
+<a href="state-health.html">State Health</a>
+<a href="state-ses.html">State SES</a>
+<a href="state-regions.html">Regions</a>
+<a href="county-health.html">County Health</a>
+<a href="county-ses.html">County SES</a>
+<a href="county-neighbors.html">Neighbors</a>
+<a href="country-indicators.html">Countries</a>
+<a href="country-metadata.html">Country Metadata</a>
+<a href="name-reconciliation.html">Names</a>
+<a href="methodology.html">Methodology</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    
+<section class="hero">
+  <h1>State Socioeconomic Indicators</h1>
+  <p class="lede">Long-format Attribute-Value SES records use FIPS-like geo codes. State-level records end in 000; county-like rows are included as distractors.</p>
+</section>
+<div class="downloads"><a class="download" href="../data/state_ses_long.csv" download>state_ses_long.csv</a></div>
+<p class="note">Use geo_level and the 000 suffix together when extracting true state rows.</p>
+<input class="searchbar" type="search" data-search placeholder="Search visible sample rows">
+<div class="table-wrap"><table data-filterable><thead><tr><th>geo_fips</th><th>state</th><th>geo_name</th><th>geo_level</th><th>attribute</th><th>value</th><th>unit</th><th>extraction_note</th></tr></thead><tbody><tr><td>01000</td><td>AL</td><td>Alabama</td><td>state</td><td>PCTPOVALL_2023</td><td>12.7</td><td>percent</td><td>State rows end in 000; county-like rows below are distractors</td></tr><tr><td>01000</td><td>AL</td><td>Alabama</td><td>state</td><td>MEDHHINC_2023</td><td>68631.0</td><td>dollars</td><td>State rows end in 000; county-like rows below are distractors</td></tr><tr><td>01000</td><td>AL</td><td>Alabama</td><td>state</td><td>Unemployment_rate_2023</td><td>4.2</td><td>percent</td><td>State rows end in 000; county-like rows below are distractors</td></tr><tr><td>01000</td><td>AL</td><td>Alabama</td><td>state</td><td>Percent_bachelors_or_higher_2019_23</td><td>34.6</td><td>percent</td><td>State rows end in 000; county-like rows below are distractors</td></tr><tr><td>01000</td><td>AL</td><td>Alabama</td><td>state</td><td>POP_ESTIMATE_2023</td><td>11213831</td><td>persons</td><td>State rows end in 000; county-like rows below are distractors</td></tr><tr><td>01000</td><td>AL</td><td>Alabama</td><td>state</td><td>R_NET_MIG_2023</td><td>-3.5</td><td>per 1,000</td><td>State rows end in 000; county-like rows below are distractors</td></tr><tr><td>01001</td><td>AL</td><td>Alabama sample county 1</td><td>county-like distractor</td><td>PCTPOVALL_2023</td><td>10.7</td><td>percent</td><td>County-like record included in state SES table</td></tr><tr><td>01001</td><td>AL</td><td>Alabama sample county 1</td><td>county-like distractor</td><td>MEDHHINC_2023</td><td>68628.9</td><td>dollars</td><td>County-like record included in state SES table</td></tr><tr><td>01001</td><td>AL</td><td>Alabama sample county 1</td><td>county-like distractor</td><td>Unemployment_rate_2023</td><td>1.4</td><td>percent</td><td>County-like record included in state SES table</td></tr><tr><td>01001</td><td>AL</td><td>Alabama sample county 1</td><td>county-like distractor</td><td>Percent_bachelors_or_higher_2019_23</td><td>42.6</td><td>percent</td><td>County-like record included in state SES table</td></tr><tr><td>01002</td><td>AL</td><td>Alabama sample county 2</td><td>county-like distractor</td><td>PCTPOVALL_2023</td><td>11.3</td><td>percent</td><td>County-like record included in state SES table</td></tr><tr><td>01002</td><td>AL</td><td>Alabama sample county 2</td><td>county-like distractor</td><td>MEDHHINC_2023</td><td>68628.0</td><td>dollars</td><td>County-like record included in state SES table</td></tr></tbody></table></div>
+<script>
+const search = document.querySelector('[data-search]');
+if (search) {
+  const rows = Array.from(document.querySelectorAll('table[data-filterable] tbody tr'));
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    rows.forEach(row => {
+      row.hidden = q && !row.textContent.toLowerCase().includes(q);
+    });
+  });
+}
+</script>
+
+  </main>
+  <footer class="footer">
+    <div class="wrap">Static Web portal. CSV downloads are served directly from <code>/data/</code>.</div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,20 @@
+You are reviewing chart onboarding readiness in the Northstar Care Intake Portal.
+
+Portal: <TASK_ENV_BASE_URL>
+Email: intake.admin@northstar.example
+Password: Northstar-Intake-2026!
+
+Review these patient chart records:
+- CHR-2040
+- CHR-2058
+- CHR-2077
+
+For each patient, inspect the chart and related patient details needed to decide whether the chart is ready for onboarding. Pay particular attention to chart creation status, demographics, history, problem list, vitals, care plan or clinical instructions, and orientation communication. A chart can exist without being ready.
+
+Return only JSON matching the provided answer template. Keep patients sorted by patient_id ascending. Use these controlled values:
+- missing_sections: chart_not_created, demographics, history, problems, vitals, care_plan_or_instructions, orientation_message
+- bmi_class: not_available, normal, overweight, obese
+- orientation_state: sent, queued, missing, draft
+- next_owner: registration_desk, clinical_intake, patient_communications, ready
+
+Do not include explanations or evidence notes in the final JSON.

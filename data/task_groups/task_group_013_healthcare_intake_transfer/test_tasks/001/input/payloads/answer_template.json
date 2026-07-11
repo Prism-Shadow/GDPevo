@@ -1,0 +1,39 @@
+{
+  "task_id": "test_001",
+  "patients": [
+    {
+      "patient_id": "NSP-1042",
+      "gates": {
+        "medical_insurance": "pass|block",
+        "pbm": "pass|block|not_required",
+        "pharmacy": "pass|block|not_required",
+        "demographics": "pass|block",
+        "risk": "low|moderate|high"
+      },
+      "blocked_reasons": [
+        "insurance_inactive|insurance_out_of_network|pbm_inactive|pharmacy_out_of_network|demographics_incomplete|clinical_review_required"
+      ],
+      "overall_decision": "ready|manual_review|blocked",
+      "pbm_status": "active|inactive|not_required",
+      "pharmacy_network_status": "in_network|out_of_network|not_required"
+    }
+  ],
+  "ready_patient_ids": [
+    "NSP-0000"
+  ],
+  "manual_review_patient_ids": [
+    "NSP-0000"
+  ],
+  "summary_counts": {
+    "ready": 0,
+    "manual_review": 0,
+    "blocked": 0
+  },
+  "pbm_pharmacy_outcomes": [
+    {
+      "patient_id": "NSP-1042",
+      "pbm_status": "active|inactive|not_required",
+      "pharmacy_network_status": "in_network|out_of_network|not_required"
+    }
+  ]
+}

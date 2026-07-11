@@ -1,0 +1,70 @@
+{
+  "description": "Required JSON shape for the DQ-USG-2026-05-C LUMAFORMS May 2026 commercial usage correction response.",
+  "required_top_level_keys": [
+    "correction_sql",
+    "changed_row_count",
+    "total_compute_hours_after_fix",
+    "affected_accounts",
+    "top_accounts_after_fix",
+    "regional_breakdown_after_fix"
+  ],
+  "field_definitions": {
+    "correction_sql": {
+      "type": "string",
+      "description": "A safe SQLite UPDATE statement or script that applies only approved case DQ-USG-2026-05-C to usage_daily and populates audit fields."
+    },
+    "changed_row_count": {
+      "type": "integer",
+      "description": "Number of usage_daily rows changed by the approved correction."
+    },
+    "total_compute_hours_after_fix": {
+      "type": "number",
+      "precision": 2,
+      "description": "Qualified May 2026 LUMAFORMS compute hours for commercial accounts after applying the correction."
+    },
+    "affected_accounts": {
+      "type": "array",
+      "ordering": "Ascending account_id.",
+      "item_required_keys": [
+        "account_id",
+        "account_name",
+        "region",
+        "corrected_usage_row_count",
+        "added_compute_hours"
+      ],
+      "numeric_precision": {
+        "added_compute_hours": 2
+      }
+    },
+    "top_accounts_after_fix": {
+      "type": "array",
+      "ordering": "Top five qualified commercial LUMAFORMS accounts ordered by compute_hours descending, then account_id ascending.",
+      "item_required_keys": [
+        "account_id",
+        "account_name",
+        "region",
+        "usage_row_count",
+        "compute_hours",
+        "api_calls"
+      ],
+      "numeric_precision": {
+        "compute_hours": 2
+      }
+    },
+    "regional_breakdown_after_fix": {
+      "type": "array",
+      "ordering": "Ordered by region ascending.",
+      "item_required_keys": [
+        "region",
+        "account_count",
+        "usage_row_count",
+        "compute_hours",
+        "api_calls"
+      ],
+      "numeric_precision": {
+        "compute_hours": 2
+      }
+    }
+  },
+  "rounding": "Round compute_hours values to two decimal places. Counts and api_calls must be integers."
+}

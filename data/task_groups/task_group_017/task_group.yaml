@@ -1,0 +1,349 @@
+task_group:
+  task_group_id: task_group_017
+  scenario_id: SCN_017_white_collar_investigation_production_review
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Legal white-collar investigation production review
+  description: |
+    This train-predict task group asks agents to work inside a shared legal
+    investigation workspace and identify document-production, preservation,
+    retention, custodian-collection, privilege, QC, and remediation issues.
+    Train and test tasks come from the same production-review distribution:
+    they require mapping subpoena categories to business records, collection
+    events, retention rules, privilege logs, production logs, and QC evidence.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/server.py
+    - env/generate_data.py
+    - env/manifest.json
+    - env/README.md
+    - env/data/generated/matters.json
+    - env/data/generated/subpoena_categories.json
+    - env/data/generated/production_logs.json
+    - env/data/generated/collection_events.json
+    - env/data/generated/retention_rules.json
+    - env/data/generated/destruction_events.json
+    - env/data/generated/privilege_logs.json
+    - env/data/generated/qc_events.json
+    - env/data/generated/custodians.json
+    - env/data/generated/documents.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/partner_request.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct matter, phase, disclosure flag, and complete affected category and issue sets.
+          weight: 1
+        - goal: Identify missing personal phone, Signal, and WhatsApp with post-hold disclosure action.
+          weight: 3
+        - goal: Identify miscoded testing-accuracy complaint email and QC supplemental-production action.
+          weight: 2
+        - goal: Calculate privilege log gap as 4232 withheld, 1847 logged, and 2385 unlogged.
+          weight: 3
+        - goal: Flag counsel communications overbreadth with 1247 withheld and zero produced.
+          weight: 2
+        - goal: Map affected categories to correct statuses, sources, actions, and notice flags.
+          weight: 2
+        - goal: Provide required ranked remediation and disclosure action plan.
+          weight: 3
+        - goal: Exclude noisy comparator issues from the material first-production issue set.
+          weight: 1
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+      - train_tasks/002/input/payloads/hold_exception_memo.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct matter, hold date, and complete record issue, hold defect, and source sets.
+          weight: 1
+        - goal: Classify 2019 lab boxes as pre-hold policy destruction and production gap.
+          weight: 2
+        - goal: Classify post-hold EHS box destruction as critical spoliation requiring notice.
+          weight: 3
+        - goal: Identify voicemail and Teams communication gaps and supplemental collection need.
+          weight: 2
+        - goal: Identify Ironvault seven-year archive as recoverable email source.
+          weight: 2
+        - goal: Identify missing October 2023 audit report as retained and requiring vendor retrieval.
+          weight: 2
+        - goal: Identify offsite vendor and personal-device hold defects.
+          weight: 3
+        - goal: Rank remediation actions for notice, vendor retrieval, collection, hold refresh, and policy-gap log.
+          weight: 2
+        - goal: Correct overall disclosure, blocked-category, policy-gap, and post-hold issue sets.
+          weight: 1
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct target custodian, matter, overall escalation status, and notice recommendation.
+          weight: 1
+        - goal: Identify post-hold laptop wipe with categories, counts, severity, and recovery action.
+          weight: 2
+        - goal: Identify shared-drive deletion with 37 deleted, 29 recovered, and 8 unrecovered.
+          weight: 3
+        - goal: Identify uncollected personal Gmail source and supplemental collection action.
+          weight: 2
+        - goal: Identify three privileged emails forwarded to outside banker as waiver risk.
+          weight: 2
+        - goal: Identify 12 business-only over-designations and privilege-log correction action.
+          weight: 1
+        - goal: Identify 45 privileged documents first-pass coded non-privileged with clawback action.
+          weight: 3
+        - goal: Identify 23 failed attachments split into 14 password-protected and 9 corrupt.
+          weight: 2
+        - goal: Rank escalations and primary actions in the required order.
+          weight: 3
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct task identity and affected category set.
+          weight: 2
+        - goal: Correct category status core for the production and privilege issues.
+          weight: 2
+        - goal: Identify zero-production whistleblower/compliance category and two miscoded complaint documents.
+          weight: 3
+        - goal: Calculate R-10 privilege log gap as 808 unlogged documents.
+          weight: 3
+        - goal: Identify R-11 all-withheld counsel category as overdesignation risk.
+          weight: 3
+        - goal: Identify 31 privileged records coded non-privileged and clawback risk.
+          weight: 2
+        - goal: Assign correct required action types by category.
+          weight: 2
+        - goal: Provide correct remediation action records.
+          weight: 2
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct matter readiness and former compliance custodian retention status.
+          weight: 2
+        - goal: Correct P-01 personnel-file retention classification through 2027.
+          weight: 2
+        - goal: Correct P-02 Iron archive classification despite active mailbox purge.
+          weight: 2
+        - goal: Correct P-03 Teams pre-2022 source-gap classification and missing count.
+          weight: 2
+        - goal: Correct P-04 missing local PST classification and action.
+          weight: 2
+        - goal: Correct P-05 personal cloud and text hold-notice defect classification.
+          weight: 3
+        - goal: Correct prioritized supplemental, hold-refresh, laptop, Teams, archive, and vendor actions.
+          weight: 3
+        - goal: Correct risk-flag set and regulator-notice booleans.
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+      - test_tasks/001/input/payloads/partner_request.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct matter, phase, disclosure flag, and complete affected category and issue sets.
+          weight: 1
+        - goal: Identify encrypted uncollected phone and Signal/Telegram personal-message gap.
+          weight: 3
+        - goal: Identify D. Ibarra revenue-recognition complaint email miscoded non-responsive.
+          weight: 2
+        - goal: Calculate privilege log gap as 3640 withheld, 2275 logged, and 1365 unlogged.
+          weight: 3
+        - goal: Flag prior counsel logistics category with 980 withheld and zero produced.
+          weight: 2
+        - goal: Identify missing Q2 2022 board package in separate board portal.
+          weight: 2
+        - goal: Map affected categories to correct statuses, sources, actions, and notice flags.
+          weight: 2
+        - goal: Provide required ranked remediation and disclosure action plan.
+          weight: 3
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct matter, hold date, and complete record issue, hold defect, and source sets.
+          weight: 1
+        - goal: Classify 2020 emissions lab data as pre-hold policy destruction.
+          weight: 2
+        - goal: Classify February 5 2025 Teams purge of 11 channels as post-hold spoliation.
+          weight: 3
+        - goal: Identify VaultSeven executive archive as recoverable email source.
+          weight: 2
+        - goal: Identify missing 2024 Tidewater audit report as retained and requiring vendor retrieval.
+          weight: 2
+        - goal: Identify offsite vendor-box and personal-device hold omissions.
+          weight: 3
+        - goal: Rank remediation actions for notice, audit retrieval, hold refresh, collection, and policy gap.
+          weight: 2
+        - goal: Correct overall disclosure, blocked-category, policy-gap, and post-hold issue sets.
+          weight: 1
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct target custodian, matter, overall escalation status, and notice recommendation.
+          weight: 1
+        - goal: Identify post-hold laptop wipe with categories, counts, severity, and recovery action.
+          weight: 2
+        - goal: Identify shared-folder deletion with 52 deleted, 41 recovered, and 11 unrecovered.
+          weight: 3
+        - goal: Identify uncollected personal Outlook source and supplemental collection action.
+          weight: 2
+        - goal: Identify four privileged emails forwarded to outside consultant as waiver risk.
+          weight: 2
+        - goal: Identify 18 business-only over-designations and privilege-log correction action.
+          weight: 1
+        - goal: Identify 39 privileged investigation emails first-pass coded non-privileged.
+          weight: 3
+        - goal: Identify 31 failed attachments split into 17 password-protected and 14 corrupt.
+          weight: 2
+        - goal: Rank escalations and primary actions in the required order.
+          weight: 3
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct matter identity and ready category set O-01, O-02, O-08, O-09, and O-10.
+          weight: 2
+        - goal: Correct blocked category set O-03 through O-07.
+          weight: 3
+        - goal: Correct uncollected phone/chat blocker classification and action.
+          weight: 3
+        - goal: Correct missing archive blocker classification and action.
+          weight: 2
+        - goal: Correct unlogged privilege blocker classification and action.
+          weight: 3
+        - goal: Correct failed attachment blocker classification and action.
+          weight: 2
+        - goal: Correct post-hold deletion blocker classification and notice flag.
+          weight: 3
+        - goal: Correct top-blocker ranking and notice-required booleans.
+          weight: 3
+        - goal: Correct production readiness summary and action enums.
+          weight: 3
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct board task identity and scope for M-ALD-507, M-BAY-144, and M-LYN-322.
+          weight: 1
+        - goal: Correct ranked top priorities across personal-message, Teams purge, shared deletion, laptop wipe, privilege gap, miscoding, audit, complaint, Outlook, and failed attachments.
+          weight: 3
+        - goal: Correct complete issue-to-action matrix issue IDs and action enums.
+          weight: 3
+        - goal: Correct ALD matter issue rows and deadline or notice risk flags.
+          weight: 2
+        - goal: Correct BAY matter issue rows and deadline or notice risk flags.
+          weight: 2
+        - goal: Correct LYN matter issue rows and deadline or notice risk flags.
+          weight: 3
+        - goal: Correct cross-cutting failures for vendor or archive, hold scope, post-hold loss, privilege, and QC.
+          weight: 3
+        - goal: Correct matter-level deadline and notice-risk summary.
+          weight: 2

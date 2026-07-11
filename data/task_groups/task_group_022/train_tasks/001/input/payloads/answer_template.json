@@ -1,0 +1,36 @@
+{
+  "period": {
+    "start_date": "YYYY-MM-DD",
+    "end_date": "YYYY-MM-DD"
+  },
+  "qualified_account_count": "integer",
+  "total_compute_hours": "number rounded to 2 decimal places",
+  "top_accounts": [
+    {
+      "rank": "integer, 1-based; ordered by compute_hours descending then account_id ascending",
+      "account_id": "string",
+      "account_name": "string",
+      "compute_hours": "number rounded to 2 decimal places"
+    }
+  ],
+  "regional_breakdown": [
+    {
+      "region": "one of NA, EMEA, APAC, LATAM; ordered alphabetically",
+      "qualified_account_count": "integer",
+      "qualified_usage_rows": "integer",
+      "compute_hours": "number rounded to 2 decimal places"
+    }
+  ],
+  "account_breakdown": [
+    {
+      "account_id": "string; ordered ascending",
+      "account_name": "string",
+      "region": "one of NA, EMEA, APAC, LATAM",
+      "qualified_usage_rows": "integer",
+      "first_qualified_usage_date": "YYYY-MM-DD",
+      "last_qualified_usage_date": "YYYY-MM-DD",
+      "compute_hours": "number rounded to 2 decimal places"
+    }
+  ],
+  "telemetry_v1_rows_excluded": "integer"
+}

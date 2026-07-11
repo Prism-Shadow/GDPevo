@@ -1,0 +1,351 @@
+task_group:
+  task_group_id: task_group_021
+  scenario_id: SCN_021_data_cleaning_quality_pipeline
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Data Analysis
+  description: |
+    AsterOps data-quality benchmark for CRM/contact reconciliation, product and
+    category normalization, and operational cost integrity audits. Train and test
+    tasks use the same shared business environment and require structured JSON
+    outputs with deterministic scoring.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/server.py
+    - env/generate_data.py
+    - env/data/asterops_data.json
+    - env/data/manifest.json
+    - env/data/downloads/campaign_members_export.csv
+    - env/data/downloads/category_aliases.csv
+    - env/data/downloads/crm_contact_rows_export.csv
+    - env/data/downloads/facilities_charges_export.csv
+    - env/data/downloads/fleet_purchases_export.csv
+    - env/data/downloads/fleet_vehicles_export.csv
+    - env/data/downloads/fuel_aliases.csv
+    - env/data/downloads/logistics_cost_events_export.csv
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Correct target batch, retained canonical contact count, and retained reachability audit evidence.
+          weight: 1
+        - goal: Correct count of rows dropped for missing reachable contact channels.
+          weight: 2
+        - goal: Correct duplicate person-key group count.
+          weight: 2
+        - goal: Correct suppressed source-row identifiers.
+          weight: 2
+        - goal: Correct canonical contact statuses and source selections.
+          weight: 3
+        - goal: Correct canonical normalized email and phone values.
+          weight: 3
+        - goal: Correct retained city counts.
+          weight: 2
+        - goal: Correct quality flag counts.
+          weight: 3
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/score.py
+      rubric:
+        - goal: Correct audit scope, effective purchase count, lifecycle evidence, and source-delta counts.
+          weight: 2
+        - goal: Correct gallons by canonical fuel class plus alias and source-exclusion evidence.
+          weight: 3
+        - goal: Correct mismatch purchase ID set plus alias and source-exclusion evidence.
+          weight: 3
+        - goal: Correct exception purchase IDs for lifecycle and vehicle-exception handling.
+          weight: 3
+        - goal: Correct vehicle review queue with expected and observed fuel classes plus audit evidence.
+          weight: 3
+        - goal: Correct vendor mismatch counts.
+          weight: 2
+        - goal: Correct alias issue counts for priority overlaps, traps, unknowns, and unmapped descriptions.
+          weight: 3
+        - goal: Correct alias-resolution trace for nontrivial effective purchases.
+          weight: 3
+        - goal: Correct API-vs-CSV source delta purchase ID sets.
+          weight: 3
+        - goal: Correct transaction-level reconciliation and operations load decisions for source disagreements.
+          weight: 3
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: Correct wave identifier and effective event count.
+          weight: 2
+        - goal: Correct invalid event IDs and their controlled issue types.
+          weight: 2
+        - goal: Correct duplicate business-key count and amended event IDs used.
+          weight: 1
+        - goal: Correct total corrected shipment cost in USD cents.
+          weight: 3
+        - goal: Correct corrected USD totals for each controlled cost type.
+          weight: 3
+        - goal: Correct top lane by corrected cost and lane amount.
+          weight: 2
+        - goal: Correct effective source-unit counts after exclusions.
+          weight: 2
+        - goal: Correct controlled issue-type count summary.
+          weight: 2
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/evaluator.py
+      rubric:
+        - goal: Correct target campaign identifier.
+          weight: 1
+        - goal: Correct unique qualified reachable audience count.
+          weight: 2
+        - goal: Correct hard-blocked or suppressed campaign member IDs.
+          weight: 2
+        - goal: Correct campaign member IDs requiring manual review.
+          weight: 2
+        - goal: Correct retained-audience email domain counts.
+          weight: 1
+        - goal: Correct retained-audience canonical segment counts.
+          weight: 1
+        - goal: Correct duplicate campaign person keys.
+          weight: 2
+        - goal: Correct canonical retained member audit sample.
+          weight: 3
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: Correct scope and effective charge count.
+          weight: 2
+        - goal: Correct invalid and superseded charge identifiers.
+          weight: 2
+        - goal: Correct canonical category counts.
+          weight: 2
+        - goal: Correct spend by category in USD cents.
+          weight: 3
+        - goal: Correct top vendor by adjusted spend.
+          weight: 2
+        - goal: Correct review reason counts.
+          weight: 2
+        - goal: Correct seeded canonical charge audit sample.
+          weight: 3
+        - goal: Correct ambiguous charge audit sample.
+          weight: 1
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Correct target batch and retained canonical contact count.
+          weight: 2
+        - goal: Correct unreachable canonical count, suppressed source-row IDs, and suppression audit evidence.
+          weight: 2
+        - goal: Correct duplicate person-key group count.
+          weight: 2
+        - goal: Correct target-batch source-conflict person keys.
+          weight: 2
+        - goal: Correct canonical person decisions, statuses, sources, and source-precedence override evidence.
+          weight: 3
+        - goal: Correct normalized canonical email, phone, city, and domain values.
+          weight: 3
+        - goal: Correct retained-contact city and domain counts.
+          weight: 2
+        - goal: Correct quality issue counts and decision-audit source-row evidence.
+          weight: 3
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/score.py
+      rubric:
+        - goal: Correct audit scope, effective purchase count, lifecycle evidence, and source-delta counts.
+          weight: 2
+        - goal: Correct gallons by canonical fuel class plus alias and source-exclusion evidence.
+          weight: 3
+        - goal: Correct mismatch purchase ID set plus alias and source-exclusion evidence.
+          weight: 3
+        - goal: Correct exception purchase IDs plus effective-record and vehicle-exception evidence.
+          weight: 3
+        - goal: Correct vehicle review queue and fuel decision-audit purchase ID sets.
+          weight: 3
+        - goal: Correct vendor mismatch counts.
+          weight: 2
+        - goal: Correct alias issue counts and alias-decision audit evidence.
+          weight: 3
+        - goal: Correct alias-resolution trace for nontrivial effective purchases.
+          weight: 3
+        - goal: Correct API-vs-CSV source delta purchase ID sets.
+          weight: 3
+        - goal: Correct transaction-level reconciliation and operations load decisions for source disagreements.
+          weight: 3
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: Correct wave identifier and effective event count.
+          weight: 2
+        - goal: Correct invalid event IDs and their controlled issue types.
+          weight: 2
+        - goal: Correct duplicate and amendment reconstruction plus effective-record audit evidence.
+          weight: 3
+        - goal: Correct line-level currency conversion and rounded total.
+          weight: 3
+        - goal: Correct corrected USD totals for each controlled cost type.
+          weight: 3
+        - goal: Correct top lane by corrected cost and lane amount.
+          weight: 2
+        - goal: Correct effective source-unit counts after exclusions.
+          weight: 2
+        - goal: Correct controlled issue-count summary and audit evidence.
+          weight: 3
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+      - test_tasks/004/input/payloads/partner_onboarding_wave2_stale_extract.csv
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/evaluator.py
+      rubric:
+        - goal: Correct roster and batch identifiers, qualified contact count, and reachability audit evidence.
+          weight: 3
+        - goal: Correct blocked or suppressed roster rows and suppression audit evidence.
+          weight: 1
+        - goal: Correct manual-review roster rows and person-level lineage evidence.
+          weight: 3
+        - goal: Correct canonical qualified partner contacts, source-precedence override evidence, and lineage evidence.
+          weight: 1
+        - goal: Correct canonical manual-review and blocked partner-contact rows.
+          weight: 1
+        - goal: Correct normalized segment, category, partner-tier counts, and category alias audit rows.
+          weight: 1
+        - goal: Correct duplicate partner person keys across roster/contact source rows.
+          weight: 1
+        - goal: Correct review reason counts, audit quality flags, and decision-audit source-row evidence.
+          weight: 1
+        - goal: Correct person-level roster and CRM lineage audit rows.
+          weight: 3
+        - goal: Correct row-level category alias audit evidence.
+          weight: 1
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: Correct target identifiers and effective claim-event count.
+          weight: 1
+        - goal: Correct invalid event IDs and their controlled issue types.
+          weight: 1
+        - goal: Correct duplicate, void or superseded, and amendment reconstruction with effective-record audit evidence.
+          weight: 2
+        - goal: Correct line-level currency conversion and rounded total.
+          weight: 1
+        - goal: Correct corrected USD totals and effective counts for each claim category.
+          weight: 2
+        - goal: Correct top claim lane by corrected cost and lane amount.
+          weight: 1
+        - goal: Correct effective source-unit counts after exclusions.
+          weight: 1
+        - goal: Correct raw invalid-unit issue taxonomy count.
+          weight: 3
+        - goal: Correct non-USD issue-count scope.
+          weight: 1
+        - goal: Correct remaining controlled issue-type counts.
+          weight: 1

@@ -1,0 +1,288 @@
+{
+  "description": "Expected JSON output for test_004 partner onboarding roster normalization.",
+  "required_top_level_keys": [
+    "roster_id",
+    "batch_id",
+    "qualified_partner_contact_count",
+    "blocked_or_suppressed_ids",
+    "needs_manual_review_ids",
+    "canonical_partner_contacts",
+    "segment_counts",
+    "category_counts",
+    "partner_tier_counts",
+    "duplicate_person_keys",
+    "decision_audit",
+    "source_lineage_audit",
+    "category_alias_audit",
+    "review_reason_counts",
+    "quality_flags"
+  ],
+  "fields": {
+    "roster_id": {
+      "type": "string",
+      "description": "Partner roster identifier."
+    },
+    "batch_id": {
+      "type": "string",
+      "description": "CRM/contact batch identifier reconciled with the roster."
+    },
+    "qualified_partner_contact_count": {
+      "type": "integer",
+      "description": "Unique canonical partner contacts allowed to enter the partner analytics table."
+    },
+    "blocked_or_suppressed_ids": {
+      "type": "list[string]",
+      "ordering": "ascending by partner_contact_id",
+      "description": "Partner roster source row IDs blocked by suppression, do-not-contact, or revoked consent. Use partner_contact_id values from the roster extract."
+    },
+    "needs_manual_review_ids": {
+      "type": "list[string]",
+      "ordering": "ascending by partner_contact_id",
+      "description": "Partner roster source row IDs that are not analytics-ready and require manual review rather than a hard suppression decision."
+    },
+    "canonical_partner_contacts": {
+      "type": "list[object]",
+      "ordering": "ascending by person_key",
+      "description": "One canonical decision row per partner person in the target roster, including nonqualified people.",
+      "item_required_keys": [
+        "person_key",
+        "partner_contact_id",
+        "canonical_contact_row_id",
+        "email",
+        "phone_digits",
+        "company_canonical",
+        "partner_tier",
+        "canonical_segment",
+        "canonical_category",
+        "analytics_status",
+        "review_reasons"
+      ],
+      "item_fields": {
+        "person_key": {
+          "type": "string"
+        },
+        "partner_contact_id": {
+          "type": "string"
+        },
+        "canonical_contact_row_id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "normalization": "lowercase, trimmed; empty string when unavailable"
+        },
+        "phone_digits": {
+          "type": "string",
+          "normalization": "digits only; empty string when unavailable"
+        },
+        "company_canonical": {
+          "type": "string"
+        },
+        "partner_tier": {
+          "type": "enum",
+          "allowed_values": [
+            "platinum",
+            "gold",
+            "silver",
+            "bronze",
+            "unknown"
+          ]
+        },
+        "canonical_segment": {
+          "type": "enum",
+          "allowed_values": [
+            "enterprise_renewal",
+            "strategic_renewal",
+            "smb_churn_risk",
+            "partner",
+            "ops_lead",
+            "unknown"
+          ]
+        },
+        "canonical_category": {
+          "type": "enum",
+          "allowed_values": [
+            "fuel",
+            "maintenance",
+            "freight",
+            "accessorial",
+            "claim",
+            "tax_fee",
+            "unknown"
+          ]
+        },
+        "analytics_status": {
+          "type": "enum",
+          "allowed_values": [
+            "qualified",
+            "blocked_or_suppressed",
+            "manual_review"
+          ]
+        },
+        "review_reasons": {
+          "type": "list[enum]",
+          "allowed_values": [
+            "duplicate",
+            "invalid_amount",
+            "invalid_unit",
+            "missing_contact_channel",
+            "suppressed_contact",
+            "ambiguous_alias",
+            "superseded",
+            "source_conflict"
+          ],
+          "ordering": "business order shown in allowed_values"
+        }
+      }
+    },
+    "segment_counts": {
+      "type": "object[string, integer]",
+      "required_keys": [
+        "enterprise_renewal",
+        "strategic_renewal",
+        "smb_churn_risk",
+        "partner",
+        "ops_lead",
+        "unknown"
+      ],
+      "description": "Counts by canonical segment for qualified partner contacts only. Include every required key, using 0 where absent."
+    },
+    "category_counts": {
+      "type": "object[string, integer]",
+      "required_keys": [
+        "fuel",
+        "maintenance",
+        "freight",
+        "accessorial",
+        "claim",
+        "tax_fee",
+        "unknown"
+      ],
+      "description": "Counts by canonical category for qualified partner contacts only. Include every required key, using 0 where absent."
+    },
+    "partner_tier_counts": {
+      "type": "object[string, integer]",
+      "required_keys": [
+        "platinum",
+        "gold",
+        "silver",
+        "bronze",
+        "unknown"
+      ],
+      "description": "Counts by partner tier for qualified partner contacts only. Include every required key, using 0 where absent."
+    },
+    "duplicate_person_keys": {
+      "type": "list[string]",
+      "ordering": "ascending by person_key",
+      "description": "Person keys with duplicate source rows in the roster/contact reconciliation."
+    },
+    "decision_audit": {
+      "type": "object",
+      "required_keys": [
+        "precedence_override_person_keys",
+        "suppressed_reachable_row_ids",
+        "normalization_changed_row_ids"
+      ],
+      "fields": {
+        "precedence_override_person_keys": {
+          "type": "list[string]",
+          "ordering": "ascending person_key"
+        },
+        "suppressed_reachable_row_ids": {
+          "type": "list[string]",
+          "ordering": "ascending row_id"
+        },
+        "normalization_changed_row_ids": {
+          "type": "list[string]",
+          "ordering": "ascending row_id"
+        }
+      }
+    },
+    "source_lineage_audit": {
+      "type": "list[object]",
+      "ordering": "ascending person_key",
+      "description": "Lineage rows for each canonical partner person represented in the roster.",
+      "item_required_keys": [
+        "person_key",
+        "selected_partner_contact_id",
+        "selected_contact_row_id",
+        "roster_row_ids",
+        "noncanonical_contact_row_ids",
+        "lineage_decision"
+      ],
+      "item_field_types": {
+        "person_key": "string",
+        "selected_partner_contact_id": "string",
+        "selected_contact_row_id": "string",
+        "roster_row_ids": "list[string]",
+        "noncanonical_contact_row_ids": "list[string]",
+        "lineage_decision": "enum"
+      },
+      "lineage_decision_allowed_values": [
+        "qualified",
+        "qualified_source_precedence",
+        "qualified_with_suppressed_stale_row",
+        "qualified_with_stale_duplicate_rows",
+        "manual_review_missing_channel",
+        "blocked_or_suppressed"
+      ]
+    },
+    "category_alias_audit": {
+      "type": "list[object]",
+      "ordering": "ascending partner_contact_id",
+      "description": "Category-normalization evidence for partner roster source rows.",
+      "item_required_keys": [
+        "partner_contact_id",
+        "raw_partner_category",
+        "selected_alias",
+        "canonical_category",
+        "matched_aliases",
+        "audit_reasons"
+      ],
+      "item_field_types": {
+        "partner_contact_id": "string",
+        "raw_partner_category": "string",
+        "selected_alias": "string",
+        "canonical_category": "enum",
+        "matched_aliases": "list[string]",
+        "audit_reasons": "list[enum]"
+      },
+      "audit_reason_allowed_values": [
+        "priority_overlap",
+        "category_normalized",
+        "ambiguous_alias"
+      ]
+    },
+    "review_reason_counts": {
+      "type": "object[string, integer]",
+      "required_keys": [
+        "duplicate",
+        "invalid_amount",
+        "invalid_unit",
+        "missing_contact_channel",
+        "suppressed_contact",
+        "ambiguous_alias",
+        "superseded",
+        "source_conflict"
+      ],
+      "description": "Counts of review or block reasons across source roster rows that are not directly analytics-ready. Include every required key, using 0 where absent."
+    },
+    "quality_flags": {
+      "type": "object[string, integer]",
+      "required_keys": [
+        "raw_roster_row_count",
+        "crm_source_row_count",
+        "canonical_partner_person_count",
+        "qualified_partner_contact_count",
+        "blocked_or_suppressed_roster_rows",
+        "manual_review_roster_rows",
+        "duplicate_person_groups",
+        "company_name_variation_groups",
+        "stale_reference_rows",
+        "ambiguous_alias_rows",
+        "missing_channel_rows"
+      ],
+      "description": "Integer audit flags for the roster normalization."
+    }
+  }
+}

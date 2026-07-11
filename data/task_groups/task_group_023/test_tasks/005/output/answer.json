@@ -1,0 +1,52 @@
+{
+  "action_label": "review_spatial_context",
+  "flags": {
+    "top_positive_residual_fips": [
+      "48035",
+      "48026",
+      "08014",
+      "48032",
+      "06003"
+    ]
+  },
+  "measures": {
+    "mediator_label": "No leisure-time physical activity",
+    "mediator_measure_id": "LPA",
+    "outcome_measure_id": "CHD"
+  },
+  "modeling": {
+    "bootstrap_ci_enum": "includes_zero",
+    "bootstrap_ci_high": 0.06,
+    "bootstrap_ci_low": -0.13,
+    "dynamic_variable_rule": "unemployment_2023_minus_2010_and_income_2023_minus_2022",
+    "indirect_effect": -0.033,
+    "mediator_to_outcome_beta": 0.522,
+    "poverty_to_mediator_beta": -0.063,
+    "rucc_handling": "categorical_dummies"
+  },
+  "scope": {
+    "analysis_year": 2024,
+    "complete_case_count": 157,
+    "exclusions_by_reason": {
+      "invalid_fips": 1,
+      "missing_health_data": 0,
+      "missing_ses": 3,
+      "outside_requested_states": 470
+    },
+    "requested_states": [
+      "CA",
+      "OR",
+      "WA",
+      "AZ",
+      "CO",
+      "TX"
+    ]
+  },
+  "spatial": {
+    "isolate_state_count": 1,
+    "moran_i": 0.136,
+    "moran_i_bucket": "0_05_to_0_20",
+    "top_residual_hotspot_division": "West South Central"
+  },
+  "task_id": "test_005"
+}

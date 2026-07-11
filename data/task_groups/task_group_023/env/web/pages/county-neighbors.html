@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>State Neighbor And Isolate Reference | Public Health Evidence Portal</title>
+  <link rel="stylesheet" href="../assets/portal.css">
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="brand">Public Health Evidence Portal</div>
+      <nav aria-label="Main navigation">
+        <a href="../index.html">Home</a>
+<a href="state-health.html">State Health</a>
+<a href="state-ses.html">State SES</a>
+<a href="state-regions.html">Regions</a>
+<a href="county-health.html">County Health</a>
+<a href="county-ses.html">County SES</a>
+<a href="county-neighbors.html">Neighbors</a>
+<a href="country-indicators.html">Countries</a>
+<a href="country-metadata.html">Country Metadata</a>
+<a href="name-reconciliation.html">Names</a>
+<a href="methodology.html">Methodology</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    
+<section class="hero">
+  <h1>State Neighbor And Isolate Reference</h1>
+  <p class="lede">State neighbor lists support spatial residual summaries. Alaska and Hawaii are isolates.</p>
+</section>
+<div class="downloads"><a class="download" href="../data/state_neighbors.csv" download>state_neighbors.csv</a></div>
+<p class="note">Isolate states have no contiguous neighbors.</p>
+<input class="searchbar" type="search" data-search placeholder="Search visible sample rows">
+<div class="table-wrap"><table data-filterable><thead><tr><th>state</th><th>state_name</th><th>region</th><th>division</th><th>neighbors</th><th>neighbor_count</th><th>isolate_flag</th><th>note</th></tr></thead><tbody><tr><td>AL</td><td>Alabama</td><td>South</td><td>East South Central</td><td>FL|GA|MS|TN</td><td>4</td><td>N</td><td></td></tr><tr><td>AK</td><td>Alaska</td><td>West</td><td>Pacific</td><td></td><td>0</td><td>Y</td><td>Isolate used for spatial residual summaries</td></tr><tr><td>AZ</td><td>Arizona</td><td>West</td><td>Mountain</td><td>CA|CO|NM|NV|UT</td><td>5</td><td>N</td><td></td></tr><tr><td>AR</td><td>Arkansas</td><td>South</td><td>West South Central</td><td>LA|MO|MS|OK|TN|TX</td><td>6</td><td>N</td><td></td></tr><tr><td>CA</td><td>California</td><td>West</td><td>Pacific</td><td>AZ|NV|OR</td><td>3</td><td>N</td><td></td></tr><tr><td>CO</td><td>Colorado</td><td>West</td><td>Mountain</td><td>AZ|KS|NE|NM|OK|UT|WY</td><td>7</td><td>N</td><td></td></tr><tr><td>CT</td><td>Connecticut</td><td>Northeast</td><td>New England</td><td>MA|NY|RI</td><td>3</td><td>N</td><td></td></tr><tr><td>DE</td><td>Delaware</td><td>South</td><td>South Atlantic</td><td>MD|NJ|PA</td><td>3</td><td>N</td><td></td></tr><tr><td>DC</td><td>District of Columbia</td><td>South</td><td>South Atlantic</td><td>MD|VA</td><td>2</td><td>N</td><td></td></tr><tr><td>FL</td><td>Florida</td><td>South</td><td>South Atlantic</td><td>AL|GA</td><td>2</td><td>N</td><td></td></tr><tr><td>GA</td><td>Georgia</td><td>South</td><td>South Atlantic</td><td>AL|FL|NC|SC|TN</td><td>5</td><td>N</td><td></td></tr><tr><td>HI</td><td>Hawaii</td><td>West</td><td>Pacific</td><td></td><td>0</td><td>Y</td><td>Isolate used for spatial residual summaries</td></tr></tbody></table></div>
+<script>
+const search = document.querySelector('[data-search]');
+if (search) {
+  const rows = Array.from(document.querySelectorAll('table[data-filterable] tbody tr'));
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    rows.forEach(row => {
+      row.hidden = q && !row.textContent.toLowerCase().includes(q);
+    });
+  });
+}
+</script>
+
+  </main>
+  <footer class="footer">
+    <div class="wrap">Static Web portal. CSV downloads are served directly from <code>/data/</code>.</div>
+  </footer>
+</body>
+</html>
