@@ -7,6 +7,8 @@ import sqlite3
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
 
+from judge_api import judge_answer_request
+
 
 DEFAULT_USERNAME = "payer_ops_solver"
 DEFAULT_PASSWORD = "revcycle_sql_014"
@@ -139,6 +141,11 @@ class QueryServer(BaseHTTPRequestHandler):
         if not self.require_auth():
             return
         path = urlparse(self.path).path
+        if path == "/api/judge":
+            length = int(self.headers.get("Content-Length", "0"))
+            status, payload = judge_answer_request(self.rfile.read(length))
+            self.send_json(status, payload)
+            return
         if path != "/query":
             self.send_json(404, {"error": "not found"})
             return

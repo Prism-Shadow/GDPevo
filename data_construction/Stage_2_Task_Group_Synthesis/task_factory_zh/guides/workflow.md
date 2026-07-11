@@ -61,7 +61,7 @@ reviewer subagent 负责独立审查：
 | 3. Env blueprint | 主 agent | `scratch/env_blueprint.md` | 共享业务系统、公开入口、数据契约、生成种子、setup 行为和 manifest 要求都已说明 |
 | 4. Env 实现 | 上下文干净的 env-builder coding subagent | `env/` | 环境服务于全部任务，按业务领域组织，可以运行，且没有接近答案的 per-task endpoint |
 | 5. Task 构造 | 10 个 task-builder subagents | `train_tasks/` 和 `test_tasks/` 任务目录 | 每个任务都有 solver input、中英双语 notes、标准答案、evaluator 和 answer template |
-| 6. 集成和 evaluator 自检 | 主 agent | 最终 `task_group.yaml`、路径/schema 修正、evaluator 自检记录 | 每个 evaluator 对自己的 `output/answer.json` 都能打满分 |
+| 6. 集成和 evaluator 自检 | 主 agent | 最终 `task_group.yaml`、路径/schema 修正、evaluator 与 Judge API 自检记录 | 每个 evaluator 对自己的 `output/answer.json` 都能打满分；`/api/judge` 能评测 train 答案、拒绝 test id，且不暴露隐藏细节 |
 | 7. 难度校准 | skill-builder 和 solver subagents，主 agent 负责打分 | `scratch/difficulty_calibration.md`、blind train attempts、reflection、`SKILL.md`、direct/post-skill 结果 | direct 和 post-skill attempts 都是 clean-context，且达到难度目标、不过度饱和 |
 | 8. 独立 review 和返工 | reviewer subagent 和主 agent | review findings、返工记录、必要时重跑校准 | 结构、环境、notes、评测、迁移和难度要求都通过 |
 
@@ -74,7 +74,7 @@ reviewer subagent 负责独立审查：
 5. 主 agent 启动 10 个 task-builder subagents，可以并行或分批运行：`train_001` 到 `train_005` 和 `test_001` 到 `test_005` 各 1 个。
 6. Task-builder subagents 分别生成自己负责 task 的 `input/`、`notes/`、`output/` 和 `eval/`。
 7. 主 agent 集成所有任务，统一修正路径、schema、notes 和 env 使用方式。
-8. 主 agent 运行每个 evaluator，对照标准答案检查可复现性。
+8. 主 agent 运行每个 evaluator，对照标准答案检查可复现性；把 `env/judge_api.py` 接入环境服务，并验证 `/api/judge` 能给每个 train 标准答案满分、给无效 candidate 更低分、拒绝 test task id，且不会返回 evaluator 或答案中的隐藏内容。
 9. 难度校准前，主 agent 在 `8000-8100` 范围内随机选择可用端口启动 task-group 环境，并记录启动命令和端口；不要从 `8000` 开始顺序查找。
 10. direct calibration：10 个上下文干净 solver subagents 运行 no-skill 尝试，每个 test task 2 次。主 agent 在 solver 上下文外评分，并记录 direct `avg@2`。
 11. 上下文干净的 skill-builder subagent 先在不看答案的情况下完成 5 个 train inputs，并把 blind attempts 放到 `scratch/train_skill/blind_attempts/`。

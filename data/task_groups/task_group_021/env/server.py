@@ -10,6 +10,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE = Path(__file__).resolve().parent
 DATA_DIR = BASE / "data"
@@ -52,6 +54,14 @@ class AsterOpsHandler(BaseHTTPRequestHandler):
 
     def log_message(self, fmt, *args):
         return
+
+    def do_POST(self):
+        if urlparse(self.path).path.rstrip("/") != "/api/judge":
+            self._send_error(404, "Unknown endpoint")
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self._send_json(status, payload)
 
     def do_GET(self):
         parsed = urlparse(self.path)

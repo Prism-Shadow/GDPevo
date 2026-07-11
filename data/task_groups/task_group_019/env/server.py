@@ -14,6 +14,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -48,13 +50,21 @@ class CLRPHandler(BaseHTTPRequestHandler):
 
     def end_headers(self) -> None:
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         super().end_headers()
 
     def do_OPTIONS(self) -> None:
         self.send_response(HTTPStatus.NO_CONTENT)
         self.end_headers()
+
+    def do_POST(self) -> None:
+        if urlparse(self.path).path.rstrip("/") != "/api/judge":
+            self.write_json(HTTPStatus.NOT_FOUND, {"error": "not_found", "path": self.path})
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.write_json(HTTPStatus(status), payload)
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)

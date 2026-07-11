@@ -5,6 +5,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from judge_api import judge_answer_request
+
 
 ROOT = Path(__file__).resolve().parent
 DATA_PATH = ROOT / "data" / "ehr_quality_data.json"
@@ -48,6 +50,14 @@ class Handler(BaseHTTPRequestHandler):
 
     def not_found(self):
         self.send_json({"error": "not_found"}, 404)
+
+    def do_POST(self):
+        if urlparse(self.path).path.rstrip("/") != "/api/judge":
+            self.not_found()
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(payload, status)
 
     def do_GET(self):
         parsed = urlparse(self.path)

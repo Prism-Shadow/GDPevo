@@ -61,7 +61,7 @@ Construction should move through these stages. Do not skip directly from reading
 | 3. Environment blueprint | Main agent | `scratch/env_blueprint.md` | Shared business systems, public entry points, data contracts, generation seeds, setup behavior, and manifest requirements are specified |
 | 4. Environment implementation | Clean-context env-builder coding subagent | `env/` | The environment is shared across all tasks, domain-oriented, runnable, and free of answer-like per-task endpoints |
 | 5. Task construction | 10 task-builder subagents | `train_tasks/` and `test_tasks/` task folders | Each assigned task has solver input, bilingual notes, standard answer, evaluator, and answer template |
-| 6. Integration and evaluator self-check | Main agent | Finalized `task_group.yaml`, path/schema fixes, evaluator self-check logs | Every evaluator scores its own `output/answer.json` as full credit |
+| 6. Integration and evaluator self-check | Main agent | Finalized `task_group.yaml`, path/schema fixes, evaluator and judge-API self-check logs | Every evaluator scores its own `output/answer.json` as full credit; `/api/judge` scores train answers, rejects test ids, and exposes no hidden details |
 | 7. Difficulty calibration | Skill-builder and solver subagents, scored by main agent | `scratch/difficulty_calibration.md`, blind train attempts, reflection, `SKILL.md`, direct/post-skill results | Direct and post-skill attempts are clean-context and meet difficulty targets without saturation |
 | 8. Independent review and rework | Reviewer subagent and main agent | Review findings, rework records, rerun calibration where needed | Structure, environment, notes, evaluation, transfer, and difficulty requirements all pass |
 
@@ -74,7 +74,7 @@ Construction should move through these stages. Do not skip directly from reading
 5. The main agent launches 10 task-builder subagents, in parallel or batches: one for each `train_001` through `train_005` and `test_001` through `test_005`.
 6. Task-builder subagents generate their own assigned task `input/`, `notes/`, `output/`, and `eval/`.
 7. The main agent integrates all tasks and standardizes paths, schemas, notes, and environment usage.
-8. The main agent runs every evaluator against the standard answer to check reproducibility.
+8. The main agent runs every evaluator against the standard answer to check reproducibility, connects `env/judge_api.py` to the environment service, and verifies that `/api/judge` gives full credit to each train standard answer, gives lower credit to an invalid candidate, rejects test task ids, and returns no hidden evaluator or answer content.
 9. Before difficulty calibration, the main agent starts the task-group environment as a local process on a randomly selected available port in the `8000-8100` range and records the startup command and port. Do not start by scanning upward from `8000`.
 10. Direct calibration: 10 clean-context solver subagents run no-skill attempts, 2 attempts for each of the 5 test tasks. The main agent scores predictions outside solver contexts and records direct `avg@2`.
 11. A clean-context skill-builder subagent first solves the 5 train inputs without seeing answers and stores blind attempts under `scratch/train_skill/blind_attempts/`.

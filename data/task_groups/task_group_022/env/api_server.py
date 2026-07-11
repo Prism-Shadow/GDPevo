@@ -14,6 +14,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 READ_LIMIT_DEFAULT = 100
 READ_LIMIT_MAX = 1000
@@ -238,6 +240,11 @@ class OpsAnalyticsHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path.rstrip("/") or "/"
         try:
+            if path == "/api/judge":
+                length = int(self.headers.get("Content-Length", "0"))
+                status, payload = judge_answer_request(self.rfile.read(length))
+                json_response(self, status, payload)
+                return
             body = parse_json_body(self)
             if path == "/query":
                 con = connect(self.db_path)

@@ -14,6 +14,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE = Path(__file__).resolve().parent
 DATA_FILE = BASE / "data" / "generated_data.json"
@@ -266,6 +268,16 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
+        if parsed.path == "/api/judge":
+            length = int(self.headers.get("Content-Length", "0"))
+            status, payload = judge_answer_request(self.rfile.read(length))
+            raw = json.dumps(payload, indent=2, sort_keys=True).encode("utf-8")
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(raw)))
+            self.end_headers()
+            self.wfile.write(raw)
+            return
         if parsed.path != "/login":
             self.send_error(404)
             return

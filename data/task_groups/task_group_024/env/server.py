@@ -12,6 +12,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
@@ -122,6 +124,14 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(payload)))
         self.end_headers()
         self.wfile.write(payload)
+
+    def do_POST(self) -> None:
+        if urlparse(self.path).path.rstrip("/") != "/api/judge":
+            self.send_json({"error": "not found", "path": self.path}, 404)
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(payload, status)
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)

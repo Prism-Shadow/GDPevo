@@ -5,10 +5,13 @@ from __future__ import annotations
 
 import functools
 import http.server
+import json
 import os
 import shutil
 import sys
 from pathlib import Path
+
+from judge_api import judge_answer_request
 
 
 ROOT = Path(__file__).resolve().parent
@@ -16,6 +19,19 @@ WEB = ROOT / "web"
 
 
 class StaticOnlyHandler(http.server.SimpleHTTPRequestHandler):
+    def do_POST(self) -> None:
+        if self.path.split("?", 1)[0].rstrip("/") != "/api/judge":
+            self.send_error(404)
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        raw = json.dumps(payload, indent=2, sort_keys=True).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(raw)))
+        self.end_headers()
+        self.wfile.write(raw)
+
     def copyfile(self, source, outputfile) -> None:  # type: ignore[no-untyped-def]
         try:
             shutil.copyfileobj(source, outputfile)

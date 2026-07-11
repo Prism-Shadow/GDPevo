@@ -11,6 +11,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_FILE = BASE_DIR / "data" / "dealdesk.json"
@@ -779,6 +781,14 @@ class DealDeskHandler(BaseHTTPRequestHandler):
 
     def not_found(self) -> None:
         self.send_json({"error": "not_found"}, status=404)
+
+    def do_POST(self) -> None:
+        if urlparse(self.path).path.rstrip("/") != "/api/judge":
+            self.not_found()
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(payload, status=status)
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)

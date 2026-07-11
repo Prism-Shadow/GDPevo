@@ -10,6 +10,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 ROOT = Path(__file__).resolve().parent
 DATA_PATH = ROOT / "data" / "clinic_data.json"
@@ -116,6 +118,14 @@ class ClinicHandler(BaseHTTPRequestHandler):
 
     def bad_request(self, message: str) -> None:
         self.write_json({"error": "bad_request", "message": message}, 400)
+
+    def do_POST(self) -> None:
+        if urlparse(self.path).path.rstrip("/") != "/api/judge":
+            self.not_found()
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.write_json(payload, status)
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)

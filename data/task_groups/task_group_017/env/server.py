@@ -10,6 +10,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data" / "generated"
@@ -155,6 +157,14 @@ def search_records(query: dict[str, list[str]]) -> dict:
 
 class Handler(BaseHTTPRequestHandler):
     server_version = "TaskGroup017Env/1.0"
+
+    def do_POST(self) -> None:
+        if urlparse(self.path).path.rstrip("/") != "/api/judge":
+            self.send_json(404, {"error": "endpoint not found", "path": self.path})
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(status, payload)
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)

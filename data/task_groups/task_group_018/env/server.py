@@ -13,6 +13,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_FILE = BASE_DIR / "data" / "clerk_ops.json"
@@ -79,6 +81,14 @@ def date_active(row: dict, effective_on: str | None) -> bool:
 
 class ClerkOpsHandler(BaseHTTPRequestHandler):
     server_version = "ClerkOpsHTTP/1.0"
+
+    def do_POST(self) -> None:
+        if urlparse(self.path).path.rstrip("/") != "/api/judge":
+            self.send_error_json(HTTPStatus.NOT_FOUND, "endpoint not found")
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(payload, status=HTTPStatus(status))
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
