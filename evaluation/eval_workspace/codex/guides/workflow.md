@@ -97,7 +97,26 @@ Stage only the materials allowed by `skill_modes.md`.
 - `reflect-3`: train inputs, remote environment entrypoint, and judge API
   instructions; no train answers.
 
-Skill-generation token usage is not included in solver efficiency metrics.
+Give every skill-generation run a unique evolve attempt ID:
+
+```text
+<task_group_id>__skill_generation__<condition>__attempt_<nn>__<timestamp>
+```
+
+Create a dedicated mounted `CODEX_HOME` for that run under:
+
+```text
+original_traces/skill_generation/<condition>/attempt_<nn>/codex_home/
+```
+
+After the run, preserve the complete raw `rollout-*.jsonl` session trace and
+write `evolve_metadata.yaml` in the matching staged directory under
+`scratch/skill_generation/`. The metadata must contain the evolve attempt ID,
+skill output path, trace path, token usage, pricing inputs, and calculated USD
+cost. Token and cost values must come from the matched raw Codex trace.
+
+Skill-generation token usage and cost are reported as evolve metrics. They are
+not included in test solver efficiency metrics.
 
 ## 4. Run Test Solvers
 
@@ -172,11 +191,17 @@ Record the raw session trace path in `run_metadata.yaml`. If the raw session
 trace is missing, keep the raw trace path `null`, leave trace-derived efficiency
 fields `null`, and report the trace issue.
 
-After all runs complete, aggregate `acc@3`, population `std@3`, average cached/input/output
-tokens, and solver turn count and tool-call counts for all four conditions. Efficiency metrics count only test solver answer
-writing: average the 3 attempts for the same test task, then average the 5 test
-tasks. Do not include skill generation, remote environment checks, evaluator
-execution, or main-agent summarization.
+After all runs complete, aggregate `acc@3`, population `std@3`, average
+cached/input/output tokens, and solver turn count and tool-call counts for all
+four conditions. Efficiency metrics count only test solver answer writing:
+average the 3 attempts for the same test task, then average the 5 test tasks.
+Do not include skill generation, remote environment checks, evaluator execution,
+or main-agent summarization in solver efficiency.
+
+Separately aggregate evolve token usage and cost across the 3 skill-generation
+runs for `fewshot`, `self`, and `reflect-3`. Preserve each attempt's metadata and
+trace path, and report the three-run totals and average cost without mixing them
+into solver efficiency.
 
 ## 6. Interpret Results
 
@@ -184,6 +209,7 @@ In the report, explain:
 
 - Overall `acc@3` and population `std@3` for all four conditions.
 - Improvement from `fewshot`, `self`, and `reflect-3` over `base`.
+- Evolve token usage and USD cost for `fewshot`, `self`, and `reflect-3`.
 - Which test tasks improved clearly and which did not.
 - Any environment instability, output-schema friction, evaluator issue, or
   suspicious leakage risk.

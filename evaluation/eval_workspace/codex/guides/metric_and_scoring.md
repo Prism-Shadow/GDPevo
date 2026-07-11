@@ -49,6 +49,69 @@ turn_count:
 
 If the trace cannot be matched uniquely, write `missing` or `ambiguous` in `match_status`, set `copied_trace_file` and the corresponding token/turn/tool-call fields to `null`, and do not estimate them manually.
 
+## Evolve Runs
+
+Each `fewshot`, `self`, and `reflect-3` skill-generation run must preserve:
+
+```text
+scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
+original_traces/skill_generation/<condition>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+```
+
+Recommended `evolve_metadata.yaml` format:
+
+```yaml
+evolve_attempt_id: <task_group_id>__skill_generation__<condition>__attempt_<nn>__<timestamp>
+condition: <fewshot|self|reflect-3>
+attempt: <int>
+model: gpt-5.5, xhigh
+skill_file: <path to generated SKILL.md>
+
+trace:
+  session_file: <path to complete rollout-*.jsonl or null>
+  session_id: <session_id or null>
+  match_status: matched
+
+token_usage:
+  source: codex_session_trace
+  input_tokens: <int or null>
+  cached_input_tokens: <int or null>
+  output_tokens: <int or null>
+  reasoning_output_tokens: <int or null>
+  total_tokens: <int or null>
+
+pricing:
+  basis: standard_api_text_token_equivalent
+  uncached_input_usd_per_million: 5.00
+  cached_input_usd_per_million: 0.50
+  output_usd_per_million: 30.00
+cost_usd: <float or null>
+```
+
+For Codex GPT-5.5, calculate evolve cost from the trace token counts:
+
+```text
+uncached_input_tokens = max(input_tokens - cached_input_tokens, 0)
+
+cost_usd =
+  (uncached_input_tokens * 5.00
+   + cached_input_tokens * 0.50
+   + output_tokens * 30.00) / 1_000_000
+```
+
+This is the standard API text-token equivalent used by the GDPevo experiment
+board for cross-run comparison, not a reconstruction of the account invoice.
+Do not silently apply subscription credits, service-tier multipliers, or
+long-context adjustments without corresponding billing evidence; record a
+different pricing basis explicitly if the experiment adopts one.
+
+`cached_input_tokens` is a subset of `input_tokens`.
+`reasoning_output_tokens` is a subset of `output_tokens` and must not be charged
+again. Use the final cumulative usage for that isolated session; do not sum
+cumulative snapshots from multiple trace events. If the trace is missing or
+ambiguous, leave all trace-derived token and cost fields `null` and record the
+reason instead of estimating them.
+
 ## acc@3
 
 For the same test task under the same condition, run 3 independent attempts.
@@ -119,5 +182,10 @@ After all `score.yaml` files are ready, the main agent should check that all fou
 The main agent should also aggregate average cached/input/output tokens, solver turns, and tool calls from each `run_metadata.yaml`, first per test task and then per condition. The aggregation follows the same shape as `acc@3`: average the 3 attempts for the same test task, then average the 5 test tasks.
 
 These efficiency metrics only count the answer-writing work of test solver subagents. They do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
+
+Evolve token and cost metrics are aggregated separately for each non-base
+condition. Sum the three skill-generation attempts for the mode totals and keep
+each attempt's raw values and full trace path in the report. Do not combine
+evolve usage with solver efficiency.
 
 The evaluation agent may write temporary aggregation or checking code in `scratch/` according to the current task group's evaluator shape.
