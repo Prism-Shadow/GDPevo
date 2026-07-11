@@ -27,7 +27,7 @@ values belong in the evaluation workspace `.env` file for the actual run.
 
 ## Train-Only Judge API
 
-Every task-group environment must expose `POST /api/judge` for reflect skill generation. The request body uses `{"task_id": "train_001", "answer": {...}}`. The endpoint must run the matching train evaluator and return only a normalized `score` in `[0, 1]`, a boolean `correct`, and a notice that the endpoint is train-only. It must reject every `test_*` task id and must not return the gold answer, rubric details, evaluator output, or other hidden material.
+Every task-group environment must expose `POST /api/judge` to judge candidate answers for train tasks. The request body uses `{"task_id": "train_001", "answer": {...}}`. The endpoint must run the matching train evaluator and return only a normalized `score` in `[0, 1]`, a boolean `correct`, and a notice that the endpoint is train-only. It must reject every `test_*` task id and must not return the gold answer, rubric details, evaluator output, or other hidden material.
 
 Keep the reusable judge implementation in `env/judge_api.py`, connect it to the task group's existing HTTP service, and declare it under `env.files` in `task_group.yaml`. The judge endpoint is an evaluation control surface, not a business-data endpoint; do not expose task-specific source data through it.
 

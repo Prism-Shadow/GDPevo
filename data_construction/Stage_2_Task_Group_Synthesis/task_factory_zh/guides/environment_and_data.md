@@ -27,7 +27,7 @@ setup 命令都不应进入 `prompt.txt` 或 `input/payloads/`；这些值属于
 
 ## 仅限训练阶段的 Judge API
 
-每个 task group 的环境都必须提供 `POST /api/judge`，供 reflect skill 生成阶段使用。请求体格式为 `{"task_id": "train_001", "answer": {...}}`。接口应调用对应 train task 的 evaluator，只返回 `[0, 1]` 范围内的 `score`、布尔值 `correct`，以及该接口仅限训练阶段使用的说明。接口必须拒绝所有 `test_*` task id，且不能返回标准答案、rubric 细节、evaluator 原始输出或其他隐藏材料。
+每个 task group 的环境都必须提供 `POST /api/judge`，用于评测 train task 的 candidate answer。请求体格式为 `{"task_id": "train_001", "answer": {...}}`。接口应调用对应 train task 的 evaluator，只返回 `[0, 1]` 范围内的 `score`、布尔值 `correct`，以及该接口仅限训练阶段使用的说明。接口必须拒绝所有 `test_*` task id，且不能返回标准答案、rubric 细节、evaluator 原始输出或其他隐藏材料。
 
 通用实现放在 `env/judge_api.py`，接入 task group 现有的 HTTP 服务，并在 `task_group.yaml` 的 `env.files` 中声明。Judge API 是评测控制接口，不是业务数据接口，不能通过它暴露按 task 切分的源数据。
 
