@@ -29,7 +29,6 @@ evolve:
           input_tokens: <int or null>
           cached_input_tokens: <int or null>
           output_tokens: <int or null>
-          reasoning_output_tokens: <int or null>
           total_tokens: <int or null>
           cost_usd: <float or null>
         attempt_02: <same shape as attempt_01>
@@ -38,7 +37,6 @@ evolve:
         input_tokens_avg_3: <float or null>
         cached_input_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
-        reasoning_output_tokens_avg_3: <float or null>
         cost_usd_avg_3: <float or null>
     self: <same shape as fewshot>
     reflect-3: <same shape as fewshot>
@@ -120,8 +118,7 @@ conditions:
   paths in workspace audit files rather than the formal report. The summary
   retains the arithmetic `avg_3` for every token bucket and for USD cost.
 - Calculate evolve cost with the pricing block recorded in the report. Cached
-  input is a subset of input, and reasoning output is a subset of output; do not
-  double-count either field.
+  input is a subset of input; do not double-count it.
 - Efficiency metrics follow the same aggregation shape as `acc@3`: average the
   3 attempts for the same test task, then average the 5 test tasks.
 - Efficiency metrics only count answer-writing by test solver subagents. Do not
