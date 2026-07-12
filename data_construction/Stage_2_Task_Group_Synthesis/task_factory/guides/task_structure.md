@@ -23,6 +23,7 @@ task_group_001/
 ├── task_group.yaml
 ├── env/
 │   ├── setup.sh
+│   ├── judge_api.py
 │   └── <shared business services, data, setup files, and support files>
 ├── train_tasks/
 │   ├── 001/
@@ -71,6 +72,7 @@ env:
   setup: env/setup.sh
   files:
     - env/setup.sh
+    - env/judge_api.py
     - env/<shared_business_service_or_support_file>
 
 train_tasks:

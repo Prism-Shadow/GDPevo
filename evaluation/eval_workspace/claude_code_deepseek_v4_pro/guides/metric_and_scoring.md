@@ -26,12 +26,10 @@ manual counting inside the agent prompt.
 
 ### Token accounting (read carefully — easy to get wrong)
 
-This workspace runs Claude Code with DeepSeek V4 Pro through the DeepSeek Anthropic API. The
-authoritative efficiency source is the preserved Dockerized `claude -p` run
-trace, not a manually reconstructed DeepSeek billing record and not any
-surrounding orchestration output. Billing/cost conversion is intentionally out of
-scope for the formal report; preserve the token buckets so cost can be computed
-later from an agreed DeepSeek rate card.
+This workspace runs Claude Code with DeepSeek V4 Pro through the DeepSeek
+Anthropic API. The authoritative efficiency and cost source is the preserved
+Dockerized `claude -p` run trace, not surrounding orchestration output. Use the
+DeepSeek V4 Pro rate card defined below for both solver and evolve cost.
 
 Each solver attempt should preserve these trace files under
 `original_traces/<condition>/<task_id>/attempt_<nn>/`:
@@ -74,6 +72,7 @@ token_usage:                          # deduped by message.id, summed across res
   cache_creation_input_tokens: <int>
   cache_read_input_tokens: <int>
   output_tokens: <int>
+cost_usd: <float or null>
 trace_efficiency:
   source: claude_session_trace
   rounds: <int>
@@ -81,12 +80,68 @@ trace_efficiency:
 ```
 
 If the trace cannot be matched uniquely, write `missing` or `ambiguous` in
-`match_status`, set the trace-file fields and the corresponding token, round,
+`match_status`, set the trace-file fields and the corresponding token, cost, round,
 and tool-call fields to `null`, and do not estimate them manually.
+
+Calculate each solver attempt's `cost_usd` from its deduplicated token buckets
+with the same model rate card and formula defined below for evolve runs.
 
 Each scored attempt must preserve the matched raw Claude Code trace under
 `original_traces/<condition>/<task_id>/attempt_<nn>/`. The report token fields
 must be reproducible from the copied trace.
+
+## Evolve Runs
+
+Each `fewshot`, `self`, and `reflect-3` skill-generation run must preserve:
+
+```text
+scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
+original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+Recommended `evolve_metadata.yaml` format:
+
+```yaml
+evolve_attempt_id: <task_group_id>__skill_generation__<condition>__attempt_<nn>__<timestamp>
+condition: <fewshot|self|reflect-3>
+attempt: <int>
+model: deepseek-v4-pro[1m], max
+skill_file: <path to generated SKILL.md>
+
+transcript:
+  claude_session_id: <uuid or null>
+  session_file: <path under original_traces/skill_generation/... or null>
+  match_status: matched
+  missing_reason: <string or null>
+
+token_usage:
+  source: claude_session_trace
+  input_tokens: <int or null>
+  cache_creation_input_tokens: <int or null>
+  cache_read_input_tokens: <int or null>
+  output_tokens: <int or null>
+  total_tokens: <int or null>
+
+pricing:
+  basis: deepseek_v4_pro_api
+  input_usd_per_million: 0.435
+  cache_creation_usd_per_million: 0.00
+  cache_read_usd_per_million: 0.003625
+  output_usd_per_million: 0.87
+cost_usd: <float or null>
+```
+
+```text
+cost_usd =
+  (input_tokens * 0.435
+   + cache_read_input_tokens * 0.003625
+   + output_tokens * 0.87) / 1_000_000
+```
+
+Keep `cache_creation_input_tokens` in metadata for schema compatibility, but do
+not charge it under this rate card. If any token bucket required by
+`total_tokens` is missing, set `total_tokens` and `cost_usd` to `null`; do not
+report a partial total or estimate the missing bucket.
 
 ## acc@3
 
@@ -161,7 +216,7 @@ If retries still cannot produce a valid score, stop the evaluation and report th
 
 After all `score.yaml` files are ready, the main agent should check that all four conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3` and `std@3`, overall `acc@3` and `std@3`, and improvements from `fewshot`, `self`, and `reflect-3` over `base`.
 
-The main agent should also aggregate average token fields from each
+The main agent should also aggregate average token and cost fields from each
 `run_metadata.yaml`, first per test task and then per condition. Aggregate raw
 metadata fields `input_tokens`, `cache_creation_input_tokens`,
 `cache_read_input_tokens`, and `output_tokens`, but write the formal report
@@ -172,5 +227,11 @@ follows the same shape as `acc@3`: average the 3 attempts for the same test
 task, then average the 5 test tasks.
 
 These efficiency metrics only count the answer-writing work of test solver Claude processes. They do not include skill generation, remote environment checks, evaluator execution, or orchestrator summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
+
+Evolve token and cost metrics are aggregated separately for each non-base
+condition. Average each token bucket and USD cost across the three
+skill-generation attempts, and keep every attempt's raw token and cost values
+in the report. Retain metadata and trace paths only in workspace audit files.
+Do not combine evolve usage with solver efficiency.
 
 The evaluation agent may write temporary aggregation or checking code in `scratch/` according to the current task group's evaluator shape.

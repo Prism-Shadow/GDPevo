@@ -1,0 +1,20 @@
+Task: Integrated production-readiness review for matter M-OVL-730.
+
+You are preparing the structured readiness call for the legal team before the next production. Use the shared investigation API at <TASK_ENV_BASE_URL> and inspect the matter record, subpoena categories, current production logs, collection events, destruction events, privilege logs, QC events, custodians, and document records for matter M-OVL-730.
+
+The service exposes JSON endpoints including:
+
+- /api/matters/M-OVL-730
+- /api/subpoena_categories?matter_id=M-OVL-730
+- /api/production_logs?matter_id=M-OVL-730
+- /api/collection_events?matter_id=M-OVL-730
+- /api/destruction_events?matter_id=M-OVL-730
+- /api/privilege_logs?matter_id=M-OVL-730
+- /api/qc_events?matter_id=M-OVL-730
+- /api/custodians?matter_id=M-OVL-730
+- /api/documents?matter_id=M-OVL-730
+- /api/search?matter_id=M-OVL-730&q=...
+
+Focus on subpoena categories O-01 through O-10. Return JSON only, conforming to input/payloads/answer_template.json. Do not include a memo or explanatory text outside the JSON.
+
+Your answer should identify which categories are production-ready, which are blocked, the blocker reason and action for each blocked category, the notice-required decisions, and the ranked top blockers.

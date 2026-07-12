@@ -53,14 +53,71 @@ token_usage:                          # deduped by message.id, summed across res
   cache_creation_input_tokens: <int>
   cache_read_input_tokens: <int>
   output_tokens: <int>
+cost_usd: <float or null>
 turn_count:
   source: session_trace
   assistant_turns: <int>
 ```
 
 If the transcript cannot be found at the expected session path, write `missing`
-in `match_status`, set `session_file` and the corresponding token/turn/tool-call
+in `match_status`, set `session_file` and the corresponding token/cost/turn/tool-call
 fields to `null`, and do not estimate them manually.
+
+Calculate each solver attempt's `cost_usd` from its deduplicated token buckets
+with the same model rate card and formula defined below for evolve runs.
+
+## Evolve Runs
+
+Each `fewshot`, `self`, and `reflect-3` skill-generation run must preserve:
+
+```text
+scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
+original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+Recommended `evolve_metadata.yaml` format:
+
+```yaml
+evolve_attempt_id: <task_group_id>__skill_generation__<condition>__attempt_<nn>__<timestamp>
+condition: <fewshot|self|reflect-3>
+attempt: <int>
+model: glm-5.2, max
+skill_file: <path to generated SKILL.md>
+
+transcript:
+  claude_session_id: <uuid or null>
+  session_file: <path under original_traces/skill_generation/... or null>
+  match_status: matched
+  missing_reason: <string or null>
+
+token_usage:
+  source: session_trace
+  input_tokens: <int or null>
+  cache_creation_input_tokens: <int or null>
+  cache_read_input_tokens: <int or null>
+  output_tokens: <int or null>
+  total_tokens: <int or null>
+
+pricing:
+  basis: zai_glm_5_2_api
+  input_usd_per_million: 1.40
+  cache_creation_usd_per_million: 0.00
+  cache_read_usd_per_million: 0.26
+  output_usd_per_million: 4.40
+cost_usd: <float or null>
+```
+
+```text
+cost_usd =
+  (input_tokens * 1.40
+   + cache_creation_input_tokens * 0.00
+   + cache_read_input_tokens * 0.26
+   + output_tokens * 4.40) / 1_000_000
+```
+
+If any token bucket required by `total_tokens` is missing, set `total_tokens`
+and `cost_usd` to `null`; do not report a partial total or infer one
+provider-specific field from another.
 
 For this GLM run, use only token buckets that are explicitly present in the
 Claude Code session trace. If a GLM trace omits cache write/read or another
@@ -134,11 +191,17 @@ If retries still cannot produce a valid score, stop the evaluation and report th
 
 After all `score.yaml` files are ready, the main agent should check that all four conditions, 5 test tasks, and 3 runs per task are complete. Then calculate per-task `acc@3` and `std@3`, overall `acc@3` and `std@3`, and improvements from `fewshot`, `self`, and `reflect-3` over `base`.
 
-The main agent should also aggregate average token fields, solver turns, and tool calls from each
+The main agent should also aggregate average token and cost fields, solver turns, and tool calls from each
 `run_metadata.yaml`, first per test task and then per condition. The aggregation
 follows the same shape as `acc@3`: average the 3 attempts for the same test task,
 then average the 5 test tasks.
 
 These efficiency metrics only count the answer-writing work of test solver runs. They do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
+
+Evolve token and cost metrics are aggregated separately for each non-base
+condition. Average each token bucket and USD cost across the three
+skill-generation attempts, and keep every attempt's raw token and cost values
+in the report. Retain metadata and trace paths only in workspace audit files.
+Do not combine evolve usage with solver efficiency.
 
 The evaluation agent may write temporary aggregation or checking code in `scratch/` according to the current task group's evaluator shape.

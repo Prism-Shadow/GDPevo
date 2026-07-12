@@ -1,0 +1,87 @@
+{
+  "api_entrypoint": "TASK_ENV_BASE_URL",
+  "date_window": {
+    "end": "2026-06-30",
+    "start": "2026-01-01"
+  },
+  "environment": "api_wrapped_ops_analytics",
+  "formal_cases": {
+    "DQ-TKT-2026-03-B": {
+      "field_name": "duplicate_of",
+      "new_value": "TKT-DQ-MASTER-03-B",
+      "target_ids": [
+        "TKT-DQ-MAR-B-001",
+        "TKT-DQ-MAR-B-002",
+        "TKT-DQ-MAR-B-003"
+      ],
+      "target_table": "tickets"
+    },
+    "DQ-TKT-2026-05-D": {
+      "field_name": "duplicate_of",
+      "new_value": "TKT-DQ-MASTER-05-D",
+      "target_ids": [
+        "TKT-DQ-MAY-D-001",
+        "TKT-DQ-MAY-D-002"
+      ],
+      "target_table": "tickets"
+    },
+    "DQ-USG-2026-04-A": {
+      "field_name": "product_id",
+      "new_value": "ATLASDB",
+      "old_value": "HELIOSYNC",
+      "target_ids": [
+        "USG-DQ-APR-001",
+        "USG-DQ-APR-002",
+        "USG-DQ-APR-003",
+        "USG-DQ-APR-004",
+        "USG-DQ-APR-005",
+        "USG-DQ-APR-006",
+        "USG-DQ-APR-007",
+        "USG-DQ-APR-008",
+        "USG-DQ-APR-009",
+        "USG-DQ-APR-010",
+        "USG-DQ-APR-011",
+        "USG-DQ-APR-012",
+        "USG-DQ-APR-013",
+        "USG-DQ-APR-014"
+      ],
+      "target_table": "usage_daily"
+    },
+    "DQ-USG-2026-05-C": {
+      "field_name": "product_id",
+      "new_value": "LUMAFORMS",
+      "old_value": "NEXAQUEUE",
+      "target_ids": [
+        "USG-DQ-MAY-001",
+        "USG-DQ-MAY-002",
+        "USG-DQ-MAY-003",
+        "USG-DQ-MAY-004",
+        "USG-DQ-MAY-005",
+        "USG-DQ-MAY-006",
+        "USG-DQ-MAY-007",
+        "USG-DQ-MAY-008",
+        "USG-DQ-MAY-009",
+        "USG-DQ-MAY-010",
+        "USG-DQ-MAY-011"
+      ],
+      "target_table": "usage_daily"
+    }
+  },
+  "notes": [
+    "Solver-facing access is through the HTTP API base URL exported by task_env.sh.",
+    "The SQLite database path is relative to this manifest and is retained for environment setup.",
+    "This manifest is hidden construction metadata and is not solver-facing."
+  ],
+  "record_counts": {
+    "accounts": 104,
+    "data_quality_cases": 8,
+    "incidents": 8,
+    "metric_notes": 10,
+    "products": 4,
+    "subscriptions": 180,
+    "tickets": 1200,
+    "usage_daily": 18000
+  },
+  "seed": 15015,
+  "sqlite_db": "ops_analytics.sqlite"
+}

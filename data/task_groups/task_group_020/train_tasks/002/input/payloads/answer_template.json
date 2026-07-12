@@ -1,0 +1,262 @@
+{
+  "schema_name": "seller_apa_counterparty_paper_review_v1",
+  "response_rule": "Return a single JSON object only. Do not include markdown or explanatory prose.",
+  "top_level_required_keys": {
+    "deal_id": {
+      "type": "string",
+      "required_value": "D-BRASS-219"
+    },
+    "review_type": {
+      "type": "enum",
+      "allowed_values": [
+        "SELLER_APA_COUNTERPARTY_PAPER_REVIEW"
+      ]
+    },
+    "currency": {
+      "type": "enum",
+      "allowed_values": [
+        "USD"
+      ]
+    },
+    "issues": {
+      "type": "list<object>",
+      "ordering": "Sort by issue_id ascending. Include each material issue once. Omit non-issues."
+    }
+  },
+  "issue_object_required_keys": {
+    "issue_id": {
+      "type": "enum",
+      "allowed_values": [
+        "ASSUMED_LIABILITIES_AND_NWC",
+        "CLOSING_DEADLINE",
+        "EMPLOYEE_TSA_IP_TRANSITION",
+        "ESCROW",
+        "FINANCING_CONDITION",
+        "HSR_CONDITION",
+        "MAE",
+        "MATERIAL_CONSENTS",
+        "PURCHASE_PRICE",
+        "RESTRICTIVE_COVENANT",
+        "REVERSE_TERMINATION_FEE",
+        "SURVIVAL_CAP_BASKET",
+        "TAX_ESCROW"
+      ]
+    },
+    "severity": {
+      "type": "enum",
+      "allowed_values": [
+        "CRITICAL",
+        "HIGH",
+        "MEDIUM",
+        "LOW"
+      ]
+    },
+    "recommended_action": {
+      "type": "enum",
+      "allowed_values": [
+        "ACCEPT",
+        "ADD",
+        "ADD_FALLBACK_ONLY",
+        "DELETE",
+        "ESCALATE",
+        "NO_ISSUE",
+        "REVISE"
+      ]
+    },
+    "corrected_value": {
+      "type": "object",
+      "description": "Use only the normalized fields that are relevant to the issue. Currency amounts are integer dollars. Percentages are decimal percentages rounded to two places, not fractions."
+    },
+    "source_ids": {
+      "type": "list<string>",
+      "description": "Document, policy, clause, or benchmark IDs supporting the issue. This field is for auditability and is not a prose evidence memo."
+    }
+  },
+  "corrected_value_allowed_fields": {
+    "financing_condition_allowed": {
+      "type": "boolean"
+    },
+    "lender_diligence_condition_allowed": {
+      "type": "boolean"
+    },
+    "approval_required": {
+      "type": "enum",
+      "allowed_values": [
+        "DEAL_LEAD",
+        "EMPLOYMENT_COUNSEL",
+        "EXECUTIVE_COMMITTEE",
+        "HR_COMMITTEE",
+        "IP_COUNSEL",
+        "OPERATIONS_COMMITTEE",
+        "SELLER_STEERING_COMMITTEE",
+        "NONE"
+      ]
+    },
+    "replacement": {
+      "type": "enum",
+      "allowed_values": [
+        "CLOSING_CERTAINTY_COVENANT",
+        "NONE"
+      ]
+    },
+    "fallback_only": {
+      "type": "boolean"
+    },
+    "fee_base": {
+      "type": "enum",
+      "allowed_values": [
+        "HEADLINE_VALUE",
+        "EQUITY_VALUE",
+        "NONE"
+      ]
+    },
+    "reverse_fee_percent": {
+      "type": "number",
+      "precision": "two decimal percentage points"
+    },
+    "reverse_fee_amount_usd": {
+      "type": "integer",
+      "unit": "USD"
+    },
+    "parent_guarantee_required": {
+      "type": "boolean"
+    },
+    "financing_condition_must_still_be_deleted": {
+      "type": "boolean"
+    },
+    "escrow_percent": {
+      "type": "number",
+      "precision": "two decimal percentage points"
+    },
+    "escrow_amount_usd": {
+      "type": "integer",
+      "unit": "USD"
+    },
+    "fallback_escrow_percent": {
+      "type": "number",
+      "precision": "two decimal percentage points"
+    },
+    "fallback_escrow_amount_usd": {
+      "type": "integer",
+      "unit": "USD"
+    },
+    "release_months": {
+      "type": "integer"
+    },
+    "investment_benefit": {
+      "type": "enum",
+      "allowed_values": [
+        "FOR_BUYER",
+        "FOR_SELLER",
+        "SPLIT",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "escrow_longer_than_survival_allowed": {
+      "type": "boolean"
+    },
+    "seller_rep_survival_months": {
+      "type": "integer"
+    },
+    "general_cap_percent": {
+      "type": "number",
+      "precision": "two decimal percentage points"
+    },
+    "general_cap_amount_usd": {
+      "type": "integer",
+      "unit": "USD"
+    },
+    "basket_percent": {
+      "type": "number",
+      "precision": "two decimal percentage points"
+    },
+    "basket_type": {
+      "type": "enum",
+      "allowed_values": [
+        "DEDUCTIBLE",
+        "TIPPING",
+        "NONE"
+      ]
+    },
+    "de_minimis_required": {
+      "type": "boolean"
+    },
+    "tipping_allowed": {
+      "type": "boolean"
+    },
+    "buyer_assumed_liability_covenant": {
+      "type": "enum",
+      "allowed_values": [
+        "SURVIVE_UNTIL_FULLY_PERFORMED",
+        "SIX_MONTHS",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "working_capital_reset_allowed": {
+      "type": "boolean"
+    },
+    "working_capital_target_usd": {
+      "type": "integer",
+      "unit": "USD"
+    },
+    "working_capital_collar_usd": {
+      "type": "integer",
+      "unit": "USD"
+    },
+    "non_compete_years": {
+      "type": "integer"
+    },
+    "customer_non_solicit_years": {
+      "type": "integer"
+    },
+    "worldwide_scope_allowed": {
+      "type": "boolean"
+    },
+    "affiliate_wide_scope_allowed": {
+      "type": "boolean"
+    },
+    "business_scope": {
+      "type": "enum",
+      "allowed_values": [
+        "TRANSFERRED_BUSINESS_ONLY",
+        "ALL_AFFILIATE_BUSINESSES",
+        "ADJACENT_PRODUCTS",
+        "NONE"
+      ]
+    },
+    "buyer_comparable_offer_required": {
+      "type": "boolean"
+    },
+    "warn_and_severance_liability": {
+      "type": "enum",
+      "allowed_values": [
+        "BUYER_FOR_TRANSFERRED_EMPLOYEES",
+        "SELLER",
+        "ALLOCATED_BY_STATUTE",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "tsa_required": {
+      "type": "boolean"
+    },
+    "tsa_services": {
+      "type": "list<enum>",
+      "allowed_values": [
+        "ERP",
+        "IT_HELPDESK",
+        "PAYROLL",
+        "QUALITY_CERTIFICATIONS"
+      ],
+      "ordering": "Sort alphabetically."
+    },
+    "ip_transition_license_required": {
+      "type": "boolean"
+    },
+    "retained_ip_boundaries_required": {
+      "type": "boolean"
+    },
+    "trademark_phaseout_months": {
+      "type": "integer"
+    }
+  }
+}

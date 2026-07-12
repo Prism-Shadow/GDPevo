@@ -1,0 +1,32 @@
+{
+  "release_id": "string",
+  "as_of_date": "YYYY-MM-DD",
+  "ship_decision": "enum: Ship | Hold | NoShip",
+  "risk_tier": "enum: Low | Medium | High",
+  "milestones": [
+    {
+      "milestone_id": "string; sort milestone objects by milestone_id ascending",
+      "critical": "boolean",
+      "completion_percentage": "number; percentage rounded to one decimal place"
+    }
+  ],
+  "gating_work_item_ids": [
+    "string work item IDs; sort ascending"
+  ],
+  "blocker_cause_counts": {
+    "ExternalDependency": "integer",
+    "Environment": "integer",
+    "SecurityReview": "integer",
+    "Capacity": "integer",
+    "DesignDecision": "integer",
+    "DataMigration": "integer",
+    "Vendor": "integer",
+    "OwnershipGap": "integer"
+  },
+  "critical_dependency_chain": [
+    "string work item IDs in dependency order from upstream to downstream; do not sort this list"
+  ],
+  "owner_escalation_ids": [
+    "string owner IDs sorted ascending; include UNASSIGNED only when a gated item has no owner"
+  ]
+}

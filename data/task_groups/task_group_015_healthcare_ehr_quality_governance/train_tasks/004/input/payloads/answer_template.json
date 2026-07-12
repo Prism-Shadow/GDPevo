@@ -1,0 +1,110 @@
+{
+  "allowed_enums": {
+    "audit_status": [
+      "READY_FOR_MERGE",
+      "BLOCKED_ADDRESS_CONFLICT",
+      "NO_EVENT_FOUND"
+    ],
+    "boolean": [
+      true,
+      false
+    ],
+    "disposition": [
+      "MERGE_READY",
+      "NEEDS_CLARIFICATION",
+      "DO_NOT_MERGE"
+    ],
+    "priority_tier": [
+      "TIER_1_IMMEDIATE",
+      "TIER_2_SHORT_TERM",
+      "TIER_3_ADMINISTRATIVE"
+    ],
+    "readiness": [
+      "READY",
+      "READY_WITH_WARNINGS",
+      "BLOCKED_INCOMPLETE_PACKET",
+      "NEEDS_CLARIFICATION",
+      "BLOCKED_ORDER_SAFETY"
+    ],
+    "send_ready": [
+      "READY",
+      "NEEDS_CLARIFICATION",
+      "BLOCKED"
+    ]
+  },
+  "date_format": "YYYY-MM-DD for dates; ISO 8601 for timestamps.",
+  "environment_base_url_placeholder": "<TASK_ENV_BASE_URL>",
+  "instructions": "Return one JSON object. Use the keys, field types, enum casing, and list ordering defined here. Do not include explanatory prose outside JSON.",
+  "list_ordering": "Lists of stable identifiers must be sorted ascending unless a field explicitly represents a priority queue.",
+  "numeric_precision": "Counts are integers. Decimal scores or ratios, if any, should be rounded to 3 decimal places.",
+  "schema": {
+    "blocker_codes": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "evidence_encounter_ids": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "laterality_consistent": {
+      "type": "boolean"
+    },
+    "missing_sbar_sections": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "order_validation": {
+      "required_keys": {
+        "priority": {
+          "type": "string"
+        },
+        "service_code": {
+          "type": "string"
+        },
+        "specialty": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "patient_id": {
+      "type": "string"
+    },
+    "ready_to_sign": {
+      "type": "boolean"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "sbar_sections_present": {
+      "required_keys": {
+        "ASSESSMENT": {
+          "type": "boolean"
+        },
+        "BACKGROUND": {
+          "type": "boolean"
+        },
+        "RECOMMENDATION": {
+          "type": "boolean"
+        },
+        "SITUATION": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "title": "Orthopedic service request validation"
+}

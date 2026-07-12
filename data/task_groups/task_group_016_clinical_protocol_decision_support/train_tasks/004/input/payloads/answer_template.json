@@ -1,0 +1,37 @@
+{
+  "description": "Return one JSON object for the FHIR-style lab retrieval task.",
+  "required_top_level_keys": [
+    "patient_id",
+    "primary_protocol",
+    "query",
+    "has_matching_lab",
+    "matched_observation_ids",
+    "matched_count",
+    "first_match_date",
+    "last_match_date",
+    "excluded_observation_ids",
+    "resource_type",
+    "code_checked"
+  ],
+  "fields": {
+    "patient_id": {"type": "string"},
+    "primary_protocol": {"type": "enum", "allowed": ["FHIR_LAB_RETRIEVAL_2026"]},
+    "query": {
+      "type": "object",
+      "required": ["resourceType", "code", "month"],
+      "fields": {
+        "resourceType": {"type": "enum", "allowed": ["Observation"]},
+        "code": {"type": "string"},
+        "month": {"type": "string", "format": "YYYY-MM"}
+      }
+    },
+    "has_matching_lab": {"type": "boolean"},
+    "matched_observation_ids": {"type": "list", "items": "string", "ordering": "sort_lexicographic"},
+    "matched_count": {"type": "integer"},
+    "first_match_date": {"type": "string", "format": "YYYY-MM-DD"},
+    "last_match_date": {"type": "string", "format": "YYYY-MM-DD"},
+    "excluded_observation_ids": {"type": "list", "items": "string", "ordering": "sort_lexicographic"},
+    "resource_type": {"type": "enum", "allowed": ["Observation"]},
+    "code_checked": {"type": "string"}
+  }
+}

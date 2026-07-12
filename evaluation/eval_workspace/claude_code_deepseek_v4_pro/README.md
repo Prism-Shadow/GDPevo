@@ -1,6 +1,6 @@
 # DeepSeek V4 Pro Claude Code Evaluation Workspace
 
-This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc@3`, population `std@3`, token usage, `rounds_avg_3`, and `tool_calls_avg_3` across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
+This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc@3`, population `std@3`, solver efficiency metrics, and separately reported evolve token/cost metrics across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
 
 This workspace evaluates one task group at a time. Do not modify the task group under evaluation. If you find that the task group itself is invalid, record the risk in the report and send the data back to an earlier stage.
 
@@ -36,7 +36,7 @@ runs.
 | `task_group/` | The single official task group currently under evaluation |
 | `skills/` | Generated `fewshot`, `self`, and `reflect-3` files |
 | `runs/` | Solver outputs and scoring records for each condition, test task, and attempt |
-| `original_traces/` | Raw Dockerized Claude Code run traces copied after each solver attempt |
+| `original_traces/` | Complete raw Dockerized Claude Code traces for skill-generation runs and solver attempts |
 | `scratch/` | Temporary scripts, environment notes, and intermediate checks created by the main evaluation agent |
 | `report/` | The final evaluation report for the current task group |
 
@@ -54,7 +54,7 @@ Read these files in order before starting evaluation:
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: deepseek-v4-pro[1m] via DeepSeek Anthropic API.
-Run all four modes with acc@3/std@3 plus token, rounds, and tool-call efficiency, then write report/<task_group_id>.yaml.
+Run all four modes with acc@3/std@3, collect solver and evolve token/cost metrics, preserve complete traces, and write report/<task_group_id>.yaml.
 ```
 
 Use `.env` for the remote task environment:
@@ -110,6 +110,12 @@ skills/reflect-3/reflect-3_attempt_02/SKILL.md
 skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
+For every skill-generation run, use a dedicated mounted `CLAUDE_CONFIG_DIR` and
+unique session ID, preserve the complete raw Claude Code session trace under
+`original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/.../<claude_session_id>.jsonl`,
+and write the matching `evolve_metadata.yaml` under
+`scratch/skill_generation/` with token usage and calculated USD cost.
+
 Do not copy a whole train task or test task directory into any Claude run staging
 area. Stage only the files explicitly allowed by `guides/skill_modes.md` and
 `guides/workflow.md`.
@@ -136,9 +142,9 @@ runs/<condition>/<test_id>/attempt_<nn>/score.yaml
 runs/<condition>/<test_id>/attempt_<nn>/run_metadata.yaml
 ```
 
-7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average token, round-count, and tool-call fields for each condition. Write the final report to `report/<task_group_id>.yaml`. The report must include a `model_config` block with `provider: deepseek`,
+7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average token, round-count, tool-call, and cost fields for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. The report must include a `model_config` block with `provider: deepseek`,
 `primary_model: deepseek-v4-pro[1m]`, `haiku_model: deepseek-v4-pro[1m]`,
-`subagent_model: deepseek-v4-pro[1m]`, and `claude_code_effort: max`. The formal report field names are `input_tokens_avg_3`, `cache_creation_tokens_avg_3`, `cache_read_tokens_avg_3`, `output_tokens_avg_3`, `rounds_avg_3`, and `tool_calls_avg_3`. Raw `run_metadata.yaml` may preserve provider-specific token names such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the report schema must use the normalized field names above. These efficiency metrics only count answer-writing by test solver Claude subprocesses: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, remote environment checks, evaluator execution, or orchestrator summarization. Temporary checking or aggregation code must be placed under `scratch/`, not in the workspace root.
+`subagent_model: deepseek-v4-pro[1m]`, and `claude_code_effort: max`. The formal report field names are `input_tokens_avg_3`, `cache_creation_tokens_avg_3`, `cache_read_tokens_avg_3`, `output_tokens_avg_3`, `cost_usd_avg_3`, `rounds_avg_3`, and `tool_calls_avg_3`. Raw `run_metadata.yaml` may preserve provider-specific token names such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the report schema must use the normalized field names above. Solver efficiency only counts answer-writing by test solver Claude subprocesses: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, remote environment checks, evaluator execution, or orchestrator summarization into solver efficiency. Temporary checking or aggregation code must be placed under `scratch/`, not in the workspace root.
 
 8. Before reporting completion, verify that every scored solver attempt has a
 matched raw Claude Code trace copied under `original_traces/`, and that the

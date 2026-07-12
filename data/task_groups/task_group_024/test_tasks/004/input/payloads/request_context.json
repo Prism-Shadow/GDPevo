@@ -1,0 +1,42 @@
+{
+  "task_id": "test_004",
+  "review_type": "combined_portfolio_mix_sla_aging",
+  "business_context": "Core Services leadership is reviewing Q2 delivery risk by comparing closed-work allocation against the target portfolio mix and checking whether reliability/security SLA spillover needs escalation.",
+  "scope": {
+    "product": "Core Services",
+    "portfolio_quarter": "2026-Q2",
+    "portfolio_as_of_date": "2026-06-30",
+    "sla_as_of_date": "2026-06-30",
+    "recent_closed_window_days": 21,
+    "sla_categories": [
+      "Reliability",
+      "Security"
+    ]
+  },
+  "endpoint_hints": [
+    {
+      "description": "Portfolio work items can be filtered by product and quarter.",
+      "path": "/api/work-items?product=Core%20Services&quarter=2026-Q2"
+    },
+    {
+      "description": "Additional product work items are available for the broader review.",
+      "path": "/api/work-items?product=Core%20Services"
+    },
+    {
+      "description": "Additional item history for the product is available.",
+      "path": "/api/status-history?product=Core%20Services"
+    },
+    {
+      "description": "Portfolio targets can be filtered by product and quarter.",
+      "path": "/api/portfolio-targets?product=Core%20Services&quarter=2026-Q2"
+    },
+    {
+      "description": "SLA targets are provided by category and severity.",
+      "path": "/api/sla-policies"
+    },
+    {
+      "description": "Team and owner metadata are available.",
+      "path": "/api/teams"
+    }
+  ]
+}

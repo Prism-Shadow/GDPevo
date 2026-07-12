@@ -53,13 +53,71 @@ token_usage:                          # 按 message.id 去重、跨响应求和
   cache_creation_input_tokens: <int>
   cache_read_input_tokens: <int>
   output_tokens: <int>
+cost_usd: <float or null>
 turn_count:
   source: session_trace
   assistant_turns: <int>
 ```
 
 如果 transcript 不在预期 session 路径下，应在 `match_status` 中写入 `missing`，
-将 `session_file` 和对应 token/turn/tool-call 字段设为 `null`，不要手动估算。
+将 `session_file` 和对应 token/cost/turn/tool-call 字段设为 `null`，不要手动估算。
+
+每次 solver attempt 的 `cost_usd` 使用去重后的 token 桶，按下文 evolve runs
+相同的模型费率和公式计算。
+
+## Evolve Runs
+
+每次 `fewshot`、`self` 和 `reflect-3` skill-generation run 都必须保存：
+
+```text
+scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
+original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+推荐的 `evolve_metadata.yaml` 格式：
+
+```yaml
+evolve_attempt_id: <task_group_id>__skill_generation__<condition>__attempt_<nn>__<timestamp>
+condition: <fewshot|self|reflect-3>
+attempt: <int>
+model: claude-opus-4-8, xhigh
+skill_file: <path to generated SKILL.md>
+
+transcript:
+  claude_session_id: <uuid or null>
+  session_file: <path under original_traces/skill_generation/... or null>
+  match_status: matched
+  missing_reason: <string or null>
+
+token_usage:
+  source: session_trace
+  input_tokens: <int or null>
+  cache_creation_input_tokens: <int or null>
+  cache_read_input_tokens: <int or null>
+  output_tokens: <int or null>
+  total_tokens: <int or null>
+
+pricing:
+  basis: claude_opus_4_8_api
+  input_usd_per_million: 5.00
+  cache_creation_usd_per_million: 6.25
+  cache_read_usd_per_million: 0.50
+  output_usd_per_million: 25.00
+cost_usd: <float or null>
+```
+
+Skill-generation session 使用与 solver 相同的 `message.id` 去重规则，然后计算：
+
+```text
+cost_usd =
+  (input_tokens * 5.00
+   + cache_creation_input_tokens * 6.25
+   + cache_read_input_tokens * 0.50
+   + output_tokens * 25.00) / 1_000_000
+```
+
+`total_tokens` 是上面四个互不重叠 token 桶的总和。如果 trace 缺失或匹配不唯一，
+所有 trace 派生的 token 与费用字段保持 `null` 并记录原因，不要估算。
 
 ## acc@3
 
@@ -108,8 +166,13 @@ overall tool calls@3 = (test_001_tool_calls@3 + test_002_tool_calls@3 + test_003
 
 所有 `score.yaml` 准备完成后，主 agent 应检查四种条件、5 个 test tasks、每个 task 3 次运行是否完整。然后计算每个 task 的 `acc@3` 和 `std@3`、整体 `acc@3` 和 `std@3`，以及 `fewshot`、`self` 和 `reflect-3` 相对 `base` 的提升。
 
-主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 token 字段和 solver turns，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
+主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 token、费用字段、solver turns 和 tool calls，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
 
 这些效率指标只统计 test solver runs 写答案的过程。不包括 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总。它们不能替代 `acc@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
+
+Evolve token 与费用指标按每个非 base 条件单独聚合。对同一模式三次
+skill-generation attempts 的每个 token bucket 和美元费用分别取平均，并在 report
+中保留每次 attempt 的 token 和费用原始值。metadata 和 trace 路径仅保留在
+工作区审计文件中。不要把 evolve 用量合并到 solver 效率指标中。
 
 评估 agent 可以根据当前 task group 的 evaluator 形态，在 `scratch/` 中编写临时聚合或检查代码。

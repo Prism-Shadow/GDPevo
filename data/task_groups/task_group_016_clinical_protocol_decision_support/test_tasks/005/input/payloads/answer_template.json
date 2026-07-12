@@ -1,0 +1,53 @@
+{
+  "description": "Return one JSON object for the complex-care escalation task.",
+  "required_top_level_keys": [
+    "case_id",
+    "patient_id",
+    "primary_protocol",
+    "risk_level",
+    "program_type",
+    "chart_concerns",
+    "required_assessment_domains",
+    "consent_strategy_codes",
+    "care_plan_problem_set",
+    "disciplines",
+    "follow_up_cadence",
+    "escalation_triggers",
+    "avoid_unsupported_guarantees"
+  ],
+  "fields": {
+    "case_id": {"type": "string"},
+    "patient_id": {"type": "string"},
+    "primary_protocol": {"type": "enum", "allowed": ["COMPLEX_CARE_2026"]},
+    "risk_level": {"type": "enum", "allowed": ["low", "moderate", "high"]},
+    "program_type": {"type": "enum", "allowed": ["complex_care", "routine_care_management", "not_eligible"]},
+    "chart_concerns": {
+      "type": "list",
+      "items_enum": ["behavioral_health_history", "ckd_stage_4", "copd_exacerbation_risk", "food_insecurity", "heart_failure_recent_admission", "housing_instability", "inhaler_affordability", "missed_nephrology_followup", "missed_pulmonary_rehab", "polypharmacy", "recent_high_acuity_admissions", "transportation_barrier", "uncontrolled_diabetes", "utility_risk"],
+      "ordering": "sort_lexicographic"
+    },
+    "required_assessment_domains": {
+      "type": "list",
+      "items_enum": ["behavioral_health_safety", "copd_rescue_inhaler_use", "diabetes_medication_access", "food_insecurity", "heart_failure_symptoms", "housing_stability", "inhaler_affordability", "medication_costs", "nephrology_followup", "pulmonary_rehab_transport", "transportation", "utility_risk"],
+      "ordering": "sort_lexicographic"
+    },
+    "consent_strategy_codes": {
+      "type": "list",
+      "items_enum": ["avoid_guarantees", "bounded_process_help", "clear_voluntary_consent", "permission_before_sensitive_topics", "plain_language_condition_schedule", "plain_language_dialysis_schedule", "reflect_first_refusal"],
+      "ordering": "sort_lexicographic"
+    },
+    "care_plan_problem_set": {
+      "type": "list",
+      "items_enum": ["copd_exacerbation_prevention", "diabetes_medication_access", "food_utility_resources", "heart_failure_self_monitoring", "housing_stability", "inhaler_affordability", "kidney_followup", "pulmonary_rehab_transport", "transportation_followup"],
+      "ordering": "sort_lexicographic"
+    },
+    "disciplines": {"type": "list", "items_enum": ["behavioral_health_consultant", "care_manager", "clinical_pharmacist", "primary_care_provider", "respiratory_therapist", "social_worker"], "ordering": "sort_lexicographic"},
+    "follow_up_cadence": {"type": "enum", "allowed": ["weekly", "biweekly", "monthly"]},
+    "escalation_triggers": {
+      "type": "list",
+      "items_enum": ["dyspnea_weight_gain_or_ed_return", "glucose_extreme_or_symptomatic", "housing_loss_or_unsafe_discharge", "missed_followup_due_to_transport", "phq9_item9_or_increase", "rescue_inhaler_overuse_or_spo2_decline"],
+      "ordering": "sort_lexicographic"
+    },
+    "avoid_unsupported_guarantees": {"type": "boolean"}
+  }
+}

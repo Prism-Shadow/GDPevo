@@ -1,0 +1,62 @@
+{
+  "correction_sql": {
+    "type": "string",
+    "description": "A single safe SQLite UPDATE statement or script that applies only approved case DQ-USG-2026-04-A to usage_daily and populates audit fields."
+  },
+  "changed_row_count": {
+    "type": "integer",
+    "description": "Number of usage_daily rows changed by the approved correction."
+  },
+  "total_compute_hours_after_fix": {
+    "type": "number",
+    "precision": 2,
+    "description": "Qualified April 2026 ATLASDB compute hours for enterprise accounts after applying the correction."
+  },
+  "affected_accounts": {
+    "type": "array",
+    "ordering": "ascending account_id",
+    "items": {
+      "type": "object",
+      "required_keys": [
+        "account_id",
+        "account_name",
+        "region",
+        "corrected_usage_row_count",
+        "added_compute_hours"
+      ],
+      "field_types": {
+        "account_id": "string",
+        "account_name": "string",
+        "region": "string enum: NA, EMEA, APAC, LATAM",
+        "corrected_usage_row_count": "integer",
+        "added_compute_hours": "number with two decimals"
+      }
+    },
+    "description": "Enterprise accounts whose corrected rows qualify for the recomputed ATLASDB usage metric."
+  },
+  "top_account_after_fix": {
+    "type": "object",
+    "required_keys": [
+      "account_id",
+      "account_name",
+      "region",
+      "usage_row_count",
+      "compute_hours"
+    ],
+    "field_types": {
+      "account_id": "string",
+      "account_name": "string",
+      "region": "string enum: NA, EMEA, APAC, LATAM",
+      "usage_row_count": "integer",
+      "compute_hours": "number with two decimals"
+    },
+    "description": "The highest-compute qualified enterprise ATLASDB account after the fix, ordered by compute_hours descending and account_id ascending for ties."
+  },
+  "audit_reason": {
+    "type": "string",
+    "allowed_values": [
+      "approved correction DQ-USG-2026-04-A"
+    ],
+    "description": "Audit reason written by the correction and reported in the response."
+  }
+}

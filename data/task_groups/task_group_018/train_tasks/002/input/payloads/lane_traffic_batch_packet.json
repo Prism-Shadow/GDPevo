@@ -1,0 +1,73 @@
+{
+  "batch_id": "LAN-TV-2025-08-01-A",
+  "county": "Lane",
+  "court": "Lane County Justice Court",
+  "packet_created_at": "2025-08-01T10:15:00Z",
+  "prepared_by": "Lane traffic desk deputy clerk",
+  "work_request": "Prepare post-hearing disposition, financial assessment, and installment-plan fields for the three listed citations.",
+  "environment_records_to_consult": {
+    "citations": "Use live citation records for citation identity, violation details, and any existing approved plan dates or amounts.",
+    "fee_schedule": "Use Lane traffic fee rows active on the disposition or order date.",
+    "payment_policy": "Use Lane installment policy for minimum plan amounts and default first-due-date handling.",
+    "stale_exports": "The old financial ledger snapshot may contain similar citation numbers or older import status; use it only as a conflict warning."
+  },
+  "target_citations": [
+    "CIT-LAN-2024-00411",
+    "CIT-LAN-2025-00701",
+    "CIT-LAN-2025-00702"
+  ],
+  "bench_packet_rows": [
+    {
+      "citation_number": "CIT-LAN-2024-00411",
+      "packet_row_id": "LAN-TV-A",
+      "bench_order_date": "2024-11-08",
+      "plea_taken": "no_contest",
+      "disposition_ordered": "convicted",
+      "traffic_school_elected": false,
+      "late_fee_ordered_now": false,
+      "plan_note": "Extended plan approved at the amount and first due date already recorded on the live citation.",
+      "candidate_fee_codes_from_import_workpaper": [
+        "TR-BASE",
+        "TR-SPEED",
+        "TR-LATE"
+      ],
+      "clerk_warning": "There is a nearby stale citation import for CIT-LAN-2024-00412 under Evan Tuner. Do not merge it into this citation."
+    },
+    {
+      "citation_number": "CIT-LAN-2025-00701",
+      "packet_row_id": "LAN-TV-B",
+      "bench_order_date": "2025-07-23",
+      "plea_taken": "no_contest",
+      "disposition_ordered": "convicted",
+      "traffic_school_elected": false,
+      "late_fee_ordered_now": false,
+      "plan_note": "Defendant requested a low monthly amount; judge approved the lowest amount allowed by local policy. No first payment date was announced on the record.",
+      "candidate_fee_codes_from_import_workpaper": [
+        "TR-BASE",
+        "TR-SCHOOL",
+        "TR-231"
+      ],
+      "clerk_warning": "The live citation may still show pending because this bench row is the current post-hearing result."
+    },
+    {
+      "citation_number": "CIT-LAN-2025-00702",
+      "packet_row_id": "LAN-TV-C",
+      "bench_order_date": "2025-07-29",
+      "plea_taken": "guilty",
+      "disposition_ordered": "convicted",
+      "traffic_school_elected": false,
+      "late_fee_ordered_now": false,
+      "plan_note": "Extended plan approved at the amount and first due date already recorded on the live citation.",
+      "candidate_fee_codes_from_import_workpaper": [
+        "TR-BASE",
+        "TR-LATE",
+        "TR-SCHOOL"
+      ],
+      "clerk_warning": "A trainee worksheet included optional fees, but only charges supported by the order and active schedule should be entered."
+    }
+  ],
+  "output_notes": {
+    "entry_order": "Return citation entries ordered by citation_number ascending.",
+    "excluded_candidate_fee_codes": "For each citation, include candidate fee or charge codes from the import workpaper that are not entered in the final financial assessment."
+  }
+}

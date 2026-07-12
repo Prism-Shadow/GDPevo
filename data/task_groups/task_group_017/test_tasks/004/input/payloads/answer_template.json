@@ -1,0 +1,365 @@
+{
+  "schema_name": "test_004_ovl_integrated_production_readiness",
+  "schema_version": "1.0",
+  "description": "Return one JSON object matching this contract. Do not include this schema metadata in the response.",
+  "required_top_level_keys_in_order": [
+    "task_id",
+    "matter_id",
+    "overall_status",
+    "ready_category_ids",
+    "blocked_category_ids",
+    "category_readiness",
+    "blockers",
+    "top_blockers",
+    "notice_required",
+    "actions"
+  ],
+  "ordering_rules": {
+    "ready_category_ids": "Sort category IDs ascending.",
+    "blocked_category_ids": "Sort category IDs ascending.",
+    "category_readiness": "Include categories O-01 through O-10 only, sorted by category_id ascending.",
+    "blockers": "Sort by blocker_id ascending.",
+    "top_blockers": "Sort by rank ascending.",
+    "actions": "Sort by rank ascending.",
+    "source_event_ids": "Sort IDs lexicographically unless the row has a rank field.",
+    "document_ids": "Sort document IDs ascending.",
+    "category_ids": "Sort category IDs ascending.",
+    "blocker_ids": "Sort blocker IDs ascending unless the row has a rank field."
+  },
+  "enums": {
+    "overall_status": [
+      "ready",
+      "mixed_not_ready",
+      "blocked"
+    ],
+    "readiness_status": [
+      "ready",
+      "blocked"
+    ],
+    "blocker_code": [
+      "none",
+      "uncollected_phone_chat",
+      "missing_archive",
+      "unlogged_privilege",
+      "failed_attachments",
+      "post_hold_deletion",
+      "vendor_source_reconciliation",
+      "hold_scope_reconciliation",
+      "retention_policy_reconciliation",
+      "review_coding_reconciliation",
+      "duplicate_custodian_reconciliation",
+      "privilege_overdesignation_review",
+      "external_portal_reconciliation"
+    ],
+    "severity": [
+      "critical",
+      "high",
+      "medium",
+      "low",
+      "none"
+    ],
+    "timing_class": [
+      "not_applicable",
+      "uncollected_source",
+      "missing_archive",
+      "privilege_protocol_defect",
+      "processing_exception",
+      "post_hold_spoliation"
+    ],
+    "action": [
+      "no_action",
+      "supplemental_collection",
+      "archive_retrieval",
+      "privilege_log_supplement",
+      "reprocess_qc",
+      "regulator_notice",
+      "forensic_recovery"
+    ],
+    "owner_queue": [
+      "legal",
+      "client_it",
+      "archive_team",
+      "privilege_team",
+      "review_vendor",
+      "litigation_support"
+    ]
+  },
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_004"
+    },
+    "matter_id": {
+      "type": "string",
+      "required_value": "M-OVL-730"
+    },
+    "overall_status": {
+      "type": "enum",
+      "allowed_values_ref": "overall_status"
+    },
+    "ready_category_ids": {
+      "type": "list<string>",
+      "ordering": "Sort ascending."
+    },
+    "blocked_category_ids": {
+      "type": "list<string>",
+      "ordering": "Sort ascending."
+    },
+    "category_readiness": {
+      "type": "list<object>",
+      "required_object_keys_in_order": [
+        "category_id",
+        "readiness_status",
+        "blocker_code",
+        "severity",
+        "produced_count",
+        "withheld_privileged_count",
+        "privilege_logged_count",
+        "unlogged_privileged_count",
+        "affected_count",
+        "unrecovered_count",
+        "source_event_ids",
+        "primary_action",
+        "notice_required"
+      ],
+      "object_fields": {
+        "category_id": {
+          "type": "string",
+          "allowed_pattern": "^O-(01|02|03|04|05|06|07|08|09|10)$"
+        },
+        "readiness_status": {
+          "type": "enum",
+          "allowed_values_ref": "readiness_status"
+        },
+        "blocker_code": {
+          "type": "enum",
+          "allowed_values_ref": "blocker_code"
+        },
+        "severity": {
+          "type": "enum",
+          "allowed_values_ref": "severity"
+        },
+        "produced_count": {
+          "type": "integer"
+        },
+        "withheld_privileged_count": {
+          "type": "integer"
+        },
+        "privilege_logged_count": {
+          "type": "integer"
+        },
+        "unlogged_privileged_count": {
+          "type": "integer",
+          "calculation_note": "Use withheld_privileged_count minus privilege_logged_count for privilege-log gap categories; otherwise use 0."
+        },
+        "affected_count": {
+          "type": "integer",
+          "units": "records_or_sources"
+        },
+        "unrecovered_count": {
+          "type": "integer",
+          "units": "records_or_sources"
+        },
+        "source_event_ids": {
+          "type": "list<string>",
+          "ordering": "Sort lexicographically."
+        },
+        "primary_action": {
+          "type": "enum",
+          "allowed_values_ref": "action"
+        },
+        "notice_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "blockers": {
+      "type": "list<object>",
+      "required_object_keys_in_order": [
+        "blocker_id",
+        "category_id",
+        "blocker_code",
+        "severity",
+        "timing_class",
+        "affected_count",
+        "recovered_count",
+        "unrecovered_count",
+        "unlogged_privileged_count",
+        "source_event_ids",
+        "document_ids",
+        "primary_action",
+        "notice_required"
+      ],
+      "object_fields": {
+        "blocker_id": {
+          "type": "string",
+          "format": "BLK-O##-SHORT-LABEL"
+        },
+        "category_id": {
+          "type": "string"
+        },
+        "blocker_code": {
+          "type": "enum",
+          "allowed_values_ref": "blocker_code"
+        },
+        "severity": {
+          "type": "enum",
+          "allowed_values_ref": "severity"
+        },
+        "timing_class": {
+          "type": "enum",
+          "allowed_values_ref": "timing_class"
+        },
+        "affected_count": {
+          "type": "integer"
+        },
+        "recovered_count": {
+          "type": "integer"
+        },
+        "unrecovered_count": {
+          "type": "integer"
+        },
+        "unlogged_privileged_count": {
+          "type": "integer"
+        },
+        "source_event_ids": {
+          "type": "list<string>",
+          "ordering": "Sort lexicographically."
+        },
+        "document_ids": {
+          "type": "list<string>",
+          "ordering": "Sort ascending."
+        },
+        "primary_action": {
+          "type": "enum",
+          "allowed_values_ref": "action"
+        },
+        "notice_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "top_blockers": {
+      "type": "list<object>",
+      "required_object_keys_in_order": [
+        "rank",
+        "blocker_id",
+        "category_id",
+        "blocker_code",
+        "primary_action",
+        "notice_required"
+      ],
+      "object_fields": {
+        "rank": {
+          "type": "integer",
+          "description": "Starting at 1."
+        },
+        "blocker_id": {
+          "type": "string"
+        },
+        "category_id": {
+          "type": "string"
+        },
+        "blocker_code": {
+          "type": "enum",
+          "allowed_values_ref": "blocker_code"
+        },
+        "primary_action": {
+          "type": "enum",
+          "allowed_values_ref": "action"
+        },
+        "notice_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "notice_required": {
+      "type": "object",
+      "required_keys_in_order": [
+        "overall_notice_required",
+        "notice_category_ids",
+        "notice_blocker_ids",
+        "spoliation_notice_required",
+        "privilege_protocol_notice_required",
+        "collection_gap_notice_required",
+        "archive_notice_required",
+        "processing_notice_required"
+      ],
+      "fields": {
+        "overall_notice_required": {
+          "type": "boolean"
+        },
+        "notice_category_ids": {
+          "type": "list<string>",
+          "ordering": "Sort category IDs ascending."
+        },
+        "notice_blocker_ids": {
+          "type": "list<string>",
+          "ordering": "Sort blocker IDs ascending."
+        },
+        "spoliation_notice_required": {
+          "type": "boolean"
+        },
+        "privilege_protocol_notice_required": {
+          "type": "boolean"
+        },
+        "collection_gap_notice_required": {
+          "type": "boolean"
+        },
+        "archive_notice_required": {
+          "type": "boolean"
+        },
+        "processing_notice_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "actions": {
+      "type": "list<object>",
+      "required_object_keys_in_order": [
+        "rank",
+        "action_id",
+        "action",
+        "category_ids",
+        "blocker_ids",
+        "owner_queue",
+        "required_before_production",
+        "notice_required"
+      ],
+      "object_fields": {
+        "rank": {
+          "type": "integer",
+          "description": "Starting at 1."
+        },
+        "action_id": {
+          "type": "string"
+        },
+        "action": {
+          "type": "enum",
+          "allowed_values_ref": "action"
+        },
+        "category_ids": {
+          "type": "list<string>",
+          "ordering": "Sort category IDs ascending."
+        },
+        "blocker_ids": {
+          "type": "list<string>",
+          "ordering": "Sort blocker IDs ascending."
+        },
+        "owner_queue": {
+          "type": "enum",
+          "allowed_values_ref": "owner_queue"
+        },
+        "required_before_production": {
+          "type": "boolean"
+        },
+        "notice_required": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "field_conventions": {
+    "blocker_code": "Select the best blocker code from the generic candidate pool; the enum intentionally contains distractors and is not a list of expected blockers."
+  }
+}

@@ -16,6 +16,31 @@ scenario_id: <scenario_id>
 model: <model_name_or_config>
 harness: codex
 
+evolve:
+  pricing:
+    basis: standard_api_text_token_equivalent
+    uncached_input_usd_per_million: 5.00
+    cached_input_usd_per_million: 0.50
+    output_usd_per_million: 30.00
+  conditions:
+    fewshot:
+      attempts:
+        attempt_01:
+          input_tokens: <int or null>
+          cached_input_tokens: <int or null>
+          output_tokens: <int or null>
+          total_tokens: <int or null>
+          cost_usd: <float or null>
+        attempt_02: <same shape as attempt_01>
+        attempt_03: <same shape as attempt_01>
+      summary:
+        input_tokens_avg_3: <float or null>
+        cached_input_tokens_avg_3: <float or null>
+        output_tokens_avg_3: <float or null>
+        cost_usd_avg_3: <float or null>
+    self: <same shape as fewshot>
+    reflect-3: <same shape as fewshot>
+
 conditions:
   base:
     overall_acc_at_3: <float>
@@ -88,6 +113,12 @@ conditions:
 - Token fields come from the Codex session traces copied under
   `original_traces/`. If a trace cannot be matched uniquely, write `null` and
   preserve the trace issue in the corresponding run record.
+- `evolve` contains only skill-generation usage for the three non-base modes.
+  Preserve all 3 attempt token and cost records. Keep metadata and raw trace
+  paths in workspace audit files rather than the formal report. The summary
+  retains the arithmetic `avg_3` for every token bucket and for USD cost.
+- Calculate evolve cost with the pricing block recorded in the report. Cached
+  input is a subset of input; do not double-count it.
 - Efficiency metrics follow the same aggregation shape as `acc@3`: average the
   3 attempts for the same test task, then average the 5 test tasks.
 - Efficiency metrics only count answer-writing by test solver subagents. Do not

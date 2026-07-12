@@ -1,0 +1,7 @@
+Lane County Justice Court needs a post-hearing traffic batch prepared for clerk entry.
+
+Use the shared clerk operations environment at <TASK_ENV_BASE_URL>.
+
+The local packet is in `input/payloads/lane_traffic_batch_packet.json`, and the required response shape is defined in `input/payloads/answer_template.json`. Prepare one JSON response for the three citations in the packet. Use the citation number as the case/account reference when the live citation record does not provide a separate case number.
+
+The output should be ready for financial entry review: identify the final plea and disposition values, assessed traffic components and totals, candidate charges that should not be entered, and the installment plan structure for each citation. Keep amounts in dollars to two decimals and dates in ISO `YYYY-MM-DD` format.

@@ -1,0 +1,117 @@
+{
+  "allowed_enums": {
+    "audit_status": [
+      "READY_FOR_MERGE",
+      "BLOCKED_ADDRESS_CONFLICT",
+      "NO_EVENT_FOUND"
+    ],
+    "boolean": [
+      true,
+      false
+    ],
+    "disposition": [
+      "MERGE_READY",
+      "NEEDS_CLARIFICATION",
+      "DO_NOT_MERGE"
+    ],
+    "priority_tier": [
+      "TIER_1_IMMEDIATE",
+      "TIER_2_SHORT_TERM",
+      "TIER_3_ADMINISTRATIVE"
+    ],
+    "readiness": [
+      "READY",
+      "READY_WITH_WARNINGS",
+      "BLOCKED_INCOMPLETE_PACKET",
+      "NEEDS_CLARIFICATION",
+      "BLOCKED_ORDER_SAFETY"
+    ],
+    "send_ready": [
+      "READY",
+      "NEEDS_CLARIFICATION",
+      "BLOCKED"
+    ]
+  },
+  "date_format": "YYYY-MM-DD for dates; ISO 8601 for timestamps.",
+  "environment_base_url_placeholder": "<TASK_ENV_BASE_URL>",
+  "instructions": "Return one JSON object. Use the keys, field types, enum casing, and list ordering defined here. Do not include explanatory prose outside JSON.",
+  "list_ordering": "Lists of stable identifiers must be sorted ascending unless a field explicitly represents a priority queue.",
+  "numeric_precision": "Counts are integers. Decimal scores or ratios, if any, should be rounded to 3 decimal places.",
+  "schema": {
+    "allergy_update": {
+      "required_keys": {
+        "allergen": {
+          "type": "string"
+        },
+        "reaction": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "diagnosis_update": {
+      "required_keys": {
+        "code": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "letter_merge_fields": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "patient_id": {
+      "type": "string"
+    },
+    "recent_encounter_ids": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "referral_id": {
+      "type": "string"
+    },
+    "referral_target": {
+      "required_keys": {
+        "provider_id": {
+          "type": "string"
+        },
+        "specialty": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "safety_flags": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "send_ready": {
+      "type": "string"
+    },
+    "unresolved_quality_issues": {
+      "items": "string_or_object_as_defined_by_field_name",
+      "ordering": "sort IDs ascending where the list contains IDs",
+      "type": "list"
+    }
+  },
+  "title": "Cardiology referral chart-update decision"
+}

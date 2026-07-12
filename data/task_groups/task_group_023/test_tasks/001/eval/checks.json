@@ -1,0 +1,74 @@
+[
+  {
+    "goal": "Correct analytic state count and exclusions.",
+    "paths": [
+      "sample.states_in_model",
+      "sample.excluded_states"
+    ],
+    "weight": 2
+  },
+  {
+    "goal": "Correct current-year Total obesity and life-expectancy filters.",
+    "paths": [
+      "filters.exposure_measure_id",
+      "filters.outcome_measure_id",
+      "filters.stratum_type",
+      "filters.stratum"
+    ],
+    "weight": 3
+  },
+  {
+    "goal": "Correct state-level SES join convention.",
+    "paths": [
+      "filters.state_level_ses_rows_only"
+    ],
+    "weight": 2
+  },
+  {
+    "goal": "Correct bivariate standardized obesity effect.",
+    "paths": [
+      "model.bivariate_std_beta",
+      "model.bivariate_p_bucket"
+    ],
+    "weight": 2
+  },
+  {
+    "goal": "Correct adjusted attenuation result.",
+    "paths": [
+      "model.adjusted_std_beta",
+      "model.adjusted_p_bucket",
+      "model.attenuation_pct"
+    ],
+    "weight": 3
+  },
+  {
+    "goal": "Correct VIF bucket and culprit pair.",
+    "paths": [
+      "diagnostics.max_vif_bucket",
+      "diagnostics.culprit_pair"
+    ],
+    "weight": 2
+  },
+  {
+    "goal": "Correct regional ICC bucket.",
+    "paths": [
+      "diagnostics.regional_icc_bucket"
+    ],
+    "weight": 1
+  },
+  {
+    "goal": "Correct high-leverage sensitivity verdict.",
+    "paths": [
+      "diagnostics.high_leverage_states",
+      "diagnostics.sensitivity_verdict"
+    ],
+    "weight": 3
+  },
+  {
+    "goal": "Correct final claim-support enum.",
+    "paths": [
+      "conclusion"
+    ],
+    "weight": 2
+  }
+]

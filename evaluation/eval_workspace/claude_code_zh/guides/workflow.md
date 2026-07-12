@@ -91,7 +91,22 @@ scratch/skill_generation/reflect-3_attempt_03/
 - `reflect-3`：train inputs、远程环境入口、judge API 调用说明；无 train
   answers。
 
-Skill-generation token 用量不计入 solver 效率指标。
+每次 skill-generation run 都创建专用挂载的 Claude config 目录和唯一 session
+ID，并将完整 session trace 保存到：
+
+```text
+original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+对应的用量记录写到：
+
+```text
+scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
+```
+
+按照 solver run 相同的 `message.id` 去重规则从 session trace 回填各 token 桶，
+再按 `metric_and_scoring.md` 中的价格计算费用。Skill-generation token 用量作为
+evolve 用量单独报告，不计入 solver 效率指标。
 
 ## 4. 运行 Test Solvers
 
@@ -165,6 +180,11 @@ original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanit
 test solver 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对
 5 个 test tasks 取平均。不要包含 skill generation、远程环境检查、evaluator
 执行或主 agent 汇总。
+
+另行把每个非 base 模式的 3 份 skill-generation trace 和
+`evolve_metadata.yaml` 聚合到 report 顶层 `evolve` 区块。metadata 和 trace 路径
+仅保留在工作区审计文件中。正式 report 只保留每次 attempt 的 token 和费用
+字段，以及三次 attempt 的每个 token bucket 和美元费用算术平均值。
 
 ## 6. 解释结果
 

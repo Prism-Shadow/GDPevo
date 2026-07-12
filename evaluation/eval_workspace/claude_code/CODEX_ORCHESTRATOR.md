@@ -50,18 +50,26 @@ path in reusable instructions.
 
 ## Trace Preservation
 
-Preserve the raw Claude Code session file as the primary trace. Create the
-mounted Claude config directory under the attempt trace directory, set
+Preserve the complete raw Claude Code session file as the primary trace. Create
+the mounted Claude config directory under the matching trace directory, set
 `CLAUDE_CONFIG_DIR=/claude_config` only when launching the agent process, pass a
 unique `--session-id`, and preserve the resulting file from:
 
 ```text
+original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
 original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+For each skill-generation run, also write the matching token and cost record:
+
+```text
+scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
 ```
 
 Do not require stdout/stderr command logs as formal trace artifacts, do not use
 `--no-session-persistence`, and do not rely on searching the user's global
 `~/.claude` after the run.
 
-A Docker run is not complete until `answer.json` or `SKILL.md` and the primary
-session trace or its missing reason have been preserved.
+A Docker run is not complete until `answer.json` or `SKILL.md`, the primary
+session trace or its missing reason, and the corresponding run/evolve metadata
+have been preserved.

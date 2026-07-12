@@ -1,0 +1,310 @@
+{
+  "description": "Required JSON output for the August 2026 south-region fleet fuel mismatch audit.",
+  "required_top_level_keys": [
+    "region",
+    "period",
+    "purchase_count_evaluated",
+    "mismatch_purchase_ids",
+    "exception_purchase_ids",
+    "vehicle_review_queue",
+    "gallons_by_canonical_fuel",
+    "vendor_mismatch_counts",
+    "alias_issue_counts",
+    "decision_audit",
+    "source_delta_audit",
+    "transaction_reconciliation",
+    "operations_load_decision_audit"
+  ],
+  "controlled_enums": {
+    "fuel_class": [
+      "diesel",
+      "unleaded",
+      "premium_unleaded",
+      "electric",
+      "hybrid",
+      "unknown"
+    ]
+  },
+  "fields": {
+    "region": {
+      "type": "string",
+      "allowed_values": [
+        "north",
+        "south",
+        "west",
+        "east"
+      ]
+    },
+    "period": {
+      "type": "string",
+      "format": "YYYY-MM"
+    },
+    "purchase_count_evaluated": {
+      "type": "integer",
+      "description": "Count of effective purchase records evaluated for canonical fuel totals and mismatch review."
+    },
+    "mismatch_purchase_ids": {
+      "type": "list[string]",
+      "ordering": "ascending purchase_id",
+      "description": "Effective purchase IDs requiring mismatch review, excluding business exceptions."
+    },
+    "exception_purchase_ids": {
+      "type": "list[string]",
+      "ordering": "ascending purchase_id",
+      "description": "Purchase IDs kept out of the mismatch queue because of effective-record or vehicle-exception handling."
+    },
+    "vehicle_review_queue": {
+      "type": "list[object]",
+      "ordering": "ascending vehicle_id, then ascending observed_fuel",
+      "item_required_keys": [
+        "vehicle_id",
+        "expected_fuel",
+        "observed_fuel",
+        "purchase_ids"
+      ],
+      "item_field_types": {
+        "vehicle_id": "string",
+        "expected_fuel": "fuel_class",
+        "observed_fuel": "fuel_class",
+        "purchase_ids": "list[string]"
+      }
+    },
+    "gallons_by_canonical_fuel": {
+      "type": "object",
+      "required_keys": [
+        "diesel",
+        "unleaded",
+        "premium_unleaded",
+        "electric",
+        "hybrid",
+        "unknown"
+      ],
+      "value_type": "number",
+      "units": "gallons",
+      "precision": 2
+    },
+    "vendor_mismatch_counts": {
+      "type": "object",
+      "key_type": "vendor name",
+      "value_type": "integer",
+      "description": "Include vendors with at least one purchase in mismatch_purchase_ids."
+    },
+    "alias_issue_counts": {
+      "type": "object",
+      "required_keys": [
+        "priority_overlap_matches",
+        "generic_unleaded_traps",
+        "ambiguous_unknown_matches",
+        "unmapped_descriptions"
+      ],
+      "value_type": "integer",
+      "description": "Counts are based on effective purchase records in scope."
+    },
+    "decision_audit": {
+      "type": "object",
+            "required_keys": [
+                "alias_priority_purchase_ids",
+                "generic_unleaded_trap_purchase_ids",
+                "unknown_alias_purchase_ids",
+                "unmapped_description_purchase_ids",
+                "void_purchase_ids",
+                "amended_purchase_ids",
+                "superseded_purchase_ids",
+                "vehicle_exception_purchase_ids",
+                "zero_gallon_purchase_ids",
+                "alias_resolution_trace"
+            ],
+            "fields": {
+                "alias_priority_purchase_ids": {
+                    "type": "list[string]",
+                    "ordering": "ascending purchase_id",
+          "description": "Effective purchase IDs whose product description matches multiple aliases and needs priority resolution."
+        },
+        "generic_unleaded_trap_purchase_ids": {
+          "type": "list[string]",
+          "ordering": "ascending purchase_id",
+          "description": "Effective purchase IDs where generic unleaded also matches a more specific unleaded alias."
+        },
+                "unknown_alias_purchase_ids": {
+                    "type": "list[string]",
+                    "ordering": "ascending purchase_id",
+                    "description": "Effective purchase IDs whose selected alias maps to unknown fuel."
+                },
+                "unmapped_description_purchase_ids": {
+                    "type": "list[string]",
+                    "ordering": "ascending purchase_id",
+                    "description": "Effective purchase IDs whose product description matches no fuel alias."
+                },
+                "void_purchase_ids": {
+                    "type": "list[string]",
+                    "ordering": "ascending purchase_id",
+                    "description": "In-scope purchase IDs excluded because record_status is void."
+                },
+                "amended_purchase_ids": {
+                    "type": "list[string]",
+                    "ordering": "ascending purchase_id",
+                    "description": "In-scope purchase IDs retained as amendment records."
+                },
+                "superseded_purchase_ids": {
+                    "type": "list[string]",
+                    "ordering": "ascending purchase_id",
+                    "description": "In-scope purchase IDs replaced by an amendment."
+                },
+                "vehicle_exception_purchase_ids": {
+                    "type": "list[string]",
+                    "ordering": "ascending purchase_id",
+                    "description": "Effective purchases whose observed fuel does not match the vehicle but whose vehicle has a business exception."
+                },
+                "zero_gallon_purchase_ids": {
+                    "type": "list[string]",
+                    "ordering": "ascending purchase_id",
+                    "description": "Effective purchases with zero gallons."
+                },
+                "alias_resolution_trace": {
+                    "type": "list[object]",
+                    "ordering": "ascending purchase_id",
+                    "description": "Business evidence rows for effective purchases with nontrivial alias resolution.",
+                    "item_required_keys": [
+                        "purchase_id",
+                        "selected_alias",
+                        "canonical_fuel",
+                        "matched_aliases",
+                        "audit_reasons"
+                    ],
+                    "item_field_types": {
+                        "purchase_id": "string",
+                        "selected_alias": "string",
+                        "canonical_fuel": "fuel_class",
+                        "matched_aliases": "list[string]",
+                        "audit_reasons": "list[string]"
+                    },
+                    "audit_reason_allowed_values": [
+                        "priority_overlap",
+                        "generic_unleaded_trap",
+                        "selected_unknown_alias",
+                        "unmapped_description"
+                    ]
+                }
+            }
+        },
+        "source_delta_audit": {
+          "type": "object",
+          "required_keys": [
+            "api_only_current_purchase_ids",
+            "csv_only_legacy_purchase_ids",
+            "csv_stale_purchase_ids",
+            "source_disagreement_transaction_keys",
+            "csv_records_excluded_from_operational_totals",
+            "source_delta_counts"
+          ],
+          "description": "Reconciliation evidence between current API purchase records and the monthly CSV export snapshot.",
+          "fields": {
+            "api_only_current_purchase_ids": {
+              "type": "list[string]",
+              "ordering": "ascending purchase_id"
+            },
+            "csv_only_legacy_purchase_ids": {
+              "type": "list[string]",
+              "ordering": "ascending purchase_id"
+            },
+            "csv_stale_purchase_ids": {
+              "type": "list[string]",
+              "ordering": "ascending purchase_id"
+            },
+            "source_disagreement_transaction_keys": {
+              "type": "list[string]",
+              "ordering": "ascending transaction_key"
+            },
+            "csv_records_excluded_from_operational_totals": {
+              "type": "list[string]",
+              "ordering": "ascending purchase_id"
+            },
+            "source_delta_counts": {
+              "type": "object[string, integer]",
+              "required_keys": [
+                "api_only_current_records",
+                "csv_only_legacy_records",
+                "csv_stale_records",
+                "disagreement_transaction_keys",
+                "csv_records_excluded_from_operational_totals"
+              ]
+            }
+          }
+        },
+        "transaction_reconciliation": {
+          "type": "list[object]",
+          "ordering": "ascending transaction_key",
+          "description": "Rows for transactions whose current API and CSV export states disagree.",
+          "item_required_keys": [
+            "transaction_key",
+            "current_api_purchase_ids",
+            "excluded_purchase_ids",
+            "csv_export_purchase_ids",
+            "reconciliation_status"
+          ],
+          "item_field_types": {
+            "transaction_key": "string",
+            "current_api_purchase_ids": "list[string]",
+            "excluded_purchase_ids": "list[string]",
+            "csv_export_purchase_ids": "list[string]",
+            "reconciliation_status": "enum"
+          },
+          "reconciliation_status_allowed_values": [
+            "api_current_replaces_stale_csv",
+            "csv_only_legacy",
+            "csv_extra_legacy",
+            "csv_stale_status"
+          ]
+        },
+        "operations_load_decision_audit": {
+          "type": "list[object]",
+          "ordering": "ascending purchase_id",
+          "description": "Business action audit for purchase records affected by mismatch, exception, amendment, or source-snapshot handling.",
+          "item_required_keys": [
+            "purchase_id",
+            "source_action",
+            "ops_action",
+            "owner",
+            "metric_effect",
+            "decision_reasons"
+          ],
+          "item_field_types": {
+            "purchase_id": "string",
+            "source_action": "enum",
+            "ops_action": "enum",
+            "owner": "enum",
+            "metric_effect": "enum",
+            "decision_reasons": "list[enum]"
+          },
+          "source_action_allowed_values": [
+            "current_api_loaded",
+            "csv_snapshot_excluded"
+          ],
+          "ops_action_allowed_values": [
+            "mismatch_review",
+            "exception_documented",
+            "source_snapshot_review",
+            "superseded_record",
+            "no_ops_review"
+          ],
+          "owner_allowed_values": [
+            "regional_ops",
+            "source_integrations",
+            "none"
+          ],
+          "metric_effect_allowed_values": [
+            "included_in_fuel_totals",
+            "included_exception_not_mismatch",
+            "excluded_from_totals"
+          ],
+          "decision_reason_allowed_values": [
+            "expected_fuel_mismatch",
+            "vehicle_exception",
+            "superseded_by_api",
+            "csv_stale_record",
+            "csv_only_legacy",
+            "api_current_amendment"
+          ]
+        }
+    }
+}

@@ -51,9 +51,18 @@ path in reusable instructions.
 
 ## Trace Preservation
 
-Preserve the raw Codex session file as the primary trace. Create the mounted
-Codex home under the attempt trace directory, set `CODEX_HOME=/codex_home` only
-when launching the agent process, and preserve the resulting file from:
+Preserve the complete raw Codex session file as the primary trace. Create a
+dedicated mounted Codex home for every skill-generation run and solver attempt,
+set `CODEX_HOME=/codex_home` only when launching that agent process, and keep
+the resulting `rollout-*.jsonl` file in place.
+
+For skill-generation runs, use:
+
+```text
+original_traces/skill_generation/<condition>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+```
+
+For test solver attempts, use:
 
 ```text
 original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
@@ -63,5 +72,6 @@ Do not require stdout/stderr command logs as formal trace artifacts, do not trea
 stdout JSONL as a replacement for the raw `rollout-*.jsonl` session trace, and
 do not rely on searching the user's global `~/.codex` after the run.
 
-A Docker run is not complete until `answer.json` or `SKILL.md` and the primary
-session trace or its missing reason have been preserved.
+A Docker run is not complete until `answer.json` or `SKILL.md`, the complete
+primary session trace or its missing reason, and the corresponding metadata
+record have been preserved.

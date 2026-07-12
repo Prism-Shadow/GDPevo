@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TASK_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+PREDICTION_PATH="${1:-${TASK_DIR}/output/answer.json}"
+GOLD_PATH="${TASK_DIR}/output/answer.json"
+
+python3 "${SCRIPT_DIR}/evaluator.py" "${PREDICTION_PATH}" "${GOLD_PATH}"

@@ -16,6 +16,34 @@ scenario_id: <scenario_id>
 model: <model_name_or_config>
 harness: claude_code
 
+evolve:
+  pricing:
+    basis: claude_opus_4_8_api
+    input_usd_per_million: 5.00
+    cache_creation_usd_per_million: 6.25
+    cache_read_usd_per_million: 0.50
+    output_usd_per_million: 25.00
+  conditions:
+    fewshot:
+      attempts:
+        attempt_01:
+          input_tokens: <int or null>
+          cache_creation_tokens: <int or null>
+          cache_read_tokens: <int or null>
+          output_tokens: <int or null>
+          total_tokens: <int or null>
+          cost_usd: <float or null>
+        attempt_02: <same shape as attempt_01>
+        attempt_03: <same shape as attempt_01>
+      summary:
+        input_tokens_avg_3: <float or null>
+        cache_creation_tokens_avg_3: <float or null>
+        cache_read_tokens_avg_3: <float or null>
+        output_tokens_avg_3: <float or null>
+        cost_usd_avg_3: <float or null>
+    self: <same shape as fewshot>
+    reflect-3: <same shape as fewshot>
+
 conditions:
   base:
     overall_acc_at_3: <float>
@@ -25,6 +53,7 @@ conditions:
       cache_creation_tokens_avg_3: <float or null>
       cache_read_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
+      cost_usd_avg_3: <float or null>
       rounds_avg_3: <float or null>
       tool_calls_avg_3: <float or null>
     tasks:
@@ -39,6 +68,7 @@ conditions:
         cache_creation_tokens_avg_3: <float or null>
         cache_read_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
+        cost_usd_avg_3: <float or null>
         rounds_avg_3: <float or null>
         tool_calls_avg_3: <float or null>
       test_002: <same shape as test_001>
@@ -87,8 +117,16 @@ conditions:
 - Token 字段来自写入 `original_traces/.../claude_config/` 下、并按
   `message.id` 去重后的 Claude Code session traces。如果 transcript 缺失，应写
   `null`，并在对应 run record 中保留问题。
+- `evolve` 只记录三个非 base 模式的 skill-generation 用量。保留 3 次 attempt
+  的 token 和费用记录。metadata 和原始 trace 路径仅保留在工作区审计文件中，
+  不写入正式 report；summary 保留每个 token bucket 和美元费用的三次
+  算术平均值。
+- Evolve 费用使用 report 中记录的 pricing 区块计算。Claude 的四个 token 桶互不
+  重叠，各计费一次。
 - 效率指标和 `acc@3` 使用相同聚合方式：先对同一个 test task 的 3 次
   attempts 取平均，再对 5 个 test tasks 取平均。
+- `cost_usd_avg_3` 使用 `evolve.pricing` 中记录的同一模型费率，并采用相同的
+  task 后 condition 两级聚合方式。
 - 效率指标只统计 test solver runs 写答案的过程。不要包含 skill
   generation、远程环境检查、evaluator 执行或主 agent 汇总。
 - 如果任何 test attempt 因访问或泄漏禁止材料而污染，应将其排除出 report

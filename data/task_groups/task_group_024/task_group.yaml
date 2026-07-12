@@ -1,0 +1,347 @@
+task_group:
+  task_group_id: task_group_024
+  scenario_id: SCN_024_engineering_portfolio_work_item_analytics
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Data Analysis
+  description: |
+    Train-predict benchmark for engineering portfolio, work item, SLA, and
+    release-readiness analytics. Tasks use one shared Engineering Ops
+    environment containing generated work items, status history, releases,
+    milestones, blockers, dependencies, portfolio targets, owners, teams, and
+    policy documents. Train and test tasks are formal business-analysis tasks
+    from the same distribution: portfolio mix reviews, reliability/security SLA
+    aging reviews, release gate rollups, and combined delivery-risk decisions.
+    The release-readiness train anchor was reworked to use Ledger Flow 2026.1
+    with active gates so test release-gate reconstruction has a real train
+    counterpart.
+
+env:
+  setup: env/setup.sh
+  files:
+    - env/setup.sh
+    - env/server.py
+    - env/judge_api.py
+    - env/generate_data.py
+    - env/manifest.json
+    - env/data/blockers.json
+    - env/data/construction_index.json
+    - env/data/dependencies.json
+    - env/data/documents.json
+    - env/data/milestone_items.json
+    - env/data/milestones.json
+    - env/data/owners.json
+    - env/data/portfolio_targets.json
+    - env/data/releases.json
+    - env/data/sla_policies.json
+    - env/data/status_history.json
+    - env/data/teams.json
+    - env/data/work_items.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/request_context.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Eligible completed non-cancelled work item set and total.
+          weight: 3
+        - goal: Portfolio category counts.
+          weight: 3
+        - goal: Actual percentages, target percentages, and gap basis points.
+          weight: 2
+        - goal: Under-invested category set.
+          weight: 2
+        - goal: Largest negative gap category.
+          weight: 1
+        - goal: Follow-up action enum and owner team mapping.
+          weight: 2
+        - goal: Evidence sample IDs by category.
+          weight: 1
+
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+      - train_tasks/002/input/payloads/request_context.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: Included effective reliability/security SLA population.
+          weight: 3
+        - goal: Overdue work item ID set.
+          weight: 3
+        - goal: Aging bucket counts.
+          weight: 2
+        - goal: Owner and team hotspot rankings.
+          weight: 2
+        - goal: Duplicate cluster representatives and members.
+          weight: 2
+        - goal: Escaped S1/S2 included item count.
+          weight: 1
+        - goal: Missing-owner overdue triage set.
+          weight: 1
+
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+      - train_tasks/003/input/payloads/request_context.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: Ship decision enum.
+          weight: 3
+        - goal: Gating work item ID set.
+          weight: 3
+        - goal: Milestone completion percentages.
+          weight: 2
+        - goal: Blocker cause counts.
+          weight: 2
+        - goal: Critical dependency chain.
+          weight: 2
+        - goal: Release risk tier.
+          weight: 1
+        - goal: Owner escalation ID set.
+          weight: 1
+
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+      - train_tasks/004/input/payloads/request_context.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: Eligible completed Data Platform Q1 work item set and total.
+          weight: 3
+        - goal: Portfolio category counts.
+          weight: 3
+        - goal: Actual percentages, target percentages, and gap basis points.
+          weight: 2
+        - goal: Under-invested category set.
+          weight: 2
+        - goal: Largest negative gap category.
+          weight: 1
+        - goal: Follow-up action enum and owner-team mapping.
+          weight: 2
+        - goal: Evidence sample IDs by category.
+          weight: 1
+
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+      - train_tasks/005/input/payloads/request_context.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: Included effective reliability/security SLA population.
+          weight: 3
+        - goal: Overdue work item ID set.
+          weight: 3
+        - goal: Aging bucket counts.
+          weight: 2
+        - goal: Owner and team hotspot rankings.
+          weight: 2
+        - goal: Duplicate cluster representatives and included members.
+          weight: 2
+        - goal: Escaped S1/S2 included item count.
+          weight: 1
+        - goal: Overdue missing-owner triage set.
+          weight: 1
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+      - test_tasks/001/input/payloads/request_context.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Eligible closed-work item set and total match the quarter-end scope.
+          weight: 3
+        - goal: Category counts match portfolio classification precedence.
+          weight: 3
+        - goal: Actual percentages, target percentages, and gap basis points match rounding rules.
+          weight: 2
+        - goal: Under-invested category set matches the negative-gap threshold.
+          weight: 2
+        - goal: Largest negative gap category is correct.
+          weight: 1
+        - goal: Follow-up action enum and owner-team mapping are correct.
+          weight: 2
+        - goal: Evidence sample IDs per category are correct.
+          weight: 1
+
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+      - test_tasks/002/input/payloads/request_context.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: Included effective Mobile Platform Reliability/Security population.
+          weight: 3
+        - goal: Overdue work item ID set.
+          weight: 3
+        - goal: Aging bucket counts.
+          weight: 2
+        - goal: Ranked owner and team overdue hotspots.
+          weight: 2
+        - goal: Duplicate cluster representatives and included members.
+          weight: 2
+        - goal: Escaped S1/S2 included item count.
+          weight: 1
+        - goal: Overdue missing-owner work item IDs.
+          weight: 2
+
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+      - test_tasks/003/input/payloads/request_context.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: Ship decision enum matches release gate policy.
+          weight: 3
+        - goal: Gating work item ID set matches active critical-path blockers.
+          weight: 3
+        - goal: Milestone completion percentages match readiness rules.
+          weight: 2
+        - goal: Blocker cause counts match active blockers attached to gating work.
+          weight: 2
+        - goal: Critical dependency chain matches the ordered representative chain.
+          weight: 2
+        - goal: Release risk tier matches readiness policy.
+          weight: 1
+        - goal: Owner escalation ID set matches gating item ownership.
+          weight: 1
+
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+      - test_tasks/004/input/payloads/request_context.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: Portfolio eligible completed-work item set and total.
+          weight: 1
+        - goal: Portfolio category counts.
+          weight: 3
+        - goal: Portfolio under-invested categories and follow-up allocation action.
+          weight: 1
+        - goal: SLA included reliability/security population.
+          weight: 1
+        - goal: SLA overdue work item set.
+          weight: 1
+        - goal: SLA owner and team hotspot ranking.
+          weight: 1
+        - goal: Duplicate cluster and missing-owner triage.
+          weight: 3
+        - goal: Combined action enum.
+          weight: 3
+
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+      - test_tasks/005/input/payloads/request_context.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: Release ship decision matches the readiness gate result.
+          weight: 2
+        - goal: Gating work item set matches active critical release gates.
+          weight: 3
+        - goal: Milestone completion percentages match by milestone.
+          weight: 2
+        - goal: Blocker cause counts match controlled release blocker causes.
+          weight: 2
+        - goal: Critical dependency chain matches the lexicographically smallest qualifying chain.
+          weight: 2
+        - goal: Release-scoped portfolio eligible closed-work set matches.
+          weight: 3
+        - goal: Portfolio category counts, percentages, gaps, under-investment, and follow-up mapping match.
+          weight: 3
+        - goal: Combined action enum matches the release and portfolio result.
+          weight: 1

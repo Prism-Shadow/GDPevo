@@ -1,0 +1,147 @@
+{
+  "packet_id": "MAR-MIX-MISD-2026-06-18",
+  "county": "Marion",
+  "court": "Marion County Circuit Court",
+  "docket_date": "2026-06-18",
+  "packet_note": "Clerk operations received this packet after the mixed misdemeanor docket and financial review queue. The local export was produced before the hearing desk finished reconciling counsel and ledger data.",
+  "stale_clerk_export": {
+    "export_name": "marion_misdemeanor_update_queue",
+    "export_date": "2026-05-20",
+    "records": [
+      {
+        "case_number": "23-MAR-01003",
+        "defendant_name": "Elena Mason",
+        "queue": "compliance_context",
+        "matter_hint": "compliance review",
+        "stale_status": "open",
+        "stale_defense_attorney": "Carlos Reed",
+        "stale_defense_type": "unknown",
+        "stale_principal_hint": 132.5
+      },
+      {
+        "case_number": "23-MAR-01004",
+        "defendant_name": "Priya Mason",
+        "queue": "mixed_misdemeanor_docket",
+        "matter_hint": "misdemeanor sentence review",
+        "stale_status": "probation_active",
+        "stale_defense_attorney": "Carlos Reed",
+        "stale_defense_type": "public_defender",
+        "stale_principal_hint": 105.0
+      },
+      {
+        "case_number": "24-MAR-01002",
+        "defendant_name": "Fatima Walker",
+        "queue": "traffic_context",
+        "matter_hint": "traffic account",
+        "stale_status": "closed",
+        "stale_defense_attorney": "Nolan Pierce",
+        "stale_defense_type": "retained",
+        "stale_principal_hint": 122.5
+      },
+      {
+        "case_number": "24-MAR-01004",
+        "defendant_name": "Nadia Nguyen",
+        "queue": "mixed_misdemeanor_docket",
+        "matter_hint": "warrant recall and misdemeanor setting",
+        "stale_status": "warrant",
+        "stale_defense_attorney": "Nolan Pierce",
+        "stale_defense_type": "public_defender",
+        "stale_principal_hint": 105.0
+      },
+      {
+        "case_number": "25-MAR-01001",
+        "defendant_name": "Nadia Cruz",
+        "queue": "mixed_misdemeanor_docket",
+        "matter_hint": "closed misdemeanor financial review",
+        "stale_status": "closed",
+        "stale_defense_attorney": "Mina Patel",
+        "stale_defense_type": "retained",
+        "stale_principal_hint": 327.5
+      },
+      {
+        "case_number": "25-MAR-01002",
+        "defendant_name": "Miguel Abbott",
+        "queue": "mixed_misdemeanor_docket",
+        "matter_hint": "deferred misdemeanor financial review",
+        "stale_status": "closed",
+        "stale_defense_attorney": "Former Counsel",
+        "stale_defense_type": "unknown",
+        "stale_principal_hint": 327.5
+      },
+      {
+        "case_number": "25-MAR-01003",
+        "defendant_name": "Hannah Foster",
+        "queue": "mixed_misdemeanor_docket",
+        "matter_hint": "new misdemeanor disposition",
+        "stale_status": "open",
+        "stale_defense_attorney": "Irene Mason",
+        "stale_defense_type": "public_defender",
+        "stale_principal_hint": 0.0
+      }
+    ]
+  },
+  "bench_and_review_notes": [
+    {
+      "case_number": "23-MAR-01004",
+      "note_type": "sentence_review",
+      "note": "Prior sentence review only. The probation-active disposition from 2024-06-12 remains in place. No new judgment, restitution, or financial event was pronounced."
+    },
+    {
+      "case_number": "24-MAR-01004",
+      "note_type": "hearing_outcome",
+      "note": "The bench recalled the warrant. Plea was not entered and the matter remains open for a later setting. No conviction, deferred adjudication, dismissal, restitution, or probation order was entered today."
+    },
+    {
+      "case_number": "25-MAR-01001",
+      "note_type": "financial_review",
+      "note": "Closed disposition from 2025-07-22 remains. No restitution was ordered and no probation setup fee was pronounced. The review is for counsel type and assessment cleanup only."
+    },
+    {
+      "case_number": "25-MAR-01002",
+      "note_type": "financial_review",
+      "note": "Deferred disposition from 2025-09-22 remains. No conviction was entered. The non-deferred felony counts were dismissed, no restitution was ordered, and no probation setup fee was pronounced."
+    },
+    {
+      "case_number": "25-MAR-01003",
+      "note_type": "hearing_outcome",
+      "note": "Guilty plea and sentencing on 2026-06-18. CHG-001 was convicted on the amended misdemeanor criminal mischief count. CHG-002 was dismissed. Probation was ordered for 12 months. No restitution and no separate probation setup fee were pronounced."
+    }
+  ],
+  "counsel_confirmations": [
+    {
+      "case_number": "23-MAR-01004",
+      "confirmed_attorney": "Carlos Reed",
+      "confirmed_defense_type": "public_defender",
+      "confirmation_note": "Matches the live case representation for this review."
+    },
+    {
+      "case_number": "24-MAR-01004",
+      "confirmed_attorney": "Nolan Pierce",
+      "confirmed_defense_type": "retained",
+      "confirmation_note": "Written confirmation filed for retained representation at the warrant recall."
+    },
+    {
+      "case_number": "25-MAR-01001",
+      "confirmed_attorney": "Mina Patel",
+      "confirmed_defense_type": "appointed_private",
+      "confirmation_note": "Court appointment order controls the counsel type for the closed matter."
+    },
+    {
+      "case_number": "25-MAR-01002",
+      "confirmed_attorney": "Mina Patel",
+      "confirmed_defense_type": "appointed_private",
+      "confirmation_note": "Appointment continued after former counsel withdrew."
+    },
+    {
+      "case_number": "25-MAR-01003",
+      "confirmed_attorney": "Irene Mason",
+      "confirmed_defense_type": "public_defender",
+      "confirmation_note": "Matches the live case representation for the new disposition."
+    }
+  ],
+  "finance_request": {
+    "amount_basis": "Report final approved principal before payments and the delta from the current live ledger principal_amount.",
+    "zero_ledger_instruction": "If the live environment has no financial obligation for a target case, treat current live principal as 0.00.",
+    "fee_code_instruction": "Use Marion criminal fee schedule rows for the relevant filing or disposition dates. Use only fee codes supported by the schedule and by the hearing or review note."
+  }
+}

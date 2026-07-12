@@ -25,6 +25,34 @@ model_config:
   claude_code_effort: max
 harness: claude_code_deepseek_v4_pro
 
+evolve:
+  pricing:
+    basis: deepseek_v4_pro_api
+    input_usd_per_million: 0.435
+    cache_creation_usd_per_million: 0.00
+    cache_read_usd_per_million: 0.003625
+    output_usd_per_million: 0.87
+  conditions:
+    fewshot:
+      attempts:
+        attempt_01:
+          input_tokens: <int or null>
+          cache_creation_tokens: <int or null>
+          cache_read_tokens: <int or null>
+          output_tokens: <int or null>
+          total_tokens: <int or null>
+          cost_usd: <float or null>
+        attempt_02: <same shape as attempt_01>
+        attempt_03: <same shape as attempt_01>
+      summary:
+        input_tokens_avg_3: <float or null>
+        cache_creation_tokens_avg_3: <float or null>
+        cache_read_tokens_avg_3: <float or null>
+        output_tokens_avg_3: <float or null>
+        cost_usd_avg_3: <float or null>
+    self: <same shape as fewshot>
+    reflect-3: <same shape as fewshot>
+
 conditions:
   base:
     overall_acc_at_3: <float>
@@ -34,6 +62,7 @@ conditions:
       cache_creation_tokens_avg_3: <float or null>
       cache_read_tokens_avg_3: <float or null>
       output_tokens_avg_3: <float or null>
+      cost_usd_avg_3: <float or null>
       rounds_avg_3: <float or null>
       tool_calls_avg_3: <float or null>
     tasks:
@@ -48,6 +77,7 @@ conditions:
         cache_creation_tokens_avg_3: <float or null>
         cache_read_tokens_avg_3: <float or null>
         output_tokens_avg_3: <float or null>
+        cost_usd_avg_3: <float or null>
         rounds_avg_3: <float or null>
         tool_calls_avg_3: <float or null>
       test_002: <same shape as test_001>
@@ -106,11 +136,17 @@ conditions:
   `cache_creation_tokens_avg_3`, `cache_read_tokens_avg_3`, and
   `output_tokens_avg_3`. Raw metadata may keep provider-specific source fields
   such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the
-  formal report must use the normalized field names above. Do not add cost
-  fields to the formal report unless a separate run instruction provides an
-  agreed DeepSeek rate card.
+  formal report must use the normalized field names above.
+- `evolve` contains only skill-generation usage for the three non-base modes.
+  Preserve all 3 attempt token and cost records. Keep metadata and raw trace
+  paths in workspace audit files rather than the formal report. The summary
+  retains the arithmetic `avg_3` for every token bucket and for USD cost.
+- Calculate evolve cost with the DeepSeek rate card recorded in the report. The
+  cache-creation bucket is retained for schema compatibility but is not charged.
 - Efficiency metrics follow the same aggregation shape as `acc@3`: average the
   3 attempts for the same test task, then average the 5 test tasks.
+- `cost_usd_avg_3` uses the same model rate card recorded under
+  `evolve.pricing` and follows the same task-then-condition aggregation shape.
 - Efficiency metrics only count answer-writing by test solver Claude processes. Do not
   include skill generation, remote environment checks, evaluator execution, or
   orchestrator summarization.

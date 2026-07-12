@@ -1,0 +1,54 @@
+You are deciding dialysis transfer acceptance and chart-prep actions in the Northstar Care Intake Portal.
+
+Portal: <TASK_ENV_BASE_URL>
+Email: intake.admin@northstar.example
+Password: Northstar-Intake-2026!
+
+Review these transfer records: TR-2644, TR-2659, TR-2671, TR-2688, TR-2693.
+
+For each transfer, inspect the transfer details, patient record, document packet, requested start date, chair availability, confidentiality/authorization items, and linked chart-prep status. Return only structured JSON matching the answer template. Use the controlled enum values in the template and sort transfer rows by transfer_id ascending. Do not include narrative evidence or extra keys.
+
+Decision enums:
+- accept
+- hold_missing_packet
+- hold_capacity
+
+Start compatibility enums:
+- compatible
+- capacity_review
+- waitlist
+
+Route owner enums:
+- referring_facility
+- capacity_coordinator
+- chart_prep
+- intake_complete
+
+Chart prep action enums:
+- ready_no_action
+- registration_update
+- clinical_chart_update
+- communications_send_orientation
+- multi_team_chart_prep
+
+Packet item names:
+- labs
+- infection screen
+- dialysis prescription
+- medication list
+- allergy list
+- authorization
+- confidentiality statement
+- referring contact
+- transport note
+
+Chart missing section names:
+- chart_not_created
+- demographics
+- history
+- problems
+- vitals
+- care_plan_or_instructions
+- orientation_message
+
+Put packet items that are missing, draft, expired, or otherwise not final/usable in missing_packet_items. Put otherwise usable labs or infection screens that are outside the current freshness window for the requested start in stale_items. Put every transfer_id with at least one stale_items entry in freshness_exception_transfers. For chart prep, distinguish a chart that exists from a chart that is ready for intake handoff.

@@ -1,0 +1,153 @@
+{
+  "allowed_enums": {
+    "audit_status": [
+      "READY_FOR_MERGE",
+      "BLOCKED_ADDRESS_CONFLICT",
+      "NO_EVENT_FOUND"
+    ],
+    "boolean": [
+      true,
+      false
+    ],
+    "disposition": [
+      "MERGE_READY",
+      "NEEDS_CLARIFICATION",
+      "DO_NOT_MERGE"
+    ],
+    "priority_tier": [
+      "TIER_1_IMMEDIATE",
+      "TIER_2_SHORT_TERM",
+      "TIER_3_ADMINISTRATIVE"
+    ],
+    "readiness": [
+      "READY",
+      "READY_WITH_WARNINGS",
+      "BLOCKED_INCOMPLETE_PACKET",
+      "NEEDS_CLARIFICATION",
+      "BLOCKED_ORDER_SAFETY"
+    ],
+    "send_ready": [
+      "READY",
+      "NEEDS_CLARIFICATION",
+      "BLOCKED"
+    ]
+  },
+  "date_format": "YYYY-MM-DD for dates; ISO 8601 for timestamps.",
+  "environment_base_url_placeholder": "<TASK_ENV_BASE_URL>",
+  "instructions": "Return one JSON object. Use the keys, field types, enum casing, and list ordering defined here. Do not include explanatory prose outside JSON.",
+  "list_ordering": "Lists of stable identifiers must be sorted ascending unless a field explicitly represents a priority queue.",
+  "numeric_precision": "Counts are integers. Decimal scores or ratios, if any, should be rounded to 3 decimal places.",
+  "schema": {
+    "batch_id": {
+      "type": "string"
+    },
+    "corrected_code_suggestions": {
+      "description": "Map only the referral IDs that require an ICD-10 correction to the corrected ICD-10 code. Do not include referrals that have no code correction.",
+      "dynamic_keys": "referral_id",
+      "value_schema": {
+        "description": "Corrected ICD-10 code, preserving decimal/case style from the codebook.",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "duplicate_groups": {
+      "items": {
+        "items": {
+          "type": "string"
+        },
+        "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+        "type": "list"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "insurance_anomalies": {
+      "items": {
+        "required_keys": {
+          "insurance_id": {
+            "type": "string"
+          },
+          "related_duplicate_referral_ids": {
+            "items": {
+              "type": "string"
+            },
+            "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+            "type": "list"
+          },
+          "unrelated_referral_ids": {
+            "items": {
+              "type": "string"
+            },
+            "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+            "type": "list"
+          }
+        },
+        "type": "object"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "laterality_mismatch_referral_ids": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "missing_counts": {
+      "required_keys": {
+        "auth_not_submitted": {
+          "type": "integer"
+        },
+        "imaging_missing": {
+          "type": "integer"
+        },
+        "records_missing": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "narrative_mismatch_referral_ids": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "out_of_range_code_referral_ids": {
+      "items": {
+        "type": "string"
+      },
+      "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+      "type": "list"
+    },
+    "priority_queues": {
+      "required_keys": {
+        "tier1_immediate": {
+          "items": {
+            "type": "string"
+          },
+          "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+          "type": "list"
+        },
+        "tier2_short_term": {
+          "items": {
+            "type": "string"
+          },
+          "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+          "type": "list"
+        },
+        "tier3_administrative": {
+          "items": {
+            "type": "string"
+          },
+          "ordering": "sort stable IDs ascending unless the field name says queue/ranking",
+          "type": "list"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "title": "April orthopedic referral quality audit"
+}

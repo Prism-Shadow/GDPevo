@@ -25,6 +25,12 @@ In solver-visible task inputs, refer to the running environment base URL only as
 names, ports, and setup commands out of `prompt.txt` and `input/payloads/`; those
 values belong in the evaluation workspace `.env` file for the actual run.
 
+## Train-Only Judge API
+
+Every task-group environment must expose `POST /api/judge` to judge candidate answers for train tasks. The request body uses `{"task_id": "train_001", "answer": {...}}`. The endpoint must run the matching train evaluator and return only a normalized `score` in `[0, 1]`, a boolean `correct`, and a notice that the endpoint is train-only. It must reject every `test_*` task id and must not return the gold answer, rubric details, evaluator output, or other hidden material.
+
+Keep the reusable judge implementation in `env/judge_api.py`, connect it to the task group's existing HTTP service, and declare it under `env.files` in `task_group.yaml`. The judge endpoint is an evaluation control surface, not a business-data endpoint; do not expose task-specific source data through it.
+
 ## Env-Builder Ownership
 
 The main agent owns the environment blueprint, task-group coherence, and final integration. The actual environment implementation should be done by a clean-context env-builder coding subagent based on that blueprint.
@@ -45,6 +51,7 @@ The env-builder coding subagent should implement:
 - Train and test tasks use the same business infrastructure, creating transferable environment experience.
 - The solver can access necessary capabilities through public entry points but cannot see standard answers, hidden notes, or the `env/` implementation files.
 - Programmatic data-generation scripts, fixed seeds, generated data, and manifests are retained under `env/`.
+- The existing HTTP service exposes the train-only `POST /api/judge` endpoint through `env/judge_api.py`.
 
 Task-builder subagents may request additional interfaces, tables, or data through the main agent. They should not independently implement separate environments.
 

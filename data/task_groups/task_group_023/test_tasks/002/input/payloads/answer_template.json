@@ -1,0 +1,33 @@
+{
+  "model_winners": "object keyed by DEPRESSION, DIABETES; each value enum: static_wins, dynamic_wins",
+  "outcomes": {
+    "DEPRESSION": {
+      "dynamic_aic": "number rounded to 2 decimals",
+      "static_aic": "number rounded to 2 decimals",
+      "top_residual_outlier_fips": "array of five 5-digit FIPS strings in residual order",
+      "unemployment_change_tercile_means": "object with numeric keys T1, T2, T3 rounded to 2 decimals",
+      "winning_model": "enum: static_wins, dynamic_wins"
+    },
+    "DIABETES": {
+      "dynamic_aic": "number rounded to 2 decimals",
+      "static_aic": "number rounded to 2 decimals",
+      "top_residual_outlier_fips": "array of five 5-digit FIPS strings in residual order",
+      "unemployment_change_tercile_means": "object with numeric keys T1, T2, T3 rounded to 2 decimals",
+      "winning_model": "enum: static_wins, dynamic_wins"
+    }
+  },
+  "reconciliation_label": "enum: static_wins, dynamic_wins, dynamic_changes_mixed_by_outcome",
+  "scope": {
+    "analysis_year": "integer",
+    "complete_case_count": "integer",
+    "exclusions_by_reason": "object with integer keys invalid_fips, outside_requested_states, missing_ses, missing_health_data",
+    "requested_states": "array of state abbreviations in prompt order"
+  },
+  "shared_residual_outlier_fips": "array of five 5-digit FIPS strings",
+  "task_id": "string; required exact value 'test_002'",
+  "warehouse": {
+    "income_change_rule": "enum: MEDHHINC_2023_minus_Median_Household_Income_2022",
+    "measure_ids": "array containing exactly these requested measure ids: DIABETES, DEPRESSION",
+    "rucc_handling": "enum: categorical_dummies"
+  }
+}

@@ -97,7 +97,23 @@ Stage only the materials allowed by `skill_modes.md`.
 - `reflect-3`: train inputs, remote environment entrypoint, and judge API
   instructions; no train answers.
 
-Skill-generation token usage is not included in solver efficiency metrics.
+For every skill-generation run, create a dedicated mounted Claude config
+directory and unique session ID. Preserve the complete session trace under:
+
+```text
+original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+Write the matching usage record under:
+
+```text
+scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
+```
+
+Backfill its token buckets from the session trace using the same
+`message.id` deduplication rule as solver runs, then calculate cost with the
+pricing in `metric_and_scoring.md`. Skill-generation token usage is reported as
+evolve usage and is not included in solver efficiency metrics.
 
 ## 4. Run Test Solvers
 
@@ -178,6 +194,12 @@ conditions. Efficiency metrics count only test solver answer writing: average
 the 3 attempts for the same test task, then average the 5 test tasks. Do not
 include skill generation, remote environment checks, evaluator execution, or
 main-agent summarization.
+
+Separately aggregate each non-base mode's 3 skill-generation traces and
+`evolve_metadata.yaml` files into the report's top-level `evolve` block. Keep
+metadata and trace paths in workspace audit files. In the formal report, keep
+only each attempt's token and cost fields plus the arithmetic mean of every
+token bucket and USD cost across the three attempts.
 
 ## 6. Interpret Results
 

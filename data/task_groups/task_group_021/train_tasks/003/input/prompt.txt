@@ -1,0 +1,5 @@
+AsterOps Logistics Finance needs a closed-form integrity audit for shipment cost wave `SEA_Q3_2026` before the wave is loaded into the Q3 cost mart.
+
+Use the shared environment at `<TASK_ENV_BASE_URL>`. The relevant public surfaces are the logistics cost-event API and the quality-rule reference API. Return one JSON object that conforms to `input/payloads/answer_template.json`.
+
+The audit result should identify the effective shipment-cost event set for the wave, suppress non-effective or invalid records, convert monetary values to USD cents, and report the requested cost totals and exception summaries. Use stable event IDs, business keys, lanes, cost-type enums, unit enums, and issue-type enums exactly as they appear in the environment and answer template.

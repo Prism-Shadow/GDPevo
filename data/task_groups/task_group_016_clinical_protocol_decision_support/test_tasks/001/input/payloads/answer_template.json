@@ -1,0 +1,45 @@
+{
+  "description": "Return one JSON object for the head-injury triage task.",
+  "required_top_level_keys": [
+    "case_id",
+    "patient_id",
+    "primary_protocol",
+    "risk_level",
+    "ct_recommendation",
+    "disposition",
+    "red_flags_present",
+    "activity_plan",
+    "follow_up_hours",
+    "contraindicated_actions",
+    "evidence_ids"
+  ],
+  "fields": {
+    "case_id": {"type": "string"},
+    "patient_id": {"type": "string"},
+    "primary_protocol": {"type": "enum", "allowed": ["HEAD_INJURY_2026"]},
+    "risk_level": {"type": "enum", "allowed": ["home_observation", "same_day_clinic", "urgent_ed"]},
+    "ct_recommendation": {"type": "enum", "allowed": ["not_required", "consider", "urgent"]},
+    "disposition": {"type": "enum", "allowed": ["home_with_observation", "same_day_clinic_followup", "send_to_ed_now"]},
+    "red_flags_present": {
+      "type": "list",
+      "items_enum": ["abnormal_gait", "abnormal_gait_coordination", "amnesia_gt_30_min", "anticoagulant_use", "confusion", "deteriorating_mental_status", "focal_weakness", "increasing_drowsiness", "repeated_vomiting", "seizure", "slurred_speech", "worsening_headache"],
+      "ordering": "sort_lexicographic"
+    },
+    "activity_plan": {
+      "type": "object",
+      "required": ["school", "sports", "driving"],
+      "fields": {
+        "school": {"type": "enum", "allowed": ["routine_as_tolerated", "reduced_24_48h", "no_school_until_evaluated"]},
+        "sports": {"type": "enum", "allowed": ["routine_as_tolerated", "no_sports_until_cleared"]},
+        "driving": {"type": "enum", "allowed": ["routine_as_tolerated", "no_driving_until_symptom_free_cleared"]}
+      }
+    },
+    "follow_up_hours": {"type": "integer", "unit": "hours"},
+    "contraindicated_actions": {
+      "type": "list",
+      "items_enum": ["drive_self_home", "same_day_return_to_play", "unsupervised_home_observation"],
+      "ordering": "sort_lexicographic"
+    },
+    "evidence_ids": {"type": "list", "items": "string", "ordering": "sort_lexicographic"}
+  }
+}
