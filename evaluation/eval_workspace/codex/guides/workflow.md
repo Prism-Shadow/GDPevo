@@ -200,8 +200,9 @@ or main-agent summarization in solver efficiency.
 
 Separately aggregate evolve token usage and cost across the 3 skill-generation
 runs for `fewshot`, `self`, and `reflect-3`. Preserve each attempt's metadata and
-trace path, and report the arithmetic mean of each token bucket and USD cost
-without mixing them into solver efficiency.
+trace path in the workspace audit files. In the formal report, keep only each
+attempt's token and cost fields plus the arithmetic mean of each token bucket
+and USD cost, without mixing them into solver efficiency.
 
 ## 6. Interpret Results
 

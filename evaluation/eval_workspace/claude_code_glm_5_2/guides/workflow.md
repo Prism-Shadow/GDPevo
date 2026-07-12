@@ -194,7 +194,8 @@ main-agent summarization.
 
 Separately aggregate each non-base mode's 3 skill-generation traces and
 `evolve_metadata.yaml` files into the report's top-level `evolve` block. Keep
-all attempt records and trace paths, and report the arithmetic mean of every
+metadata and trace paths in workspace audit files. In the formal report, keep
+only each attempt's token and cost fields plus the arithmetic mean of every
 token bucket and USD cost across the three attempts.
 
 ## 6. Interpret Results

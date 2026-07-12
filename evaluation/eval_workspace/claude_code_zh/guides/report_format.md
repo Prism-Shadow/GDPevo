@@ -27,8 +27,6 @@ evolve:
     fewshot:
       attempts:
         attempt_01:
-          metadata_file: ../scratch/skill_generation/fewshot_attempt_01/evolve_metadata.yaml
-          trace_file: <path under ../original_traces/skill_generation/fewshot/attempt_01/ or null>
           input_tokens: <int or null>
           cache_creation_tokens: <int or null>
           cache_read_tokens: <int or null>
@@ -120,8 +118,9 @@ conditions:
   `message.id` 去重后的 Claude Code session traces。如果 transcript 缺失，应写
   `null`，并在对应 run record 中保留问题。
 - `evolve` 只记录三个非 base 模式的 skill-generation 用量。保留 3 次 attempt
-  的记录和完整原始 trace 路径；summary 保留每个 token bucket 和美元费用的
-  三次算术平均值。
+  的 token 和费用记录。metadata 和原始 trace 路径仅保留在工作区审计文件中，
+  不写入正式 report；summary 保留每个 token bucket 和美元费用的三次
+  算术平均值。
 - Evolve 费用使用 report 中记录的 pricing 区块计算。Claude 的四个 token 桶互不
   重叠，各计费一次。
 - 效率指标和 `acc@3` 使用相同聚合方式：先对同一个 test task 的 3 次

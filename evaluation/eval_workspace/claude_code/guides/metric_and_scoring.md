@@ -198,7 +198,8 @@ These efficiency metrics only count the answer-writing work of test solver runs.
 
 Evolve token and cost metrics are aggregated separately for each non-base
 condition. Average each token bucket and USD cost across the three
-skill-generation attempts, and keep every attempt's raw values and complete
-trace path in the report. Do not combine evolve usage with solver efficiency.
+skill-generation attempts, and keep every attempt's raw token and cost values
+in the report. Retain metadata and trace paths only in workspace audit files.
+Do not combine evolve usage with solver efficiency.
 
 The evaluation agent may write temporary aggregation or checking code in `scratch/` according to the current task group's evaluator shape.

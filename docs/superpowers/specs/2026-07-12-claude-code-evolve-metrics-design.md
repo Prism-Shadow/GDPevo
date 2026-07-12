@@ -29,10 +29,11 @@ For every `fewshot`, `self`, and `reflect-3` skill-generation attempt:
 ## Report Contract
 
 Add an `evolve` block to each report schema. It records all three attempts for
-each non-base mode, including metadata and trace paths, token buckets, total
-tokens, and cost. Its summary keeps the per-bucket token averages and average
-cost across the three skill-generation attempts, matching solver report
-granularity without duplicating per-bucket totals.
+each non-base mode, including token buckets, total tokens, and cost. Metadata
+and trace paths remain in workspace audit files and are not copied into the
+formal report. Its summary keeps the per-bucket token averages and average cost
+across the three skill-generation attempts, matching solver report granularity
+without duplicating per-bucket totals.
 
 Solver token, cost, turn, and tool-call metrics retain their current meaning and
 aggregation rules. Skill-generation usage must not be mixed into solver

@@ -26,8 +26,6 @@ evolve:
     fewshot:
       attempts:
         attempt_01:
-          metadata_file: ../scratch/skill_generation/fewshot_attempt_01/evolve_metadata.yaml
-          trace_file: <path under ../original_traces/skill_generation/fewshot/attempt_01/ or null>
           input_tokens: <int or null>
           cached_input_tokens: <int or null>
           output_tokens: <int or null>
@@ -118,7 +116,8 @@ conditions:
   `original_traces/`. If a trace cannot be matched uniquely, write `null` and
   preserve the trace issue in the corresponding run record.
 - `evolve` contains only skill-generation usage for the three non-base modes.
-  Preserve all 3 attempt records and their complete raw trace paths. The summary
+  Preserve all 3 attempt token and cost records. Keep metadata and raw trace
+  paths in workspace audit files rather than the formal report. The summary
   retains the arithmetic `avg_3` for every token bucket and for USD cost.
 - Calculate evolve cost with the pricing block recorded in the report. Cached
   input is a subset of input, and reasoning output is a subset of output; do not

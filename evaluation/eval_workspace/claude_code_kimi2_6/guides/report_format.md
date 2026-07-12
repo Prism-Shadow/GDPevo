@@ -31,8 +31,6 @@ evolve:
     fewshot:
       attempts:
         attempt_01:
-          metadata_file: ../scratch/skill_generation/fewshot_attempt_01/evolve_metadata.yaml
-          trace_file: <path under ../original_traces/skill_generation/fewshot/attempt_01/ or null>
           input_tokens: <int or null>
           cache_creation_tokens: <int or null>
           cache_read_tokens: <int or null>
@@ -135,7 +133,8 @@ conditions:
   such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the
   formal report must use the normalized field names above.
 - `evolve` contains only skill-generation usage for the three non-base modes.
-  Preserve all 3 attempt records and their complete raw trace paths. The summary
+  Preserve all 3 attempt token and cost records. Keep metadata and raw trace
+  paths in workspace audit files rather than the formal report. The summary
   retains the arithmetic `avg_3` for every token bucket and for USD cost.
 - Calculate evolve cost with the Kimi rate card recorded in the report. The
   cache-creation bucket is retained for schema compatibility but is not charged.

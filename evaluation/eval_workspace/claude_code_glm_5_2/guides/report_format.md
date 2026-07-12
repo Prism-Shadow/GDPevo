@@ -27,8 +27,6 @@ evolve:
     fewshot:
       attempts:
         attempt_01:
-          metadata_file: ../scratch/skill_generation/fewshot_attempt_01/evolve_metadata.yaml
-          trace_file: <path under ../original_traces/skill_generation/fewshot/attempt_01/ or null>
           input_tokens: <int or null>
           cache_creation_tokens: <int or null>
           cache_read_tokens: <int or null>
@@ -125,7 +123,8 @@ conditions:
 - If the GLM trace does not expose a token bucket directly, keep that field
   `null` instead of inferring it from another provider-specific field.
 - `evolve` contains only skill-generation usage for the three non-base modes.
-  Preserve all 3 attempt records and their complete raw trace paths. The summary
+  Preserve all 3 attempt token and cost records. Keep metadata and raw trace
+  paths in workspace audit files rather than the formal report. The summary
   retains the arithmetic `avg_3` for every token bucket and for USD cost.
 - Calculate evolve cost with the pricing block recorded in the report. Missing
   trace buckets remain `null`; do not infer them.

@@ -172,7 +172,7 @@ overall tool calls@3 = (test_001_tool_calls@3 + test_002_tool_calls@3 + test_003
 
 Evolve token 与费用指标按每个非 base 条件单独聚合。对同一模式三次
 skill-generation attempts 的每个 token bucket 和美元费用分别取平均，并在 report
-中保留每次 attempt 的原始值和完整 trace 路径。不要把 evolve 用量合并到 solver
-效率指标中。
+中保留每次 attempt 的 token 和费用原始值。metadata 和 trace 路径仅保留在
+工作区审计文件中。不要把 evolve 用量合并到 solver 效率指标中。
 
 评估 agent 可以根据当前 task group 的 evaluator 形态，在 `scratch/` 中编写临时聚合或检查代码。
