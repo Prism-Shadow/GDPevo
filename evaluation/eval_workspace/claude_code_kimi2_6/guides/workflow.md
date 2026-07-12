@@ -128,7 +128,14 @@ train task, copy only:
 Never stage `notes/`, `eval/`, `env/`, `test_tasks/`, task-group manifests
 outside the staged inputs, or source files not explicitly allowed above.
 
-Skill-generation token usage is not included in solver efficiency metrics.
+For every skill-generation run, mount a dedicated per-run Claude config
+directory as `CLAUDE_CONFIG_DIR=/claude_config`, pass a unique session ID, and
+preserve the exact session file under
+`original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl`.
+Write `scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml`.
+Backfill token buckets from the matched session using the same deduplication
+rules as solver traces, then calculate cost with `metric_and_scoring.md`. Report
+this as evolve usage; do not include it in solver efficiency metrics.
 
 ## 4. Run Test Solvers
 
@@ -232,6 +239,11 @@ task, then average the 5 test tasks. Do not include skill generation, remote
 environment checks, evaluator execution, or main-agent summarization. Temporary
 checking code, aggregation code, and environment notes must be placed under
 `scratch/`, not in the workspace root.
+
+Separately aggregate each non-base mode's 3 skill-generation traces and
+`evolve_metadata.yaml` files into the report's top-level `evolve` block. Keep
+all attempt records and trace paths, sum token and cost totals across the three
+attempts, and report the arithmetic mean cost as `cost_usd_avg_3`.
 
 The final report must also include `model_config.claude_code_effort: xhigh` and
 `model_config.kimi_thinking: enabled`. Do not encode Kimi's thinking mode as

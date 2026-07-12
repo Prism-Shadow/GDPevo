@@ -135,20 +135,26 @@ The container must have network access because Claude Code needs the DeepSeek An
 network-disabled container unless an equivalent working proxy is explicitly
 configured.
 
-Mount only the current staged working directory and the trace/output
-directories into the container. Do not mount the full task group, full
+Mount only the current staged working directory and a dedicated per-run Claude
+config directory into the container. Mount the latter at `/claude_config`; do
+not mount the full task group, full
 evaluation workspace, parent `work/` directory, repository root, or home
 directory. This file isolation is the main protection against `notes/`, `eval/`,
 `env/`, source answers, and previous runs leaking into Claude Code.
 
-Launch Claude Code with bypass permissions, for example:
+Generate a unique UUID for every skill-generation run and solver attempt, then
+launch Claude Code with the exact session-persistence shape:
 
-```text
-claude -p --permission-mode bypassPermissions ...
+```bash
+CLAUDE_CONFIG_DIR=/claude_config \
+claude -p \
+  --permission-mode bypassPermissions \
+  --session-id "$CLAUDE_SESSION_ID" \
+  "$PROMPT"
 ```
 
-or an equivalent configuration. Do not use `--no-session-persistence`; it can
-prevent Claude Code session traces from being written.
+Do not use `--no-session-persistence`; it can prevent Claude Code session traces
+from being written.
 
 If the `claude` executable is not on `PATH`, locate it before running the
 experiment. Do not hard-code a host-specific path in reusable scripts; record
@@ -167,11 +173,18 @@ runs/<condition>/<test_id>/attempt_<nn>/score.yaml
 runs/<condition>/<test_id>/attempt_<nn>/run_metadata.yaml
 ```
 
-Every scored solver attempt must have the raw Claude Code work trace for that
-specific Claude skill-generation or solver run copied under:
+Every skill-generation run and scored solver attempt must have its own raw
+Claude Code work trace copied under the matching path:
 
 ```text
-original_traces/<condition>/<test_id>/attempt_<nn>/
+original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/<condition>/<test_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+Each skill-generation run must also write:
+
+```text
+scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
 ```
 
 Populate token usage, round count, and tool-call count in `run_metadata.yaml`
@@ -180,18 +193,9 @@ and the final report from the matched trace. Deduplicate token usage by
 explicitly and do not invent efficiency numbers.
 
 For `claude -p`, the primary trace for token usage, rounds, and tool-call
-counting is the Claude Code session JSONL from the active `.claude` directory.
-This means the Claude run itself, or the Codex orchestrator immediately after
-that run, must find the matching `.claude/projects/.../*.jsonl` or equivalent
-session file for the current staged directory/session and copy it into
-`original_traces/`.
-
-If running inside Docker, the relevant `.claude` directory may be inside the
-container rather than the host. Mount a host trace directory as the container's
-Claude home/session-trace location when possible. Otherwise, before the
-container is stopped or removed, explicitly copy the matching container
-`.claude` session trace files to the host workspace. A Docker run is not
-complete until this Claude work trace has been preserved.
+counting is the JSONL written to the dedicated mounted
+`CLAUDE_CONFIG_DIR`. Match the exact file by the run's unique session ID. A
+Docker run is not complete until this session trace has been preserved.
 
 Before deleting or replacing any Docker container, verify that all required
 artifacts have been written to the host workspace:
@@ -199,7 +203,7 @@ artifacts have been written to the host workspace:
 - `answer.json` or `SKILL.md`
 - Claude Code session trace, when available
 - debug logs, when used
-- score and metadata files after Codex scoring
+- score and run metadata files after Codex scoring, or evolve metadata for skill generation
 
 Final report:
 

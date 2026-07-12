@@ -1,6 +1,6 @@
 # Evaluation Workspace
 
-本 workspace 是评估入口。你是这一阶段的主评估 agent。你的目标是对一个已经通过质量审核的 task group 进行正式评估，并在四种条件下使用 `acc@3`、population `std@3` 和 solver turn-count 和 tool-call 效率指标：`base`、`fewshot`、`self`、`reflect-3`。
+本 workspace 是评估入口。你是这一阶段的主评估 agent。你的目标是对一个已经通过质量审核的 task group 进行正式评估，并在四种条件下统计 `acc@3`、population `std@3`、solver 效率指标，以及单独报告的 evolve token/费用指标：`base`、`fewshot`、`self`、`reflect-3`。
 
 本工作区一次只评估一个 task group。不要修改正在评估的 task group。如果你发现 task group 本身无效，应在报告中记录风险，并将数据退回到更早阶段。
 
@@ -12,7 +12,7 @@
 | `task_group/` | 当前正在评估的单个正式 task group |
 | `skills/` | 生成的 `fewshot`、`self` 和 `reflect-3` 文件 |
 | `runs/` | 每种条件、每个 test task、每次 attempt 的 solver 输出和打分记录 |
-| `original_traces/` | 每个 solver attempt 跑完后保存的 Claude Code 原始 session trace |
+| `original_traces/` | skill-generation runs 和 solver attempts 的完整 Claude Code 原始 session traces |
 | `scratch/` | 主评估 agent 创建的临时脚本、环境记录和中间检查 |
 | `report/` | 当前 task group 的最终评估报告 |
 
@@ -31,7 +31,7 @@
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: <model>.
-Run all four modes with acc@3/std@3, collect solver turn and tool-call counts, and write report/<task_group_id>.yaml.
+Run all four modes with acc@3/std@3, collect solver and evolve token/cost metrics, preserve complete traces, and write report/<task_group_id>.yaml.
 ```
 
 使用 `.env` 配置远程任务环境：
@@ -71,6 +71,12 @@ skills/reflect-3/reflect-3_attempt_02/SKILL.md
 skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
+每次 skill-generation run 都使用专用挂载的 `CLAUDE_CONFIG_DIR`，将完整原始
+session trace 保存到
+`original_traces/skill_generation/<condition>/attempt_<nn>/`，并在
+`scratch/skill_generation/` 下写入对应的 `evolve_metadata.yaml`，记录 token
+用量和计算得到的美元费用。
+
 5. 在四种条件下运行 test tasks：
 
 ```text
@@ -84,7 +90,7 @@ runs/reflect-3/
 
 6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、Claude session ID、原始 session trace 路径、token 用量、solver turn count 和 tool-call count。使用每个 attempt 专用挂载的 `CLAUDE_CONFIG_DIR`，让 Claude Code 原始 session trace 写入 `original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/.../<claude_session_id>.jsonl`，用于后续审计。
 
-7. 所有 score records 准备完成后，聚合四种条件的 `acc@3` 和 population `std@3`，并聚合每种条件的平均 token、turn 和 cost 字段。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver runs 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
+7. 所有 score records 准备完成后，聚合四种条件的 `acc@3` 和 population `std@3`，并聚合每种条件的平均 token、turn、tool-call 和 cost 字段。另行聚合每个非 base 模式 3 次 skill-generation runs 的 evolve token 与美元费用。最终报告写入 `report/<task_group_id>.yaml`。Solver 效率指标只统计 test solver runs 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要把 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总混入 solver 效率指标。临时检查或聚合代码可以放在 `scratch/` 下。
 
 ## Agent 边界
 

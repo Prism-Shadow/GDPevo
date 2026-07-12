@@ -4,7 +4,8 @@ This workspace is the evaluation entrypoint for running the Claude Code harness
 at `xhigh` reasoning while using `GLM-5.2` with the `max` model setting. You are
 the main evaluation agent for this stage. Your goal is to formally evaluate one
 task group that has already passed quality review, using `acc@3`, population
-`std@3`, and solver turn-count and tool-call efficiency metrics across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
+`std@3`, solver efficiency metrics, and separately reported evolve token/cost
+metrics across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
 
 This workspace evaluates one task group at a time. Do not modify the task group under evaluation. If you find that the task group itself is invalid, record the risk in the report and send the data back to an earlier stage.
 
@@ -16,7 +17,7 @@ This workspace evaluates one task group at a time. Do not modify the task group 
 | `task_group/` | The single official task group currently under evaluation |
 | `skills/` | Generated `fewshot`, `self`, and `reflect-3` files |
 | `runs/` | Solver outputs and scoring records for each condition, test task, and attempt |
-| `original_traces/` | Raw Claude Code session trace files preserved after each solver attempt |
+| `original_traces/` | Complete raw Claude Code session traces for skill-generation runs and solver attempts |
 | `scratch/` | Temporary scripts, environment notes, and intermediate checks created by the main evaluation agent |
 | `report/` | The final evaluation report for the current task group |
 
@@ -35,7 +36,7 @@ Read these files in order before starting evaluation:
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: glm-5.2, max.
-Run all four modes with acc@3/std@3, collect solver turn and tool-call counts, and write report/<task_group_id>.yaml.
+Run all four modes with acc@3/std@3, collect solver and evolve token/cost metrics, preserve complete traces, and write report/<task_group_id>.yaml.
 ```
 
 Use `.env` for the remote task environment:
@@ -83,6 +84,12 @@ skills/reflect-3/reflect-3_attempt_02/SKILL.md
 skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
+For every skill-generation run, use a dedicated mounted
+`CLAUDE_CONFIG_DIR`, preserve the complete raw session trace under
+`original_traces/skill_generation/<condition>/attempt_<nn>/`, and write the
+matching `evolve_metadata.yaml` under `scratch/skill_generation/` with token
+usage and calculated USD cost.
+
 5. Run test tasks under all four conditions:
 
 ```text
@@ -96,7 +103,7 @@ For each condition, run each test task independently 3 times. Every run must be 
 
 6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, `model: glm-5.2, max`, the Claude session ID, the raw session trace path, token usage, solver turn count, and tool-call count. Use a per-attempt mounted `CLAUDE_CONFIG_DIR` so the raw Claude Code session trace is written under `original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/.../<claude_session_id>.jsonl` for audit.
 
-7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average token, turn, tool-call, and cost fields for each condition. Write the final report to `report/<task_group_id>.yaml`. These efficiency metrics only count answer-writing by test solver runs: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. Temporary checking or aggregation code may be placed under `scratch/`.
+7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average token, turn, tool-call, and cost fields for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. Solver efficiency only counts answer-writing by test solver runs: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, remote environment checks, evaluator execution, or main-agent summarization into solver efficiency. Temporary checking or aggregation code may be placed under `scratch/`.
 
 ## Agent Boundaries
 

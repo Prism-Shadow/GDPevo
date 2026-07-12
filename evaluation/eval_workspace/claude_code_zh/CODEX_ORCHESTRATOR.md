@@ -44,17 +44,24 @@ attempt 前，应把实际观测到的值记录到 `scratch/`。不要加
 
 ## Trace 保存
 
-将原始 Claude Code session 文件作为主 trace 保存。创建 attempt trace 目录下的
+将完整的原始 Claude Code session 文件作为主 trace 保存。在对应 trace 目录下创建
 Claude config 目录，仅在启动 agent 进程时设置
 `CLAUDE_CONFIG_DIR=/claude_config`，传入唯一 `--session-id`，并保存下面的文件：
 
 ```text
+original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
 original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+每次 skill generation 还要写入对应的 token 与费用记录：
+
+```text
+scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
 ```
 
 stdout/stderr 命令运行日志不作为正式 trace 产物要求。不要使用
 `--no-session-persistence`，也不要在 run 结束后依赖搜索用户全局 `~/.claude`
 来猜测 trace。
 
-一次 Docker run 只有在 `answer.json` 或 `SKILL.md`、以及主 session trace 或其
-缺失原因都已保存后，才算完成。
+一次 Docker run 只有在 `answer.json` 或 `SKILL.md`、主 session trace 或其缺失
+原因，以及对应的 run/evolve metadata 都已保存后，才算完成。
