@@ -47,12 +47,10 @@ evolve:
         attempt_02: <same shape as attempt_01>
         attempt_03: <same shape as attempt_01>
       summary:
-        input_tokens_total_3: <int or null>
-        cache_creation_tokens_total_3: <int or null>
-        cache_read_tokens_total_3: <int or null>
-        output_tokens_total_3: <int or null>
-        total_tokens_total_3: <int or null>
-        cost_usd_total_3: <float or null>
+        input_tokens_avg_3: <float or null>
+        cache_creation_tokens_avg_3: <float or null>
+        cache_read_tokens_avg_3: <float or null>
+        output_tokens_avg_3: <float or null>
         cost_usd_avg_3: <float or null>
     self: <same shape as fewshot>
     reflect-3: <same shape as fewshot>
@@ -142,8 +140,8 @@ conditions:
   such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the
   formal report must use the normalized field names above.
 - `evolve` contains only skill-generation usage for the three non-base modes.
-  Preserve all 3 attempt records and their complete raw trace paths. Totals are
-  sums across the three attempts; `cost_usd_avg_3` is their arithmetic mean.
+  Preserve all 3 attempt records and their complete raw trace paths. The summary
+  retains the arithmetic `avg_3` for every token bucket and for USD cost.
 - Calculate evolve cost with the DeepSeek rate card recorded in the report. The
   cache-creation bucket is retained for schema compatibility but is not charged.
 - Efficiency metrics follow the same aggregation shape as `acc@3`: average the

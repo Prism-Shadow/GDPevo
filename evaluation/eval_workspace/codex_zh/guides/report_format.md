@@ -16,6 +16,35 @@ scenario_id: <scenario_id>
 model: <model_name_or_config>
 harness: codex
 
+evolve:
+  pricing:
+    basis: standard_api_text_token_equivalent
+    uncached_input_usd_per_million: 5.00
+    cached_input_usd_per_million: 0.50
+    output_usd_per_million: 30.00
+  conditions:
+    fewshot:
+      attempts:
+        attempt_01:
+          metadata_file: ../scratch/skill_generation/fewshot_attempt_01/evolve_metadata.yaml
+          trace_file: <path under ../original_traces/skill_generation/fewshot/attempt_01/ or null>
+          input_tokens: <int or null>
+          cached_input_tokens: <int or null>
+          output_tokens: <int or null>
+          reasoning_output_tokens: <int or null>
+          total_tokens: <int or null>
+          cost_usd: <float or null>
+        attempt_02: <same shape as attempt_01>
+        attempt_03: <same shape as attempt_01>
+      summary:
+        input_tokens_avg_3: <float or null>
+        cached_input_tokens_avg_3: <float or null>
+        output_tokens_avg_3: <float or null>
+        reasoning_output_tokens_avg_3: <float or null>
+        cost_usd_avg_3: <float or null>
+    self: <same shape as fewshot>
+    reflect-3: <same shape as fewshot>
+
 conditions:
   base:
     overall_acc_at_3: <float>
@@ -84,6 +113,11 @@ conditions:
   编号必须和使用该 skill 的 solver attempt 编号一致。
 - Token 字段来自复制到 `original_traces/` 下的 Codex session traces。如果
   trace 不能被唯一匹配，应写 `null`，并在对应 run record 中保留 trace 问题。
+- `evolve` 只记录三个非 base 模式的 skill-generation 用量。每次 attempt 都保留
+  input、cached input、output、reasoning output 和 total token 字段及完整原始
+  trace 路径；summary 保留每个 token bucket 和美元费用的三次算术平均值。
+- Evolve 费用使用 report 中记录的 pricing 区块计算。Cached input 是 input 的
+  子集，reasoning output 是 output 的子集，两者都不能重复计费。
 - 效率指标和 `acc@3` 使用相同聚合方式：先对同一个 test task 的 3 次
   attempts 取平均，再对 5 个 test tasks 取平均。
 - 效率指标只统计 test solver subagents 写答案的过程。不要包含 skill

@@ -38,11 +38,11 @@
 - [ ] Add dedicated `CLAUDE_CONFIG_DIR` and session trace paths for each skill-generation attempt.
 - [ ] Define `evolve_metadata.yaml` with input, cache creation, cache read, output, total token, and cost fields.
 - [ ] Add the Opus 4.8 rate card: input 5.00, cache creation 6.25, cache read 0.50, output 25.00 USD per million tokens.
-- [ ] Add the top-level report `evolve` schema with three attempts and totals for each non-base mode.
+- [ ] Add the top-level report `evolve` schema with three attempts and per-bucket `avg_3` fields for each non-base mode.
 - [ ] Verify English and Chinese structures with:
 
 ```bash
-rg -n "evolve_metadata|original_traces/skill_generation|cost_usd_total_3" \
+rg -n "evolve_metadata|original_traces/skill_generation|cost_usd_avg_3" \
   evaluation/eval_workspace/claude_code \
   evaluation/eval_workspace/claude_code_zh
 ```

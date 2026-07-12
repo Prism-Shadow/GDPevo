@@ -244,8 +244,8 @@ checking code, aggregation code, and environment notes must be placed under
 
 Separately aggregate each non-base mode's 3 skill-generation traces and
 `evolve_metadata.yaml` files into the report's top-level `evolve` block. Keep
-all attempt records and trace paths, sum token and cost totals across the three
-attempts, and report the arithmetic mean cost as `cost_usd_avg_3`.
+all attempt records and trace paths, and report the arithmetic mean of every
+token bucket and USD cost across the three attempts.
 
 The final report must also include `model_config.provider: deepseek`,
 `model_config.primary_model: deepseek-v4-pro[1m]`,

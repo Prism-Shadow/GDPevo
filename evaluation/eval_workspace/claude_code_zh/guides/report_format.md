@@ -38,12 +38,10 @@ evolve:
         attempt_02: <same shape as attempt_01>
         attempt_03: <same shape as attempt_01>
       summary:
-        input_tokens_total_3: <int or null>
-        cache_creation_tokens_total_3: <int or null>
-        cache_read_tokens_total_3: <int or null>
-        output_tokens_total_3: <int or null>
-        total_tokens_total_3: <int or null>
-        cost_usd_total_3: <float or null>
+        input_tokens_avg_3: <float or null>
+        cache_creation_tokens_avg_3: <float or null>
+        cache_read_tokens_avg_3: <float or null>
+        output_tokens_avg_3: <float or null>
         cost_usd_avg_3: <float or null>
     self: <same shape as fewshot>
     reflect-3: <same shape as fewshot>
@@ -122,8 +120,8 @@ conditions:
   `message.id` 去重后的 Claude Code session traces。如果 transcript 缺失，应写
   `null`，并在对应 run record 中保留问题。
 - `evolve` 只记录三个非 base 模式的 skill-generation 用量。保留 3 次 attempt
-  的记录和完整原始 trace 路径；summary 为三次 attempt 的总和，
-  `cost_usd_avg_3` 为算术平均值。
+  的记录和完整原始 trace 路径；summary 保留每个 token bucket 和美元费用的
+  三次算术平均值。
 - Evolve 费用使用 report 中记录的 pricing 区块计算。Claude 的四个 token 桶互不
   重叠，各计费一次。
 - 效率指标和 `acc@3` 使用相同聚合方式：先对同一个 test task 的 3 次

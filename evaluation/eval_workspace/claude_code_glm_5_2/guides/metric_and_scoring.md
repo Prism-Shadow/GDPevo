@@ -199,8 +199,8 @@ then average the 5 test tasks.
 These efficiency metrics only count the answer-writing work of test solver runs. They do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
 
 Evolve token and cost metrics are aggregated separately for each non-base
-condition. Sum the three skill-generation attempts for the mode totals and keep
-each attempt's raw values and complete trace path in the report. Do not combine
-evolve usage with solver efficiency.
+condition. Average each token bucket and USD cost across the three
+skill-generation attempts, and keep every attempt's raw values and complete
+trace path in the report. Do not combine evolve usage with solver efficiency.
 
 The evaluation agent may write temporary aggregation or checking code in `scratch/` according to the current task group's evaluator shape.
