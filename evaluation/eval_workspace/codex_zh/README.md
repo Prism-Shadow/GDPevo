@@ -107,7 +107,7 @@ Solver runs 只能看到当前条件允许的信息。Solver 不应该看到 tes
 ```text
 eval_attempt_id: <unique_eval_attempt_id>
 
-Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
+Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. Before solving, read input/prompt.txt and inspect every file under input/payloads/. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
 ```
 
 主 agent 之后使用 `eval_attempt_id` 匹配对应 Codex session trace，将原始 trace 复制到 `original_traces/`，并回填 token、turn 和 tool-call 字段。
