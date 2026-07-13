@@ -113,7 +113,7 @@ Keep the solver isolated-agent prompt short and explicit:
 ```text
 eval_attempt_id: <unique_eval_attempt_id>
 
-Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
+Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. Before solving, read input/prompt.txt and inspect every file under input/payloads/. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
 ```
 
 The main agent later uses `eval_attempt_id` to match the corresponding Codex session trace, copies that raw trace into `original_traces/`, and backfills token, turn, and tool-call fields.
