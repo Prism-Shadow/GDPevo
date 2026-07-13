@@ -1,34 +1,123 @@
 export const modes = ["base", "demo", "reflect"];
 
-export const summaryCards = [
+const v1LeaderboardRuns = [
   {
-    title: "Codex · GPT-5.5",
+    model: "GPT-5.5",
+    harness: "Codex",
     thinking: "xhigh",
-    rows: [
-      { mode: "base", acc: "48.35%", tokens: "709.2", usd: "1.08" },
-      { mode: "demo", acc: "65.99%", tokens: "466.1", usd: "0.81" },
-      { mode: "reflect", acc: "67.13%", tokens: "458.7", usd: "0.79", best: true }
-    ]
+    method: "skill-creator",
+    modes: {
+      base: { acc: 46.72, std: 5.13, lift: 0, rounds: 14.91, tokens: 735.3, cost: 1.137 },
+      fewshot: { acc: 64.91, std: 6.36, lift: 18.19, rounds: 11.58, tokens: 451.7, cost: 0.805 },
+      self: { acc: 54.99, std: 8.73, lift: 8.27, rounds: 9.71, tokens: 344.3, cost: 0.771 },
+      "reflect-3": { acc: 57.45, std: 7.62, lift: 10.73, rounds: 10.83, tokens: 399.4, cost: 0.844 }
+    }
   },
   {
-    title: "Claude Code · Opus 4.8",
+    model: "Opus 4.8",
+    harness: "Claude Code",
     thinking: "xhigh",
-    rows: [
-      { mode: "base", acc: "49.11%", tokens: "376.8", usd: "0.61" },
-      { mode: "demo", acc: "70.90%", tokens: "340.8", usd: "0.55", best: true },
-      { mode: "reflect", acc: "67.94%", tokens: "331.9", usd: "0.56" }
-    ]
+    method: "skill-creator",
+    modes: {
+      base: { acc: 49.11, std: 5.25, lift: 0, rounds: 14.62, tokens: 385.8, cost: 0.607 },
+      fewshot: { acc: 70.9, std: 6.38, lift: 21.79, rounds: 11.1, tokens: 347.3, cost: 0.549 },
+      self: { acc: 57.37, std: 6.79, lift: 8.26, rounds: 11.78, tokens: 433.9, cost: 0.61 },
+      "reflect-3": { acc: 62.72, std: 6.68, lift: 13.62, rounds: 12.15, tokens: 433.4, cost: 0.605 }
+    }
   },
   {
-    title: "Panofy · Opus 4.6",
+    model: "Opus 4.6",
+    harness: "Panofy",
     thinking: "high",
-    rows: [
-      { mode: "base", acc: "50.17%", tokens: "318.9", usd: "0.72" },
-      { mode: "demo", acc: "68.24%", tokens: "383.5", usd: "0.80", best: true },
-      { mode: "reflect", acc: "67.98%", tokens: "365.2", usd: "0.79" }
-    ]
+    method: "agent-training",
+    modes: {
+      base: { acc: 50.4, std: 6.99, lift: 0, rounds: 15.16, tokens: 379.3, cost: 0.752 },
+      fewshot: { acc: 71.47, std: 4.93, lift: 21.07, rounds: 13.48, tokens: 385.5, cost: 0.814 },
+      self: { acc: 58.39, std: 5.74, lift: 7.99, rounds: 12.51, tokens: 341.8, cost: 0.707 },
+      "reflect-3": { acc: 59.82, std: 7.31, lift: 9.41, rounds: 14.37, tokens: 394.8, cost: 0.767 }
+    }
+  },
+  {
+    model: "GLM-5.2",
+    harness: "Claude Code",
+    thinking: "max",
+    method: "skill-creator",
+    modes: {
+      base: { acc: 47.73, std: 5.21, lift: 0, rounds: 17.57, tokens: 633.3, cost: 0.388 },
+      fewshot: { acc: 69.55, std: 8.85, lift: 21.83, rounds: 15.49, tokens: 606.3, cost: 0.34 },
+      self: { acc: 55.91, std: 7.84, lift: 8.18, rounds: 15.98, tokens: 634.8, cost: 0.348 },
+      "reflect-3": { acc: 63.35, std: 7.51, lift: 15.62, rounds: 15.36, tokens: 572.6, cost: 0.324 }
+    }
+  },
+  {
+    model: "Kimi K2.6",
+    harness: "Claude Code",
+    thinking: "enabled",
+    method: "skill-creator",
+    modes: {
+      base: { acc: 25.14, std: 12.15, lift: 0, rounds: 46.24, tokens: 1226.7, cost: 0.338 },
+      fewshot: { acc: 30.48, std: 13.22, lift: 5.34, rounds: 37.87, tokens: 977, cost: 0.288 },
+      self: { acc: 29.16, std: 14.18, lift: 4.02, rounds: 32.67, tokens: 821.6, cost: 0.25 },
+      "reflect-3": { acc: 32.68, std: 14.25, lift: 7.54, rounds: 31.68, tokens: 950.5, cost: 0.28 }
+    }
+  },
+  {
+    model: "DeepSeek V4 Pro",
+    harness: "Claude Code",
+    thinking: "max",
+    method: "skill-creator",
+    modes: {
+      base: { acc: 46.06, std: 6.9, lift: 0, rounds: 13.22, tokens: 503.4, cost: 0.031 },
+      fewshot: { acc: 54.8, std: 9.65, lift: 8.74, rounds: 11.46, tokens: 439.9, cost: 0.032 },
+      self: { acc: 48.69, std: 8.75, lift: 2.63, rounds: 10.53, tokens: 405.7, cost: 0.032 },
+      "reflect-3": { acc: 49.22, std: 8.67, lift: 3.16, rounds: 10.26, tokens: 383.8, cost: 0.031 }
+    }
   }
 ];
+
+const v2LeaderboardRuns = [
+  {
+    model: "GPT-5.5",
+    harness: "Codex",
+    thinking: "xhigh",
+    method: "skill-creator",
+    modes: {
+      base: { acc: 42.96, std: 4.47, lift: 0, rounds: 15.56, tokens: 588.3, cost: 1.043 },
+      fewshot: { acc: 52.46, std: 5.62, lift: 9.5, rounds: 12.7, tokens: 424.0, cost: 0.861 },
+      self: { acc: 46.98, std: 6.32, lift: 4.02, rounds: 13.38, tokens: 427.3, cost: 0.851 },
+      "reflect-3": { acc: 47.13, std: 7.42, lift: 4.17, rounds: 14.24, tokens: 475.3, cost: 0.901 }
+    }
+  }
+];
+
+export const leaderboardModes = ["base", "fewshot", "self", "reflect-3"];
+
+function createLeaderboardRows(version, runs) {
+  return runs.flatMap((run) =>
+    leaderboardModes.map((mode) => ({
+      id: `${version}-${run.harness}-${run.model}-${mode}`.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-"),
+      model: run.model,
+      harness: run.harness,
+      thinking: run.thinking,
+      method: run.method,
+      mode,
+      ...run.modes[mode]
+    }))
+  );
+}
+
+export const leaderboardVersions = {
+  v1: {
+    label: "V1",
+    taskRange: "001–012",
+    rows: createLeaderboardRows("v1", v1LeaderboardRuns)
+  },
+  v2: {
+    label: "V2",
+    taskRange: "013–024",
+    rows: createLeaderboardRows("v2", v2LeaderboardRuns)
+  }
+};
 
 export const harnesses = [
   { key: "codex", harness: "Codex", model: "GPT-5.5", thinking: "xhigh" },
