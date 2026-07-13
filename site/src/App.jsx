@@ -58,7 +58,7 @@ export default function App() {
   return (
     <>
       <Header page={page} lang={lang} setLang={setLang} themeChoice={themeChoice} setThemeChoice={setThemeChoice} />
-      {page === "blog" ? <BlogPage /> : <HomePage />}
+      {page === "blog" ? <BlogPage /> : <HomePage lang={lang} />}
       <Footer />
     </>
   );

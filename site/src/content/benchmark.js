@@ -1,5 +1,3 @@
-export const modes = ["base", "demo", "reflect"];
-
 const v1LeaderboardRuns = [
   {
     model: "GPT-5.5",
@@ -119,25 +117,85 @@ export const leaderboardVersions = {
   }
 };
 
-export const harnesses = [
-  { key: "codex", harness: "Codex", model: "GPT-5.5", thinking: "xhigh" },
-  { key: "claude", harness: "Claude Code", model: "Opus 4.8", thinking: "xhigh" },
-  { key: "panofy", harness: "Panofy", model: "Opus 4.6", thinking: "high" }
-];
-
-export const resultGroups = [
-  { id: "01", domain: "CRM", en: "Lead capture", zh: "线索捕获", codex: [44.43, 48.12, 57.46], claude: [48.75, 81.96, 75.47], panofy: [63.74, 85.28, 82.26] },
-  { id: "02", domain: "CRM", en: "B2B quote", zh: "B2B 报价", codex: [41.62, 51.17, 60.41], claude: [42.74, 58.48, 46.53], panofy: [43.85, 58.93, 51.51] },
-  { id: "03", domain: "CRM", en: "Service ticket", zh: "服务工单", codex: [57.84, 78.11, 71.69], claude: [46.69, 70.89, 63.92], panofy: [58.58, 73.41, 58.00] },
-  { id: "04", domain: "CRM", en: "Churn analytics", zh: "流失分析", codex: [31.73, 60.94, 59.95], claude: [25.24, 54.55, 54.28], panofy: [18.82, 59.53, 57.06] },
-  { id: "05", domain: "ERP", en: "Expense control", zh: "费用控制", codex: [35.09, 52.45, 46.51], claude: [51.15, 57.96, 59.26], panofy: [41.05, 60.51, 62.85] },
-  { id: "06", domain: "ERP", en: "Procurement", zh: "采购收货", codex: [66.28, 72.39, 71.76], claude: [67.98, 72.98, 72.54], panofy: [64.83, 72.24, 70.39] },
-  { id: "07", domain: "ERP", en: "Inventory", zh: "库存履约", codex: [38.40, 54.31, 54.49], claude: [39.54, 55.76, 57.10], panofy: [36.39, 41.88, 51.15] },
-  { id: "08", domain: "Finance", en: "Advisory & tax", zh: "理财税务", codex: [70.57, 93.18, 93.05], claude: [66.89, 93.60, 90.94], panofy: [49.18, 73.36, 79.36] },
-  { id: "09", domain: "Finance", en: "Ops modeling", zh: "运营建模", codex: [42.76, 92.47, 80.94], claude: [51.76, 100.00, 80.00], panofy: [62.39, 89.73, 92.47] },
-  { id: "10", domain: "Finance", en: "Investment", zh: "投资策略", codex: [60.76, 71.05, 73.77], claude: [58.60, 63.45, 75.07], panofy: [50.73, 65.18, 63.90] },
-  { id: "11", domain: "Finance", en: "Credit risk", zh: "信用风险", codex: [45.68, 56.48, 65.41], claude: [41.56, 63.48, 60.82], panofy: [48.91, 56.38, 61.07] },
-  { id: "12", domain: "ERP", en: "HR lifecycle", zh: "HR 流程", codex: [45.08, 61.24, 70.10], claude: [48.41, 77.66, 79.30], panofy: [63.59, 82.43, 85.77] }
+export const radarRuns = [
+  {
+    id: "codex-gpt5-5",
+    model: "GPT-5.5",
+    harness: "Codex",
+    thinking: "xhigh",
+    method: "skill-creator",
+    scores: {
+      base: [44.43, 41.62, 57.84, 31.73, 35.09, 66.28, 38.4, 43.47, 41.87, 63.15, 51.68, 45.08],
+      fewshot: [48.12, 51.17, 78.11, 60.94, 52.45, 72.39, 54.31, 95.55, 69.79, 71.44, 63.38, 61.24],
+      self: [71.06, 45.36, 62.91, 25.74, 58.86, 70.46, 28.48, 62.44, 52.3, 68.99, 50.23, 63.01],
+      "reflect-3": [68.34, 44.24, 57.76, 25.01, 59.51, 72.87, 43.44, 72.68, 68.33, 68.77, 47.61, 60.78]
+    }
+  },
+  {
+    id: "claude-opus-4-8",
+    model: "Opus 4.8",
+    harness: "Claude Code",
+    thinking: "xhigh",
+    method: "skill-creator",
+    scores: {
+      base: [48.75, 42.74, 46.69, 25.24, 51.15, 67.98, 39.54, 66.89, 51.76, 58.6, 41.56, 48.41],
+      fewshot: [81.96, 58.48, 70.89, 54.55, 57.96, 72.98, 55.76, 93.6, 100, 63.45, 63.48, 77.66],
+      self: [77.11, 49.84, 57.21, 38.35, 45.35, 74.72, 37.38, 68.93, 58.07, 60.67, 47.32, 73.48],
+      "reflect-3": [71.84, 58.79, 56.48, 45.5, 58.97, 73.52, 51.45, 78.58, 76.68, 58.16, 48.03, 74.7]
+    }
+  },
+  {
+    id: "panofy-opus-4-6",
+    model: "Opus 4.6",
+    harness: "Panofy",
+    thinking: "high",
+    method: "agent-training",
+    scores: {
+      base: [63.93, 43.55, 55.16, 16, 47.84, 68.91, 35.56, 63.12, 60.78, 53.11, 49.55, 47.3],
+      fewshot: [90.12, 60.03, 72.33, 57.95, 58.4, 67.05, 56.18, 90.94, 90.9, 70.29, 55.86, 87.58],
+      self: [76.98, 48.72, 55.71, 19.24, 46.18, 70.76, 42.59, 65.34, 73.22, 72.01, 45.01, 84.91],
+      "reflect-3": [76.59, 51.08, 47.47, 30.95, 44.23, 71.31, 43.94, 71.54, 76.78, 69.78, 50.89, 83.23]
+    }
+  },
+  {
+    id: "claude-glm-5-2",
+    model: "GLM-5.2",
+    harness: "Claude Code",
+    thinking: "max",
+    method: "skill-creator",
+    scores: {
+      base: [42.94, 40.92, 61.56, 19.68, 48.07, 58.37, 33.36, 56.27, 55.1, 61.54, 47.59, 47.3],
+      fewshot: [81.65, 56.27, 74.9, 60.15, 62.44, 70.41, 55.84, 77.94, 88.31, 72.11, 54.4, 80.21],
+      self: [61.77, 42.43, 65.65, 28.61, 54.97, 61.15, 35.21, 63.09, 63.45, 69.6, 46.38, 78.58],
+      "reflect-3": [78.38, 47.71, 63.15, 42.93, 59.38, 62.07, 55.03, 76.41, 78.35, 64.61, 52, 80.16]
+    }
+  },
+  {
+    id: "claude-kimi-k2-6",
+    model: "Kimi K2.6",
+    harness: "Claude Code",
+    thinking: "enabled",
+    method: "skill-creator",
+    scores: {
+      base: [32.04, 30.29, 18.15, 22.56, 15.73, 25, 6.28, 15.73, 44.83, 23.22, 26.6, 41.26],
+      fewshot: [44.24, 44, 29.19, 23.97, 11.19, 18.22, 8.5, 15.7, 49.38, 22.85, 40.49, 58.06],
+      self: [22.43, 34.55, 19.54, 16.51, 20.93, 26.3, 12.34, 11.77, 58.93, 35.95, 37.08, 53.55],
+      "reflect-3": [64.39, 33.63, 20.16, 15.85, 24.95, 27.35, 5.31, 15.46, 53.98, 35.89, 36.1, 59.05]
+    }
+  },
+  {
+    id: "claude-deepseek-v4-pro",
+    model: "DeepSeek V4 Pro",
+    harness: "Claude Code",
+    thinking: "max",
+    method: "skill-creator",
+    scores: {
+      base: [56.79, 40, 49.22, 22.63, 47.45, 63.35, 33.2, 56.93, 49.07, 40.33, 45.75, 48.04],
+      fewshot: [57.97, 43.38, 38.14, 34.61, 61.99, 63.31, 44.26, 65.25, 72.59, 52.87, 45.07, 78.22],
+      self: [64.45, 43.75, 38.63, 19.29, 31.64, 69.24, 32.14, 51.64, 53.01, 62.42, 41.78, 76.27],
+      "reflect-3": [63.59, 48.34, 42.48, 23.16, 44.79, 65.61, 32.57, 47.27, 59.93, 51.74, 48.98, 62.2]
+    }
+  }
 ];
 
 export const taskGroups = [

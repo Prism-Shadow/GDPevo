@@ -1,15 +1,11 @@
 import { Fragment, useMemo, useState } from "react";
 import { BenchmarkFigure } from "../components/BenchmarkFigure.jsx";
+import { TaskGroupRadar } from "../components/TaskGroupRadar.jsx";
 import { GitHubIcon, NavIcon } from "../components/icons.jsx";
 import { homeContent } from "../content/home.js";
 import { Lang, LocalizedMarkdown } from "../lib/i18n.jsx";
 import { links } from "../content/links.js";
-import { harnesses, modes, resultGroups, taskGroups, taskTopics } from "../content/benchmark.js";
-
-const modeLabels = {
-  demo: "fewshot"
-};
-const modeLabel = (mode) => modeLabels[mode] ?? mode;
+import { taskGroups, taskTopics } from "../content/benchmark.js";
 
 function Hero() {
   const { title, subtitle, meta, actions, stats } = homeContent.hero;
@@ -77,100 +73,7 @@ function Hero() {
   );
 }
 
-function Meter({ value, mode }) {
-  return (
-    <div className={`ob-meter mode-${mode}`}>
-      <div className="ob-track">
-        <span className={`fl ${mode}`} style={{ "--w": `${value.toFixed(2)}%` }} />
-      </div>
-      <b>{value.toFixed(1)}</b>
-    </div>
-  );
-}
-
-function HarnessRows({ harness, group }) {
-  return (
-    <div className="ob-harness-block">
-      <span className="ob-harness">{harness.harness}</span>
-      <span className="ob-model">
-        <strong>{harness.model}</strong>
-        <small>{harness.thinking}</small>
-      </span>
-      <div className="ob-condition-rows">
-        {modes.map((mode, index) => (
-          <div className="ob-row" key={mode}>
-            <code>{modeLabel(mode)}</code>
-            <Meter value={group[harness.key][index]} mode={mode} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ResultsChart() {
-  const { chartTitle, chartColumns } = homeContent.results;
-
-  return (
-    <figure className="panel chart merged-chart shown" id="chart">
-      <figcaption className="panel-head">
-        <span className="panel-title">
-          <Lang {...chartTitle} />
-        </span>
-        <span className="legend">
-          <span className="leg">
-            <i className="sw sw-base" />
-            base
-          </span>
-          <span className="leg">
-            <i className="sw sw-demo" />
-            fewshot
-          </span>
-          <span className="leg">
-            <i className="sw sw-reflect" />
-            reflect
-          </span>
-        </span>
-      </figcaption>
-      <div className="combined-bars">
-        <div className="ob-head">
-          <span>
-            <Lang {...chartColumns.taskGroup} />
-          </span>
-          <span>{chartColumns.harness}</span>
-          <span>{chartColumns.model}</span>
-          <span>
-            <Lang {...chartColumns.setting} />
-          </span>
-          <span>{chartColumns.accuracy}</span>
-        </div>
-        {resultGroups.map((group) => {
-          const chip = group.domain === "Finance" ? "fin" : group.domain.toLowerCase();
-          return (
-            <div className="ob-group" key={group.id}>
-              <div className="ob-name">
-                <strong>{group.id}</strong>
-                <span className="ob-title-line">
-                  <span>
-                    <Lang en={group.en} zh={group.zh} />
-                  </span>
-                  <i className={`chip ${chip}`}>{group.domain}</i>
-                </span>
-              </div>
-              <div className="ob-rows">
-                {harnesses.map((harness) => (
-                  <HarnessRows key={harness.key} harness={harness} group={group} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </figure>
-  );
-}
-
-function ResultsSection() {
+function ResultsSection({ lang }) {
   const { results } = homeContent;
 
   return (
@@ -182,8 +85,8 @@ function ResultsSection() {
         <p className="lead">
           <LocalizedMarkdown copy={results.lead} />
         </p>
-        <BenchmarkFigure className="results-benchmark-figure" modeLabels={modeLabels} />
-        <ResultsChart />
+        <BenchmarkFigure className="results-benchmark-figure" />
+        <TaskGroupRadar lang={lang} />
         {results.notes.map((note) => (
           <p className="note" key={note.key}>
             <LocalizedMarkdown copy={note} />
@@ -310,11 +213,11 @@ function TasksSection() {
   );
 }
 
-export function HomePage() {
+export function HomePage({ lang = "en" }) {
   return (
     <main id="top">
       <Hero />
-      <ResultsSection />
+      <ResultsSection lang={lang} />
       <TasksSection />
     </main>
   );
