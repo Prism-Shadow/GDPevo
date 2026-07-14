@@ -29,8 +29,9 @@ Never stage an entire train task or test task directory. Stage only the
 allowlisted files for the current mode. `notes/`, `eval/`, `env/`, unrelated
 tasks, and previous run outputs are never allowlisted for Claude runs.
 
-All non-reflect staging should expose only the container-visible environment URL from
-`.env`:
+All staging receives the container-visible environment URL from `.env` plus
+the allowed business endpoint names copied from `task_group/env/endpoints.txt`
+without descriptions:
 
 ```text
 GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/

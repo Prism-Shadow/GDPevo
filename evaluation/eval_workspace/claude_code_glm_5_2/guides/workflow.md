@@ -65,6 +65,13 @@ startup/reset commands, port, and URL in `scratch/environment.md`.
 Skill-generation and solver runs must not enter, list, or read `env/`. They may
 use only the container-visible environment entrypoint staged by the main agent.
 
+Read endpoint names from `task_group/env/endpoints.txt`. Each staged
+`environment_access.md` must include the base URL, required credentials, and
+all endpoints allowed for that run as `METHOD /path` lines without endpoint
+descriptions. Include business endpoints for skill generation and test solving;
+add `/api/judge` only for reflect skill generation; never include `/health` or
+reset/reseed endpoints in execution-agent inputs.
+
 The judge endpoint is train-only and valid only during reflect skill generation
 on train tasks. It must not be staged to test solvers or written into generated
 skills as a test-time tool. Only reflect skill-generation runs should
@@ -136,7 +143,7 @@ reflect-3
 For each attempt directory, stage only:
 
 - The current test task `input/`.
-- `environment_access.md` with the container-visible environment URL.
+- `environment_access.md` with the container-visible URL, credentials when needed, and the allowed endpoint names.
 - The complete matching skill package directory as `skill/` for non-base modes.
 
 Do not stage `env/`, train tasks, source answer files, test answers, task notes,

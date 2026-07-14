@@ -20,7 +20,9 @@ reflect-3
 主 agent 应将每个 skill-generation 或 solver run 允许读取的材料 staging 到该 run
 专属目录中。不要把完整 task group 目录给隔离 run。
 
-所有非 reflect staging 都只应暴露 `.env` 中的容器可访问的环境 URL：
+所有 staging 都应接收 `.env` 中的容器可访问环境 URL，以及从
+`task_group/env/endpoints.txt` 复制的允许业务 endpoint 名称；endpoint 不附
+接口介绍：
 
 ```text
 GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/

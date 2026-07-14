@@ -54,6 +54,13 @@ GDPEVO_JUDGE_PATH=/api/judge
 Skill-generation 和 solver runs 不得进入、列出或读取 `env/`。它们只能
 使用主 agent staging 的容器可访问环境入口。
 
+主 agent 从 `task_group/env/endpoints.txt` 读取 endpoint 名称。每次 staging 的
+`environment_access.md` 都要包含 base URL、必要凭据，以及当前运行允许的全部
+endpoint；endpoint 只按 `METHOD /path` 逐行列出，不附接口介绍。Skill
+generation 和 test solving 可以使用业务 endpoint；只有 reflect skill
+generation 可以额外看到 `/api/judge`；执行 agent 不能看到 `/health` 或
+reset/reseed endpoint。
+
 Judge endpoint 只用于 reflect skill generation 中的 train tasks。它不能
 staging 给 test solver，也不能作为 test-time 工具写入生成的 skill。只有
 reflect skill-generation runs 能收到它的调用说明：
@@ -131,7 +138,7 @@ reflect-3
 每个 attempt 目录只 staging：
 
 - 当前 test task 的 `input/`。
-- 包含容器可访问环境 URL 的 `environment_access.md`。
+- 包含容器可访问环境 URL、必要凭据和允许 endpoint 名称的 `environment_access.md`。
 - 非 base 模式下与 attempt 编号匹配的完整 skill 包目录，统一命名为 `skill/`。
 
 不要给 test solver staging `env/`、train tasks、源 answer files、test answers、

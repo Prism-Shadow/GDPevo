@@ -22,7 +22,11 @@ The environment API runs on the orchestration host with
 `TASK_ENV_BIND=0.0.0.0`. Every agent container uses the fixed
 `--add-host=host.docker.internal:host-gateway` option and reaches it through
 `http://host.docker.internal:<TASK_ENV_PORT>`. Stage that URL in
-`environment_access.md`. Do not stage or mount environment source files.
+`environment_access.md`, together with every business endpoint allowed for the
+run, copied from `env/endpoints.txt` as `METHOD /path` lines without
+descriptions. Do not include `/health`, reset/reseed endpoints, or `/api/judge`
+in base/fewshot calibration inputs. Do not stage or mount environment source
+files.
 
 ## Codex Command
 

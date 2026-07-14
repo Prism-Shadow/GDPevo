@@ -21,7 +21,8 @@ base 用于估计未学习 train 的表现。
 运行难度测试前，主 agent 在宿主机上以 `TASK_ENV_BIND=0.0.0.0` 和可用的
 `TASK_ENV_PORT` 启动环境。每个校准容器都必须带
 `--add-host=host.docker.internal:host-gateway`，`environment_access.md` 固定写
-`http://host.docker.internal:<TASK_ENV_PORT>`。先从临时容器通过完全相同的
+`http://host.docker.internal:<TASK_ENV_PORT>`，并从 `env/endpoints.txt` 加入
+当前运行允许的全部业务 endpoint，每行只写 `METHOD /path`。先从临时容器通过完全相同的
 路径检查 health endpoint，并把启动命令、端口、URL 和日志记录到
 `scratch/difficulty_calibration.md`。不能把 `env/` staging 或挂载进校准
 agent。环境状态仍有效时，base 和 fewshot 可以复用同一个服务；发生写入
@@ -167,6 +168,7 @@ reviewer subagent 应检查：
 - `env/` 是否是面向整个 task group 的公共数据与办公环境，而不是单任务临时工具。
 - solver-facing env 是否按共享业务领域和接口组织，而不是按 per-task 数据包或 `/api/tasks/<task_id>/data` 这类 endpoint 组织。
 - `env/` 是否由上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 实现，而不是由主 agent 直接手写。
+- `env/endpoints.txt` 是否以 `METHOD /path` 且不附说明的方式列全所有可访问 endpoint，agent 可见的 `environment_access.md` 是否只包含当前运行允许的 endpoint。
 - 数据库型任务是否使用宿主机侧的 SQLite，并只通过带鉴权的运行中查询服务开放任务所需的读写能力；不能使用 PostgreSQL，也不能让 solver agents 直接访问 `.db`、`env/`、schema 或生成数据文件。
 - 大量数据是否由程序和随机数生成，并保留 seed 和脚本。
 - 每个任务是否有 `notes/notes.md`，且 test task 说明迁移设计和迁移来源。

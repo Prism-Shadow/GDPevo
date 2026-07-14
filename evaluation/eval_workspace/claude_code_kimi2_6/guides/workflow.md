@@ -67,18 +67,25 @@ startup/reset commands, port, and URL in `scratch/environment.md`.
 Some official task inputs were authored for the local-environment harness and
 may mention localhost, `127.0.0.1`, or `env/setup.sh`. Do not modify official
 task input files, but treat those local references as obsolete for this Kimi
-evaluation. Every staged skill-generation and solver directory must include an
-`environment_access.md` file that states:
+evaluation. The main agent must override those references when preparing each
+staged `environment_access.md`:
 
 ```text
-Use only GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/.
-Do not start task_group/env or run env/setup.sh inside this container.
-If any task text mentions a local env URL, this environment_access.md overrides
-that local reference.
+base_url: http://host.docker.internal:<TASK_ENV_PORT>/
+allowed_endpoints:
+- <METHOD /path>
+credentials: <runtime credentials, only when required>
 ```
 
 Skill-generation and solver Claude runs must not enter, list, or read `env/`.
 They may use only the container-visible environment entrypoint staged by the main agent.
+
+Read endpoint names from `task_group/env/endpoints.txt`. Each staged
+`environment_access.md` must include the base URL, required credentials, and
+all endpoints allowed for that run as `METHOD /path` lines without endpoint
+descriptions. Include business endpoints for skill generation and test solving;
+add `/api/judge` only for reflect skill generation; never include `/health` or
+reset/reseed endpoints in execution-agent inputs.
 
 The judge endpoint is train-only and valid only during reflect skill generation
 on train tasks. It must not be staged to test solvers or written into generated
@@ -162,8 +169,7 @@ reflect-3
 For each attempt directory, stage only:
 
 - The current test task `input/`.
-- `environment_access.md` with the container-visible environment URL and the override
-  notice for any stale local-env references in official task inputs.
+- `environment_access.md` with the container-visible URL, credentials when needed, and the allowed endpoint names; it overrides stale local-env references in official task inputs.
 - The complete matching skill package directory as `skill/` for non-base modes.
 
 Do not copy whole test task directories for solver attempts. Do not stage

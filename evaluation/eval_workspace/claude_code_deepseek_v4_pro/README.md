@@ -94,8 +94,10 @@ Some official task inputs may still mention localhost, `127.0.0.1`, or
 `env/setup.sh` from the local-environment harness. Do not edit those official
 inputs, but treat those local references as superseded for this DeepSeek evaluation.
 When staging every skill-generation or solver directory, write
-`environment_access.md` with the `.env` container-visible URL and state that it is the only
-environment entrypoint to use.
+`environment_access.md` with the `.env` container-visible URL, required runtime
+credentials, and every endpoint name allowed for that run from
+`task_group/env/endpoints.txt`. List endpoints only as `METHOD /path`, without
+descriptions.
 
 4. Generate 3 independent skills for each non-base condition:
 

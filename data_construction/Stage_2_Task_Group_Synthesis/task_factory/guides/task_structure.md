@@ -24,6 +24,7 @@ task_group_001/
 ├── env/
 │   ├── setup.sh
 │   ├── judge_api.py
+│   ├── endpoints.txt
 │   └── <shared business services, data, setup files, and support files>
 ├── train_tasks/
 │   ├── 001/
@@ -73,6 +74,7 @@ env:
   files:
     - env/setup.sh
     - env/judge_api.py
+    - env/endpoints.txt
     - env/<shared_business_service_or_support_file>
 
 train_tasks:
@@ -126,9 +128,14 @@ test_tasks:
 | `task_group.domain` | Yes | Domain label |
 | `task_group.description` | Yes | Shared task-group background; not default solver input |
 | `env.setup` | Yes | Environment setup entry point |
-| `env.files` | Yes | Shared environment files that should be declared in the final task group index |
+| `env.files` | Yes | Shared environment files declared in the final task group index; must include `env/endpoints.txt` |
 | `train_tasks` | Yes | Exactly 5 train task entries: `train_001` through `train_005` |
 | `test_tasks` | Yes | Exactly 5 test task entries: `test_001` through `test_005` |
+
+`env/endpoints.txt` is a plain endpoint inventory. List every reachable endpoint
+once as `METHOD /path`, including business endpoints, `/health`, and
+`/api/judge`. Do not include descriptions, examples, host names, credentials,
+or usage instructions.
 
 Each item under `train_tasks` and `test_tasks` is a formal task:
 

@@ -20,6 +20,14 @@ Do not partition the solver-facing environment by task. Avoid per-task data pack
 
 `env/` itself is not solver-visible input. Solver, base, and fewshot agents should access the environment only through exposed entry points, such as a browser URL, API base URL, or authenticated SQLite query-service URL and credentials. If a task requires relational data access, keep the SQLite database file on the orchestration host and expose the required read or write SQL capability through the running environment service. The service may accept SQL over HTTP or provide an equivalent shared query interface, but it must not become a task-answer endpoint. Do not let solver agents inspect or mount `env/` files, SQLite database files, schema or migration scripts, generated data files, database dumps, seeds, manifests, or setup scripts directly.
 
+Keep a complete plain-text endpoint list at `env/endpoints.txt`, with one
+`METHOD /path` per line and no descriptions. During calibration or evaluation,
+the main agent writes all endpoint names allowed for the current run into
+`environment_access.md`, together with the runtime base URL and credentials if
+needed. Business endpoints may be shown to skill-generation and test agents;
+`/api/judge` is shown only during reflect skill generation; `/health` and
+reset/reseed endpoints remain orchestration-only.
+
 In solver-visible task inputs, refer to the running environment base URL only as
 `<TASK_ENV_BASE_URL>`. Keep real localhost addresses, private IPs, public host
 names, ports, and setup commands out of `prompt.txt` and `input/payloads/`; those
@@ -86,7 +94,7 @@ The blueprint should be written before implementation and stored at:
 scratch/env_blueprint.md
 ```
 
-It should specify business systems, public entry points, data contracts, required tables or APIs, the SQLite schema and query-service contract when applicable, authentication requirements, random seeds, generated-data expectations, setup behavior, manifest requirements, `TASK_ENV_BIND`/`TASK_ENV_PORT`, the fixed host-gateway route, health checks, and state-reset behavior.
+It should specify business systems, public entry points, data contracts, required tables or APIs, the complete endpoint list, the SQLite schema and query-service contract when applicable, authentication requirements, random seeds, generated-data expectations, setup behavior, manifest requirements, `TASK_ENV_BIND`/`TASK_ENV_PORT`, the fixed host-gateway route, health checks, and state-reset behavior.
 
 The env-builder coding subagent should implement:
 
@@ -101,6 +109,7 @@ The env-builder coding subagent should implement:
 - Train and test tasks use the same business infrastructure, creating transferable environment experience.
 - The solver can access necessary capabilities through public entry points but cannot see standard answers, hidden notes, or the `env/` implementation files.
 - Programmatic data-generation scripts, fixed seeds, generated data, and manifests are retained under `env/`.
+- `env/endpoints.txt` lists every reachable endpoint as `METHOD /path` without descriptions.
 - The existing HTTP service exposes the train-only `POST /api/judge` endpoint through `env/judge_api.py`.
 - A health endpoint and deterministic operator reset/reseed path are documented
   for deployment and calibration without exposing hidden task truth.

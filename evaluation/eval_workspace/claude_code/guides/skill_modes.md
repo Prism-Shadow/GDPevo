@@ -23,8 +23,9 @@ The main agent stages the allowed materials for each skill-generation or solver
 run into that run's dedicated directory. Do not give isolated runs the full task
 group directory.
 
-All non-reflect staging should expose only the container-visible environment URL from
-`.env`:
+All staging receives the container-visible environment URL from `.env` plus
+the allowed business endpoint names copied from `task_group/env/endpoints.txt`
+without descriptions:
 
 ```text
 GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/

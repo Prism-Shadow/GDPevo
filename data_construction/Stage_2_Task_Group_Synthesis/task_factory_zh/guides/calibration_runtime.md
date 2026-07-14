@@ -18,7 +18,10 @@ scratch/calibration_runs/<run_kind>/<run_id>/codex_home/ -> /codex_home
 环境 API 固定在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 运行。每个 agent
 容器都使用 `--add-host=host.docker.internal:host-gateway`，并通过
 `http://host.docker.internal:<TASK_ENV_PORT>` 访问。该 URL 写入
-`environment_access.md`；不能 staging 或挂载环境源码。
+`environment_access.md`，同时从 `env/endpoints.txt` 中取出当前运行允许的全部
+业务 endpoint，以 `METHOD /path` 逐行写入，不附接口介绍。base/fewshot 校准
+输入不能包含 `/health`、reset/reseed endpoint 或 `/api/judge`。不能 staging
+或挂载环境源码。
 
 ## Codex 命令
 

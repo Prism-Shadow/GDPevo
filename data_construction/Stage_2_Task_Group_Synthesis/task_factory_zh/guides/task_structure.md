@@ -24,6 +24,7 @@ task_group_001/
 ├── env/
 │   ├── setup.sh
 │   ├── judge_api.py
+│   ├── endpoints.txt
 │   └── <共享业务服务、数据、setup 文件和支持文件>
 ├── train_tasks/
 │   ├── 001/
@@ -73,6 +74,7 @@ env:
   files:
     - env/setup.sh
     - env/judge_api.py
+    - env/endpoints.txt
     - env/<shared_business_service_or_support_file>
 
 train_tasks:
@@ -126,9 +128,13 @@ test_tasks:
 | `task_group.domain` | 是 | 领域标签 |
 | `task_group.description` | 是 | task group 的共享背景说明，不作为 solver 默认输入 |
 | `env.setup` | 是 | 环境准备入口 |
-| `env.files` | 是 | 需要在最终 task group 索引中声明的公共环境文件 |
+| `env.files` | 是 | 最终 task group 索引中声明的公共环境文件；必须包含 `env/endpoints.txt` |
 | `train_tasks` | 是 | 5 个 train task 条目：`train_001` 到 `train_005` |
 | `test_tasks` | 是 | 5 个 test task 条目：`test_001` 到 `test_005` |
+
+`env/endpoints.txt` 是纯 endpoint 清单。每个可访问 endpoint 只写一行
+`METHOD /path`，需要包含业务 endpoint、`/health` 和 `/api/judge`。不能写接口
+介绍、样例、host、凭据或调用说明。
 
 `train_tasks` 和 `test_tasks` 中的每一项表示一个正式任务：
 
