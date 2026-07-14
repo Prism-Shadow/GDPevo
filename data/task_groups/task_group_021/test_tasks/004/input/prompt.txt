@@ -1,5 +1,0 @@
-AsterOps needs the second partner onboarding roster, `partner_onboarding_wave2`, normalized before it is loaded into the partner analytics table.
-
-Use the shared AsterOps data quality workbench at `<TASK_ENV_BASE_URL>`. The public surfaces include the catalog, CRM contact rows, quality-rule reference data, category alias reference data, and shared CSV downloads exposed by that service. A partner-ops roster extract is also provided in `input/payloads/partner_onboarding_wave2_stale_extract.csv`; it contains partner tier, company, segment, and category labels captured before the live workbench was refreshed.
-
-Return one JSON object matching `input/payloads/answer_template.json`. The result should identify the target roster and batch, decide which partner contacts can enter analytics, separate blocked or suppressed source roster rows from manual-review rows, provide canonical partner-contact decisions, and summarize the normalized segment/category counts, partner tier counts, duplicate person keys, and review reasons. Do not include prose outside the JSON.
