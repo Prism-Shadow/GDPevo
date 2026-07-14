@@ -52,7 +52,7 @@ GDPEVO_JUDGE_PATH=/api/judge
 ```
 
 Start `task_group/env` on the orchestration host with
-`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT=<port>`. Set
+`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric task-group id`. Set
 `GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/` and pass
 `--add-host=host.docker.internal:host-gateway` to every agent `docker run`.
 Never mount `task_group/env/` into an agent container. Confirm the health/index

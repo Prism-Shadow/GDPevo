@@ -58,7 +58,7 @@ Run all four modes with acc@3/std@3, collect solver and evolve token/cost metric
 Use `.env` for the agent-container-visible task environment:
 
 ```text
-GDPEVO_ENV_BASE_URL=http://host.docker.internal:8000/
+GDPEVO_ENV_BASE_URL=http://host.docker.internal:9001/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
@@ -85,7 +85,7 @@ task_group/<task_group_id>/
 
 2. Check that the workspace contains only one task group and that the task group includes 5 train tasks, 5 test tasks, a shared environment, standard answers, and evaluators.
 
-3. Start the task-group environment on the orchestration host with `TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT`. Every agent container must use `--add-host=host.docker.internal:host-gateway`; set `.env` to `http://host.docker.internal:<TASK_ENV_PORT>/`. Never stage or mount `task_group/env/` into an agent container. Verify the health endpoint from a disposable container through this exact route, then record the startup/reset commands, port, base URL, and health result.
+3. Start the task-group environment on the orchestration host with `TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric task-group id` (`task_group_001` uses `9001`). Every agent container must use `--add-host=host.docker.internal:host-gateway`; set `.env` to `http://host.docker.internal:<TASK_ENV_PORT>/`. Never stage or mount `task_group/env/` into an agent container. Verify the health endpoint from a disposable container through this exact route, then record the startup/reset commands, port, base URL, and health result.
 
 Some official task inputs may still mention localhost, `127.0.0.1`, or
 `env/setup.sh` from the local-environment harness. Do not edit those official

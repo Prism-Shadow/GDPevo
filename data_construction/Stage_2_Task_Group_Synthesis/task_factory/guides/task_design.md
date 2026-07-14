@@ -121,6 +121,6 @@ The draft should include at least:
 - A rubric independence map showing which business question and answer fields each point measures, which points share upstream dependencies, and why the rubric will not behave as one duplicated all-or-nothing check.
 - Output-shape plan for `answer_template.json`, including numeric precision and controlled-choice fields for string-like outputs.
 - Labels for which scoring points depend on train-derived experience and which depend on substantial data exploration or long-horizon work, ensuring most score cannot be obtained by base attempts through simple reading.
-- A skill-saturation check: the train-derived skill should improve test performance but should not make most or all test tasks near-perfect.
+- A skill-saturation check: the train-derived skill should improve test performance but should not make most or all test tasks score `0.95` or higher or otherwise approach a perfect score.
 
 The design draft should assign task ownership and provide enough task-specific brief material for each task-builder subagent. It should not directly generate every task's `input/`, `notes/`, `output/`, and `eval/`. Those files are produced later by 10 task-builder subagents, one per task.

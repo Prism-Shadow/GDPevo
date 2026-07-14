@@ -8,9 +8,9 @@
 
 使用 train set 提炼出的 skill 后，overall fewshot `avg@3` 相对 base 的
 目标提升约为 `0.10-0.20`。还应逐题检查 intended transfer points 是否提升，
-同时避免大部分任务接近满分。
+同时避免大部分任务达到 `0.95` 以上或接近满分。
 
-train-derived skill 不应该让每个 test 都拿到特别高的分数。如果大部分或全部 test 在使用 skill 后都接近满分，例如达到 `0.90` 左右或更高，说明 SOP 可能过于简单、过于机械，或 test 解法太容易从 train tasks 中直接归纳出来。
+train-derived skill 不应该让每个 test 都拿到特别高的分数。如果大部分或全部 test 在使用 skill 后达到 `0.95` 以上或接近满分，说明 SOP 可能过于简单、过于机械，或 test 解法太容易从 train tasks 中直接归纳出来。
 
 这里的目标不是让所有 test 都变简单，而是验证 5 个包含标准答案的 train examples 能否为隔离的 fewshot generator 提供足够证据，使其归纳出可迁移的 SOP、facts、字段口径、环境使用方式或业务判断经验。
 
@@ -18,8 +18,9 @@ train-derived skill 不应该让每个 test 都拿到特别高的分数。如果
 
 base 用于估计未学习 train 的表现。
 
-运行难度测试前，主 agent 在宿主机上以 `TASK_ENV_BIND=0.0.0.0` 和可用的
-`TASK_ENV_PORT` 启动环境。每个校准容器都必须带
+运行难度测试前，主 agent 在宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动环境，
+并令 `TASK_ENV_PORT` 取 `9000 + task group 数字编号`；例如
+`task_group_001` 使用 `9001`，`task_group_024` 使用 `9024`。每个校准容器都必须带
 `--add-host=host.docker.internal:host-gateway`，`environment_access.md` 固定写
 `http://host.docker.internal:<TASK_ENV_PORT>`，并从 `env/endpoints.txt` 加入
 当前运行允许的全部业务 endpoint，每行只写 `METHOD /path`。先从临时容器通过完全相同的
@@ -186,4 +187,4 @@ reviewer subagent 应检查：
 - 是否由 3 个相互隔离的 Dockerized 进程基于 5 个 train inputs 和对应标准答案生成了 3 个独立 fewshot skills，并分别保存到 `scratch/train_skill/fewshot_attempt_<nn>/`。
 - Overall base `avg@3` 是否约为 `0.40-0.60`，不合理的单题离群值是否已返工或说明。
 - Overall fewshot gain 是否约为 `0.10-0.20`，且收益来自预期的 transfer-dependent aspects，而不是重复 rubric points。
-- fewshot `avg@3` 是否避免在大部分或全部 test 上过度饱和；如果 skill 后每题都接近满分，是否需要返工 SOP、任务多样性、数据探索、env 或 scoring points。
+- fewshot `avg@3` 是否避免在大部分或全部 test 上过度饱和；如果 skill 后大部分任务达到 `0.95` 以上或接近满分，是否需要返工 SOP、任务多样性、数据探索、env 或 scoring points。

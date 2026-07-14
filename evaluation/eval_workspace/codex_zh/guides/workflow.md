@@ -46,7 +46,8 @@ GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
-在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动 `task_group/env`。每个 agent
+在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动 `task_group/env`，并令
+`TASK_ENV_PORT` 取 `9000 + task group 数字编号`。每个 agent
 容器必须带 `--add-host=host.docker.internal:host-gateway`。通过这条固定路径从
 临时容器检查 health / index endpoint，并把启动/重置命令、端口和 URL 记录到
 `scratch/environment.md`。

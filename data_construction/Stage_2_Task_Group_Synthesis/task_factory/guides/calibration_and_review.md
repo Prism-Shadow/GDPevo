@@ -10,9 +10,9 @@ should not pass because very easy and impossible tasks merely average together.
 After using a skill derived directly from the train set, overall fewshot
 `avg@3` should improve by roughly `0.10-0.20` over base `avg@3`. Inspect each
 task as well: the intended transfer points should improve without making most
-tasks nearly perfect.
+tasks score `0.95` or higher or otherwise approach a perfect score.
 
-The train-derived skill should not make every test task score extremely high. If most or all test tasks become near-perfect after using the skill, such as around `0.90` or higher, the SOP is probably too simple, too mechanical, or too directly inferable from the train tasks.
+The train-derived skill should not make every test task score extremely high. If most or all test tasks score `0.95` or higher after using the skill, or otherwise approach a perfect score, the SOP is probably too simple, too mechanical, or too directly inferable from the train tasks.
 
 The goal is not to make all test tasks easy. The goal is to verify that the five solved train examples provide enough evidence for an isolated fewshot generator to infer transferable SOPs, facts, data conventions, environment-use patterns, or business-judgment experience.
 
@@ -21,8 +21,9 @@ The goal is not to make all test tasks easy. The goal is to verify that the five
 Base attempts estimate performance without train-set learning.
 
 Before running difficulty attempts, start the task-group environment on the
-orchestration host with `TASK_ENV_BIND=0.0.0.0` and an available
-`TASK_ENV_PORT`. Every calibration container must use
+orchestration host with `TASK_ENV_BIND=0.0.0.0` and the deterministic port
+`TASK_ENV_PORT` set to `9000 + the numeric task-group id`; for example,
+`task_group_001` uses `9001` and `task_group_024` uses `9024`. Every calibration container must use
 `--add-host=host.docker.internal:host-gateway`, and
 `environment_access.md` must contain
 `http://host.docker.internal:<TASK_ENV_PORT>` plus every allowed business
@@ -212,4 +213,4 @@ The reviewer subagent should check:
 - Whether 3 independent fewshot skills were generated from the 5 train inputs and matching standard answers, with isolated Dockerized processes and package roots under `scratch/train_skill/fewshot_attempt_<nn>/`.
 - Whether overall base `avg@3` is about `0.40-0.60`, with implausible per-task outliers reworked or justified.
 - Whether overall fewshot gain is about `0.10-0.20` and comes from intended transfer-dependent aspects rather than duplicated rubric points.
-- Whether fewshot `avg@3` avoids saturation across most or all test tasks; if skill scores are near-perfect everywhere, whether the SOP, task diversity, data exploration, environment, or scoring points should be reworked.
+- Whether fewshot `avg@3` avoids saturation across most or all test tasks; if most skill scores reach `0.95` or higher or otherwise approach a perfect score, whether the SOP, task diversity, data exploration, environment, or scoring points should be reworked.

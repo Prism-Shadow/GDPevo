@@ -59,8 +59,8 @@ Model: GPT-5.5, reasoning_effort: xhigh.
 
 ## 环境
 
-每个 task-group 环境都固定在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 和不同的
-`TASK_ENV_PORT` 启动。各自 `.env` URL 写成
+每个 task-group 环境都固定在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动，
+并令 `TASK_ENV_PORT` 取 `9000 + task group 数字编号`。各自 `.env` URL 写成
 `http://host.docker.internal:<TASK_ENV_PORT>/`，每个 solver 容器都必须带
 `--add-host=host.docker.internal:host-gateway`。这个 workspace 不重新生成 skill。
 solver run 不能进入、列出、读取或挂载 `task_groups/*/env/`，只能使用主 agent

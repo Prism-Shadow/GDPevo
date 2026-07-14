@@ -38,7 +38,7 @@ Run all four modes with acc@3/std@3, collect solver and evolve token/cost metric
 使用 `.env` 配置 agent 容器可访问的任务环境：
 
 ```text
-GDPEVO_ENV_BASE_URL=http://host.docker.internal:8000/
+GDPEVO_ENV_BASE_URL=http://host.docker.internal:9001/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
@@ -56,7 +56,7 @@ task_group/<task_group_id>/
 
 2. 检查工作区只包含一个 task group，并确认该 task group 包含 5 个 train tasks、5 个 test tasks、共享环境、标准答案和 evaluators。
 
-3. 在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 和 `TASK_ENV_PORT` 启动 task-group 环境。每个 agent 容器都必须使用 `--add-host=host.docker.internal:host-gateway`，并将 `.env` 写成 `http://host.docker.internal:<TASK_ENV_PORT>/`。绝不能把 `task_group/env/` staging 或挂载进 agent 容器。先用临时容器通过同一路径检查 health endpoint，再记录启动/重置命令、端口、base URL 和检查结果。
+3. 在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动 task-group 环境，并令 `TASK_ENV_PORT` 取 `9000 + task group 数字编号`，例如 `task_group_001` 使用 `9001`。每个 agent 容器都必须使用 `--add-host=host.docker.internal:host-gateway`，并将 `.env` 写成 `http://host.docker.internal:<TASK_ENV_PORT>/`。绝不能把 `task_group/env/` staging 或挂载进 agent 容器。先用临时容器通过同一路径检查 health endpoint，再记录启动/重置命令、端口、base URL 和检查结果。
 
 4. 为每种非 base 条件生成 3 个独立 skills：
 

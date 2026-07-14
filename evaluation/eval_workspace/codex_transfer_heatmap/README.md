@@ -61,7 +61,7 @@ Model: GPT-5.5, reasoning_effort: xhigh.
 ## Environment
 
 Start each task-group environment on the orchestration host with
-`TASK_ENV_BIND=0.0.0.0` and a distinct `TASK_ENV_PORT`. Set each task group's
+`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric task-group id`. Set each task group's
 `.env` URL to `http://host.docker.internal:<TASK_ENV_PORT>/`, and pass
 `--add-host=host.docker.internal:host-gateway` to every solver container. Do not
 regenerate skills in this workspace. Solver runs must not enter, list, read, or

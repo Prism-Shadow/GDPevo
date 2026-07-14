@@ -59,7 +59,8 @@ GDPEVO_JUDGE_PATH=/api/judge
 ```
 
 Start `task_group/env` on the orchestration host with
-`TASK_ENV_BIND=0.0.0.0`. Every agent container must use
+`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric task-group id`.
+Every agent container must use
 `--add-host=host.docker.internal:host-gateway`. Confirm the health/index
 endpoint from a disposable container through this exact route and record the
 startup/reset commands, port, and URL in `scratch/environment.md`.

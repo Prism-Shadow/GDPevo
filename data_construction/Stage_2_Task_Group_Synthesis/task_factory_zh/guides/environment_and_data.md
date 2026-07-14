@@ -35,15 +35,18 @@ setup 命令都不应进入 `prompt.txt` 或 `input/payloads/`；这些值属于
 ## 执行架构
 
 环境固定作为 agent 容器之外的宿主机网络服务运行。主 agent 通过
-`env/setup.sh` 启动服务，并设置 `TASK_ENV_BIND=0.0.0.0` 和
-`TASK_ENV_PORT=<port>`。文件系统隔离保持严格：不能把 `env/`、数据库文件、
+`env/setup.sh` 启动服务，设置 `TASK_ENV_BIND=0.0.0.0`，并令
+`TASK_ENV_PORT` 取 `9000 + task group 数字编号`；例如 `task_group_001` 使用
+`9001`，`task_group_024` 使用 `9024`。文件系统隔离保持严格：不能把
+`env/`、数据库文件、
 seed、manifest、源码或 setup 脚本 staging 或挂载进任何 agent 容器。
 
 校准和正式评估统一使用这一种网络配置：
 
 ```text
-宿主机环境：TASK_ENV_BIND=0.0.0.0, TASK_ENV_PORT=<port>
-agent URL：  http://host.docker.internal:<port>
+端口规则：  9000 + task group 数字编号
+宿主机环境：TASK_ENV_BIND=0.0.0.0, TASK_ENV_PORT=<计算结果>
+agent URL：  http://host.docker.internal:<计算结果>
 Docker 参数：--add-host=host.docker.internal:host-gateway
 ```
 

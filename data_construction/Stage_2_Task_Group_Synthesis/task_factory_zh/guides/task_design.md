@@ -120,6 +120,6 @@ task_factory/scratch/task_group_design.md
 - Rubric independence map：说明每个 point 对应哪个业务问题和哪些 answer fields，哪些 points 共享上游依赖，以及为什么整套 rubric 不会退化成同一个全对或全错检查的重复版本。
 - `answer_template.json` 的输出形态计划，包括数值精度，以及面向字符串类输出的受控选择字段。
 - 标注哪些 scoring points 依赖 train-derived experience、哪些依赖大量数据探索或长流程工作，确保多数分数不能由 base 通过简单读题获得。
-- skill saturation 检查：train-derived skill 应该提升 test 表现，但不应该让大部分或全部 test 接近满分。
+- skill saturation 检查：train-derived skill 应该提升 test 表现，但不应该让大部分或全部 test 达到 `0.95` 以上或接近满分。
 
 设计稿应分配 task 归属，并为每个 task-builder subagent 提供足够的 task-specific brief。设计稿不应直接生成每个 task 的 `input/`、`notes/`、`output/` 和 `eval/`。这些文件应由后续 10 个 task-builder subagents 分别生成。

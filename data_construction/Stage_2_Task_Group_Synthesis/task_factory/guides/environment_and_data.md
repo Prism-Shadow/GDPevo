@@ -37,15 +37,18 @@ values belong in the evaluation workspace `.env` file for the actual run.
 
 The environment is a host-side network service outside every skill-generation
 or solver container. Start it from `env/setup.sh` on the orchestration host with
-`TASK_ENV_BIND=0.0.0.0` and a configured `TASK_ENV_PORT`. Filesystem isolation
-remains strict: never stage or mount `env/`, its database files, seeds,
+`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric
+task-group id`. For example, `task_group_001` uses `9001` and
+`task_group_024` uses `9024`. Filesystem isolation remains strict: never stage
+or mount `env/`, its database files, seeds,
 manifests, source code, or setup scripts into an agent container.
 
 Use this one network pattern for calibration and evaluation:
 
 ```text
-host environment: TASK_ENV_BIND=0.0.0.0, TASK_ENV_PORT=<port>
-agent URL:        http://host.docker.internal:<port>
+port rule:        9000 + numeric task-group id
+host environment: TASK_ENV_BIND=0.0.0.0, TASK_ENV_PORT=<computed integer>
+agent URL:        http://host.docker.internal:<computed integer>
 docker option:    --add-host=host.docker.internal:host-gateway
 ```
 

@@ -19,7 +19,8 @@ Do not mount the repository, full task group, parent workspace, user home,
 other attempts, or review artifacts.
 
 The environment API runs on the orchestration host with
-`TASK_ENV_BIND=0.0.0.0`. Every agent container uses the fixed
+`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric task-group id`.
+Every agent container uses the fixed
 `--add-host=host.docker.internal:host-gateway` option and reaches it through
 `http://host.docker.internal:<TASK_ENV_PORT>`. Stage that URL in
 `environment_access.md`, together with every business endpoint allowed for the
