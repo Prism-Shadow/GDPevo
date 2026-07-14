@@ -64,7 +64,7 @@ Construction should move through these stages. Do not skip directly from reading
 
 1. The main agent writes `scratch/task_group_design.md`, covering the 10 task plan, task-builder assignments, task diversity, transferable SOPs, train/test roles, environment plan, data-generation plan, and evaluation plan. This is a design document only; it must not create task folders, prompts, notes, standard answers, evaluators, or environment implementation files.
 2. The main agent writes `scratch/env_blueprint.md`, specifying shared business systems, public interfaces, data contracts, generation seeds, manifest requirements, `TASK_ENV_BIND`/`TASK_ENV_PORT`, fixed host-gateway access, reset behavior, and expected environment behavior.
-3. A clean-context env-builder coding subagent implements `env/` from `scratch/env_blueprint.md`, including Web, API, PostgreSQL, data-generation scripts, generated data, setup scripts, manifests, health checks, and an operator reset/reseed path.
+3. A clean-context env-builder coding subagent implements `env/` from `scratch/env_blueprint.md`, including Web/API services, any required host-side SQLite database and authenticated query service, data-generation scripts, generated data, setup scripts, manifests, health checks, and an operator reset/reseed path.
 4. The main agent reviews and integrates the env-builder output, then records usable environment entry points for task builders.
 5. The main agent launches 10 task-builder subagents, in parallel or batches: one for each `train_001` through `train_005` and `test_001` through `test_005`.
 6. Task-builder subagents generate their own assigned task `input/`, `notes/`, `output/`, and `eval/`.

@@ -46,9 +46,9 @@
 - train tasks 不能显式教授 SOP、不能是 test 的低配版本，也不能让 benchmark 退化成机械套模板；skill 应从完整 train examples 中归纳可迁移经验，不能复制 task-specific final values。
 - 每个正式任务都应保持长程任务复杂度，且难度应与来源 examples 对齐；不能把生成任务做得明显更简单、更窄或更像 toy task。
 - 大量数据应由程序和随机数生成，不手写生产规模数据。
-- `env/` 应是面向整个 task group 的公共数据与办公环境，可包含 Web、API、开放 PostgreSQL 或其他业务基础设施，但不能按 task 切成独立数据包或接近答案的 task-specific endpoint。
+- `env/` 应是面向整个 task group 的公共数据与办公环境，可包含 Web、API 或基于 SQLite 的业务基础设施，但不能按 task 切成独立数据包或接近答案的 task-specific endpoint。数据库型环境必须使用 SQLite，不能使用 PostgreSQL 或其他服务端数据库引擎。
 - 环境 API 固定在主控宿主机上运行，使用 `TASK_ENV_BIND=0.0.0.0` 和配置好的 `TASK_ENV_PORT`。每个 solver 或 skill-generation 容器都通过 `http://host.docker.internal:<TASK_ENV_PORT>/` 访问，并带上 `--add-host=host.docker.internal:host-gateway`；不能把 `env/` 挂载进 agent 容器，也不能把容器自己的 `localhost` 当成环境地址。
-- solver 和测试 agent 可以使用 URL、API endpoint、数据库连接串等环境入口，但不能直接查看 `env/` 目录、源码、生成数据文件、seed、manifest 或 setup 脚本。
+- solver 和测试 agent 可以使用 URL、API endpoint，或带鉴权信息的 SQLite 查询服务 URL，但不能直接查看 `env/` 目录、SQLite 数据库文件、源码、生成数据文件、seed、manifest 或 setup 脚本。
 - `env/` 实现应由上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 完成；主 agent 负责 blueprint 和最终集成。
 - task 文件，包括 `input/`、`notes/`、`output/` 和 `eval/`，应由 task-builder subagents 分别为自己负责的 task 生成。主 agent 不应直接用一个总 builder 脚本生成所有 task 文件和答案。
 - `scratch/build_task_group_*.py` 这类脚本不能从一个固定 specification 里同时创建共享环境、10 个任务目录、隐藏标准答案、notes、evaluators、task-group 索引、scratch 设计文档和校准 skill。即使生成文件结构看起来正确，这也属于流程违规。

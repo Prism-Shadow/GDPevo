@@ -10,7 +10,7 @@
 
 - Web 应用或页面。
 - HTTP/API 服务。
-- 开放给 solver 使用的 PostgreSQL 或其他数据库。
+- 通过带鉴权的网络查询服务开放给 solver 使用的 SQLite 数据库。不能使用 PostgreSQL 或其他服务端数据库引擎。
 - 业务系统数据、生成脚本、初始化脚本和配置文件。
 - 与任务相关但不直接给出答案的查询、筛选、状态检查或操作接口。
 
@@ -18,7 +18,7 @@
 
 solver-facing env 不能按 task 切分。避免 per-task 数据包、per-task 数据库，或 `/api/tasks/<task_id>/data` 这类直接把某条 task 相关数据打包给 solver 的 endpoint。generator 可以保留给构造和 review 使用的隐藏元数据，但 solver-facing services 应暴露共享业务对象和正常办公接口，例如 `/events`、`/crm/accounts`、`/campaign-members`、`/exhibitors`、`/finance/invoices`、SQL tables 或共享文件。
 
-`env/` 本身不是 solver 可见输入。solver、base 和 fewshot agents 只能通过暴露出来的环境入口访问环境，例如浏览器 URL、API base URL 或数据库连接串。如果任务使用 PostgreSQL 或其他数据库，应把数据库作为运行中的服务暴露出来，并提供连接信息；不能让 solver agents 直接查看 `env/` 文件、migration 脚本、生成数据文件、数据库 dump、seed、manifest 或 setup 脚本。
+`env/` 本身不是 solver 可见输入。solver、base 和 fewshot agents 只能通过暴露出来的环境入口访问环境，例如浏览器 URL、API base URL，或带鉴权信息的 SQLite 查询服务 URL。如果任务需要访问关系型数据，SQLite 数据库文件应留在主控宿主机上，由运行中的环境服务提供任务所需的 SQL 查询或写入能力。该服务可以通过 HTTP 接收 SQL，也可以提供等价的共享查询接口，但不能成为直接返回任务答案的接口。不能让 solver agents 直接查看或挂载 `env/` 文件、SQLite 数据库文件、schema 或 migration 脚本、生成数据文件、数据库 dump、seed、manifest 或 setup 脚本。
 
 在 solver 可见 task input 中，运行环境 base URL 只能写成
 `<TASK_ENV_BASE_URL>`。真实 localhost 地址、私有 IP、公开 host、端口和
@@ -77,7 +77,7 @@ blueprint 应在实现前写好，并放在：
 scratch/env_blueprint.md
 ```
 
-blueprint 应说明业务系统、公开入口、数据契约、需要的表或 API、随机种子、生成数据预期、setup 行为、manifest 要求、`TASK_ENV_BIND`/`TASK_ENV_PORT`、固定 host-gateway 路径、health check 和环境重置方式。
+blueprint 应说明业务系统、公开入口、数据契约、需要的表或 API；使用数据库时还要说明 SQLite schema、查询服务协议和鉴权要求；此外还应说明随机种子、生成数据预期、setup 行为、manifest 要求、`TASK_ENV_BIND`/`TASK_ENV_PORT`、固定 host-gateway 路径、health check 和环境重置方式。
 
 env-builder coding subagent 应实现：
 
@@ -87,7 +87,7 @@ env-builder coding subagent 应实现：
   `http://host.docker.internal:<port>` 访问服务。
 - 监听地址不能直接当成 agent-facing URL；网络配置完成后，由主 agent 提供
   `TASK_ENV_BASE_URL`。
-- Web、API、数据库和数据文件服务于整个 task group。
+- Web/API 服务和基于 SQLite 的数据服务于整个 task group。SQLite 查询服务应支持任务需要的读取和写入操作，同时确保 `.db` 文件只留在宿主机环境侧。
 - 共享数据模型和公开接口应按业务领域组织，而不是按 task id 组织。
 - train/test 使用同一套业务基础设施，形成可迁移的环境经验。
 - solver 能通过公开入口访问必要能力，但不能直接看到标准答案、隐藏说明或 `env/` 实现文件。

@@ -67,7 +67,7 @@ Avoid far-transfer-only design. If fewshot attempts fail to improve over base at
 Test difficulty should come from two sources:
 
 - Transferring SOPs and key facts from train tasks.
-- Intrinsic task complexity, such as long workflows, many tools, many APIs, many Web pages, complex exposed databases, large data, messy data, dirty data, conflicting similar sources, or stale local materials.
+- Intrinsic task complexity, such as long workflows, many tools, many APIs, many Web pages, complex SQLite-backed query surfaces, large data, messy data, dirty data, conflicting similar sources, or stale local materials.
 
 Do not create difficulty through arbitrary ambiguity, bad formatting, or unrecoverable missing information. Difficulty should come from real business complexity, long-horizon operations, information discovery, source selection, and transfer failure.
 

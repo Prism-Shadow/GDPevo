@@ -64,7 +64,7 @@ reviewer subagent 负责独立审查：
 
 1. 主 agent 编写 `scratch/task_group_design.md`，覆盖 10 个 task 的规划、task-builder 分派、任务 diversity、可迁移 SOP、train/test 角色、环境计划、数据生成计划和评测计划。这里只是设计文档阶段，不能创建 task 目录、prompt、notes、标准答案、evaluator 或 env 实现文件。
 2. 主 agent 编写 `scratch/env_blueprint.md`，说明共享业务系统、公开接口、数据契约、生成种子、manifest 要求、`TASK_ENV_BIND`/`TASK_ENV_PORT`、固定 host-gateway 访问、reset 行为和预期环境行为。
-3. 上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 实现 `env/`，包括 Web、API、PostgreSQL、数据生成脚本、生成数据、setup 脚本、manifest、health check 和由主 agent 控制的 reset/reseed 流程。
+3. 上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 实现 `env/`，包括 Web/API 服务、任务需要的宿主机 SQLite 数据库及其带鉴权查询服务、数据生成脚本、生成数据、setup 脚本、manifest、health check 和由主 agent 控制的 reset/reseed 流程。
 4. 主 agent review 并集成 env-builder 产物，再记录 task builders 可使用的环境入口。
 5. 主 agent 启动 10 个 task-builder subagents，可以并行或分批运行：`train_001` 到 `train_005` 和 `test_001` 到 `test_005` 各 1 个。
 6. Task-builder subagents 分别生成自己负责 task 的 `input/`、`notes/`、`output/` 和 `eval/`。

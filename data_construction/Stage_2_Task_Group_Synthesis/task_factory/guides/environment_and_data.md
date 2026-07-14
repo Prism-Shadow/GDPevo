@@ -10,7 +10,7 @@ It may include:
 
 - Web applications or pages.
 - HTTP/API services.
-- PostgreSQL or other databases exposed to the solver.
+- SQLite-backed data stores exposed through an authenticated network query service. Do not use PostgreSQL or another server database.
 - Business-system data, generator scripts, initialization scripts, and configuration files.
 - Query, filtering, status-check, or operational interfaces that are relevant to the task but do not directly return the answer.
 
@@ -18,7 +18,7 @@ The environment should reflect real production-system complexity: enough objects
 
 Do not partition the solver-facing environment by task. Avoid per-task data packages, per-task databases, or endpoints such as `/api/tasks/<task_id>/data` that hand the solver a task-specific bundle. The generator may keep hidden construction metadata for builders, but solver-facing services should expose shared business objects and normal workplace interfaces, such as `/events`, `/crm/accounts`, `/campaign-members`, `/exhibitors`, `/finance/invoices`, SQL tables, or shared files.
 
-`env/` itself is not solver-visible input. Solver, base, and fewshot agents should access the environment only through exposed entry points, such as a browser URL, API base URL, or database connection string. If a task uses PostgreSQL or another database, expose it as a running service with connection details; do not let solver agents inspect `env/` files, migration scripts, generated data files, database dumps, seeds, manifests, or setup scripts directly.
+`env/` itself is not solver-visible input. Solver, base, and fewshot agents should access the environment only through exposed entry points, such as a browser URL, API base URL, or authenticated SQLite query-service URL and credentials. If a task requires relational data access, keep the SQLite database file on the orchestration host and expose the required read or write SQL capability through the running environment service. The service may accept SQL over HTTP or provide an equivalent shared query interface, but it must not become a task-answer endpoint. Do not let solver agents inspect or mount `env/` files, SQLite database files, schema or migration scripts, generated data files, database dumps, seeds, manifests, or setup scripts directly.
 
 In solver-visible task inputs, refer to the running environment base URL only as
 `<TASK_ENV_BASE_URL>`. Keep real localhost addresses, private IPs, public host
@@ -86,7 +86,7 @@ The blueprint should be written before implementation and stored at:
 scratch/env_blueprint.md
 ```
 
-It should specify business systems, public entry points, data contracts, required tables or APIs, random seeds, generated-data expectations, setup behavior, manifest requirements, `TASK_ENV_BIND`/`TASK_ENV_PORT`, the fixed host-gateway route, health checks, and state-reset behavior.
+It should specify business systems, public entry points, data contracts, required tables or APIs, the SQLite schema and query-service contract when applicable, authentication requirements, random seeds, generated-data expectations, setup behavior, manifest requirements, `TASK_ENV_BIND`/`TASK_ENV_PORT`, the fixed host-gateway route, health checks, and state-reset behavior.
 
 The env-builder coding subagent should implement:
 
@@ -96,7 +96,7 @@ The env-builder coding subagent should implement:
   `--add-host=host.docker.internal:host-gateway` option is present.
 - Bind addresses are not reused blindly as agent-facing URLs;
   `TASK_ENV_BASE_URL` is supplied by the orchestrator after networking is set up.
-- Web, API, database, and data files serve the whole task group.
+- Web/API services and SQLite-backed data serve the whole task group. Any SQLite query service supports the read and write operations required by the tasks while keeping the `.db` file host-side.
 - Shared data models and public interfaces are organized by business domain, not by task id.
 - Train and test tasks use the same business infrastructure, creating transferable environment experience.
 - The solver can access necessary capabilities through public entry points but cannot see standard answers, hidden notes, or the `env/` implementation files.
