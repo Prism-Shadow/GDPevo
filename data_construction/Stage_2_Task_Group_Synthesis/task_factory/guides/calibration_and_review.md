@@ -14,7 +14,7 @@ tasks nearly perfect.
 
 The train-derived skill should not make every test task score extremely high. If most or all test tasks become near-perfect after using the skill, such as around `0.90` or higher, the SOP is probably too simple, too mechanical, or too directly inferable from the train tasks.
 
-The goal is not to make all test tasks easy. The goal is to verify that real train tasks provide enough evidence for the agent to infer transferable SOPs, facts, data conventions, environment-use patterns, or business-judgment experience through blind attempts, answer comparison, and reflection.
+The goal is not to make all test tasks easy. The goal is to verify that the five solved train examples provide enough evidence for an isolated fewshot generator to infer transferable SOPs, facts, data conventions, environment-use patterns, or business-judgment experience.
 
 ## Base Test Attempts
 
@@ -43,7 +43,7 @@ The Codex process may see only:
 - The target test task's `input/`
 - Necessary environment entry points, such as URLs, API endpoints, or database connection strings
 
-It must not see:
+The Codex process must not see:
 
 - train tasks
 - notes
@@ -55,35 +55,20 @@ It must not see:
 
 ## Train-Derived Skill
 
-The calibration skill is derived through two separate Dockerized `codex exec`
-processes so train answers are absent from the blind-solving context.
+Generate 3 independent calibration skills with 3 isolated Dockerized
+`codex exec` processes, matching the formal evaluation's `fewshot` condition.
+Each generator may see only:
 
-First, the blind-train process may see only:
-
-- Solver-visible inputs for train tasks
+- Solver-visible inputs for all 5 train tasks
+- Standard `output/answer.json` for all 5 train tasks
 - Necessary environment entry points, such as URLs, API endpoints, or database connection strings
 
-It must solve all 5 train tasks without seeing train answers, using the fixed
-blind-train prompt from `calibration_runtime.md`. Store those blind attempts
-under:
+Each process uses the fixed fewshot skill-generation prompt from
+`calibration_runtime.md` and independently distills transferable operating
+experience from the solved train examples. The 3 processes must not share a
+working directory, Codex home, prior skill, or trace.
 
-```text
-scratch/train_skill/blind_attempts/
-```
-
-Then launch a fresh skill-distillation Codex process with only the train inputs,
-preserved blind attempts, train `output/answer.json` files, and environment
-access staged into `/work`. It uses the fixed skill-distillation prompt, compares
-the blind attempts against the standard answers, and writes a mistake analysis
-at:
-
-```text
-scratch/train_skill/reflection.md
-```
-
-The reflection should identify missed source-precedence rules, missing SOP steps, wrong field conventions, wrong calculations, weak environment-use habits, and output-format mistakes. Only after this comparison should the distillation process write the final skill.
-
-It must not see:
+Each generator must not see:
 
 - test tasks
 - notes
@@ -92,16 +77,21 @@ It must not see:
 - review records
 - the `env/` directory, source files, generated data files, database dumps, seeds, manifests, or setup scripts
 
-The skill is used only for calibration, stored under `scratch/`, and excluded from the final `task_group/`.
-
-The skill package is a directory stored as:
+The skills are used only for calibration, stored under `scratch/`, and excluded
+from the final `task_group/`. Each attempt directory is the complete skill
+package root, with `SKILL.md` as its entry file:
 
 ```text
-scratch/train_skill/skill/
-scratch/train_skill/skill/SKILL.md
+scratch/train_skill/fewshot_attempt_01/SKILL.md
+scratch/train_skill/fewshot_attempt_02/SKILL.md
+scratch/train_skill/fewshot_attempt_03/SKILL.md
 ```
 
-`skill/SKILL.md` is the package entry file. It should contain the corrected operating method learned from train: source precedence, reusable business rules, environment-use strategy, field and output conventions, calculation rules, common pitfalls, and final validation checks. Supporting files may live inside the same `skill/` directory. The package must not contain test-specific facts or final answers.
+Each package should contain the operating method inferred from train: source
+precedence, reusable business rules, environment-use strategy, field and output
+conventions, calculation rules, common pitfalls, and final validation checks.
+Supporting files may live in the same attempt directory. The package must not
+copy train answers or contain test-specific facts or final answers.
 
 ## Fewshot Test Attempts
 
@@ -109,10 +99,11 @@ Fewshot attempts validate transfer gain from the train-derived skill.
 
 Run exactly 3 fewshot attempts for each of the 5 test tasks, for 15 independent
 Dockerized `codex exec` processes total. Do not use orchestration subagents for
-these attempts. Each process receives the train-derived skill and exactly one
-freshly staged target test task, and uses the fixed fewshot prompt from
-`calibration_runtime.md`. Compute fewshot `avg@3` for each test task from its
-three scored attempts.
+these attempts. Attempt 01 receives `fewshot_attempt_01`, attempt 02 receives
+`fewshot_attempt_02`, and attempt 03 receives `fewshot_attempt_03`, together
+with exactly one freshly staged target test task. Each process uses the fixed
+fewshot prompt from `calibration_runtime.md`. Compute fewshot `avg@3` for each
+test task from its three scored attempts.
 
 The Codex process may see:
 
@@ -134,7 +125,7 @@ Record at least:
 
 - Solver, input, prediction file, evaluation command, and score for each of the 15 base attempts.
 - Calibration model, reasoning effort, container image, fixed host-gateway settings, fixed prompt type, run id, staged files, and primary Codex trace path for every process.
-- Paths to the train blind attempts, train answer comparison reflection, train-derived skill, and the train inputs used to create it.
+- Generator metadata, staged train inputs and answers, skill-package path, and primary trace path for each of the 3 independent fewshot skill-generation attempts.
 - Solver, input, prediction file, evaluation command, and score for each of the 15 fewshot attempts.
 - Base `avg@3`, fewshot `avg@3`, and gain for each test task.
 - Overall base `avg@3` and overall fewshot `avg@3` across the 5 test tasks.
@@ -216,7 +207,7 @@ The reviewer subagent should check:
 - Whether scoring points prefer numeric, enum, boolean, ranking, set, or normalized structured outputs; if string matching is needed, whether it has been converted into controlled-choice fields to avoid schema friction.
 - Whether most scoring points genuinely depend on train transfer, substantial data exploration, or long-horizon work, instead of being obtainable without train learning or deep data exploration.
 - Whether `scratch/difficulty_calibration.md` contains 15 valid base and 15 valid fewshot Dockerized `codex exec` attempts, all launched with the fixed prompts and dedicated staged work/Codex-home directories.
-- Whether the train-derived skill was produced by a blind-train Codex process without answers, followed by a separate answer-comparison and skill-distillation Codex process, before writing the package under `scratch/train_skill/skill/` with `SKILL.md` as its entry file.
+- Whether 3 independent fewshot skills were generated from the 5 train inputs and matching standard answers, with isolated Dockerized processes and package roots under `scratch/train_skill/fewshot_attempt_<nn>/`.
 - Whether overall base `avg@3` is about `0.40-0.60`, with implausible per-task outliers reworked or justified.
 - Whether overall fewshot gain is about `0.10-0.20` and comes from intended transfer-dependent aspects rather than duplicated rubric points.
 - Whether fewshot `avg@3` avoids saturation across most or all test tasks; if skill scores are near-perfect everywhere, whether the SOP, task diversity, data exploration, environment, or scoring points should be reworked.

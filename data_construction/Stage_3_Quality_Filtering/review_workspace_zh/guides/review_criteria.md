@@ -27,7 +27,7 @@ scratch/
 
 `task_group/` 是正式数据本体。`scratch/` 是第二阶段 `task_factory/scratch` 的副本，不是 solver 可见输入，也不进入最终评估任务。Reviewer 可按需要参考其中的设计、校准、尝试和返工记录。
 
-`scratch/` 可以包含标准答案、构造 truth、盲做结果、反思、校准记录和返工过程，这些内容本身不算泄露。泄露检查只针对正式 task group 中 solver 可见的 surface：`input/prompt.txt`、`input/payloads/`、`answer_template.json`、公开 API、公开网页、公开数据库或其他运行时入口。如果 `scratch/` 中的答案、SOP 或构造 truth 被复制进这些 solver-visible surface，才应判为泄露。
+`scratch/` 可以包含标准答案、构造 truth、生成的 fewshot skill package、skill-generation trace、校准记录和返工过程，这些内容本身不算泄露。泄露检查只针对正式 task group 中 solver 可见的 surface：`input/prompt.txt`、`input/payloads/`、`answer_template.json`、公开 API、公开网页、公开数据库或其他运行时入口。如果 `scratch/` 中的答案、SOP 或构造 truth 被复制进这些 solver-visible surface，才应判为泄露。
 
 ## Reviewer 检查项
 
@@ -44,7 +44,7 @@ scratch/
 | `rubric_independence` | 每个 task 是否至少评估 3 个可以独立失败的业务问题或方面；points 是否没有重复同一个根本判断；`scratch/rubric_validation.md` 是否通过 selective perturbation 证明各 points 不会一起得分或失分 |
 | `evaluation_design` | eval 是否围绕关键业务结果做确定性检查；天然可拆分的结果是否支持有文档说明的 point 内 partial credit；是否避免 schema 摩擦、自由文本匹配和碎片堆分 |
 | `difficulty_calibration` | base/fewshot 是否为使用固定 prompt、保留 trace 的隔离 Dockerized `codex exec` runs；overall base `avg@3` 是否约为 `0.40-0.60`；fewshot gain 是否约为 `0.10-0.20`；是否避免大面积饱和 |
-| `construction_process` | 是否能看到 env-builder 和 task-builder subagents，以及 Dockerized blind-train、skill-distillation、solver calibration、review/rework 和完整运行证据 |
+| `construction_process` | 是否能看到 env-builder 和 task-builder subagents，以及 3 个隔离的 Dockerized fewshot skill-generation 进程、solver calibration、review/rework 和完整运行证据 |
 | `overall` | 是否可以进入最终评估池 |
 
 Reviewer 的 `decision` 应反映整体质量。某个小项有瑕疵但不影响 benchmark 有效性时，可以 `pass` 并在 `concerns` 中记录；如果存在答案泄漏、eval 不可信、train/test 迁移无效、结构缺失或校准无效，应 `fail`。

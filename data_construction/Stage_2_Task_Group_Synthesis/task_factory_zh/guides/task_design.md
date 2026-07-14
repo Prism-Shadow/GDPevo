@@ -2,7 +2,7 @@
 
 ## Train-Predict 目标
 
-task group 应体现 train-predict 工作模式：agent 先完成真实 train tasks，再通过对照标准答案和反思错误归纳场景经验，最后在 test tasks 中迁移使用。
+task group 应体现 train-predict 工作模式：隔离的 fewshot generator 读取真实 train tasks 的 solver 可见输入和标准答案，将可迁移经验提炼为 skill，再由 test solver 在未见任务中使用。
 
 设计时应同时满足：
 
@@ -10,7 +10,7 @@ task group 应体现 train-predict 工作模式：agent 先完成真实 train ta
 - train tasks 不能是教学题、教程题、worked examples、test 的低配版本或显式 SOP 演示；它们应是正式业务任务，只是在校准流程中先被暴露。
 - train 与 test 不能只是同一模板换壳；任务之间需要有 diversity，包括不同子场景、数据形态、环境入口、输出 schema 或决策目标。
 - 每个正式任务的复杂程度和难度应与第一阶段 examples 对齐，保持长程任务特征。
-- test 不能只靠本地输入材料直接完成，必须有一部分 SOP、关键 facts、字段口径、工具选择经验或业务判断习惯需要通过 train 真实任务的盲做、答案对照和反思来归纳。
+- test 不能只靠本地输入材料直接完成，必须有一部分 SOP、关键 facts、字段口径、工具选择经验或业务判断习惯需要从 fewshot skill generation 可见的 train inputs 和标准答案中归纳。
 
 ## Example 难度对齐
 
@@ -50,7 +50,7 @@ diversity 应限制在可迁移带宽内。一个 task group 不应让 5 个 tra
 - 无法从 train 中归纳出来的新隐藏政策、评分逻辑或来源优先级；
 - train 中没有可比较聚合任务或重复组件工作流时，直接加入综合 board/rollup task。
 
-每个 test task 应有一个有意义的迁移核心：一部分高权重 scoring points 的正确解法必须依赖可从真实 train task 尝试和答案对照中归纳出的 SOP、来源优先级、字段口径、计算方式、输出约定或业务判断。这些 transfer-dependent scoring points 应有明确 train anchors，但这些 anchors 应是真实任务，不是教学样例。其他高权重点可以来自 test 自身的数据探索、数据规模、噪声证据或长流程工作。
+每个 test task 应有一个有意义的迁移核心：一部分高权重 scoring points 的正确解法必须依赖可从 train inputs 和标准答案中归纳出的 SOP、来源优先级、字段口径、计算方式、输出约定或业务判断。这些 transfer-dependent scoring points 应有明确 train anchors，但这些 anchors 应是真实任务，不是简化的教学样例。其他高权重点可以来自 test 自身的数据探索、数据规模、噪声证据或长流程工作。
 
 每个 test task 的设计稿都必须为那些依赖 train 迁移的 scoring points 提供 transfer coverage matrix：
 

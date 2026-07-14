@@ -1,8 +1,8 @@
 # Calibration Runtime And Fixed Prompts
 
 Difficulty calibration does not use the orchestration system's subagent
-mechanism. Every blind-train, skill-distillation, base, and fewshot
-run is a separate noninteractive Codex process inside Docker.
+mechanism. Every fewshot skill-generation, base, and fewshot run is a separate
+noninteractive Codex process inside Docker.
 
 ## Isolation Contract
 
@@ -63,30 +63,29 @@ run_type: base_test
 Solve exactly one test task using only files staged in the current /work directory. Read input/prompt.txt and every file under input/payloads/. Use environment_access.md only to reach the running task environment over the network. Do not call the judge API. If any unexpected material is present in /work, stop and write contamination_report.txt instead of an answer. Otherwise write the final answer to answer.json and follow input/payloads/answer_template.json exactly.
 ```
 
-### Blind Train Attempt
+### Fewshot Skill Generation
 
-Stage all five train `input/` directories and `environment_access.md`. Do not
-stage train answers or judge instructions.
+Stage all five train `input/` directories, the five matching standard answers
+under `train_answers/<task_id>/answer.json`, and `environment_access.md`. Do not
+stage test material, notes, evaluators, judge instructions, or another skill
+attempt. Run this prompt in 3 isolated processes to produce 3 independent skill
+packages.
 
 ```text
 calibration_run_id: <unique_run_id>
-run_type: blind_train
+run_type: skill_generation
+condition: fewshot
 
-Attempt all five train tasks using only files staged in the current /work directory. For each train task, read its input/prompt.txt and every file under input/payloads/, use environment_access.md only for network access, and write the candidate answer under blind_attempts/<task_id>/answer.json. If any unexpected material is present in /work, stop and write contamination_report.txt instead of continuing.
+Generate one reusable skill package using only files staged in the current /work directory. Read all five train inputs from train_tasks/train_001/input/ through train_tasks/train_005/input/, including every payload, and the five matching standard answers from train_answers/train_001/answer.json through train_answers/train_005/answer.json. Use environment_access.md only to reach the running environment over the network. If any unexpected material is present in /work, stop and write contamination_report.txt. Otherwise create skill/ and write the reusable entry instructions to skill/SKILL.md without copying task-specific answer values. Keep any supporting files inside skill/.
 ```
 
-### Skill Distillation
-
-Stage all five train inputs, the preserved blind attempts, the five train
-standard answers under `train_answers/<task_id>/answer.json`, and
-`environment_access.md`. Do not stage test materials, notes, evaluators, or
-judge instructions.
+After each process finishes, preserve the complete contents of `/work/skill/`
+as the matching package root:
 
 ```text
-calibration_run_id: <unique_run_id>
-run_type: skill_distillation
-
-Build one reusable skill package using only files staged in the current /work directory. Compare each blind attempt with the corresponding train answer, identify concrete mistakes and transferable operating rules, and write the analysis to reflection.md. Create the skill directory and write its entry file to skill/SKILL.md. The skill may contain source precedence, business rules, environment-use strategy, calculations, field conventions, common pitfalls, validation checks, and supporting files inside skill/, but it must not copy train answers or include task-specific final values. If any unexpected material is present in /work, stop and write contamination_report.txt instead of producing a skill.
+scratch/train_skill/fewshot_attempt_01/SKILL.md
+scratch/train_skill/fewshot_attempt_02/SKILL.md
+scratch/train_skill/fewshot_attempt_03/SKILL.md
 ```
 
 ### Fewshot Test Attempt
@@ -107,7 +106,7 @@ A run is valid only when:
 
 - its work directory was fresh and contained only the materials allowed above;
 - the environment health check succeeded from the same container network;
-- the process produced the expected `answer.json`, blind attempts, or skill;
+- the process produced the expected `answer.json` or complete skill package;
 - the complete Codex session trace is preserved, or a concrete missing reason is
   recorded;
 - the trace shows no access to forbidden material; and

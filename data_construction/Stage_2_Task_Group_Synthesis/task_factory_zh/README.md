@@ -2,7 +2,7 @@
 
 `task_factory_zh/` 是英文 `task_factory/` 文档的中文翻译镜像，用于团队阅读和讨论。实际数据构造工作区、seed scenario、构造中的 task group 和 scratch 材料仍以 `data_construction/task_factory/` 为准。
 
-`task_factory/` 是第二阶段生产 benchmark 的英文工作规范。目标是从第一阶段一个场景下的几个 examples 出发，构造一个包含 5 个 train tasks 和 5 个 test tasks 的 train-predict task group。train tasks 和 test tasks 都应来自同一真实任务分布；train tasks 不是教学题、教程题或简化样例，而是先暴露给 agent 盲做、对照答案并反思的真实任务样本。
+`task_factory/` 是第二阶段生产 benchmark 的英文工作规范。目标是从第一阶段一个场景下的几个 examples 出发，构造一个包含 5 个 train tasks 和 5 个 test tasks 的 train-predict task group。train tasks 和 test tasks 都应来自同一真实任务分布；train tasks 不是教学题、教程题或简化样例，其 solver 可见输入和标准答案作为 fewshot skill generation 使用的完整示例。
 
 该工作区定义目录结构、生产要求和固定的校准 prompt。运行时仍需填写模型、推理强度、端口和 run id 等参数，但交给 agent 的材料布局和网络拓扑不再由生产 agent 自行选择。
 
@@ -42,8 +42,8 @@
 - train 和 test 都应来自同一真实任务分布；train 只是校准流程中先暴露的样本，不是教学题。
 - task group 需要同时具备 diversity 和可迁移的 SOP、经验、关键 facts。
 - diversity 应限制在可迁移带宽内。优先选择 2-3 个反复出现的操作家族，在实体、数据规模、噪声、来源冲突和输出 schema 上变化，而不是放入五个彼此无关且只出现一次的 SOP 家族。
-- 每个 test task 都应包含一部分依赖 train 真实任务尝试和答案对照后归纳经验的高权重 scoring points。这些 transfer-dependent points 应有明确 train anchors；其他高权重点可以来自 test 自身的数据探索、数据规模或长流程工作。
-- train tasks 不能显式教授 SOP、不能是 test 的低配版本，也不能作为 worked examples；可迁移经验应来自 blind attempts、错误反思和答案对照。
+- 每个 test task 都应包含一部分依赖从 train inputs 和标准答案中归纳经验的高权重 scoring points。这些 transfer-dependent points 应有明确 train anchors；其他高权重点可以来自 test 自身的数据探索、数据规模或长流程工作。
+- train tasks 不能显式教授 SOP、不能是 test 的低配版本，也不能让 benchmark 退化成机械套模板；skill 应从完整 train examples 中归纳可迁移经验，不能复制 task-specific final values。
 - 每个正式任务都应保持长程任务复杂度，且难度应与来源 examples 对齐；不能把生成任务做得明显更简单、更窄或更像 toy task。
 - 大量数据应由程序和随机数生成，不手写生产规模数据。
 - `env/` 应是面向整个 task group 的公共数据与办公环境，可包含 Web、API、开放 PostgreSQL 或其他业务基础设施，但不能按 task 切成独立数据包或接近答案的 task-specific endpoint。
@@ -53,8 +53,8 @@
 - task 文件，包括 `input/`、`notes/`、`output/` 和 `eval/`，应由 task-builder subagents 分别为自己负责的 task 生成。主 agent 不应直接用一个总 builder 脚本生成所有 task 文件和答案。
 - `scratch/build_task_group_*.py` 这类脚本不能从一个固定 specification 里同时创建共享环境、10 个任务目录、隐藏标准答案、notes、evaluators、task-group 索引、scratch 设计文档和校准 skill。即使生成文件结构看起来正确，这也属于流程违规。
 - 脚本只能用于边界清晰的局部工作，例如共享 `env/` 数据生成、单个 task-builder 自己任务内的转换或 evaluator 辅助、以及集成后的校验；不能替代 env-builder 和 task-builder subagents。
-- train-derived skill 必须通过 blind train attempts 生成：先在不看答案的情况下完成 5 个真实 train tasks，再用独立进程对照 `output/answer.json` 反思错误，最后把完整 skill 目录包写到 `scratch/train_skill/skill/`，其中 `SKILL.md` 是入口文件。
-- 难度校准不能把主控系统的 subagent 当 solver。blind-train、skill-distillation、base 和 fewshot 的每次运行都必须是独立的 Dockerized `codex exec` 进程，使用专属 staged `/work`、临时 `CODEX_HOME`、固定 prompt，并保留原始 trace。
+- 使用 3 个相互隔离的进程生成 3 个独立 fewshot skill。每个 generator 接收 5 个 train inputs、对应的 train `output/answer.json` 和环境入口，并把完整 skill 目录包写到 `scratch/train_skill/fewshot_attempt_<nn>/`，其中 `SKILL.md` 是入口文件。
+- 难度校准不能把主控系统的 subagent 当 solver。fewshot skill generation、base 和 fewshot 的每次运行都必须是独立的 Dockerized `codex exec` 进程，使用专属 staged `/work`、临时 `CODEX_HOME`、固定 prompt，并保留原始 trace。
 - Overall base `avg@3` 目标约为 `0.40-0.60`；fewshot 的 overall gain 目标约为 `0.10-0.20`，且不能让大部分 test 分数饱和。
 - `notes/notes.md` 是每个任务的可解释性文件，包含问题定义、解答方法、迁移来源、模型易错点、评测标准和数据生成说明；该文件应中英双语，方便人工审核。
 - 最终 task group 中只有 `notes/notes.md` 应包含中文；solver 可见输入、answer template、标准答案、evaluator、task metadata 和 env 文件应保持英文。

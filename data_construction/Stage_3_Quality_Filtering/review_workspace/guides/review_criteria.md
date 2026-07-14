@@ -27,7 +27,7 @@ scratch/
 
 `task_group/` is the formal benchmark data. `scratch/` is a copy of the Stage 2 `task_factory/scratch` material; it is not solver-visible input and is not part of the final evaluation tasks. Reviewers may use it to inspect design, calibration, attempts, and rework history.
 
-`scratch/` may contain reference answers, construction truth, blind-run results, reflection notes, calibration logs, and rework history. These do not count as leakage by themselves. Leakage checks only apply to solver-visible formal task group surfaces: `input/prompt.txt`, `input/payloads/`, `answer_template.json`, public APIs, public web pages, public databases, or other runtime entry points. If answers, SOPs, or construction truth from `scratch/` are copied into those solver-visible surfaces, mark it as leakage.
+`scratch/` may contain reference answers, construction truth, generated fewshot skill packages, skill-generation traces, calibration logs, and rework history. These do not count as leakage by themselves. Leakage checks only apply to solver-visible formal task group surfaces: `input/prompt.txt`, `input/payloads/`, `answer_template.json`, public APIs, public web pages, public databases, or other runtime entry points. If answers, SOPs, or construction truth from `scratch/` are copied into those solver-visible surfaces, mark it as leakage.
 
 ## Reviewer Checks
 
@@ -44,7 +44,7 @@ Each reviewer must independently check:
 | `rubric_independence` | Whether every task evaluates at least 3 independently fail-able business questions/aspects; points do not merely duplicate one root decision; and `scratch/rubric_validation.md` uses selective perturbations to show that points do not all rise or fall together. |
 | `evaluation_design` | Whether evaluation uses deterministic checks around key business outcomes, supports documented within-point partial credit where the outcome naturally decomposes, and avoids schema friction, free-text matching, and point stuffing. |
 | `difficulty_calibration` | Whether base/fewshot attempts are isolated Dockerized `codex exec` runs with fixed prompts and traces; overall base `avg@3` is about `0.40-0.60`; fewshot gain is about `0.10-0.20`; and results avoid broad saturation. |
-| `construction_process` | Whether records show env-builder and task-builder subagents plus Dockerized blind-train, skill-distillation, and solver calibration processes, review/rework, and complete run evidence. |
+| `construction_process` | Whether records show env-builder and task-builder subagents plus 3 isolated Dockerized fewshot skill-generation processes, solver calibration, review/rework, and complete run evidence. |
 | `overall` | Whether the task group is ready for the final evaluation pool. |
 
 The reviewer's `decision` should reflect overall quality. Small issues that do not harm benchmark validity can be `pass` with `concerns`. Answer leakage, untrustworthy evaluation, invalid train/test transfer, missing structure, or invalid calibration should be `fail`.

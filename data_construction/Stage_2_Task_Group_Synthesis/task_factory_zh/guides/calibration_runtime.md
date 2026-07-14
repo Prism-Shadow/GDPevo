@@ -1,8 +1,7 @@
 # 校准运行方式与固定 Prompt
 
-难度校准不使用主控系统的 subagent 机制。Blind-train、skill-distillation、
-base 和 fewshot 的每一次运行，都必须是 Docker 中独立启动的非交互式
-Codex 进程。
+难度校准不使用主控系统的 subagent 机制。fewshot skill generation、base 和
+fewshot 的每一次运行，都必须是 Docker 中独立启动的非交互式 Codex 进程。
 
 ## 隔离契约
 
@@ -56,30 +55,28 @@ run_type: base_test
 Solve exactly one test task using only files staged in the current /work directory. Read input/prompt.txt and every file under input/payloads/. Use environment_access.md only to reach the running task environment over the network. Do not call the judge API. If any unexpected material is present in /work, stop and write contamination_report.txt instead of an answer. Otherwise write the final answer to answer.json and follow input/payloads/answer_template.json exactly.
 ```
 
-### Blind Train Attempt
+### Fewshot Skill Generation
 
-Staging 5 个 train 的 `input/` 和 `environment_access.md`，不能 staging train
-answers 或 judge instructions。
+Staging 5 个 train 的 `input/`、放在
+`train_answers/<task_id>/answer.json` 的 5 个对应标准答案，以及
+`environment_access.md`。不能 staging test 材料、notes、evaluators、judge
+instructions 或其他 skill attempt。使用该 prompt 启动 3 个相互隔离的进程，
+生成 3 个独立 skill package。
 
 ```text
 calibration_run_id: <unique_run_id>
-run_type: blind_train
+run_type: skill_generation
+condition: fewshot
 
-Attempt all five train tasks using only files staged in the current /work directory. For each train task, read its input/prompt.txt and every file under input/payloads/, use environment_access.md only for network access, and write the candidate answer under blind_attempts/<task_id>/answer.json. If any unexpected material is present in /work, stop and write contamination_report.txt instead of continuing.
+Generate one reusable skill package using only files staged in the current /work directory. Read all five train inputs from train_tasks/train_001/input/ through train_tasks/train_005/input/, including every payload, and the five matching standard answers from train_answers/train_001/answer.json through train_answers/train_005/answer.json. Use environment_access.md only to reach the running environment over the network. If any unexpected material is present in /work, stop and write contamination_report.txt. Otherwise create skill/ and write the reusable entry instructions to skill/SKILL.md without copying task-specific answer values. Keep any supporting files inside skill/.
 ```
 
-### Skill Distillation
-
-Staging 5 个 train inputs、保留的 blind attempts、放在
-`train_answers/<task_id>/answer.json` 的 5 个 train 标准答案，以及
-`environment_access.md`。不能 staging test 材料、notes、evaluators 或 judge
-instructions。
+每个进程结束后，把 `/work/skill/` 的全部内容保留为对应的 package root：
 
 ```text
-calibration_run_id: <unique_run_id>
-run_type: skill_distillation
-
-Build one reusable skill package using only files staged in the current /work directory. Compare each blind attempt with the corresponding train answer, identify concrete mistakes and transferable operating rules, and write the analysis to reflection.md. Create the skill directory and write its entry file to skill/SKILL.md. The skill may contain source precedence, business rules, environment-use strategy, calculations, field conventions, common pitfalls, validation checks, and supporting files inside skill/, but it must not copy train answers or include task-specific final values. If any unexpected material is present in /work, stop and write contamination_report.txt instead of producing a skill.
+scratch/train_skill/fewshot_attempt_01/SKILL.md
+scratch/train_skill/fewshot_attempt_02/SKILL.md
+scratch/train_skill/fewshot_attempt_03/SKILL.md
 ```
 
 ### Fewshot Test Attempt
@@ -100,7 +97,7 @@ Solve exactly one test task using only files staged in the current /work directo
 
 - `/work` 为新建目录，且只包含该模式允许的材料；
 - 使用与正式运行相同的容器网络完成环境 health check；
-- 进程生成了预期的 `answer.json`、blind attempts 或 `skill/` 目录；
+- 进程生成了预期的 `answer.json` 或完整 skill package；
 - 完整 Codex session trace 已保存，或明确记录了无法保存的原因；
 - trace 中没有访问禁止材料；
 - 评分由主 agent 在 Codex 进程之外执行。

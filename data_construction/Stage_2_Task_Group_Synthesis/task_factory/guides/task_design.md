@@ -2,7 +2,7 @@
 
 ## Train-Predict Goal
 
-The task group should implement a train-predict workflow: the agent first attempts real train tasks, compares those attempts against the standard answers, reflects on mistakes, and then transfers the distilled experience to test tasks.
+The task group should implement a train-predict workflow: an isolated fewshot generator reads the solver-visible inputs and standard answers of the real train tasks, distills transferable experience into a skill, and test solvers apply that skill to unseen tasks.
 
 The design should satisfy all of the following:
 
@@ -10,7 +10,7 @@ The design should satisfy all of the following:
 - Train tasks must not be teaching problems, tutorials, worked examples, easier versions of test tasks, or explicit SOP demonstrations. They are formal business tasks that happen to be exposed first in the calibration workflow.
 - Train and test tasks must not be simple template variants. They need diversity across sub-scenarios, data forms, environment entry points, output schemas, or decision goals.
 - Every formal task should align with the complexity and difficulty of the stage 1 examples and preserve long-horizon task characteristics.
-- Test tasks must not be solvable only from local input materials. Some SOPs, key facts, field conventions, tool-selection experience, or business-judgment habits must be inferred from blind train-task attempts, answer comparison, and reflection.
+- Test tasks must not be solvable only from local input materials. Some SOPs, key facts, field conventions, tool-selection experience, or business-judgment habits must be inferred from the train inputs and standard answers available to fewshot skill generation.
 
 ## Example Difficulty Alignment
 
@@ -50,7 +50,7 @@ Bad diversity changes:
 - a new hidden policy, scoring logic, or source-precedence rule that cannot be inferred from train;
 - an integrated board or rollup task when train has no comparable aggregation or repeated component workflows.
 
-Each test task should have a meaningful transfer core: some high-weight scoring points whose correct solution depends on SOPs, source-precedence rules, field conventions, calculations, output conventions, or business judgments that can be inferred from real train-task attempts and answer comparison. These transfer-dependent scoring points should have explicit train anchors, but those anchors should be real tasks rather than instructional examples. Other high-weight points may come from task-specific exploration, data scale, noisy evidence, or long-horizon work.
+Each test task should have a meaningful transfer core: some high-weight scoring points whose correct solution depends on SOPs, source-precedence rules, field conventions, calculations, output conventions, or business judgments that can be inferred from the train inputs and standard answers. These transfer-dependent scoring points should have explicit train anchors, but those anchors should be real tasks rather than simplified teaching examples. Other high-weight points may come from task-specific exploration, data scale, noisy evidence, or long-horizon work.
 
 For every test task, the design draft must include a transfer coverage matrix for the scoring points that are intended to depend on train transfer:
 

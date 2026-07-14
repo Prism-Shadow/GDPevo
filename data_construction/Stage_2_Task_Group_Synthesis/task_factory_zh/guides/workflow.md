@@ -35,10 +35,9 @@ task-builder subagents 负责局部任务生产：
 
 Dockerized Codex 进程负责难度校准：
 
-- 一个 blind-train 进程在看不到答案的情况下完成全部 5 个 train tasks。
-- 一个独立的 skill-distillation 进程对照 blind attempts 和 train answers，写 reflection 和校准 skill。
+- 3 个相互隔离的 fewshot skill-generation 进程分别读取全部 5 个 train inputs 和对应标准答案，生成 3 个独立 skill package。
 - base：每个 test task 运行 3 个隔离进程，5 个 test tasks 共 15 个进程。
-- fewshot：每个 test task 带 train-derived skill 运行 3 个隔离进程，5 个 test tasks 共 15 个进程。
+- fewshot：每个 test task 运行 3 个隔离进程，attempt 01/02/03 分别使用对应的 skill package，5 个 test tasks 共 15 个进程。
 - 每个进程都有新建的 staged `/work`、专属 `CODEX_HOME`、固定 prompt，且只能看到该运行允许的文件。
 - 保留完整 Codex session trace；不能访问 notes、evaluator、环境源码、构造草稿或其他 runs。
 
@@ -58,7 +57,7 @@ reviewer subagent 负责独立审查：
 | 4. Env 实现 | 上下文干净的 env-builder coding subagent | `env/` | 环境服务于全部任务，按业务领域组织，能被独立 agent 容器访问，且没有接近答案的 per-task endpoint |
 | 5. Task 构造 | 10 个 task-builder subagents | `train_tasks/` 和 `test_tasks/` 任务目录 | 每个任务都有 solver input、中英双语 notes、标准答案、evaluator 和 answer template |
 | 6. 集成和 evaluator 自检 | 主 agent | 最终 `task_group.yaml`、路径/schema 修正、`scratch/rubric_validation.md`、evaluator 与 Judge API 自检记录 | 每个 evaluator 对标准答案打满分；selective perturbation 只损失对应分值；partial answer 能得到部分分；`/api/judge` 拒绝 test id 且不暴露隐藏细节 |
-| 7. 难度校准 | Dockerized Codex 进程，主 agent 负责打分 | `scratch/difficulty_calibration.md`、traces、blind train attempts、reflection、skill 目录包、base/fewshot 结果 | 固定 prompt 运行彼此隔离；overall base 约为 `0.40-0.60`；fewshot gain 约为 `0.10-0.20`，且不过度饱和 |
+| 7. 难度校准 | Dockerized Codex 进程，主 agent 负责打分 | `scratch/difficulty_calibration.md`、traces、3 个独立 fewshot skill package、base/fewshot 结果 | 固定 prompt 运行彼此隔离；overall base 约为 `0.40-0.60`；fewshot gain 约为 `0.10-0.20`，且不过度饱和 |
 | 8. 独立 review 和返工 | reviewer subagent 和主 agent | review findings、返工记录、必要时重跑校准 | 结构、环境、notes、评测、迁移和难度要求都通过 |
 
 ## 构造流程
@@ -73,11 +72,10 @@ reviewer subagent 负责独立审查：
 8. 主 agent 运行每个 evaluator 对照标准答案自检，创建 `scratch/rubric_validation.md`，并使用单方面错误和 partial answer probes 验证多维度、非二值打分。随后把 `env/judge_api.py` 接入服务，验证 `/api/judge` 对 train 标准答案打满分、保留 evaluator 的 partial score、拒绝 test task id，且不会返回隐藏 evaluator 或答案内容。
 9. 难度校准前，主 agent 在宿主机以 `TASK_ENV_BIND=0.0.0.0` 启动环境，所有 agent 容器都带 `--add-host=host.docker.internal:host-gateway`，并从临时容器验证 `http://host.docker.internal:<TASK_ENV_PORT>` 的 health endpoint。
 10. base calibration：使用固定 base prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次。主 agent 在 Codex 进程外评分并记录 base `avg@3`。
-11. 使用固定 blind-train prompt 启动一个看不到 train answers 的 Dockerized `codex exec` 进程，把结果放在 `scratch/train_skill/blind_attempts/`。
-12. 使用固定 distillation prompt 启动另一个 Dockerized `codex exec` 进程，只向它提供 blind attempts 和 train answers；写出 `scratch/train_skill/reflection.md` 和完整的 `scratch/train_skill/skill/` 目录包，其中 `SKILL.md` 是入口文件。
-13. fewshot calibration：使用固定 fewshot prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次。主 agent 在 Codex 进程外评分并记录 fewshot `avg@3`。
-14. 上下文干净的 reviewer subagent 在生成、验证和校准后做独立 review。
-15. 主 agent 根据校准和 review 返工，重跑受影响的 subagents 和校准尝试，直到结构、迁移设计、数据生成、评测和难度目标都通过。
+11. 使用固定 fewshot skill-generation prompt 启动 3 个相互隔离的 Dockerized `codex exec` 进程。每个进程接收全部 5 个 train inputs、对应 train answers 和环境入口，并把完整 package 写到 `scratch/train_skill/fewshot_attempt_<nn>/`，其中 `SKILL.md` 是入口文件。
+12. fewshot calibration：使用固定 fewshot prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次；attempt 01/02/03 分别使用 `fewshot_attempt_01/02/03`。主 agent 在 Codex 进程外评分并记录 fewshot `avg@3`。
+13. 上下文干净的 reviewer subagent 在生成、验证和校准后做独立 review。
+14. 主 agent 根据校准和 review 返工，重跑受影响的 subagents 和校准尝试，直到结构、迁移设计、数据生成、评测和难度目标都通过。
 
 ## 禁止总 Builder 脚本
 
@@ -95,7 +93,9 @@ reviewer subagent 负责独立审查：
 - `scratch/task_group_design.md`
 - `scratch/env_blueprint.md`
 - `scratch/difficulty_calibration.md`
-- `scratch/train_skill/skill/SKILL.md`
+- `scratch/train_skill/fewshot_attempt_01/SKILL.md`
+- `scratch/train_skill/fewshot_attempt_02/SKILL.md`
+- `scratch/train_skill/fewshot_attempt_03/SKILL.md`
 
 允许的脚本必须有清晰、狭窄的归属和用途：
 
@@ -103,7 +103,7 @@ reviewer subagent 负责独立审查：
 - task-builder 可以为自己负责的单个 task 写局部辅助脚本，例如 evaluator 或 task-local 数据转换。
 - 主 agent 可以运行集成后的校验脚本，检查路径、schema、evaluator 可复现性和一致性。
 
-设计文档必须先于实现产物形成，不能由同一个生成最终产物的脚本事后回填。`SKILL.md` 必须来自上下文干净的 blind-solve、答案对照和反思流程，不能从构造 specification 里预先写好。
+设计文档必须先于实现产物形成，不能由同一个生成最终产物的脚本事后回填。每个 `SKILL.md` 必须由隔离的 fewshot skill-generation 进程根据 staged train inputs 和标准答案生成，不能从构造 specification 里预先写好。
 
 ## 协作约束
 
