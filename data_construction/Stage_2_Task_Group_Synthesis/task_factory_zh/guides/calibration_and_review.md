@@ -2,11 +2,11 @@
 
 ## 校准目标
 
-5 个 test tasks 的 overall direct `avg@3` 目标约为 `0.40-0.60`。单个 task
+5 个 test tasks 的 overall base `avg@3` 目标约为 `0.40-0.60`。单个 task
 通常也应接近这一范围；允许存在有充分理由的离群值，但不能靠“很简单的题”和
 “几乎不可能完成的题”互相平均来通过校准。
 
-使用 train set 提炼出的 skill 后，overall post-skill `avg@3` 相对 direct 的
+使用 train set 提炼出的 skill 后，overall fewshot `avg@3` 相对 base 的
 目标提升约为 `0.10-0.20`。还应逐题检查 intended transfer points 是否提升，
 同时避免大部分任务接近满分。
 
@@ -14,9 +14,9 @@ train-derived skill 不应该让每个 test 都拿到特别高的分数。如果
 
 这里的目标不是让所有 test 都变简单，而是验证真实 train tasks 能否通过盲做、答案对照和反思，提供可迁移的 SOP、facts、字段口径、环境使用方式或业务判断经验。
 
-## Direct Test Attempts
+## Base Test Attempts
 
-direct test 用于估计未学习 train 的表现。
+base 用于估计未学习 train 的表现。
 
 运行难度测试前，主 agent 在宿主机上以 `TASK_ENV_BIND=0.0.0.0` 和可用的
 `TASK_ENV_PORT` 启动环境。每个校准容器都必须带
@@ -24,13 +24,13 @@ direct test 用于估计未学习 train 的表现。
 `http://host.docker.internal:<TASK_ENV_PORT>`。先从临时容器通过完全相同的
 路径检查 health endpoint，并把启动命令、端口、URL 和日志记录到
 `scratch/difficulty_calibration.md`。不能把 `env/` staging 或挂载进校准
-agent。环境状态仍有效时，direct 和 post-skill 可以复用同一个服务；发生写入
+agent。环境状态仍有效时，base 和 fewshot 可以复用同一个服务；发生写入
 或环境返工后应 reset 或重启。
 
-每个 test task 必须运行 3 次 direct attempts，5 个 test tasks 共 15 个相互
+每个 test task 必须运行 3 次 base attempts，5 个 test tasks 共 15 个相互
 独立的 Dockerized `codex exec` 进程。不能用主控系统的 solver subagent 替代。
 每个进程只收到一个新 staging 的目标 test task，并使用
-`calibration_runtime.md` 中固定的 direct-test prompt。每个 test task 的 direct
+`calibration_runtime.md` 中固定的 base prompt。每个 test task 的 base
 `avg@3` 由三次评分取平均得到。
 
 Codex 进程只能看到：
@@ -96,15 +96,15 @@ scratch/train_skill/skill/SKILL.md
 
 `skill/SKILL.md` 是目录包入口文件，应包含从 train 中纠正出来的工作方法：来源优先级、可复用业务规则、环境使用策略、字段和输出口径、计算规则、常见陷阱和最终校验清单。其他支持文件可以放在同一个 `skill/` 目录中。整个目录不能包含 test-specific facts 或 test 标准答案。
 
-## Skill Test Attempts
+## Fewshot Test Attempts
 
-train-skill test 用于验证迁移收益。
+fewshot 用于验证 train-derived skill 的迁移收益。
 
-每个 test task 必须运行 3 次 post-skill attempts，5 个 test tasks 共 15 个相互
+每个 test task 必须运行 3 次 fewshot attempts，5 个 test tasks 共 15 个相互
 独立的 Dockerized `codex exec` 进程。不能使用主控系统的 solver subagent。
 每个进程接收完整 train-derived `skill/` 目录和一个新 staging 的目标 test
-task，并使用 `calibration_runtime.md` 中固定的 post-skill prompt。每个 test
-task 的 post-skill `avg@3` 由三次评分取平均得到。
+task，并使用 `calibration_runtime.md` 中固定的 fewshot prompt。每个 test
+task 的 fewshot `avg@3` 由三次评分取平均得到。
 
 Codex 进程可以看到：
 
@@ -124,14 +124,14 @@ scratch/difficulty_calibration.md
 
 至少记录：
 
-- 10 次 direct test attempts 的 solver、输入、预测文件、评测命令和得分。
+- 15 次 base attempts 的 solver、输入、预测文件、评测命令和得分。
 - 每个进程的校准模型、reasoning effort、容器镜像、固定 host-gateway 配置、固定 prompt 类型、run id、staged 文件和主 Codex trace 路径。
 - train blind attempts、train answer comparison reflection、train-derived skill 的路径，以及用于创建 skill 的 train 输入。
-- 10 次 post-skill test attempts 的 solver、输入、预测文件、评测命令和得分。
-- 每个 test task 的 direct `avg@3`、post-skill `avg@3` 和 gain。
-- 5 个 test tasks 的 overall direct `avg@3` 和 overall post-skill `avg@3`。
-- Overall direct `avg@3` 是否约为 `0.40-0.60`，以及单题离群值是否有充分理由。
-- Overall post-skill gain 是否约为 `0.10-0.20`，并逐题说明哪些 transfer-dependent rubric points 发生变化。
+- 15 次 fewshot attempts 的 solver、输入、预测文件、评测命令和得分。
+- 每个 test task 的 base `avg@3`、fewshot `avg@3` 和 gain。
+- 5 个 test tasks 的 overall base `avg@3` 和 overall fewshot `avg@3`。
+- Overall base `avg@3` 是否约为 `0.40-0.60`，以及单题离群值是否有充分理由。
+- Overall fewshot gain 是否约为 `0.10-0.20`，并逐题说明哪些 transfer-dependent rubric points 发生变化。
 - skill test 分数是否在大部分或全部 test 上过度饱和，如果是，记录哪些 scoring points 变得过于容易。
 - 低分来源是否来自迁移失败或任务复杂度，而不是 prompt 歧义、schema 摩擦或评测脆弱。
 
@@ -141,7 +141,7 @@ builder 手写、人工改写、合成或反事实 prediction 文件不能计入
 
 如果校准或 review 不通过，该 task group 必须返工并重新检查，不能直接进入 `data_construction/task_groups/<task_group_id>/`。
 
-当 overall direct `avg@3` 不在约 `0.40-0.60` 范围内，或单题明显过易、
+当 overall base `avg@3` 不在约 `0.40-0.60` 范围内，或单题明显过易、
 几乎不可能完成时，主 agent 可以返工以下任意组合：
 
 - scoring points，如果过多分数来自低难度检查；
@@ -157,9 +157,9 @@ builder 手写、人工改写、合成或反事实 prediction 文件不能计入
 train/test 变体是否过于机械相似，或相关 rubric points 是否都在重复奖励同一个
 学习到的判断。应返工迁移设计，而不是直接接受被放大的 gain。
 
-当 post-skill `avg@3` 显示 train-derived skill 在大部分或全部 test 上分数过高时，应返工让 SOP 不那么机械，并让 test 不能被 train examples 直接套出来。主 agent 可以在同一真实任务分布内提高 train/test 多样性，要求更多 test-specific evidence discovery，增加更大或更脏的数据，扩大环境入口，把部分简单 payload 信息移入 `env/` 查询，或重设 scoring points，让 skill 有帮助但不能直接回答整个任务。不要通过增加歧义、隐藏必要信息、脆弱 schema 或不公平 evaluator 来压低分数。
+当 fewshot `avg@3` 显示 train-derived skill 在大部分或全部 test 上分数过高时，应返工让 SOP 不那么机械，并让 test 不能被 train examples 直接套出来。主 agent 可以在同一真实任务分布内提高 train/test 多样性，要求更多 test-specific evidence discovery，增加更大或更脏的数据，扩大环境入口，把部分简单 payload 信息移入 `env/` 查询，或重设 scoring points，让 skill 有帮助但不能直接回答整个任务。不要通过增加歧义、隐藏必要信息、脆弱 schema 或不公平 evaluator 来压低分数。
 
-当 review 发现结构、泄漏、评测或数据生成问题时，主 agent 将返工分派给对应 subagent，重新集成产物，重新跑 evaluator，必要时重新校准，并再次 review。最终通过前，在最后一次相关返工之后，每个 test task 都必须有 3 次有效 direct attempts 和 3 次有效 post-skill attempts。
+当 review 发现结构、泄漏、评测或数据生成问题时，主 agent 将返工分派给对应 subagent，重新集成产物，重新跑 evaluator，必要时重新校准，并再次 review。最终通过前，在最后一次相关返工之后，每个 test task 都必须有 3 次有效 base attempts 和 3 次有效 fewshot attempts。
 
 ## Review
 
@@ -191,8 +191,8 @@ reviewer subagent 应检查：
 - 不可拆分的 point 是否使用 deterministic exact match；天然可拆分的 point 是否使用文档化、确定性的 partial credit，并输出 `[0, 1]` 内的 earned fraction。
 - scoring points 是否优先评估数值、枚举、布尔、排序、集合或规范化结构结果；如需字符串匹配，是否已改成受控选择字段以避免 schema 摩擦。
 - 大部分 scoring points 是否真实依赖 train 迁移、大量数据探索或长流程工作，而不是不学习 train、不深入探索数据也能拿到。
-- `scratch/difficulty_calibration.md` 是否包含 10 次有效 direct 和 10 次有效 post-skill Dockerized `codex exec` attempts，且都使用固定 prompt、专属 staged work 和 Codex-home 目录。
+- `scratch/difficulty_calibration.md` 是否包含 15 次有效 base 和 15 次有效 fewshot Dockerized `codex exec` attempts，且都使用固定 prompt、专属 staged work 和 Codex-home 目录。
 - train-derived skill 是否先由看不到答案的 blind-train Codex 进程生成 attempts，再由独立的答案对照与 skill-distillation Codex 进程生成 `scratch/train_skill/reflection.md` 和 `scratch/train_skill/skill/` 目录包。
-- Overall direct `avg@3` 是否约为 `0.40-0.60`，不合理的单题离群值是否已返工或说明。
-- Overall post-skill gain 是否约为 `0.10-0.20`，且收益来自预期的 transfer-dependent aspects，而不是重复 rubric points。
-- post-skill `avg@3` 是否避免在大部分或全部 test 上过度饱和；如果 skill 后每题都接近满分，是否需要返工 SOP、任务多样性、数据探索、env 或 scoring points。
+- Overall base `avg@3` 是否约为 `0.40-0.60`，不合理的单题离群值是否已返工或说明。
+- Overall fewshot gain 是否约为 `0.10-0.20`，且收益来自预期的 transfer-dependent aspects，而不是重复 rubric points。
+- fewshot `avg@3` 是否避免在大部分或全部 test 上过度饱和；如果 skill 后每题都接近满分，是否需要返工 SOP、任务多样性、数据探索、env 或 scoring points。

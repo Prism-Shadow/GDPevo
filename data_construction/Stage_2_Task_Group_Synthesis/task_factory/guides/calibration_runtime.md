@@ -1,7 +1,7 @@
 # Calibration Runtime And Fixed Prompts
 
 Difficulty calibration does not use the orchestration system's subagent
-mechanism. Every blind-train, skill-distillation, direct-test, and post-skill
+mechanism. Every blind-train, skill-distillation, base, and fewshot
 run is a separate noninteractive Codex process inside Docker.
 
 ## Isolation Contract
@@ -52,13 +52,13 @@ only angle-bracket placeholders. Do not append task hints, answer summaries,
 rubric details, evaluator descriptions, notes, construction truth, or paths
 outside `/work`.
 
-### Direct Test Attempt
+### Base Test Attempt
 
 Stage only the target test `input/` and `environment_access.md`.
 
 ```text
 calibration_run_id: <unique_run_id>
-run_type: direct_test
+run_type: base_test
 
 Solve exactly one test task using only files staged in the current /work directory. Read input/prompt.txt and every file under input/payloads/. Use environment_access.md only to reach the running task environment over the network. Do not call the judge API. If any unexpected material is present in /work, stop and write contamination_report.txt instead of an answer. Otherwise write the final answer to answer.json and follow input/payloads/answer_template.json exactly.
 ```
@@ -89,14 +89,14 @@ run_type: skill_distillation
 Build one reusable skill package using only files staged in the current /work directory. Compare each blind attempt with the corresponding train answer, identify concrete mistakes and transferable operating rules, and write the analysis to reflection.md. Create the skill directory and write its entry file to skill/SKILL.md. The skill may contain source precedence, business rules, environment-use strategy, calculations, field conventions, common pitfalls, validation checks, and supporting files inside skill/, but it must not copy train answers or include task-specific final values. If any unexpected material is present in /work, stop and write contamination_report.txt instead of producing a skill.
 ```
 
-### Post-Skill Test Attempt
+### Fewshot Test Attempt
 
 Stage only the target test `input/`, the complete generated skill directory as
 `skill/`, and `environment_access.md`.
 
 ```text
 calibration_run_id: <unique_run_id>
-run_type: post_skill_test
+run_type: fewshot_test
 
 Solve exactly one test task using only files staged in the current /work directory. Read skill/SKILL.md and any files it references inside skill/, then read input/prompt.txt and every file under input/payloads/. Use environment_access.md only to reach the running task environment over the network. Do not call the judge API. If any unexpected material is present in /work, stop and write contamination_report.txt instead of an answer. Otherwise write the final answer to answer.json and follow input/payloads/answer_template.json exactly.
 ```

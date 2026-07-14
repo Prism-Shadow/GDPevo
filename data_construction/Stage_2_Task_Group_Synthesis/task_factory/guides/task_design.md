@@ -30,7 +30,7 @@ Train/test transfer should be close enough that a real train-derived skill can h
 
 ## Diversity Band
 
-Diversity should stay inside a transfer band. A task group should not use its 5 train tasks to cover five unrelated workflow families, then test each family once. That creates a broad but shallow train-derived skill: the skill records many isolated facts, but post-skill attempts still need to rediscover each test task's main business logic.
+Diversity should stay inside a transfer band. A task group should not use its 5 train tasks to cover five unrelated workflow families, then test each family once. That creates a broad but shallow train-derived skill: the skill records many isolated facts, but fewshot attempts still need to rediscover each test task's main business logic.
 
 Prefer 2-3 recurring operation families within the same scenario. Vary the entities, accounts, events, campaigns, products, data volume, noise patterns, source conflicts, environment surfaces, and output schemas while preserving enough repeated decision frames for train-derived experience to transfer.
 
@@ -60,7 +60,7 @@ For every test task, the design draft must include a transfer coverage matrix fo
 
 There is no requirement that every high-weight scoring point map to train. The requirement is that a nontrivial subset of high-weight points can only be solved well by transferring methods inferred from real train tasks. Unanchored high-weight points are allowed when they measure genuine task-specific data exploration or long-horizon work rather than an unstated new SOP.
 
-Avoid far-transfer-only design. If post-skill attempts fail to improve over direct attempts, first check whether diversity is too wide: too many unrelated workflow families, too many one-off train anchors, or test-only SOPs that never recur in train. Rework by narrowing the operation-family spread, adding real train coverage for recurring conventions, tightening train/test distribution alignment, or clarifying which high-weight points depend on transfer versus task-specific exploration before making the task easier in superficial ways.
+Avoid far-transfer-only design. If fewshot attempts fail to improve over base attempts, first check whether diversity is too wide: too many unrelated workflow families, too many one-off train anchors, or test-only SOPs that never recur in train. Rework by narrowing the operation-family spread, adding real train coverage for recurring conventions, tightening train/test distribution alignment, or clarifying which high-weight points depend on transfer versus task-specific exploration before making the task easier in superficial ways.
 
 ## Sources Of Complexity
 
@@ -120,7 +120,7 @@ The draft should include at least:
 - Evaluation and calibration plan, including each task's expected 6-10 scoring points, `1`/`2`/`3` raw weights, at least 3 independently fail-able business aspects, and deterministic exact-match or partial-credit logic.
 - A rubric independence map showing which business question and answer fields each point measures, which points share upstream dependencies, and why the rubric will not behave as one duplicated all-or-nothing check.
 - Output-shape plan for `answer_template.json`, including numeric precision and controlled-choice fields for string-like outputs.
-- Labels for which scoring points depend on train-derived experience and which depend on substantial data exploration or long-horizon work, ensuring most score cannot be obtained by direct test attempts through simple reading.
+- Labels for which scoring points depend on train-derived experience and which depend on substantial data exploration or long-horizon work, ensuring most score cannot be obtained by base attempts through simple reading.
 - A skill-saturation check: the train-derived skill should improve test performance but should not make most or all test tasks near-perfect.
 
 The design draft should assign task ownership and provide enough task-specific brief material for each task-builder subagent. It should not directly generate every task's `input/`, `notes/`, `output/`, and `eval/`. Those files are produced later by 10 task-builder subagents, one per task.

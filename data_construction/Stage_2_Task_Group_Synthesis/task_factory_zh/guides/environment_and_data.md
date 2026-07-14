@@ -18,7 +18,7 @@
 
 solver-facing env 不能按 task 切分。避免 per-task 数据包、per-task 数据库，或 `/api/tasks/<task_id>/data` 这类直接把某条 task 相关数据打包给 solver 的 endpoint。generator 可以保留给构造和 review 使用的隐藏元数据，但 solver-facing services 应暴露共享业务对象和正常办公接口，例如 `/events`、`/crm/accounts`、`/campaign-members`、`/exhibitors`、`/finance/invoices`、SQL tables 或共享文件。
 
-`env/` 本身不是 solver 可见输入。solver、direct-test 和 post-skill agents 只能通过暴露出来的环境入口访问环境，例如浏览器 URL、API base URL 或数据库连接串。如果任务使用 PostgreSQL 或其他数据库，应把数据库作为运行中的服务暴露出来，并提供连接信息；不能让 solver agents 直接查看 `env/` 文件、migration 脚本、生成数据文件、数据库 dump、seed、manifest 或 setup 脚本。
+`env/` 本身不是 solver 可见输入。solver、base 和 fewshot agents 只能通过暴露出来的环境入口访问环境，例如浏览器 URL、API base URL 或数据库连接串。如果任务使用 PostgreSQL 或其他数据库，应把数据库作为运行中的服务暴露出来，并提供连接信息；不能让 solver agents 直接查看 `env/` 文件、migration 脚本、生成数据文件、数据库 dump、seed、manifest 或 setup 脚本。
 
 在 solver 可见 task input 中，运行环境 base URL 只能写成
 `<TASK_ENV_BASE_URL>`。真实 localhost 地址、私有 IP、公开 host、端口和

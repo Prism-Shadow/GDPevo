@@ -30,7 +30,7 @@ train/test 的迁移距离应足够近，让真实的 train-derived skill 能产
 
 ## Diversity 带宽
 
-diversity 应限制在可迁移带宽内。一个 task group 不应让 5 个 train tasks 覆盖五个彼此无关的工作流家族，然后每个家族只在 test 中考一次。这样得到的 train-derived skill 会变成宽而浅的速记：记录了很多孤立事实，但 post-skill attempts 仍然需要重新摸索每个 test 的主要业务逻辑。
+diversity 应限制在可迁移带宽内。一个 task group 不应让 5 个 train tasks 覆盖五个彼此无关的工作流家族，然后每个家族只在 test 中考一次。这样得到的 train-derived skill 会变成宽而浅的速记：记录了很多孤立事实，但 fewshot attempts 仍然需要重新摸索每个 test 的主要业务逻辑。
 
 更好的做法是，在同一个 scenario 内选择 2-3 个反复出现的操作家族。可以变化实体、账号、活动、campaign、产品、数据体量、噪声形态、来源冲突、环境入口和输出 schema，但需要保留足够重复的决策框架，让 train-derived experience 可以迁移。
 
@@ -60,7 +60,7 @@ diversity 应限制在可迁移带宽内。一个 task group 不应让 5 个 tra
 
 不要求每个高权重 scoring point 都映射到 train。真正的要求是：test 中要有一部分非平凡的高权重点，只有迁移从真实 train tasks 中归纳出的方法才能稳定做对。没有 train anchor 的高权重点可以存在，但它们应衡量真实的任务特定数据探索或长流程工作，而不是未说明的新 SOP。
 
-避免只做远迁移。如果 post-skill attempts 不能显著高于 direct attempts，首先检查 diversity 是否过宽：是否有太多彼此无关的工作流家族、太多一次性 train anchors，或 test-only SOP 没有在 train 中重复出现。返工时优先收窄操作家族范围、补充可复用口径的真实 train 覆盖、拉近 train/test 分布，或明确哪些高权重点依赖迁移、哪些高权重点依赖 test-specific exploration，而不是只通过泄露步骤或把 test prompt 写得更程序化来修复。
+避免只做远迁移。如果 fewshot attempts 不能显著高于 base attempts，首先检查 diversity 是否过宽：是否有太多彼此无关的工作流家族、太多一次性 train anchors，或 test-only SOP 没有在 train 中重复出现。返工时优先收窄操作家族范围、补充可复用口径的真实 train 覆盖、拉近 train/test 分布，或明确哪些高权重点依赖迁移、哪些高权重点依赖 test-specific exploration，而不是只通过泄露步骤或把 test prompt 写得更程序化来修复。
 
 ## 复杂度来源
 
@@ -119,7 +119,7 @@ task_factory/scratch/task_group_design.md
 - 评测和校准计划，包括每个任务预期的 6-10 个 scoring points、`1`/`2`/`3` 原始权重、至少 3 个可以独立失败的业务方面，以及确定性的 exact-match 或 partial-credit 逻辑。
 - Rubric independence map：说明每个 point 对应哪个业务问题和哪些 answer fields，哪些 points 共享上游依赖，以及为什么整套 rubric 不会退化成同一个全对或全错检查的重复版本。
 - `answer_template.json` 的输出形态计划，包括数值精度，以及面向字符串类输出的受控选择字段。
-- 标注哪些 scoring points 依赖 train-derived experience、哪些依赖大量数据探索或长流程工作，确保多数分数不能由 direct test 通过简单读题获得。
+- 标注哪些 scoring points 依赖 train-derived experience、哪些依赖大量数据探索或长流程工作，确保多数分数不能由 base 通过简单读题获得。
 - skill saturation 检查：train-derived skill 应该提升 test 表现，但不应该让大部分或全部 test 接近满分。
 
 设计稿应分配 task 归属，并为每个 task-builder subagent 提供足够的 task-specific brief。设计稿不应直接生成每个 task 的 `input/`、`notes/`、`output/` 和 `eval/`。这些文件应由后续 10 个 task-builder subagents 分别生成。

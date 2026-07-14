@@ -37,8 +37,8 @@ Dockerized Codex processes own difficulty calibration:
 
 - One blind-train process attempts all 5 train tasks without answers.
 - One separate skill-distillation process compares the blind attempts with train answers and writes the reflection and calibration skill.
-- Direct test: run 3 isolated processes per test task, for 15 processes total.
-- Post-skill test: run 3 isolated processes per test task with the train-derived skill, for another 15 processes total.
+- Base: run 3 isolated processes per test task, for 15 processes total.
+- Fewshot: run 3 isolated processes per test task with the train-derived skill, for another 15 processes total.
 - Every process receives a fresh staged `/work`, dedicated `CODEX_HOME`, fixed prompt, and only the files allowed for that run.
 - Preserve complete Codex session traces and do not access notes, evaluator files, environment source, construction drafts, or other runs.
 
@@ -58,7 +58,7 @@ Construction should move through these stages. Do not skip directly from reading
 | 4. Environment implementation | Clean-context env-builder coding subagent | `env/` | The environment is shared across all tasks, domain-oriented, reachable from a separate agent container, and free of answer-like per-task endpoints |
 | 5. Task construction | 10 task-builder subagents | `train_tasks/` and `test_tasks/` task folders | Each assigned task has solver input, bilingual notes, standard answer, evaluator, and answer template |
 | 6. Integration and evaluator self-check | Main agent | Finalized `task_group.yaml`, path/schema fixes, `scratch/rubric_validation.md`, evaluator and judge-API self-check logs | Every evaluator scores its own answer fully, selective perturbations lose only intended credit, partial answers receive partial scores, and `/api/judge` rejects test ids without hidden details |
-| 7. Difficulty calibration | Dockerized Codex processes, scored by main agent | `scratch/difficulty_calibration.md`, traces, blind train attempts, reflection, `SKILL.md`, direct/post-skill results | Fixed-prompt runs are isolated; overall direct score is about `0.40-0.60`; skill gain is about `0.10-0.20` without saturation |
+| 7. Difficulty calibration | Dockerized Codex processes, scored by main agent | `scratch/difficulty_calibration.md`, traces, blind train attempts, reflection, `SKILL.md`, base/fewshot results | Fixed-prompt runs are isolated; overall base score is about `0.40-0.60`; fewshot gain is about `0.10-0.20` without saturation |
 | 8. Independent review and rework | Reviewer subagent and main agent | Review findings, rework records, rerun calibration where needed | Structure, environment, notes, evaluation, transfer, and difficulty requirements all pass |
 
 ## Construction Flow
@@ -72,10 +72,10 @@ Construction should move through these stages. Do not skip directly from reading
 7. The main agent integrates all tasks and standardizes paths, schemas, notes, and environment usage.
 8. The main agent runs every evaluator against the standard answer, creates `scratch/rubric_validation.md`, and runs selective wrong-aspect and partial-answer probes to verify multidimensional, non-binary scoring. It connects `env/judge_api.py` to the service and verifies that `/api/judge` gives full credit to train standard answers, preserves evaluator partial scores, rejects test task ids, and returns no hidden evaluator or answer content.
 9. Before difficulty calibration, the main agent starts the task-group environment on the host with `TASK_ENV_BIND=0.0.0.0`, gives all agent containers `--add-host=host.docker.internal:host-gateway`, and verifies the health endpoint at `http://host.docker.internal:<TASK_ENV_PORT>` from a disposable container.
-10. Direct calibration: launch 15 independent Dockerized `codex exec` runs with the fixed direct-test prompt, 3 attempts for each test task. The main agent scores predictions outside the Codex processes and records direct `avg@3`.
+10. Base calibration: launch 15 independent Dockerized `codex exec` runs with the fixed base prompt, 3 attempts for each test task. The main agent scores predictions outside the Codex processes and records base `avg@3`.
 11. Launch one Dockerized blind-train `codex exec` process with the fixed blind-train prompt and no train answers; store its outputs under `scratch/train_skill/blind_attempts/`.
 12. Launch a separate Dockerized skill-distillation `codex exec` process with the fixed distillation prompt, blind attempts, and train answers; write `scratch/train_skill/reflection.md` and the skill package under `scratch/train_skill/skill/` with `SKILL.md` as its entry file.
-13. Post-skill calibration: launch 15 independent Dockerized `codex exec` runs with the fixed post-skill prompt, 3 attempts for each test task. The main agent scores predictions outside the Codex processes and records post-skill `avg@3`.
+13. Fewshot calibration: launch 15 independent Dockerized `codex exec` runs with the fixed fewshot prompt, 3 attempts for each test task. The main agent scores predictions outside the Codex processes and records fewshot `avg@3`.
 14. A clean-context reviewer subagent performs an independent review after generation, validation, and calibration.
 15. The main agent revises based on calibration and review, reruns affected subagents and calibration attempts, and repeats until structure, transfer design, data generation, evaluation, and difficulty targets all pass.
 

@@ -18,7 +18,7 @@ The environment should reflect real production-system complexity: enough objects
 
 Do not partition the solver-facing environment by task. Avoid per-task data packages, per-task databases, or endpoints such as `/api/tasks/<task_id>/data` that hand the solver a task-specific bundle. The generator may keep hidden construction metadata for builders, but solver-facing services should expose shared business objects and normal workplace interfaces, such as `/events`, `/crm/accounts`, `/campaign-members`, `/exhibitors`, `/finance/invoices`, SQL tables, or shared files.
 
-`env/` itself is not solver-visible input. Solver, direct-test, and post-skill agents should access the environment only through exposed entry points, such as a browser URL, API base URL, or database connection string. If a task uses PostgreSQL or another database, expose it as a running service with connection details; do not let solver agents inspect `env/` files, migration scripts, generated data files, database dumps, seeds, manifests, or setup scripts directly.
+`env/` itself is not solver-visible input. Solver, base, and fewshot agents should access the environment only through exposed entry points, such as a browser URL, API base URL, or database connection string. If a task uses PostgreSQL or another database, expose it as a running service with connection details; do not let solver agents inspect `env/` files, migration scripts, generated data files, database dumps, seeds, manifests, or setup scripts directly.
 
 In solver-visible task inputs, refer to the running environment base URL only as
 `<TASK_ENV_BASE_URL>`. Keep real localhost addresses, private IPs, public host

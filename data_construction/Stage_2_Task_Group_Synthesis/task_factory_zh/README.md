@@ -54,13 +54,13 @@
 - `scratch/build_task_group_*.py` 这类脚本不能从一个固定 specification 里同时创建共享环境、10 个任务目录、隐藏标准答案、notes、evaluators、task-group 索引、scratch 设计文档和校准 skill。即使生成文件结构看起来正确，这也属于流程违规。
 - 脚本只能用于边界清晰的局部工作，例如共享 `env/` 数据生成、单个 task-builder 自己任务内的转换或 evaluator 辅助、以及集成后的校验；不能替代 env-builder 和 task-builder subagents。
 - train-derived skill 必须通过 blind train attempts 生成：先在不看答案的情况下完成 5 个真实 train tasks，再用独立进程对照 `output/answer.json` 反思错误，最后把完整 skill 目录包写到 `scratch/train_skill/skill/`，其中 `SKILL.md` 是入口文件。
-- 难度校准不能把主控系统的 subagent 当 solver。blind-train、skill-distillation、direct-test 和 post-skill 的每次运行都必须是独立的 Dockerized `codex exec` 进程，使用专属 staged `/work`、临时 `CODEX_HOME`、固定 prompt，并保留原始 trace。
-- Overall direct `avg@3` 目标约为 `0.40-0.60`；train-derived skill 的 overall gain 目标约为 `0.10-0.20`，且不能让大部分 test 分数饱和。
+- 难度校准不能把主控系统的 subagent 当 solver。blind-train、skill-distillation、base 和 fewshot 的每次运行都必须是独立的 Dockerized `codex exec` 进程，使用专属 staged `/work`、临时 `CODEX_HOME`、固定 prompt，并保留原始 trace。
+- Overall base `avg@3` 目标约为 `0.40-0.60`；fewshot 的 overall gain 目标约为 `0.10-0.20`，且不能让大部分 test 分数饱和。
 - `notes/notes.md` 是每个任务的可解释性文件，包含问题定义、解答方法、迁移来源、模型易错点、评测标准和数据生成说明；该文件应中英双语，方便人工审核。
 - 最终 task group 中只有 `notes/notes.md` 应包含中文；solver 可见输入、answer template、标准答案、evaluator、task metadata 和 env 文件应保持英文。
 - 每个 train/test task 都必须包含 `input/payloads/answer_template.json`，明确规定输出 JSON 结构、字段类型、数值精度和可选枚举值。
 - 每个任务最好包含 6-10 个 scoring points，并覆盖多个可以独立失败的业务问题或方面。把同一个根本判断拆成许多会一起得分、一起失分的相关行，不属于多维评测。
 - 每个点的原始权重为 `1`、`2` 或 `3`，最大分值按 `weight / sum(weight)` 归一化。若一个业务结果天然包含可独立判断的子项，可以在该 point 内使用确定性的 partial credit；evaluator 必须明确输出 earned fraction，不能让整套 rubric 因单一依赖变成全对或全错。
 - scoring points 应优先评估数值、枚举、布尔、排序、集合或规范化结构结果。若需要字符串匹配，应在 `answer_template.json` 中改成选择题式字段，避免 schema 摩擦。
-- 大部分 scoring points 必须依赖迁移学习、大量数据探索或长流程工作，不能让 direct test 靠简单读题和格式填充拿到多数分。
+- 大部分 scoring points 必须依赖迁移学习、大量数据探索或长流程工作，不能让 base 靠简单读题和格式填充拿到多数分。
 - solver 可见的 `prompt.txt` 和 `input/payloads/` 不应直白泄露 SOP、关键事实、工具流程或 `(1)(2)(3)(4)` 式解题步骤。

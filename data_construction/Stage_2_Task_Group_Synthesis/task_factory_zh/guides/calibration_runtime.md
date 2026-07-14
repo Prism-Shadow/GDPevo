@@ -1,7 +1,7 @@
 # 校准运行方式与固定 Prompt
 
 难度校准不使用主控系统的 subagent 机制。Blind-train、skill-distillation、
-direct-test 和 post-skill 的每一次运行，都必须是 Docker 中独立启动的非交互式
+base 和 fewshot 的每一次运行，都必须是 Docker 中独立启动的非交互式
 Codex 进程。
 
 ## 隔离契约
@@ -45,13 +45,13 @@ docker run --rm \
 每次 `codex exec` 只能使用下面对应的一份模板。只替换尖括号占位符，不能追加
 task hints、答案摘要、rubric/evaluator 细节、notes、构造真值或 `/work` 外路径。
 
-### Direct Test Attempt
+### Base Test Attempt
 
 只 staging 当前 test 的 `input/` 和 `environment_access.md`。
 
 ```text
 calibration_run_id: <unique_run_id>
-run_type: direct_test
+run_type: base_test
 
 Solve exactly one test task using only files staged in the current /work directory. Read input/prompt.txt and every file under input/payloads/. Use environment_access.md only to reach the running task environment over the network. Do not call the judge API. If any unexpected material is present in /work, stop and write contamination_report.txt instead of an answer. Otherwise write the final answer to answer.json and follow input/payloads/answer_template.json exactly.
 ```
@@ -82,14 +82,14 @@ run_type: skill_distillation
 Build one reusable skill package using only files staged in the current /work directory. Compare each blind attempt with the corresponding train answer, identify concrete mistakes and transferable operating rules, and write the analysis to reflection.md. Create the skill directory and write its entry file to skill/SKILL.md. The skill may contain source precedence, business rules, environment-use strategy, calculations, field conventions, common pitfalls, validation checks, and supporting files inside skill/, but it must not copy train answers or include task-specific final values. If any unexpected material is present in /work, stop and write contamination_report.txt instead of producing a skill.
 ```
 
-### Post-Skill Test Attempt
+### Fewshot Test Attempt
 
 只 staging 当前 test 的 `input/`、完整的 `skill/` 目录包和
 `environment_access.md`。
 
 ```text
 calibration_run_id: <unique_run_id>
-run_type: post_skill_test
+run_type: fewshot_test
 
 Solve exactly one test task using only files staged in the current /work directory. Read skill/SKILL.md and any files it references inside skill/, then read input/prompt.txt and every file under input/payloads/. Use environment_access.md only to reach the running task environment over the network. Do not call the judge API. If any unexpected material is present in /work, stop and write contamination_report.txt instead of an answer. Otherwise write the final answer to answer.json and follow input/payloads/answer_template.json exactly.
 ```
