@@ -119,9 +119,7 @@ class Checker:
         has_judge_api = False
         for idx, item in enumerate(files):
             self.require_path(item, f"env.files[{idx}]", kind="file")
-            if isinstance(item, str) and Path(item).as_posix().endswith(
-                "env/judge_api.py"
-            ):
+            if isinstance(item, str) and Path(item).parts == ("env", "judge_api.py"):
                 has_judge_api = True
         if not has_judge_api:
             self.fail("env.files must declare env/judge_api.py")

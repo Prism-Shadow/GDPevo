@@ -2,7 +2,8 @@
 
 This evaluation compares four conditions over the same task group, test tasks,
 DeepSeek V4 Pro model configuration, Claude Code `max` effort setting,
-DeepSeek V4 Pro for Haiku/进程 defaults, task environment, and evaluators:
+DeepSeek V4 Pro as the default model for Haiku and spawned processes, task
+environment, and evaluators:
 
 ```text
 base
