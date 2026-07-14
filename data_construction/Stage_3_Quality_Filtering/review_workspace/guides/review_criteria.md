@@ -43,7 +43,7 @@ Each reviewer must independently check:
 | `notes_interpretability` | Whether each task has bilingual `notes/notes.md` explaining the problem, answer basis, transfer source, common pitfalls, and scoring standard. |
 | `rubric_independence` | Whether every task evaluates at least 3 independently fail-able business questions/aspects; points do not merely duplicate one root decision; and `scratch/rubric_validation.md` uses selective perturbations to show that points do not all rise or fall together. |
 | `evaluation_design` | Whether evaluation uses deterministic checks around key business outcomes, supports documented within-point partial credit where the outcome naturally decomposes, and avoids schema friction, free-text matching, and point stuffing. |
-| `difficulty_calibration` | Whether base/fewshot attempts are isolated Dockerized `codex exec` runs with fixed prompts and traces; overall base `avg@3` is about `0.40-0.60`; fewshot gain is about `0.10-0.20`; and results avoid broad saturation. |
+| `difficulty_calibration` | Whether base/fewshot attempts are isolated Dockerized `codex exec` runs with fixed prompts and traces; overall base `avg@3` is about `0.40-0.60`; fewshot gain is about `0.10-0.20`; and most tasks do not score `0.95` or higher or otherwise approach a perfect score. |
 | `construction_process` | Whether records show env-builder and task-builder subagents plus 3 isolated Dockerized fewshot skill-generation processes, solver calibration, review/rework, and complete run evidence. |
 | `overall` | Whether the task group is ready for the final evaluation pool. |
 
@@ -58,7 +58,7 @@ The reviewer's `decision` should reflect overall quality. Small issues that do n
 - Test tasks can score well without transfer from train tasks.
 - The apparent 6-10 rubric rows mostly depend on one answer field or upstream decision, so they all pass or fail together.
 - `scratch/rubric_validation.md` is missing, selective wrong-aspect probes collapse most points together, or naturally decomposable points provide only full-or-zero credit without justification.
-- Overall base score falls outside the approximate `0.40-0.60` target, fewshot gain falls outside the approximate `0.10-0.20` target without a convincing explanation, or results saturate near full score across many tasks.
+- Overall base score falls outside the approximate `0.40-0.60` target, fewshot gain falls outside the approximate `0.10-0.20` target without a convincing explanation, or most tasks score `0.95` or higher or otherwise approach a perfect score.
 - Difficulty evidence comes from orchestration subagents, hand-authored predictions, non-fixed prompts, or runs without isolated staged work and preserved Codex traces.
 - Evaluation scores free text, evidence phrasing, format friction, or unrelated fields instead of key business outcomes.
 - Notes omit transfer source, answer basis, or scoring standard, making the data hard to interpret.

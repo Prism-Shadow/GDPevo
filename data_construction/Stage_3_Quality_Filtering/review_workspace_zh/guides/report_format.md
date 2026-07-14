@@ -62,7 +62,7 @@ manual_review:
 | `business_realism_check` | task group 是否来自真实业务问题，而不是玩具数据或教学题 |
 | `environment_design_check` | `env/` 是否是共享公共数据与办公环境，且不是答案计算器或按 task 切分的数据包 |
 | `transfer_design_check` | train/test 是否都是正式任务，test 是否能从 train 中迁移经验且不过度同质 |
-| `difficulty_check` | 固定 prompt 的 Dockerized 校准是否有效，overall base `avg@3` 是否约为 `0.40-0.60`，fewshot gain 是否约为 `0.10-0.20`，并避免饱和 |
+| `difficulty_check` | 固定 prompt 的 Dockerized 校准是否有效，overall base `avg@3` 是否约为 `0.40-0.60`，fewshot gain 是否约为 `0.10-0.20`，并避免大部分任务达到 `0.95` 以上或接近满分 |
 | `rubric_independence_check` | 每个 task 是否评估多个可以独立失败的业务问题或方面，selective perturbation 是否避免所有 points 一起变化，适合拆分的 point 是否实现确定性的 partial credit |
 | `eval_design_check` | eval 是否围绕关键业务结果打分，避免碎片字段堆分、自由文本摩擦或 schema 摩擦 |
 | `overall` | 最终质量审核结论 |
