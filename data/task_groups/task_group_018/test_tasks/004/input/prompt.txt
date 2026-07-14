@@ -1,9 +1,0 @@
-Today is 2026-03-06. You are helping the Benton County Circuit Court audit desk clear a post-disposition financial release queue before the next clerk import batch is approved.
-
-Use the shared clerk operations environment at <TASK_ENV_BASE_URL>.
-
-The task-local materials in `input/payloads/` contain the queue packet that came from finance, including old import extracts, fee and counsel-cost references, ledger correction notices, and release-board notes. The shared environment has the live case records, docket entries, financial obligations, attorney directory, fee schedules, payment policy, and stale exports.
-
-Prepare a clerk-ready JSON answer that matches `input/payloads/answer_template.json`. Include one row for each Benton criminal matter that belongs in this post-disposition finance release audit, ordered by case number. Exclude queue rows that are only routing context or are not ready for this audit batch. Resolve the controlling status, disposition and assessment dates, defense-fee treatment, approved assessments, ledger-credit corrections, corrected balance, and release or hold decision.
-
-Return only the completed JSON object.
