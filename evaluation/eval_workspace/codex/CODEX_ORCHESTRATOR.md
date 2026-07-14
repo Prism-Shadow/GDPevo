@@ -1,7 +1,7 @@
 # Codex Orchestrator Guide
 
 Codex is the main evaluation orchestrator. The orchestrator may inspect the full
-task group to stage allowed files, check the remote environment, call
+task group to stage allowed files, start and check the task environment, call
 evaluators, preserve traces, and aggregate reports. It must not solve test tasks
 directly.
 
@@ -16,9 +16,13 @@ into the container. Do not mount the full task group, full evaluation workspace,
 repository root, parent work directory, home directory, `env/`, `notes/`,
 evaluator files, source answers, or previous runs.
 
-The container must have network access because Codex needs model API access and
-the staged attempt may need `GDPEVO_ENV_BASE_URL`. Do not run a network-disabled
-container unless an equivalent working proxy is configured.
+Run the environment on the orchestration host with `TASK_ENV_BIND=0.0.0.0`.
+Every agent `docker run` must include
+`--add-host=host.docker.internal:host-gateway` and use
+`http://host.docker.internal:<TASK_ENV_PORT>/`. The agent container must also
+have model API access. Before scored runs, verify the environment health
+endpoint from a disposable container through this exact route. Never stage or
+mount `env/` into the agent container.
 
 ## Codex Command
 
@@ -49,6 +53,14 @@ If `codex` is not on `PATH`, locate it before running the experiment and record
 the resolved executable path under `scratch/`. Do not hard-code a host-specific
 path in reusable instructions.
 
+## Fixed Prompt Contract
+
+Use exactly one mode-specific template from `guides/agent_prompts.md` as
+`$PROMPT`. Replace only its declared placeholders. Do not append hints, answer
+summaries, notes, rubric/evaluator details, or additional paths. The staged
+`/work` contents and Docker mounts enforce the information boundary; the prompt
+must describe the run, not smuggle extra context into it.
+
 ## Trace Preservation
 
 Preserve the complete raw Codex session file as the primary trace. Create a
@@ -72,6 +84,7 @@ Do not require stdout/stderr command logs as formal trace artifacts, do not trea
 stdout JSONL as a replacement for the raw `rollout-*.jsonl` session trace, and
 do not rely on searching the user's global `~/.codex` after the run.
 
-A Docker run is not complete until `answer.json` or `SKILL.md`, the complete
+A Docker run is not complete until `answer.json` or the complete `skill/` package
+with `skill/SKILL.md` as its entry file, the complete
 primary session trace or its missing reason, and the corresponding metadata
 record have been preserved.

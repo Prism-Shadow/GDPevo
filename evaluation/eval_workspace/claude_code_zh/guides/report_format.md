@@ -128,7 +128,7 @@ conditions:
 - `cost_usd_avg_3` 使用 `evolve.pricing` 中记录的同一模型费率，并采用相同的
   task 后 condition 两级聚合方式。
 - 效率指标只统计 test solver runs 写答案的过程。不要包含 skill
-  generation、远程环境检查、evaluator 执行或主 agent 汇总。
+  generation、环境检查、evaluator 执行或主 agent 汇总。
 - 如果任何 test attempt 因访问或泄漏禁止材料而污染，应将其排除出 report
   分数和聚合。污染原因与替代 attempt 记录在对应 run record 中，不写入正式
   report YAML。

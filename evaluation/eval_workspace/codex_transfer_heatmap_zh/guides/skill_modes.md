@@ -9,6 +9,10 @@ reflect-3
 
 本工作区消费既有 skills，不生成、不修订、不训练 skills。
 
+下文每个 attempt 目录都是一个完整 skill 目录包，`SKILL.md` 是必需入口文件。
+运行时应把整个匹配 attempt 目录 staging 为 `/work/skill/`，不能只抽出一个
+`SKILL.md`。
+
 共同规则：
 
 - 每个 source task group、每个 mode 使用 3 个既有独立 skill。
@@ -48,8 +52,8 @@ answers，也不重新生成 reflect-3 skills。
 无论 mode 是什么，test solver 只能看到：
 
 - 当前 target test task 的 `input/`。
-- target task group 的远程环境入口。
-- 当前 source/mode/attempt 对应的 `SKILL.md`。
+- target task group 的容器可访问环境入口。
+- 当前 source/mode/attempt 对应的完整 skill 目录包，以 `skill/` staging。
 
 solver 不能看到 source 或 target 的 train tasks、standard answers、notes、evaluator
 files、`env/` 源文件或其他 attempt 的工作目录。

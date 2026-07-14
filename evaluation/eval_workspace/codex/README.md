@@ -10,7 +10,7 @@ This workspace evaluates one task group at a time. Do not modify the task group 
 | --- | --- |
 | `guides/` | Evaluation workflow, skill modes, metrics, scoring, and report format |
 | `task_group/` | The single official task group currently under evaluation |
-| `skills/` | Generated `fewshot`, `self`, and `reflect-3` files |
+| `skills/` | Generated `fewshot`, `self`, and `reflect-3` skill packages; each attempt is a directory whose entry file is `SKILL.md` |
 | `runs/` | Solver outputs and scoring records for each condition, test task, and attempt |
 | `original_traces/` | Complete raw Codex session traces for skill-generation runs and solver attempts |
 | `scratch/` | Temporary scripts, environment notes, and intermediate checks created by the main evaluation agent |
@@ -23,8 +23,9 @@ Read these files in order before starting evaluation:
 1. `CODEX_ORCHESTRATOR.md` - Codex main-agent orchestration, Docker isolation, isolated agent command, and trace preservation
 2. `guides/workflow.md` - main-agent evaluation workflow
 3. `guides/skill_modes.md` - the four conditions and information boundaries
-4. `guides/metric_and_scoring.md` - `acc@3`, population `std@3`, turn/tool-call tracking, single-attempt scoring, and aggregation rules
-5. `guides/report_format.md` - final report format
+4. `guides/agent_prompts.md` - fixed skill-generation and solver prompts
+5. `guides/metric_and_scoring.md` - `acc@3`, population `std@3`, turn/tool-call tracking, single-attempt scoring, and aggregation rules
+6. `guides/report_format.md` - final report format
 
 ## Launch Prompt
 
@@ -34,10 +35,10 @@ Model: <model>, <reasoning_effort>.
 Run all four modes with acc@3/std@3, collect solver and evolve token/cost metrics, preserve complete traces, and write report/<task_group_id>.yaml.
 ```
 
-Use `.env` for the remote task environment:
+Use `.env` for the agent-container-visible task environment:
 
 ```text
-GDPEVO_ENV_BASE_URL=https://your-env-host.example/
+GDPEVO_ENV_BASE_URL=http://host.docker.internal:8000/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
@@ -55,7 +56,7 @@ task_group/<task_group_id>/
 
 2. Check that the workspace contains only one task group and that the task group includes 5 train tasks, 5 test tasks, a shared environment, standard answers, and evaluators.
 
-3. Confirm the remote task-group environment from `.env`. Do not start a local env service for Codex evaluation. Record the base URL, health-check result, and any remote environment notes.
+3. Start the task-group environment on the orchestration host with `TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT`. Every agent container must use `--add-host=host.docker.internal:host-gateway`; set `.env` to `http://host.docker.internal:<TASK_ENV_PORT>/`. Never stage or mount `task_group/env/` into an agent container. Verify the health endpoint from a disposable container through this exact route, then record the startup/reset commands, port, base URL, and health result.
 
 4. Generate 3 independent skills for each non-base condition:
 
@@ -90,30 +91,26 @@ For each condition, run each test task independently 3 times. Every run must be 
 
 6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, Codex session trace, copied raw trace path, token usage, solver turn count, and tool-call count. Use a per-attempt mounted `CODEX_HOME` so the raw Codex session trace is written under `original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/.../rollout-*.jsonl` for audit.
 
-7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average cached/input/output tokens, solver turns, and tool calls for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. Solver efficiency only counts answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, remote environment checks, evaluator execution, or main-agent summarization into solver efficiency. Temporary checking or aggregation code may be placed under `scratch/`.
+7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average cached/input/output tokens, solver turns, and tool calls for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. Solver efficiency only counts answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, environment checks, evaluator execution, or main-agent summarization into solver efficiency. Temporary checking or aggregation code may be placed under `scratch/`.
 
 ## Agent Boundaries
 
-The main agent may read the full task group in order to verify the remote environment contract, call evaluators, and aggregate results, but it must not solve test tasks directly.
+The main agent may read the full task group in order to start/reset the environment, verify its network contract, call evaluators, and aggregate results, but it must not solve test tasks directly.
 
 Skill-generation isolated agent runs only generate skills. They do not solve test tasks.
 
-Solver isolated agent runs may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver runs must not enter, list, or read `env/`; they may use the shared environment only through the remote Web/API URL or database connection explicitly exposed by the main agent. Only reflect skill-generation runs should receive the train-only judge API instructions, and that API is not valid for test-time solving.
+Solver isolated agent runs may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver runs must not enter, list, read, or mount `env/`; they may use the shared environment only through the container-visible Web/API URL or database connection explicitly exposed by the main agent. Only reflect skill-generation runs should receive the train-only judge API instructions, and that API is not valid for test-time solving.
 
 Mode-allowed training exposure is not contamination: for example, fewshot skill generation may read train `output/answer.json`. For test-solving attempts, however, direct access to any source `output/answer.json` is forbidden unless that answer file is the solver's own output inside the current attempt directory.
 
 If a solver/test run accidentally accesses, lists, or reports seeing forbidden material such as `env/`, source `output/answer.json` during test solving, task notes, evaluator files, train tasks outside the allowed mode/stage, or another attempt's run files, treat that attempt as contaminated. Report the incident to the user, do not score or aggregate that attempt, record the reason in the attempt directory, and rerun the affected test in a fresh clean attempt directory.
 
-For solver attempts, use the corresponding fresh attempt directory as the Docker-mounted `/work`, such as `runs/base/test_001/attempt_01/`. Stage the current task `input/`, environment access instructions, and, for skill modes only, the matching skill copy for the same attempt number. Do not reuse an attempt directory for a rerun; create a new clean directory and keep the invalidated run for audit. For skill generation, use a dedicated directory under `scratch/skill_generation/` and stage only the allowed train materials for that mode.
+For solver attempts, use the corresponding fresh attempt directory as the Docker-mounted `/work`, such as `runs/base/test_001/attempt_01/`. Stage the current task `input/`, environment access instructions, and, for skill modes only, the complete matching skill package directory as `skill/`. Do not reuse an attempt directory for a rerun; create a new clean directory and keep the invalidated run for audit. For skill generation, use a dedicated directory under `scratch/skill_generation/`, stage only the allowed train materials for that mode, and copy the generated `skill/` directory to the matching canonical attempt directory under `skills/`.
 
-## Solver Prompt
+## Fixed Agent Prompts
 
-Keep the solver isolated-agent prompt short and explicit:
-
-```text
-eval_attempt_id: <unique_eval_attempt_id>
-
-Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. Before solving, read input/prompt.txt and inspect every file under input/payloads/. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
-```
-
-The main agent later uses `eval_attempt_id` to match the corresponding Codex session trace, copies that raw trace into `original_traces/`, and backfills token, turn, and tool-call fields.
+Use the exact mode-specific skill-generation and test-solver templates in
+`guides/agent_prompts.md`. Replace only the declared placeholders and do not
+append hints or hidden context. The main agent later uses each run id to match
+the corresponding Codex session trace and backfill token, turn, and tool-call
+fields.

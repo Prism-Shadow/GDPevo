@@ -117,8 +117,8 @@ conditions:
   子集，不能重复计费。
 - 效率指标和 `acc@3` 使用相同聚合方式：先对同一个 test task 的 3 次
   attempts 取平均，再对 5 个 test tasks 取平均。
-- 效率指标只统计 test solver subagents 写答案的过程。不要包含 skill
-  generation、远程环境检查、evaluator 执行或主 agent 汇总。
+- 效率指标只统计 test solver 进程 写答案的过程。不要包含 skill
+  generation、环境检查、evaluator 执行或主 agent 汇总。
 - 如果任何 test attempt 因访问或泄漏禁止材料而污染，应将其排除出 report
   分数和聚合。污染原因与替代 attempt 记录在对应 run record 中，不写入正式
   report YAML。

@@ -2,9 +2,15 @@
 
 ## Calibration Targets
 
-Each test task should have direct `avg@2` roughly below `0.60` when attempted without learning from the train set.
+Across the 5 test tasks, overall direct `avg@2` should be roughly `0.40-0.60`
+when attempted without learning from the train set. Individual tasks should
+normally remain near that band; justified outliers are allowed, but a group
+should not pass because very easy and impossible tasks merely average together.
 
-After using a skill derived directly from the train set, each test task's post-skill `avg@2` should improve by about `0.15` or more over direct `avg@2`.
+After using a skill derived directly from the train set, overall post-skill
+`avg@2` should improve by roughly `0.10-0.20` over direct `avg@2`. Inspect each
+task as well: the intended transfer points should improve without making most
+tasks nearly perfect.
 
 The train-derived skill should not make every test task score extremely high. If most or all test tasks become near-perfect after using the skill, such as around `0.90` or higher, the SOP is probably too simple, too mechanical, or too directly inferable from the train tasks.
 
@@ -14,11 +20,25 @@ The goal is not to make all test tasks easy. The goal is to verify that real tra
 
 Direct test attempts estimate performance without train-set learning.
 
-Before running difficulty test attempts, start the task group's environment as a local process on a randomly selected available port in the `8000-8100` range. Randomly sample a port first, check whether it is available, and if it is not, randomly sample another remaining port rather than scanning upward from `8000`. Record the startup command, port, and any relevant logs in `scratch/difficulty_calibration.md`. Reuse the same process for direct and post-skill attempts when the environment has not changed; restart it after any environment rework.
+Before running difficulty attempts, start the task-group environment on the
+orchestration host with `TASK_ENV_BIND=0.0.0.0` and an available
+`TASK_ENV_PORT`. Every calibration container must use
+`--add-host=host.docker.internal:host-gateway`, and
+`environment_access.md` must contain
+`http://host.docker.internal:<TASK_ENV_PORT>`. Verify the health endpoint from a
+disposable container through that exact route and record the startup command,
+port, URL, and logs in `scratch/difficulty_calibration.md`. Never stage or mount
+`env/` into a calibration agent. Reuse the same service for direct and
+post-skill attempts when state remains valid; reset or restart it after writes
+or environment rework.
 
-Run exactly 2 clean-context direct attempts for each of the 5 test tasks, for 10 solver subagents total. Each solver subagent handles one target test task and one attempt. Compute direct `avg@2` for each test task from its two scored attempts.
+Run exactly 2 direct attempts for each of the 5 test tasks, for 10 independent
+Dockerized `codex exec` processes total. Do not use orchestration subagents for
+these attempts. Each process receives one freshly staged target test task and
+uses the fixed direct-test prompt from `calibration_runtime.md`. Compute direct
+`avg@2` for each test task from its two scored attempts.
 
-The solver subagent may see only:
+The Codex process may see only:
 
 - The target test task's `input/`
 - Necessary environment entry points, such as URLs, API endpoints, or database connection strings
@@ -35,26 +55,33 @@ It must not see:
 
 ## Train-Derived Skill
 
-The skill-builder subagent derives a skill from the train tasks through a blind-solve, compare, reflect, and distill loop.
+The calibration skill is derived through two separate Dockerized `codex exec`
+processes so train answers are absent from the blind-solving context.
 
-First, the skill-builder may see only:
+First, the blind-train process may see only:
 
 - Solver-visible inputs for train tasks
 - Necessary environment entry points, such as URLs, API endpoints, or database connection strings
 
-It must solve all 5 train tasks without seeing train answers. Store those blind attempts under:
+It must solve all 5 train tasks without seeing train answers, using the fixed
+blind-train prompt from `calibration_runtime.md`. Store those blind attempts
+under:
 
 ```text
 scratch/train_skill/blind_attempts/
 ```
 
-Then the skill-builder may see `output/answer.json` for the 5 train tasks. It compares its blind attempts against the standard answers and writes a mistake analysis at:
+Then launch a fresh skill-distillation Codex process with only the train inputs,
+preserved blind attempts, train `output/answer.json` files, and environment
+access staged into `/work`. It uses the fixed skill-distillation prompt, compares
+the blind attempts against the standard answers, and writes a mistake analysis
+at:
 
 ```text
 scratch/train_skill/reflection.md
 ```
 
-The reflection should identify missed source-precedence rules, missing SOP steps, wrong field conventions, wrong calculations, weak environment-use habits, and output-format mistakes. Only after this comparison should the skill-builder write the final skill.
+The reflection should identify missed source-precedence rules, missing SOP steps, wrong field conventions, wrong calculations, weak environment-use habits, and output-format mistakes. Only after this comparison should the distillation process write the final skill.
 
 It must not see:
 
@@ -67,21 +94,27 @@ It must not see:
 
 The skill is used only for calibration, stored under `scratch/`, and excluded from the final `task_group/`.
 
-The skill package should be stored as:
+The skill package is a directory stored as:
 
 ```text
-scratch/train_skill/SKILL.md
+scratch/train_skill/skill/
+scratch/train_skill/skill/SKILL.md
 ```
 
-`SKILL.md` should contain the corrected operating method learned from train: source precedence, reusable business rules, environment-use strategy, field and output conventions, calculation rules, common pitfalls, and final validation checks. It should not contain test-specific facts or final answers.
+`skill/SKILL.md` is the package entry file. It should contain the corrected operating method learned from train: source precedence, reusable business rules, environment-use strategy, field and output conventions, calculation rules, common pitfalls, and final validation checks. Supporting files may live inside the same `skill/` directory. The package must not contain test-specific facts or final answers.
 
 ## Skill Test Attempts
 
 Train-skill test attempts validate transfer gain.
 
-Run exactly 2 clean-context post-skill attempts for each of the 5 test tasks, for 10 solver subagents total. Each solver subagent receives the train-derived skill and exactly one target test task. Compute post-skill `avg@2` for each test task from its two scored attempts.
+Run exactly 2 post-skill attempts for each of the 5 test tasks, for 10 independent
+Dockerized `codex exec` processes total. Do not use orchestration subagents for
+these attempts. Each process receives the train-derived skill and exactly one
+freshly staged target test task, and uses the fixed post-skill prompt from
+`calibration_runtime.md`. Compute post-skill `avg@2` for each test task from its
+two scored attempts.
 
-The solver subagent may see:
+The Codex process may see:
 
 - train-derived skill
 - The target test task's `input/`
@@ -100,11 +133,13 @@ scratch/difficulty_calibration.md
 Record at least:
 
 - Solver, input, prediction file, evaluation command, and score for each of the 10 direct test attempts.
+- Calibration model, reasoning effort, container image, fixed host-gateway settings, fixed prompt type, run id, staged files, and primary Codex trace path for every process.
 - Paths to the train blind attempts, train answer comparison reflection, train-derived skill, and the train inputs used to create it.
 - Solver, input, prediction file, evaluation command, and score for each of the 10 post-skill test attempts.
 - Direct `avg@2`, post-skill `avg@2`, and gain for each test task.
 - Overall direct `avg@2` and overall post-skill `avg@2` across the 5 test tasks.
-- Whether each test task's post-skill `avg@2` improves by about `0.15` or more.
+- Whether overall direct `avg@2` is about `0.40-0.60` and whether individual task outliers are justified.
+- Whether overall post-skill gain is about `0.10-0.20`, with a per-task explanation of which transfer-dependent rubric points changed.
 - Whether skill test scores saturate across most or all test tasks, and if so which scoring points became too easy.
 - Whether low scores come from transfer failure or task complexity, not prompt ambiguity, schema friction, or fragile evaluation.
 
@@ -114,7 +149,9 @@ Builder-authored, hand-mutated, synthetic, or counterfactual prediction files do
 
 If calibration or review fails, the task group must be reworked and checked again before it can move to `data_construction/task_groups/<task_group_id>/`.
 
-When direct `avg@2` is too high, the main agent may rework any combination of:
+When overall direct `avg@2` is outside roughly `0.40-0.60`, or individual tasks
+are implausibly easy or impossible, the main agent may rework any combination
+of:
 
 - scoring points, if too much score comes from low-difficulty checks;
 - task design, if the test task is solvable without train transfer;
@@ -123,7 +160,26 @@ When direct `avg@2` is too high, the main agent may rework any combination of:
 
 If the environment needs rework, the main agent should revise `scratch/env_blueprint.md` and send it back to the clean-context env-builder coding subagent. Environment-side rework may include increasing data volume, adding realistic noise, widening API/Web/database surfaces, removing direct-answer endpoints, adding stale or overlapping sources, changing what is exposed in payloads versus `env/`, or making source selection more realistic.
 
-When train-derived skill improvement is too small by post-skill `avg@2`, rework should focus on train/test transfer distance and diversity width. Inspect whether the intended transfer-dependent high-weight points actually rely on methods that can be inferred from real train tasks. Also check whether the group covers too many one-off workflow families, causing each test task to have only a single narrow train anchor. If transfer is too wide, narrow the group to 2-3 recurring operation families, make reusable conventions recur across multiple train tasks, or redesign test scoring points so the transfer core comes from repeated train evidence. If the test requires missing SOPs, source-precedence rules, calculations, or business judgments, add real train-task coverage or redesign those points. If the test has no meaningful high-weight points that require train transfer, add such points. Do not require every high-weight point to have a train anchor, and do not fix transfer failure by making train tasks instructional, making test prompts procedural, or leaking SOP steps into solver-visible inputs.
+When overall train-derived skill improvement is below roughly `0.10`, rework
+should focus on train/test transfer distance and diversity width. Inspect whether
+the intended transfer-dependent high-weight points actually rely on methods that
+can be inferred from real train tasks. Also check whether the group covers too
+many one-off workflow families, causing each test task to have only a single
+narrow train anchor. If transfer is too wide, narrow the group to 2-3 recurring
+operation families, make reusable conventions recur across multiple train
+tasks, or redesign test scoring points so the transfer core comes from repeated
+train evidence. If the test requires missing SOPs, source-precedence rules,
+calculations, or business judgments, add real train-task coverage or redesign
+those points. If the test has no meaningful high-weight points that require
+train transfer, add such points. Do not require every high-weight point to have
+a train anchor, and do not fix transfer failure by making train tasks
+instructional, making test prompts procedural, or leaking SOP steps into
+solver-visible inputs.
+
+When overall gain is substantially above roughly `0.20`, inspect whether the
+skill reveals too much of the test solution, the train/test variants are too
+mechanically similar, or correlated rubric points all reward the same learned
+decision. Rework the transfer design rather than accepting an inflated gain.
 
 When train-derived skill scores are too high across most or all test tasks by post-skill `avg@2`, rework should make the SOP less mechanical and the test tasks less directly solved by train examples. The main agent may increase train/test diversity within the same real-task distribution, require more task-specific evidence discovery, add larger or messier data, broaden environment surfaces, move some easy payload information into `env/`, or redesign scoring points so that the skill helps but does not answer the whole task. Do not reduce scores by adding ambiguity, hidden information, brittle schemas, or unfair evaluator behavior.
 
@@ -154,11 +210,13 @@ The reviewer subagent should check:
 - Whether every train and test task has `input/payloads/answer_template.json`, and whether `output/answer.json` conforms to that template.
 - Whether evaluation is rule-based, reproducible, and covers key business judgments.
 - Whether every task has 6-10 scoring points, raw weights only use `1`, `2`, or `3`, and final score is normalized by `weight / sum(weight)`.
-- Whether scoring points exact-match key business results instead of wording, evidence strings, formatting friction, or irrelevant details.
+- Whether the rubric spans at least 3 independently fail-able business questions or aspects, rather than splitting one root decision into duplicated points that all rise or fall together.
+- Whether `scratch/rubric_validation.md` maps rubric dependencies and contains selective perturbation probes showing that independent mistakes lose only the intended credit.
+- Whether indivisible points use deterministic exact match and naturally decomposable points can award documented partial credit with an earned fraction in `[0, 1]`.
 - Whether scoring points prefer numeric, enum, boolean, ranking, set, or normalized structured outputs; if string matching is needed, whether it has been converted into controlled-choice fields to avoid schema friction.
 - Whether most scoring points genuinely depend on train transfer, substantial data exploration, or long-horizon work, instead of being obtainable without train learning or deep data exploration.
-- Whether `scratch/difficulty_calibration.md` contains 10 valid direct clean-context solver attempts and 10 valid post-skill clean-context solver attempts.
-- Whether the train-derived skill was produced by blind-solving all 5 train inputs first, comparing against `output/answer.json`, writing `scratch/train_skill/reflection.md`, and only then writing `scratch/train_skill/SKILL.md`.
-- Whether direct `avg@2` is roughly below `0.60` for each test task; if not, whether scoring points, task design, solver-visible inputs, or the environment should be reworked.
-- Whether post-skill `avg@2` shows the target gain over direct `avg@2`.
+- Whether `scratch/difficulty_calibration.md` contains 10 valid direct and 10 valid post-skill Dockerized `codex exec` attempts, all launched with the fixed prompts and dedicated staged work/Codex-home directories.
+- Whether the train-derived skill was produced by a blind-train Codex process without answers, followed by a separate answer-comparison and skill-distillation Codex process, before writing the package under `scratch/train_skill/skill/` with `SKILL.md` as its entry file.
+- Whether overall direct `avg@2` is about `0.40-0.60`, with implausible per-task outliers reworked or justified.
+- Whether overall post-skill gain is about `0.10-0.20` and comes from intended transfer-dependent aspects rather than duplicated rubric points.
 - Whether post-skill `avg@2` avoids saturation across most or all test tasks; if skill scores are near-perfect everywhere, whether the SOP, task diversity, data exploration, environment, or scoring points should be reworked.

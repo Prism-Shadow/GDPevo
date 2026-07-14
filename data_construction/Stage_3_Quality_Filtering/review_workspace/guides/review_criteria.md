@@ -8,12 +8,13 @@
 - `train_tasks` and `test_tasks` each contain 5 tasks.
 - Each declared task contains `input/`, `prompt.txt`, `payloads/answer_template.json`, `notes/notes.md`, `output/answer.json`, `eval/eval.sh`, and evaluator files.
 - Environment files declared in `env.setup` and `env.files` exist.
+- `env.files` declares `env/judge_api.py` for the required train-only judge endpoint.
 - All JSON/YAML files parse.
-- Each task's `eval.rubric` is a non-empty list, and each item has `goal` and positive `weight`.
+- Each task's `eval.rubric` has 6-10 items, and every item has `goal` plus an integer `weight` in `{1, 2, 3}`.
 - Each task evaluator gives full credit to the reference answer. The script only requires evaluator stdout to be JSON and supports common full-credit fields such as `score`, `normalized_score`, `earned_score/max_score`, `earned_weight/total_weight`, `passed`, `points`, or `checks`.
 - `notes/notes.md` contains at least Chinese notes; Chinese should appear only in `notes/notes.md`.
 
-The script does not judge business realism, task difficulty, transfer design, scoring-point count, rubric weight quality, leakage risk, or evaluation design quality. Reviewer subagents must judge those.
+The script does not judge business realism, task difficulty, transfer design, rubric independence, semantic weight appropriateness, leakage risk, or evaluation design quality. Reviewer subagents must judge those.
 
 ## Reviewer Inputs
 
@@ -37,12 +38,13 @@ Each reviewer must independently check:
 | `scenario_lineage` | Whether the task group comes from examples under one scenario and preserves the difficulty drivers from the source examples. |
 | `train_predict_design` | Whether train/test are all real tasks; train tasks are not tutorials; test tasks require transferable experience from train. |
 | `transfer_band` | Whether diversity sits within a transferable band, with 2-3 recurring operation families rather than unrelated one-off SOPs. |
-| `environment_design` | Whether `env/` is a shared public data and workspace environment; solvers can only access public entry points and cannot inspect env source files or truth. |
+| `environment_design` | Whether `env/` is a shared public data and workspace environment; it runs outside agent containers; Dockerized agents can reach it through a verified network route without mounting env source or truth. |
 | `leakage_control` | Whether solver-visible formal task group surfaces leak answers, complete SOPs, scoring points, construction truth, or solution steps; drafts and answers in `scratch/` do not count as leakage evidence. |
 | `notes_interpretability` | Whether each task has bilingual `notes/notes.md` explaining the problem, answer basis, transfer source, common pitfalls, and scoring standard. |
-| `evaluation_design` | Whether evaluation uses exact checks around key business outcomes, avoiding schema friction, free-text matching, and point stuffing. |
-| `difficulty_calibration` | Whether direct `acc@2` is roughly below `0.60`, evolved attempts improve by about `0.15+`, and results avoid broad full-score saturation. |
-| `construction_process` | Whether records show env-builder, task-builder, solver calibration, review/rework, and other multi-agent construction steps. |
+| `rubric_independence` | Whether every task evaluates at least 3 independently fail-able business questions/aspects; points do not merely duplicate one root decision; and `scratch/rubric_validation.md` uses selective perturbations to show that points do not all rise or fall together. |
+| `evaluation_design` | Whether evaluation uses deterministic checks around key business outcomes, supports documented within-point partial credit where the outcome naturally decomposes, and avoids schema friction, free-text matching, and point stuffing. |
+| `difficulty_calibration` | Whether direct/post-skill attempts are isolated Dockerized `codex exec` runs with fixed prompts and traces; overall direct `avg@2` is about `0.40-0.60`; overall gain is about `0.10-0.20`; and results avoid broad saturation. |
+| `construction_process` | Whether records show env-builder and task-builder subagents plus Dockerized blind-train, skill-distillation, and solver calibration processes, review/rework, and complete run evidence. |
 | `overall` | Whether the task group is ready for the final evaluation pool. |
 
 The reviewer's `decision` should reflect overall quality. Small issues that do not harm benchmark validity can be `pass` with `concerns`. Answer leakage, untrustworthy evaluation, invalid train/test transfer, missing structure, or invalid calibration should be `fail`.
@@ -52,8 +54,12 @@ The reviewer's `decision` should reflect overall quality. Small issues that do n
 - Solver-visible prompts, payloads, answer templates, or public environment entry points directly include SOPs, answer facts, scoring points, or solution steps.
 - Answers, construction truth, or calibration logs from `scratch/` are copied into solver-visible surfaces.
 - `env/` provides an answer calculator, task-specific data package, or near-answer endpoint such as `/api/tasks/<task_id>/data`.
+- Calibration or evaluation mounts `env/` into an agent container, uses the container's own `localhost` for an external API, or lacks a successful container-side health check for the configured route.
 - Test tasks can score well without transfer from train tasks.
-- Evolved attempts show no meaningful improvement, or results saturate near full score across many tasks.
+- The apparent 6-10 rubric rows mostly depend on one answer field or upstream decision, so they all pass or fail together.
+- `scratch/rubric_validation.md` is missing, selective wrong-aspect probes collapse most points together, or naturally decomposable points provide only full-or-zero credit without justification.
+- Overall direct score falls outside the approximate `0.40-0.60` target, skill gain falls outside the approximate `0.10-0.20` target without a convincing explanation, or results saturate near full score across many tasks.
+- Difficulty evidence comes from orchestration subagents, hand-authored predictions, non-fixed prompts, or runs without isolated staged work and preserved Codex traces.
 - Evaluation scores free text, evidence phrasing, format friction, or unrelated fields instead of key business outcomes.
 - Notes omit transfer source, answer basis, or scoring standard, making the data hard to interpret.
 - Multi-agent construction records are missing, or all env/task/answer/notes/eval assets were clearly generated by one monolithic script.

@@ -4,7 +4,7 @@
 
 Stage 2 construction may use a main agent and multiple subagents.
 
-This workspace requires subagents for construction and calibration. A user request to construct a task group in this workspace should be treated as permission to use subagents. If subagent concurrency is limited, run them in batches while preserving clean contexts.
+This workspace requires subagents for environment and task construction. A user request to construct a task group in this workspace should be treated as permission to use those construction subagents. Difficulty calibration is different: do not use orchestration subagents for calibration. Launch each calibration run as an isolated Dockerized `codex exec` process using `calibration_runtime.md`.
 
 The main agent owns overall consistency:
 
@@ -33,22 +33,18 @@ Task-builder subagents own local task production:
 - Request additional environment capabilities or data through the main agent when needed, but do not independently implement separate environments.
 - Do not modify tasks owned by other subagents.
 
-The skill-builder subagent owns the train-derived skill:
+Dockerized Codex processes own difficulty calibration:
 
-- First read only solver-visible train inputs and attempt the 5 real train tasks without answers.
-- Then compare those attempts with train answers and summarize transferable SOPs, facts, field conventions, and environment-use experience.
-- Output the calibration skill under `scratch/`.
-
-Solver subagents own difficulty testing:
-
-- Direct test: run 2 clean-context attempts per test task, for 10 solver subagents total across 5 test tasks.
-- Post-skill test: after skill distillation, run 2 clean-context attempts per test task with the train-derived skill, for another 10 solver subagents total.
-- Each solver subagent handles exactly one target test task and one attempt.
-- Do not access notes, standard answers, evaluation scripts, or construction drafts.
+- One blind-train process attempts all 5 train tasks without answers.
+- One separate skill-distillation process compares the blind attempts with train answers and writes the reflection and calibration skill.
+- Direct test: run 2 isolated processes per test task, for 10 processes total.
+- Post-skill test: run 2 isolated processes per test task with the train-derived skill, for another 10 processes total.
+- Every process receives a fresh staged `/work`, dedicated `CODEX_HOME`, fixed prompt, and only the files allowed for that run.
+- Preserve complete Codex session traces and do not access notes, evaluator files, environment source, construction drafts, or other runs.
 
 The reviewer subagent owns independent review:
 
-- Check structure, interpretability, data generation, environment complexity, prompt leakage, transfer design, and evaluation validity.
+- Check structure, interpretability, data generation, environment complexity, prompt leakage, transfer design, evaluation validity, rubric multidimensionality, and partial-credit behavior.
 
 ## Stage Overview
 
@@ -58,28 +54,28 @@ Construction should move through these stages. Do not skip directly from reading
 | --- | --- | --- | --- |
 | 1. Scenario understanding | Main agent | Source example difficulty audit and scenario interpretation | The main agent can explain the source examples' real workflow, data surfaces, and difficulty drivers |
 | 2. Task-group design | Main agent | `scratch/task_group_design.md` only | The 5 train and 5 test tasks, transfer plan, diversity plan, scoring plan, and task-builder assignments are explicit; no task files, answers, evaluators, or environment implementation are created in this stage |
-| 3. Environment blueprint | Main agent | `scratch/env_blueprint.md` | Shared business systems, public entry points, data contracts, generation seeds, setup behavior, and manifest requirements are specified |
-| 4. Environment implementation | Clean-context env-builder coding subagent | `env/` | The environment is shared across all tasks, domain-oriented, runnable, and free of answer-like per-task endpoints |
+| 3. Environment blueprint | Main agent | `scratch/env_blueprint.md` | Shared business systems, public entry points, data contracts, generation seeds, host bind/port behavior, fixed host-gateway access, reset behavior, and manifest requirements are specified |
+| 4. Environment implementation | Clean-context env-builder coding subagent | `env/` | The environment is shared across all tasks, domain-oriented, reachable from a separate agent container, and free of answer-like per-task endpoints |
 | 5. Task construction | 10 task-builder subagents | `train_tasks/` and `test_tasks/` task folders | Each assigned task has solver input, bilingual notes, standard answer, evaluator, and answer template |
-| 6. Integration and evaluator self-check | Main agent | Finalized `task_group.yaml`, path/schema fixes, evaluator and judge-API self-check logs | Every evaluator scores its own `output/answer.json` as full credit; `/api/judge` scores train answers, rejects test ids, and exposes no hidden details |
-| 7. Difficulty calibration | Skill-builder and solver subagents, scored by main agent | `scratch/difficulty_calibration.md`, blind train attempts, reflection, `SKILL.md`, direct/post-skill results | Direct and post-skill attempts are clean-context and meet difficulty targets without saturation |
+| 6. Integration and evaluator self-check | Main agent | Finalized `task_group.yaml`, path/schema fixes, `scratch/rubric_validation.md`, evaluator and judge-API self-check logs | Every evaluator scores its own answer fully, selective perturbations lose only intended credit, partial answers receive partial scores, and `/api/judge` rejects test ids without hidden details |
+| 7. Difficulty calibration | Dockerized Codex processes, scored by main agent | `scratch/difficulty_calibration.md`, traces, blind train attempts, reflection, `SKILL.md`, direct/post-skill results | Fixed-prompt runs are isolated; overall direct score is about `0.40-0.60`; skill gain is about `0.10-0.20` without saturation |
 | 8. Independent review and rework | Reviewer subagent and main agent | Review findings, rework records, rerun calibration where needed | Structure, environment, notes, evaluation, transfer, and difficulty requirements all pass |
 
 ## Construction Flow
 
 1. The main agent writes `scratch/task_group_design.md`, covering the 10 task plan, task-builder assignments, task diversity, transferable SOPs, train/test roles, environment plan, data-generation plan, and evaluation plan. This is a design document only; it must not create task folders, prompts, notes, standard answers, evaluators, or environment implementation files.
-2. The main agent writes `scratch/env_blueprint.md`, specifying shared business systems, public interfaces, data contracts, generation seeds, manifest requirements, and expected environment behavior.
-3. A clean-context env-builder coding subagent implements `env/` from `scratch/env_blueprint.md`, including Web, API, PostgreSQL, data-generation scripts, generated data, setup scripts, and manifests.
+2. The main agent writes `scratch/env_blueprint.md`, specifying shared business systems, public interfaces, data contracts, generation seeds, manifest requirements, `TASK_ENV_BIND`/`TASK_ENV_PORT`, fixed host-gateway access, reset behavior, and expected environment behavior.
+3. A clean-context env-builder coding subagent implements `env/` from `scratch/env_blueprint.md`, including Web, API, PostgreSQL, data-generation scripts, generated data, setup scripts, manifests, health checks, and an operator reset/reseed path.
 4. The main agent reviews and integrates the env-builder output, then records usable environment entry points for task builders.
 5. The main agent launches 10 task-builder subagents, in parallel or batches: one for each `train_001` through `train_005` and `test_001` through `test_005`.
 6. Task-builder subagents generate their own assigned task `input/`, `notes/`, `output/`, and `eval/`.
 7. The main agent integrates all tasks and standardizes paths, schemas, notes, and environment usage.
-8. The main agent runs every evaluator against the standard answer to check reproducibility, connects `env/judge_api.py` to the environment service, and verifies that `/api/judge` gives full credit to each train standard answer, gives lower credit to an invalid candidate, rejects test task ids, and returns no hidden evaluator or answer content.
-9. Before difficulty calibration, the main agent starts the task-group environment as a local process on a randomly selected available port in the `8000-8100` range and records the startup command and port. Do not start by scanning upward from `8000`.
-10. Direct calibration: 10 clean-context solver subagents run no-skill attempts, 2 attempts for each of the 5 test tasks. The main agent scores predictions outside solver contexts and records direct `avg@2`.
-11. A clean-context skill-builder subagent first solves the 5 train inputs without seeing answers and stores blind attempts under `scratch/train_skill/blind_attempts/`.
-12. The skill-builder then compares those blind attempts with the 5 train `output/answer.json` files, writes `scratch/train_skill/reflection.md`, and distills the corrected method into `scratch/train_skill/SKILL.md`.
-13. Post-skill calibration: 10 clean-context solver subagents run post-skill attempts, 2 attempts for each of the 5 test tasks. The main agent scores predictions outside solver contexts and records post-skill `avg@2`.
+8. The main agent runs every evaluator against the standard answer, creates `scratch/rubric_validation.md`, and runs selective wrong-aspect and partial-answer probes to verify multidimensional, non-binary scoring. It connects `env/judge_api.py` to the service and verifies that `/api/judge` gives full credit to train standard answers, preserves evaluator partial scores, rejects test task ids, and returns no hidden evaluator or answer content.
+9. Before difficulty calibration, the main agent starts the task-group environment on the host with `TASK_ENV_BIND=0.0.0.0`, gives all agent containers `--add-host=host.docker.internal:host-gateway`, and verifies the health endpoint at `http://host.docker.internal:<TASK_ENV_PORT>` from a disposable container.
+10. Direct calibration: launch 10 independent Dockerized `codex exec` runs with the fixed direct-test prompt, 2 attempts for each test task. The main agent scores predictions outside the Codex processes and records direct `avg@2`.
+11. Launch one Dockerized blind-train `codex exec` process with the fixed blind-train prompt and no train answers; store its outputs under `scratch/train_skill/blind_attempts/`.
+12. Launch a separate Dockerized skill-distillation `codex exec` process with the fixed distillation prompt, blind attempts, and train answers; write `scratch/train_skill/reflection.md` and the skill package under `scratch/train_skill/skill/` with `SKILL.md` as its entry file.
+13. Post-skill calibration: launch 10 independent Dockerized `codex exec` runs with the fixed post-skill prompt, 2 attempts for each test task. The main agent scores predictions outside the Codex processes and records post-skill `avg@2`.
 14. A clean-context reviewer subagent performs an independent review after generation, validation, and calibration.
 15. The main agent revises based on calibration and review, reruns affected subagents and calibration attempts, and repeats until structure, transfer design, data generation, evaluation, and difficulty targets all pass.
 
@@ -99,7 +95,7 @@ A script such as `scratch/build_task_group_001.py` is not acceptable if it direc
 - `scratch/task_group_design.md`
 - `scratch/env_blueprint.md`
 - `scratch/difficulty_calibration.md`
-- `scratch/train_skill/SKILL.md`
+- `scratch/train_skill/skill/SKILL.md`
 
 Allowed scripts must have a narrow owner and purpose:
 
@@ -115,7 +111,7 @@ Design docs must be written before implementation, not backfilled by the same sc
 - The env-builder coding subagent owns `env/` implementation and programmatic data-generation code.
 - Task-builder subagents own task-file generation. The main agent should not directly generate all task prompts, standard answers, notes, and evaluators in one monolithic builder script.
 - A monolithic script that creates env, all task files, answers, notes, evaluators, scratch docs, and skills is not a valid substitute for subagent construction.
-- Solver subagents used for difficulty calibration must be clean-context and counted only when they produce a prediction from the allowed inputs.
+- Calibration runs must use Dockerized `codex exec`, dedicated staged work and `CODEX_HOME` directories, the fixed prompts in `calibration_runtime.md`, and preserved raw traces. Orchestration subagent runs do not count as difficulty evidence.
 - Subagent write scopes should be clear to avoid overwriting each other.
 - Subagents must not transform notes, standard answers, or eval files into solver-facing input.
 - All temporary designs, solver runs, skills, and review records belong under `scratch/`.

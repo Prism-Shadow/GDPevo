@@ -9,6 +9,10 @@ reflect-3
 
 It consumes existing skills. It does not generate, revise, or train skills.
 
+Each attempt directory shown below is a complete skill package whose required
+entry file is `SKILL.md`. Stage the whole matching attempt directory as
+`/work/skill/`; do not detach or copy only `SKILL.md`.
+
 Common rules:
 
 - Use 3 existing independent skills for each source task group and mode.
@@ -48,8 +52,9 @@ workspace should not expose train answers or regenerate reflect-3 skills.
 For every mode, a test solver may see only:
 
 - The current target test task `input/`.
-- The target task group's remote environment entrypoint.
-- The `SKILL.md` matching the current source/mode/attempt.
+- The target task group's container-visible environment entrypoint.
+- The complete skill package matching the current source/mode/attempt, staged
+  as `skill/`.
 
 The solver must not see source or target train tasks, standard answers, notes,
 evaluator files, `env/` source files, or another attempt's working directory.

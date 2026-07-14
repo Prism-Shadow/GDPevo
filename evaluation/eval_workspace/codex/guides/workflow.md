@@ -3,7 +3,8 @@
 This file explains how the Codex main evaluation orchestrator should run one
 complete Codex evaluation.
 
-The evaluation now uses a remote task environment and four conditions:
+The evaluation uses one task environment reachable from the agent containers
+and four conditions:
 
 ```text
 base
@@ -26,7 +27,9 @@ CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort
 
 `CODEX_HOME` is a runtime-only temporary environment variable for that agent
 process, not a task `.env` setting. Do not use `codex exec --ephemeral` for
-formal attempts.
+formal attempts. Use the exact mode-specific prompt in `agent_prompts.md` for
+every process; replace only declared placeholders and do not append task hints
+or extra paths.
 
 ## 1. Prepare The Task Group
 
@@ -39,21 +42,26 @@ task_group/<task_group_id>/
 Confirm it contains 5 train tasks, 5 test tasks, `env/`, official inputs,
 standard answers, and `eval/eval.sh` for each task. Do not modify it.
 
-## 2. Configure The Remote Environment
+## 2. Start And Connect The Environment
 
 Load `.env`:
 
 ```text
-GDPEVO_ENV_BASE_URL=<remote task environment>
+GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
-Do not start the local `task_group/env` service for Codex evaluation. Confirm the
-remote environment health/index endpoint answers and record the URL in
-`scratch/environment.md`.
+Start `task_group/env` on the orchestration host with
+`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT=<port>`. Set
+`GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/` and pass
+`--add-host=host.docker.internal:host-gateway` to every agent `docker run`.
+Never mount `task_group/env/` into an agent container. Confirm the health/index
+endpoint from a disposable container through that exact route, using the same
+image and network option as scored runs, and record the startup/reset commands,
+port, URL, and health result in `scratch/environment.md`.
 
 Skill-generation and solver runs must not enter, list, or read `env/`. They may
-use only the remote environment entrypoint staged by the main agent.
+use only the container-visible environment entrypoint staged by the main agent.
 
 The judge endpoint is train-only and valid only during reflect skill generation
 on train tasks. It must not be staged to test solvers or written into generated
@@ -91,10 +99,10 @@ scratch/skill_generation/reflect-3_attempt_03/
 
 Stage only the materials allowed by `skill_modes.md`.
 
-- `fewshot`: train inputs, train gold answers, remote environment entrypoint.
-- `self`: train inputs and remote environment entrypoint; no train answers and
+- `fewshot`: train inputs, train gold answers, container-visible environment entrypoint.
+- `self`: train inputs and container-visible environment entrypoint; no train answers and
   no judge feedback.
-- `reflect-3`: train inputs, remote environment entrypoint, and judge API
+- `reflect-3`: train inputs, container-visible environment entrypoint, and judge API
   instructions; no train answers.
 
 Give every skill-generation run a unique evolve attempt ID:
@@ -139,8 +147,8 @@ reflect-3
 For each attempt directory, stage only:
 
 - The current test task `input/`.
-- `environment_access.md` with the remote environment URL.
-- The matching skill for non-base modes.
+- `environment_access.md` with the container-visible environment URL.
+- The complete matching skill package directory as `skill/` for non-base modes.
 
 Do not stage `env/`, train tasks, source answer files, test answers, task notes,
 evaluator files, other test tasks, generated skills from other attempts, prior
@@ -195,7 +203,7 @@ After all runs complete, aggregate `acc@3`, population `std@3`, average
 cached/input/output tokens, and solver turn count and tool-call counts for all
 four conditions. Efficiency metrics count only test solver answer writing:
 average the 3 attempts for the same test task, then average the 5 test tasks.
-Do not include skill generation, remote environment checks, evaluator execution,
+Do not include skill generation, environment checks, evaluator execution,
 or main-agent summarization in solver efficiency.
 
 Separately aggregate evolve token usage and cost across the 3 skill-generation

@@ -21,8 +21,8 @@ The evaluation workspace inside that directory is:
 <work_root>/task_group_XXX/evaluation/eval_workspace/claude_code_kimi2_6
 ```
 
-Read `README.md` and `guides/` first. Use `.env` for the remote task
-environment. Do not start the local `task_group/env` service.
+Read `README.md` and `guides/` first. Start the task environment outside the
+agent container and use `.env` for its container-visible URL.
 
 Before running any Claude Code command, confirm the active Claude Code
 configuration is Kimi 2.6 with Claude Code `xhigh` effort, Kimi model-side
@@ -111,10 +111,10 @@ Stage only:
 
 - the current test task `input/`
 - `environment_access.md`
-- the matching skill for non-base modes
+- the complete matching skill package directory as `skill/` for non-base modes
 
-The solver prompt must tell Claude Code to read/write only inside that attempt
-directory and write the final answer as `answer.json`.
+Use the test-solver template in `guides/agent_prompts.md`; the mounted staging
+directory, rather than a path blacklist in the prompt, enforces file isolation.
 
 ## Running Claude Code
 
@@ -128,10 +128,13 @@ expected to work without an interactive password prompt. If `sudo docker` is not
 usable, stop before launching Claude Code, record the blocker in `scratch/`, and
 report it to the user.
 
-The container must have network access because Claude Code needs the
-SiliconFlow API and tasks may need `GDPEVO_ENV_BASE_URL`. Do not use a
-network-disabled container unless an equivalent working proxy is explicitly
-configured.
+Run the environment on the orchestration host with `TASK_ENV_BIND=0.0.0.0`.
+Every agent `docker run` must include
+`--add-host=host.docker.internal:host-gateway` and use
+`http://host.docker.internal:<TASK_ENV_PORT>/`. The agent container must also
+reach the SiliconFlow API. Before scored runs, verify the environment health
+endpoint from a disposable container through this exact route. Never stage or
+mount `env/` into the agent container.
 
 Mount only the current staged working directory and a dedicated per-run Claude
 config directory into the container. Mount the latter at `/claude_config`; do
@@ -157,6 +160,13 @@ from being written.
 If the `claude` executable is not on `PATH`, locate it before running the
 experiment. Do not hard-code a host-specific path in reusable scripts; record
 the resolved executable path in `scratch/`.
+
+## Fixed Prompt Contract
+
+Use exactly one mode-specific template from `guides/agent_prompts.md` as
+`$PROMPT`. Replace only its declared placeholders. Do not append hints, answer
+summaries, notes, rubric/evaluator details, or additional paths. The staged
+working directory and Docker mounts enforce the information boundary.
 
 Do not use direct host execution as an automatic fallback. If a Dockerized
 Claude command cannot be constructed, stop and report the blocker instead of
@@ -198,7 +208,7 @@ Docker run is not complete until this session trace has been preserved.
 Before deleting or replacing any Docker container, verify that all required
 artifacts have been written to the host workspace:
 
-- `answer.json` or `SKILL.md`
+- `answer.json` or the complete `skill/` package with `skill/SKILL.md` as its entry file
 - Claude Code session trace, when available
 - debug logs, when used
 - score and run metadata files after Codex scoring, or evolve metadata for skill generation

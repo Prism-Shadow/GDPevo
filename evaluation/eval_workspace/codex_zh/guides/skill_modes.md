@@ -1,6 +1,6 @@
 # Skill Modes
 
-本评估比较四种条件。四种条件必须使用同一个 task group、同一批 test tasks、同一个模型配置、同一个远程环境和同一套 evaluators：
+本评估比较四种条件。四种条件必须使用同一个 task group、同一批 test tasks、同一个模型配置、同一个 task 环境和同一套 evaluators：
 
 ```text
 base
@@ -11,16 +11,22 @@ reflect-3
 
 少样本条件在 report 和目录中继续使用 `fewshot` 作为 key。
 
-主 agent 应将每个 skill-generation 或 solver subagent 允许读取的材料 staging 到该 subagent 专属 workspace/cwd 中。不要把完整 task group 目录给 subagent。
+每个生成的 skill 都是一个目录包。对应的 attempt 目录就是包根目录，
+`SKILL.md` 是必须存在的入口文件。生成进程应在 `/work/skill/` 下写出
+完整目录，运行结束后由主 agent 将整个目录复制到下文对应的规范 attempt
+目录。Solver 收到的也应是挂载为 `/work/skill/` 的完整目录，而不是一个
+脱离上下文的 `SKILL.md` 文件。
 
-所有非 reflect staging 都只应暴露 `.env` 中的远程环境 URL：
+主 agent 应将每个 skill-generation 或 solver 进程 允许读取的材料 staging 到该 进程 专属 workspace/cwd 中。不要把完整 task group 目录给 进程。
+
+所有非 reflect staging 都只应暴露 `.env` 中的容器可访问的环境 URL：
 
 ```text
-GDPEVO_ENV_BASE_URL=<remote task environment>
+GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
 ```
 
 主 agent 也可以从 `.env` 读取 train-only judge path，但这个值只能 staging 给
-reflect skill-generation subagents：
+reflect skill-generation 进程：
 
 ```text
 GDPEVO_JUDGE_PATH=/api/judge
@@ -47,17 +53,17 @@ test-time 工具，生成的 `SKILL.md` 不能要求 solver 调用它。
 Solver 只能看到：
 
 - 当前 test task 的 `input/`。
-- 远程环境入口。
+- 容器可访问的环境入口。
 
 Solver 不能看到 train tasks、test 标准答案、test notes、evaluator files、generated skills 或 judge 说明。
 
 ## fewshot（少样本进化）
 
-使用 3 个干净上下文的 skill-generation subagents 生成 3 个独立 skills。每个 generator 可以看到：
+使用 3 个干净上下文的 skill-generation 进程 生成 3 个独立 skills。每个 generator 可以看到：
 
 - 5 个 train tasks 的正式 `input/`。
 - 5 个 train tasks 的标准 `output/answer.json`。
-- 远程环境入口。
+- 容器可访问的环境入口。
 
 Generator 不能看到 test 标准答案、test notes 或 evaluator files。
 
@@ -69,16 +75,16 @@ skills/fewshot/fewshot_attempt_02/SKILL.md
 skills/fewshot/fewshot_attempt_03/SKILL.md
 ```
 
-Solver 接收当前 test input、远程环境入口，以及匹配 attempt 编号的 fewshot skill。
+Solver 接收当前 test input、容器可访问的环境入口，以及匹配 attempt 编号的 fewshot skill。
 
 ## self
 
-使用 3 个干净上下文的 skill-generation subagents 生成 3 个独立 skills。这个模式表示没有 train outputs、也没有 judge feedback 的自我进化。
+使用 3 个干净上下文的 skill-generation 进程 生成 3 个独立 skills。这个模式表示没有 train outputs、也没有 judge feedback 的自我进化。
 
 Generator 可以看到：
 
 - 5 个 train tasks 的正式 `input/`。
-- 远程环境入口。
+- 容器可访问的环境入口。
 
 Generator 不能看到：
 
@@ -94,7 +100,7 @@ skills/self/self_attempt_02/SKILL.md
 skills/self/self_attempt_03/SKILL.md
 ```
 
-Solver 接收当前 test input、远程环境入口，以及匹配的 self skill。
+Solver 接收当前 test input、容器可访问的环境入口，以及匹配的 self skill。
 
 ## reflect-3
 
@@ -108,7 +114,7 @@ train task 的下一次尝试。
 Generator 可以看到：
 
 - 5 个 train tasks 的正式 `input/`。
-- 远程环境入口。
+- 容器可访问的环境入口。
 - 上面 train-only judge API 的说明。
 
 Generator 不能看到：
@@ -119,7 +125,7 @@ Generator 不能看到：
 每次 reflect skill generation run 中，对每一道 train task，generator 应先完成
 以下 3 轮循环，再进入下一道 train task：
 
-1. 只读取当前 train task 的 input、远程环境入口和 judge API 调用说明。
+1. 只读取当前 train task 的 input、容器可访问的环境入口和 judge API 调用说明。
 2. 为当前 train task 生成一个 candidate answer。
 3. 将该 candidate answer 提交给 `POST /api/judge`。
 4. 记录返回的 `score` 和 `correct`。
@@ -134,7 +140,7 @@ skills/reflect-3/reflect-3_attempt_02/SKILL.md
 skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
-Solver 接收当前 test input、远程环境入口，以及匹配的 `reflect-3` skill。
+Solver 接收当前 test input、容器可访问的环境入口，以及匹配的 `reflect-3` skill。
 
 ## Skill 质量要求
 
@@ -143,7 +149,7 @@ Skill 应该是可执行经验，而不是 train answers 的复述。
 好的 skill 应包含：
 
 - 可迁移业务规则。
-- 如何使用远程 Web/API 或数据库环境。
+- 如何使用通过网络暴露的 Web/API 或数据库环境。
 - 输出字段定义。
 - 常见误判和排除规则。
 - 从 train tasks 学到、应迁移到 test tasks 的 SOP。

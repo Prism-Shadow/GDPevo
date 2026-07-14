@@ -4,7 +4,7 @@
 
 `task_factory/` 是第二阶段生产 benchmark 的英文工作规范。目标是从第一阶段一个场景下的几个 examples 出发，构造一个包含 5 个 train tasks 和 5 个 test tasks 的 train-predict task group。train tasks 和 test tasks 都应来自同一真实任务分布；train tasks 不是教学题、教程题或简化样例，而是先暴露给 agent 盲做、对照答案并反思的真实任务样本。
 
-该工作区定义结构和生产要求，不包含固定 prompt 模板。
+该工作区定义目录结构、生产要求和固定的校准 prompt。运行时仍需填写模型、推理强度、端口和 run id 等参数，但交给 agent 的材料布局和网络拓扑不再由生产 agent 自行选择。
 
 ## 翻译目录
 
@@ -32,7 +32,8 @@
 3. `guides/environment_and_data.md` - env 基础设施和程序化造数
 4. `guides/notes_and_evaluation.md` - notes、标准答案和评测要求
 5. `guides/workflow.md` - 主 agent 与 subagent 协作流程
-6. `guides/calibration_and_review.md` - 迁移校准和 review
+6. `guides/calibration_runtime.md` - Dockerized Codex 校准运行方式和固定 prompt
+7. `guides/calibration_and_review.md` - 迁移校准和 review
 
 ## 核心原则
 
@@ -46,17 +47,20 @@
 - 每个正式任务都应保持长程任务复杂度，且难度应与来源 examples 对齐；不能把生成任务做得明显更简单、更窄或更像 toy task。
 - 大量数据应由程序和随机数生成，不手写生产规模数据。
 - `env/` 应是面向整个 task group 的公共数据与办公环境，可包含 Web、API、开放 PostgreSQL 或其他业务基础设施，但不能按 task 切成独立数据包或接近答案的 task-specific endpoint。
+- 环境 API 固定在主控宿主机上运行，使用 `TASK_ENV_BIND=0.0.0.0` 和配置好的 `TASK_ENV_PORT`。每个 solver 或 skill-generation 容器都通过 `http://host.docker.internal:<TASK_ENV_PORT>/` 访问，并带上 `--add-host=host.docker.internal:host-gateway`；不能把 `env/` 挂载进 agent 容器，也不能把容器自己的 `localhost` 当成环境地址。
 - solver 和测试 agent 可以使用 URL、API endpoint、数据库连接串等环境入口，但不能直接查看 `env/` 目录、源码、生成数据文件、seed、manifest 或 setup 脚本。
 - `env/` 实现应由上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 完成；主 agent 负责 blueprint 和最终集成。
 - task 文件，包括 `input/`、`notes/`、`output/` 和 `eval/`，应由 task-builder subagents 分别为自己负责的 task 生成。主 agent 不应直接用一个总 builder 脚本生成所有 task 文件和答案。
 - `scratch/build_task_group_*.py` 这类脚本不能从一个固定 specification 里同时创建共享环境、10 个任务目录、隐藏标准答案、notes、evaluators、task-group 索引、scratch 设计文档和校准 skill。即使生成文件结构看起来正确，这也属于流程违规。
 - 脚本只能用于边界清晰的局部工作，例如共享 `env/` 数据生成、单个 task-builder 自己任务内的转换或 evaluator 辅助、以及集成后的校验；不能替代 env-builder 和 task-builder subagents。
-- train-derived skill 必须通过 blind train attempts 生成：skill-builder 先在不看答案的情况下完成 5 个真实 train tasks，再对照 `output/answer.json` 反思错误，最后把纠正后的工作方法沉淀为 `scratch/train_skill/SKILL.md`。
-- 难度校准使用上下文干净的 solver subagents：每个 test task 跑 2 次 direct attempts 和 2 次 post-skill attempts，并在 `scratch/difficulty_calibration.md` 中记录 direct `avg@2` 和 post-skill `avg@2`。
+- train-derived skill 必须通过 blind train attempts 生成：先在不看答案的情况下完成 5 个真实 train tasks，再用独立进程对照 `output/answer.json` 反思错误，最后把完整 skill 目录包写到 `scratch/train_skill/skill/`，其中 `SKILL.md` 是入口文件。
+- 难度校准不能把主控系统的 subagent 当 solver。blind-train、skill-distillation、direct-test 和 post-skill 的每次运行都必须是独立的 Dockerized `codex exec` 进程，使用专属 staged `/work`、临时 `CODEX_HOME`、固定 prompt，并保留原始 trace。
+- Overall direct `avg@2` 目标约为 `0.40-0.60`；train-derived skill 的 overall gain 目标约为 `0.10-0.20`，且不能让大部分 test 分数饱和。
 - `notes/notes.md` 是每个任务的可解释性文件，包含问题定义、解答方法、迁移来源、模型易错点、评测标准和数据生成说明；该文件应中英双语，方便人工审核。
 - 最终 task group 中只有 `notes/notes.md` 应包含中文；solver 可见输入、answer template、标准答案、evaluator、task metadata 和 env 文件应保持英文。
 - 每个 train/test task 都必须包含 `input/payloads/answer_template.json`，明确规定输出 JSON 结构、字段类型、数值精度和可选枚举值。
-- 每个任务最好包含 6-10 个 scoring points；每个点的原始权重为 `1`、`2` 或 `3`，按 `weight / sum(weight)` 归一化，并对关键业务结果做 exact match。
+- 每个任务最好包含 6-10 个 scoring points，并覆盖多个可以独立失败的业务问题或方面。把同一个根本判断拆成许多会一起得分、一起失分的相关行，不属于多维评测。
+- 每个点的原始权重为 `1`、`2` 或 `3`，最大分值按 `weight / sum(weight)` 归一化。若一个业务结果天然包含可独立判断的子项，可以在该 point 内使用确定性的 partial credit；evaluator 必须明确输出 earned fraction，不能让整套 rubric 因单一依赖变成全对或全错。
 - scoring points 应优先评估数值、枚举、布尔、排序、集合或规范化结构结果。若需要字符串匹配，应在 `answer_template.json` 中改成选择题式字段，避免 schema 摩擦。
 - 大部分 scoring points 必须依赖迁移学习、大量数据探索或长流程工作，不能让 direct test 靠简单读题和格式填充拿到多数分。
 - solver 可见的 `prompt.txt` 和 `input/payloads/` 不应直白泄露 SOP、关键事实、工具流程或 `(1)(2)(3)(4)` 式解题步骤。

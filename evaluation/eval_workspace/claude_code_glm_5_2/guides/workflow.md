@@ -4,7 +4,8 @@ This file explains how the Codex main evaluation orchestrator should run one
 complete Claude Code evaluation with `GLM-5.2`: Claude Code uses `xhigh` effort,
 and the GLM model setting reported for the released run is `max`.
 
-The evaluation now uses a remote task environment and four conditions:
+The evaluation uses one task environment reachable from the agent containers
+and four conditions:
 
 ```text
 base
@@ -27,7 +28,9 @@ CLAUDE_CONFIG_DIR=/claude_config claude -p --permission-mode bypassPermissions -
 
 `CLAUDE_CONFIG_DIR` is a runtime-only temporary environment variable for that
 agent process, not a task `.env` setting. Do not use `--no-session-persistence`
-for formal attempts.
+for formal attempts. Use the exact mode-specific prompt in `agent_prompts.md`
+for every process; replace only declared placeholders and do not append task
+hints or extra paths.
 
 Before launching any runs, confirm that the Dockerized Claude Code configuration
 uses `GLM-5.2` with Claude Code `xhigh` effort and the GLM `max` model setting.
@@ -44,21 +47,23 @@ task_group/<task_group_id>/
 Confirm it contains 5 train tasks, 5 test tasks, `env/`, official inputs,
 standard answers, and `eval/eval.sh` for each task. Do not modify it.
 
-## 2. Configure The Remote Environment
+## 2. Start And Connect The Environment
 
 Load `.env`:
 
 ```text
-GDPEVO_ENV_BASE_URL=<remote task environment>
+GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
-Do not start the local `task_group/env` service for Claude Code evaluation.
-Confirm the remote environment health/index endpoint answers and record the URL
-in `scratch/environment.md`.
+Start `task_group/env` on the orchestration host with
+`TASK_ENV_BIND=0.0.0.0`. Every agent container must use
+`--add-host=host.docker.internal:host-gateway`. Confirm the health/index
+endpoint from a disposable container through this exact route and record the
+startup/reset commands, port, and URL in `scratch/environment.md`.
 
 Skill-generation and solver runs must not enter, list, or read `env/`. They may
-use only the remote environment entrypoint staged by the main agent.
+use only the container-visible environment entrypoint staged by the main agent.
 
 The judge endpoint is train-only and valid only during reflect skill generation
 on train tasks. It must not be staged to test solvers or written into generated
@@ -96,10 +101,10 @@ scratch/skill_generation/reflect-3_attempt_03/
 
 Stage only the materials allowed by `skill_modes.md`.
 
-- `fewshot`: train inputs, train gold answers, remote environment entrypoint.
-- `self`: train inputs and remote environment entrypoint; no train answers and
+- `fewshot`: train inputs, train gold answers, container-visible environment entrypoint.
+- `self`: train inputs and container-visible environment entrypoint; no train answers and
   no judge feedback.
-- `reflect-3`: train inputs, remote environment entrypoint, and judge API
+- `reflect-3`: train inputs, container-visible environment entrypoint, and judge API
   instructions; no train answers.
 
 For every skill-generation run, create a dedicated mounted Claude config
@@ -131,8 +136,8 @@ reflect-3
 For each attempt directory, stage only:
 
 - The current test task `input/`.
-- `environment_access.md` with the remote environment URL.
-- The matching skill for non-base modes.
+- `environment_access.md` with the container-visible environment URL.
+- The complete matching skill package directory as `skill/` for non-base modes.
 
 Do not stage `env/`, train tasks, source answer files, test answers, task notes,
 evaluator files, other test tasks, generated skills from other attempts, prior
@@ -189,7 +194,7 @@ tool-call fields `null`, and report the trace issue.
 After all runs complete, aggregate `acc@3`, population `std@3`, per-bucket tokens, and solver turn count and tool-call counts for all four
 conditions. Efficiency metrics count only test solver answer writing: average
 the 3 attempts for the same test task, then average the 5 test tasks. Do not
-include skill generation, remote environment checks, evaluator execution, or
+include skill generation, environment checks, evaluator execution, or
 main-agent summarization.
 
 Separately aggregate each non-base mode's 3 skill-generation traces and

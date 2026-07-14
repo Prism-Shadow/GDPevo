@@ -116,8 +116,15 @@ class Checker:
         if not isinstance(files, list) or not files:
             self.fail("env.files must be a non-empty list")
             return
+        has_judge_api = False
         for idx, item in enumerate(files):
             self.require_path(item, f"env.files[{idx}]", kind="file")
+            if isinstance(item, str) and Path(item).as_posix().endswith(
+                "env/judge_api.py"
+            ):
+                has_judge_api = True
+        if not has_judge_api:
+            self.fail("env.files must declare env/judge_api.py")
 
     def check_task_list(self, data: dict[str, Any], split: str) -> None:
         tasks = data.get(split)
@@ -233,6 +240,12 @@ class Checker:
             self.fail(f"{prefix}.eval.rubric must be a non-empty list")
             return
 
+        if not 6 <= len(rubric) <= 10:
+            self.fail(
+                f"{prefix}.eval.rubric must contain 6-10 scoring points, "
+                f"found {len(rubric)}"
+            )
+
         for idx, item in enumerate(rubric):
             field = f"{prefix}.eval.rubric[{idx}]"
             if not isinstance(item, dict):
@@ -241,8 +254,12 @@ class Checker:
             if not isinstance(item.get("goal"), str) or not item["goal"].strip():
                 self.fail(f"{field}.goal must be a non-empty string")
             weight = item.get("weight")
-            if not is_number(weight) or float(weight) <= 0:
-                self.fail(f"{field}.weight must be a positive number")
+            if (
+                not isinstance(weight, int)
+                or isinstance(weight, bool)
+                or weight not in {1, 2, 3}
+            ):
+                self.fail(f"{field}.weight must be an integer in {{1, 2, 3}}")
 
     def check_eval_on_answer(self, script_path: Path, answer_path: Path, prefix: str) -> None:
         self.run_eval_and_check(

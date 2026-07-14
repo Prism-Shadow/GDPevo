@@ -122,7 +122,7 @@ conditions:
 - Efficiency metrics follow the same aggregation shape as `acc@3`: average the
   3 attempts for the same test task, then average the 5 test tasks.
 - Efficiency metrics only count answer-writing by test solver subagents. Do not
-  include skill generation, remote environment checks, evaluator execution, or
+  include skill generation, environment checks, evaluator execution, or
   main-agent summarization.
 - If any test attempt was contaminated by forbidden material access or leakage,
   exclude it from report scores and aggregation. Preserve the contamination

@@ -2,7 +2,7 @@
 
 本文说明 Codex 主控评估 agent 如何运行一次完整 Claude Code 评估。
 
-评估现在使用远程 task 环境和四种条件：
+评估使用一个由 agent 容器通过网络访问的宿主机 task 环境和四种条件：
 
 ```text
 base
@@ -23,7 +23,8 @@ CLAUDE_CONFIG_DIR=/claude_config claude -p --permission-mode bypassPermissions -
 ```
 
 `CLAUDE_CONFIG_DIR` 是该 agent 进程运行时临时设置的环境变量，不是任务 `.env`
-配置。正式 attempt 不要使用 `--no-session-persistence`。
+配置。正式 attempt 不要使用 `--no-session-persistence`。每个进程必须使用
+`agent_prompts.md` 中对应模式的固定 prompt，只替换声明的占位符，不追加提示或路径。
 
 ## 1. 准备 Task Group
 
@@ -36,20 +37,22 @@ task_group/<task_group_id>/
 确认它包含 5 个 train tasks、5 个 test tasks、`env/`、每个 task 的正式
 input、标准答案和 `eval/eval.sh`。不要修改 task group。
 
-## 2. 配置远程环境
+## 2. 启动并连接环境
 
 读取 `.env`：
 
 ```text
-GDPEVO_ENV_BASE_URL=<remote task environment>
+GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
-Claude Code 评估不再本地启动 `task_group/env` 服务。确认远程环境的 health /
-index 端点可访问，并把 URL 记录到 `scratch/environment.md`。
+在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动 `task_group/env`。每个 agent
+容器必须带 `--add-host=host.docker.internal:host-gateway`。通过这条固定路径从
+临时容器检查 health / index endpoint，并把启动/重置命令、端口和 URL 记录到
+`scratch/environment.md`。
 
 Skill-generation 和 solver runs 不得进入、列出或读取 `env/`。它们只能
-使用主 agent staging 的远程环境入口。
+使用主 agent staging 的容器可访问环境入口。
 
 Judge endpoint 只用于 reflect skill generation 中的 train tasks。它不能
 staging 给 test solver，也不能作为 test-time 工具写入生成的 skill。只有
@@ -86,9 +89,9 @@ scratch/skill_generation/reflect-3_attempt_03/
 
 只 staging `skill_modes.md` 允许的材料。
 
-- `fewshot`：train inputs、train 标准答案、远程环境入口。
-- `self`：train inputs 和远程环境入口；无 train answers、无 judge feedback。
-- `reflect-3`：train inputs、远程环境入口、judge API 调用说明；无 train
+- `fewshot`：train inputs、train 标准答案、容器可访问环境入口。
+- `self`：train inputs 和容器可访问环境入口；无 train answers、无 judge feedback。
+- `reflect-3`：train inputs、容器可访问环境入口、judge API 调用说明；无 train
   answers。
 
 每次 skill-generation run 都创建专用挂载的 Claude config 目录和唯一 session
@@ -128,8 +131,8 @@ reflect-3
 每个 attempt 目录只 staging：
 
 - 当前 test task 的 `input/`。
-- 包含远程环境 URL 的 `environment_access.md`。
-- 非 base 模式下与 attempt 编号匹配的 skill。
+- 包含容器可访问环境 URL 的 `environment_access.md`。
+- 非 base 模式下与 attempt 编号匹配的完整 skill 包目录，统一命名为 `skill/`。
 
 不要给 test solver staging `env/`、train tasks、源 answer files、test answers、
 task notes、evaluator files、其他 test tasks、其他 attempt 的 generated skills、
@@ -178,7 +181,7 @@ original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanit
 
 所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3`、各桶 token 和 solver turn count 和 tool-call counts。效率指标只统计
 test solver 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对
-5 个 test tasks 取平均。不要包含 skill generation、远程环境检查、evaluator
+5 个 test tasks 取平均。不要包含 skill generation、环境检查、evaluator
 执行或主 agent 汇总。
 
 另行把每个非 base 模式的 3 份 skill-generation trace 和

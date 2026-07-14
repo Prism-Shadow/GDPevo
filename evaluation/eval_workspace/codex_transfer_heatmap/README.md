@@ -38,7 +38,7 @@ Do not run `base`, `self`, or any non-Codex harness in this workspace.
 | `CODEX_ORCHESTRATOR.md` | Codex orchestration, Docker isolation, `codex exec` command shape, and trace preservation |
 | `RUN_SCOPE.md` | Fixed scope for this 3x3 transfer experiment |
 | `heatmap_scope.json` | Machine-readable task group, mode, and label definition |
-| `guides/` | Workflow, skill modes, scoring, and report format |
+| `guides/` | Workflow, fixed solver prompt, skill modes, scoring, and report format |
 | `task_groups/` | The 3 representative task groups for this transfer run |
 | `skills/` | Existing `fewshot` and `reflect-3` skills by source task group |
 | `runs/` | Isolated solver records for each mode/source/target/test/attempt |
@@ -60,12 +60,13 @@ Model: GPT-5.5, reasoning_effort: xhigh.
 
 ## Environment
 
-Use the configured `.env` remote environment URL for each task group.
-
-Do not start a local env service. Do not regenerate skills in this
-workspace. Solver runs must not enter, list, or read
-`task_groups/*/env/`; they may only use the remote environment entrypoint staged
-by the main agent.
+Start each task-group environment on the orchestration host with
+`TASK_ENV_BIND=0.0.0.0` and a distinct `TASK_ENV_PORT`. Set each task group's
+`.env` URL to `http://host.docker.internal:<TASK_ENV_PORT>/`, and pass
+`--add-host=host.docker.internal:host-gateway` to every solver container. Do not
+regenerate skills in this workspace. Solver runs must not enter, list, read, or
+mount `task_groups/*/env/`; they may only use the container-visible environment
+entrypoint staged by the main agent.
 
 ## Isolated Solver Runs
 
@@ -89,7 +90,8 @@ or solve test tasks directly as the main agent.
 Use the command shape in `CODEX_ORCHESTRATOR.md`, including the per-attempt
 runtime-only `CODEX_HOME=/codex_home`. `CODEX_HOME` is set only when launching
 the solver process and is not a task `.env` setting. Do not use `codex exec
---ephemeral` for formal attempts.
+--ephemeral` for formal attempts. Use the exact prompt in
+`guides/agent_prompts.md`; replace only its declared placeholders.
 
 ## Outputs
 

@@ -10,7 +10,7 @@
 | --- | --- |
 | `guides/` | 评估流程、skill modes、指标、打分和报告格式 |
 | `task_group/` | 当前正在评估的单个正式 task group |
-| `skills/` | 生成的 `fewshot`、`self` 和 `reflect-3` 文件 |
+| `skills/` | 生成的 `fewshot`、`self` 和 `reflect-3` skill 包；每个 attempt 是一个目录，入口文件为 `SKILL.md` |
 | `runs/` | 每种条件、每个 test task、每次 attempt 的 solver 输出和打分记录 |
 | `original_traces/` | 每个 solver attempt 跑完后复制进来的 Codex 原始 session trace |
 | `scratch/` | 主评估 agent 创建的临时脚本、环境记录和中间检查 |
@@ -23,8 +23,9 @@
 1. `CODEX_ORCHESTRATOR.md` - Codex 主控、Docker 隔离、`codex exec` 命令形态和 trace 保存
 2. `guides/workflow.md` - 主 agent 评估流程
 3. `guides/skill_modes.md` - 四种条件和信息边界
-4. `guides/metric_and_scoring.md` - `acc@3`、population `std@3`、turn/tool-call 记录、单次 attempt 打分和聚合规则
-5. `guides/report_format.md` - 最终报告格式
+4. `guides/agent_prompts.md` - 固定的 skill-generation 和 solver prompts
+5. `guides/metric_and_scoring.md` - `acc@3`、population `std@3`、turn/tool-call 记录、单次 attempt 打分和聚合规则
+6. `guides/report_format.md` - 最终报告格式
 
 ## 启动 Prompt
 
@@ -34,10 +35,10 @@ Model: <model>, <reasoning_effort>.
 Run all four modes with acc@3/std@3, collect solver turn and tool-call counts, and write report/<task_group_id>.yaml.
 ```
 
-使用 `.env` 配置远程任务环境：
+使用 `.env` 配置 agent 容器可访问的任务环境：
 
 ```text
-GDPEVO_ENV_BASE_URL=https://your-env-host.example/
+GDPEVO_ENV_BASE_URL=http://host.docker.internal:8000/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
@@ -55,7 +56,7 @@ task_group/<task_group_id>/
 
 2. 检查工作区只包含一个 task group，并确认该 task group 包含 5 个 train tasks、5 个 test tasks、共享环境、标准答案和 evaluators。
 
-3. 根据 `.env` 确认远程 task-group 环境。Codex 评估不再本地启动 env 服务。记录 base URL、health check 结果和远程环境说明。
+3. 在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 和 `TASK_ENV_PORT` 启动 task-group 环境。每个 agent 容器都必须使用 `--add-host=host.docker.internal:host-gateway`，并将 `.env` 写成 `http://host.docker.internal:<TASK_ENV_PORT>/`。绝不能把 `task_group/env/` staging 或挂载进 agent 容器。先用临时容器通过同一路径检查 health endpoint，再记录启动/重置命令、端口、base URL 和检查结果。
 
 4. 为每种非 base 条件生成 3 个独立 skills：
 
@@ -84,30 +85,25 @@ runs/reflect-3/
 
 6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、Codex session trace、复制进工作区的原始 trace 路径、token 用量、solver turn count 和 tool-call count。使用每个 attempt 专用挂载的 `CODEX_HOME`，让 Codex 原始 session trace 写入 `original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/.../rollout-*.jsonl`，用于后续审计。
 
-7. 所有 score records 准备完成后，聚合四种条件的 `acc@3` 和 population `std@3`，并聚合每种条件的平均 cached/input/output tokens、solver turns 和 tool calls。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver subagents 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
+7. 所有 score records 准备完成后，聚合四种条件的 `acc@3` 和 population `std@3`，并聚合每种条件的平均 cached/input/output tokens、solver turns 和 tool calls。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver 进程 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境检查、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
 
 ## Agent 边界
 
-主 agent 可以读取完整 task group，以便确认远程环境契约、调用 evaluators 和汇总结果，但不能直接解 test tasks。
+主 agent 可以读取完整 task group，以便确认 task 环境网络契约、调用 evaluators 和汇总结果，但不能直接解 test tasks。
 
 Skill-generation runs 只负责生成 skills，不参与 test 解题。
 
-Solver runs 只能看到当前条件允许的信息。Solver 不应该看到 test 标准答案、test notes、evaluator 实现细节或 `env/` 源码。Skill-generation 和 solver runs 不能进入、列出或读取 `env/`；它们只能通过主 agent 明确暴露的远程 Web/API URL 或数据库连接使用共享环境。只有 reflect skill-generation runs 应收到 train-only judge API 说明，且该 API 对 test-time solving 无效。
+Solver runs 只能看到当前条件允许的信息。Solver 不应该看到 test 标准答案、test notes、evaluator 实现细节或 `env/` 源码。Skill-generation 和 solver runs 不能进入、列出或读取 `env/`；它们只能通过主 agent 明确暴露的容器可访问的 Web/API URL 或数据库连接使用共享环境。只有 reflect skill-generation runs 应收到 train-only judge API 说明，且该 API 对 test-time solving 无效。
 
 模式允许的训练阶段暴露不算污染：例如 fewshot skill 生成可以读取 train `output/answer.json`。但在 test-solving attempt 中，除当前 attempt 目录内 solver 自己写出的答案文件外，直接访问任何源任务的 `output/answer.json` 都是禁止的。
 
 如果 solver/test run 误访问、列出或报告看到了禁止材料，例如 `env/`、test solving 阶段的源 `output/answer.json`、task notes、evaluator files、当前模式/阶段不允许的 train tasks 或 train answers，或其它 attempt 的 run files，该 attempt 视为污染。主 agent 必须及时报告给用户，不要打分或纳入聚合，在 attempt 目录记录原因，并用新的干净 attempt 目录重新测试受影响任务。
 
-对于 solver attempts，应使用对应的全新 attempt 目录作为 Docker 内 `/work`，例如 `runs/base/test_001/attempt_01/`。主 agent 只放入当前 task 的 `input/`、环境访问说明，以及 skill 条件下与 attempt 编号匹配的 skill 副本。重跑不能复用旧 attempt 目录；应创建新的干净目录，并保留被判污染的 run 供审计。Skill 生成应使用 `scratch/skill_generation/` 下的独立目录，并只放入该模式允许的 train 材料。
+对于 solver attempts，应使用对应的全新 attempt 目录作为 Docker 内 `/work`，例如 `runs/base/test_001/attempt_01/`。主 agent 只放入当前 task 的 `input/`、环境访问说明，以及 skill 条件下与 attempt 编号匹配的完整 skill 包目录，并统一命名为 `skill/`。重跑不能复用旧 attempt 目录；应创建新的干净目录，并保留被判污染的 run 供审计。Skill 生成应使用 `scratch/skill_generation/` 下的独立目录，只放入该模式允许的 train 材料，并把生成的整个 `skill/` 目录复制到 `skills/` 下对应的 attempt 目录。
 
-## Solver Prompt
+## 固定 Agent Prompts
 
-给 solver run 的任务说明应简短明确：
-
-```text
-eval_attempt_id: <unique_eval_attempt_id>
-
-Please solve this single test task from the current attempt directory only. Do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. Before solving, read input/prompt.txt and inspect every file under input/payloads/. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
-```
-
-主 agent 之后使用 `eval_attempt_id` 匹配对应 Codex session trace，将原始 trace 复制到 `original_traces/`，并回填 token、turn 和 tool-call 字段。
+严格使用 `guides/agent_prompts.md` 中与当前模式对应的 skill-generation 或
+test-solver 模板。只替换模板声明的占位符，不要追加提示、隐藏上下文或其它路径。
+主 agent 之后使用每次 run 的 id 匹配 Codex session trace，并回填 token、turn 和
+tool-call 字段。
