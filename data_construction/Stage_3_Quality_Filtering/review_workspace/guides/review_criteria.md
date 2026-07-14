@@ -43,7 +43,7 @@ Each reviewer must independently check:
 | `notes_interpretability` | Whether each task has bilingual `notes/notes.md` explaining the problem, answer basis, transfer source, common pitfalls, and scoring standard. |
 | `rubric_independence` | Whether every task evaluates at least 3 independently fail-able business questions/aspects; points do not merely duplicate one root decision; and `scratch/rubric_validation.md` uses selective perturbations to show that points do not all rise or fall together. |
 | `evaluation_design` | Whether evaluation uses deterministic checks around key business outcomes, supports documented within-point partial credit where the outcome naturally decomposes, and avoids schema friction, free-text matching, and point stuffing. |
-| `difficulty_calibration` | Whether direct/post-skill attempts are isolated Dockerized `codex exec` runs with fixed prompts and traces; overall direct `avg@2` is about `0.40-0.60`; overall gain is about `0.10-0.20`; and results avoid broad saturation. |
+| `difficulty_calibration` | Whether direct/post-skill attempts are isolated Dockerized `codex exec` runs with fixed prompts and traces; overall direct `avg@3` is about `0.40-0.60`; overall gain is about `0.10-0.20`; and results avoid broad saturation. |
 | `construction_process` | Whether records show env-builder and task-builder subagents plus Dockerized blind-train, skill-distillation, and solver calibration processes, review/rework, and complete run evidence. |
 | `overall` | Whether the task group is ready for the final evaluation pool. |
 

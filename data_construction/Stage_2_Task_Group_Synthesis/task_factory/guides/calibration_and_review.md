@@ -2,13 +2,13 @@
 
 ## Calibration Targets
 
-Across the 5 test tasks, overall direct `avg@2` should be roughly `0.40-0.60`
+Across the 5 test tasks, overall direct `avg@3` should be roughly `0.40-0.60`
 when attempted without learning from the train set. Individual tasks should
 normally remain near that band; justified outliers are allowed, but a group
 should not pass because very easy and impossible tasks merely average together.
 
 After using a skill derived directly from the train set, overall post-skill
-`avg@2` should improve by roughly `0.10-0.20` over direct `avg@2`. Inspect each
+`avg@3` should improve by roughly `0.10-0.20` over direct `avg@3`. Inspect each
 task as well: the intended transfer points should improve without making most
 tasks nearly perfect.
 
@@ -32,11 +32,11 @@ port, URL, and logs in `scratch/difficulty_calibration.md`. Never stage or mount
 post-skill attempts when state remains valid; reset or restart it after writes
 or environment rework.
 
-Run exactly 2 direct attempts for each of the 5 test tasks, for 10 independent
+Run exactly 3 direct attempts for each of the 5 test tasks, for 15 independent
 Dockerized `codex exec` processes total. Do not use orchestration subagents for
 these attempts. Each process receives one freshly staged target test task and
 uses the fixed direct-test prompt from `calibration_runtime.md`. Compute direct
-`avg@2` for each test task from its two scored attempts.
+`avg@3` for each test task from its three scored attempts.
 
 The Codex process may see only:
 
@@ -107,12 +107,12 @@ scratch/train_skill/skill/SKILL.md
 
 Train-skill test attempts validate transfer gain.
 
-Run exactly 2 post-skill attempts for each of the 5 test tasks, for 10 independent
+Run exactly 3 post-skill attempts for each of the 5 test tasks, for 15 independent
 Dockerized `codex exec` processes total. Do not use orchestration subagents for
 these attempts. Each process receives the train-derived skill and exactly one
 freshly staged target test task, and uses the fixed post-skill prompt from
-`calibration_runtime.md`. Compute post-skill `avg@2` for each test task from its
-two scored attempts.
+`calibration_runtime.md`. Compute post-skill `avg@3` for each test task from its
+three scored attempts.
 
 The Codex process may see:
 
@@ -136,9 +136,9 @@ Record at least:
 - Calibration model, reasoning effort, container image, fixed host-gateway settings, fixed prompt type, run id, staged files, and primary Codex trace path for every process.
 - Paths to the train blind attempts, train answer comparison reflection, train-derived skill, and the train inputs used to create it.
 - Solver, input, prediction file, evaluation command, and score for each of the 10 post-skill test attempts.
-- Direct `avg@2`, post-skill `avg@2`, and gain for each test task.
-- Overall direct `avg@2` and overall post-skill `avg@2` across the 5 test tasks.
-- Whether overall direct `avg@2` is about `0.40-0.60` and whether individual task outliers are justified.
+- Direct `avg@3`, post-skill `avg@3`, and gain for each test task.
+- Overall direct `avg@3` and overall post-skill `avg@3` across the 5 test tasks.
+- Whether overall direct `avg@3` is about `0.40-0.60` and whether individual task outliers are justified.
 - Whether overall post-skill gain is about `0.10-0.20`, with a per-task explanation of which transfer-dependent rubric points changed.
 - Whether skill test scores saturate across most or all test tasks, and if so which scoring points became too easy.
 - Whether low scores come from transfer failure or task complexity, not prompt ambiguity, schema friction, or fragile evaluation.
@@ -149,7 +149,7 @@ Builder-authored, hand-mutated, synthetic, or counterfactual prediction files do
 
 If calibration or review fails, the task group must be reworked and checked again before it can move to `data_construction/task_groups/<task_group_id>/`.
 
-When overall direct `avg@2` is outside roughly `0.40-0.60`, or individual tasks
+When overall direct `avg@3` is outside roughly `0.40-0.60`, or individual tasks
 are implausibly easy or impossible, the main agent may rework any combination
 of:
 
@@ -181,7 +181,7 @@ skill reveals too much of the test solution, the train/test variants are too
 mechanically similar, or correlated rubric points all reward the same learned
 decision. Rework the transfer design rather than accepting an inflated gain.
 
-When train-derived skill scores are too high across most or all test tasks by post-skill `avg@2`, rework should make the SOP less mechanical and the test tasks less directly solved by train examples. The main agent may increase train/test diversity within the same real-task distribution, require more task-specific evidence discovery, add larger or messier data, broaden environment surfaces, move some easy payload information into `env/`, or redesign scoring points so that the skill helps but does not answer the whole task. Do not reduce scores by adding ambiguity, hidden information, brittle schemas, or unfair evaluator behavior.
+When train-derived skill scores are too high across most or all test tasks by post-skill `avg@3`, rework should make the SOP less mechanical and the test tasks less directly solved by train examples. The main agent may increase train/test diversity within the same real-task distribution, require more task-specific evidence discovery, add larger or messier data, broaden environment surfaces, move some easy payload information into `env/`, or redesign scoring points so that the skill helps but does not answer the whole task. Do not reduce scores by adding ambiguity, hidden information, brittle schemas, or unfair evaluator behavior.
 
 When review finds structural, leakage, evaluation, or data-generation problems, the main agent assigns rework to the responsible subagent, reintegrates the result, reruns evaluators, reruns calibration when needed, and requests review again. Final acceptance requires two valid direct attempts and two valid post-skill attempts for every test task after the last relevant rework.
 
@@ -217,6 +217,6 @@ The reviewer subagent should check:
 - Whether most scoring points genuinely depend on train transfer, substantial data exploration, or long-horizon work, instead of being obtainable without train learning or deep data exploration.
 - Whether `scratch/difficulty_calibration.md` contains 10 valid direct and 10 valid post-skill Dockerized `codex exec` attempts, all launched with the fixed prompts and dedicated staged work/Codex-home directories.
 - Whether the train-derived skill was produced by a blind-train Codex process without answers, followed by a separate answer-comparison and skill-distillation Codex process, before writing the package under `scratch/train_skill/skill/` with `SKILL.md` as its entry file.
-- Whether overall direct `avg@2` is about `0.40-0.60`, with implausible per-task outliers reworked or justified.
+- Whether overall direct `avg@3` is about `0.40-0.60`, with implausible per-task outliers reworked or justified.
 - Whether overall post-skill gain is about `0.10-0.20` and comes from intended transfer-dependent aspects rather than duplicated rubric points.
-- Whether post-skill `avg@2` avoids saturation across most or all test tasks; if skill scores are near-perfect everywhere, whether the SOP, task diversity, data exploration, environment, or scoring points should be reworked.
+- Whether post-skill `avg@3` avoids saturation across most or all test tasks; if skill scores are near-perfect everywhere, whether the SOP, task diversity, data exploration, environment, or scoring points should be reworked.

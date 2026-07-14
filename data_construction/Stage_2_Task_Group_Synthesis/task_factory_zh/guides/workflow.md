@@ -37,8 +37,8 @@ Dockerized Codex 进程负责难度校准：
 
 - 一个 blind-train 进程在看不到答案的情况下完成全部 5 个 train tasks。
 - 一个独立的 skill-distillation 进程对照 blind attempts 和 train answers，写 reflection 和校准 skill。
-- direct test：每个 test task 运行 2 个隔离进程，5 个 test tasks 共 10 个进程。
-- post-skill test：每个 test task 带 train-derived skill 运行 2 个隔离进程，再运行 10 个进程。
+- direct test：每个 test task 运行 3 个隔离进程，5 个 test tasks 共 15 个进程。
+- post-skill test：每个 test task 带 train-derived skill 运行 3 个隔离进程，5 个 test tasks 共 15 个进程。
 - 每个进程都有新建的 staged `/work`、专属 `CODEX_HOME`、固定 prompt，且只能看到该运行允许的文件。
 - 保留完整 Codex session trace；不能访问 notes、evaluator、环境源码、构造草稿或其他 runs。
 
@@ -72,10 +72,10 @@ reviewer subagent 负责独立审查：
 7. 主 agent 集成所有任务，统一修正路径、schema、notes 和 env 使用方式。
 8. 主 agent 运行每个 evaluator 对照标准答案自检，创建 `scratch/rubric_validation.md`，并使用单方面错误和 partial answer probes 验证多维度、非二值打分。随后把 `env/judge_api.py` 接入服务，验证 `/api/judge` 对 train 标准答案打满分、保留 evaluator 的 partial score、拒绝 test task id，且不会返回隐藏 evaluator 或答案内容。
 9. 难度校准前，主 agent 在宿主机以 `TASK_ENV_BIND=0.0.0.0` 启动环境，所有 agent 容器都带 `--add-host=host.docker.internal:host-gateway`，并从临时容器验证 `http://host.docker.internal:<TASK_ENV_PORT>` 的 health endpoint。
-10. direct calibration：使用固定 direct-test prompt 启动 10 个独立 Dockerized `codex exec` runs，每个 test task 2 次。主 agent 在 Codex 进程外评分并记录 direct `avg@2`。
+10. direct calibration：使用固定 direct-test prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次。主 agent 在 Codex 进程外评分并记录 direct `avg@3`。
 11. 使用固定 blind-train prompt 启动一个看不到 train answers 的 Dockerized `codex exec` 进程，把结果放在 `scratch/train_skill/blind_attempts/`。
 12. 使用固定 distillation prompt 启动另一个 Dockerized `codex exec` 进程，只向它提供 blind attempts 和 train answers；写出 `scratch/train_skill/reflection.md` 和完整的 `scratch/train_skill/skill/` 目录包，其中 `SKILL.md` 是入口文件。
-13. post-skill calibration：使用固定 post-skill prompt 启动 10 个独立 Dockerized `codex exec` runs，每个 test task 2 次。主 agent 在 Codex 进程外评分并记录 post-skill `avg@2`。
+13. post-skill calibration：使用固定 post-skill prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次。主 agent 在 Codex 进程外评分并记录 post-skill `avg@3`。
 14. 上下文干净的 reviewer subagent 在生成、验证和校准后做独立 review。
 15. 主 agent 根据校准和 review 返工，重跑受影响的 subagents 和校准尝试，直到结构、迁移设计、数据生成、评测和难度目标都通过。
 

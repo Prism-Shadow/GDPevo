@@ -113,5 +113,5 @@ A run is valid only when:
 - the trace shows no access to forbidden material; and
 - scoring was performed outside the agent process by the main agent.
 
-Contaminated or incomplete runs do not count toward `avg@2`. Keep them for
+Contaminated or incomplete runs do not count toward `avg@3`. Keep them for
 audit, create a new run id and directory, and rerun from a clean stage.

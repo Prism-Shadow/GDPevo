@@ -43,7 +43,7 @@ scratch/
 | `notes_interpretability` | 每个 task 是否有中英双语 `notes/notes.md`，且说明问题定义、解答依据、迁移来源、易错点和评测标准 |
 | `rubric_independence` | 每个 task 是否至少评估 3 个可以独立失败的业务问题或方面；points 是否没有重复同一个根本判断；`scratch/rubric_validation.md` 是否通过 selective perturbation 证明各 points 不会一起得分或失分 |
 | `evaluation_design` | eval 是否围绕关键业务结果做确定性检查；天然可拆分的结果是否支持有文档说明的 point 内 partial credit；是否避免 schema 摩擦、自由文本匹配和碎片堆分 |
-| `difficulty_calibration` | direct/post-skill 是否为使用固定 prompt、保留 trace 的隔离 Dockerized `codex exec` runs；overall direct `avg@2` 是否约为 `0.40-0.60`；overall gain 是否约为 `0.10-0.20`；是否避免大面积饱和 |
+| `difficulty_calibration` | direct/post-skill 是否为使用固定 prompt、保留 trace 的隔离 Dockerized `codex exec` runs；overall direct `avg@3` 是否约为 `0.40-0.60`；overall gain 是否约为 `0.10-0.20`；是否避免大面积饱和 |
 | `construction_process` | 是否能看到 env-builder 和 task-builder subagents，以及 Dockerized blind-train、skill-distillation、solver calibration、review/rework 和完整运行证据 |
 | `overall` | 是否可以进入最终评估池 |
 

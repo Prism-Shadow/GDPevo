@@ -105,5 +105,5 @@ Solve exactly one test task using only files staged in the current /work directo
 - trace 中没有访问禁止材料；
 - 评分由主 agent 在 Codex 进程之外执行。
 
-受污染或不完整的运行不能计入 `avg@2`。保留原运行供审计，使用新的 run id
+受污染或不完整的运行不能计入 `avg@3`。保留原运行供审计，使用新的 run id
 和干净目录重新执行。
