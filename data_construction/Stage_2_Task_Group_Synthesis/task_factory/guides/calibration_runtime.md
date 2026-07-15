@@ -4,6 +4,13 @@ Difficulty calibration does not use the orchestration system's subagent
 mechanism. Every fewshot skill-generation, base, and fewshot run is a separate
 noninteractive Codex process inside Docker.
 
+All formal calibration processes use the Codex harness with model `gpt-5.5`
+and reasoning effort `xhigh`. This is a fixed benchmark protocol, independent
+of the model running the construction workspace. Never infer the calibration
+model from the main agent, current session, client default, or available model
+alias. If this exact configuration is unavailable, stop and report calibration
+as blocked rather than substituting another model or reasoning effort.
+
 ## Isolation Contract
 
 For every run, create a fresh staged work directory and a dedicated Codex home.
@@ -46,9 +53,8 @@ attempts concurrently as the host can support.
 
 ## Codex Command
 
-Use the configured calibration model and reasoning effort. After the
-orchestrator has created the network and healthy environment container, the
-fixed agent launch shape is:
+After the orchestrator has created the network and healthy environment
+container, use this fixed calibration launch shape:
 
 ```bash
 docker run --rm \
@@ -58,14 +64,15 @@ docker run --rm \
   --mount type=bind,src="$WORK_DIR",dst=/work \
   --mount type=bind,src="$CODEX_HOME_DIR",dst=/codex_home \
   "$AGENT_IMAGE" \
-  sh -lc 'CODEX_HOME=/codex_home codex exec -C /work -m <calibration_model> -c '\''model_reasoning_effort="<reasoning_effort>"'\'' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"'
+  sh -lc 'CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c '\''model_reasoning_effort="xhigh"'\'' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"'
 ```
 
 `CODEX_HOME` is a temporary runtime variable for that process. Do not use
 `--ephemeral`: preserve the complete `rollout-*.jsonl` under the dedicated
-`codex_home/` as the primary trace. Record the model, reasoning effort, image,
-owner, network and container names, state mode, run id, staged files, trace
-path, and exit status in the calibration record.
+`codex_home/` as the primary trace. Record and verify `model: gpt-5.5` and
+`reasoning_effort: xhigh`, together with the image, owner, network and container
+names, state mode, run id, staged files, trace path, and exit status in the
+calibration record.
 
 ## Prompt Contract
 
@@ -126,6 +133,7 @@ Solve exactly one test task using only files staged in the current /work directo
 
 A run is valid only when:
 
+- it ran through the Codex harness with `gpt-5.5` and `xhigh` reasoning effort;
 - its work directory was fresh and contained only the materials allowed above;
 - the environment health check succeeded from a disposable container on the
   same Docker network through `http://task-env:<TASK_ENV_PORT>/`;

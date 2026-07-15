@@ -33,7 +33,9 @@ Task-builder subagents own local task production:
 - Request additional environment capabilities or data through the main agent when needed, but do not independently implement separate environments.
 - Do not modify tasks owned by other subagents.
 
-Dockerized Codex processes own difficulty calibration:
+Dockerized Codex processes own difficulty calibration. Every process must use
+the Codex harness with `gpt-5.5` at `xhigh` reasoning effort; do not inherit the
+main construction agent's model or client defaults:
 
 - Three isolated fewshot skill-generation processes each read all 5 train inputs and matching standard answers, producing 3 independent skill packages.
 - Base: run 3 isolated processes per test task, for 15 processes total.

@@ -2,6 +2,12 @@
 
 ## Calibration Targets
 
+All targets in this guide are defined against the fixed calibration setup:
+Codex with `gpt-5.5` at `xhigh` reasoning effort. The model running the task
+construction workspace is not the calibration model and must not be inherited
+by calibration processes. A run with any substituted model or effort is
+invalid and must not contribute to `avg@3`.
+
 Across the 5 test tasks, overall base `avg@3` should be roughly `0.40-0.60`
 when attempted without learning from the train set. Individual tasks should
 normally remain near that band; justified outliers are allowed, but a group
@@ -127,7 +133,8 @@ scratch/difficulty_calibration.md
 Record at least:
 
 - Solver, input, prediction file, evaluation command, and score for each of the 15 base attempts.
-- Calibration model, reasoning effort, agent and environment images,
+- Verification that the calibration process used `gpt-5.5` with `xhigh`
+  reasoning effort, plus the agent and environment images,
   owner-scoped network/container names, environment state mode, fixed prompt
   type, run id, staged files, and primary Codex trace path for every process.
 - Generator metadata, staged train inputs and answers, skill-package path, and primary trace path for each of the 3 independent fewshot skill-generation attempts.
@@ -215,7 +222,7 @@ The reviewer subagent should check:
 - Whether indivisible points use deterministic exact match and naturally decomposable points can award documented partial credit with an earned fraction in `[0, 1]`.
 - Whether scoring points prefer numeric, enum, boolean, ranking, set, or normalized structured outputs; if string matching is needed, whether it has been converted into controlled-choice fields to avoid schema friction.
 - Whether most scoring points genuinely depend on train transfer, substantial data exploration, or long-horizon work, instead of being obtainable without train learning or deep data exploration.
-- Whether `scratch/difficulty_calibration.md` contains 15 valid base and 15 valid fewshot Dockerized `codex exec` attempts, all launched with the fixed prompts and dedicated staged work/Codex-home directories.
+- Whether `scratch/difficulty_calibration.md` contains 15 valid base and 15 valid fewshot Dockerized `codex exec` attempts, all launched with `gpt-5.5`, `xhigh` reasoning effort, the fixed prompts, and dedicated staged work/Codex-home directories.
 - Whether 3 independent fewshot skills were generated from the 5 train inputs and matching standard answers, with isolated Dockerized processes and package roots under `scratch/train_skill/fewshot_attempt_<nn>/`.
 - Whether overall base `avg@3` is about `0.40-0.60`, with implausible per-task outliers reworked or justified.
 - Whether overall fewshot gain is about `0.10-0.20` and comes from intended transfer-dependent aspects rather than duplicated rubric points.
