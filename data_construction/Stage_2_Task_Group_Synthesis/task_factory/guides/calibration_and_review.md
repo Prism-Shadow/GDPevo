@@ -14,7 +14,7 @@ normally remain near that band; justified outliers are allowed, but a group
 should not pass because very easy and impossible tasks merely average together.
 
 After using a skill derived directly from the train set, overall fewshot
-`avg@3` should improve by roughly `0.10-0.20` over base `avg@3`. Inspect each
+`avg@3` should improve by roughly `0.10-0.30` over base `avg@3`. Inspect each
 task as well: the intended transfer points should improve without making most
 tasks score `0.95` or higher or otherwise approach a perfect score.
 
@@ -142,7 +142,7 @@ Record at least:
 - Base `avg@3`, fewshot `avg@3`, and gain for each test task.
 - Overall base `avg@3` and overall fewshot `avg@3` across the 5 test tasks.
 - Whether overall base `avg@3` is about `0.40-0.60` and whether individual task outliers are justified.
-- Whether overall fewshot gain is about `0.10-0.20`, with a per-task explanation of which transfer-dependent rubric points changed.
+- Whether overall fewshot gain is about `0.10-0.30`, with a per-task explanation of which transfer-dependent rubric points changed.
 - Whether fewshot scores saturate across most or all test tasks, and if so which scoring points became too easy.
 - Whether low scores come from transfer failure or task complexity, not prompt ambiguity, schema friction, or fragile evaluation.
 
@@ -225,5 +225,5 @@ The reviewer subagent should check:
 - Whether `scratch/difficulty_calibration.md` contains 15 valid base and 15 valid fewshot Dockerized `codex exec` attempts, all launched with `gpt-5.5`, `xhigh` reasoning effort, the fixed prompts, and dedicated staged work/Codex-home directories.
 - Whether 3 independent fewshot skills were generated from the 5 train inputs and matching standard answers, with isolated Dockerized processes and package roots under `scratch/train_skill/fewshot_attempt_<nn>/`.
 - Whether overall base `avg@3` is about `0.40-0.60`, with implausible per-task outliers reworked or justified.
-- Whether overall fewshot gain is about `0.10-0.20` and comes from intended transfer-dependent aspects rather than duplicated rubric points.
+- Whether overall fewshot gain is about `0.10-0.30` and comes from intended transfer-dependent aspects rather than duplicated rubric points.
 - Whether fewshot `avg@3` avoids saturation across most or all test tasks; if most skill scores reach `0.95` or higher or otherwise approach a perfect score, whether the SOP, task diversity, data exploration, environment, or scoring points should be reworked.
