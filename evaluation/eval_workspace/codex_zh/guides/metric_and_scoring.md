@@ -98,6 +98,6 @@ overall tool calls@3 = (test_001_tool_calls@3 + test_002_tool_calls@3 + test_003
 
 主 agent 还应从每个 `run_metadata.yaml` 中聚合平均 cached/input/output tokens、solver turns 和 tool calls，先按每个 test task 的 3 次 attempts 求平均，再按条件下的 5 个 test tasks 求平均。
 
-这些效率指标只统计 test solver subagents 写答案的过程。不包括 skill 生成、远程环境检查、evaluator 执行或主 agent 汇总。它们不能替代 `acc@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
+这些效率指标只统计 test solver 进程 写答案的过程。不包括 skill 生成、环境检查、evaluator 执行或主 agent 汇总。它们不能替代 `acc@3`，但应出现在最终报告中，用于比较不同 skill 条件下的效率。
 
 评估 agent 可以根据当前 task group 的 evaluator 形态，在 `scratch/` 中编写临时聚合或检查代码。

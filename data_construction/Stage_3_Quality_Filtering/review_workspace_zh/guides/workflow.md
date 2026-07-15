@@ -34,7 +34,7 @@ python3 scripts/check_task_group.py task_group/<task_group_id>
 
 3. 如果脚本检查失败，停止 reviewer 投票，并在 `../reports/<task_group_id>.yaml` 中记录 `script_check.pass: false` 和失败原因。
 
-4. 如果脚本检查通过，主 agent 启动 6 个上下文干净的 reviewer subagents。每个 reviewer 独立阅读同一个 task group 和对应 `scratch/`，不能参考其他 reviewer 的结论。
+4. 如果脚本检查通过，主 agent 启动 6 个上下文干净的 reviewer subagents。每个 reviewer 独立阅读同一个 task group 和对应 `scratch/`，包括 evaluator 实现、`rubric_validation.md`、固定 prompt 校准记录和保留的运行证据，不能参考其他 reviewer 的结论。
 
 5. 每个 reviewer 按 `review_criteria.md` 给出一票：
 
@@ -76,8 +76,7 @@ decision: fail
 主 agent 可以给每个 reviewer subagent 使用下面的简短任务说明：
 
 ```text
-Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard.
-Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
+Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard. Inspect the actual evaluators and scratch/rubric_validation.md; verify that each task measures at least 4 independently fail-able business aspects, that selective mistakes do not make all rubric points move together, and that deterministic partial credit works where specified. Also verify the fixed-prompt Dockerized Codex calibration evidence. Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
 ```
 
 Reviewer 应重点判断 task group 是否能作为 benchmark 数据，而不是只检查文件是否存在。

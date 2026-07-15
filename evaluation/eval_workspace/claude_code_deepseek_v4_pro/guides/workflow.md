@@ -3,7 +3,8 @@
 This file explains how the main evaluation agent should run one complete Claude
 Code evaluation for DeepSeek V4 Pro through the DeepSeek Anthropic API.
 
-The evaluation now uses a remote task environment and four conditions:
+The evaluation runs the task environment in stage- or attempt-scoped Docker
+networks reachable only by the assigned agent containers, across four conditions:
 
 ```text
 base
@@ -35,7 +36,9 @@ When a user asks you to run evaluation in this workspace, that request is
 permission for Codex to orchestrate Dockerized `claude -p` subprocesses. Keep
 every skill-generation and solver run in a clean, dedicated directory, and mount
 only that staged directory plus the matching trace/output directory into the
-container.
+container. Use the exact mode-specific prompt in `agent_prompts.md` for every
+process; replace only declared placeholders and do not append task hints or
+extra paths.
 
 ## 1. Prepare The Task Group
 
@@ -48,35 +51,49 @@ task_group/<task_group_id>/
 Confirm it contains 5 train tasks, 5 test tasks, `env/`, official inputs,
 standard answers, and `eval/eval.sh` for each task. Do not modify it.
 
-## 2. Configure The Remote Environment
+## 2. Start And Connect The Environment
 
 Load `.env`:
 
 ```text
-GDPEVO_ENV_BASE_URL=<remote task environment>
+GDPEVO_RUN_OWNER="<user_name>"
+GDPEVO_ENV_BASE_URL=http://task-env:<TASK_ENV_PORT>/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
-Do not start the local `task_group/env` service for Claude Code evaluation.
-Confirm the remote environment health/index endpoint answers and record the URL
-in `scratch/environment.md`.
+Build `task_group/env/Dockerfile`. Create the mandatory owner/run-scoped network
+and environment container described in `CODEX_ORCHESTRATOR.md`, with alias
+`task-env`, `TASK_ENV_BIND=0.0.0.0`, internal `TASK_ENV_PORT = 9000 + task-group
+number`, and no published host port. Attach every agent container to its
+assigned network. Read `env.state_mode` to choose shared-within-stage or
+fresh-per-attempt lifetime, and keep judge-enabled reflect generation separate
+from judge-disabled test runs. Confirm the health/index endpoint from a
+disposable container on the same network through the exact agent URL and
+record all runtime names, image, state mode, port, URL, and result in
+`scratch/environment.md`.
 
 Some official task inputs were authored for the local-environment harness and
 may mention localhost, `127.0.0.1`, or `env/setup.sh`. Do not modify official
 task input files, but treat those local references as obsolete for this DeepSeek
-evaluation. Every staged skill-generation and solver directory must include an
-`environment_access.md` file that states:
+evaluation. The main agent must override those references when preparing each
+staged `environment_access.md`:
 
 ```text
-Use only GDPEVO_ENV_BASE_URL=<remote URL from .env>.
-Do not start task_group/env, run env/setup.sh, or use localhost/127.0.0.1
-unless the remote URL itself explicitly points there.
-If any task text mentions a local env URL, this environment_access.md overrides
-that local reference.
+base_url: http://task-env:<TASK_ENV_PORT>/
+allowed_endpoints:
+- <METHOD /path>
+credentials: <runtime credentials, only when required>
 ```
 
 Skill-generation and solver Claude runs must not enter, list, or read `env/`.
-They may use only the remote environment entrypoint staged by the main agent.
+They may use only the container-visible environment entrypoint staged by the main agent.
+
+Read endpoint names from `task_group/env/endpoints.txt`. Each staged
+`environment_access.md` must include the base URL, required credentials, and
+all endpoints allowed for that run as `METHOD /path` lines without endpoint
+descriptions. Include business endpoints for skill generation and test solving;
+add `/api/judge` only for reflect skill generation; never include `/health` or
+reset/reseed endpoints in execution-agent inputs.
 
 The judge endpoint is train-only and valid only during reflect skill generation
 on train tasks. It must not be staged to test solvers or written into generated
@@ -114,10 +131,10 @@ scratch/skill_generation/reflect-3_attempt_03/
 
 Stage only the materials allowed by `skill_modes.md`.
 
-- `fewshot`: train inputs, train gold answers, remote environment entrypoint.
-- `self`: train inputs and remote environment entrypoint; no train answers and
+- `fewshot`: train inputs, train gold answers, container-visible environment entrypoint.
+- `self`: train inputs and container-visible environment entrypoint; no train answers and
   no judge feedback.
-- `reflect-3`: train inputs, remote environment entrypoint, and judge API
+- `reflect-3`: train inputs, container-visible environment entrypoint, and judge API
   instructions; no train answers.
 
 Do not copy whole train task directories for skill generation. For each staged
@@ -160,9 +177,8 @@ reflect-3
 For each attempt directory, stage only:
 
 - The current test task `input/`.
-- `environment_access.md` with the remote environment URL and the override
-  notice for any stale local-env references in official task inputs.
-- The matching skill for non-base modes.
+- `environment_access.md` with the container-visible URL, credentials when needed, and the allowed endpoint names; it overrides stale local-env references in official task inputs.
+- The complete matching skill package directory as `skill/` for non-base modes.
 
 Do not copy whole test task directories for solver attempts. Do not stage
 `env/`, train tasks, source answer files, test answers, task notes, evaluator

@@ -16,7 +16,8 @@ CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort
 ```
 
 `CODEX_HOME` 是该 solver 进程运行时临时设置的环境变量，不是任务 `.env` 配置。
-正式 attempt 不要使用 `codex exec --ephemeral`。
+正式 attempt 不要使用 `codex exec --ephemeral`。只能使用
+`guides/agent_prompts.md` 中的固定 prompt，并只替换声明的占位符。
 
 除非用户明确覆盖，否则使用 `heatmap_scope.json` 里的模型配置：
 
@@ -45,20 +46,23 @@ task_group_010
 
 确认 `heatmap_scope.json` 与 `RUN_SCOPE.md` 一致。
 
-## 2. Check Remote Environments
+## 2. 启动并检查环境
 
-从 `.env` 读取：
+在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 和三个不同端口启动环境，并在
+`.env` 中写入：
 
 ```text
-GDPEVO_TASK_GROUP_002_ENV_BASE_URL
-GDPEVO_TASK_GROUP_006_ENV_BASE_URL
-GDPEVO_TASK_GROUP_010_ENV_BASE_URL
+GDPEVO_TASK_GROUP_002_ENV_BASE_URL=http://host.docker.internal:<TG002_PORT>/
+GDPEVO_TASK_GROUP_006_ENV_BASE_URL=http://host.docker.internal:<TG006_PORT>/
+GDPEVO_TASK_GROUP_010_ENV_BASE_URL=http://host.docker.internal:<TG010_PORT>/
 ```
 
-不要启动本地 env service。
+每个 solver `docker run` 都必须带
+`--add-host=host.docker.internal:host-gateway`。开始计分运行前，先从临时容器
+通过完全相同的配置 URL 验证每个 health/index endpoint。
 
 主 agent 可以检查 `task_groups/*/env/` 和 evaluator，用于确认环境契约、staging
-材料和评分。solver 子 agent 不允许进入、列出或读取任何 `env/` 源文件。
+材料和评分。solver 进程不允许进入、列出、读取或挂载任何 `env/` 源文件。
 
 ## 3. Check Source Skills
 
@@ -88,8 +92,9 @@ runs/<mode>/<source_task_group_id>__to__<target_task_group_id>/test_001/attempt_
 每个 attempt 目录只放：
 
 - 当前 target test task 的 `input/`。
-- `environment_access.md`，只含 target task group 的远程环境入口。
-- 当前 source task group、当前 mode、当前 attempt 编号对应的 `SKILL.md`。
+- `environment_access.md`，只含 target task group 的容器可访问环境入口。
+- 当前 source task group、mode 和 attempt 编号对应的完整 skill 目录包，以
+  `skill/` staging，入口文件为 `skill/SKILL.md`。
 
 不要 staging：
 
@@ -112,20 +117,7 @@ run_metadata.yaml
 思考强度完成。main agent 负责 staging attempt 目录、启动隔离 solver run，并在
 solver 写出 `answer.json` 后评分和聚合。
 
-solver prompt 保持短而明确：
-
-```text
-eval_attempt_id: <unique_eval_attempt_id>
-model: GPT-5.5
-reasoning_effort: xhigh
-
-Please solve this single transfer-evaluation test task from the current attempt
-directory only. Do not access any path outside it. Use only the staged task
-input, environment_access.md, and SKILL.md. If you accidentally see env source,
-answer files, notes, evaluator files, train tasks, or another run's files, stop
-and report the contamination instead of solving. Write the final answer as
-answer.json following input/payloads/answer_template.json.
-```
+原样使用 `guides/agent_prompts.md` 中的固定 solver prompt，不能追加内容。
 
 ## 5. Score
 
@@ -189,5 +181,5 @@ heatmaps/index.html
 3. 在新的 clean attempt 目录重跑。
 4. 在 cell report 的 `notes` 或 `excluded_attempts` 中记录。
 
-匹配 source/mode/attempt 的既有 skill 文件是允许材料。test solver 不能直接读取 source
+匹配 source/mode/attempt 的既有 skill 目录包是允许材料。test solver 不能直接读取 source
 或 target 的 train tasks、标准答案、notes、evaluator、env 源文件或其他 run 目录。

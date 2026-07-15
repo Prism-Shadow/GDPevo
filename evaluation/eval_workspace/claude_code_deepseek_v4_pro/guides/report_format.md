@@ -148,7 +148,7 @@ conditions:
 - `cost_usd_avg_3` uses the same model rate card recorded under
   `evolve.pricing` and follows the same task-then-condition aggregation shape.
 - Efficiency metrics only count answer-writing by test solver Claude processes. Do not
-  include skill generation, remote environment checks, evaluator execution, or
+  include skill generation, environment checks, evaluator execution, or
   orchestrator summarization.
 - If any test attempt was contaminated by forbidden material access or leakage,
   exclude it from report scores and aggregation. Preserve the contamination

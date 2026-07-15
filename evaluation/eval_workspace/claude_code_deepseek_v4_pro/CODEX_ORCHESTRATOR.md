@@ -21,8 +21,8 @@ The evaluation workspace inside that directory is:
 <work_root>/task_group_XXX/evaluation/eval_workspace/claude_code_deepseek_v4_pro
 ```
 
-Read `README.md` and `guides/` first. Use `.env` for the remote task
-environment. Do not start the local `task_group/env` service.
+Read `README.md` and `guides/` first. Start the task environment outside the
+agent container and use `.env` for its container-visible URL.
 
 Before running any Claude Code command, confirm the active Claude Code
 configuration is DeepSeek V4 Pro via the DeepSeek Anthropic API with Claude
@@ -114,10 +114,10 @@ Stage only:
 
 - the current test task `input/`
 - `environment_access.md`
-- the matching skill for non-base modes
+- the complete matching skill package directory as `skill/` for non-base modes
 
-The solver prompt must tell Claude Code to read/write only inside that attempt
-directory and write the final answer as `answer.json`.
+Use the test-solver template in `guides/agent_prompts.md`; the mounted staging
+directory, rather than a path blacklist in the prompt, enforces file isolation.
 
 ## Running Claude Code
 
@@ -131,9 +131,31 @@ expected to work without an interactive password prompt. If `sudo docker` is not
 usable, stop before launching Claude Code, record the blocker in `scratch/`, and
 report it to the user.
 
-The container must have network access because Claude Code needs the DeepSeek Anthropic API and tasks may need `GDPEVO_ENV_BASE_URL`. Do not use a
-network-disabled container unless an equivalent working proxy is explicitly
-configured.
+Build the task environment from `env/Dockerfile` and run it with each agent on
+an orchestrator-created Docker bridge network. The environment binds
+`0.0.0.0:<TASK_ENV_PORT>`, uses the network alias `task-env`, and publishes no
+host port. Agents use `http://task-env:<TASK_ENV_PORT>/` and retain DeepSeek
+Anthropic API egress. Create a normal user-defined bridge, not an `--internal`
+network, so Docker's default outbound NAT and DNS remain available. Never stage
+or mount `env/` into an agent container.
+If `env/Dockerfile` or `env.state_mode` is missing, stop and report an
+incompatible legacy task group; do not fall back to a host-side environment.
+
+The orchestrator, not the tested agent, creates all names. Each name contains a
+normalized `<user_name>`, task-group number, capability stage,
+condition/task/attempt when applicable, and an eight-character random suffix;
+for example `gdp-<user_name>-013-test-few-t001-a01-7f3a91c2-net`. Use the same
+scope with `-env` and `-agent` for containers. `task-env` is only a network
+alias, never a fixed global container name.
+
+Read `env.state_mode` from `task_group.yaml`. A `read_only` instance may serve
+concurrent attempts in the same capability stage; a `mutable` environment gets
+a fresh network, container, and writable layer per attempt. Run as much
+parallelism as the host supports. Keep judge-enabled reflect skill generation
+separate from judge-disabled calibration, other skill generation, and formal
+test stages. Test instances use `TASK_ENV_ENABLE_JUDGE=0`. Before scored runs,
+verify `/health` from a disposable container on the same network through the
+exact agent URL.
 
 Mount only the current staged working directory and a dedicated per-run Claude
 config directory into the container. Mount the latter at `/claude_config`; do
@@ -159,6 +181,13 @@ from being written.
 If the `claude` executable is not on `PATH`, locate it before running the
 experiment. Do not hard-code a host-specific path in reusable scripts; record
 the resolved executable path in `scratch/`.
+
+## Fixed Prompt Contract
+
+Use exactly one mode-specific template from `guides/agent_prompts.md` as
+`$PROMPT`. Replace only its declared placeholders. Do not append hints, answer
+summaries, notes, rubric/evaluator details, or additional paths. The staged
+working directory and Docker mounts enforce the information boundary.
 
 Do not use direct host execution as an automatic fallback. If a Dockerized
 Claude command cannot be constructed, stop and report the blocker instead of
@@ -200,7 +229,7 @@ Docker run is not complete until this session trace has been preserved.
 Before deleting or replacing any Docker container, verify that all required
 artifacts have been written to the host workspace:
 
-- `answer.json` or `SKILL.md`
+- `answer.json` or the complete `skill/` package with `skill/SKILL.md` as its entry file
 - Claude Code session trace, when available
 - debug logs, when used
 - score and run metadata files after Codex scoring, or evolve metadata for skill generation

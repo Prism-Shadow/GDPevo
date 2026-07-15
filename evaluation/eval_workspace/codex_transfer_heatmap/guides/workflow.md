@@ -20,7 +20,8 @@ CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort
 
 `CODEX_HOME` is a runtime-only temporary environment variable for that solver
 process, not a task `.env` setting. Do not use `codex exec --ephemeral` for
-formal attempts.
+formal attempts. Use exactly the prompt in `guides/agent_prompts.md`; replace
+only its declared placeholders.
 
 Use the model configuration in `heatmap_scope.json` unless the user explicitly
 overrides it:
@@ -50,21 +51,25 @@ task_group_010
 
 Confirm that `heatmap_scope.json` matches `RUN_SCOPE.md`.
 
-## 2. Check Remote Environments
+## 2. Start And Check Environments
 
-Load these values from `.env`:
+Start all three environments on the orchestration host with
+`TASK_ENV_BIND=0.0.0.0` and distinct ports. Set these values in `.env`:
 
 ```text
-GDPEVO_TASK_GROUP_002_ENV_BASE_URL
-GDPEVO_TASK_GROUP_006_ENV_BASE_URL
-GDPEVO_TASK_GROUP_010_ENV_BASE_URL
+GDPEVO_TASK_GROUP_002_ENV_BASE_URL=http://host.docker.internal:<TG002_PORT>/
+GDPEVO_TASK_GROUP_006_ENV_BASE_URL=http://host.docker.internal:<TG006_PORT>/
+GDPEVO_TASK_GROUP_010_ENV_BASE_URL=http://host.docker.internal:<TG010_PORT>/
 ```
 
-Do not start a local env service.
+Every solver `docker run` must include
+`--add-host=host.docker.internal:host-gateway`. Verify each health/index
+endpoint from a disposable container through the exact configured route before
+starting scored runs.
 
 The main agent may inspect `task_groups/*/env/` and evaluators to verify the
 environment contract, stage allowed materials, and score results. Solver
-subagents must not enter, list, or read any `env/` source files.
+processes must not enter, list, read, or mount any `env/` source files.
 
 ## 3. Check Source Skills
 
@@ -96,10 +101,11 @@ runs/<mode>/<source_task_group_id>__to__<target_task_group_id>/test_001/attempt_
 Each attempt directory should contain only:
 
 - The current target test task `input/`.
-- `environment_access.md`, containing only the target task group's remote
+- `environment_access.md`, containing only the target task group's container-visible
   environment entrypoint.
-- The `SKILL.md` matching the current source task group, mode, and attempt
-  number.
+- The complete skill package directory matching the current source task group,
+  mode, and attempt number, staged as `skill/` with `skill/SKILL.md` as its
+  entry file.
 
 Do not stage:
 
@@ -123,20 +129,7 @@ using the configured model and reasoning effort. The main agent stages the
 attempt directory, launches the isolated solver run, then scores and aggregates
 the result after the solver writes `answer.json`.
 
-Use this short solver prompt shape:
-
-```text
-eval_attempt_id: <unique_eval_attempt_id>
-model: GPT-5.5
-reasoning_effort: xhigh
-
-Please solve this single transfer-evaluation test task from the current attempt
-directory only. Do not access any path outside it. Use only the staged task
-input, environment_access.md, and SKILL.md. If you accidentally see env source,
-answer files, notes, evaluator files, train tasks, or another run's files, stop
-and report the contamination instead of solving. Write the final answer as
-answer.json following input/payloads/answer_template.json.
-```
+Use the fixed solver prompt in `guides/agent_prompts.md` without additions.
 
 ## 5. Score
 
@@ -204,6 +197,6 @@ If a solver/test attempt accesses forbidden material, stop using that result:
 3. Rerun the affected test in a new clean attempt directory.
 4. Record the issue in the cell report's `notes` or `excluded_attempts`.
 
-Existing skill files are allowed artifacts for the matching source/mode/attempt.
+Existing skill package directories are allowed artifacts for the matching source/mode/attempt.
 Test solvers must not directly read source or target train tasks, standard
 answers, notes, evaluators, env source files, or other run directories.

@@ -15,7 +15,7 @@ This workspace evaluates one task group at a time. Do not modify the task group 
 | --- | --- |
 | `guides/` | Evaluation workflow, skill modes, metrics, scoring, and report format |
 | `task_group/` | The single official task group currently under evaluation |
-| `skills/` | Generated `fewshot`, `self`, and `reflect-3` files |
+| `skills/` | Generated `fewshot`, `self`, and `reflect-3` skill packages; each attempt is a directory whose entry file is `SKILL.md` |
 | `runs/` | Solver outputs and scoring records for each condition, test task, and attempt |
 | `original_traces/` | Complete raw Claude Code session traces for skill-generation runs and solver attempts |
 | `scratch/` | Temporary scripts, environment notes, and intermediate checks created by the main evaluation agent |
@@ -28,8 +28,9 @@ Read these files in order before starting evaluation:
 1. `CODEX_ORCHESTRATOR.md` - Codex main-agent orchestration, Docker isolation, Claude Code GLM command, and trace preservation
 2. `guides/workflow.md` - main-agent evaluation workflow
 3. `guides/skill_modes.md` - the four conditions and information boundaries
-4. `guides/metric_and_scoring.md` - `acc@3`, population `std@3`, turn/tool-call tracking, single-attempt scoring, and aggregation rules
-5. `guides/report_format.md` - final report format
+4. `guides/agent_prompts.md` - fixed skill-generation and solver prompts
+5. `guides/metric_and_scoring.md` - `acc@3`, population `std@3`, turn/tool-call tracking, single-attempt scoring, and aggregation rules
+6. `guides/report_format.md` - final report format
 
 ## Launch Prompt
 
@@ -39,10 +40,11 @@ Model: glm-5.2, max.
 Run all four modes with acc@3/std@3, collect solver and evolve token/cost metrics, preserve complete traces, and write report/<task_group_id>.yaml.
 ```
 
-Use `.env` for the remote task environment:
+Use `.env` for the agent-container-visible task environment:
 
 ```text
-GDPEVO_ENV_BASE_URL=https://your-env-host.example/
+GDPEVO_RUN_OWNER="<user_name>"
+GDPEVO_ENV_BASE_URL=http://task-env:9001/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
@@ -68,7 +70,7 @@ task_group/<task_group_id>/
 
 2. Check that the workspace contains only one task group and that the task group includes 5 train tasks, 5 test tasks, a shared environment, standard answers, and evaluators.
 
-3. Confirm the remote task-group environment from `.env`. Do not start a local env service for Claude Code evaluation. Record the base URL, health-check result, and any remote environment notes.
+3. Build the environment from `task_group/<task_group_id>/env/Dockerfile`. For every runtime scope, create a Docker bridge network whose unique name contains normalized `<user_name>`, task-group number, capability stage, condition/task/attempt when applicable, and an eight-character random suffix. Start the environment on that network with alias `task-env`, `TASK_ENV_BIND=0.0.0.0`, and internal `TASK_ENV_PORT = 9000 + task-group number`; publish no host port. Agent containers join the same network and use `http://task-env:<TASK_ENV_PORT>/`. Read `env.state_mode`: share a read-only instance only inside one capability stage; give every mutable attempt a fresh network and environment. Enable `/api/judge` only for the isolated reflect skill-generation stage and disable it for formal tests. Verify `/health` from a disposable container on the same network and record all runtime names and results.
 
 4. Generate 3 independent skills for each non-base condition:
 
@@ -103,30 +105,26 @@ For each condition, run each test task independently 3 times. Every run must be 
 
 6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, `model: glm-5.2, max`, the Claude session ID, the raw session trace path, token usage, solver turn count, and tool-call count. Use a per-attempt mounted `CLAUDE_CONFIG_DIR` so the raw Claude Code session trace is written under `original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/.../<claude_session_id>.jsonl` for audit.
 
-7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average token, turn, tool-call, and cost fields for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. Solver efficiency only counts answer-writing by test solver runs: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, remote environment checks, evaluator execution, or main-agent summarization into solver efficiency. Temporary checking or aggregation code may be placed under `scratch/`.
+7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average token, turn, tool-call, and cost fields for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. Solver efficiency only counts answer-writing by test solver runs: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, environment checks, evaluator execution, or main-agent summarization into solver efficiency. Temporary checking or aggregation code may be placed under `scratch/`.
 
 ## Agent Boundaries
 
-The main agent may read the full task group in order to verify the remote environment contract, call evaluators, and aggregate results, but it must not solve test tasks directly.
+The main agent may read the full task group in order to start/reset the environment, verify its network contract, call evaluators, and aggregate results, but it must not solve test tasks directly.
 
 Skill-generation isolated agent runs only generate skills. They do not solve test tasks.
 
-Solver isolated agent runs may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver runs must not enter, list, or read `env/`; they may use the shared environment only through the remote Web/API URL or database connection explicitly exposed by the main agent. Only reflect skill-generation runs should receive the train-only judge API instructions, and that API is not valid for test-time solving.
+Solver isolated agent runs may only see the information allowed for the current condition. A solver must not see test standard answers, test notes, evaluator implementation details, or `env/` source code. Skill-generation and solver runs must not enter, list, read, or mount `env/`; they may use the shared environment only through the container-visible Web/API URL or database connection explicitly exposed by the main agent. Only reflect skill-generation runs should receive the train-only judge API instructions, and that API is not valid for test-time solving.
 
 Mode-allowed training exposure is not contamination: for example, fewshot skill generation may read train `output/answer.json`. For test-solving attempts, however, direct access to any source `output/answer.json` is forbidden unless that answer file is the solver's own output inside the current attempt directory.
 
 If a solver/test run accidentally accesses, lists, or reports seeing forbidden material such as `env/`, source `output/answer.json` during test solving, task notes, evaluator files, train tasks outside the allowed mode/stage, or another attempt's run files, treat that attempt as contaminated. Report the incident to the user, do not score or aggregate that attempt, record the reason in the attempt directory, and rerun the affected test in a fresh clean attempt directory.
 
-For each solver attempt, the main agent stages the allowed files into a dedicated fresh attempt directory, such as `runs/base/test_001/attempt_01/`, and mounts only that directory as `/work` for the Dockerized Claude Code run. Stage the current task `input/`, environment access instructions, and, for skill modes only, the matching skill copy for the same attempt number. Do not reuse an attempt directory for a rerun; create a new clean directory and keep the invalidated run for audit. For skill generation, stage only the allowed train materials for that mode into a dedicated directory under `scratch/skill_generation/`, and mount only that directory for the isolated agent run.
+For each solver attempt, the main agent stages the allowed files into a dedicated fresh attempt directory, such as `runs/base/test_001/attempt_01/`, and mounts only that directory as `/work` for the Dockerized Claude Code run. Stage the current task `input/`, environment access instructions, and, for skill modes only, the complete matching skill package directory as `skill/`. Do not reuse an attempt directory for a rerun; create a new clean directory and keep the invalidated run for audit. For skill generation, stage only the allowed train materials for that mode into a dedicated directory under `scratch/skill_generation/`, mount only that directory, and copy the generated `skill/` directory to the matching canonical attempt directory under `skills/`.
 
-## Solver Prompt
+## Fixed Agent Prompts
 
-Keep the solver isolated-agent prompt short and explicit:
-
-```text
-eval_attempt_id: <unique_eval_attempt_id>
-
-Please solve this single test task. You may only read and write files inside this attempt directory; do not access any path outside it. Use only the staged task input, allowed environment access, and the skill file if one is provided. If you accidentally see env source, answer files, notes, evaluator files, train tasks not staged for this attempt, or another run's files, stop and report the contamination instead of solving. Write the final answer as answer.json following input/payloads/answer_template.json.
-```
-
-The main agent later uses `eval_attempt_id` and `claude_session_id` to locate the isolated run's turns and tool calls in the mounted session transcript, then backfills token, turn, and tool-call fields.
+Use the exact mode-specific skill-generation and test-solver templates in
+`guides/agent_prompts.md`. Replace only the declared placeholders and do not
+append hints or hidden context. The main agent later uses each run id and
+`claude_session_id` to locate the isolated run's trace and backfill token, turn,
+and tool-call fields.

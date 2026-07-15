@@ -22,8 +22,10 @@ A completed task group should contain exactly 5 train tasks and 5 test tasks.
 task_group_001/
 ├── task_group.yaml
 ├── env/
+│   ├── Dockerfile
 │   ├── setup.sh
 │   ├── judge_api.py
+│   ├── endpoints.txt
 │   └── <shared business services, data, setup files, and support files>
 ├── train_tasks/
 │   ├── 001/
@@ -69,10 +71,14 @@ task_group:
     Describe the train-predict benchmark and the shared business environment.
 
 env:
+  dockerfile: env/Dockerfile
   setup: env/setup.sh
+  state_mode: read_only # or mutable
   files:
+    - env/Dockerfile
     - env/setup.sh
     - env/judge_api.py
+    - env/endpoints.txt
     - env/<shared_business_service_or_support_file>
 
 train_tasks:
@@ -125,10 +131,26 @@ test_tasks:
 | `task_group.source_examples` | Yes | Stage 1 example IDs used to construct the task group; all must come from the same scenario |
 | `task_group.domain` | Yes | Domain label |
 | `task_group.description` | Yes | Shared task-group background; not default solver input |
+| `env.dockerfile` | Yes | Docker build entry point for the isolated environment image; the build context is `env/` only |
 | `env.setup` | Yes | Environment setup entry point |
-| `env.files` | Yes | Shared environment files that should be declared in the final task group index |
+| `env.state_mode` | Yes | `read_only` only when concurrent attempts cannot change any later solver-visible result; otherwise `mutable` |
+| `env.files` | Yes | Shared environment files declared in the final task group index; must include `env/endpoints.txt` |
 | `train_tasks` | Yes | Exactly 5 train task entries: `train_001` through `train_005` |
 | `test_tasks` | Yes | Exactly 5 test task entries: `test_001` through `test_005` |
+
+`env/endpoints.txt` is a plain endpoint inventory. List every reachable endpoint
+once as `METHOD /path`, including business endpoints, `/health`, and
+`/api/judge`. Do not include descriptions, examples, host names, credentials,
+or usage instructions.
+
+The constructor must declare `env.state_mode`; calibration and evaluation
+orchestrators must not infer it at runtime. Use `read_only` only when business
+endpoints are observational and sessions, caches, authentication state, logs,
+rate limits, or judge bookkeeping cannot change a later attempt's visible
+behavior. If any task performs a write, or if there is uncertainty, use
+`mutable`. A `read_only` environment may be shared by concurrent attempts in
+the same capability stage. A `mutable` environment receives a fresh container
+and isolated writable layer for every attempt.
 
 Each item under `train_tasks` and `test_tasks` is a formal task:
 
@@ -143,7 +165,7 @@ Each item under `train_tasks` and `test_tasks` is a formal task:
 | `answer_json` | Yes | Standard-answer file |
 | `eval.script` | Yes | Evaluation entry script |
 | `eval.files` | Yes | Evaluation-related files |
-| `eval.rubric` | Yes | 6-10 scoring points; each item uses `goal` and `weight`; each `weight` can only be `1`, `2`, or `3`, and its final score contribution is `weight / sum(weight)` |
+| `eval.rubric` | Yes | 6-10 scoring points spanning at least 4 independently fail-able business aspects; each item uses `goal` and `weight`; each `weight` can only be `1`, `2`, or `3`, and its maximum contribution is `weight / sum(weight)`; evaluators may award deterministic partial fractions within a point |
 
 ## answer_template.json
 

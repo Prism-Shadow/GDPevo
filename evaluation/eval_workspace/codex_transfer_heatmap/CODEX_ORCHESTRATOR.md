@@ -15,7 +15,10 @@ evaluation workspace, repository root, parent work directory, home directory,
 `env/`, notes, evaluator files, source answers, or previous runs.
 
 The container must have network access because Codex needs model API access and
-the staged attempt may need the target task group's remote environment URL.
+the staged attempt needs the target environment. Start that environment on the
+orchestration host with `TASK_ENV_BIND=0.0.0.0`; pass
+`--add-host=host.docker.internal:host-gateway` to every solver container and use
+`http://host.docker.internal:<TASK_ENV_PORT>/`. Never mount environment files.
 
 ## Codex Command
 
@@ -40,6 +43,10 @@ solver process. Do not write it into `.env`, task materials, generated skills,
 or reports as a task environment setting.
 
 Do not add `--ephemeral`; formal attempts must leave trace files.
+
+Pass exactly the fixed test-solver prompt from `guides/agent_prompts.md` and
+replace only its declared placeholders. Do not append task hints, answer
+summaries, evaluator details, or extra filesystem paths.
 
 ## Trace Preservation
 

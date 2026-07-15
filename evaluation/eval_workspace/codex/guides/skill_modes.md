@@ -1,7 +1,7 @@
 # Skill Modes
 
 This evaluation compares four conditions over the same task group, test tasks,
-model configuration, remote environment, and evaluators:
+model configuration, task environment, and evaluators:
 
 ```text
 base
@@ -12,19 +12,27 @@ reflect-3
 
 Use `fewshot` as the report/directory key for the few-shot condition.
 
-The main agent stages the allowed materials for each skill-generation or solver
-subagent into that subagent's dedicated workspace/cwd. Do not give subagents the
-full task group directory.
+Every generated skill is a directory package. Its attempt directory is the
+package root and `SKILL.md` is the required entry file. A generation process
+writes the complete package under `/work/skill/`; after the run, copy the whole
+directory into the matching canonical attempt directory shown below. A solver
+receives that complete package mounted as `/work/skill/`, not a detached
+`SKILL.md` file.
 
-All non-reflect staging should expose only the remote environment URL from
-`.env`:
+The main agent stages the allowed materials for each skill-generation or solver
+process into that process's dedicated `/work`. Do not mount the full task group
+directory.
+
+All staging receives the container-visible environment URL from `.env` plus
+the allowed business endpoint names copied from `task_group/env/endpoints.txt`
+without descriptions:
 
 ```text
-GDPEVO_ENV_BASE_URL=<remote task environment>
+GDPEVO_ENV_BASE_URL=http://task-env:<TASK_ENV_PORT>/
 ```
 
 The main agent may also read the train-only judge path from `.env`, but it must
-stage that value only for reflect skill-generation subagents:
+stage that value only for reflect skill-generation processes:
 
 ```text
 GDPEVO_JUDGE_PATH=/api/judge
@@ -52,19 +60,19 @@ No skill is generated.
 The solver may see only:
 
 - The current test task `input/`.
-- The remote environment entrypoint.
+- The container-visible environment entrypoint.
 
 The solver must not see train tasks, test answers, test notes, evaluator files,
 generated skills, or judge instructions.
 
 ## fewshot
 
-Generate 3 independent skills with 3 clean-context skill-generation subagents.
+Generate 3 independent skills with 3 isolated skill-generation processes.
 Each generator may see:
 
 - Official `input/` for the 5 train tasks.
 - Standard `output/answer.json` for the 5 train tasks.
-- The remote environment entrypoint.
+- The container-visible environment entrypoint.
 
 The generator must not see test answers, test notes, or evaluator files.
 
@@ -76,18 +84,18 @@ skills/fewshot/fewshot_attempt_02/SKILL.md
 skills/fewshot/fewshot_attempt_03/SKILL.md
 ```
 
-The solver receives the current test input, remote environment entrypoint, and
+The solver receives the current test input, container-visible environment entrypoint, and
 the matching fewshot skill.
 
 ## self
 
-Generate 3 independent skills with 3 clean-context skill-generation subagents.
+Generate 3 independent skills with 3 isolated skill-generation processes.
 This mode is self-evolution without train outputs or judge feedback.
 
 The generator may see:
 
 - Official `input/` for the 5 train tasks.
-- The remote environment entrypoint.
+- The container-visible environment entrypoint.
 
 The generator must not see:
 
@@ -105,7 +113,7 @@ skills/self/self_attempt_02/SKILL.md
 skills/self/self_attempt_03/SKILL.md
 ```
 
-The solver receives the current test input, remote environment entrypoint, and
+The solver receives the current test input, container-visible environment entrypoint, and
 the matching self skill.
 
 ## reflect-3
@@ -121,7 +129,7 @@ task.
 The generator may see:
 
 - Official `input/` for the 5 train tasks.
-- The remote environment entrypoint.
+- The container-visible environment entrypoint.
 - The train-only judge API description above.
 
 The generator must not see:
@@ -132,7 +140,7 @@ The generator must not see:
 For each train task in a reflect skill generation run, the generator should run
 this 3-round loop before moving to the next train task:
 
-1. Read only the current train task input, the remote environment entrypoint,
+1. Read only the current train task input, the container-visible environment entrypoint,
    and the judge API instructions.
 2. Produce a candidate answer for the current train task.
 3. Submit that candidate answer to `POST /api/judge`.
@@ -151,7 +159,7 @@ skills/reflect-3/reflect-3_attempt_02/SKILL.md
 skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
-The solver receives the current test input, remote environment entrypoint, and
+The solver receives the current test input, container-visible environment entrypoint, and
 the matching `reflect-3` skill.
 
 ## Skill Quality Requirements
@@ -161,7 +169,7 @@ A skill should be executable experience, not a restatement of train answers.
 A good skill should include:
 
 - Transferable business rules.
-- How to use the remote Web/API or database environment.
+- How to use the network-exposed Web/API or database environment.
 - Output field definitions.
 - Common misjudgments and exclusion rules.
 - SOPs learned from train tasks that should transfer to test tasks.

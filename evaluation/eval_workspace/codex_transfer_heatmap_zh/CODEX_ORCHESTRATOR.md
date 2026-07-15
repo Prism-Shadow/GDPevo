@@ -13,8 +13,10 @@ heatmaps，但不能直接解目标 test tasks。
 完整 `task_groups/` 树、完整 evaluation workspace、仓库根目录、上级 work
 目录、home 目录、`env/`、notes、evaluator 文件、源答案或之前的 runs。
 
-容器需要网络，因为 Codex 需要访问模型 API，attempt 也可能需要访问目标 task
-group 的远程环境 URL。
+容器需要网络，因为 Codex 需要访问模型 API，attempt 还需要访问目标 task
+group 的环境。环境固定在主控宿主机以 `TASK_ENV_BIND=0.0.0.0` 启动；每个
+solver 容器都带 `--add-host=host.docker.internal:host-gateway`，并通过
+`http://host.docker.internal:<TASK_ENV_PORT>/` 访问。不能挂载环境文件。
 
 ## Codex 命令
 
@@ -38,6 +40,9 @@ codex exec \
 不要把它写进 `.env`、task 材料、生成的 skill 或 report，避免被误解为任务环境配置。
 
 不要加 `--ephemeral`，正式 attempt 必须留下 trace。
+
+只能使用 `guides/agent_prompts.md` 中固定的 test-solver prompt，并只替换其中
+声明的占位符。不能追加 task hint、答案摘要、evaluator 细节或其他文件路径。
 
 ## Trace 保存
 

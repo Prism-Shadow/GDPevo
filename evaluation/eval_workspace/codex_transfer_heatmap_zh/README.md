@@ -37,7 +37,7 @@ reflect-3
 | `CODEX_ORCHESTRATOR.md` | Codex 主控、Docker 隔离、`codex exec` 命令形态和 trace 保存 |
 | `RUN_SCOPE.md` | 本次 3x3 迁移实验的固定范围 |
 | `heatmap_scope.json` | 脚本读取的 task group、mode、label 定义 |
-| `guides/` | 运行流程、skill mode、评分和报告格式 |
+| `guides/` | 运行流程、固定 solver prompt、skill mode、评分和报告格式 |
 | `task_groups/` | 本次迁移实验的 3 个代表 task group |
 | `skills/` | 按 source task group 组织的既有 `fewshot` 和 `reflect-3` skills |
 | `runs/` | 每个 mode/source/target/test/attempt 的隔离求解记录 |
@@ -59,8 +59,12 @@ Model: GPT-5.5, reasoning_effort: xhigh.
 
 ## 环境
 
-不要启动本地 env service。这个 workspace 不重新生成 skill。solver run 不能进入、
-列出或读取 `task_groups/*/env/`，只能使用主 agent staging 给它们的远程环境入口。
+每个 task-group 环境都固定在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动，
+并令 `TASK_ENV_PORT` 取 `9000 + task group 数字编号`。各自 `.env` URL 写成
+`http://host.docker.internal:<TASK_ENV_PORT>/`，每个 solver 容器都必须带
+`--add-host=host.docker.internal:host-gateway`。这个 workspace 不重新生成 skill。
+solver run 不能进入、列出、读取或挂载 `task_groups/*/env/`，只能使用主 agent
+staging 给它们的容器可访问环境入口。
 
 ## 隔离 Solver Runs
 
@@ -82,6 +86,8 @@ main agent 直接解题。
 使用 `CODEX_ORCHESTRATOR.md` 中的命令形态，并在启动 solver 进程时临时设置每个
 attempt 专用的 `CODEX_HOME=/codex_home`。`CODEX_HOME` 不是任务 `.env` 配置。
 正式 attempt 不要使用 `codex exec --ephemeral`。
+每次运行都必须原样使用 `guides/agent_prompts.md` 中的固定 prompt，只替换其中
+声明的占位符。
 
 ## 产出
 

@@ -194,7 +194,7 @@ The main agent should also aggregate average token and cost fields, solver turns
 follows the same shape as `acc@3`: average the 3 attempts for the same test task,
 then average the 5 test tasks.
 
-These efficiency metrics only count the answer-writing work of test solver runs. They do not include skill generation, remote environment checks, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
+These efficiency metrics only count the answer-writing work of test solver runs. They do not include skill generation, environment checks, evaluator execution, or main-agent summarization. They do not replace `acc@3`, but they should appear in the final report for efficiency comparison across skill conditions.
 
 Evolve token and cost metrics are aggregated separately for each non-base
 condition. Average each token bucket and USD cost across the three

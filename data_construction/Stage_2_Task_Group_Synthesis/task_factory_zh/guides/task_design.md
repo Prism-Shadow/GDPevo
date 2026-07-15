@@ -2,7 +2,7 @@
 
 ## Train-Predict 目标
 
-task group 应体现 train-predict 工作模式：agent 先完成真实 train tasks，再通过对照标准答案和反思错误归纳场景经验，最后在 test tasks 中迁移使用。
+task group 应体现 train-predict 工作模式：隔离的 fewshot generator 读取真实 train tasks 的 solver 可见输入和标准答案，将可迁移经验提炼为 skill，再由 test solver 在未见任务中使用。
 
 设计时应同时满足：
 
@@ -10,7 +10,7 @@ task group 应体现 train-predict 工作模式：agent 先完成真实 train ta
 - train tasks 不能是教学题、教程题、worked examples、test 的低配版本或显式 SOP 演示；它们应是正式业务任务，只是在校准流程中先被暴露。
 - train 与 test 不能只是同一模板换壳；任务之间需要有 diversity，包括不同子场景、数据形态、环境入口、输出 schema 或决策目标。
 - 每个正式任务的复杂程度和难度应与第一阶段 examples 对齐，保持长程任务特征。
-- test 不能只靠本地输入材料直接完成，必须有一部分 SOP、关键 facts、字段口径、工具选择经验或业务判断习惯需要通过 train 真实任务的盲做、答案对照和反思来归纳。
+- test 不能只靠本地输入材料直接完成，必须有一部分 SOP、关键 facts、字段口径、工具选择经验或业务判断习惯需要从 fewshot skill generation 可见的 train inputs 和标准答案中归纳。
 
 ## Example 难度对齐
 
@@ -30,7 +30,7 @@ train/test 的迁移距离应足够近，让真实的 train-derived skill 能产
 
 ## Diversity 带宽
 
-diversity 应限制在可迁移带宽内。一个 task group 不应让 5 个 train tasks 覆盖五个彼此无关的工作流家族，然后每个家族只在 test 中考一次。这样得到的 train-derived skill 会变成宽而浅的速记：记录了很多孤立事实，但 post-skill attempts 仍然需要重新摸索每个 test 的主要业务逻辑。
+diversity 应限制在可迁移带宽内。一个 task group 不应让 5 个 train tasks 覆盖五个彼此无关的工作流家族，然后每个家族只在 test 中考一次。这样得到的 train-derived skill 会变成宽而浅的速记：记录了很多孤立事实，但 fewshot attempts 仍然需要重新摸索每个 test 的主要业务逻辑。
 
 更好的做法是，在同一个 scenario 内选择 2-3 个反复出现的操作家族。可以变化实体、账号、活动、campaign、产品、数据体量、噪声形态、来源冲突、环境入口和输出 schema，但需要保留足够重复的决策框架，让 train-derived experience 可以迁移。
 
@@ -50,7 +50,7 @@ diversity 应限制在可迁移带宽内。一个 task group 不应让 5 个 tra
 - 无法从 train 中归纳出来的新隐藏政策、评分逻辑或来源优先级；
 - train 中没有可比较聚合任务或重复组件工作流时，直接加入综合 board/rollup task。
 
-每个 test task 应有一个有意义的迁移核心：一部分高权重 scoring points 的正确解法必须依赖可从真实 train task 尝试和答案对照中归纳出的 SOP、来源优先级、字段口径、计算方式、输出约定或业务判断。这些 transfer-dependent scoring points 应有明确 train anchors，但这些 anchors 应是真实任务，不是教学样例。其他高权重点可以来自 test 自身的数据探索、数据规模、噪声证据或长流程工作。
+每个 test task 应有一个有意义的迁移核心：一部分高权重 scoring points 的正确解法必须依赖可从 train inputs 和标准答案中归纳出的 SOP、来源优先级、字段口径、计算方式、输出约定或业务判断。这些 transfer-dependent scoring points 应有明确 train anchors，但这些 anchors 应是真实任务，不是简化的教学样例。其他高权重点可以来自 test 自身的数据探索、数据规模、噪声证据或长流程工作。
 
 每个 test task 的设计稿都必须为那些依赖 train 迁移的 scoring points 提供 transfer coverage matrix：
 
@@ -60,14 +60,14 @@ diversity 应限制在可迁移带宽内。一个 task group 不应让 5 个 tra
 
 不要求每个高权重 scoring point 都映射到 train。真正的要求是：test 中要有一部分非平凡的高权重点，只有迁移从真实 train tasks 中归纳出的方法才能稳定做对。没有 train anchor 的高权重点可以存在，但它们应衡量真实的任务特定数据探索或长流程工作，而不是未说明的新 SOP。
 
-避免只做远迁移。如果 post-skill attempts 不能显著高于 direct attempts，首先检查 diversity 是否过宽：是否有太多彼此无关的工作流家族、太多一次性 train anchors，或 test-only SOP 没有在 train 中重复出现。返工时优先收窄操作家族范围、补充可复用口径的真实 train 覆盖、拉近 train/test 分布，或明确哪些高权重点依赖迁移、哪些高权重点依赖 test-specific exploration，而不是只通过泄露步骤或把 test prompt 写得更程序化来修复。
+避免只做远迁移。如果 fewshot attempts 不能显著高于 base attempts，首先检查 diversity 是否过宽：是否有太多彼此无关的工作流家族、太多一次性 train anchors，或 test-only SOP 没有在 train 中重复出现。返工时优先收窄操作家族范围、补充可复用口径的真实 train 覆盖、拉近 train/test 分布，或明确哪些高权重点依赖迁移、哪些高权重点依赖 test-specific exploration，而不是只通过泄露步骤或把 test prompt 写得更程序化来修复。
 
 ## 复杂度来源
 
 test 难度来源包括两类：
 
 - 从 train 中迁移 SOP 和关键 facts。
-- 任务自身复杂，例如流程长、软件多、API 多、Web 页面多、开放数据库复杂、数据量大、数据杂、数据脏、相似来源冲突或局部材料过时。
+- 任务自身复杂，例如流程长、软件多、API 多、Web 页面多、SQLite 查询服务复杂、数据量大、数据杂、数据脏、相似来源冲突或局部材料过时。
 
 不要用任意歧义、坏格式、不可恢复的信息缺口来制造难度。难度应来自真实业务复杂性、长程操作、信息发现、来源选择和迁移失败。
 
@@ -116,9 +116,10 @@ task_factory/scratch/task_group_design.md
 - transfer coverage matrix，将依赖 train 迁移的 test scoring points 映射到一个或多个 train anchors，并说明具体迁移什么。
 - 共享 env blueprint，或指向 `scratch/env_blueprint.md`。
 - 交给 env-builder coding subagent 实现的程序化数据生成计划。
-- 评测和校准计划，包括每个任务预期的 6-10 个 scoring points、`1`/`2`/`3` 原始权重和 exact-match 业务结果。
+- 评测和校准计划，包括每个任务预期的 6-10 个 scoring points、`1`/`2`/`3` 原始权重、至少 4 个可以独立失败的业务方面，以及确定性的 exact-match 或 partial-credit 逻辑。
+- Rubric independence map：说明每个 point 对应哪个业务问题和哪些 answer fields，哪些 points 共享上游依赖，以及为什么整套 rubric 不会退化成同一个全对或全错检查的重复版本。
 - `answer_template.json` 的输出形态计划，包括数值精度，以及面向字符串类输出的受控选择字段。
-- 标注哪些 scoring points 依赖 train-derived experience、哪些依赖大量数据探索或长流程工作，确保多数分数不能由 direct test 通过简单读题获得。
-- skill saturation 检查：train-derived skill 应该提升 test 表现，但不应该让大部分或全部 test 接近满分。
+- 标注哪些 scoring points 依赖 train-derived experience、哪些依赖大量数据探索或长流程工作，确保多数分数不能由 base 通过简单读题获得。
+- skill saturation 检查：train-derived skill 应该提升 test 表现，但不应该让大部分或全部 test 达到 `0.95` 以上或接近满分。
 
 设计稿应分配 task 归属，并为每个 task-builder subagent 提供足够的 task-specific brief。设计稿不应直接生成每个 task 的 `input/`、`notes/`、`output/` 和 `eval/`。这些文件应由后续 10 个 task-builder subagents 分别生成。

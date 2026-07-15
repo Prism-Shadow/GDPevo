@@ -34,7 +34,7 @@ python3 scripts/check_task_group.py task_group/<task_group_id>
 
 3. If the script fails, stop reviewer voting and record `script_check.pass: false` plus the failure reason in `../reports/<task_group_id>.yaml`.
 
-4. If the script passes, the lead agent launches 6 clean-context reviewer subagents. Each reviewer independently reads the same task group and matching `scratch/`, without seeing other reviewers' conclusions.
+4. If the script passes, the lead agent launches 6 clean-context reviewer subagents. Each reviewer independently reads the same task group and matching `scratch/`, including evaluator implementations, `rubric_validation.md`, fixed-prompt calibration records, and preserved run evidence, without seeing other reviewers' conclusions.
 
 5. Each reviewer uses `review_criteria.md` and returns one vote:
 
@@ -76,8 +76,7 @@ Passing review requires all of:
 The lead agent can use this short prompt for each reviewer subagent:
 
 ```text
-Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard.
-Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
+Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard. Inspect the actual evaluators and scratch/rubric_validation.md; verify that each task measures at least 4 independently fail-able business aspects, that selective mistakes do not make all rubric points move together, and that deterministic partial credit works where specified. Also verify the fixed-prompt Dockerized Codex calibration evidence. Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
 ```
 
 Reviewers should judge whether the task group is valid benchmark data, not merely whether files exist.
