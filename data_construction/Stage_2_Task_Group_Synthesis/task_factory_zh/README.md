@@ -60,7 +60,7 @@
 - `notes/notes.md` 是每个任务的可解释性文件，包含问题定义、解答方法、迁移来源、模型易错点、评测标准和数据生成说明；该文件应中英双语，方便人工审核。
 - 最终 task group 中只有 `notes/notes.md` 应包含中文；solver 可见输入、answer template、标准答案、evaluator、task metadata 和 env 文件应保持英文。
 - 每个 train/test task 都必须包含 `input/payloads/answer_template.json`，明确规定输出 JSON 结构、字段类型、数值精度和可选枚举值。
-- 每个任务最好包含 6-10 个 scoring points，并覆盖多个可以独立失败的业务问题或方面。把同一个根本判断拆成许多会一起得分、一起失分的相关行，不属于多维评测。
+- 每个任务最好包含 6-10 个 scoring points，并覆盖至少 4 个可以独立失败的业务问题或方面。把同一个根本判断拆成许多会一起得分、一起失分的相关行，不属于多维评测。
 - 每个点的原始权重为 `1`、`2` 或 `3`，最大分值按 `weight / sum(weight)` 归一化。若一个业务结果天然包含可独立判断的子项，可以在该 point 内使用确定性的 partial credit；evaluator 必须明确输出 earned fraction，不能让整套 rubric 因单一依赖变成全对或全错。
 - scoring points 应优先评估数值、枚举、布尔、排序、集合或规范化结构结果。若需要字符串匹配，应在 `answer_template.json` 中改成选择题式字段，避免 schema 摩擦。
 - 大部分 scoring points 必须依赖迁移学习、大量数据探索或长流程工作，不能让 base 靠简单读题和格式填充拿到多数分。

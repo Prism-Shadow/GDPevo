@@ -178,7 +178,7 @@ reviewer subagent 应检查：
 - 每个 train/test task 是否都有 `input/payloads/answer_template.json`，且 `output/answer.json` 是否符合该模板。
 - 评测是否 rule-based、可复现，并覆盖关键业务判断。
 - 每个 task 是否有 6-10 个 scoring points，原始权重是否只使用 `1`、`2` 或 `3`，最终分数是否按 `weight / sum(weight)` 归一化。
-- rubric 是否覆盖至少 3 个可以独立失败的业务问题或方面，而不是把一个根本判断拆成许多会同时得分或失分的重复 points。
+- rubric 是否覆盖至少 4 个可以独立失败的业务问题或方面，而不是把一个根本判断拆成许多会同时得分或失分的重复 points。
 - `scratch/rubric_validation.md` 是否记录 rubric dependency map，并通过 selective perturbation 证明不同错误只损失对应分值。
 - 不可拆分的 point 是否使用 deterministic exact match；天然可拆分的 point 是否使用文档化、确定性的 partial credit，并输出 `[0, 1]` 内的 earned fraction。
 - scoring points 是否优先评估数值、枚举、布尔、排序、集合或规范化结构结果；如需字符串匹配，是否已改成受控选择字段以避免 schema 摩擦。

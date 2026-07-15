@@ -116,7 +116,7 @@ task_factory/scratch/task_group_design.md
 - transfer coverage matrix，将依赖 train 迁移的 test scoring points 映射到一个或多个 train anchors，并说明具体迁移什么。
 - 共享 env blueprint，或指向 `scratch/env_blueprint.md`。
 - 交给 env-builder coding subagent 实现的程序化数据生成计划。
-- 评测和校准计划，包括每个任务预期的 6-10 个 scoring points、`1`/`2`/`3` 原始权重、至少 3 个可以独立失败的业务方面，以及确定性的 exact-match 或 partial-credit 逻辑。
+- 评测和校准计划，包括每个任务预期的 6-10 个 scoring points、`1`/`2`/`3` 原始权重、至少 4 个可以独立失败的业务方面，以及确定性的 exact-match 或 partial-credit 逻辑。
 - Rubric independence map：说明每个 point 对应哪个业务问题和哪些 answer fields，哪些 points 共享上游依赖，以及为什么整套 rubric 不会退化成同一个全对或全错检查的重复版本。
 - `answer_template.json` 的输出形态计划，包括数值精度，以及面向字符串类输出的受控选择字段。
 - 标注哪些 scoring points 依赖 train-derived experience、哪些依赖大量数据探索或长流程工作，确保多数分数不能由 base 通过简单读题获得。

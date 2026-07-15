@@ -149,7 +149,7 @@ test_tasks:
 | `answer_json` | 是 | 标准答案文件 |
 | `eval.script` | 是 | 评测入口脚本 |
 | `eval.files` | 是 | 评测相关文件列表 |
-| `eval.rubric` | 是 | 6-10 个 scoring points，覆盖至少 3 个可以独立失败的业务方面；每项只写 `goal` 和 `weight`；`weight` 只能为 `1`、`2` 或 `3`，该点最大贡献为 `weight / sum(weight)`；evaluator 可以在 point 内给出确定性的部分得分比例 |
+| `eval.rubric` | 是 | 6-10 个 scoring points，覆盖至少 4 个可以独立失败的业务方面；每项只写 `goal` 和 `weight`；`weight` 只能为 `1`、`2` 或 `3`，该点最大贡献为 `weight / sum(weight)`；evaluator 可以在 point 内给出确定性的部分得分比例 |
 
 ## answer_template.json
 

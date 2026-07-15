@@ -108,7 +108,7 @@ rubric:
     weight: 2
 ```
 
-继续补足到 6-10 个 scoring points，并至少覆盖 3 个真正不同的业务方面。`rubric` 只作为评测目标的简洁索引；答案路径、exact-match 或 partial-credit 逻辑、归一化、容差、subcheck 比例和实现细节放在评测文件中。
+继续补足到 6-10 个 scoring points，并至少覆盖 4 个真正不同的业务方面。`rubric` 只作为评测目标的简洁索引；答案路径、exact-match 或 partial-credit 逻辑、归一化、容差、subcheck 比例和实现细节放在评测文件中。
 
 校准前必须创建 `scratch/rubric_validation.md`。针对每个 task，记录每个 scoring point 对应的业务问题、answer fields、上游依赖，以及 partial-credit subchecks。随后做 selective perturbation probes：保持其他方面正确，只故意改错一个方面，确认只有预期 points 丢分；还要至少包含一个最终分严格位于 `0` 与 `1` 之间的 partial answer。若几乎所有 points 都一起得分或失分，应重新设计 rubric 或 task，而不是接受表面上的 point 数量。
 

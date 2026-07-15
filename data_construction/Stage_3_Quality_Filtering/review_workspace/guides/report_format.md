@@ -63,7 +63,7 @@ manual_review:
 | `environment_design_check` | Whether `env/` is a shared public data and workspace environment, not an answer calculator or task-specific data package. |
 | `transfer_design_check` | Whether train/test are both real tasks, and whether test tasks require transferable experience from train without being overly homogeneous. |
 | `difficulty_check` | Whether Dockerized fixed-prompt calibration is valid, overall base `avg@3` is about `0.40-0.60`, fewshot gain is about `0.10-0.20`, and most tasks stay below `0.95` rather than approaching a perfect score. |
-| `rubric_independence_check` | Whether each task scores multiple independently fail-able business questions/aspects, selective perturbations do not make all points move together, and meaningful within-point partial credit is implemented deterministically where appropriate. |
+| `rubric_independence_check` | Whether each task scores at least 4 independently fail-able business questions/aspects, selective perturbations do not make all points move together, and meaningful within-point partial credit is implemented deterministically where appropriate. |
 | `eval_design_check` | Whether evaluation scores key business outcomes and avoids point stuffing, free-text friction, or schema friction. |
 | `overall` | Final quality review decision. |
 

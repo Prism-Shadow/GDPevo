@@ -150,7 +150,7 @@ Each item under `train_tasks` and `test_tasks` is a formal task:
 | `answer_json` | Yes | Standard-answer file |
 | `eval.script` | Yes | Evaluation entry script |
 | `eval.files` | Yes | Evaluation-related files |
-| `eval.rubric` | Yes | 6-10 scoring points spanning at least 3 independently fail-able business aspects; each item uses `goal` and `weight`; each `weight` can only be `1`, `2`, or `3`, and its maximum contribution is `weight / sum(weight)`; evaluators may award deterministic partial fractions within a point |
+| `eval.rubric` | Yes | 6-10 scoring points spanning at least 4 independently fail-able business aspects; each item uses `goal` and `weight`; each `weight` can only be `1`, `2`, or `3`, and its maximum contribution is `weight / sum(weight)`; evaluators may award deterministic partial fractions within a point |
 
 ## answer_template.json
 

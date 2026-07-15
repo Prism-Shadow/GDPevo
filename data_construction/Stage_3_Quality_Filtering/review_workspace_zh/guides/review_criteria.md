@@ -41,7 +41,7 @@ scratch/
 | `environment_design` | `env/` 是否是共享公共数据与办公环境；是否运行在 agent 容器之外；Dockerized agent 能否通过已验证的网络路径访问，且没有挂载 env 源码或 truth |
 | `leakage_control` | 正式 task group 的 solver-visible surface 是否泄露答案、完整 SOP、评分点、构造 truth 或解题步骤；`scratch/` 中的生产草稿和答案不作为泄露依据 |
 | `notes_interpretability` | 每个 task 是否有中英双语 `notes/notes.md`，且说明问题定义、解答依据、迁移来源、易错点和评测标准 |
-| `rubric_independence` | 每个 task 是否至少评估 3 个可以独立失败的业务问题或方面；points 是否没有重复同一个根本判断；`scratch/rubric_validation.md` 是否通过 selective perturbation 证明各 points 不会一起得分或失分 |
+| `rubric_independence` | 每个 task 是否至少评估 4 个可以独立失败的业务问题或方面；points 是否没有重复同一个根本判断；`scratch/rubric_validation.md` 是否通过 selective perturbation 证明各 points 不会一起得分或失分 |
 | `evaluation_design` | eval 是否围绕关键业务结果做确定性检查；天然可拆分的结果是否支持有文档说明的 point 内 partial credit；是否避免 schema 摩擦、自由文本匹配和碎片堆分 |
 | `difficulty_calibration` | base/fewshot 是否为使用固定 prompt、保留 trace 的隔离 Dockerized `codex exec` runs；overall base `avg@3` 是否约为 `0.40-0.60`；fewshot gain 是否约为 `0.10-0.20`；是否避免大部分任务达到 `0.95` 以上或接近满分 |
 | `construction_process` | 是否能看到 env-builder 和 task-builder subagents，以及 3 个隔离的 Dockerized fewshot skill-generation 进程、solver calibration、review/rework 和完整运行证据 |

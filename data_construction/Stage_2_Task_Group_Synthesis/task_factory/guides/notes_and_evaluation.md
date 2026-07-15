@@ -123,7 +123,7 @@ rubric:
     weight: 2
 ```
 
-Continue until the task has 6-10 scoring points spanning at least 3 genuinely
+Continue until the task has 6-10 scoring points spanning at least 4 genuinely
 different business aspects. Keep `rubric` as a concise index of evaluation
 goals. Put answer paths, exact-match or partial-credit logic, normalization,
 tolerances, subcheck shares, and implementation details in the evaluation
