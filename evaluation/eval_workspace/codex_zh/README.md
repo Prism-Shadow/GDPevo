@@ -38,7 +38,8 @@ Run all four modes with acc@3/std@3, collect solver turn and tool-call counts, a
 使用 `.env` 配置 agent 容器可访问的任务环境：
 
 ```text
-GDPEVO_ENV_BASE_URL=http://host.docker.internal:9001/
+GDPEVO_RUN_OWNER="<user_name>"
+GDPEVO_ENV_BASE_URL=http://task-env:9001/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
@@ -56,7 +57,7 @@ task_group/<task_group_id>/
 
 2. 检查工作区只包含一个 task group，并确认该 task group 包含 5 个 train tasks、5 个 test tasks、共享环境、标准答案和 evaluators。
 
-3. 在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动 task-group 环境，并令 `TASK_ENV_PORT` 取 `9000 + task group 数字编号`，例如 `task_group_001` 使用 `9001`。每个 agent 容器都必须使用 `--add-host=host.docker.internal:host-gateway`，并将 `.env` 写成 `http://host.docker.internal:<TASK_ENV_PORT>/`。绝不能把 `task_group/env/` staging 或挂载进 agent 容器。先用临时容器通过同一路径检查 health endpoint，再记录启动/重置命令、端口、base URL 和检查结果。
+3. 从 `task_group/<task_group_id>/env/Dockerfile` 构建环境镜像。每个运行 scope 都创建独立 Docker bridge network，名称必须包含规范化后的 `<user_name>`、task group 编号、权限阶段、必要时的 condition/task/attempt 和 8 位随机 suffix。环境接入该 network，别名为 `task-env`，监听 `TASK_ENV_BIND=0.0.0.0` 和容器内 `TASK_ENV_PORT = 9000 + task group 数字编号`，且不映射宿主机端口；agent 加入同一 network，通过 `http://task-env:<TASK_ENV_PORT>/` 访问。读取 `env.state_mode`：read-only 环境只能在同一权限阶段共享，mutable 环境每个 attempt 使用新的 environment 和 network。只有独立的 reflect skill-generation 阶段开启 `/api/judge`，正式 test 必须关闭。最后从相同 network 的临时容器检查 `/health`，并记录全部运行时名称和检查结果。
 
 4. 为每种非 base 条件生成 3 个独立 skills：
 

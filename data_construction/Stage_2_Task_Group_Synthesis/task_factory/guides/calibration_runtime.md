@@ -18,25 +18,42 @@ Do not mount the repository, full task group, parent workspace, user home,
 `env/`, notes, evaluators, standard answers not explicitly allowed for that run,
 other attempts, or review artifacts.
 
-The environment API runs on the orchestration host with
-`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric task-group id`.
-Every agent container uses the fixed
-`--add-host=host.docker.internal:host-gateway` option and reaches it through
-`http://host.docker.internal:<TASK_ENV_PORT>`. Stage that URL in
+Build the environment image from `env/Dockerfile` and attach it and every
+calibration agent to an orchestrator-created Docker bridge network. The
+environment binds `0.0.0.0` at `TASK_ENV_PORT`, where the port is `9000 + the
+numeric task-group id`, and has the network alias `task-env`. Do not publish the
+port to the host. Stage `http://task-env:<TASK_ENV_PORT>/` in
 `environment_access.md`, together with every business endpoint allowed for the
 run, copied from `env/endpoints.txt` as `METHOD /path` lines without
 descriptions. Do not include `/health`, reset/reseed endpoints, or `/api/judge`
-in base/fewshot calibration inputs. Do not stage or mount environment source
-files.
+in base/fewshot calibration inputs, and launch calibration environments with
+`TASK_ENV_ENABLE_JUDGE=0`. Do not stage or mount environment source files.
+Create the bridge without `--internal` so the agent retains outbound model-API
+access through Docker's default NAT and DNS.
+
+The orchestrator owns all runtime names. Include the normalized
+`GDPEVO_RUN_OWNER` or invoking username, task-group number, `cal`, run kind,
+task/attempt when applicable, and an eight-character random suffix. For
+example, `gdp-<user_name>-013-cal-base-t001-a01-7f3a91c2-net`. The environment
+container receives the same scope with `-env`; the agent receives `-agent`.
+Use `task-env` only as a network alias, never as a fixed global container name.
+
+Read `env.state_mode` from `task_group.yaml`. A `read_only` environment may be
+shared by concurrent calibration agents on one calibration-stage network. A
+`mutable` environment gets a separate network and fresh environment container
+for every calibration attempt. The orchestrator may run as many uniquely named
+attempts concurrently as the host can support.
 
 ## Codex Command
 
-Use the configured calibration model and reasoning effort. The fixed host-side
-launch shape is:
+Use the configured calibration model and reasoning effort. After the
+orchestrator has created the network and healthy environment container, the
+fixed agent launch shape is:
 
 ```bash
 docker run --rm \
-  --add-host=host.docker.internal:host-gateway \
+  --name "$AGENT_CONTAINER_NAME" \
+  --network "$NETWORK_NAME" \
   --env PROMPT \
   --mount type=bind,src="$WORK_DIR",dst=/work \
   --mount type=bind,src="$CODEX_HOME_DIR",dst=/codex_home \
@@ -47,8 +64,8 @@ docker run --rm \
 `CODEX_HOME` is a temporary runtime variable for that process. Do not use
 `--ephemeral`: preserve the complete `rollout-*.jsonl` under the dedicated
 `codex_home/` as the primary trace. Record the model, reasoning effort, image,
-network configuration, run id, staged files, trace path, and exit status in the
-calibration record.
+owner, network and container names, state mode, run id, staged files, trace
+path, and exit status in the calibration record.
 
 ## Prompt Contract
 
@@ -110,7 +127,8 @@ Solve exactly one test task using only files staged in the current /work directo
 A run is valid only when:
 
 - its work directory was fresh and contained only the materials allowed above;
-- the environment health check succeeded from the same container network;
+- the environment health check succeeded from a disposable container on the
+  same Docker network through `http://task-env:<TASK_ENV_PORT>/`;
 - the process produced the expected `answer.json` or complete skill package;
 - the complete Codex session trace is preserved, or a concrete missing reason is
   recorded;

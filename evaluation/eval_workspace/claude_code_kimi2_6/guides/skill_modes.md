@@ -33,7 +33,7 @@ the allowed business endpoint names copied from `task_group/env/endpoints.txt`
 without descriptions:
 
 ```text
-GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
+GDPEVO_ENV_BASE_URL=http://task-env:<TASK_ENV_PORT>/
 ```
 
 The main agent may also read the train-only judge path from `.env`, but it must

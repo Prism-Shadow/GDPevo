@@ -13,12 +13,27 @@ tasks。
 完整 task group、完整 evaluation workspace、仓库根目录、上级 work 目录、home
 目录、`env/`、`notes/`、evaluator 文件、源答案或之前的 runs。
 
-环境服务固定在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动。每个 agent
-`docker run` 都必须带
-`--add-host=host.docker.internal:host-gateway`，并通过
-`http://host.docker.internal:<TASK_ENV_PORT>/` 访问。agent 容器还需要访问模型
-API。正式运行前，应使用临时容器通过这条完全相同的路径检查环境 health
-endpoint。不能把 `env/` staging 或挂载进 agent 容器。
+主控从 `env/Dockerfile` 构建环境镜像，并把环境容器和 agent 接入主控创建的
+Docker bridge network。环境监听 `0.0.0.0:<TASK_ENV_PORT>`，network 别名为
+`task-env`，不映射宿主机端口；agent 通过
+`http://task-env:<TASK_ENV_PORT>/` 访问，并保留模型 API 出站能力。不能把
+bridge 创建为 `--internal` network；必须保留 Docker 默认的出站 NAT 和 DNS。
+不能把 `env/` staging 或挂载进 agent 容器。
+如果缺少 `env/Dockerfile` 或 `env.state_mode`，应停止并报告这是不兼容的旧版
+task group，不能退回宿主机环境方案。
+
+所有名称由主控而不是被测 agent 生成。名称必须包含规范化后的 `<user_name>`、
+task group 编号、权限阶段、必要时的 condition/task/attempt 和 8 位随机 suffix；
+例如 `gdp-<user_name>-013-test-few-t001-a01-7f3a91c2-net`。容器使用相同 scope，
+并分别以 `-env` 和 `-agent` 结尾。`task-env` 只能作为当前 network 的别名，
+不能作为全局固定容器名。
+
+主控从 `task_group.yaml` 读取 `env.state_mode`。`read_only` 环境可以在同一个
+权限阶段供多个 attempt 并发共享；`mutable` 环境的每个 attempt 都使用新的
+network、环境容器和可写层，可按服务器能力并发运行。开启 judge 的 reflect
+skill generation 必须与关闭 judge 的 calibration、其他 skill generation 和
+正式 test 分开。test 环境设置 `TASK_ENV_ENABLE_JUDGE=0`。正式运行前，必须从
+同一 network 上的临时容器通过 agent 实际 URL 检查 `/health`。
 
 ## Claude Code 命令
 

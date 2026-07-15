@@ -3,8 +3,8 @@
 This file explains how the main evaluation agent should run one complete Claude
 Code evaluation for Kimi 2.6 through SiliconFlow.
 
-The evaluation uses one host-side task environment reachable from the agent
-containers and four conditions:
+The evaluation runs the task environment in stage- or attempt-scoped Docker
+networks reachable only by the assigned agent containers, across four conditions:
 
 ```text
 base
@@ -54,16 +54,21 @@ standard answers, and `eval/eval.sh` for each task. Do not modify it.
 Load `.env`:
 
 ```text
-GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
+GDPEVO_RUN_OWNER="<user_name>"
+GDPEVO_ENV_BASE_URL=http://task-env:<TASK_ENV_PORT>/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
-Start `task_group/env` on the orchestration host with
-`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric task-group id`.
-Every agent container must use
-`--add-host=host.docker.internal:host-gateway`. Confirm the health/index
-endpoint from a disposable container through this exact route and record the
-startup/reset commands, port, and URL in `scratch/environment.md`.
+Build `task_group/env/Dockerfile`. Create the mandatory owner/run-scoped network
+and environment container described in `CODEX_ORCHESTRATOR.md`, with alias
+`task-env`, `TASK_ENV_BIND=0.0.0.0`, internal `TASK_ENV_PORT = 9000 + task-group
+number`, and no published host port. Attach every agent container to its
+assigned network. Read `env.state_mode` to choose shared-within-stage or
+fresh-per-attempt lifetime, and keep judge-enabled reflect generation separate
+from judge-disabled test runs. Confirm the health/index endpoint from a
+disposable container on the same network through the exact agent URL and
+record all runtime names, image, state mode, port, URL, and result in
+`scratch/environment.md`.
 
 Some official task inputs were authored for the local-environment harness and
 may mention localhost, `127.0.0.1`, or `env/setup.sh`. Do not modify official
@@ -72,7 +77,7 @@ evaluation. The main agent must override those references when preparing each
 staged `environment_access.md`:
 
 ```text
-base_url: http://host.docker.internal:<TASK_ENV_PORT>/
+base_url: http://task-env:<TASK_ENV_PORT>/
 allowed_endpoints:
 - <METHOD /path>
 credentials: <runtime credentials, only when required>

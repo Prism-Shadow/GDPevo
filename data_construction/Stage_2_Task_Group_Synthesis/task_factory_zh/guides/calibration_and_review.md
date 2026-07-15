@@ -18,16 +18,18 @@ train-derived skill 不应该让每个 test 都拿到特别高的分数。如果
 
 base 用于估计未学习 train 的表现。
 
-运行难度测试前，主 agent 在宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动环境，
-并令 `TASK_ENV_PORT` 取 `9000 + task group 数字编号`；例如
-`task_group_001` 使用 `9001`，`task_group_024` 使用 `9024`。每个校准容器都必须带
-`--add-host=host.docker.internal:host-gateway`，`environment_access.md` 固定写
-`http://host.docker.internal:<TASK_ENV_PORT>`，并从 `env/endpoints.txt` 加入
-当前运行允许的全部业务 endpoint，每行只写 `METHOD /path`。先从临时容器通过完全相同的
-路径检查 health endpoint，并把启动命令、端口、URL 和日志记录到
-`scratch/difficulty_calibration.md`。不能把 `env/` staging 或挂载进校准
-agent。环境状态仍有效时，base 和 fewshot 可以复用同一个服务；发生写入
-或环境返工后应 reset 或重启。
+运行难度测试前，主 agent 构建 task group 的环境镜像，并在主控创建的 Docker
+bridge network 中启动环境。环境以 `TASK_ENV_BIND=0.0.0.0` 监听，容器内
+`TASK_ENV_PORT` 取 `9000 + task group 数字编号`；例如 `task_group_001` 使用
+`9001`，`task_group_024` 使用 `9024`。环境的 network 别名是 `task-env`，
+不映射宿主机端口；`environment_access.md` 写入
+`http://task-env:<TASK_ENV_PORT>/`，并从 `env/endpoints.txt` 加入当前运行允许
+的全部业务 endpoint，每行只写 `METHOD /path`。先从相同 network 上的临时
+容器检查 health endpoint，并把 owner-scoped network/容器名、镜像、state mode、
+容器内端口、URL 和结果记录到 `scratch/difficulty_calibration.md`。不能把
+`env/` staging 或挂载进校准 agent。只有 `env.state_mode: read_only` 时，同一
+校准阶段的并发 attempts 才能共享环境；`mutable` 环境为每个 attempt 启动新的
+environment 和 network。
 
 每个 test task 必须运行 3 次 base attempts，5 个 test tasks 共 15 个相互
 独立的 Dockerized `codex exec` 进程。不能用主控系统的 solver subagent 替代。
@@ -116,7 +118,9 @@ scratch/difficulty_calibration.md
 至少记录：
 
 - 15 次 base attempts 的 solver、输入、预测文件、评测命令和得分。
-- 每个进程的校准模型、reasoning effort、容器镜像、固定 host-gateway 配置、固定 prompt 类型、run id、staged 文件和主 Codex trace 路径。
+- 每个进程的校准模型、reasoning effort、agent 和环境镜像、owner-scoped
+  network/容器名、环境 state mode、固定 prompt 类型、run id、staged 文件和
+  主 Codex trace 路径。
 - 3 次独立 fewshot skill generation 的 generator metadata、staged train inputs 和 answers、skill package 路径及主 trace 路径。
 - 15 次 fewshot attempts 的 solver、输入、预测文件、评测命令和得分。
 - 每个 test task 的 base `avg@3`、fewshot `avg@3` 和 gain。
@@ -170,7 +174,9 @@ reviewer subagent 应检查：
 - solver-facing env 是否按共享业务领域和接口组织，而不是按 per-task 数据包或 `/api/tasks/<task_id>/data` 这类 endpoint 组织。
 - `env/` 是否由上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 实现，而不是由主 agent 直接手写。
 - `env/endpoints.txt` 是否以 `METHOD /path` 且不附说明的方式列全所有可访问 endpoint，agent 可见的 `environment_access.md` 是否只包含当前运行允许的 endpoint。
-- 数据库型任务是否使用宿主机侧的 SQLite，并只通过带鉴权的运行中查询服务开放任务所需的读写能力；不能使用 PostgreSQL，也不能让 solver agents 直接访问 `.db`、`env/`、schema 或生成数据文件。
+- 数据库型任务是否把 SQLite 保留在环境容器内，并只通过带鉴权的运行中查询
+  服务开放任务所需的读写能力；不能使用 PostgreSQL，也不能让 solver agents
+  直接访问 `.db`、`env/`、schema 或生成数据文件。
 - 大量数据是否由程序和随机数生成，并保留 seed 和脚本。
 - 每个任务是否有 `notes/notes.md`，且 test task 说明迁移设计和迁移来源。
 - 每个 `notes/notes.md` 是否中英双语，便于人工审核。

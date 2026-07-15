@@ -42,15 +42,20 @@ input、标准答案和 `eval/eval.sh`。不要修改 task group。
 读取 `.env`：
 
 ```text
-GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
+GDPEVO_RUN_OWNER="<user_name>"
+GDPEVO_ENV_BASE_URL=http://task-env:<TASK_ENV_PORT>/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
-在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 启动 `task_group/env`，并令
-`TASK_ENV_PORT` 取 `9000 + task group 数字编号`。每个 agent
-容器必须带 `--add-host=host.docker.internal:host-gateway`。通过这条固定路径从
-临时容器检查 health / index endpoint，并把启动/重置命令、端口和 URL 记录到
-`scratch/environment.md`。
+构建 `task_group/env/Dockerfile`。按照 `CODEX_ORCHESTRATOR.md` 的强制规范，
+创建包含 owner/run 的 network 和环境容器；环境别名为 `task-env`，监听
+`TASK_ENV_BIND=0.0.0.0` 和容器内
+`TASK_ENV_PORT = 9000 + task group 数字编号`，不映射宿主机端口。每个 agent
+接入为它分配的 network。根据 `env.state_mode` 决定在同一权限阶段共享 read-only
+环境，或为每个 mutable attempt 启动新环境；开启 judge 的 reflect generation
+不能和关闭 judge 的 test 共用。临时容器必须在同一 network 上通过 agent 实际
+URL 检查 health / index endpoint，并将全部运行时名称、镜像、state mode、端口、
+URL 和结果记录到 `scratch/environment.md`。
 
 Skill-generation 和 solver runs 不得进入、列出或读取 `env/`。它们只能
 使用主 agent staging 的容器可访问环境入口。

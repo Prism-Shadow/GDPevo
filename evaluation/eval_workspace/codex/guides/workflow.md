@@ -47,18 +47,21 @@ standard answers, and `eval/eval.sh` for each task. Do not modify it.
 Load `.env`:
 
 ```text
-GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
+GDPEVO_RUN_OWNER="<user_name>"
+GDPEVO_ENV_BASE_URL=http://task-env:<TASK_ENV_PORT>/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
-Start `task_group/env` on the orchestration host with
-`TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric task-group id`. Set
-`GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/` and pass
-`--add-host=host.docker.internal:host-gateway` to every agent `docker run`.
-Never mount `task_group/env/` into an agent container. Confirm the health/index
-endpoint from a disposable container through that exact route, using the same
-image and network option as scored runs, and record the startup/reset commands,
-port, URL, and health result in `scratch/environment.md`.
+Build `task_group/env/Dockerfile`. Create the mandatory owner/run-scoped network
+and environment container described in `CODEX_ORCHESTRATOR.md`, with alias
+`task-env`, `TASK_ENV_BIND=0.0.0.0`, internal `TASK_ENV_PORT = 9000 + task-group
+number`, and no published host port. Attach every agent container to its
+assigned network. Never mount `task_group/env/` into an agent container. Read
+`env.state_mode` to choose shared-within-stage or fresh-per-attempt lifetime,
+and keep judge-enabled reflect generation separate from judge-disabled test
+runs. Confirm the health/index endpoint from a disposable container on the same
+network through the exact agent URL, then record all runtime names, image,
+state mode, port, URL, and result in `scratch/environment.md`.
 
 Skill-generation and solver runs must not enter, list, or read `env/`. They may
 use only the container-visible environment entrypoint staged by the main agent.

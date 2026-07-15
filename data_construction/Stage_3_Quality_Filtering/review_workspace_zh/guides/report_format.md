@@ -33,6 +33,12 @@ manual_review:
   environment_design_check:
     pass: <bool>
     detail: <string>
+  environment_lifecycle_check:
+    pass: <bool>
+    detail: <string>
+  environment_capabilities_check:
+    pass: <bool>
+    detail: <string>
   transfer_design_check:
     pass: <bool>
     detail: <string>
@@ -60,7 +66,9 @@ manual_review:
 | `manual_review` | 主 agent 根据 6 个 reviewer 结论汇总出的质量检查 |
 | `leakage_check` | 正式 task group 的 solver-visible prompt、payload、API、answer template 是否泄露答案、完整 SOP、评分点或解题步骤；`scratch/` 中的生产草稿、答案和校准记录不算泄露 |
 | `business_realism_check` | task group 是否来自真实业务问题，而不是玩具数据或教学题 |
-| `environment_design_check` | `env/` 是否是共享公共数据与办公环境，且不是答案计算器或按 task 切分的数据包 |
+| `environment_design_check` | 环境镜像是否只从 `env/` 构建，agent 是否只通过保留模型 API 出站能力的非 `--internal` Docker network 访问环境，且没有映射宿主机端口或挂载 env、数据库与 truth |
+| `environment_lifecycle_check` | `env.state_mode` 是否准确，read-only 环境是否只在同一权限阶段安全共享，mutable attempt 是否获得干净环境，包含 `<user_name>` 的运行时名称是否避免并发重名 |
+| `environment_capabilities_check` | 每个阶段是否只开放允许的 endpoint，尤其是 `TASK_ENV_ENABLE_JUDGE=0` 时 `/api/judge` 是否不可访问 |
 | `transfer_design_check` | train/test 是否都是正式任务，test 是否能从 train 中迁移经验且不过度同质 |
 | `difficulty_check` | 固定 prompt 的 Dockerized 校准是否有效，overall base `avg@3` 是否约为 `0.40-0.60`，fewshot gain 是否约为 `0.10-0.20`，并避免大部分任务达到 `0.95` 以上或接近满分 |
 | `rubric_independence_check` | 每个 task 是否评估至少 4 个可以独立失败的业务问题或方面，selective perturbation 是否避免所有 points 一起变化，适合拆分的 point 是否实现确定性的 partial credit |

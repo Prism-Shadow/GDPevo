@@ -22,6 +22,7 @@ A completed task group should contain exactly 5 train tasks and 5 test tasks.
 task_group_001/
 ├── task_group.yaml
 ├── env/
+│   ├── Dockerfile
 │   ├── setup.sh
 │   ├── judge_api.py
 │   ├── endpoints.txt
@@ -70,8 +71,11 @@ task_group:
     Describe the train-predict benchmark and the shared business environment.
 
 env:
+  dockerfile: env/Dockerfile
   setup: env/setup.sh
+  state_mode: read_only # or mutable
   files:
+    - env/Dockerfile
     - env/setup.sh
     - env/judge_api.py
     - env/endpoints.txt
@@ -127,7 +131,9 @@ test_tasks:
 | `task_group.source_examples` | Yes | Stage 1 example IDs used to construct the task group; all must come from the same scenario |
 | `task_group.domain` | Yes | Domain label |
 | `task_group.description` | Yes | Shared task-group background; not default solver input |
+| `env.dockerfile` | Yes | Docker build entry point for the isolated environment image; the build context is `env/` only |
 | `env.setup` | Yes | Environment setup entry point |
+| `env.state_mode` | Yes | `read_only` only when concurrent attempts cannot change any later solver-visible result; otherwise `mutable` |
 | `env.files` | Yes | Shared environment files declared in the final task group index; must include `env/endpoints.txt` |
 | `train_tasks` | Yes | Exactly 5 train task entries: `train_001` through `train_005` |
 | `test_tasks` | Yes | Exactly 5 test task entries: `test_001` through `test_005` |
@@ -136,6 +142,15 @@ test_tasks:
 once as `METHOD /path`, including business endpoints, `/health`, and
 `/api/judge`. Do not include descriptions, examples, host names, credentials,
 or usage instructions.
+
+The constructor must declare `env.state_mode`; calibration and evaluation
+orchestrators must not infer it at runtime. Use `read_only` only when business
+endpoints are observational and sessions, caches, authentication state, logs,
+rate limits, or judge bookkeeping cannot change a later attempt's visible
+behavior. If any task performs a write, or if there is uncertainty, use
+`mutable`. A `read_only` environment may be shared by concurrent attempts in
+the same capability stage. A `mutable` environment receives a fresh container
+and isolated writable layer for every attempt.
 
 Each item under `train_tasks` and `test_tasks` is a formal task:
 

@@ -47,7 +47,7 @@
 - 每个正式任务都应保持长程任务复杂度，且难度应与来源 examples 对齐；不能把生成任务做得明显更简单、更窄或更像 toy task。
 - 大量数据应由程序和随机数生成，不手写生产规模数据。
 - `env/` 应是面向整个 task group 的公共数据与办公环境，可包含 Web、API 或基于 SQLite 的业务基础设施，但不能按 task 切成独立数据包或接近答案的 task-specific endpoint。数据库型环境必须使用 SQLite，不能使用 PostgreSQL 或其他服务端数据库引擎。
-- 环境 API 固定在主控宿主机上运行，使用 `TASK_ENV_BIND=0.0.0.0`，并令 `TASK_ENV_PORT` 取 `9000 + task group 数字编号`（`task_group_001` 使用 `9001`，`task_group_024` 使用 `9024`）。每个 solver 或 skill-generation 容器都通过 `http://host.docker.internal:<TASK_ENV_PORT>/` 访问，并带上 `--add-host=host.docker.internal:host-gateway`；不能把 `env/` 挂载进 agent 容器，也不能把容器自己的 `localhost` 当成环境地址。
+- 环境必须从 `env/Dockerfile` 构建，并与每个 solver 或 skill-generation 容器接入包含 user 和 run 标识的独立 Docker bridge network。环境以 `TASK_ENV_BIND=0.0.0.0` 监听，`TASK_ENV_PORT` 取 `9000 + task group 数字编号`，network 别名为 `task-env`，不映射宿主机端口；agent 通过 `http://task-env:<TASK_ENV_PORT>/` 访问。`env.state_mode` 必须声明为 `read_only` 或 `mutable`：前者可在同一权限阶段共享，后者每个 attempt 使用新环境。不能把 `env/` 挂载进 agent 容器。
 - solver 和测试 agent 可以使用 URL、API endpoint，或带鉴权信息的 SQLite 查询服务 URL，但不能直接查看 `env/` 目录、SQLite 数据库文件、源码、生成数据文件、seed、manifest 或 setup 脚本。
 - `env/endpoints.txt` 必须以 `METHOD /path` 且不附接口介绍的方式列出所有可访问 endpoint；校准和正式评估只把当前运行允许的 endpoint 名称写入 `environment_access.md`。
 - `env/` 实现应由上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 完成；主 agent 负责 blueprint 和最终集成。

@@ -38,7 +38,8 @@ Run all four modes with acc@3/std@3, collect solver and evolve token/cost metric
 Use `.env` for the agent-container-visible task environment:
 
 ```text
-GDPEVO_ENV_BASE_URL=http://host.docker.internal:9001/
+GDPEVO_RUN_OWNER="<user_name>"
+GDPEVO_ENV_BASE_URL=http://task-env:9001/
 GDPEVO_JUDGE_PATH=/api/judge
 ```
 
@@ -56,7 +57,7 @@ task_group/<task_group_id>/
 
 2. Check that the workspace contains only one task group and that the task group includes 5 train tasks, 5 test tasks, a shared environment, standard answers, and evaluators.
 
-3. Start the task-group environment on the orchestration host with `TASK_ENV_BIND=0.0.0.0` and `TASK_ENV_PORT` set to `9000 + the numeric task-group id` (`task_group_001` uses `9001`). Every agent container must use `--add-host=host.docker.internal:host-gateway`; set `.env` to `http://host.docker.internal:<TASK_ENV_PORT>/`. Never stage or mount `task_group/env/` into an agent container. Verify the health endpoint from a disposable container through this exact route, then record the startup/reset commands, port, base URL, and health result.
+3. Build the environment from `task_group/<task_group_id>/env/Dockerfile`. For every runtime scope, create a Docker bridge network whose unique name contains normalized `<user_name>`, task-group number, capability stage, condition/task/attempt when applicable, and an eight-character random suffix. Start the environment on that network with alias `task-env`, `TASK_ENV_BIND=0.0.0.0`, and internal `TASK_ENV_PORT = 9000 + task-group number`; publish no host port. Agent containers join the same network and use `http://task-env:<TASK_ENV_PORT>/`. Read `env.state_mode`: share a read-only instance only inside one capability stage; give every mutable attempt a fresh network and environment. Enable `/api/judge` only for the isolated reflect skill-generation stage and disable it for formal tests. Verify `/health` from a disposable container on the same network and record all runtime names and results.
 
 4. Generate 3 independent skills for each non-base condition:
 

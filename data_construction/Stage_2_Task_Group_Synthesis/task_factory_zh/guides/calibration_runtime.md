@@ -15,22 +15,37 @@ scratch/calibration_runs/<run_kind>/<run_id>/codex_home/ -> /codex_home
 不能挂载仓库、完整 task group、父目录、用户 home、`env/`、notes、evaluators、
 该运行不允许看到的标准答案、其他 attempts 或 review 材料。
 
-环境 API 固定在主控宿主机上以 `TASK_ENV_BIND=0.0.0.0` 运行，并令
-`TASK_ENV_PORT` 取 `9000 + task group 数字编号`。每个 agent 容器都使用
-`--add-host=host.docker.internal:host-gateway`，并通过
-`http://host.docker.internal:<TASK_ENV_PORT>` 访问。该 URL 写入
-`environment_access.md`，同时从 `env/endpoints.txt` 中取出当前运行允许的全部
-业务 endpoint，以 `METHOD /path` 逐行写入，不附接口介绍。base/fewshot 校准
-输入不能包含 `/health`、reset/reseed endpoint 或 `/api/judge`。不能 staging
-或挂载环境源码。
+主控从 `env/Dockerfile` 构建环境镜像，并把环境容器与每个 calibration agent
+接入主控创建的 Docker bridge network。环境以 `TASK_ENV_BIND=0.0.0.0` 监听，
+`TASK_ENV_PORT` 取 `9000 + task group 数字编号`，network 别名固定为
+`task-env`，且不映射宿主机端口。写入 `environment_access.md` 的地址是
+`http://task-env:<TASK_ENV_PORT>/`，同时从 `env/endpoints.txt` 中取出当前运行
+允许的全部业务 endpoint，以 `METHOD /path` 逐行写入，不附接口介绍。
+base/fewshot 校准输入不能包含 `/health`、reset/reseed endpoint 或
+`/api/judge`，环境实例设置 `TASK_ENV_ENABLE_JUDGE=0`。不能 staging 或挂载
+环境源码。创建 bridge 时不能使用 `--internal`，以便 agent 通过 Docker 默认
+NAT 和 DNS 保留模型 API 出站能力。
+
+所有运行时名称都由主控生成，必须包含规范化后的 `GDPEVO_RUN_OWNER` 或当前
+用户名、task group 编号、`cal`、运行类型、必要时的 task/attempt 和 8 位随机
+suffix。例如 `gdp-<user_name>-013-cal-base-t001-a01-7f3a91c2-net`；环境容器和
+agent 容器使用相同 scope，并分别以 `-env` 和 `-agent` 结尾。`task-env` 只能
+作为 network 别名，不能作为全局固定容器名。
+
+主控读取 `task_group.yaml` 中的 `env.state_mode`。`read_only` 环境可以在同一
+calibration 阶段供多个并发 agent 共用；`mutable` 环境的每个 calibration
+attempt 都使用独立 network 和新环境容器。只要命名唯一，主控可以按服务器能力
+并发启动多个 attempt。
 
 ## Codex 命令
 
-使用配置好的校准模型和 reasoning effort。宿主机统一使用以下启动形式：
+使用配置好的校准模型和 reasoning effort。主控创建 network 并确认环境健康后，
+agent 统一使用以下启动形式：
 
 ```bash
 docker run --rm \
-  --add-host=host.docker.internal:host-gateway \
+  --name "$AGENT_CONTAINER_NAME" \
+  --network "$NETWORK_NAME" \
   --env PROMPT \
   --mount type=bind,src="$WORK_DIR",dst=/work \
   --mount type=bind,src="$CODEX_HOME_DIR",dst=/codex_home \
@@ -41,7 +56,8 @@ docker run --rm \
 `CODEX_HOME` 只是该进程运行时的临时变量。正式校准不能使用
 `codex exec --ephemeral`；应把专属 `codex_home/` 下完整的
 `rollout-*.jsonl` 保留为主 trace。校准记录还要保存模型、reasoning effort、
-镜像、网络配置、run id、staged 文件、trace 路径和退出状态。
+agent 和环境镜像、owner、network 和容器名、state mode、run id、staged 文件、
+trace 路径和退出状态。
 
 ## Prompt 契约
 
@@ -100,7 +116,8 @@ Solve exactly one test task using only files staged in the current /work directo
 一次运行只有在以下条件全部满足时才有效：
 
 - `/work` 为新建目录，且只包含该模式允许的材料；
-- 使用与正式运行相同的容器网络完成环境 health check；
+- 临时容器已在相同 Docker network 中通过
+  `http://task-env:<TASK_ENV_PORT>/` 完成环境 health check；
 - 进程生成了预期的 `answer.json` 或完整 skill package；
 - 完整 Codex session trace 已保存，或明确记录了无法保存的原因；
 - trace 中没有访问禁止材料；

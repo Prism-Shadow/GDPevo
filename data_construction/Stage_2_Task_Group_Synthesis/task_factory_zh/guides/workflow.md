@@ -53,7 +53,7 @@ reviewer subagent 负责独立审查：
 | --- | --- | --- | --- |
 | 1. 理解场景 | 主 agent | 来源 example 难度审计和场景理解 | 主 agent 能说明来源 examples 的真实工作流、数据表面和难度来源 |
 | 2. Task group 设计 | 主 agent | 只写 `scratch/task_group_design.md` | 5 个 train、5 个 test、迁移计划、diversity 计划、scoring 计划和 task-builder 分派都已明确；本阶段不创建 task 文件、答案、evaluator 或 env 实现 |
-| 3. Env blueprint | 主 agent | `scratch/env_blueprint.md` | 共享业务系统、公开入口、数据契约、生成种子、宿主机监听与端口、固定 host-gateway 访问、reset 行为和 manifest 要求都已说明 |
+| 3. Env blueprint | 主 agent | `scratch/env_blueprint.md` | 共享业务系统、公开入口、数据契约、生成种子、环境镜像与运行方式、state mode、仅限 Docker network 的访问方式、reset 行为和 manifest 要求都已说明 |
 | 4. Env 实现 | 上下文干净的 env-builder coding subagent | `env/` | 环境服务于全部任务，按业务领域组织，能被独立 agent 容器访问，且没有接近答案的 per-task endpoint |
 | 5. Task 构造 | 10 个 task-builder subagents | `train_tasks/` 和 `test_tasks/` 任务目录 | 每个任务都有 solver input、中英双语 notes、标准答案、evaluator 和 answer template |
 | 6. 集成和 evaluator 自检 | 主 agent | 最终 `task_group.yaml`、路径/schema 修正、`scratch/rubric_validation.md`、evaluator 与 Judge API 自检记录 | 每个 evaluator 对标准答案打满分；selective perturbation 只损失对应分值；partial answer 能得到部分分；`/api/judge` 拒绝 test id 且不暴露隐藏细节 |
@@ -63,14 +63,14 @@ reviewer subagent 负责独立审查：
 ## 构造流程
 
 1. 主 agent 编写 `scratch/task_group_design.md`，覆盖 10 个 task 的规划、task-builder 分派、任务 diversity、可迁移 SOP、train/test 角色、环境计划、数据生成计划和评测计划。这里只是设计文档阶段，不能创建 task 目录、prompt、notes、标准答案、evaluator 或 env 实现文件。
-2. 主 agent 编写 `scratch/env_blueprint.md`，说明共享业务系统、公开接口、数据契约、生成种子、manifest 要求、`TASK_ENV_BIND`/`TASK_ENV_PORT`、固定 host-gateway 访问、reset 行为和预期环境行为。
-3. 上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 实现 `env/`，包括 Web/API 服务、`env/endpoints.txt`、任务需要的宿主机 SQLite 数据库及其带鉴权查询服务、数据生成脚本、生成数据、setup 脚本、manifest、health check 和由主 agent 控制的 reset/reseed 流程。
+2. 主 agent 编写 `scratch/env_blueprint.md`，说明共享业务系统、公开接口、数据契约、生成种子、manifest 要求、`env/Dockerfile`、`env.state_mode`、`TASK_ENV_BIND`/`TASK_ENV_PORT`、`task-env` network 路径、judge 开关、reset 行为和预期环境行为。
+3. 上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 实现 `env/`，包括环境 Dockerfile、Web/API 服务、`env/endpoints.txt`、任务需要的容器内 SQLite 数据库及其带鉴权查询服务、数据生成脚本、生成数据、setup 脚本、manifest、health check 和由主 agent 控制的 reset/reseed 流程。
 4. 主 agent review 并集成 env-builder 产物，再记录 task builders 可使用的环境入口。
 5. 主 agent 启动 10 个 task-builder subagents，可以并行或分批运行：`train_001` 到 `train_005` 和 `test_001` 到 `test_005` 各 1 个。
 6. Task-builder subagents 分别生成自己负责 task 的 `input/`、`notes/`、`output/` 和 `eval/`。
 7. 主 agent 集成所有任务，统一修正路径、schema、notes 和 env 使用方式。
 8. 主 agent 运行每个 evaluator 对照标准答案自检，创建 `scratch/rubric_validation.md`，并使用单方面错误和 partial answer probes 验证多维度、非二值打分。随后把 `env/judge_api.py` 接入服务，验证 `/api/judge` 对 train 标准答案打满分、保留 evaluator 的 partial score、拒绝 test task id，且不会返回隐藏 evaluator 或答案内容。
-9. 难度校准前，主 agent 在宿主机以 `TASK_ENV_BIND=0.0.0.0` 启动环境，所有 agent 容器都带 `--add-host=host.docker.internal:host-gateway`，并从临时容器验证 `http://host.docker.internal:<TASK_ENV_PORT>` 的 health endpoint。
+9. 难度校准前，主 agent 构建环境镜像，创建包含 user/run/task/stage 的独立 Docker network，并从同一 network 上的临时容器验证 `http://task-env:<TASK_ENV_PORT>/` 的 health endpoint。read-only 环境可在 judge 关闭的 calibration 阶段共享；mutable 环境为每个 attempt 启动独立 environment 和 network。
 10. base calibration：使用固定 base prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次。主 agent 在 Codex 进程外评分并记录 base `avg@3`。
 11. 使用固定 fewshot skill-generation prompt 启动 3 个相互隔离的 Dockerized `codex exec` 进程。每个进程接收全部 5 个 train inputs、对应 train answers 和环境入口，并把完整 package 写到 `scratch/train_skill/fewshot_attempt_<nn>/`，其中 `SKILL.md` 是入口文件。
 12. fewshot calibration：使用固定 fewshot prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次；attempt 01/02/03 分别使用 `fewshot_attempt_01/02/03`。主 agent 在 Codex 进程外评分并记录 fewshot `avg@3`。

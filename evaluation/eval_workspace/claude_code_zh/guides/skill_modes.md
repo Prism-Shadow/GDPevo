@@ -25,7 +25,7 @@ reflect-3
 接口介绍：
 
 ```text
-GDPEVO_ENV_BASE_URL=http://host.docker.internal:<TASK_ENV_PORT>/
+GDPEVO_ENV_BASE_URL=http://task-env:<TASK_ENV_PORT>/
 ```
 
 主 agent 也可以从 `.env` 读取 train-only judge path，但这个值只能 staging 给

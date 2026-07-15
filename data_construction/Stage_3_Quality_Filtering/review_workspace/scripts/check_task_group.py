@@ -108,19 +108,32 @@ class Checker:
             self.fail("env must be a mapping")
             return
 
+        dockerfile = env.get("dockerfile")
+        if dockerfile != "env/Dockerfile":
+            self.fail("env.dockerfile must be exactly env/Dockerfile")
+        self.require_path(dockerfile, "env.dockerfile", kind="file")
         setup_path = self.require_path(env.get("setup"), "env.setup", kind="file")
         if setup_path is not None and setup_path.is_file() and not os.access(setup_path, os.X_OK):
             self.fail("env.setup must be executable")
+
+        state_mode = env.get("state_mode")
+        if state_mode not in {"read_only", "mutable"}:
+            self.fail("env.state_mode must be either read_only or mutable")
 
         files = env.get("files")
         if not isinstance(files, list) or not files:
             self.fail("env.files must be a non-empty list")
             return
+        has_dockerfile = False
         has_judge_api = False
         for idx, item in enumerate(files):
             self.require_path(item, f"env.files[{idx}]", kind="file")
-            if isinstance(item, str) and Path(item).parts == ("env", "judge_api.py"):
-                has_judge_api = True
+            if isinstance(item, str):
+                parts = Path(item).parts
+                has_dockerfile = has_dockerfile or parts == ("env", "Dockerfile")
+                has_judge_api = has_judge_api or parts == ("env", "judge_api.py")
+        if not has_dockerfile:
+            self.fail("env.files must declare env/Dockerfile")
         if not has_judge_api:
             self.fail("env.files must declare env/judge_api.py")
 

@@ -7,7 +7,8 @@
 - `task_group.yaml` parses and contains `task_group`, `env`, `train_tasks`, and `test_tasks`.
 - `train_tasks` and `test_tasks` each contain 5 tasks.
 - Each declared task contains `input/`, `prompt.txt`, `payloads/answer_template.json`, `notes/notes.md`, `output/answer.json`, `eval/eval.sh`, and evaluator files.
-- Environment files declared in `env.setup` and `env.files` exist.
+- Environment files declared in `env.dockerfile`, `env.setup`, and `env.files` exist.
+- `env.files` declares the exact path `env/Dockerfile`, and `env.state_mode` is either `read_only` or `mutable`.
 - `env.files` declares `env/judge_api.py` for the required train-only judge endpoint.
 - All JSON/YAML files parse.
 - Each task's `eval.rubric` has 6-10 items, and every item has `goal` plus an integer `weight` in `{1, 2, 3}`.
@@ -38,7 +39,9 @@ Each reviewer must independently check:
 | `scenario_lineage` | Whether the task group comes from examples under one scenario and preserves the difficulty drivers from the source examples. |
 | `train_predict_design` | Whether train/test are all real tasks; train tasks are not tutorials; test tasks require transferable experience from train. |
 | `transfer_band` | Whether diversity sits within a transferable band, with 2-3 recurring operation families rather than unrelated one-off SOPs. |
-| `environment_design` | Whether `env/` is a shared public data and workspace environment; it runs outside agent containers; Dockerized agents can reach it through a verified network route without mounting env source or truth. |
+| `environment_design` | Whether `env/Dockerfile` builds from the `env/` directory alone; the environment and agent run on a non-`--internal`, orchestrator-created bridge network that preserves outbound model-API access; the environment is reachable only as `http://task-env:<TASK_ENV_PORT>/` inside that network without publishing a host port; and no env source, database, truth, or Docker socket is mounted into the agent. |
+| `environment_lifecycle` | Whether `env.state_mode` matches actual behavior: a `read_only` environment remains unchanged under concurrent attempts and is shared only within one capability stage, while every `mutable` attempt gets a clean environment instance and writable layer. Runtime names must include normalized `<user_name>`, task-group/stage/attempt scope, and a random suffix so concurrent experiments cannot collide. |
+| `environment_capabilities` | Whether calibration and skill-generation/test stages expose only their allowed endpoints; `/api/judge` is registered only when `TASK_ENV_ENABLE_JUDGE=1` for the isolated train-feedback stage, and is absent or returns `404` when the flag is disabled. |
 | `leakage_control` | Whether solver-visible formal task group surfaces leak answers, complete SOPs, scoring points, construction truth, or solution steps; drafts and answers in `scratch/` do not count as leakage evidence. |
 | `notes_interpretability` | Whether each task has bilingual `notes/notes.md` explaining the problem, answer basis, transfer source, common pitfalls, and scoring standard. |
 | `rubric_independence` | Whether every task evaluates at least 4 independently fail-able business questions/aspects; points do not merely duplicate one root decision; and `scratch/rubric_validation.md` uses selective perturbations to show that points do not all rise or fall together. |
@@ -54,7 +57,9 @@ The reviewer's `decision` should reflect overall quality. Small issues that do n
 - Solver-visible prompts, payloads, answer templates, or public environment entry points directly include SOPs, answer facts, scoring points, or solution steps.
 - Answers, construction truth, or calibration logs from `scratch/` are copied into solver-visible surfaces.
 - `env/` provides an answer calculator, task-specific data package, or near-answer endpoint such as `/api/tasks/<task_id>/data`.
-- Calibration or evaluation mounts `env/` into an agent container, uses the container's own `localhost` for an external API, or lacks a successful container-side health check for the configured route.
+- `env/Dockerfile` cannot build from `env/` alone; the bridge is created with `--internal` and blocks model-API egress; calibration or evaluation publishes a host port, mounts `env/`, its SQLite database, truth, or the Docker socket into an agent container; uses the agent container's own `localhost`; or lacks a successful health check from the same Docker network through `http://task-env:<TASK_ENV_PORT>/`.
+- `env.state_mode` is inaccurate, a mutable attempt reuses state from another attempt, a read-only environment changes under concurrent requests, or runtime names can collide across users/runs.
+- `/api/judge` remains reachable when `TASK_ENV_ENABLE_JUDGE=0`, or a formal test shares an environment instance with a judge-enabled stage.
 - Test tasks can score well without transfer from train tasks.
 - The apparent 6-10 rubric rows mostly depend on one answer field or upstream decision, so they all pass or fail together.
 - `scratch/rubric_validation.md` is missing, selective wrong-aspect probes collapse most points together, or naturally decomposable points provide only full-or-zero credit without justification.
