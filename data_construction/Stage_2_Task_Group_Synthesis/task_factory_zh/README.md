@@ -61,7 +61,7 @@
 - 最终 task group 中只有 `notes/notes.md` 应包含中文；solver 可见输入、answer template、标准答案、evaluator、task metadata 和 env 文件应保持英文。
 - 每个 train/test task 都必须包含 `input/payloads/answer_template.json`，明确规定输出 JSON 结构、字段类型、数值精度和可选枚举值。
 - 每个任务最好包含 6-10 个 scoring points，并覆盖至少 4 个语义上不同的业务结果。不能通过更换措辞，重复奖励同一个判断、答案事实或根本决策；把一个判断拆成相关或语义重复的多行不属于多维评测。
-- 每个 point 的原始权重为 `1`、`2` 或 `3`，该点分值按 `weight / sum(weight)` 计算。完整目标通过时获得该点全部分值，否则得零分；point 内不允许部分得分。真正不同的业务结果可以拆成不同 points，但同一个结果不能换一种说法重复计分。
+- 每个 point 的原始权重为 `1`、`2` 或 `3`，该点分值按 `weight / sum(weight)` 计算。每个 point 只有两种评分结果：完整满足要求时获得该点全部分值，否则得 `0` 分。真正不同的业务结果可以拆成不同 points，但同一个结果不能换一种说法重复计分。
 - scoring points 应优先评估数值、枚举、布尔、排序、集合或规范化结构结果。若需要字符串匹配，应在 `answer_template.json` 中改成选择题式字段，避免 schema 摩擦。
 - 大部分 scoring points 必须依赖迁移学习、大量数据探索或长流程工作，不能让 base 靠简单读题和格式填充拿到多数分。
 - solver 可见的 `prompt.txt` 和 `input/payloads/` 不应直白泄露 SOP、关键事实、工具流程或 `(1)(2)(3)(4)` 式解题步骤。

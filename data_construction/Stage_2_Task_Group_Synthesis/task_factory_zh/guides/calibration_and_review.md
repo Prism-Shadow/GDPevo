@@ -190,7 +190,7 @@ reviewer subagent 应检查：
 - 评测是否 rule-based、可复现，并覆盖关键业务判断。
 - 每个 task 是否有 6-10 个 scoring points，原始权重是否只使用 `1`、`2` 或 `3`，最终分数是否按 `weight / sum(weight)` 归一化。
 - rubric 是否覆盖至少 4 个语义上不同的业务结果，且没有换一种说法重复奖励同一个判断、答案事实或根本决策。
-- `scratch/rubric_validation.md` 是否确认 points 之间不存在语义重复，并且每个 point 只能获得该点全部分值或零分。
+- `scratch/rubric_validation.md` 是否确认 points 之间不存在语义重复，并且每个 point 完整满足要求时获得该点全部分值，否则得 `0` 分。
 - scoring points 是否优先评估数值、枚举、布尔、排序、集合或规范化结构结果；如需字符串匹配，是否已改成受控选择字段以避免 schema 摩擦。
 - 大部分 scoring points 是否真实依赖 train 迁移、大量数据探索或长流程工作，而不是不学习 train、不深入探索数据也能拿到。
 - `scratch/difficulty_calibration.md` 是否包含 15 次有效 base 和 15 次有效 fewshot Dockerized `codex exec` attempts，且都使用固定 prompt、专属 staged work 和 Codex-home 目录。
