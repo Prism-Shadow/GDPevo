@@ -20,7 +20,7 @@ Follow the same style as Stage 1 example notes: a fixed heading template is not 
 - Task definition: business background, visible inputs, expected output, key constraints, important objects, and expected work process.
 - Scenario fit: why this task belongs to the current scenario and task group, including the business workflow, object relationships, data flow, or system coordination it represents.
 - Material map: what each important payload, public environment entry point, generated dataset, policy, table, API, or support file is used for.
-- Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, expected 6-10 scoring goals, scoring weights, independent business aspects, exact-match or partial-credit checks, and likely model pitfalls.
+- Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, expected 6-10 scoring goals, scoring weights, independent business aspects, whole-point pass/fail checks, and likely model pitfalls.
 - Transfer design:
   - For train tasks, explain what SOP, facts, field conventions, tool-use habits, or business judgment can be inferred from solving this real task and comparing against the answer.
   - For test tasks, explain which train task(s) anchor the transferable knowledge needed here, what knowledge must be inferred and transferred, and which high-value scoring goals depend on transfer rather than only task-local exploration.
@@ -42,7 +42,7 @@ Do not force a rigid section template. Use clear headings that fit the task, but
 2. Task definition: business background, visible inputs, expected output, key constraints, important objects, and expected work process.
 3. Scenario fit: why this task belongs to the current scenario and task group, including the workflow, object relationships, data flow, or system coordination it represents.
 4. Material map: what each important payload, public environment entry point, generated dataset, policy, table, API, or support file is used for.
-5. Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, 6-10 scoring goals, raw scoring weights, independent business aspects, exact-match or partial-credit checks, and likely model pitfalls.
+5. Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, 6-10 scoring goals, raw scoring weights, independent business aspects, whole-point pass/fail checks, and likely model pitfalls.
 6. Transfer design:
    - If this is a train task, explain what transferable SOP, facts, field conventions, tool-use habits, or business judgment can be inferred from solving this real task and comparing the attempt against the answer. Do not describe the train task as a tutorial or worked example.
    - If this is a test task, name the train task(s) that anchor the transferable knowledge, describe what knowledge must be inferred and transferred, and identify which important scoring goals rely on transfer.
@@ -80,24 +80,26 @@ normalized_weight = scoring_point.weight / sum(all scoring_point.weight)
 
 If a task has raw weights `[2, 3, 1, 2, 1, 3, 2, 1]`, the total weight is `15`, so a scoring point with raw weight `3` contributes `3 / 15 = 0.20`.
 
-Each scoring point must be deterministic. An indivisible result may still use
-exact match. When one business result naturally contains meaningful independent
-subchecks, the evaluator may award partial credit within that point. For
-example, a weighted entity-set point may award a documented fraction for
-correct inclusions and exclusions, or a compliance point may separately credit
-eligibility, deadline, and required-action subchecks. Partial credit must not be
-based on free-text similarity or arbitrary field count.
+Each scoring point must be deterministic and atomic. A point earns its full
+normalized weight only when the complete business-result goal passes; otherwise
+it earns zero. Within-point fractional credit is not allowed. If eligibility,
+deadline, required action, inclusion, exclusion, or other results can fail
+independently, represent them as separate meaningful rubric points instead of
+combining them into one fractionally scored point. Do not create tiny points for
+incidental fields merely to manufacture score granularity.
 
 For every point, evaluator output should report its maximum normalized weight,
-earned fraction in `[0, 1]`, earned normalized weight, and subcheck results when
-partial credit is used. The total score is:
+a boolean pass result, earned normalized weight equal to either the maximum or
+`0`, and deterministic check details. The total score is:
 
 ```text
-score = sum(normalized_weight * earned_fraction)
+score = sum(normalized_weight * point_pass)
+point_pass in {0, 1}
 ```
 
-This preserves the `1`/`2`/`3` raw weighting while allowing informative scores
-between all-wrong and all-correct.
+This preserves the `1`/`2`/`3` raw weighting. The task-level score may still
+fall anywhere between `0` and `1` because some rubric points can pass while
+others fail, but no individual point may be partially earned.
 
 Scoring points should focus as much as possible on numeric, enum, boolean, ranking, set, aggregate, or other normalized structured outputs. Avoid scoring free-form strings directly. If a result naturally looks like a string classification, status, reason code, action name, or label, expose it as a controlled-choice field in `answer_template.json` and evaluate the selected value exactly.
 
@@ -125,18 +127,20 @@ rubric:
 
 Continue until the task has 6-10 scoring points spanning at least 4 genuinely
 different business aspects. Keep `rubric` as a concise index of evaluation
-goals. Put answer paths, exact-match or partial-credit logic, normalization,
-tolerances, subcheck shares, and implementation details in the evaluation
-files.
+goals. Put answer paths, whole-point pass/fail logic, normalization, tolerances,
+and implementation details in the evaluation files.
 
 Before calibration, create `scratch/rubric_validation.md`. For every task, map
 each scoring point to its business question, answer fields, upstream
-dependencies, and any partial-credit subchecks. Then run selective perturbation
+dependencies, and complete pass condition. Then run selective perturbation
 probes: keep all but one aspect correct, make that aspect wrong, and confirm
-that only the intended rubric points lose credit. Include at least one partial
-answer that receives a score strictly between `0` and `1`. If nearly every
-point rises or falls together, redesign the rubric or task instead of accepting
-the apparent point count.
+that only the intended rubric points change from full credit to zero. Verify
+that every point always earns either its full normalized weight or zero.
+Include at least one task-level partial answer that receives a total score
+strictly between `0` and `1` because some whole points pass and others fail,
+not because any point receives a fraction. If nearly every point rises or falls
+together, redesign the rubric or task instead of accepting the apparent point
+count.
 
 Evaluation should use reproducible rule checks, such as:
 
@@ -148,4 +152,4 @@ Evaluation should use reproducible rule checks, such as:
 
 Numeric results should be compared deterministically at the precision declared by the task, such as currency to cents or ratios to a specified decimal place. Lists or sets should be normalized first, for example by sorting on a stable key, removing non-business whitespace, or applying a documented enum casing rule. Normalization rules must be written in the evaluator or notes.
 
-Do not rely on subjective text-quality judgments. Do not evaluate only by whole-file equality unless the task answer is itself a single fully normalized machine field. Do not make evidence wording, formatting friction, irrelevant fields, or incidental strings independent scoring points. String-like scored outputs should be converted into enum or multiple-choice style fields whenever possible. A shared parser or prerequisite may invalidate an unreadable answer, but ordinary business mistakes should still produce diagnostic partial scores rather than an all-or-nothing collapse.
+Do not rely on subjective text-quality judgments. Do not evaluate only by whole-file equality unless the task answer is itself a single fully normalized machine field. Do not make evidence wording, formatting friction, irrelevant fields, or incidental strings independent scoring points. String-like scored outputs should be converted into enum or multiple-choice style fields whenever possible. A shared parser or prerequisite may invalidate an unreadable answer, but ordinary business mistakes should affect only their relevant whole rubric points so the weighted task score remains diagnostic rather than collapsing all points together.

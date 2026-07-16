@@ -76,7 +76,7 @@ Passing review requires all of:
 The lead agent can use this short prompt for each reviewer subagent:
 
 ```text
-Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard. Inspect the actual evaluators and scratch/rubric_validation.md; verify that each task measures at least 4 independently fail-able business aspects, that selective mistakes do not make all rubric points move together, and that deterministic partial credit works where specified. Also verify the fixed-prompt Dockerized Codex calibration evidence. Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
+Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard. Inspect the actual evaluators and scratch/rubric_validation.md; verify that each task measures at least 4 independently fail-able business aspects, that every rubric point earns only full normalized credit or zero, that independently fail-able results are separate points, and that selective mistakes do not make unrelated points move together. Also verify the fixed-prompt Dockerized Codex calibration evidence. Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
 ```
 
 Reviewers should judge whether the task group is valid benchmark data, not merely whether files exist.
