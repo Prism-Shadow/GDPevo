@@ -18,10 +18,8 @@
 | --- | --- |
 | `task_factory/guides/` | 数据构造说明，按主题拆分 |
 | `task_factory/seed_scenario/` | 放置从第一阶段复制来的 1 个 scenario 及其若干 examples |
-| `task_factory/task_group/` | 放置构造中的 task group |
+| `task_factory/task_group/` | 放置构造中的 task group；完成并通过 review 后仍保留在这里 |
 | `task_factory/scratch/` | 放置设计草稿、数据生成记录、校准记录、检查结果和中间材料 |
-
-构造完成并通过 review 后，再将结果移动到 `data_construction/task_groups/<task_group_id>/`。
 
 ## 构造说明
 

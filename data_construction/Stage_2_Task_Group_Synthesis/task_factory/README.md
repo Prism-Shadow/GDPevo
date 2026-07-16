@@ -10,10 +10,8 @@ This directory defines the workspace structure, construction requirements, and f
 | --- | --- |
 | `guides/` | Construction guides split by topic |
 | `seed_scenario/` | One copied stage 1 scenario and its selected examples |
-| `task_group/` | The task group currently under construction |
+| `task_group/` | The task group under construction; keep the completed reviewed task group here |
 | `scratch/` | Design drafts, data-generation records, calibration records, review notes, and intermediate artifacts |
-
-After construction and review, move the completed task group to `data_construction/task_groups/<task_group_id>/`.
 
 ## Guides
 

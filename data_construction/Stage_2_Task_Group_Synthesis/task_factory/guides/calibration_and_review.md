@@ -151,7 +151,7 @@ Builder-authored, hand-mutated, synthetic, or counterfactual prediction files do
 
 ## Rework Loop
 
-If calibration or review fails, the task group must be reworked and checked again before it can move to `data_construction/task_groups/<task_group_id>/`.
+If calibration or review fails, the task group must be reworked and checked again before construction is considered complete.
 
 When overall base `avg@3` is outside roughly `0.40-0.60`, or individual tasks
 are implausibly easy or impossible, the main agent may rework any combination

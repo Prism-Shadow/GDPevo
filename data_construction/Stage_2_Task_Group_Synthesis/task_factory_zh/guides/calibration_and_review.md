@@ -139,7 +139,7 @@ builder 手写、人工改写、合成或反事实 prediction 文件不能计入
 
 ## 返工闭环
 
-如果校准或 review 不通过，该 task group 必须返工并重新检查，不能直接进入 `data_construction/task_groups/<task_group_id>/`。
+如果校准或 review 不通过，该 task group 必须返工并重新检查，不能视为构造完成。
 
 当 overall base `avg@3` 不在约 `0.40-0.60` 范围内，或单题明显过易、
 几乎不可能完成时，主 agent 可以返工以下任意组合：
