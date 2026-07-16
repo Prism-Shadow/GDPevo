@@ -218,9 +218,8 @@ The reviewer subagent should check:
 - Whether every train and test task has `input/payloads/answer_template.json`, and whether `output/answer.json` conforms to that template.
 - Whether evaluation is rule-based, reproducible, and covers key business judgments.
 - Whether every task has 6-10 scoring points, raw weights only use `1`, `2`, or `3`, and final score is normalized by `weight / sum(weight)`.
-- Whether the rubric spans at least 4 independently fail-able business questions or aspects, rather than splitting one root decision into duplicated points that all rise or fall together.
-- Whether `scratch/rubric_validation.md` maps rubric dependencies and contains selective perturbation probes showing that independent mistakes lose only the intended credit.
-- Whether every rubric point uses deterministic whole-point scoring, earns only its full normalized weight or zero, and splits independently fail-able results into separate meaningful points.
+- Whether the rubric spans at least 4 semantically distinct business outcomes and does not reward the same underlying criterion, answer fact, or root decision more than once.
+- Whether `scratch/rubric_validation.md` confirms that the points are semantically non-duplicate and every point earns either all of its assigned score or zero.
 - Whether scoring points prefer numeric, enum, boolean, ranking, set, or normalized structured outputs; if string matching is needed, whether it has been converted into controlled-choice fields to avoid schema friction.
 - Whether most scoring points genuinely depend on train transfer, substantial data exploration, or long-horizon work, instead of being obtainable without train learning or deep data exploration.
 - Whether `scratch/difficulty_calibration.md` contains 15 valid base and 15 valid fewshot Dockerized `codex exec` attempts, all launched with `gpt-5.5`, `xhigh` reasoning effort, the fixed prompts, and dedicated staged work/Codex-home directories.

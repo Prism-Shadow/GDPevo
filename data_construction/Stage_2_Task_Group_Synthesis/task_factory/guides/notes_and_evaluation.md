@@ -20,7 +20,7 @@ Follow the same style as Stage 1 example notes: a fixed heading template is not 
 - Task definition: business background, visible inputs, expected output, key constraints, important objects, and expected work process.
 - Scenario fit: why this task belongs to the current scenario and task group, including the business workflow, object relationships, data flow, or system coordination it represents.
 - Material map: what each important payload, public environment entry point, generated dataset, policy, table, API, or support file is used for.
-- Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, expected 6-10 scoring goals, scoring weights, independent business aspects, whole-point pass/fail checks, and likely model pitfalls.
+- Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, expected 6-10 scoring goals, scoring weights, distinct non-duplicate business outcomes, whole-point pass/fail checks, and likely model pitfalls.
 - Transfer design:
   - For train tasks, explain what SOP, facts, field conventions, tool-use habits, or business judgment can be inferred from solving this real task and comparing against the answer.
   - For test tasks, explain which train task(s) anchor the transferable knowledge needed here, what knowledge must be inferred and transferred, and which high-value scoring goals depend on transfer rather than only task-local exploration.
@@ -42,7 +42,7 @@ Do not force a rigid section template. Use clear headings that fit the task, but
 2. Task definition: business background, visible inputs, expected output, key constraints, important objects, and expected work process.
 3. Scenario fit: why this task belongs to the current scenario and task group, including the workflow, object relationships, data flow, or system coordination it represents.
 4. Material map: what each important payload, public environment entry point, generated dataset, policy, table, API, or support file is used for.
-5. Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, 6-10 scoring goals, raw scoring weights, independent business aspects, whole-point pass/fail checks, and likely model pitfalls.
+5. Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, 6-10 scoring goals, raw scoring weights, distinct non-duplicate business outcomes, whole-point pass/fail checks, and likely model pitfalls.
 6. Transfer design:
    - If this is a train task, explain what transferable SOP, facts, field conventions, tool-use habits, or business judgment can be inferred from solving this real task and comparing the attempt against the answer. Do not describe the train task as a tutorial or worked example.
    - If this is a test task, name the train task(s) that anchor the transferable knowledge, describe what knowledge must be inferred and transferred, and identify which important scoring goals rely on transfer.
@@ -64,36 +64,34 @@ The standard answer should be explainable from the evidence, rules, and data-gen
 
 `eval/eval.sh` is the evaluation entry point. Each task should normally contain 6-10 scoring points. A scoring point is a weighted business-result dimension, not a tiny field or a sentence of explanation.
 
-The rubric must evaluate multiple independently fail-able questions and aspects.
-For example, a task may separately assess target selection, policy eligibility,
-numeric calculation, prioritization, and required follow-up action. It is not
-acceptable to split one root decision into many rows whose results all flip
-together. Renaming the same check, checking the same answer field several ways,
-or making every point depend on one shared inclusion set does not create a
-multidimensional rubric.
+The rubric must cover at least 4 semantically distinct business outcomes. Do
+not create separate points that merely restate or re-check the same criterion,
+answer fact, or root decision. Points may use the same source evidence only when
+they score genuinely different conclusions.
 
-Each scoring point's raw `weight` can only be `1`, `2`, or `3`. The final score contribution is normalized as:
+Each scoring point's raw `weight` can only be `1`, `2`, or `3`. Convert it into the score assigned to that point as:
 
 ```text
-normalized_weight = scoring_point.weight / sum(all scoring_point.weight)
+assigned_score = scoring_point.weight / sum(all scoring_point.weight)
 ```
 
 If a task has raw weights `[2, 3, 1, 2, 1, 3, 2, 1]`, the total weight is `15`, so a scoring point with raw weight `3` contributes `3 / 15 = 0.20`.
 
-Each scoring point must be deterministic and atomic. A point earns its full
-normalized weight only when the complete business-result goal passes; otherwise
-it earns zero. Within-point fractional credit is not allowed. If eligibility,
+Each scoring point must be deterministic and atomic. A point earns all of its
+assigned score only when the complete business-result goal passes; otherwise it
+earns zero. Within-point fractional credit is not allowed. If eligibility,
 deadline, required action, inclusion, exclusion, or other results can fail
 independently, represent them as separate meaningful rubric points instead of
 combining them into one fractionally scored point. Do not create tiny points for
-incidental fields merely to manufacture score granularity.
+incidental fields merely to manufacture score granularity, and do not create
+multiple points that reward the same result under different names.
 
-For every point, evaluator output should report its maximum normalized weight,
-a boolean pass result, earned normalized weight equal to either the maximum or
-`0`, and deterministic check details. The total score is:
+For every point, evaluator output should report its assigned score, a boolean
+pass result, earned score equal to either the assigned score or `0`, and
+deterministic check details. The total score is:
 
 ```text
-score = sum(normalized_weight * point_pass)
+score = sum(assigned_score * point_pass)
 point_pass in {0, 1}
 ```
 
@@ -130,17 +128,11 @@ different business aspects. Keep `rubric` as a concise index of evaluation
 goals. Put answer paths, whole-point pass/fail logic, normalization, tolerances,
 and implementation details in the evaluation files.
 
-Before calibration, create `scratch/rubric_validation.md`. For every task, map
-each scoring point to its business question, answer fields, upstream
-dependencies, and complete pass condition. Then run selective perturbation
-probes: keep all but one aspect correct, make that aspect wrong, and confirm
-that only the intended rubric points change from full credit to zero. Verify
-that every point always earns either its full normalized weight or zero.
-Include at least one task-level partial answer that receives a total score
-strictly between `0` and `1` because some whole points pass and others fail,
-not because any point receives a fraction. If nearly every point rises or falls
-together, redesign the rubric or task instead of accepting the apparent point
-count.
+Before calibration, create `scratch/rubric_validation.md` and confirm these
+rules for every task: the rubric covers at least 4 distinct business outcomes;
+no points score the same underlying criterion, answer fact, or root decision;
+and every point always earns either all of its assigned score or zero. Merge or
+redesign any points that violate these rules before calibration.
 
 Evaluation should use reproducible rule checks, such as:
 

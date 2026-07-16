@@ -117,8 +117,7 @@ The draft should include at least:
 - A transfer coverage matrix that maps transfer-dependent test scoring points to one or more train anchors and states exactly what transfers.
 - Shared environment blueprint, or a pointer to `scratch/env_blueprint.md`.
 - Programmatic data-generation plan for the env-builder coding subagent to implement.
-- Evaluation and calibration plan, including each task's expected 6-10 scoring points, `1`/`2`/`3` raw weights, at least 4 independently fail-able business aspects, and deterministic whole-point pass/fail logic. Results that can fail independently must be separate points.
-- A rubric independence map showing which business question and answer fields each point measures, which points share upstream dependencies, and why the rubric will not behave as one duplicated all-or-nothing check.
+- Evaluation and calibration plan, including each task's expected 6-10 scoring points, `1`/`2`/`3` raw weights, at least 4 semantically distinct business outcomes, no duplicate scoring of the same criterion or answer fact, and deterministic whole-point pass/fail logic.
 - Output-shape plan for `answer_template.json`, including numeric precision and controlled-choice fields for string-like outputs.
 - Labels for which scoring points depend on train-derived experience and which depend on substantial data exploration or long-horizon work, ensuring most score cannot be obtained by base attempts through simple reading.
 - A skill-saturation check: the train-derived skill should improve test performance, but overall fewshot `avg@3` should remain roughly below `0.80`; it should also not make most or all test tasks score `0.95` or higher or otherwise approach a perfect score.

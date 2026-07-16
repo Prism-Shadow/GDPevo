@@ -44,8 +44,8 @@ Each reviewer must independently check:
 | `environment_capabilities` | Whether calibration and skill-generation/test stages expose only their allowed endpoints; `/api/judge` is registered only when `TASK_ENV_ENABLE_JUDGE=1` for the isolated train-feedback stage, and is absent or returns `404` when the flag is disabled. |
 | `leakage_control` | Whether solver-visible formal task group surfaces leak answers, complete SOPs, scoring points, construction truth, or solution steps; drafts and answers in `scratch/` do not count as leakage evidence. |
 | `notes_interpretability` | Whether each task has bilingual `notes/notes.md` explaining the problem, answer basis, transfer source, common pitfalls, and scoring standard. |
-| `rubric_independence` | Whether every task evaluates at least 4 independently fail-able business questions/aspects; points do not merely duplicate one root decision; and `scratch/rubric_validation.md` uses selective perturbations to show that points do not all rise or fall together. |
-| `evaluation_design` | Whether evaluation uses deterministic whole-point checks around key business outcomes; every point earns full normalized credit or zero; independently fail-able results are separate meaningful points; and schema friction, free-text matching, and point stuffing are avoided. |
+| `rubric_independence` | Whether every task evaluates at least 4 semantically distinct business outcomes and does not reward the same underlying criterion, answer fact, or root decision more than once. |
+| `evaluation_design` | Whether evaluation uses deterministic whole-point checks around key business outcomes; every point earns all of its assigned score or zero; and schema friction, free-text matching, and point stuffing are avoided. |
 | `difficulty_calibration` | Whether base/fewshot attempts are isolated Dockerized `codex exec` runs with fixed prompts and traces; overall base `avg@3` is about `0.40-0.60`; overall fewshot `avg@3` remains roughly below `0.80` with a gain of about `0.10-0.30`; and most tasks do not score `0.95` or higher or otherwise approach a perfect score. |
 | `construction_process` | Whether records show env-builder and task-builder subagents plus 3 isolated Dockerized fewshot skill-generation processes, solver calibration, review/rework, and complete run evidence. |
 | `overall` | Whether the task group is ready for the final evaluation pool. |
@@ -61,8 +61,8 @@ The reviewer's `decision` should reflect overall quality. Small issues that do n
 - `env.state_mode` is inaccurate, a mutable attempt reuses state from another attempt, a read-only environment changes under concurrent requests, or runtime names can collide across users/runs.
 - `/api/judge` remains reachable when `TASK_ENV_ENABLE_JUDGE=0`, or a formal test shares an environment instance with a judge-enabled stage.
 - Test tasks can score well without transfer from train tasks.
-- The apparent 6-10 rubric rows mostly depend on one answer field or upstream decision, so they all pass or fail together.
-- `scratch/rubric_validation.md` is missing, selective wrong-aspect probes collapse most points together, any rubric point receives fractional credit, or independently fail-able results are bundled into one point instead of being split.
+- The apparent 6-10 rubric rows use different wording but reward the same underlying criterion, answer fact, or root decision more than once, causing semantic double counting.
+- `scratch/rubric_validation.md` is missing, does not check semantic duplication, or allows any rubric point to receive only part of its assigned score.
 - Overall base score falls outside the approximate `0.40-0.60` target, overall fewshot `avg@3` reaches roughly `0.80` or higher, fewshot gain falls outside the approximate `0.10-0.30` target without a convincing explanation, or most tasks score `0.95` or higher or otherwise approach a perfect score.
 - Difficulty evidence comes from orchestration subagents, hand-authored predictions, non-fixed prompts, or runs without isolated staged work and preserved Codex traces.
 - Evaluation scores free text, evidence phrasing, format friction, or unrelated fields instead of key business outcomes.

@@ -76,7 +76,7 @@ decision: fail
 主 agent 可以给每个 reviewer subagent 使用下面的简短任务说明：
 
 ```text
-Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard. Inspect the actual evaluators and scratch/rubric_validation.md; verify that each task measures at least 4 independently fail-able business aspects, that every rubric point earns only full normalized credit or zero, that independently fail-able results are separate points, and that selective mistakes do not make unrelated points move together. Also verify the fixed-prompt Dockerized Codex calibration evidence. Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
+Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard. Inspect the actual evaluators and scratch/rubric_validation.md; verify that each task measures at least 4 semantically distinct business outcomes, does not reward the same underlying criterion or answer fact more than once, and gives each point either all of its assigned score or zero. Also verify the fixed-prompt Dockerized Codex calibration evidence. Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
 ```
 
 Reviewer 应重点判断 task group 是否能作为 benchmark 数据，而不是只检查文件是否存在。
