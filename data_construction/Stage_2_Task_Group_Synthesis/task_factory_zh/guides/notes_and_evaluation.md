@@ -20,7 +20,7 @@ notes/notes.md
 - 任务定义：业务背景、solver 可见输入、预期输出、关键约束、重要对象和预期工作流程。
 - 场景归属：解释该 task 为什么属于当前 scenario 和 task group，包括它体现的业务流程、对象关系、数据流转或系统协同。
 - 材料说明：说明每个重要 payload、公开环境入口、生成数据集、policy、table、API 或支持文件的用途。
-- 解答和评测依据：关键证据、规则、计算、输出 schema、答案构造、预期 6-10 个 scoring goals、打分权重、相互独立的业务方面、exact-match 或 partial-credit 检查，以及模型易错点。
+- 解答和评测依据：关键证据、规则、计算、输出 schema、答案构造、预期 6-10 个 scoring goals、打分权重、语义不同且不重复的业务结果、整点通过或失败的检查，以及模型易错点。
 - 迁移设计：
   - 对 train task，说明通过完成这个真实任务并对照答案，可以归纳出什么可迁移 SOP、facts、字段口径、工具使用习惯或业务判断。
   - 对 test task，说明需要从哪些 train task 迁移知识、具体需要归纳和迁移什么知识，以及哪些高价值 scoring goals 依赖迁移而不只是依赖当前 task 的本地探索。
@@ -42,7 +42,7 @@ Do not force a rigid section template. Use clear headings that fit the task, but
 2. Task definition: business background, visible inputs, expected output, key constraints, important objects, and expected work process.
 3. Scenario fit: why this task belongs to the current scenario and task group, including the workflow, object relationships, data flow, or system coordination it represents.
 4. Material map: what each important payload, public environment entry point, generated dataset, policy, table, API, or support file is used for.
-5. Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, 6-10 scoring goals, raw scoring weights, independent business aspects, exact-match or partial-credit checks, and likely model pitfalls.
+5. Solution and evaluation basis: key evidence, rules, calculations, output schema, answer construction, 6-10 scoring goals, raw scoring weights, distinct non-duplicate business outcomes, whole-point pass/fail checks, and likely model pitfalls.
 6. Transfer design:
    - If this is a train task, explain what transferable SOP, facts, field conventions, tool-use habits, or business judgment can be inferred from solving this real task and comparing the attempt against the answer. Do not describe the train task as a tutorial or worked example.
    - If this is a test task, name the train task(s) that anchor the transferable knowledge, describe what knowledge must be inferred and transferred, and identify which important scoring goals rely on transfer.
@@ -64,25 +64,26 @@ Keep the notes concrete. Refer to actual files, task IDs, field names, APIs, tab
 
 `eval/eval.sh` 是评测入口。每个 task 最好包含 6-10 个 scoring points。Scoring point 是带权重的业务结果维度，而不是一个零碎字段或一句解释。
 
-Rubric 必须评估多个可以独立失败的问题或方面。例如，同一任务可以分别检查目标对象选择、规则资格判断、数值计算、优先级和后续动作。不能把一个根本判断拆成许多结果必然一起变化的行。对同一个字段换名字重复检查、以不同形式检查同一答案，或让所有 points 都依赖同一个 inclusion set，都不属于多维评测。
+Rubric 必须覆盖至少 4 个语义上不同的业务结果。不能设置多个 points，换一种说法重复检查同一个判断、答案事实或根本决策。不同 points 可以使用同一份来源证据，但必须评价真正不同的结论。
 
-每个 scoring point 的原始 `weight` 只能设为 `1`、`2` 或 `3`。最终得分权重按以下方式归一化：
+每个 scoring point 的原始 `weight` 只能设为 `1`、`2` 或 `3`。该 point 的分值按以下方式计算：
 
 ```text
-normalized_weight = scoring_point.weight / sum(all scoring_point.weight)
+assigned_score = scoring_point.weight / sum(all scoring_point.weight)
 ```
 
 如果一个 task 的原始权重为 `[2, 3, 1, 2, 1, 3, 2, 1]`，总权重为 `15`，则原始权重为 `3` 的 scoring point 最终贡献 `3 / 15 = 0.20`。
 
-每个 scoring point 的打分都必须是确定性的。不可拆分的业务结果可以继续使用 exact match。若一个业务结果天然包含有业务意义、可以独立判断的子项，evaluator 可以在该 point 内给 partial credit。例如，对目标对象集合可以按正确纳入和正确排除给出文档化比例；合规 point 可以分别检查资格、截止日期和必须采取的动作。Partial credit 不能基于自由文本相似度，也不能只是机械统计字段数量。
+每个 scoring point 的打分都必须是确定性的，并且整体通过或整体失败。完整业务目标通过时获得该点全部分值，否则得零分；point 内不允许部分得分。资格、截止日期、必须采取的动作、纳入或排除等真正不同的业务结果，应拆成有业务意义的独立 points。不要为了制造分数粒度而拆出零碎字段，也不要用不同名称重复奖励同一个结果。
 
-每个 point 的 evaluator 输出应包含该点最大 normalized weight、`[0, 1]` 内的 earned fraction、实际获得的 normalized weight，以及使用 partial credit 时各 subcheck 的结果。总分按以下方式计算：
+每个 point 的 evaluator 输出应包含该点分值、布尔型通过结果、实际得分（只能等于该点全部分值或 `0`），以及确定性的检查详情。总分按以下方式计算：
 
 ```text
-score = sum(normalized_weight * earned_fraction)
+score = sum(assigned_score * point_pass)
+point_pass in {0, 1}
 ```
 
-这样既保留 `1`/`2`/`3` 原始权重，也能在全错与全对之间给出有诊断意义的分数。
+这样既保留 `1`/`2`/`3` 原始权重，也允许任务总分处于 `0` 与 `1` 之间：不同 points 可以分别通过或失败，但任何单个 point 都不能只获得一部分分值。
 
 scoring points 应尽量围绕数值、枚举、布尔、排序、集合、聚合或其他规范化结构结果。避免直接对自由文本字符串打分。如果某个结果天然像字符串分类、状态、原因代码、动作名或标签，应在 `answer_template.json` 中做成受控选择字段，并对选择值做 exact match。
 
@@ -108,9 +109,9 @@ rubric:
     weight: 2
 ```
 
-继续补足到 6-10 个 scoring points，并至少覆盖 4 个真正不同的业务方面。`rubric` 只作为评测目标的简洁索引；答案路径、exact-match 或 partial-credit 逻辑、归一化、容差、subcheck 比例和实现细节放在评测文件中。
+继续补足到 6-10 个 scoring points，并至少覆盖 4 个真正不同的业务结果。`rubric` 只作为评测目标的简洁索引；答案路径、整点通过或失败的逻辑、分值计算、容差和实现细节放在评测文件中。
 
-校准前必须创建 `scratch/rubric_validation.md`。针对每个 task，记录每个 scoring point 对应的业务问题、answer fields、上游依赖，以及 partial-credit subchecks。随后做 selective perturbation probes：保持其他方面正确，只故意改错一个方面，确认只有预期 points 丢分；还要至少包含一个最终分严格位于 `0` 与 `1` 之间的 partial answer。若几乎所有 points 都一起得分或失分，应重新设计 rubric 或 task，而不是接受表面上的 point 数量。
+校准前必须创建 `scratch/rubric_validation.md`，并确认每个 task 满足以下规则：rubric 至少覆盖 4 个不同业务结果；不同 points 没有重复评价同一个判断、答案事实或根本决策；每个 point 始终只能获得该点全部分值或零分。不满足这些规则的 points 必须在校准前合并或重新设计。
 
 评测应尽量使用可复现的规则检查，例如：
 
@@ -122,4 +123,4 @@ rubric:
 
 数值结果应按任务声明的精度做确定性比较，例如金额精确到分、比例精确到指定小数位。列表或集合应先做清晰的规范化，例如按稳定 key 排序、去除非业务空白、统一枚举大小写规则；规范化规则必须写在 evaluator 或 notes 中。
 
-不要依赖主观文本质量判断。不要让评测只检查完整文件相等，除非该任务答案本身就是单一、完全规范化的机器字段。不要把证据措辞、格式摩擦、无关字段或偶然字符串作为独立 scoring point。涉及字符串类得分字段时，应尽量改成 enum 或选择题式字段。共享 parser 或前置校验可以拒绝不可读答案，但一般业务错误应得到有诊断意义的部分分，而不是让整套 rubric 全部归零。
+不要依赖主观文本质量判断。不要让评测只检查完整文件相等，除非该任务答案本身就是单一、完全规范化的机器字段。不要把证据措辞、格式摩擦、无关字段或偶然字符串作为独立 scoring point。涉及字符串类得分字段时，应尽量改成 enum 或选择题式字段。共享 parser 或前置校验可以拒绝不可读答案，但一般业务错误应只让相关 rubric points 归零，而不是让整套 rubric 全部归零。

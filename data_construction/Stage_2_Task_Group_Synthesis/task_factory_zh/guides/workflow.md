@@ -43,7 +43,7 @@ Dockerized Codex 进程负责难度校准：
 
 reviewer subagent 负责独立审查：
 
-- 检查结构、可解释性、数据生成、env 复杂度、prompt 泄漏、迁移设计、评测有效性、rubric 多维度和 partial-credit 行为。
+- 检查结构、可解释性、数据生成、env 复杂度、prompt 泄漏、迁移设计、评测有效性、rubric 之间是否语义重复，以及每个 point 是否整体给分。
 
 ## 阶段概览
 
@@ -56,8 +56,8 @@ reviewer subagent 负责独立审查：
 | 3. Env blueprint | 主 agent | `scratch/env_blueprint.md` | 共享业务系统、公开入口、数据契约、生成种子、环境镜像与运行方式、state mode、仅限 Docker network 的访问方式、reset 行为和 manifest 要求都已说明 |
 | 4. Env 实现 | 上下文干净的 env-builder coding subagent | `env/` | 环境服务于全部任务，按业务领域组织，能被独立 agent 容器访问，且没有接近答案的 per-task endpoint |
 | 5. Task 构造 | 10 个 task-builder subagents | `train_tasks/` 和 `test_tasks/` 任务目录 | 每个任务都有 solver input、中英双语 notes、标准答案、evaluator 和 answer template |
-| 6. 集成和 evaluator 自检 | 主 agent | 最终 `task_group.yaml`、路径/schema 修正、`scratch/rubric_validation.md`、evaluator 与 Judge API 自检记录 | 每个 evaluator 对标准答案打满分；selective perturbation 只损失对应分值；partial answer 能得到部分分；`/api/judge` 拒绝 test id 且不暴露隐藏细节 |
-| 7. 难度校准 | Dockerized Codex 进程，主 agent 负责打分 | `scratch/difficulty_calibration.md`、traces、3 个独立 fewshot skill package、base/fewshot 结果 | 固定 prompt 运行彼此隔离；overall base 约为 `0.40-0.60`；fewshot gain 约为 `0.10-0.20`，且不过度饱和 |
+| 6. 集成和 evaluator 自检 | 主 agent | 最终 `task_group.yaml`、路径/schema 修正、`scratch/rubric_validation.md`、evaluator 与 Judge API 自检记录 | 每个 evaluator 对标准答案打满分；rubric 覆盖不同业务结果且没有重复计分；每个 point 获得该点全部分值或零分；`/api/judge` 拒绝 test id 且不暴露隐藏细节 |
+| 7. 难度校准 | Dockerized Codex 进程，主 agent 负责打分 | `scratch/difficulty_calibration.md`、traces、3 个独立 fewshot skill package、base/fewshot 结果 | 固定 prompt 运行彼此隔离；overall base 约为 `0.40-0.60`；fewshot 大致低于 `0.80`，gain 约为 `0.10-0.30`，且不过度饱和 |
 | 8. 独立 review 和返工 | reviewer subagent 和主 agent | review findings、返工记录、必要时重跑校准 | 结构、环境、notes、评测、迁移和难度要求都通过 |
 
 ## 构造流程
@@ -69,7 +69,7 @@ reviewer subagent 负责独立审查：
 5. 主 agent 启动 10 个 task-builder subagents，可以并行或分批运行：`train_001` 到 `train_005` 和 `test_001` 到 `test_005` 各 1 个。
 6. Task-builder subagents 分别生成自己负责 task 的 `input/`、`notes/`、`output/` 和 `eval/`。
 7. 主 agent 集成所有任务，统一修正路径、schema、notes 和 env 使用方式。
-8. 主 agent 运行每个 evaluator 对照标准答案自检，创建 `scratch/rubric_validation.md`，并使用单方面错误和 partial answer probes 验证多维度、非二值打分。随后把 `env/judge_api.py` 接入服务，验证 `/api/judge` 对 train 标准答案打满分、保留 evaluator 的 partial score、拒绝 test task id，且不会返回隐藏 evaluator 或答案内容。
+8. 主 agent 运行每个 evaluator 对照标准答案自检并创建 `scratch/rubric_validation.md`，确认每个 task 至少覆盖 4 个不同业务结果，不重复评价同一个判断或答案事实，并且每个 point 只能获得该点全部分值或零分。随后把 `env/judge_api.py` 接入服务，验证 `/api/judge` 对 train 标准答案打满分、保留 evaluator 的加权总分、拒绝 test task id，且不会返回隐藏 evaluator 或答案内容。
 9. 难度校准前，主 agent 构建环境镜像，创建包含 user/run/task/stage 的独立 Docker network，并从同一 network 上的临时容器验证 `http://task-env:<TASK_ENV_PORT>/` 的 health endpoint。read-only 环境可在 judge 关闭的 calibration 阶段共享；mutable 环境为每个 attempt 启动独立 environment 和 network。
 10. base calibration：使用固定 base prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次。主 agent 在 Codex 进程外评分并记录 base `avg@3`。
 11. 使用固定 fewshot skill-generation prompt 启动 3 个相互隔离的 Dockerized `codex exec` 进程。每个进程接收全部 5 个 train inputs、对应 train answers 和环境入口，并把完整 package 写到 `scratch/train_skill/fewshot_attempt_<nn>/`，其中 `SKILL.md` 是入口文件。
