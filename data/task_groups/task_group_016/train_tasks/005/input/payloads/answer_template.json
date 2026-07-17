@@ -1,0 +1,109 @@
+{
+  "description": "Required JSON output for train_005, an observation-window retrieval and protocol-gate task.",
+  "top_level_type": "object",
+  "required_keys": [
+    "task_id",
+    "case_id",
+    "patient_id",
+    "window",
+    "target_code",
+    "lab_found",
+    "matched_observation_ids",
+    "excluded_observation_ids",
+    "latest_final",
+    "protocol_gate",
+    "repeat_lab"
+  ],
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "train_005"
+    },
+    "case_id": {
+      "type": "string",
+      "required_value": "CASE-LAB-518"
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Synthetic clinic patient identifier for the target case."
+    },
+    "window": {
+      "type": "object",
+      "required_keys": ["from", "to"],
+      "fields": {
+        "from": {
+          "type": "string",
+          "format": "ISO-8601 UTC timestamp",
+          "description": "Inclusive start of the observation search window."
+        },
+        "to": {
+          "type": "string",
+          "format": "ISO-8601 UTC timestamp",
+          "description": "Exclusive end of the observation search window."
+        }
+      }
+    },
+    "target_code": {
+      "type": "enum",
+      "allowed_values": ["K"],
+      "description": "Observation code for serum potassium."
+    },
+    "lab_found": {
+      "type": "boolean",
+      "description": "True only when at least one final target-code observation belongs to the patient and falls inside the window."
+    },
+    "matched_observation_ids": {
+      "type": "array",
+      "items": "string",
+      "ordering": "Sort matching final target-code observations by effective_time ascending, then observation_id ascending."
+    },
+    "excluded_observation_ids": {
+      "type": "array",
+      "items": "string",
+      "ordering": "Sort excluded relevant distractor observations by effective_time ascending when available, then observation_id ascending.",
+      "description": "Observation ids that are relevant to the case review but do not qualify because of date, code, or status."
+    },
+    "latest_final": {
+      "type": "object",
+      "nullable": true,
+      "required_when": "lab_found is true",
+      "required_keys": ["observation_id", "value_mmol_l", "effective_time"],
+      "fields": {
+        "observation_id": {
+          "type": "string"
+        },
+        "value_mmol_l": {
+          "type": "number",
+          "precision": "one decimal place",
+          "unit": "mmol/L"
+        },
+        "effective_time": {
+          "type": "string",
+          "format": "ISO-8601 UTC timestamp"
+        }
+      }
+    },
+    "protocol_gate": {
+      "type": "enum",
+      "allowed_values": [
+        "satisfies_recent_final_normal",
+        "recent_final_low_repletion_needed",
+        "recent_final_critical_or_urgent",
+        "no_final_lab_in_window"
+      ]
+    },
+    "repeat_lab": {
+      "type": "object",
+      "required_keys": ["recommended", "scheduled_time"],
+      "fields": {
+        "recommended": {
+          "type": "boolean"
+        },
+        "scheduled_time": {
+          "type": ["string", "null"],
+          "format": "ISO-8601 UTC timestamp when scheduled, otherwise null"
+        }
+      }
+    }
+  }
+}

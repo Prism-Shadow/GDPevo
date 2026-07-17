@@ -1,0 +1,190 @@
+{
+  "description": "Required JSON output shape for the DMHTN-2026A chronic-care enrollment panel.",
+  "type": "object",
+  "required_top_level_keys": [
+    "program_code",
+    "as_of_date",
+    "patients",
+    "summary"
+  ],
+  "program_code": {
+    "type": "string",
+    "required_value": "DMHTN-2026A"
+  },
+  "as_of_date": {
+    "type": "string",
+    "format": "YYYY-MM-DD"
+  },
+  "patients": {
+    "type": "list",
+    "ordering": "Sort by patient_id ascending.",
+    "item_required_keys": [
+      "patient_id",
+      "eligible",
+      "enrollment_status",
+      "reason_codes",
+      "follow_up_cadence",
+      "missing_chart_artifacts",
+      "outreach_channel",
+      "initial_monitoring_package"
+    ],
+    "patient_id": {
+      "type": "string"
+    },
+    "eligible": {
+      "type": "boolean"
+    },
+    "enrollment_status": {
+      "type": "enum",
+      "allowed_values": [
+        "enroll",
+        "hold",
+        "reject"
+      ]
+    },
+    "reason_codes": {
+      "type": "list",
+      "ordering": "Treat as an unordered set.",
+      "allowed_values": [
+        "meets_dmhtn_criteria",
+        "recent_hospitalization_high_touch",
+        "low_adherence_high_touch",
+        "ckd_biweekly_monitoring",
+        "recent_ed_high_touch",
+        "consent_declined",
+        "consent_missing",
+        "chart_not_active",
+        "stale_active_problems",
+        "missing_recent_vitals",
+        "missing_recent_labs",
+        "missing_medication_list",
+        "wrong_target_condition",
+        "missing_active_dmhtn_diagnosis"
+      ]
+    },
+    "follow_up_cadence": {
+      "type": "enum",
+      "allowed_values": [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "deferred",
+        "none"
+      ]
+    },
+    "missing_chart_artifacts": {
+      "type": "list",
+      "ordering": "Treat as an unordered set.",
+      "allowed_values": [
+        "chart_record",
+        "active_problems",
+        "vitals",
+        "labs",
+        "medications",
+        "consent"
+      ]
+    },
+    "outreach_channel": {
+      "type": "enum",
+      "allowed_values": [
+        "phone",
+        "portal",
+        "sms",
+        "email",
+        "none"
+      ]
+    },
+    "initial_monitoring_package": {
+      "type": "object",
+      "required_keys": [
+        "package_type",
+        "components",
+        "first_checkin_days"
+      ],
+      "package_type": {
+        "type": "enum",
+        "allowed_values": [
+          "standard_dm_htn",
+          "high_touch_dm_htn",
+          "deferred",
+          "not_applicable"
+        ]
+      },
+      "components": {
+        "type": "list",
+        "ordering": "Treat as an unordered set.",
+        "allowed_values": [
+          "bp_cuff",
+          "glucometer",
+          "lab_order_a1c_cmp_lipid",
+          "medication_reconciliation",
+          "care_plan_setup",
+          "consent_packet",
+          "chart_update_request"
+        ]
+      },
+      "first_checkin_days": {
+        "type": "integer_or_null",
+        "units": "calendar days after enrollment start"
+      }
+    }
+  },
+  "summary": {
+    "type": "object",
+    "required_keys": [
+      "total_candidates",
+      "eligible_count",
+      "ineligible_count",
+      "status_counts",
+      "follow_up_counts",
+      "outreach_counts",
+      "monitoring_package_counts"
+    ],
+    "integer_count_fields": [
+      "total_candidates",
+      "eligible_count",
+      "ineligible_count"
+    ],
+    "status_counts": {
+      "type": "object",
+      "required_keys": [
+        "enroll",
+        "hold",
+        "reject"
+      ],
+      "value_type": "integer"
+    },
+    "follow_up_counts": {
+      "type": "object",
+      "required_keys": [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "deferred",
+        "none"
+      ],
+      "value_type": "integer"
+    },
+    "outreach_counts": {
+      "type": "object",
+      "required_keys": [
+        "phone",
+        "portal",
+        "sms",
+        "email",
+        "none"
+      ],
+      "value_type": "integer"
+    },
+    "monitoring_package_counts": {
+      "type": "object",
+      "required_keys": [
+        "standard_dm_htn",
+        "high_touch_dm_htn",
+        "deferred",
+        "not_applicable"
+      ],
+      "value_type": "integer"
+    }
+  }
+}

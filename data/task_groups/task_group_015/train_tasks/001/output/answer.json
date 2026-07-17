@@ -1,0 +1,154 @@
+{
+  "task_id": "train_001",
+  "candidate_id": "DUP-TR-001",
+  "merge": {
+    "target_patient_id": "P-31014",
+    "source_patient_id": "P-88420",
+    "disposition": "ready_to_merge",
+    "canonical_reason_codes": [
+      "matching_identity_signals",
+      "source_marked_duplicate_to_target",
+      "target_active_canonical_record"
+    ]
+  },
+  "merge_decision": {
+    "disposition": "merge_ready",
+    "canonical_target_patient_id": "P-31014",
+    "source_patient_id": "P-88420",
+    "manual_review_required": false,
+    "reason_codes": [
+      "active_duplicate_candidate",
+      "duplicate_record_already_points_to_target",
+      "strong_identity_match"
+    ]
+  },
+  "clinical_unions": {
+    "active_condition_keys": [
+      "copd",
+      "coronary_artery_disease",
+      "diabetes_type_2",
+      "hypertension",
+      "right_knee_oa"
+    ],
+    "active_medication_keys": [
+      "aspirin",
+      "baseline_med",
+      "metformin"
+    ],
+    "active_allergy_keys": [
+      "baseline_allergy",
+      "iodinated_contrast",
+      "penicillin"
+    ]
+  },
+  "active_key_unions": {
+    "condition_keys": [
+      "copd",
+      "coronary_artery_disease",
+      "diabetes_type_2",
+      "hypertension",
+      "right_knee_oa"
+    ],
+    "medication_keys": [
+      "aspirin",
+      "baseline_med",
+      "metformin"
+    ],
+    "allergy_keys": [
+      "baseline_allergy",
+      "iodinated_contrast",
+      "penicillin"
+    ]
+  },
+  "active_list_reconciliation": {
+    "authoritative_source": "patient_active_list_endpoints_over_duplicate_preview",
+    "condition_keys_added_from_active_endpoints": [
+      "copd",
+      "right_knee_oa"
+    ],
+    "medication_keys_added_from_active_endpoints": [
+      "baseline_med"
+    ],
+    "allergy_keys_added_from_active_endpoints": [
+      "baseline_allergy"
+    ]
+  },
+  "identity_signals": {
+    "match_signals": [
+      "name_variant",
+      "same_dob",
+      "same_insurance",
+      "same_phone",
+      "shared_external_cardiology_document"
+    ],
+    "conflict_signals": [
+      "address_abbreviation"
+    ],
+    "demographic_matches": [
+      "dob",
+      "insurance_id",
+      "phone",
+      "primary_care_provider_id",
+      "sex"
+    ],
+    "demographic_conflicts": [
+      "address_abbreviation",
+      "given_name_variant"
+    ]
+  },
+  "evidence": {
+    "document_ids": [
+      "DOC-CARD-TR-001",
+      "DOC-MERGE-TR-001-A"
+    ],
+    "audit_ids": [
+      "AUD-TR-001-A",
+      "AUD-TR-001-B"
+    ]
+  },
+  "excluded_distractors": {
+    "condition_keys": [
+      "left_knee_oa"
+    ],
+    "medication_keys": [
+      "naproxen"
+    ],
+    "document_ids": [
+      "DOC-2B6141CA",
+      "DOC-E1547158"
+    ],
+    "audit_ids": []
+  },
+  "document_selection_policy": {
+    "packet_document_basis": "identity_or_external_continuity_documents_only",
+    "excluded_document_types": [
+      "chart_summary"
+    ]
+  },
+  "packet_readiness": {
+    "ready_for_merge_packet": true,
+    "readiness_status": "ready",
+    "required_review_notes": []
+  },
+  "packet_contact": {
+    "specialist_provider": {
+      "provider_id": "PRV-CARD-020",
+      "name": "Dr. Renee Okafor",
+      "role": "Cardiologist",
+      "service_line": "cardiology",
+      "facility": "Summit Heart Center",
+      "phone": "555-430-2020",
+      "fax": "555-430-2299",
+      "contact_reason": "External cardiology continuity document on the source duplicate shell"
+    },
+    "primary_care_provider": {
+      "provider_id": "PRV-PCP-001",
+      "name": "Dr. Alina Chow",
+      "role": "Primary Care",
+      "service_line": "primary_care",
+      "facility": "Harborview Primary Care",
+      "phone": "555-410-1001",
+      "fax": "555-410-1099"
+    }
+  }
+}

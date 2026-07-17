@@ -1,0 +1,53 @@
+{
+  "task_id": "test_004",
+  "case_id": "CASE-CM-908",
+  "patient_id": "PAT-4908",
+  "risk_tier": "high",
+  "program": "complex_care_management",
+  "priority_problems": [
+    "uncontrolled_diabetes",
+    "chronic_kidney_disease_stage_4",
+    "heart_failure_recent_admission",
+    "hypertension",
+    "polypharmacy",
+    "transportation_barrier",
+    "financial_food_barrier"
+  ],
+  "numeric_anchors": {
+    "risk_score": 0.79,
+    "hba1c_percent": 9.1,
+    "egfr": 28,
+    "blood_pressure": "158/92",
+    "active_medication_count": 14
+  },
+  "referrals": [
+    "pharmacist",
+    "social_worker",
+    "transportation_benefits",
+    "primary_care"
+  ],
+  "outreach_stance": "permission_based_plain_language",
+  "care_plan_minima": {
+    "min_problem_count": 3,
+    "weekly_follow_up": true,
+    "requires_member_stated_priority": true,
+    "min_disciplines": 2
+  },
+  "escalation_conditions": [
+    "dyspnea_weight_gain_or_ed_return",
+    "phq9_increase_or_item9_positive"
+  ],
+  "source_provenance": {
+    "chart_facts": [
+      "risk_score",
+      "hba1c_percent",
+      "egfr",
+      "active_medication_count"
+    ],
+    "member_disclosure_needed": [
+      "transportation_barrier",
+      "financial_food_barrier",
+      "medication_access_barrier"
+    ]
+  }
+}

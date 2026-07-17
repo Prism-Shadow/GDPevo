@@ -1,0 +1,308 @@
+{
+  "task_id": "train_002",
+  "batch_id": "ORTHO-JUN-01",
+  "referral_reviews": [
+    {
+      "referral_id": "REF0001",
+      "readiness_status": "under_review",
+      "issue_codes": [
+        "icd_chapter_mismatch"
+      ],
+      "priority_tier": "tier_1_immediate"
+    },
+    {
+      "referral_id": "REF0002",
+      "readiness_status": "blocked",
+      "issue_codes": [
+        "missing_imaging"
+      ],
+      "priority_tier": "tier_2_short_term"
+    },
+    {
+      "referral_id": "REF0003",
+      "readiness_status": "blocked",
+      "issue_codes": [
+        "auth_blocker",
+        "missing_records"
+      ],
+      "priority_tier": "tier_2_short_term"
+    },
+    {
+      "referral_id": "REF0004",
+      "readiness_status": "admin_followup",
+      "issue_codes": [
+        "shared_insurance_anomaly"
+      ],
+      "priority_tier": "tier_3_administrative"
+    },
+    {
+      "referral_id": "REF0005",
+      "readiness_status": "under_review",
+      "issue_codes": [
+        "icd_chapter_mismatch",
+        "shared_insurance_anomaly"
+      ],
+      "priority_tier": "tier_1_immediate"
+    },
+    {
+      "referral_id": "REF0006",
+      "readiness_status": "blocked",
+      "issue_codes": [
+        "auth_blocker",
+        "icd_chapter_mismatch",
+        "missing_imaging",
+        "missing_records"
+      ],
+      "priority_tier": "tier_2_short_term"
+    },
+    {
+      "referral_id": "REF0007",
+      "readiness_status": "under_review",
+      "issue_codes": [
+        "duplicate_referral",
+        "icd_chapter_mismatch"
+      ],
+      "priority_tier": "tier_2_short_term"
+    },
+    {
+      "referral_id": "REF0008",
+      "readiness_status": "under_review",
+      "issue_codes": [
+        "already_scheduled",
+        "icd_chapter_mismatch"
+      ],
+      "priority_tier": "tier_2_short_term"
+    },
+    {
+      "referral_id": "REF0009",
+      "readiness_status": "under_review",
+      "issue_codes": [
+        "duplicate_referral",
+        "icd_chapter_mismatch"
+      ],
+      "priority_tier": "tier_2_short_term"
+    }
+  ],
+  "icd_discrepancies": [
+    {
+      "referral_id": "REF0001",
+      "icd10_code": "S83.512A",
+      "issue_types": [
+        "icd_chapter_mismatch"
+      ],
+      "observed_chapter": "S00-T88",
+      "expected_chapter": "M00-M99"
+    },
+    {
+      "referral_id": "REF0005",
+      "icd10_code": "S83.512A",
+      "issue_types": [
+        "icd_chapter_mismatch"
+      ],
+      "observed_chapter": "S00-T88",
+      "expected_chapter": "M00-M99"
+    },
+    {
+      "referral_id": "REF0006",
+      "icd10_code": "S83.512A",
+      "issue_types": [
+        "icd_chapter_mismatch"
+      ],
+      "observed_chapter": "S00-T88",
+      "expected_chapter": "M00-M99"
+    },
+    {
+      "referral_id": "REF0007",
+      "icd10_code": "S83.512A",
+      "issue_types": [
+        "icd_chapter_mismatch"
+      ],
+      "observed_chapter": "S00-T88",
+      "expected_chapter": "M00-M99"
+    },
+    {
+      "referral_id": "REF0008",
+      "icd10_code": "S83.512A",
+      "issue_types": [
+        "icd_chapter_mismatch"
+      ],
+      "observed_chapter": "S00-T88",
+      "expected_chapter": "M00-M99"
+    },
+    {
+      "referral_id": "REF0009",
+      "icd10_code": "S83.512A",
+      "issue_types": [
+        "icd_chapter_mismatch"
+      ],
+      "observed_chapter": "S00-T88",
+      "expected_chapter": "M00-M99"
+    }
+  ],
+  "duplicate_groups": [
+    {
+      "group_id": "DUP-ORTHO-JUN-01-001",
+      "referral_ids": [
+        "REF0007",
+        "REF0009"
+      ],
+      "patient_id": "P046",
+      "primary_referral_id": "REF0007",
+      "recommendation": "consolidate_to_primary"
+    }
+  ],
+  "shared_insurance_anomalies": [
+    {
+      "insurance_id": "DUP-INS-ORTHO",
+      "referral_ids": [
+        "REF0004",
+        "REF0005"
+      ],
+      "patient_ids": [
+        "P043",
+        "P044"
+      ],
+      "disposition": "verify_distinct_patient_policy_id"
+    }
+  ],
+  "blocker_sets": {
+    "missing_records": [
+      "REF0003",
+      "REF0006"
+    ],
+    "missing_imaging": [
+      "REF0002",
+      "REF0006"
+    ],
+    "auth_blockers": [
+      {
+        "referral_id": "REF0003",
+        "auth_status": "denied"
+      },
+      {
+        "referral_id": "REF0006",
+        "auth_status": "pending"
+      }
+    ]
+  },
+  "ready_to_schedule": [],
+  "action_plan": [
+    {
+      "referral_id": "REF0001",
+      "priority_tier": "tier_1_immediate",
+      "action_codes": [
+        "request_corrected_icd"
+      ]
+    },
+    {
+      "referral_id": "REF0002",
+      "priority_tier": "tier_2_short_term",
+      "action_codes": [
+        "request_imaging"
+      ]
+    },
+    {
+      "referral_id": "REF0003",
+      "priority_tier": "tier_2_short_term",
+      "action_codes": [
+        "request_records",
+        "resolve_authorization"
+      ]
+    },
+    {
+      "referral_id": "REF0004",
+      "priority_tier": "tier_3_administrative",
+      "action_codes": [
+        "verify_insurance_id"
+      ]
+    },
+    {
+      "referral_id": "REF0005",
+      "priority_tier": "tier_1_immediate",
+      "action_codes": [
+        "request_corrected_icd",
+        "verify_insurance_id"
+      ]
+    },
+    {
+      "referral_id": "REF0006",
+      "priority_tier": "tier_2_short_term",
+      "action_codes": [
+        "request_corrected_icd",
+        "request_imaging",
+        "request_records",
+        "resolve_authorization"
+      ]
+    },
+    {
+      "referral_id": "REF0007",
+      "priority_tier": "tier_2_short_term",
+      "action_codes": [
+        "consolidate_duplicate",
+        "request_corrected_icd"
+      ]
+    },
+    {
+      "referral_id": "REF0008",
+      "priority_tier": "tier_2_short_term",
+      "action_codes": [
+        "request_corrected_icd",
+        "review_existing_appointment"
+      ]
+    },
+    {
+      "referral_id": "REF0009",
+      "priority_tier": "tier_2_short_term",
+      "action_codes": [
+        "consolidate_duplicate",
+        "request_corrected_icd"
+      ]
+    }
+  ],
+  "summary": {
+    "total_referrals": 9,
+    "ready_to_schedule_count": 0,
+    "follow_up_count": 9,
+    "counts_by_urgency": {
+      "urgent": 2,
+      "routine": 7,
+      "admin": 0
+    },
+    "counts_by_readiness_status": {
+      "ready": 0,
+      "blocked": 3,
+      "under_review": 5,
+      "admin_followup": 1
+    },
+    "counts_by_urgency_and_status": [
+      {
+        "urgency": "routine",
+        "readiness_status": "admin_followup",
+        "count": 1
+      },
+      {
+        "urgency": "routine",
+        "readiness_status": "blocked",
+        "count": 3
+      },
+      {
+        "urgency": "routine",
+        "readiness_status": "under_review",
+        "count": 3
+      },
+      {
+        "urgency": "urgent",
+        "readiness_status": "under_review",
+        "count": 2
+      }
+    ],
+    "issue_counts": {
+      "icd_discrepancy_referrals": 6,
+      "duplicate_groups": 1,
+      "shared_insurance_anomalies": 1,
+      "missing_records_referrals": 2,
+      "missing_imaging_referrals": 2,
+      "auth_blocker_referrals": 2
+    }
+  }
+}

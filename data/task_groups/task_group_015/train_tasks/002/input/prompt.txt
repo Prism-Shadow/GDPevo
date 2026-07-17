@@ -1,0 +1,5 @@
+Prepare the normalized cardiology referral coordination packet for referral `REF-FEB-CARD-007` and patient `P-20177`.
+
+Use the EHR/referral environment at `<TASK_ENV_BASE_URL>`. Relevant available endpoints include referral detail and search, patient detail, conditions, medications, allergies, encounters, documents, provider directory, and ICD-10 lookup.
+
+Return a single JSON object that conforms to `input/payloads/answer_template.json`. The packet should reconcile the referral with the active chart, identify the diagnosis/code set that belongs in the cardiology letter, document allergy readiness, cite recent encounter and required-document evidence, identify the receiving cardiology provider, classify authorization/readiness status, highlight referral-relevant medications, and choose the normalized referral-letter field values.

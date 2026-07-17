@@ -3,10 +3,10 @@
 Start the environment:
 
 ```bash
-PORT=8057 ./setup.sh
+TASK_ENV_PORT=9003 ./setup.sh
 ```
 
-The API listens on `http://127.0.0.1:${PORT}` and exposes shared CRM support records: accounts, service tickets, outages, diagnostics, troubleshooting, mobile lines, devices, bills, contact-center cases, enterprise accounts, export incidents, export runs, messages, and SLA contracts.
+The API listens on `http://${TASK_ENV_BIND:-0.0.0.0}:${TASK_ENV_PORT:-9003}` and exposes shared CRM support records: accounts, service tickets, outages, diagnostics, troubleshooting, mobile lines, devices, bills, contact-center cases, enterprise accounts, export incidents, export runs, messages, and SLA contracts.
 
 Useful endpoints include:
 

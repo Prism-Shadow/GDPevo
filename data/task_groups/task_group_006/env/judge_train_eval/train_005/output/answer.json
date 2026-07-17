@@ -1,0 +1,150 @@
+{
+  "task_id": "train_005",
+  "review_as_of": "2026-06-18",
+  "target_ids": {
+    "program_id": "PRG-AX17",
+    "po_ids": [
+      "PO-00031",
+      "PO-00038",
+      "PO-AX17-4481",
+      "PO-AX17-4519"
+    ],
+    "receipt_ids": [
+      "RCV-00017",
+      "RCV-00020",
+      "RCV-BLUE-14"
+    ],
+    "invoice_ids": [
+      "AP-00027",
+      "AP-00032",
+      "AP-LUMA-7714",
+      "AP-VANTIX-2188"
+    ]
+  },
+  "release_decisions": [
+    {
+      "invoice_id": "AP-00027",
+      "po_id": "PO-00031",
+      "receipt_ids_in_scope": [
+        "RCV-00017"
+      ],
+      "excluded_same_po_receipt_ids": [],
+      "decision": "hold_pending_quality_chargeback",
+      "primary_reason": "inspection_hold_pending_chargeback",
+      "invoice_total": 28051.01,
+      "approved_chargeback_amount": 0.0,
+      "pending_chargeback_amount": 8365.5,
+      "net_release_amount": 0.0
+    },
+    {
+      "invoice_id": "AP-00032",
+      "po_id": "PO-00038",
+      "receipt_ids_in_scope": [
+        "RCV-00020"
+      ],
+      "excluded_same_po_receipt_ids": [],
+      "decision": "release_net_after_approved_chargeback",
+      "primary_reason": "approved_ap_quantity_variance",
+      "invoice_total": 29200.4,
+      "approved_chargeback_amount": 1183.76,
+      "pending_chargeback_amount": 0.0,
+      "net_release_amount": 28016.64
+    },
+    {
+      "invoice_id": "AP-LUMA-7714",
+      "po_id": "PO-AX17-4481",
+      "receipt_ids_in_scope": [
+        "RCV-BLUE-14"
+      ],
+      "excluded_same_po_receipt_ids": [
+        "RCV-00001"
+      ],
+      "decision": "release_net_after_approved_chargeback",
+      "primary_reason": "approved_qty_chargeback",
+      "invoice_total": 22070.3,
+      "approved_chargeback_amount": 2028.0,
+      "pending_chargeback_amount": 0.0,
+      "net_release_amount": 20042.3
+    },
+    {
+      "invoice_id": "AP-VANTIX-2188",
+      "po_id": "PO-AX17-4519",
+      "receipt_ids_in_scope": [],
+      "excluded_same_po_receipt_ids": [],
+      "decision": "hold_missing_receipt",
+      "primary_reason": "no_receipt_on_po",
+      "invoice_total": 25764.13,
+      "approved_chargeback_amount": 0.0,
+      "pending_chargeback_amount": 0.0,
+      "net_release_amount": 0.0
+    }
+  ],
+  "receiving_exceptions": [
+    {
+      "receipt_id": "RCV-00017",
+      "po_id": "PO-00031",
+      "exception_codes": [
+        "Inspection Hold",
+        "Severe Unmatched Quantity",
+        "Underage Quantity"
+      ],
+      "chargeback_status": "pending_quality_review",
+      "resolution_status": "hold_for_quality_review"
+    },
+    {
+      "receipt_id": "RCV-00020",
+      "po_id": "PO-00038",
+      "exception_codes": [
+        "AP Quantity Variance"
+      ],
+      "chargeback_status": "approved",
+      "resolution_status": "net_release_ready"
+    },
+    {
+      "receipt_id": "RCV-BLUE-14",
+      "po_id": "PO-AX17-4481",
+      "exception_codes": [
+        "Severe Unmatched Quantity",
+        "Underage Quantity"
+      ],
+      "chargeback_status": "approved",
+      "resolution_status": "net_release_ready"
+    },
+    {
+      "receipt_id": "MISSING:PO-AX17-4519",
+      "po_id": "PO-AX17-4519",
+      "exception_codes": [],
+      "chargeback_status": "not_applicable",
+      "resolution_status": "missing_receipt"
+    }
+  ],
+  "summary": {
+    "release_invoice_ids": [
+      "AP-00032",
+      "AP-LUMA-7714"
+    ],
+    "hold_invoice_ids": [
+      "AP-00027",
+      "AP-VANTIX-2188"
+    ],
+    "approved_chargeback_total": 3211.76,
+    "pending_chargeback_total": 8365.5,
+    "net_release_total": 48058.94,
+    "authoritative_sources": [
+      "local_chargeback_register",
+      "procureops_ap_records",
+      "procureops_po_records",
+      "procureops_receipt_records"
+    ],
+    "supporting_only_sources": [
+      "ap_release_request_note",
+      "stale_po73xx_alias_note"
+    ],
+    "followup_actions": [
+      "ask_receiving_for_vantix_receipt",
+      "hold_luma_duplicate_receipt_for_separate_invoice",
+      "post_approved_chargeback_netting",
+      "route_po00031_quality_review"
+    ]
+  }
+}

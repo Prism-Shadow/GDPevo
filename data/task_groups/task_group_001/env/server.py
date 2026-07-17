@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -124,13 +125,15 @@ class HarborHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
-        path = parsed.path.rstrip("/") or "/"
-        if path == "/api/judge":
-            length = int(self.headers.get("Content-Length", "0") or "0")
-            status, payload = judge_answer_request(self.rfile.read(length))
-            self.send_json(status, payload)
+        if parsed.path != "/api/judge":
+            self.not_found()
             return
-        self.not_found()
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            self.not_found()
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(status, payload)
 
     def route(self, parts: list[str], params: dict[str, list[str]]) -> object | None:
         if parts == ["health"]:
@@ -246,8 +249,10 @@ class HarborHandler(BaseHTTPRequestHandler):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the HarborCRM local JSON API.")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8067)
+    parser.add_argument("--host", default=os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0")))
+    parser.add_argument(
+        "--port", type=int, default=int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9001")))
+    )
     args = parser.parse_args()
 
     ensure_data()

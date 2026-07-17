@@ -1,0 +1,15 @@
+You are the UM intake lead auditing a daily authorization exception batch.
+
+Use the SQLite query service at <TASK_ENV_BASE_URL>/query. Submit read-only SQL with POST JSON shaped like:
+
+```json
+{"sql": "SELECT ...", "params": []}
+```
+
+Authenticate every request with HTTP Basic Auth using username `payer_ops_solver` and password `revcycle_sql_014`.
+
+Do not assume a local database file is available or hard-code a runtime host or port. The worklist label and target scope are in `input/payloads/worklist_memo.json`.
+
+Prepare the intake audit result for the target authorization cases. The operations director needs the first intake outcome for each case, duplicate handling where relevant, gold-card or review disposition, SLA timing, provider follow-up item, notice flag, and a compact queue summary.
+
+Use the payer operations tables available through the SQL service, including authorization requests, line items, members, plans, providers, facilities, service-code rules, existing authorizations, and state SLA rules. Return only a JSON object that conforms to `input/payloads/answer_template.json`, sorted by case ID where the template calls for case-level rows.

@@ -1,0 +1,39 @@
+{
+  "request_id": "RR-2026-04-GOLD-CLOSE",
+  "requested_by": "Refund Operations and Payments Risk",
+  "business_purpose": "Reconcile settled refund exposure and isolate unresolved leakage candidates for the GOLD production-account close.",
+  "scope": {
+    "account_tier": "GOLD",
+    "account_population": "production accounts",
+    "effective_refund_service_date": {
+      "start": "2026-03-01",
+      "end": "2026-04-30",
+      "inclusive": true
+    },
+    "eligible_refunded_order_definition": "A distinct in-scope order with at least one effective settled logical refund."
+  },
+  "money_policy": {
+    "reporting_currency": "USD",
+    "fx_basis": "Use the daily fx_rates.usd_per_unit rate for each refund or reversal service_date and row currency.",
+    "order_gross_comparison": "Value the associated order gross in its order currency at the settled refund service_date rate used for the candidate comparison.",
+    "net_refund_display_decimals": 2
+  },
+  "leakage_candidate_definition": {
+    "candidate_if_any": [
+      "The order's effective settled refund value after reversals is greater than its gross order value in USD.",
+      "The order has at least two unreversed effective settled logical refunds with the same normalized reason code."
+    ],
+    "output_order": "order_id ascending"
+  },
+  "reason_ranking": {
+    "result_size": 2,
+    "primary_order": "effective net refund USD descending",
+    "tie_break": "normalized reason code ascending"
+  },
+  "cohort_risk_policy": {
+    "candidate_rate_denominator": "eligible refunded orders",
+    "LOW": "Leakage candidates are below 2% of eligible refunded orders and net refunds are below USD 20000.",
+    "MODERATE": "The LOW conditions are not both met, leakage candidates are below 5% of eligible refunded orders, and net refunds are below USD 50000.",
+    "HIGH": "All other outcomes."
+  }
+}

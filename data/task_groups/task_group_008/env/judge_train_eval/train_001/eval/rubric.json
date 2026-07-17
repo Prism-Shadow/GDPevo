@@ -1,0 +1,78 @@
+{
+  "task_id": "train_001",
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "Correct client, analysis type, and Roth conversion recommendation.",
+      "weight": 1,
+      "paths": [
+        "client_id",
+        "analysis_type",
+        "recommendation.primary_action",
+        "recommendation.suitability"
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "Correct conversion window and annual conversion amount from the controlling profile and bracket target.",
+      "weight": 3,
+      "paths": [
+        "conversion_plan.first_conversion_year",
+        "conversion_plan.conversion_years",
+        "conversion_plan.annual_conversion_amount"
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "Correct total converted and conversion tax.",
+      "weight": 2,
+      "paths": [
+        "conversion_plan.total_converted",
+        "conversion_plan.total_conversion_tax"
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "Correct first RMD year using client age and RMD start age.",
+      "weight": 2,
+      "paths": [
+        "rmd_projection.first_rmd_year"
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "Correct baseline RMD tax through the task horizon.",
+      "weight": 3,
+      "paths": [
+        "rmd_projection.baseline_rmd_tax_through_horizon"
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "Correct conversion-case RMD tax and tax savings through the task horizon.",
+      "weight": 3,
+      "paths": [
+        "rmd_projection.conversion_rmd_tax_through_horizon",
+        "rmd_projection.rmd_tax_savings_through_horizon"
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Correct projected Roth and traditional balances at the horizon.",
+      "weight": 2,
+      "paths": [
+        "legacy_projection.projected_roth_balance_horizon",
+        "legacy_projection.projected_traditional_balance_horizon"
+      ]
+    },
+    {
+      "id": "SP008",
+      "goal": "Correct source-resolution fields for profile and account evidence.",
+      "weight": 2,
+      "paths": [
+        "source_resolution.controlling_profile_source",
+        "source_resolution.controlling_account_source"
+      ]
+    }
+  ]
+}

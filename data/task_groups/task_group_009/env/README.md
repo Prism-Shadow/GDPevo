@@ -5,7 +5,7 @@ This shared environment supports the Finance Operational Modeling and Management
 Start it with:
 
 ```bash
-PORT=8047 bash env/setup.sh
+TASK_ENV_PORT=9009 bash env/setup.sh
 ```
 
 or:

@@ -1,0 +1,121 @@
+{
+  "request_id": "PHO-STATE-LONGEVITY-ALGORITHMIC-AUDIT-2023",
+  "protocol_id": "PHO_STATE_TRANSPORT_AUDIT_V1",
+  "business_task": "Determine whether adult obesity is a transportable state-level longevity signal under the registered six-module publication audit.",
+  "geography_scope": "50_STATES_PLUS_DC",
+  "analysis_years": [2020, 2021, 2022, 2023, 2024],
+  "reference_year": 2023,
+  "publication_state": "FINAL",
+  "outcome": {"dataset": "state_health", "measure_id": "life_expectancy"},
+  "primary_exposure": {"dataset": "state_health", "measure_id": "adult_obesity", "value_type": "AGE_ADJUSTED", "source_type": "DIRECT_SURVEY"},
+  "parallel_exposure": {"dataset": "state_health", "measure_id": "adult_obesity", "value_type": "CRUDE", "source_type": "DIRECT_SURVEY"},
+  "health_measures_to_resolve": [
+    "life_expectancy",
+    "adult_obesity",
+    "adult_smoking",
+    "diagnosed_diabetes",
+    "physical_inactivity",
+    "frequent_mental_distress",
+    "food_insecurity",
+    "premature_mortality_rate"
+  ],
+  "evidence_specification": {
+    "release_method": "REGISTERED_FINAL_RELEASE_RESOLUTION",
+    "primary_health_filter": "AGE_ADJUSTED_AND_DIRECT_SURVEY_AND_FINAL",
+    "parallel_health_filter": "CRUDE_AND_DIRECT_SURVEY_AND_FINAL",
+    "socioeconomic_filter": "FINAL",
+    "invalid_quality_flags": ["INVALID_SCALE", "INVALID", "WITHDRAWN"],
+    "missing_rule": "SUPPRESSED_INVALID_OR_BLANK_VALUES_ARE_UNAVAILABLE_AND_NEVER_ZERO_FILLED",
+    "core_panel_variables": ["life_expectancy", "age_adjusted_adult_obesity", "poverty", "bachelors", "median_income"],
+    "core_balanced_cohort": "JURISDICTIONS_CORE_COMPLETE_IN_EVERY_ANALYSIS_YEAR",
+    "broad_reference_cohort": "REFERENCE_YEAR_COMPLETE_CASES_FOR_OUTCOME_AND_ALL_ORDERED_RIDGE_FEATURES",
+    "strict_dual_source_cohort": "COMPLETE_FOR_OUTCOME_PRIMARY_EXPOSURE_PARALLEL_EXPOSURE_AND_ADJUSTMENTS_IN_EVERY_ANALYSIS_YEAR"
+  },
+  "audit_modules": {
+    "delete_cluster_fixed_effects": {
+      "method": "STANDARD_TWO_WAY_FIXED_EFFECTS_OLS_DELETE_ONE_STATE_JACKKNIFE",
+      "cohort": "CORE_BALANCED_COHORT",
+      "outcome": "life_expectancy",
+      "ordered_predictors": ["adult_obesity", "poverty", "bachelors", "median_income"],
+      "cluster": "STATE",
+      "required_evidence": "Full panel dimensions and coefficient, complete delete-one-state coefficient vector, jackknife inference, bias correction, and extreme deletions."
+    },
+    "nested_ridge_division_cv": {
+      "method": "NESTED_LEAVE_ONE_CENSUS_DIVISION_OUT_RIDGE",
+      "cohort": "BROAD_REFERENCE_COHORT",
+      "outcome": "life_expectancy",
+      "feature_order": [
+        "adult_obesity",
+        "adult_smoking",
+        "diagnosed_diabetes",
+        "physical_inactivity",
+        "frequent_mental_distress",
+        "food_insecurity",
+        "premature_mortality_rate",
+        "poverty",
+        "bachelors",
+        "median_income",
+        "unemployment",
+        "uninsured",
+        "socio_food_insecurity"
+      ],
+      "group": "CENSUS_DIVISION",
+      "lambda_grid": [0.01, 0.1, 1.0, 10.0, 100.0],
+      "required_evidence": "Complete outer-fold sizes, selected lambdas, inner RMSE matrix, outer RMSE vector, pooled metrics, and worst division."
+    },
+    "wild_cluster_bootstrap": {
+      "method": "PCG32_WEBB_WILD_CLUSTER_BOOTSTRAP_T",
+      "cohort": "CORE_BALANCED_COHORT",
+      "cluster": "STATE",
+      "seed": 14022023,
+      "stream": 17,
+      "replicates": 1999,
+      "quantile_probabilities": [0.025, 0.10, 0.50, 0.90, 0.975],
+      "required_evidence": "Observed fit, complete state order, first three weight-index rows, all batch exceedance counts, test summary, coefficient summary, and requested quantiles."
+    },
+    "grouped_split_conformal": {
+      "method": "GROUPED_SPLIT_CONFORMAL_RIDGE",
+      "cohort": "BROAD_REFERENCE_COHORT",
+      "group": "CENSUS_DIVISION",
+      "alpha": 0.20,
+      "fixed_lambda": 1.0,
+      "required_evidence": "All division assignments, fold sizes, thresholds, fold coverage, widths, MAE, and aggregate calibration results."
+    },
+    "trajectory_pca_clustering": {
+      "method": "REGISTERED_COVARIANCE_PCA_DETERMINISTIC_THREE_MEANS_LEAVE_YEAR_OUT_STABILITY",
+      "cohort": "CORE_BALANCED_COHORT",
+      "feature_order": ["life_expectancy_2020", "life_expectancy_2021", "life_expectancy_2022", "life_expectancy_2023", "life_expectancy_2024", "adult_obesity_2020", "adult_obesity_2021", "adult_obesity_2022", "adult_obesity_2023", "adult_obesity_2024"],
+      "cluster_count": 3,
+      "leave_year_out": [2020, 2021, 2022, 2023, 2024],
+      "required_evidence": "Complete spectrum, loadings, state scores, initialization, centroids, sizes, labels, and leave-year stability arrays."
+    },
+    "source_year_perturbation": {
+      "method": "EXHAUSTIVE_SOURCE_YEAR_FIXED_EFFECTS_PERTURBATION",
+      "cohort": "STRICT_DUAL_SOURCE_COHORT",
+      "outcome": "life_expectancy",
+      "primary_series": "AGE_ADJUSTED_DIRECT_SURVEY_ADULT_OBESITY",
+      "parallel_series": "CRUDE_DIRECT_SURVEY_ADULT_OBESITY",
+      "adjustments": ["poverty", "bachelors", "median_income"],
+      "year_subset_sizes": [3, 4, 5],
+      "required_evidence": "Strict cohort audit, all 16 source/year subsets, both coefficient and p-value vectors, shift vector, same-sign summary, and worst subset."
+    }
+  },
+  "reporting": {
+    "numeric_decimal_places": 4,
+    "full_ordered_evidence_required": true,
+    "output_contract": "answer_template.json"
+  },
+  "robustness_gates": {
+    "delete_cluster_fe": "FULL_EXPOSURE_COEFFICIENT_IS_NEGATIVE_AND_JACKKNIFE_P_VALUE_IS_AT_MOST_0_05",
+    "nested_ridge": "POOLED_Q_SQUARED_IS_AT_LEAST_0_85_AND_POOLED_RMSE_IS_AT_MOST_0_75",
+    "wild_cluster_bootstrap": "BOOTSTRAP_P_VALUE_IS_AT_MOST_0_05",
+    "grouped_split_conformal": "AGGREGATE_COVERAGE_IS_AT_LEAST_0_80_AND_AGGREGATE_MEAN_WIDTH_IS_AT_MOST_3_25",
+    "trajectory_stability": "MINIMUM_LEAVE_YEAR_OUT_ADJUSTED_RAND_INDEX_IS_AT_LEAST_0_75_AND_FIRST_TWO_COMPONENT_CUMULATIVE_EXPLAINED_RATIO_IS_AT_LEAST_0_90",
+    "source_year_stability": "SAME_SIGN_SUBSET_FRACTION_IS_AT_LEAST_0_75_AND_MEDIAN_ABSOLUTE_PERCENT_SHIFT_IS_AT_MOST_50"
+  },
+  "decision_rule": {
+    "PRIMARY_TRANSPORTABLE_LONGEVITY_SIGNAL": "ALL_SIX_GATES_PASS",
+    "ASSOCIATED_LONGEVITY_SIGNAL_WITH_LIMITED_TRANSPORTABILITY": "AT_LEAST_FOUR_GATES_PASS_BUT_PRIMARY_RULE_DOES_NOT",
+    "NO_TRANSPORTABLE_LONGEVITY_SIGNAL": "ALL_REMAINING_CASES"
+  }
+}

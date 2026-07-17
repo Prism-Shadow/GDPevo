@@ -1,0 +1,66 @@
+{
+  "pricing": {
+    "quote_id": "Q-TR-LD-5521",
+    "customer_id": "CUST-GHL",
+    "quote_date": "2026-06-01",
+    "product_code": "LD-REAGENT-44",
+    "confirmed_quantity": 1000,
+    "catalog_tier": {
+      "min_quantity": 900,
+      "max_quantity": 1199,
+      "unit_price_usd": 76.0,
+      "lead_time_days": 14,
+      "shelf_life_months": 18
+    },
+    "exw_total_usd": 76000.0,
+    "payment_terms": "NET_30_AFTER_PO"
+  },
+  "transport_decisions": {
+    "freight_options": [
+      {
+        "freight_id": "FR-LD-AIR",
+        "mode": "AIR",
+        "freight_cost_usd": 21400.0,
+        "transit_days": "3-5",
+        "valid_until": "2026-06-21",
+        "validity_status": "VALID",
+        "source_is_stale": false,
+        "customs_border_risk": "LOW",
+        "grand_total_usd": 97400.0
+      },
+      {
+        "freight_id": "FR-LD-SEA",
+        "mode": "SEA",
+        "freight_cost_usd": 5200.0,
+        "transit_days": "26-31",
+        "valid_until": "2026-06-28",
+        "validity_status": "VALID",
+        "source_is_stale": false,
+        "customs_border_risk": "LOW",
+        "grand_total_usd": 81200.0
+      },
+      {
+        "freight_id": "FR-LD-ROAD",
+        "mode": "ROAD",
+        "freight_cost_usd": 4800.0,
+        "transit_days": "10-14",
+        "valid_until": "2026-05-25",
+        "validity_status": "STALE",
+        "source_is_stale": true,
+        "customs_border_risk": "HIGH",
+        "grand_total_usd": 80800.0
+      }
+    ],
+    "recommended_mode": "SEA",
+    "freight_reconfirmation_required": true
+  },
+  "client_warnings": {
+    "road_quote_invalid_or_stale": true,
+    "freight_warning": "Freight rates require reconfirmation at final order. FR-LD-ROAD expired on 2026-05-25 and has high customs or border risk, so it should not be used without a fresh quote.",
+    "policy_terms": {
+      "quote_basis": "EXW_PLUS_FREIGHT_OPTIONS",
+      "payment_terms": "NET_30_AFTER_PO",
+      "freight_reconfirmation_required": true
+    }
+  }
+}

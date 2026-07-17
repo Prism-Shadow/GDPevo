@@ -1,0 +1,91 @@
+{
+  "task_id": "train_004",
+  "output_format": "Return one JSON object only. Do not wrap it in Markdown.",
+  "required_top_level_keys": [
+    "batch_id",
+    "application_decisions",
+    "manual_followup",
+    "rule_change_summary"
+  ],
+  "fields": {
+    "batch_id": {
+      "type": "string",
+      "required_value": "HS-2026-Q1B"
+    },
+    "application_decisions": {
+      "type": "list",
+      "ordering": "ascending by application_id",
+      "length": "one object for each application in batch HS-2026-Q1B",
+      "item": {
+        "application_id": "string",
+        "determination": "enum",
+        "reason_codes": "list of enum values, sorted in the enum order below",
+        "manual_followup_required": "boolean"
+      }
+    },
+    "manual_followup": {
+      "type": "list",
+      "ordering": "ascending by application_id",
+      "item": {
+        "application_id": "string",
+        "followup_reason_codes": "list of enum values, sorted in the enum order below"
+      }
+    },
+    "rule_change_summary": {
+      "type": "object",
+      "required_keys": [
+        "total_applications",
+        "determination_counts",
+        "q1_2026_bulletin_changed_application_ids",
+        "q1_2026_bulletin_changed_count",
+        "manual_followup_count"
+      ],
+      "field_types": {
+        "total_applications": "integer",
+        "determination_counts": {
+          "APPROVE": "integer",
+          "HOLD": "integer",
+          "DENY": "integer"
+        },
+        "q1_2026_bulletin_changed_application_ids": "list of application_id strings, ascending",
+        "q1_2026_bulletin_changed_count": "integer",
+        "manual_followup_count": "integer"
+      }
+    }
+  },
+  "allowed_enums": {
+    "determination": [
+      "APPROVE",
+      "HOLD",
+      "DENY"
+    ],
+    "reason_codes": [
+      "NO_DEFICIENCY",
+      "ADVERSE_PRIOR_REGISTRATION",
+      "BOND_CANCELLED",
+      "BOND_SHORTFALL",
+      "CORRESPONDENCE_HOLD",
+      "EXPERIENCE_VERIFY",
+      "FIELD_NOTE_HOLD",
+      "FINANCIAL_STATEMENT_MISSING",
+      "INSURANCE_VERIFY",
+      "UNRESOLVED_PENALTY"
+    ],
+    "followup_reason_codes": [
+      "PRIOR_REGISTRATION_FILE_REVIEW",
+      "BOND_REPLACEMENT_REQUIRED",
+      "BOND_INCREASE_REQUIRED",
+      "CARRIER_VERIFICATION_REQUIRED",
+      "INSPECTOR_CLEARANCE_REQUIRED",
+      "INSURANCE_REPLACEMENT_REQUIRED",
+      "PENALTY_LEDGER_REVIEW",
+      "EXPERIENCE_DOCUMENTATION_REQUIRED",
+      "FINANCIAL_STATEMENT_REQUIRED",
+      "MATERIAL_CORRESPONDENCE_REVIEW"
+    ]
+  },
+  "numeric_precision": {
+    "counts": "integers only"
+  },
+  "scoring_relevance": "Use controlled enums and stable application IDs. Do not add prose explanations for scored fields."
+}

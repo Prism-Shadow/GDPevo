@@ -1,0 +1,252 @@
+{
+  "description": "Return one normalized JSON object. Arrays marked as sets may be emitted in any order; evaluators normalize them. Dates use YYYY-MM-DD. Do not include explanatory prose outside the JSON object.",
+  "required_top_level_keys": [
+    "task_id",
+    "duplicate_review",
+    "service_request",
+    "sbar_coverage"
+  ],
+  "schema": {
+    "task_id": {
+      "type": "string",
+      "required_value": "train_004"
+    },
+    "duplicate_review": {
+      "type": "object",
+      "required_keys": [
+        "candidate_id",
+        "candidate_status",
+        "decision",
+        "primary_patient_id",
+        "possible_duplicate_patient_id",
+        "merge_target_patient_id",
+        "merge_source_patient_id",
+        "match_signals",
+        "conflict_signals"
+      ],
+      "fields": {
+        "candidate_id": {
+          "type": "string"
+        },
+        "candidate_status": {
+          "type": "enum",
+          "allowed_values": [
+            "confirmed_duplicate",
+            "needs_review",
+            "not_duplicate"
+          ]
+        },
+        "decision": {
+          "type": "enum",
+          "allowed_values": [
+            "merge",
+            "review_hold",
+            "do_not_merge"
+          ]
+        },
+        "primary_patient_id": {
+          "type": "string"
+        },
+        "possible_duplicate_patient_id": {
+          "type": "string"
+        },
+        "merge_target_patient_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "merge_source_patient_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "match_signals": {
+          "type": "array",
+          "items": "enum",
+          "allowed_values": [
+            "same_dob",
+            "same_insurance",
+            "similar_address",
+            "same_phone",
+            "same_given_name"
+          ],
+          "set_semantics": true
+        },
+        "conflict_signals": {
+          "type": "array",
+          "items": "enum",
+          "allowed_values": [
+            "different_given_name",
+            "different_phone",
+            "opposite_laterality_problem",
+            "different_dob",
+            "different_insurance",
+            "different_address"
+          ],
+          "set_semantics": true
+        }
+      }
+    },
+    "service_request": {
+      "type": "object",
+      "required_keys": [
+        "service_request_id",
+        "patient_id",
+        "status",
+        "intent",
+        "priority",
+        "service_code",
+        "service_code_valid",
+        "requester_provider_id",
+        "performer_provider_id",
+        "performer_service_line",
+        "authored_on",
+        "occurrence_date",
+        "reason_codes",
+        "reason_code_validation"
+      ],
+      "fields": {
+        "service_request_id": {
+          "type": "string"
+        },
+        "patient_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "enum",
+          "allowed_values": [
+            "draft",
+            "active",
+            "on-hold",
+            "revoked",
+            "completed",
+            "entered-in-error"
+          ]
+        },
+        "intent": {
+          "type": "enum",
+          "allowed_values": [
+            "proposal",
+            "plan",
+            "order",
+            "original-order",
+            "reflex-order",
+            "filler-order",
+            "instance-order",
+            "option"
+          ]
+        },
+        "priority": {
+          "type": "enum",
+          "allowed_values": [
+            "routine",
+            "urgent",
+            "asap",
+            "stat"
+          ]
+        },
+        "service_code": {
+          "type": "string"
+        },
+        "service_code_valid": {
+          "type": "boolean"
+        },
+        "requester_provider_id": {
+          "type": "string"
+        },
+        "performer_provider_id": {
+          "type": "string"
+        },
+        "performer_service_line": {
+          "type": "enum",
+          "allowed_values": [
+            "orthopedics",
+            "cardiology",
+            "pulmonology",
+            "neurology",
+            "skilled_nursing",
+            "oncology",
+            "primary_care"
+          ]
+        },
+        "authored_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "occurrence_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": "string",
+          "set_semantics": true
+        },
+        "reason_code_validation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required_keys": [
+              "code",
+              "valid",
+              "chapter",
+              "matches_patient_evidence"
+            ],
+            "fields": {
+              "code": {
+                "type": "string"
+              },
+              "valid": {
+                "type": "boolean"
+              },
+              "chapter": {
+                "type": "string"
+              },
+              "matches_patient_evidence": {
+                "type": "boolean"
+              }
+            }
+          },
+          "ordering": "sort_by_code"
+        }
+      }
+    },
+    "sbar_coverage": {
+      "type": "object",
+      "required_keys": [
+        "complete",
+        "sections_present",
+        "missing_sections"
+      ],
+      "fields": {
+        "complete": {
+          "type": "boolean"
+        },
+        "sections_present": {
+          "type": "array",
+          "items": "enum",
+          "allowed_values": [
+            "situation",
+            "background",
+            "assessment",
+            "recommendation"
+          ],
+          "set_semantics": true
+        },
+        "missing_sections": {
+          "type": "array",
+          "items": "enum",
+          "allowed_values": [
+            "situation",
+            "background",
+            "assessment",
+            "recommendation"
+          ],
+          "set_semantics": true
+        }
+      }
+    }
+  }
+}

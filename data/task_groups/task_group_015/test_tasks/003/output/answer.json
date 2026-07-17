@@ -1,0 +1,157 @@
+{
+  "patient": {
+    "patient_id": "P-50831",
+    "enterprise_mrn": "E10050831",
+    "display_name": "Helena Ortiz",
+    "dob": "1937-01-18"
+  },
+  "recipient": {
+    "provider_id": "PRV-SNF-050",
+    "name": "Kelsey Morgan, RN",
+    "facility": "Meadowbrook Skilled Nursing",
+    "service_line": "skilled_nursing"
+  },
+  "active_condition_keys": [
+    "diabetes_type_2",
+    "heart_failure_diastolic",
+    "lumbar_radiculopathy",
+    "memory_loss",
+    "right_knee_oa"
+  ],
+  "active_medication_keys": [
+    "baseline_med",
+    "donepezil",
+    "furosemide"
+  ],
+  "active_allergy_keys": [
+    "baseline_allergy"
+  ],
+  "handoff_encounters": [
+    {
+      "encounter_id": "ENC-50831-0",
+      "date": "2026-04-18",
+      "type": "care_transition",
+      "signed_status": "signed"
+    },
+    {
+      "encounter_id": "ENC-50831-1",
+      "date": "2026-04-14",
+      "type": "office_visit",
+      "signed_status": "signed"
+    },
+    {
+      "encounter_id": "ENC-50831-2",
+      "date": "2026-04-08",
+      "type": "office_visit",
+      "signed_status": "signed"
+    },
+    {
+      "encounter_id": "ENC-50831-3",
+      "date": "2026-03-29",
+      "type": "office_visit",
+      "signed_status": "signed"
+    },
+    {
+      "encounter_id": "ENC-50831-4",
+      "date": "2026-03-22",
+      "type": "office_visit",
+      "signed_status": "signed"
+    }
+  ],
+  "latest_immunization": {
+    "immunization_id": "IMM-D62F24F8",
+    "date": "2026-02-19",
+    "vaccine": "influenza high-dose"
+  },
+  "disclosure": {
+    "disclosure_id": "DISC-50831-SNF",
+    "date": "2026-04-18",
+    "status": "permitted",
+    "purpose": "post-acute care transition",
+    "recipient_provider_id": "PRV-SNF-050"
+  },
+  "risk_flags": [
+    "heart_failure",
+    "medication_supervision_required",
+    "mild_cognitive_impairment",
+    "walker_required"
+  ],
+  "risk_flag_evidence": [
+    {
+      "risk_flag": "heart_failure",
+      "condition_keys": [
+        "heart_failure_diastolic"
+      ],
+      "medication_keys": [
+        "furosemide"
+      ],
+      "encounter_ids": [
+        "ENC-50831-0",
+        "ENC-50831-1",
+        "ENC-50831-2",
+        "ENC-50831-3",
+        "ENC-50831-4"
+      ]
+    },
+    {
+      "risk_flag": "medication_supervision_required",
+      "condition_keys": [
+        "memory_loss"
+      ],
+      "medication_keys": [
+        "donepezil",
+        "furosemide"
+      ],
+      "encounter_ids": [
+        "ENC-50831-0",
+        "ENC-50831-1"
+      ]
+    },
+    {
+      "risk_flag": "mild_cognitive_impairment",
+      "condition_keys": [
+        "memory_loss"
+      ],
+      "medication_keys": [
+        "donepezil"
+      ],
+      "encounter_ids": [
+        "ENC-50831-0",
+        "ENC-50831-1"
+      ]
+    },
+    {
+      "risk_flag": "walker_required",
+      "condition_keys": [],
+      "medication_keys": [],
+      "encounter_ids": [
+        "ENC-50831-0",
+        "ENC-50831-1"
+      ]
+    }
+  ],
+  "source_selection": {
+    "selection_basis": "snf_transition_window",
+    "selected_encounter_ids": [
+      "ENC-50831-0",
+      "ENC-50831-1",
+      "ENC-50831-2",
+      "ENC-50831-3",
+      "ENC-50831-4"
+    ],
+    "excluded_encounter_ids": [
+      "ENC-246716B6",
+      "ENC-50831-5",
+      "ENC-61DFCB01",
+      "ENC-D67A9361"
+    ]
+  },
+  "packet_readiness": {
+    "status": "ready_with_risk_flags",
+    "ready_to_send": true,
+    "supporting_document_ids": [
+      "DOC-8334B3FE"
+    ],
+    "blocking_issue_codes": []
+  }
+}

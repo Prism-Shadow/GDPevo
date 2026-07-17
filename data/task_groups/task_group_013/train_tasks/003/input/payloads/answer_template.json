@@ -1,0 +1,126 @@
+{
+  "batch_id": {
+    "type": "string",
+    "required_value": "DIAL-WINTER-01"
+  },
+  "patients": {
+    "type": "list",
+    "ordering": "ascending by transfer_id",
+    "item_schema": {
+      "transfer_id": "string",
+      "patient_id": "string",
+      "packet_completeness_status": {
+        "type": "enum",
+        "allowed": ["complete", "incomplete"]
+      },
+      "missing_required_documents": {
+        "type": "list",
+        "ordering": "alphabetical by code",
+        "allowed_values": [
+          "allergy_list",
+          "face_sheet",
+          "flu_vaccine",
+          "hbsag",
+          "hep_b_antibody_core",
+          "history_physical",
+          "insurance_proof",
+          "medication_list",
+          "monthly_labs",
+          "physician_orders",
+          "pneumonia_vaccine",
+          "ppd_or_cxr",
+          "transportation",
+          "treatment_flowsheets",
+          "vascular_access_report"
+        ]
+      },
+      "stale_documents": {
+        "type": "list",
+        "ordering": "alphabetical by doc_type",
+        "item_schema": {
+          "doc_type": {
+            "type": "enum",
+            "allowed": ["hbsag", "hep_b_antibody_core", "history_physical", "monthly_labs", "ppd_or_cxr"]
+          },
+          "received_date": {
+            "type": "date",
+            "format": "YYYY-MM-DD"
+          },
+          "freshness_limit_days": {
+            "type": "integer"
+          }
+        }
+      },
+      "requested_start": {
+        "type": "object",
+        "required_keys": ["date", "capacity_status", "open_chairs_total", "feasibility"],
+        "fields": {
+          "date": {
+            "type": "date",
+            "format": "YYYY-MM-DD"
+          },
+          "capacity_status": {
+            "type": "enum",
+            "allowed": ["available", "unavailable"]
+          },
+          "open_chairs_total": {
+            "type": "integer",
+            "unit": "open in-center hemodialysis chairs across Cedar Ridge locations"
+          },
+          "feasibility": {
+            "type": "enum",
+            "allowed": [
+              "ready_on_requested_start",
+              "packet_not_ready_capacity_available",
+              "packet_not_ready_capacity_unavailable",
+              "capacity_unavailable"
+            ]
+          }
+        }
+      },
+      "final_intake_decision": {
+        "type": "enum",
+        "allowed": ["accept", "hold", "clinical_review"]
+      },
+      "next_contact_owner": {
+        "type": "enum",
+        "allowed": ["clinical_nurse", "intake_coordinator", "scheduling_coordinator", "none"]
+      },
+      "next_contact_route": {
+        "type": "enum",
+        "allowed": ["fax_referring_facility", "phone_patient", "internal_queue", "none"]
+      }
+    }
+  },
+  "cohort_summary": {
+    "type": "object",
+    "required_keys": [
+      "total_transfers",
+      "complete_documents_count",
+      "missing_document_patient_count",
+      "stale_document_patient_count",
+      "capacity_available_count",
+      "requested_start_ready_count",
+      "decision_counts",
+      "next_contact_owner_counts"
+    ],
+    "fields": {
+      "total_transfers": "integer",
+      "complete_documents_count": "integer",
+      "missing_document_patient_count": "integer",
+      "stale_document_patient_count": "integer",
+      "capacity_available_count": "integer",
+      "requested_start_ready_count": "integer",
+      "decision_counts": {
+        "type": "object",
+        "required_keys": ["accept", "hold", "clinical_review"],
+        "value_type": "integer"
+      },
+      "next_contact_owner_counts": {
+        "type": "object",
+        "required_keys": ["clinical_nurse", "intake_coordinator", "scheduling_coordinator", "none"],
+        "value_type": "integer"
+      }
+    }
+  }
+}

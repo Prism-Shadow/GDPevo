@@ -151,17 +151,18 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urlparse(self.path)
-        path = unquote(parsed.path).rstrip("/") or "/"
-        if path == "/api/judge":
-            length = int(self.headers.get("Content-Length", "0") or "0")
-            status, payload = judge_answer_request(self.rfile.read(length))
-            return self.send_json(payload, status=status)
-        self.not_found()
+        if parsed.path != "/api/judge":
+            return self.not_found()
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            return self.not_found()
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        return self.send_json(payload, status=status)
 
 
 def main():
-    host = "127.0.0.1"
-    port = int(os.environ.get("PORT", "8057"))
+    host = os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0"))
+    port = int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9003")))
     server = ThreadingHTTPServer((host, port), Handler)
     print(f"Support console API listening on http://{host}:{port}")
     print(f"Health: http://{host}:{port}/health")

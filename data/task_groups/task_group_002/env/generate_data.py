@@ -2309,7 +2309,7 @@ def main() -> None:
         "endpoints": ENDPOINTS,
         "record_counts": counts,
         "generation_script_path": "env/generate_data.py",
-        "setup_command": "PORT=<random available 8000-8100 port> task_factory/task_group/task_group_002/env/setup.sh",
+        "setup_command": "TASK_ENV_PORT=9002 env/setup.sh",
     }
     write_json(MANIFEST_PATH, manifest)
     print(f"Generated {BUSINESS_DATA_PATH}")

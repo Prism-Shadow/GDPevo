@@ -1,0 +1,46 @@
+{
+  "branch_id": "SUMMIT",
+  "watch_list_summary": {
+    "adverse_rating_min": 6,
+    "adverse_loan_count": 7,
+    "adverse_balance": 7675179.41,
+    "risk_classes": [
+      {"loan_id": "SUM-LN-003", "risk_class": "Desirable", "factor_score": 7},
+      {"loan_id": "SUM-LN-004", "risk_class": "Desirable", "factor_score": 8},
+      {"loan_id": "SUM-LN-010", "risk_class": "Desirable", "factor_score": 6},
+      {"loan_id": "SUM-LN-011", "risk_class": "Desirable", "factor_score": 7},
+      {"loan_id": "SUM-LN-015", "risk_class": "Desirable", "factor_score": 9},
+      {"loan_id": "SUM-LN-901", "risk_class": "Watch", "factor_score": 17},
+      {"loan_id": "SUM-LN-902", "risk_class": "Projected Loss", "factor_score": 17}
+    ],
+    "monitoring_cadence": "monthly"
+  },
+  "stress_results": {
+    "shock_label": "+200bp",
+    "breach_threshold": 1.0,
+    "results": [
+      {"loan_id": "SUM-LN-003", "base_dscr": 1.59, "stressed_dscr": 1.35, "breaches_threshold": false},
+      {"loan_id": "SUM-LN-004", "base_dscr": 1.01, "stressed_dscr": 0.86, "breaches_threshold": true},
+      {"loan_id": "SUM-LN-011", "base_dscr": 1.14, "stressed_dscr": 0.97, "breaches_threshold": true},
+      {"loan_id": "SUM-LN-015", "base_dscr": 1.55, "stressed_dscr": 1.31, "breaches_threshold": false},
+      {"loan_id": "SUM-LN-901", "base_dscr": 1.09, "stressed_dscr": 0.92, "breaches_threshold": true},
+      {"loan_id": "SUM-LN-902", "base_dscr": 0.84, "stressed_dscr": 0.71, "breaches_threshold": true}
+    ],
+    "breach_loan_ids": ["SUM-LN-004", "SUM-LN-011", "SUM-LN-901", "SUM-LN-902"]
+  },
+  "workout_queue": [
+    {"loan_id": "SUM-LN-902", "exposure": 1860000.0, "risk_class": "Projected Loss", "payment_status": "Nonaccrual", "recommended_action": "partial_chargeoff_review", "projected_loss": true},
+    {"loan_id": "SUM-LN-015", "exposure": 1689248.73, "risk_class": "Desirable", "payment_status": "90+ Days Past Due", "recommended_action": "special_assets", "projected_loss": false},
+    {"loan_id": "SUM-LN-901", "exposure": 1220000.0, "risk_class": "Watch", "payment_status": "Current", "recommended_action": "special_assets", "projected_loss": false},
+    {"loan_id": "SUM-LN-010", "exposure": 1148970.21, "risk_class": "Desirable", "payment_status": "Current", "recommended_action": "watchlist", "projected_loss": false},
+    {"loan_id": "SUM-LN-011", "exposure": 868964.36, "risk_class": "Desirable", "payment_status": "90+ Days Past Due", "recommended_action": "special_assets", "projected_loss": false},
+    {"loan_id": "SUM-LN-004", "exposure": 488115.44, "risk_class": "Desirable", "payment_status": "Current", "recommended_action": "watchlist", "projected_loss": false},
+    {"loan_id": "SUM-LN-003", "exposure": 399880.67, "risk_class": "Desirable", "payment_status": "Current", "recommended_action": "watchlist", "projected_loss": false}
+  ],
+  "severe_bucket_counts": [
+    {"current_rating": 6, "payment_status": "Current", "loan_count": 3, "exposure": 2036966.32},
+    {"current_rating": 7, "payment_status": "90+ Days Past Due", "loan_count": 2, "exposure": 2558213.09},
+    {"current_rating": 7, "payment_status": "Current", "loan_count": 1, "exposure": 1220000.0},
+    {"current_rating": 8, "payment_status": "Nonaccrual", "loan_count": 1, "exposure": 1860000.0}
+  ]
+}

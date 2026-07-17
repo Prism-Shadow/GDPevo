@@ -1,0 +1,71 @@
+{
+  "title": "State mental-health algorithmic transportability audit",
+  "submission_format": "One JSON object containing every required field and no narrative outside it.",
+  "required_top_level_keys": [
+    "publication_cohort",
+    "delete_cluster_fixed_effects",
+    "nested_ridge_division_cv",
+    "wild_cluster_bootstrap",
+    "grouped_split_conformal",
+    "trajectory_pca_clustering",
+    "source_year_perturbation",
+    "robustness_decision"
+  ],
+  "global_rules": {
+    "numeric_precision": "Round every noninteger reported statistic to 4 decimal places and encode it as a JSON number.",
+    "identifiers": "Use uppercase two-letter state codes and portal division names exactly.",
+    "ordering": "Preserve every formal order; do not sort an aligned result array independently.",
+    "missing": "Use JSON null only when a requested statistic is mathematically unavailable; never use NaN or Infinity."
+  },
+  "template": {
+    "publication_cohort": {
+      "required_keys": ["target_jurisdictions", "analysis_years", "resolved_health_observations", "resolved_socioeconomic_records", "yearly_core_complete_n", "core_balanced_state_n", "core_balanced_observation_n", "core_balanced_excluded_state_codes", "broad_2024_complete_state_n"],
+      "array_lengths": {"analysis_years": 5, "yearly_core_complete_n": 5}
+    },
+    "delete_cluster_fixed_effects": {
+      "required_keys": ["state_order", "state_n", "observation_n", "full_food_coefficient", "delete_food_coefficients", "delete_mean_coefficient", "jackknife_standard_error", "jackknife_t_statistic", "jackknife_p_value", "bias_corrected_food_coefficient", "minimum_delete_state", "minimum_delete_coefficient", "maximum_delete_state", "maximum_delete_coefficient"],
+      "cardinality_rules": {
+        "state_order": "Its length must equal the reported state_n.",
+        "delete_food_coefficients": "Its length must equal state_order length and values must align positionally with state_order."
+      }
+    },
+    "nested_ridge_division_cv": {
+      "required_keys": ["broad_state_n", "broad_state_order", "feature_order", "division_order", "lambda_grid", "outer_train_n", "outer_test_n", "selected_lambda", "inner_rmse_grid", "outer_rmse", "pooled_rmse", "pooled_mae", "pooled_q_squared", "worst_outer_division"],
+      "array_lengths": {"feature_order": 13, "division_order": 9, "lambda_grid": 5, "outer_train_n": 9, "outer_test_n": 9, "selected_lambda": 9, "inner_rmse_grid": [9, 5], "outer_rmse": 9},
+      "cardinality_rules": {
+        "broad_state_order": "Its length must equal the reported broad_state_n."
+      }
+    },
+    "wild_cluster_bootstrap": {
+      "required_keys": ["seed", "stream", "replicate_n", "state_order", "observed_food_coefficient", "observed_cr1_standard_error", "observed_t_statistic", "first_three_weight_index_rows", "batch_exceedance_counts", "exceedance_n", "bootstrap_p_value", "bootstrap_coefficient_mean", "bootstrap_coefficient_sample_sd", "t_quantile_probabilities", "bootstrap_t_quantiles"],
+      "array_lengths": {"first_three_weight_index_rows": 3, "batch_exceedance_counts": 20, "t_quantile_probabilities": 5, "bootstrap_t_quantiles": 5},
+      "cardinality_rules": {
+        "state_order": "It must exactly match delete_cluster_fixed_effects.state_order.",
+        "first_three_weight_index_rows": "Each of the three rows must have state_order length and align columns positionally with state_order."
+      }
+    },
+    "grouped_split_conformal": {
+      "required_keys": ["alpha", "fixed_lambda", "division_order", "calibration_division", "proper_train_n", "calibration_n", "test_n", "threshold", "fold_coverage", "fold_mean_width", "fold_test_mae", "aggregate_coverage", "aggregate_mean_width"],
+      "array_lengths": {"division_order": 9, "calibration_division": 9, "proper_train_n": 9, "calibration_n": 9, "test_n": 9, "threshold": 9, "fold_coverage": 9, "fold_mean_width": 9, "fold_test_mae": 9}
+    },
+    "trajectory_pca_clustering": {
+      "required_keys": ["state_order", "feature_order", "first_two_eigenvalues", "first_two_explained_ratios", "first_two_cumulative_explained_ratio", "pc1_loadings", "pc2_loadings", "pc1_scores", "pc2_scores", "initial_centroid_states", "cluster_centroids", "cluster_sizes", "cluster_labels", "leave_year_out_order", "leave_year_out_adjusted_rand_index", "leave_year_out_aligned_agreement"],
+      "array_lengths": {"feature_order": 10, "first_two_eigenvalues": 2, "first_two_explained_ratios": 2, "pc1_loadings": 10, "pc2_loadings": 10, "initial_centroid_states": 3, "cluster_centroids": [3, 2], "cluster_sizes": 3, "leave_year_out_order": 5, "leave_year_out_adjusted_rand_index": 5, "leave_year_out_aligned_agreement": 5},
+      "cardinality_rules": {
+        "state_order": "It must exactly match delete_cluster_fixed_effects.state_order.",
+        "pc1_scores": "Its length must equal state_order length and values must align positionally with state_order.",
+        "pc2_scores": "Its length must equal state_order length and values must align positionally with state_order.",
+        "cluster_labels": "Its length must equal state_order length and labels must align positionally with state_order."
+      }
+    },
+    "source_year_perturbation": {
+      "required_keys": ["strict_state_n", "strict_observation_n", "strict_excluded_state_codes", "subset_order", "primary_food_coefficients", "parallel_food_coefficients", "primary_cr1_p_values", "parallel_cr1_p_values", "absolute_percent_shifts", "same_sign_subset_n", "same_sign_subset_fraction", "median_absolute_percent_shift", "maximum_absolute_percent_shift", "worst_shift_subset"],
+      "array_lengths": {"subset_order": 16, "primary_food_coefficients": 16, "parallel_food_coefficients": 16, "primary_cr1_p_values": 16, "parallel_cr1_p_values": 16, "absolute_percent_shifts": 16}
+    },
+    "robustness_decision": {
+      "required_keys": ["delete_cluster_fe", "nested_ridge", "wild_cluster_bootstrap", "grouped_split_conformal", "trajectory_stability", "source_year_stability", "passed_gate_count", "classification"],
+      "gate_values": ["PASS", "FAIL"],
+      "classification_values": ["PRIMARY_TRANSPORTABLE_SIGNAL", "ROBUST_SECONDARY_SIGNAL", "NO_TRANSPORTABLE_SIGNAL"]
+    }
+  }
+}

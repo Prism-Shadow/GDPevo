@@ -1,0 +1,149 @@
+{
+  "description": "Required JSON output for test_005, a respiratory observation-window retrieval and protocol-gate task.",
+  "top_level_type": "object",
+  "required_keys": [
+    "task_id",
+    "case_id",
+    "patient_id",
+    "window",
+    "target_codes",
+    "viral_panel_found",
+    "cxr_found",
+    "matched_observation_ids",
+    "excluded_observation_ids",
+    "latest_cxr",
+    "viral_result",
+    "protocol_gate",
+    "remaining_tests",
+    "disposition",
+    "antibiotic_strategy"
+  ],
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_005"
+    },
+    "case_id": {
+      "type": "string",
+      "required_value": "CASE-LAB-927"
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Synthetic clinic patient identifier for the target case."
+    },
+    "window": {
+      "type": "object",
+      "required_keys": ["from", "to"],
+      "fields": {
+        "from": {
+          "type": "string",
+          "format": "ISO-8601 UTC timestamp",
+          "description": "Inclusive start of the observation search window."
+        },
+        "to": {
+          "type": "string",
+          "format": "ISO-8601 UTC timestamp",
+          "description": "Exclusive end of the observation search window."
+        }
+      }
+    },
+    "target_codes": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": ["SARS_FLU_RSV_PCR", "CXR-2V"]
+      },
+      "ordering": "No semantic ordering is required; evaluators normalize this as a set."
+    },
+    "viral_panel_found": {
+      "type": "boolean",
+      "description": "True only when at least one final respiratory viral panel observation belongs to the patient and falls inside the window."
+    },
+    "cxr_found": {
+      "type": "boolean",
+      "description": "True only when at least one final chest imaging observation belongs to the patient and falls inside the window."
+    },
+    "matched_observation_ids": {
+      "type": "array",
+      "items": "string",
+      "ordering": "Sort matching final target-code observations by effective_time ascending, then observation_id ascending."
+    },
+    "excluded_observation_ids": {
+      "type": "array",
+      "items": "string",
+      "ordering": "Sort excluded relevant distractor observations by effective_time ascending when available, then observation_id ascending.",
+      "description": "Observation ids that are relevant to the case review but do not qualify because of date, code, or status."
+    },
+    "latest_cxr": {
+      "type": "object",
+      "nullable": true,
+      "required_when": "cxr_found is true",
+      "required_keys": ["observation_id", "result", "effective_time"],
+      "fields": {
+        "observation_id": {
+          "type": "string"
+        },
+        "result": {
+          "type": "enum",
+          "allowed_values": [
+            "right_middle_lobe_infiltrate",
+            "left_lower_lobe_infiltrate",
+            "multifocal_infiltrate",
+            "no_acute_cardiopulmonary_process",
+            "normal",
+            "nonspecific"
+          ]
+        },
+        "effective_time": {
+          "type": "string",
+          "format": "ISO-8601 UTC timestamp"
+        }
+      }
+    },
+    "viral_result": {
+      "type": "enum",
+      "allowed_values": [
+        "negative",
+        "positive_sars_cov_2",
+        "positive_influenza_a",
+        "positive_influenza_b",
+        "positive_rsv",
+        "pending",
+        "not_found"
+      ]
+    },
+    "protocol_gate": {
+      "type": "enum",
+      "allowed_values": [
+        "bacterial_pneumonia_supported",
+        "viral_respiratory_infection_supported",
+        "pneumonia_protocol_pending",
+        "insufficient_observation_evidence",
+        "no_pneumonia_supported"
+      ]
+    },
+    "remaining_tests": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": ["CXR-2V", "SARS_FLU_RSV_PCR", "PULSE_OX_RECHECK", "CBC_BASIC"]
+      },
+      "ordering": "No semantic ordering is required; evaluators normalize this as a set."
+    },
+    "disposition": {
+      "type": "enum",
+      "allowed_values": ["outpatient_close_followup", "ed_transfer"]
+    },
+    "antibiotic_strategy": {
+      "type": "enum",
+      "allowed_values": [
+        "doxycycline_outpatient",
+        "defer_antibiotic_selection_to_ed",
+        "standard_outpatient_beta_lactam_plus_macrolide",
+        "supportive_care_no_antibiotic"
+      ]
+    }
+  },
+  "numeric_precision": {},
+  "output_rule": "Return exactly one JSON object with the required keys. Do not include markdown, comments, or explanatory prose."
+}

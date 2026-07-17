@@ -1,0 +1,53 @@
+{
+  "request_id": "INV-WEST-APPAREL-2026-05-003",
+  "requested_by": "Inventory Control",
+  "warehouse_id": "WH-WEST-01",
+  "product_family": "APPAREL",
+  "source_document_id": "DOC-0000028",
+  "as_of_cutoff": "2026-05-31T23:59:59Z",
+  "anomaly_scope": "Exactly one effective movement in this warehouse, product family, and source document was supplied as EA but normalized with a case multiplier.",
+  "sku_population": "Products in the named family with is_active=1.",
+  "availability_definition": "For each SKU, begin with its latest inventory snapshot at or before the cutoff and apply effective later movements through the cutoff. Available units are on_hand_each minus reserved_each plus those signed canonical movement units.",
+  "demand_definition": {
+    "window_start_inclusive": "2026-05-18T00:00:00Z",
+    "window_end_inclusive": "2026-05-31T23:59:59Z",
+    "calendar_days": 14,
+    "seven_day_demand_units": "Seven times average daily absolute effective SALE canonical quantity over the 14-day window."
+  },
+  "stockout_risk_rule": {
+    "projected_post_demand_units": "Corrected available units minus seven-day demand units.",
+    "minimum_projected_operating_buffer_each": 100,
+    "at_risk": "projected_post_demand_units is strictly below minimum_projected_operating_buffer_each",
+    "sku_list_order": "sku ascending",
+    "highest_risk_order": "projected_post_demand_units ascending, then sku ascending"
+  },
+  "stockout_status_rules": [
+    {
+      "status": "CONTROLLED",
+      "condition": "Fewer than 10% of active family SKUs are at risk."
+    },
+    {
+      "status": "WATCH",
+      "condition": "Fewer than 20% of active family SKUs are at risk."
+    },
+    {
+      "status": "CRITICAL",
+      "condition": "Otherwise."
+    }
+  ],
+  "approved_correction": {
+    "scope": "Update canonical_quantity_each and canonical_uom_multiplier for the one proven movement, plus correction metadata; preserve every raw and source-identity field.",
+    "reason_code": "UOM_SOURCE_RECONCILIATION",
+    "actor": "inventory-data-quality",
+    "audit_id": "AUD-INV-20260601-003",
+    "correction_key": "INV-20260601-WEST-APPAREL-003",
+    "corrected_at": "2026-06-01T08:45:00Z",
+    "audit_entity_type": "inventory_movement",
+    "audit_field_name": "canonical_quantity_each+canonical_uom_multiplier",
+    "audit_value_encoding": "Compact JSON objects with keys canonical_quantity_each followed by canonical_uom_multiplier."
+  },
+  "correction_status_rule": {
+    "APPLIED": "Exactly one guarded business row and one audit row commit, and post-change queries confirm both canonical values and the audit record.",
+    "NOT_APPLIED": "Any other outcome."
+  }
+}

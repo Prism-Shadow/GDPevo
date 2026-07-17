@@ -1,0 +1,77 @@
+{
+  "points": [
+    {
+      "id": "employee_identity",
+      "description": "Correctly identifies the employee under review as EMP-118.",
+      "weight": 1,
+      "fields": {
+        "employee_id": "EMP-118"
+      }
+    },
+    {
+      "id": "effective_leave_policy",
+      "description": "Reports the authoritative effective leave policy for Nadia Brooks.",
+      "weight": 2,
+      "fields": {
+        "effective_leave_policy": "Customer Success Standard 2026"
+      }
+    },
+    {
+      "id": "approved_assignment",
+      "description": "Selects the approved leave assignment that overrides the stale profile summary.",
+      "weight": 2,
+      "fields": {
+        "assignment_id": "LA-118-APP-02"
+      }
+    },
+    {
+      "id": "balance_days",
+      "description": "Reports the approved assignment balance in days.",
+      "weight": 2,
+      "fields": {
+        "balance_days": 16
+      }
+    },
+    {
+      "id": "precedence_source",
+      "description": "Applies the correct source precedence rule.",
+      "weight": 2,
+      "fields": {
+        "precedence_source": "approved_assignment_over_profile",
+        "leave_precedence_source": "approved_assignment_current_period"
+      }
+    },
+    {
+      "id": "profile_policy_ignored",
+      "description": "Flags the employee profile policy as ignored because it is stale.",
+      "weight": 1,
+      "fields": {
+        "profile_policy_ignored": true
+      }
+    },
+    {
+      "id": "audit_event",
+      "description": "Uses the audit detail that records the stale profile summary result.",
+      "weight": 2,
+      "fields": {
+        "audit_event_id": "AUD-EMP118-LEAVE-04",
+        "audit_result": "profile_summary_stale",
+        "supporting_audit_event_ids": [
+          "AUD-EMP118-LEAVE-04"
+        ],
+        "excluded_audit_event_ids": [
+          "AUD-DOC118-06"
+        ],
+        "audit_scope": "leave_source_precedence_only"
+      }
+    },
+    {
+      "id": "next_action",
+      "description": "Chooses the required remediation action after validation.",
+      "weight": 2,
+      "fields": {
+        "next_action": "update_employee_summary"
+      }
+    }
+  ]
+}

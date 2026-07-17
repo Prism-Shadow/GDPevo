@@ -254,7 +254,10 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
         if path == "/api/judge":
-            length = int(self.headers.get("Content-Length", "0") or "0")
+            if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+                self.send_json({"error": "not_found"}, 404)
+                return
+            length = int(self.headers.get("Content-Length", "0"))
             status, payload = judge_answer_request(self.rfile.read(length))
             self.send_json(payload, status)
             return
@@ -283,9 +286,12 @@ class Handler(BaseHTTPRequestHandler):
 
 def main() -> None:
     ensure_data()
-    port = int(os.environ.get("PORT") or (sys.argv[1] if len(sys.argv) > 1 else "8120"))
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"Northwind People Lifecycle Portal running at http://127.0.0.1:{port}/")
+    host = os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0"))
+    port = int(
+        os.environ.get("TASK_ENV_PORT") or os.environ.get("PORT") or (sys.argv[1] if len(sys.argv) > 1 else "9012")
+    )
+    server = ThreadingHTTPServer((host, port), Handler)
+    print(f"Northwind People Lifecycle Portal running at http://{host}:{port}/")
     server.serve_forever()
 
 

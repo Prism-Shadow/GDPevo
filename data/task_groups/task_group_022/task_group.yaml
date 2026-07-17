@@ -1,0 +1,340 @@
+task_group:
+  task_group_id: task_group_022
+  scenario_id: SCN_022_sql_database_analytics
+  source_examples:
+  - E001
+  - E002
+  - E003
+  domain: Commerce Operations SQL Analytics and Data Reconciliation
+  description: A train-predict benchmark for cutoff-consistent commerce operations analytics in a shared authenticated
+    SQLite workplace. Tasks reconcile imported event copies, reconstruct effective business state, aggregate fulfillment,
+    refunds, support, warehouse, and inventory outcomes, and perform controlled corrections when requested.
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: mutable
+  files:
+  - env/.dockerignore
+  - env/Dockerfile
+  - env/app.py
+  - env/atlas_baseline.sqlite3
+  - env/endpoints.txt
+  - env/generate_data.py
+  - env/judge_answers/train_001.json
+  - env/judge_answers/train_002.json
+  - env/judge_answers/train_003.json
+  - env/judge_answers/train_004.json
+  - env/judge_answers/train_005.json
+  - env/judge_api.py
+  - env/manifest.json
+  - env/setup.sh
+  - env/test_env.py
+  - env/train_judge_specs.json
+train_tasks:
+- task_id: train_001
+  input: train_tasks/001/input/
+  prompt_txt: train_tasks/001/input/prompt.txt
+  payloads:
+  - train_tasks/001/input/payloads/answer_template.json
+  - train_tasks/001/input/payloads/fulfillment_request.json
+  notes: train_tasks/001/notes/notes.md
+  output: train_tasks/001/output/
+  answer_json: train_tasks/001/output/answer.json
+  eval:
+    script: train_tasks/001/eval/eval.sh
+    files:
+    - train_tasks/001/eval/eval.sh
+    - train_tasks/001/eval/evaluator.py
+    rubric:
+    - goal: Correct eligible production-order count
+      weight: 2
+    - goal: Correct effective complete-order count at the cutoff
+      weight: 3
+    - goal: Correct overall on-time complete-order rate
+      weight: 3
+    - goal: Correct incomplete eligible-order count
+      weight: 2
+    - goal: Correct worst-two warehouse-region ranking and rates
+      weight: 2
+    - goal: Correct exact sorted severe-exception order set
+      weight: 3
+    - goal: Correct overall service status
+      weight: 1
+- task_id: train_002
+  input: train_tasks/002/input/
+  prompt_txt: train_tasks/002/input/prompt.txt
+  payloads:
+  - train_tasks/002/input/payloads/answer_template.json
+  - train_tasks/002/input/payloads/refund_reconciliation_request.json
+  notes: train_tasks/002/notes/notes.md
+  output: train_tasks/002/output/
+  answer_json: train_tasks/002/output/answer.json
+  eval:
+    script: train_tasks/002/eval/eval.sh
+    files:
+    - train_tasks/002/eval/eval.sh
+    - train_tasks/002/eval/evaluator.py
+    rubric:
+    - goal: Correct eligible distinct refunded-order population
+      weight: 2
+    - goal: Correct effective settled logical refund count
+      weight: 3
+    - goal: Correct effective linked reversal count
+      weight: 2
+    - goal: Correct net refund amount in USD to two decimals
+      weight: 3
+    - goal: Correct exact top-two normalized reason-code ranking
+      weight: 2
+    - goal: Correct exact ascending unresolved leakage order set
+      weight: 3
+    - goal: Correct cohort risk classification
+      weight: 1
+- task_id: train_003
+  input: train_tasks/003/input/
+  prompt_txt: train_tasks/003/input/prompt.txt
+  payloads:
+  - train_tasks/003/input/payloads/answer_template.json
+  - train_tasks/003/input/payloads/carrier_quality_request.json
+  notes: train_tasks/003/notes/notes.md
+  output: train_tasks/003/output/
+  answer_json: train_tasks/003/output/answer.json
+  eval:
+    script: train_tasks/003/eval/eval.sh
+    files:
+    - train_tasks/003/eval/eval.sh
+    - train_tasks/003/eval/evaluator.py
+    rubric:
+    - goal: Identify the faulty carrier scan row and shipment
+      weight: 3
+    - goal: Report the corrected canonical field and exact old and new values
+      weight: 3
+    - goal: Report an exact one-business-row mutation outcome
+      weight: 2
+    - goal: Report one compliant audit row with the required correction receipt fields
+      weight: 2
+    - goal: Report the pre-correction backlog shipment count
+      weight: 2
+    - goal: Report the post-correction backlog shipment count and its delta
+      weight: 3
+    - goal: Report the post-correction delivered shipment count
+      weight: 2
+    - goal: Classify the correction status under the request success rule
+      weight: 1
+- task_id: train_004
+  input: train_tasks/004/input/
+  prompt_txt: train_tasks/004/input/prompt.txt
+  payloads:
+  - train_tasks/004/input/payloads/answer_template.json
+  - train_tasks/004/input/payloads/warehouse_productivity_request.json
+  notes: train_tasks/004/notes/notes.md
+  output: train_tasks/004/output/
+  answer_json: train_tasks/004/output/answer.json
+  eval:
+    script: train_tasks/004/eval/eval.sh
+    files:
+    - train_tasks/004/eval/eval.sh
+    - train_tasks/004/eval/evaluator.py
+    rubric:
+    - goal: Correct eligible production-task count
+      weight: 2
+    - goal: Correct total effective completed production units
+      weight: 3
+    - goal: Correct ordered top-three employee ranking
+      weight: 3
+    - goal: Correct top employee units per hour at two decimals
+      weight: 2
+    - goal: Correct effective rework task count and four-decimal rate
+      weight: 2
+    - goal: Correct exact delayed high-priority task ID set
+      weight: 3
+    - goal: Correct lowest-performing team identifier
+      weight: 1
+    - goal: Correct facility status classification
+      weight: 1
+- task_id: train_005
+  input: train_tasks/005/input/
+  prompt_txt: train_tasks/005/input/prompt.txt
+  payloads:
+  - train_tasks/005/input/payloads/answer_template.json
+  - train_tasks/005/input/payloads/support_health_request.json
+  notes: train_tasks/005/notes/notes.md
+  output: train_tasks/005/output/
+  answer_json: train_tasks/005/output/answer.json
+  eval:
+    script: train_tasks/005/eval/eval.sh
+    files:
+    - train_tasks/005/eval/eval.sh
+    - train_tasks/005/eval/evaluator.py
+    rubric:
+    - goal: Report the correct eligible support-case population
+      weight: 2
+    - goal: Report the correct open-at-cutoff and reopened-at-cutoff counts
+      weight: 3
+    - goal: Report the correct first-response breach count
+      weight: 2
+    - goal: Report the correct active-clock resolution breach count
+      weight: 3
+    - goal: Report the correct worst-three account ranking and rollups
+      weight: 2
+    - goal: Report the exact sorted severe active case set
+      weight: 3
+    - goal: Report the correct median active resolution hours
+      weight: 2
+    - goal: Classify support risk under the request policy
+      weight: 1
+test_tasks:
+- task_id: test_001
+  input: test_tasks/001/input/
+  prompt_txt: test_tasks/001/input/prompt.txt
+  payloads:
+  - test_tasks/001/input/payloads/answer_template.json
+  - test_tasks/001/input/payloads/delivery_reliability_request.json
+  notes: test_tasks/001/notes/notes.md
+  output: test_tasks/001/output/
+  answer_json: test_tasks/001/output/answer.json
+  eval:
+    script: test_tasks/001/eval/eval.sh
+    files:
+    - test_tasks/001/eval/eval.sh
+    - test_tasks/001/eval/evaluator.py
+    rubric:
+    - goal: Correct eligible production-order count
+      weight: 2
+    - goal: Correct effective complete-order count at the cutoff
+      weight: 3
+    - goal: Correct overall on-time complete-order rate
+      weight: 3
+    - goal: Correct partial-or-unshipped eligible-order count
+      weight: 2
+    - goal: Correct complete warehouse reliability ranking and rates
+      weight: 2
+    - goal: Correct exact sorted severe-exception order set
+      weight: 3
+    - goal: Correct highest-late-rate carrier and rate
+      weight: 2
+    - goal: Correct delivery service status
+      weight: 1
+- task_id: test_002
+  input: test_tasks/002/input/
+  prompt_txt: test_tasks/002/input/prompt.txt
+  payloads:
+  - test_tasks/002/input/payloads/answer_template.json
+  - test_tasks/002/input/payloads/provider_exposure_request.json
+  notes: test_tasks/002/notes/notes.md
+  output: test_tasks/002/output/
+  answer_json: test_tasks/002/output/answer.json
+  eval:
+    script: test_tasks/002/eval/eval.sh
+    files:
+    - test_tasks/002/eval/eval.sh
+    - test_tasks/002/eval/evaluator.py
+    rubric:
+    - goal: Correct eligible distinct refunded-order population
+      weight: 2
+    - goal: Correct effective settled logical refund count
+      weight: 3
+    - goal: Correct effective reversed amount in USD to two decimals
+      weight: 2
+    - goal: Correct net provider exposure in USD to two decimals
+      weight: 3
+    - goal: Correct complete provider exposure ranking and provider amounts
+      weight: 2
+    - goal: Correct exact ascending unresolved leakage order set
+      weight: 3
+    - goal: Correct dominant normalized reason code
+      weight: 1
+    - goal: Correct exposure status classification
+      weight: 1
+- task_id: test_003
+  input: test_tasks/003/input/
+  prompt_txt: test_tasks/003/input/prompt.txt
+  payloads:
+  - test_tasks/003/input/payloads/answer_template.json
+  - test_tasks/003/input/payloads/inventory_control_request.json
+  notes: test_tasks/003/notes/notes.md
+  output: test_tasks/003/output/
+  answer_json: test_tasks/003/output/answer.json
+  eval:
+    script: test_tasks/003/eval/eval.sh
+    files:
+    - test_tasks/003/eval/eval.sh
+    - test_tasks/003/eval/evaluator.py
+    rubric:
+    - goal: Correct faulty movement-row, movement, and SKU identification
+      weight: 3
+    - goal: Correct old and new canonical quantity and UOM multiplier
+      weight: 3
+    - goal: Correct guarded business-row, audit-row, and correction-status outcome
+      weight: 2
+    - goal: Correct pre-correction available units for the corrected SKU
+      weight: 2
+    - goal: Correct post-correction available units and availability delta
+      weight: 3
+    - goal: Correct exact ordered post-correction stockout-risk SKU set
+      weight: 3
+    - goal: Correct highest-risk SKU identifier
+      weight: 2
+    - goal: Correct post-correction stockout status classification
+      weight: 1
+- task_id: test_004
+  input: test_tasks/004/input/
+  prompt_txt: test_tasks/004/input/prompt.txt
+  payloads:
+  - test_tasks/004/input/payloads/answer_template.json
+  - test_tasks/004/input/payloads/operations_health_request.json
+  notes: test_tasks/004/notes/notes.md
+  output: test_tasks/004/output/
+  answer_json: test_tasks/004/output/answer.json
+  eval:
+    script: test_tasks/004/eval/eval.sh
+    files:
+    - test_tasks/004/eval/eval.sh
+    - test_tasks/004/eval/evaluator.py
+    rubric:
+    - goal: Exact eligible production strategic-account set in stable order
+      weight: 2
+    - goal: Correct portfolio fulfillment failure rate
+      weight: 3
+    - goal: Correct portfolio effective net refund exposure USD
+      weight: 3
+    - goal: Correct portfolio active-clock support breach rate
+      weight: 3
+    - goal: Exact bottom-three account health ranking and scores
+      weight: 2
+    - goal: Exact critical-account set in stable order
+      weight: 3
+    - goal: Correct dominant portfolio risk dimension
+      weight: 2
+    - goal: Correct portfolio health status
+      weight: 1
+- task_id: test_005
+  input: test_tasks/005/input/
+  prompt_txt: test_tasks/005/input/prompt.txt
+  payloads:
+  - test_tasks/005/input/payloads/answer_template.json
+  - test_tasks/005/input/payloads/recovery_request.json
+  notes: test_tasks/005/notes/notes.md
+  output: test_tasks/005/output/
+  answer_json: test_tasks/005/output/answer.json
+  eval:
+    script: test_tasks/005/eval/eval.sh
+    files:
+    - test_tasks/005/eval/eval.sh
+    - test_tasks/005/eval/evaluator.py
+    rubric:
+    - goal: Correct effective backlog task and planned-unit totals
+      weight: 3
+    - goal: Correct total projected recoverable units
+      weight: 3
+    - goal: Correct facility recovery ranking and projected coverage
+      weight: 2
+    - goal: Correct top employee candidates for both facilities
+      weight: 2
+    - goal: Correct exact carrier-cutoff exposed order set
+      weight: 3
+    - goal: Correct severe linked support escalation count
+      weight: 2
+    - goal: Correct recommended recovery action
+      weight: 2
+    - goal: Correct recovery status
+      weight: 1

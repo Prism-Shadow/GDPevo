@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Q1 maintenance-log integrity certification answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_decision",
+    "event_decision_panel",
+    "issue_counts",
+    "duplicate_groups",
+    "invalid_event_ids",
+    "corrected_metrics",
+    "asset_risk_ranking",
+    "certification_status"
+  ],
+  "properties": {
+    "source_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "collection_id",
+        "as_of",
+        "authoritative_snapshot_id",
+        "snapshot_status",
+        "authoritative_row_count",
+        "scoped_raw_row_count"
+      ],
+      "properties": {
+        "collection_id": {"type": "string"},
+        "as_of": {"type": "string", "format": "date-time"},
+        "authoritative_snapshot_id": {"type": "string"},
+        "snapshot_status": {"type": "string", "enum": ["CERTIFIED", "PROVISIONAL", "STALE"]},
+        "authoritative_row_count": {"type": "integer", "minimum": 0},
+        "scoped_raw_row_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "event_decision_panel": {
+      "type": "array",
+      "description": "One coded decision for every scoped public event, sorted by event_id ascending.",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event_id", "maintenance_source_code", "history_route_code"],
+        "properties": {
+          "event_id": {"type": "string", "pattern": "^ME-Q1-[0-9]{6}$"},
+          "maintenance_source_code": {"type": "string", "enum": ["MS-12", "MS-47", "MS-86"]},
+          "history_route_code": {"type": "string", "enum": ["HR-19", "HR-33", "HR-74"]}
+        }
+      }
+    },
+    "issue_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "missing_timestamp",
+        "invalid_timestamp",
+        "invalid_odometer",
+        "negative_labor",
+        "extreme_labor",
+        "odometer_regression"
+      ],
+      "properties": {
+        "missing_timestamp": {"type": "integer", "minimum": 0},
+        "invalid_timestamp": {"type": "integer", "minimum": 0},
+        "invalid_odometer": {"type": "integer", "minimum": 0},
+        "negative_labor": {"type": "integer", "minimum": 0},
+        "extreme_labor": {"type": "integer", "minimum": 0},
+        "odometer_regression": {"type": "integer", "minimum": 0}
+      }
+    },
+    "duplicate_groups": {
+      "type": "array",
+      "description": "All cross-snapshot logical duplicates, sorted by logical_event_id ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "logical_event_id",
+          "snapshot_ids",
+          "retained_event_id",
+          "retained_snapshot_id"
+        ],
+        "properties": {
+          "logical_event_id": {"type": "string", "pattern": "^ME-Q1-[0-9]{6}$"},
+          "snapshot_ids": {
+            "type": "array",
+            "description": "Unique snapshot IDs sorted lexicographically.",
+            "items": {"type": "string"},
+            "minItems": 2,
+            "uniqueItems": true
+          },
+          "retained_event_id": {"type": "string", "pattern": "^ME-Q1-[0-9]{6}$"},
+          "retained_snapshot_id": {"type": "string"}
+        }
+      }
+    },
+    "invalid_event_ids": {
+      "type": "array",
+      "description": "Unique event IDs rejected for missing or unparsable time, invalid odometer range, or invalid labor range; sorted lexicographically. Sequence-only regressions are reported in corrected_metrics instead.",
+      "items": {"type": "string", "pattern": "^ME-Q1-[0-9]{6}$"},
+      "uniqueItems": true
+    },
+    "corrected_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "valid_event_count",
+        "total_distance_km",
+        "regression_asset_ids",
+        "regression_event_ids"
+      ],
+      "properties": {
+        "valid_event_count": {"type": "integer", "minimum": 0},
+        "total_distance_km": {
+          "type": "number",
+          "description": "Kilometers, rounded to exactly 2 decimal places.",
+          "multipleOf": 0.01
+        },
+        "regression_asset_ids": {
+          "type": "array",
+          "description": "Unique asset IDs sorted lexicographically.",
+          "items": {"type": "string", "pattern": "^AST-[0-9]{4}$"},
+          "uniqueItems": true
+        },
+        "regression_event_ids": {
+          "type": "array",
+          "description": "Unique event IDs sorted lexicographically.",
+          "items": {"type": "string", "pattern": "^ME-Q1-[0-9]{6}$"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "asset_risk_ranking": {
+      "type": "array",
+      "description": "Top assets ordered by the ranking policy in case_scope.json.",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rank", "asset_id", "rejected_event_count", "regression_event_count"],
+        "properties": {
+          "rank": {"type": "integer", "minimum": 1},
+          "asset_id": {"type": "string", "pattern": "^AST-[0-9]{4}$"},
+          "rejected_event_count": {"type": "integer", "minimum": 0},
+          "regression_event_count": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "certification_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "action"],
+      "properties": {
+        "status": {"type": "string", "enum": ["PASS", "PASS_WITH_EXCEPTIONS", "HOLD"]},
+        "action": {"type": "string", "enum": ["RELEASE", "REVIEW_EXCEPTIONS", "BLOCK_AND_REMEDIATE"]}
+      }
+    }
+  },
+  "x-ordering_rules": {
+    "event_decision_panel": "event_id ascending",
+    "duplicate_groups": "logical_event_id ascending; snapshot_ids lexicographically ascending",
+    "invalid_event_ids": "lexicographically ascending",
+    "corrected_metrics.regression_asset_ids": "lexicographically ascending",
+    "corrected_metrics.regression_event_ids": "lexicographically ascending",
+    "asset_risk_ranking": "rank ascending"
+  }
+}

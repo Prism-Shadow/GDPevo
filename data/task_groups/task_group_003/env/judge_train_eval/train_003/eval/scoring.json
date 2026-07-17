@@ -1,0 +1,79 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "Correct incident and enterprise account are identified.",
+      "weight": 1,
+      "checks": [
+        {"path": "incident_id"},
+        {"path": "enterprise_account_id"}
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "Primary root cause is correctly identified.",
+      "weight": 3,
+      "checks": [
+        {"path": "root_cause_category"}
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "Archived alert route is captured as a contributing issue.",
+      "weight": 1,
+      "checks": [
+        {"path": "contributing_alert_issue"}
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "Failure window and failed-day count are correct.",
+      "weight": 3,
+      "checks": [
+        {"path": "failure_window.start_date"},
+        {"path": "failure_window.end_date"},
+        {"path": "failure_window.failed_days"}
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "Backfill day count and SLA credit percent are correct.",
+      "weight": 3,
+      "checks": [
+        {"path": "backfill_days"},
+        {"path": "sla_credit_percent"}
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "Engineering and account owners are correct.",
+      "weight": 2,
+      "checks": [
+        {"path": "engineering_owner"},
+        {"path": "account_owner"}
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Channel, evidence folder, and report title follow the response convention.",
+      "weight": 2,
+      "checks": [
+        {"path": "channel_name"},
+        {"path": "evidence_folder"},
+        {"path": "report_title"}
+      ]
+    },
+    {
+      "id": "SP008",
+      "goal": "Share permissions and response status are correct.",
+      "weight": 2,
+      "checks": [
+        {"path": "share_permissions[0].user"},
+        {"path": "share_permissions[0].permission"},
+        {"path": "share_permissions[1].user"},
+        {"path": "share_permissions[1].permission"},
+        {"path": "response_status"}
+      ]
+    }
+  ]
+}

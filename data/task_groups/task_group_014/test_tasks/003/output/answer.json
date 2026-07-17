@@ -1,0 +1,309 @@
+{
+  "docket_id": "test_drug_batch",
+  "docket_date": "2025-05-16",
+  "case_actions": [
+    {
+      "med_case_id": "MED00005",
+      "drug_name": "Humira",
+      "member_plan_type": "Commercial",
+      "appeal": {
+        "viability_decision": "appeal_ready",
+        "turnaround": "standard_30d",
+        "policy_gaps": [],
+        "policy_requirement_keys_missing": [],
+        "policy_evidence_trace": [
+          {
+            "requirement_key": "diagnosis",
+            "requirement_status": "met",
+            "accepted_trial_ids": [],
+            "rejected_trial_ids": []
+          },
+          {
+            "requirement_key": "step_therapy",
+            "requirement_status": "met",
+            "accepted_trial_ids": [
+              "TRIAL00005_2"
+            ],
+            "rejected_trial_ids": [
+              "TRIAL00005_1",
+              "TRIAL00005_3"
+            ]
+          }
+        ],
+        "filing_deadline": "2025-06-22",
+        "deadline_status": "timely_received",
+        "deadline_basis": {
+          "adverse_notice_date": "2025-04-23",
+          "appeal_received_date": "2025-04-30",
+          "deadline_days": 60,
+          "days_from_notice_to_receipt": 7
+        },
+        "appeal_source_flags": {
+          "expedited_attestation": false,
+          "new_evidence_received": true,
+          "authorized_representative_on_file": false
+        },
+        "internal_review_next_step": "file_standard_internal_appeal",
+        "external_review_next_step": "not_ready_internal_appeal_pending",
+        "pharmacy_clinician_required": false
+      },
+      "assistance": {
+        "program_id": "AP005",
+        "eligibility_status": "assistance_eligible",
+        "blocking_reasons": [],
+        "financial_trace": {
+          "household_size": 3,
+          "annual_income": 106715.0,
+          "fpl_base_amount": 26650.0,
+          "program_income_limit": 133250.0,
+          "income_pct_fpl": 400.43
+        },
+        "document_trace": {
+          "insurance_type": "commercial",
+          "has_denial_letter": true,
+          "assistance_consent_on_file": true,
+          "program_requires_commercial_insurance": true,
+          "program_excludes_government_plan": true
+        },
+        "program_owner": "manufacturer_assistance_team",
+        "form_name": "Immunology Complete Enrollment",
+        "next_step": "open_humira_assistance_enrollment"
+      },
+      "path_separation": "parallel_appeal_and_assistance"
+    },
+    {
+      "med_case_id": "MED00006",
+      "drug_name": "Remicade",
+      "member_plan_type": "Medicare Advantage",
+      "appeal": {
+        "viability_decision": "appeal_incomplete",
+        "turnaround": "expedited_requested_needs_evidence",
+        "policy_gaps": [
+          "step_therapy_gap",
+          "tb_screen_gap"
+        ],
+        "policy_requirement_keys_missing": [
+          "step_therapy",
+          "tb_screen"
+        ],
+        "policy_evidence_trace": [
+          {
+            "requirement_key": "diagnosis",
+            "requirement_status": "met",
+            "accepted_trial_ids": [],
+            "rejected_trial_ids": []
+          },
+          {
+            "requirement_key": "step_therapy",
+            "requirement_status": "missing",
+            "accepted_trial_ids": [],
+            "rejected_trial_ids": [
+              "TRIAL00006_1"
+            ]
+          },
+          {
+            "requirement_key": "tb_screen",
+            "requirement_status": "missing",
+            "accepted_trial_ids": [],
+            "rejected_trial_ids": [
+              "TRIAL00006_1"
+            ]
+          }
+        ],
+        "filing_deadline": "2025-06-27",
+        "deadline_status": "timely_received",
+        "deadline_basis": {
+          "adverse_notice_date": "2025-04-28",
+          "appeal_received_date": "2025-05-05",
+          "deadline_days": 60,
+          "days_from_notice_to_receipt": 7
+        },
+        "appeal_source_flags": {
+          "expedited_attestation": true,
+          "new_evidence_received": false,
+          "authorized_representative_on_file": false
+        },
+        "internal_review_next_step": "pharmacy_clinician_review_for_step_and_tb_evidence",
+        "external_review_next_step": "not_ready_policy_evidence_gap",
+        "pharmacy_clinician_required": true
+      },
+      "assistance": {
+        "program_id": "AP001",
+        "eligibility_status": "assistance_ineligible",
+        "blocking_reasons": [
+          "income_over_program_limit",
+          "commercial_insurance_required",
+          "government_plan_excluded",
+          "denial_letter_missing"
+        ],
+        "financial_trace": {
+          "household_size": 1,
+          "annual_income": 111294.0,
+          "fpl_base_amount": 15650.0,
+          "program_income_limit": 78250.0,
+          "income_pct_fpl": 711.14
+        },
+        "document_trace": {
+          "insurance_type": "government",
+          "has_denial_letter": false,
+          "assistance_consent_on_file": true,
+          "program_requires_commercial_insurance": true,
+          "program_excludes_government_plan": true
+        },
+        "program_owner": "not_routed",
+        "form_name": "Remicade Access Enrollment",
+        "next_step": "no_manufacturer_route_government_income_and_documents"
+      },
+      "path_separation": "appeal_only"
+    },
+    {
+      "med_case_id": "MED00007",
+      "drug_name": "Dupixent",
+      "member_plan_type": "Medicaid",
+      "appeal": {
+        "viability_decision": "appeal_incomplete",
+        "turnaround": "standard_30d",
+        "policy_gaps": [
+          "topical_failure_gap"
+        ],
+        "policy_requirement_keys_missing": [
+          "topical_failure"
+        ],
+        "policy_evidence_trace": [
+          {
+            "requirement_key": "diagnosis",
+            "requirement_status": "met",
+            "accepted_trial_ids": [],
+            "rejected_trial_ids": []
+          },
+          {
+            "requirement_key": "topical_failure",
+            "requirement_status": "missing",
+            "accepted_trial_ids": [],
+            "rejected_trial_ids": [
+              "TRIAL00007_1",
+              "TRIAL00007_2"
+            ]
+          }
+        ],
+        "filing_deadline": "2025-07-02",
+        "deadline_status": "timely_received",
+        "deadline_basis": {
+          "adverse_notice_date": "2025-05-03",
+          "appeal_received_date": "2025-05-10",
+          "deadline_days": 60,
+          "days_from_notice_to_receipt": 7
+        },
+        "appeal_source_flags": {
+          "expedited_attestation": false,
+          "new_evidence_received": false,
+          "authorized_representative_on_file": true
+        },
+        "internal_review_next_step": "pharmacy_clinician_review_for_topical_failure_evidence",
+        "external_review_next_step": "not_ready_policy_evidence_gap",
+        "pharmacy_clinician_required": true
+      },
+      "assistance": {
+        "program_id": "AP002",
+        "eligibility_status": "assistance_ineligible",
+        "blocking_reasons": [
+          "commercial_insurance_required",
+          "government_plan_excluded"
+        ],
+        "financial_trace": {
+          "household_size": 5,
+          "annual_income": 131048.0,
+          "fpl_base_amount": 37650.0,
+          "program_income_limit": 150600.0,
+          "income_pct_fpl": 348.07
+        },
+        "document_trace": {
+          "insurance_type": "government",
+          "has_denial_letter": true,
+          "assistance_consent_on_file": true,
+          "program_requires_commercial_insurance": true,
+          "program_excludes_government_plan": true
+        },
+        "program_owner": "not_routed",
+        "form_name": "Dupixent MyWay Enrollment",
+        "next_step": "no_manufacturer_route_government_plan"
+      },
+      "path_separation": "appeal_only"
+    },
+    {
+      "med_case_id": "MED00008",
+      "drug_name": "Eliquis",
+      "member_plan_type": "Commercial",
+      "appeal": {
+        "viability_decision": "appeal_ready",
+        "turnaround": "expedited_accepted_72h",
+        "policy_gaps": [],
+        "policy_requirement_keys_missing": [],
+        "policy_evidence_trace": [
+          {
+            "requirement_key": "diagnosis",
+            "requirement_status": "met",
+            "accepted_trial_ids": [],
+            "rejected_trial_ids": []
+          }
+        ],
+        "filing_deadline": "2025-07-07",
+        "deadline_status": "timely_received",
+        "deadline_basis": {
+          "adverse_notice_date": "2025-05-08",
+          "appeal_received_date": "2025-05-15",
+          "deadline_days": 60,
+          "days_from_notice_to_receipt": 7
+        },
+        "appeal_source_flags": {
+          "expedited_attestation": true,
+          "new_evidence_received": true,
+          "authorized_representative_on_file": false
+        },
+        "internal_review_next_step": "file_expedited_internal_appeal",
+        "external_review_next_step": "not_ready_internal_appeal_pending",
+        "pharmacy_clinician_required": false
+      },
+      "assistance": {
+        "program_id": "AP003",
+        "eligibility_status": "assistance_ineligible",
+        "blocking_reasons": [
+          "assistance_consent_missing"
+        ],
+        "financial_trace": {
+          "household_size": 5,
+          "annual_income": 99321.0,
+          "fpl_base_amount": 37650.0,
+          "program_income_limit": 112950.0,
+          "income_pct_fpl": 263.8
+        },
+        "document_trace": {
+          "insurance_type": "commercial",
+          "has_denial_letter": true,
+          "assistance_consent_on_file": false,
+          "program_requires_commercial_insurance": true,
+          "program_excludes_government_plan": true
+        },
+        "program_owner": "manufacturer_assistance_team",
+        "form_name": "Anticoagulant Support Form",
+        "next_step": "collect_assistance_consent"
+      },
+      "path_separation": "parallel_appeal_and_assistance"
+    }
+  ],
+  "program_totals": {
+    "total_cases": 4,
+    "appeal_ready": 2,
+    "appeal_incomplete": 2,
+    "appeal_not_timely": 0,
+    "expedited_accepted_72h": 1,
+    "expedited_requested_needs_evidence": 1,
+    "standard_30d": 2,
+    "assistance_eligible": 1,
+    "manufacturer_team_follow_up": 2,
+    "not_routed": 2,
+    "parallel_appeal_and_assistance": 2,
+    "appeal_only": 2,
+    "pharmacy_clinician_routed": 2
+  }
+}

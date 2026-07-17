@@ -1,0 +1,206 @@
+{
+  "request_id": "OBS-COPD-MULTIAUDIT-2026-07",
+  "protocol_id": "PHO_COUNTY_PANEL_TRANSPORT_V1",
+  "protocol_application": "Apply the registered protocol in full. This file contains only the held-out COPD scenario's task-specific inputs, ordered overrides, reporting precision, and decision gates; inherit every unoverridden construction, fitting, resampling, calibration, stability, aggregation, and tie convention from the protocol.",
+  "scope_and_publication_overrides": {
+    "regions": [
+      "Midwest",
+      "West"
+    ],
+    "years": [
+      2021,
+      2022,
+      2023,
+      2024
+    ],
+    "health_measures": [
+      "copd",
+      "adult_smoking"
+    ],
+    "socioeconomic_measures": [
+      "poverty",
+      "unemployment",
+      "net_migration"
+    ],
+    "health_release_status": "FINAL",
+    "health_value_type": "CRUDE",
+    "revision_selection": "HIGHEST_FINAL_REVISION",
+    "health_suppression_flag": 0,
+    "require_selected_health_nonmissing": true,
+    "require_selected_socioeconomic_nonmissing": true,
+    "require_all_five_measures_in_every_year": true,
+    "rucc_integer_range_inclusive": [
+      1,
+      9
+    ],
+    "panel_end_years_in_order": [
+      2022,
+      2023,
+      2024
+    ],
+    "state_census_order": "state_abbr ascending"
+  },
+  "common_design_overrides": {
+    "outcome": "copd_change",
+    "baseline_terms_in_order": [
+      "lagged_copd",
+      "lagged_smoking",
+      "rucc_2",
+      "rucc_3",
+      "rucc_4",
+      "rucc_5",
+      "rucc_6",
+      "rucc_7",
+      "rucc_8",
+      "rucc_9",
+      "end_2023",
+      "end_2024"
+    ],
+    "dynamic_terms_in_order": [
+      "smoking_change",
+      "poverty_change",
+      "unemployment_change",
+      "net_migration_change"
+    ],
+    "indicator_references": {
+      "rucc": 1,
+      "panel_end_year": 2022
+    }
+  },
+  "delete_state_two_step_gmm_overrides": {
+    "instrument_order": [
+      "smoking_change",
+      "poverty_change",
+      "unemployment_change",
+      "net_migration_change",
+      "smoking_change_x_end_2024",
+      "poverty_change_x_end_2024",
+      "unemployment_change_x_end_2024",
+      "net_migration_change_x_end_2024"
+    ],
+    "coefficient_order": [
+      "smoking_change",
+      "poverty_change",
+      "unemployment_change",
+      "net_migration_change"
+    ]
+  },
+  "nested_elastic_net_overrides": {
+    "outer_fold_count": 5,
+    "inner_fold_count": 4,
+    "alpha_grid_in_order": [
+      0.01,
+      0.1,
+      1,
+      10
+    ],
+    "l1_ratio_grid_in_order": [
+      0.2,
+      0.5,
+      0.8
+    ]
+  },
+  "wild_cluster_bootstrap_t_overrides": {
+    "target_term": "smoking_change",
+    "seed": 6022026,
+    "replicate_count": 499,
+    "checkpoint_replicates_in_order": [
+      1,
+      2,
+      5,
+      10,
+      25,
+      50,
+      100,
+      200,
+      499
+    ]
+  },
+  "trajectory_pca_clustering_overrides": {
+    "trajectory_variables_in_order": [
+      "copd_change",
+      "smoking_change",
+      "poverty_change",
+      "unemployment_change",
+      "net_migration_change"
+    ]
+  },
+  "source_group_perturbation_overrides": {
+    "ordered_groups": [
+      {
+        "source_group": "lagged_health",
+        "terms": [
+          "lagged_copd",
+          "lagged_smoking"
+        ]
+      },
+      {
+        "source_group": "rucc_context",
+        "terms": [
+          "rucc_2",
+          "rucc_3",
+          "rucc_4",
+          "rucc_5",
+          "rucc_6",
+          "rucc_7",
+          "rucc_8",
+          "rucc_9"
+        ]
+      },
+      {
+        "source_group": "calendar_context",
+        "terms": [
+          "end_2023",
+          "end_2024"
+        ]
+      },
+      {
+        "source_group": "smoking_dynamics",
+        "terms": [
+          "smoking_change"
+        ]
+      },
+      {
+        "source_group": "economic_dynamics",
+        "terms": [
+          "poverty_change",
+          "unemployment_change"
+        ]
+      },
+      {
+        "source_group": "migration_dynamics",
+        "terms": [
+          "net_migration_change"
+        ]
+      }
+    ]
+  },
+  "reporting_overrides": {
+    "computed_real_decimal_places": 6,
+    "literal_grid_and_threshold_decimal_places": 4,
+    "integer_fields": [
+      "counts",
+      "ranks",
+      "fold_numbers",
+      "seed",
+      "prng_states",
+      "replicate_numbers"
+    ],
+    "preserve_all_declared_orders": true
+  },
+  "decision_rule_overrides": {
+    "six_gates_in_order": [
+      "bias-corrected smoking_change GMM coefficient > 0.10",
+      "elastic-net OOF RMSE < 0.82",
+      "wild-bootstrap plus-one p-value < 0.05",
+      "overall grouped-conformal coverage >= 0.88",
+      "median delete-state clustering ARI >= 0.75",
+      "smoking_dynamics deletion RMSE deterioration >= 0.01"
+    ],
+    "precedence": [
+      "ADVANCE_AUDITED_MODEL if all six gates pass.",
+      "REVIEW_AUDITED_MODEL if four or five gates pass.",
+      "RETAIN_LAGGED_MODEL otherwise."
+    ]
+  }
+}

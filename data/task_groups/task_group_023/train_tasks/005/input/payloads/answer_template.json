@@ -1,0 +1,58 @@
+{
+  "template_name": "west_northeast_diabetes_six_algorithm_audit",
+  "submission_format": "One JSON object with exactly the eight required analytical top-level keys below",
+  "required_top_level_keys": [
+    "cohort_and_state_census",
+    "delete_state_two_step_gmm",
+    "nested_elastic_net",
+    "wild_cluster_bootstrap_t",
+    "grouped_conformal_calibration",
+    "trajectory_pca_clustering",
+    "source_group_perturbation",
+    "decision"
+  ],
+  "numeric_rule": "Report computed real-valued fields to 6 decimal places. Report alpha, l1_ratio, nominal_coverage, and literal threshold/grid fields to 4 decimal places. JSON numbers need not preserve trailing zeros. Counts, ranks, fold numbers, seeds, PRNG states, and replicate numbers are integers.",
+  "ordering_rule": "Every list retains the exact order specified by analysis_request.json; do not substitute maps or sets.",
+  "fields": {
+    "cohort_and_state_census": {
+      "required_keys": ["health_release_status","health_value_type","revision_selection","balanced_counties","panel_rows","state_census"],
+      "state_census_item_keys": ["state_abbr","balanced_counties","panel_rows"]
+    },
+    "delete_state_two_step_gmm": {
+      "required_keys": ["instrument_count","parameter_count","state_cluster_count","full_two_step_coefficients","full_hansen_j","bias_corrected_coefficients","maximum_absolute_delete_state_shifts","delete_state_diagnostics"],
+      "coefficient_arrays": "Four values in dynamic-term order.",
+      "delete_state_item_keys": ["state_abbr","deleted_panel_rows","coefficients","hansen_j"]
+    },
+    "nested_elastic_net": {
+      "required_keys": ["outer_fold_count","inner_fold_count","coefficient_order","candidate_grid","outer_fold_diagnostics","oof_rmse","oof_r_squared"],
+      "grid_item_keys": ["alpha","l1_ratio"],
+      "outer_fold_item_keys": ["outer_fold","held_out_states","held_out_panel_rows","grid_results","selected_alpha","selected_l1_ratio","selected_standardized_coefficients","outer_rmse"],
+      "inner_grid_result_item_keys": ["alpha","l1_ratio","inner_rmse"]
+    },
+    "wild_cluster_bootstrap_t": {
+      "required_keys": ["prng","seed","replicate_count","state_cluster_count","observed_coefficient","observed_cr1_se","observed_t","absolute_tail_exceedance_count","plus_one_p_value","bootstrap_t_quantiles","prng_checkpoints"],
+      "controlled_prng": ["XORSHIFT32"],
+      "checkpoint_item_keys": ["replicate","prng_state","bootstrap_t"]
+    },
+    "grouped_conformal_calibration": {
+      "required_keys": ["nominal_coverage","fold_diagnostics","state_coverage","rucc_band_coverage","decile_calibration","overall_coverage","minimum_state_coverage"],
+      "fold_item_keys": ["outer_fold","calibration_rows","nearest_rank","radius","held_out_rows","coverage","mean_width"],
+      "state_item_keys": ["state_abbr","panel_rows","coverage"],
+      "rucc_item_keys": ["rucc_band","panel_rows","coverage"],
+      "decile_item_keys": ["decile","panel_rows","prediction_mean","observation_mean","signed_gap"]
+    },
+    "trajectory_pca_clustering": {
+      "required_keys": ["feature_order","county_count","retained_component_count","first_five_eigenvalues","first_five_explained_shares","first_three_loading_vectors","cluster_grid","selected_cluster_count","delete_state_stability","median_delete_state_ari","minimum_delete_state_ari"],
+      "cluster_grid_item_keys": ["cluster_count","inertia","average_silhouette","cluster_sizes"],
+      "stability_item_keys": ["deleted_state","retained_counties","adjusted_rand_index"]
+    },
+    "source_group_perturbation": {
+      "required_keys": ["reference_full_oof_rmse","ordered_source_groups","group_deletion_diagnostics"],
+      "group_item_keys": ["source_group","removed_terms","outer_fold_rmses","pooled_rmse","rmse_deterioration","worse_fold_count","deterioration_rank"]
+    },
+    "decision": {
+      "type": "enum",
+      "allowed_values": ["DEPLOY_DIABETES_DYNAMICS","REVIEW_DIABETES_DYNAMICS","RETAIN_LAGGED_DIABETES"]
+    }
+  }
+}

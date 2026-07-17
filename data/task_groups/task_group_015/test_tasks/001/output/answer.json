@@ -1,0 +1,82 @@
+{
+  "task_id": "test_001",
+  "candidate_id": "DUP-TE-001",
+  "merge_decision": {
+    "disposition": "merge_ready_with_conflict_review",
+    "canonical_target_patient_id": "P-73008",
+    "source_patient_id": "P-11964",
+    "manual_review_required": true,
+    "reason_codes": [
+      "active_duplicate_candidate",
+      "canonical_record_has_lower_enterprise_mrn",
+      "duplicate_record_already_points_to_target",
+      "strong_identity_match",
+      "suffix_nickname_discrepancy_present"
+    ]
+  },
+  "active_key_unions": {
+    "condition_keys": [
+      "copd",
+      "hypertension",
+      "right_knee_oa"
+    ],
+    "medication_keys": [
+      "amlodipine",
+      "baseline_med",
+      "tiotropium"
+    ],
+    "allergy_keys": [
+      "codeine",
+      "shellfish"
+    ]
+  },
+  "identity_signals": {
+    "match_signals": [
+      "name_variant",
+      "same_address_normalized",
+      "same_dob",
+      "same_insurance",
+      "same_phone"
+    ],
+    "conflict_signals": [
+      "suffix_discrepancy"
+    ],
+    "conflict_detail_codes": [
+      "given_name_nickname_eleanor_vs_ellen",
+      "suffix_present_only_on_target"
+    ]
+  },
+  "evidence": {
+    "selected_audit_ids": [
+      "AUD-TE-001-A"
+    ],
+    "excluded_audit_ids": [
+      "AUD-OTHER-MERGE"
+    ],
+    "document_ids": [
+      "DOC-PULM-11964"
+    ],
+    "provider_ids": [
+      "PRV-PCP-001",
+      "PRV-PULM-030"
+    ]
+  },
+  "excluded_distractors": {
+    "condition_keys": [
+      "right_knee_oa"
+    ],
+    "medication_keys": [
+      "prednisone"
+    ],
+    "audit_ids": [
+      "AUD-OTHER-MERGE"
+    ]
+  },
+  "packet_readiness": {
+    "ready_for_merge_packet": true,
+    "readiness_status": "ready_with_review_note",
+    "required_review_notes": [
+      "suffix_nickname_discrepancy"
+    ]
+  }
+}

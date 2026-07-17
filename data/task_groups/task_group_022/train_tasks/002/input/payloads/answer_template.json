@@ -1,0 +1,65 @@
+{
+  "type": "object",
+  "description": "GOLD production-account refund settlement reconciliation.",
+  "required": [
+    "eligible_refunded_order_count",
+    "effective_settled_logical_refund_count",
+    "effective_linked_reversal_count",
+    "net_refund_amount_usd",
+    "top_two_reason_codes",
+    "unresolved_leakage_order_ids",
+    "cohort_risk"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eligible_refunded_order_count": {
+      "type": "integer",
+      "minimum": 0,
+      "unit": "distinct orders"
+    },
+    "effective_settled_logical_refund_count": {
+      "type": "integer",
+      "minimum": 0,
+      "unit": "distinct logical refunds"
+    },
+    "effective_linked_reversal_count": {
+      "type": "integer",
+      "minimum": 0,
+      "unit": "distinct linked reversals"
+    },
+    "net_refund_amount_usd": {
+      "type": "number",
+      "minimum": 0,
+      "unit": "USD",
+      "precision": 2
+    },
+    "top_two_reason_codes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "description": "Normalized reason_code."
+      },
+      "order": "effective net USD descending, then normalized reason_code ascending"
+    },
+    "unresolved_leakage_order_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^ORD-[0-9]{6}$"
+      },
+      "order": "order_id ascending"
+    },
+    "cohort_risk": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MODERATE",
+        "HIGH"
+      ]
+    }
+  }
+}

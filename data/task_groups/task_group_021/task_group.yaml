@@ -1,0 +1,397 @@
+task_group:
+  task_group_id: task_group_021
+  scenario_id: SCN_021_data_cleaning_quality_pipeline
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Data Analysis
+  description: |
+    A train-predict benchmark for certifying operational data in the shared
+    Asteria Fleet Data Quality Hub. Formal train and test tasks cover contact
+    master canonicalization, effective-reference transaction normalization,
+    and maintenance-event integrity reconstruction across noisy, overlapping
+    sources. Every rubric item is a binary business-quality gate: its evaluator
+    checks a disjoint bundle of deterministic business-result paths and awards
+    either the point's full normalized weight or zero. Every path in a bundle
+    must match; structurally incomplete answers fail the output contract.
+
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+    - env/.dockerignore
+    - env/Dockerfile
+    - env/setup.sh
+    - env/service.py
+    - env/judge_api.py
+    - env/judge_specs.json
+    - env/judge_tasks/train_001/eval/eval.sh
+    - env/judge_tasks/train_001/eval/eval_impl.sh
+    - env/judge_tasks/train_001/eval/whole_point_eval.py
+    - env/judge_tasks/train_001/output/answer.json
+    - env/judge_tasks/train_002/eval/eval.sh
+    - env/judge_tasks/train_002/eval/eval_impl.sh
+    - env/judge_tasks/train_002/eval/whole_point_eval.py
+    - env/judge_tasks/train_002/output/answer.json
+    - env/judge_tasks/train_003/eval/eval.sh
+    - env/judge_tasks/train_003/eval/eval_impl.sh
+    - env/judge_tasks/train_003/eval/whole_point_eval.py
+    - env/judge_tasks/train_003/output/answer.json
+    - env/judge_tasks/train_004/eval/eval.sh
+    - env/judge_tasks/train_004/eval/eval_impl.sh
+    - env/judge_tasks/train_004/eval/whole_point_eval.py
+    - env/judge_tasks/train_004/output/answer.json
+    - env/judge_tasks/train_005/eval/eval.sh
+    - env/judge_tasks/train_005/eval/eval_impl.sh
+    - env/judge_tasks/train_005/eval/whole_point_eval.py
+    - env/judge_tasks/train_005/output/answer.json
+    - env/generate_data.py
+    - env/endpoints.txt
+    - env/manifest.json
+    - env/construction_truth.json
+    - env/data/asteria_quality.db
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/case_scope.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/eval_impl.sh
+        - train_tasks/001/eval/whole_point_eval.py
+      rubric:
+        - goal: Correct scoped, canonical, readiness-eligible, and duplicate-cluster counts.
+          weight: 1
+        - goal: Correct focus-cluster memberships, survivor row IDs, and identity controls.
+          weight: 3
+        - goal: Correct canonical email and phone values for focus clusters.
+          weight: 3
+        - goal: Correct unusable-contact quarantine row set and quarantine controls.
+          weight: 2
+        - goal: Correct canonical city values, field-source resolution, and provenance controls.
+          weight: 3
+        - goal: Correct channel-readiness counts and outreach controls after reconciliation.
+          weight: 2
+        - goal: Correct regional canonical-entity rollup.
+          weight: 1
+        - goal: Correct certification status and operational action.
+          weight: 2
+
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+      - train_tasks/002/input/payloads/case_scope.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/eval_impl.sh
+        - train_tasks/002/eval/whole_point_eval.py
+      rubric:
+        - goal: Correct authoritative source and scoped transaction counts.
+          weight: 1
+        - goal: Correct canonical fuel results and expected-versus-actual mismatch set.
+          weight: 2
+        - goal: Correct recognition and quarantine exception results.
+          weight: 2
+        - goal: Correct normalized volume in liters and spend in USD.
+          weight: 2
+        - goal: Correct focus-asset reconciled totals.
+          weight: 1
+        - goal: Correct merchant exception priority ranking.
+          weight: 1
+        - goal: Correct effective-reference policy and retained-source controls.
+          weight: 3
+        - goal: Correct ledger-disposition controls and reconciliation routing.
+          weight: 3
+
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+      - train_tasks/003/input/payloads/case_scope.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/eval_impl.sh
+        - train_tasks/003/eval/whole_point_eval.py
+      rubric:
+        - goal: Correct authoritative source decision, population counts, and unique-source controls.
+          weight: 2
+        - goal: Correct missing, parse, range, and sequence issue counts.
+          weight: 2
+        - goal: Correct duplicate events, retained representatives, and overlap-source controls.
+          weight: 3
+        - goal: Correct non-sequence rejected events and their history-route controls.
+          weight: 2
+        - goal: Correct unit-normalized regressions and their history-route controls.
+          weight: 3
+        - goal: Correct valid-event population and corrected fleet distance.
+          weight: 2
+        - goal: Correct highest-risk asset ranking.
+          weight: 2
+        - goal: Correct reliable-history controls, certification status, and operational action.
+          weight: 1
+
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+      - train_tasks/004/input/payloads/case_scope.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/eval_impl.sh
+        - train_tasks/004/eval/whole_point_eval.py
+      rubric:
+        - goal: Correct canonical person, duplicate, quarantine, contested, and dispatchable counts.
+          weight: 1
+        - goal: Correct focus-person memberships and master survivor IDs.
+          weight: 3
+        - goal: Correct canonical focus-person fields and consent states.
+          weight: 3
+        - goal: Correct contested identifier classifications and identity controls.
+          weight: 2
+        - goal: Correct dispatchable canonical-person set.
+          weight: 2
+        - goal: Correct readiness counts by depot.
+          weight: 2
+        - goal: Correct source-precedence outcomes plus outreach and provenance controls.
+          weight: 2
+        - goal: Correct release status and operational action.
+          weight: 1
+
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+      - train_tasks/005/input/payloads/case_scope.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/eval_impl.sh
+        - train_tasks/005/eval/whole_point_eval.py
+      rubric:
+        - goal: Correct authoritative source and scoped charge counts.
+          weight: 1
+        - goal: Correct recognized classes, mismatch charges, and reference controls.
+          weight: 3
+        - goal: Correct duplicate charge groups, retained occurrences, and source controls.
+          weight: 2
+        - goal: Correct quarantined charge set and reason profile.
+          weight: 2
+        - goal: Correct normalized billed weight and distance.
+          weight: 2
+        - goal: Correct normalized freight spend in USD.
+          weight: 2
+        - goal: Correct carrier accrual-exposure ranking.
+          weight: 2
+        - goal: Correct ledger-disposition controls, accrual close status, and routing.
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+      - test_tasks/001/input/payloads/case_scope.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/whole_point_eval.py
+      rubric:
+        - goal: Exact population quality accounting, quarantine population, and country rollup.
+          weight: 3
+        - goal: Exact focus-case identity controls, evidence memberships, and master decisions.
+          weight: 2
+        - goal: Exact canonical contact outcomes for all focus cases.
+          weight: 1
+        - goal: Exact field-provenance controls, selected sources, and precedence reasons.
+          weight: 3
+        - goal: Exact renewal-readiness controls, ready population, and certification action.
+          weight: 1
+        - goal: Exact unsafe-identity baseline graph.
+          weight: 1
+        - goal: Exact minimum containment repair and source-withdrawal robustness results.
+          weight: 1
+        - goal: Exact FX basis, candidate recovery batches, and batch costs.
+          weight: 3
+        - goal: Exact initial-state assessment and selected two-stage evidence-recovery plan.
+          weight: 1
+        - goal: Exact all-permutation source-sequence stability audit.
+          weight: 2
+
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+      - test_tasks/002/input/payloads/case_scope.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/whole_point_eval.py
+      rubric:
+        - goal: Exact authoritative source and scoped source-population counts.
+          weight: 3
+        - goal: Exact exception accounting and mismatch and quarantine populations.
+          weight: 1
+        - goal: Exact effective-reference decisions and reference-policy controls.
+          weight: 3
+        - goal: Exact transaction source, recognition, ledger, and control decisions.
+          weight: 2
+        - goal: Exact normalized volume totals by fuel type.
+          weight: 1
+        - goal: Exact normalized spend totals by fuel type.
+          weight: 2
+        - goal: Exact focus-asset reconciliation results.
+          weight: 2
+        - goal: Exact merchant exception ranking.
+          weight: 2
+        - goal: Exact reconciliation status and operational action.
+          weight: 3
+
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+      - test_tasks/003/input/payloads/case_scope.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/whole_point_eval.py
+      rubric:
+        - goal: Exact authoritative source decision and record-level source controls.
+          weight: 3
+        - goal: Exact maintenance integrity issue-class counts.
+          weight: 1
+        - goal: Exact overlap duplicate retention and history-route controls.
+          weight: 3
+        - goal: Exact invalid-event population and integrity classifications.
+          weight: 1
+        - goal: Exact odometer-regression case measurements.
+          weight: 2
+        - goal: Exact corrected continuity, Q2 coverage, and distance metrics.
+          weight: 2
+        - goal: Exact reliable-predecessor, normalized-reading, and history actions.
+          weight: 1
+        - goal: Exact highest-risk asset ranking.
+          weight: 1
+        - goal: Exact certification status and operational action.
+          weight: 3
+
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+      - test_tasks/004/input/payloads/case_scope.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/whole_point_eval.py
+      rubric:
+        - goal: Exact baseline scope, canonical-owner, contested-case, and readiness counts.
+          weight: 3
+        - goal: Exact quarantined-row count.
+          weight: 1
+        - goal: Exact focus-owner memberships, master links, and seed identities.
+          weight: 3
+        - goal: Exact canonical owner contact and policy-state fields.
+          weight: 3
+        - goal: Exact focus-owner readiness decisions and routes.
+          weight: 1
+        - goal: Exact unsafe-identifier and channel-transfer safety adjudications.
+          weight: 1
+        - goal: Exact field-precedence controls, selected rows, values, and reasons.
+          weight: 2
+        - goal: Exact ordered snapshot-admission replay and stage boundaries.
+          weight: 1
+        - goal: Exact unsafe-identity graph impacts and household remediation portfolio.
+          weight: 1
+        - goal: Exact source-removal restoration portfolio and recovered-owner population.
+          weight: 1
+
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+      - test_tasks/005/input/payloads/case_scope.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/whole_point_eval.py
+      rubric:
+        - goal: Exact source-scope accounting and duplicate-charge reconstruction.
+          weight: 3
+        - goal: Exact alias-reference policy and eligibility decisions.
+          weight: 2
+        - goal: Exact charge-level source, recognition, conversion, and accrual decisions.
+          weight: 3
+        - goal: Exact charge and invoice-route ledger controls.
+          weight: 2
+        - goal: Exact mismatch and quarantine charge populations.
+          weight: 3
+        - goal: Exact normalized totals and focus-lane reconciliation.
+          weight: 1
+        - goal: Exact carrier exposure ranking.
+          weight: 3
+        - goal: Exact integrated close-evidence reconstruction and close routing.
+          weight: 3
+        - goal: Exact unsafe-union graph containment certificates.
+          weight: 3
+        - goal: Exact certified-versus-provisional FX counterfactual exposure.
+          weight: 2

@@ -7,14 +7,14 @@ data through a local JSON API.
 ## Start The API
 
 ```bash
-cd data/task_groups/task_group_001/env
+cd /Users/aaad1eu/ljzhou/work_space/data_gen_001/task_factory/task_group/task_group_001/env
 ./setup.sh
 ```
 
 The default port is `8067`. To choose another port:
 
 ```bash
-PORT=8070 ./setup.sh
+TASK_ENV_PORT=9001 ./setup.sh
 ```
 
 `setup.sh` generates `data/harborcrm_data.json` and `data/manifest.json` if

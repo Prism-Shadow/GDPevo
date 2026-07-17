@@ -1,0 +1,293 @@
+{
+  "template_name": "train_004_radialon_production_privilege_review_answer",
+  "format": "JSON object only",
+  "required_top_level_keys": [
+    "task_id",
+    "matter_id",
+    "affected_categories",
+    "category_status",
+    "privilege_metrics",
+    "miscoding_findings",
+    "actions"
+  ],
+  "global_rules": {
+    "category_id_values": "Use exact category_id values from the environment.",
+    "document_id_values": "Use exact document_id values from the environment.",
+    "integer_counts": "All counts are integers.",
+    "list_ordering": {
+      "affected_categories": "Sort category IDs ascending.",
+      "category_status": "Sort by category_id ascending.",
+      "miscoding_findings": "Sort by finding_id ascending.",
+      "actions": "Sort by action_id ascending.",
+      "document_ids": "Sort document IDs ascending within each finding.",
+      "category_ids_in_actions": "Sort category IDs ascending within each action."
+    }
+  },
+  "enums": {
+    "category_status": [
+      "blocked_zero_production",
+      "privilege_log_incomplete",
+      "overdesignation_review",
+      "needs_qc",
+      "source_gap",
+      "ready"
+    ],
+    "issue_type": [
+      "coding_error",
+      "privilege_log_gap",
+      "privilege_miscoding",
+      "overdesignation_risk",
+      "source_gap",
+      "none"
+    ],
+    "severity": [
+      "critical",
+      "high",
+      "medium",
+      "low",
+      "none"
+    ],
+    "action_type": [
+      "supplemental_production",
+      "privilege_log_supplement",
+      "privilege_review",
+      "clawback_review",
+      "coding_correction",
+      "regulator_notice",
+      "no_action"
+    ],
+    "miscoding_issue_type": [
+      "miscoded_complaint_documents",
+      "privileged_coded_nonprivileged"
+    ],
+    "review_coding": [
+      "non-responsive",
+      "responsive",
+      "needs second-level review",
+      "family member",
+      "stale coding",
+      "unknown"
+    ],
+    "corrected_status": [
+      "responsive",
+      "privileged",
+      "not_privileged",
+      "needs_review"
+    ],
+    "production_status": [
+      "produced",
+      "not produced",
+      "withheld",
+      "redacted",
+      "pending",
+      "needs review"
+    ],
+    "priority": [
+      "critical",
+      "high",
+      "medium",
+      "low"
+    ]
+  },
+  "field_requirements": {
+    "task_id": {
+      "type": "string",
+      "required_value": "train_004"
+    },
+    "matter_id": {
+      "type": "string",
+      "required_value": "M-RDL-304"
+    },
+    "affected_categories": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "Sort category IDs ascending.",
+      "description": "Only categories requiring production, privilege-log, clawback, or privilege-review action."
+    },
+    "category_status": {
+      "type": "list",
+      "ordering": "Sort by category_id ascending.",
+      "item_required_keys": [
+        "category_id",
+        "status",
+        "severity",
+        "issue_types",
+        "produced_count",
+        "withheld_privileged_count",
+        "privilege_logged_count",
+        "required_action_types"
+      ],
+      "item_schema": {
+        "category_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "enum",
+          "allowed_values_ref": "category_status"
+        },
+        "severity": {
+          "type": "enum",
+          "allowed_values_ref": "severity"
+        },
+        "issue_types": {
+          "type": "list",
+          "item_type": "enum",
+          "allowed_values_ref": "issue_type",
+          "ordering": "Sort alphabetically."
+        },
+        "produced_count": {
+          "type": "integer"
+        },
+        "withheld_privileged_count": {
+          "type": "integer"
+        },
+        "privilege_logged_count": {
+          "type": "integer"
+        },
+        "required_action_types": {
+          "type": "list",
+          "item_type": "enum",
+          "allowed_values_ref": "action_type",
+          "ordering": "Sort alphabetically."
+        }
+      }
+    },
+    "privilege_metrics": {
+      "type": "object",
+      "required_keys": [
+        "log_gap_category_id",
+        "withheld_privileged_count",
+        "privilege_logged_count",
+        "unlogged_privileged_count",
+        "counsel_category_id",
+        "counsel_withheld_count",
+        "counsel_produced_count",
+        "counsel_all_withheld",
+        "counsel_overdesignation_risk",
+        "privileged_coded_nonprivileged_count",
+        "clawback_required"
+      ],
+      "schema": {
+        "log_gap_category_id": {
+          "type": "string"
+        },
+        "withheld_privileged_count": {
+          "type": "integer"
+        },
+        "privilege_logged_count": {
+          "type": "integer"
+        },
+        "unlogged_privileged_count": {
+          "type": "integer",
+          "calculation": "withheld_privileged_count minus privilege_logged_count for the identified privilege-log gap category"
+        },
+        "counsel_category_id": {
+          "type": "string"
+        },
+        "counsel_withheld_count": {
+          "type": "integer"
+        },
+        "counsel_produced_count": {
+          "type": "integer"
+        },
+        "counsel_all_withheld": {
+          "type": "boolean"
+        },
+        "counsel_overdesignation_risk": {
+          "type": "boolean"
+        },
+        "privileged_coded_nonprivileged_count": {
+          "type": "integer"
+        },
+        "clawback_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "miscoding_findings": {
+      "type": "list",
+      "ordering": "Sort by finding_id ascending.",
+      "item_required_keys": [
+        "finding_id",
+        "issue_type",
+        "category_id",
+        "document_count",
+        "document_ids",
+        "review_coding",
+        "corrected_status",
+        "production_status",
+        "action_type"
+      ],
+      "item_schema": {
+        "finding_id": {
+          "type": "string",
+          "format": "MF-##"
+        },
+        "issue_type": {
+          "type": "enum",
+          "allowed_values_ref": "miscoding_issue_type"
+        },
+        "category_id": {
+          "type": "string"
+        },
+        "document_count": {
+          "type": "integer"
+        },
+        "document_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering": "Sort document IDs ascending."
+        },
+        "review_coding": {
+          "type": "enum",
+          "allowed_values_ref": "review_coding"
+        },
+        "corrected_status": {
+          "type": "enum",
+          "allowed_values_ref": "corrected_status"
+        },
+        "production_status": {
+          "type": "enum",
+          "allowed_values_ref": "production_status"
+        },
+        "action_type": {
+          "type": "enum",
+          "allowed_values_ref": "action_type"
+        }
+      }
+    },
+    "actions": {
+      "type": "list",
+      "ordering": "Sort by action_id ascending.",
+      "item_required_keys": [
+        "action_id",
+        "action_type",
+        "category_ids",
+        "priority",
+        "required"
+      ],
+      "item_schema": {
+        "action_id": {
+          "type": "string",
+          "format": "ACT-##"
+        },
+        "action_type": {
+          "type": "enum",
+          "allowed_values_ref": "action_type"
+        },
+        "category_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering": "Sort category IDs ascending."
+        },
+        "priority": {
+          "type": "enum",
+          "allowed_values_ref": "priority"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

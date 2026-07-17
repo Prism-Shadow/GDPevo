@@ -15,3 +15,23 @@ Solution basis: The correct posture is `continue_with_tighter_conditions`. Georg
 Evaluation basis: The evaluator has seven exact-match scoring points with raw weights totaling 14. `SP001` weight 3 checks `segment_id` and the posture enum. `SP002` weight 2 checks all four GA benchmark metrics plus state and benchmark version. `SP003` weight 2 checks the peer states AL/FL/TN and Georgia's metric directions versus U.S. and peer median. `SP004` weight 2 checks the controlled capacity and risk interpretation. `SP005` weight 2 checks the required checklist-gate set. `SP006` weight 2 checks the added operating-control set. `SP007` weight 1 checks escalation trigger conditions and owners. Likely pitfalls include treating state medians as institution ratios, preserving the endpoint peer-state order instead of returning the template's stable order, recommending routine approval because ROAA is strong, or pausing all lending despite remaining capacity and mixed external indicators.
 
 Transfer design: The primary train anchor is `train_003`. Solvers who compared a `train_003` attempt against the standard answer should infer the transferable method: use the segment endpoint for target state, peer states, capacity, risk tolerance, checklist, and internal context; use the NCUA benchmark endpoint for four state indicators; compare the target state against both the national median and peer-state median; treat the checklist as a minimum gate; and choose tighter conditions when capacity exists but external or control risk is not clean enough for routine expansion. Transfer-dependent scoring is strongest for `SP001`, `SP003`, `SP004`, `SP005`, `SP006`, and `SP007`; `SP002` also benefits from the train-derived convention for benchmark field names but requires task-specific Georgia data exploration.
+
+Construction record: Author `test_003` task-builder worker. Created 2026-06-03. Updated 2026-06-03. Major changes: created the solver prompt, answer template, hidden answer, exact-match evaluator, and bilingual notes for the TriState Georgia ambulance equipment posture task.
+
+## 中文
+
+数据来源与任务简述：本测试任务属于 `SCN_011_bank_branch_credit_risk_lending_committee`，来源示例为 `E001`、`E002`，并主要承接 `E003` 的信用社分部姿态判断流程。任务使用共享环境 `task_group_011_bank_branch_credit_risk_lending_committee/env/`，重点公共 API 为 `/api/manifest`、`/api/policies`、`/api/benchmarks/ncua/q1-2025` 和 `/api/credit-union-segments/TRISTATE_GA_AMBULANCE`。唯一的任务本地可见载荷是 `input/payloads/answer_template.json`。
+
+任务定义：求解者需要按 2025-03-31 的口径，为 `TRISTATE_GA_AMBULANCE` 生成贷款委员会可用的 JSON 姿态建议。提示只给出分部 ID 和 API 基础 URL 的使用方式，不暴露答案路径或评分权重。答案应覆盖 `segment_id`、`posture`、`state_metrics`、`peer_comparison`、`controls`、`escalation_triggers` 和 `interpretation`。求解过程需要读取目标分部上下文，提取佐治亚州 NCUA 2025Q1 指标，将佐治亚与全国中位数及分部指定同业州比较，并把清单和运营背景转换为受控 JSON。
+
+场景适配：本任务属于任务组中的分部姿态与控制类工作。它不是单笔贷款审批，而是信用社设备贷款分部的委员会经营姿态判断，需要综合外部基准方向、剩余季度容量、风险偏好、近期拖欠、文件控制问题以及放款或监控控制。
+
+材料地图：`credit_union_segments.json` 和分部 API 提供目标州 `GA`、同业州 `FL`、`AL`、`TN`、季度容量 2250000.00、当前余额 14240000.00、审慎风险容忍度、近期拖欠 93 bps、过期付款方合同文件、现场审计延迟以及最低清单。`ncua_q1_2025.csv` 和 NCUA API 提供 GA 指标：拖欠 88 bps、贷存比 74%、ROAA 68 bps、正净收入机构占比 82%。全国中位数为 58、69、62 和 84。同业州为 AL 83/72/42/75、FL 91/78/55/78、TN 64/71/59/81；同业中位数为 83、72、55 和 78。`policies.json` 支持共享枚举约定，但不直接计算本任务答案。
+
+解答依据：正确姿态为 `continue_with_tighter_conditions`。佐治亚仍有可用容量，且 ROAA 强于全国和同业中位数；但拖欠和贷存比更高，正净收入占比低于全国中位数，且该分部风险容忍度为审慎。因此答案不应选择常规扩张，也不应全面暂停。必须清单门槛正是分部最低清单：`board_authorization`、`fleet_replacement_plan`、`payer_contract_summary`、`proof_of_insurance` 和 `ucc_or_title_lien`。新增控制针对过期付款方合同、现场审计延迟、留置权纪律、高级审查、州基准监控和近期拖欠偏高，分别为 `payer_contract_refresh_before_close`、`field_audit_completion_or_exception`、`lien_perfection_prior_to_funding`、`senior_underwriter_second_review`、`quarterly_state_benchmark_monitoring` 和 `monthly_segment_delinquency_watch`。升级触发项覆盖分部近期拖欠达到或超过 90 bps、付款方合同文件过期、现场审计积压超过 30 天，以及容量超限或例外申请。
+
+评估依据：评估器包含 7 个精确匹配评分点，原始权重合计 14。`SP001` 权重 3，检查 `segment_id` 和姿态枚举；`SP002` 权重 2，检查 GA 四项基准指标以及州和基准版本；`SP003` 权重 2，检查 AL/FL/TN 同业州以及佐治亚相对全国和同业中位数的方向；`SP004` 权重 2，检查受控的容量和风险解释；`SP005` 权重 2，检查必须清单门槛集合；`SP006` 权重 2，检查新增运营控制集合；`SP007` 权重 1，检查升级触发条件和负责人。常见错误包括把州中位数误当成机构自身比率、没有按模板稳定顺序输出同业州、因为 ROAA 强就建议常规审批，或在仍有容量且外部指标混合的情况下全面暂停。
+
+迁移设计：主要训练锚点是 `train_003`。求解者在比较 `train_003` 尝试与标准答案后，应能推断可迁移方法：用分部 API 获取目标州、同业州、容量、风险容忍度、清单和内部背景；用 NCUA 基准 API 获取四项州级指标；同时比较目标州相对全国和同业中位数的方向；把清单视为最低门槛；当仍有容量但外部或控制风险不够干净时选择更严格条件。迁移依赖最强的评分点是 `SP001`、`SP003`、`SP004`、`SP005`、`SP006` 和 `SP007`；`SP002` 也受益于训练任务中的基准字段命名约定，但仍需要针对佐治亚数据进行任务特定探索。
+
+构建记录：作者为 `test_003` task-builder worker。创建日期 2026-06-03。更新日期 2026-06-03。主要变更：创建 TriState Georgia 救护车设备贷款姿态任务的求解提示、答案模板、隐藏标准答案、精确匹配评估器和双语说明。

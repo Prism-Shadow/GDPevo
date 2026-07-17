@@ -1,0 +1,338 @@
+task_group:
+  task_group_id: task_group_019
+  scenario_id: SCN_019_regulatory_licensing_eligibility_and_compliance_review
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Legal
+  description: |
+    Train-predict benchmark for regulatory licensing eligibility and compliance
+    review. Tasks use a shared Cascadia Licensing Review Portal environment to
+    evaluate contractor registration applications, restricted alcohol-license
+    applications, and alcohol renewal manual-review queues.
+
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+    - env/Dockerfile
+    - env/setup.sh
+    - env/server.py
+    - env/judge_api.py
+    - env/endpoints.txt
+    - env/generate_data.py
+    - env/data/clrp.db
+    - env/data/public_manifest.json
+    - env/data/construction_manifest.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/endpoint_reference.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluator.py
+      rubric:
+        - goal: Application coverage exactly includes the 12 HS-2026-Q1A application IDs in required order.
+          weight: 1
+        - goal: Eligibility determination map is exact for all 12 applications.
+          weight: 3
+        - goal: Clean approval cases are correctly identified with no deficiency action.
+          weight: 2
+        - goal: Bond-related hold results and actions are exact.
+          weight: 2
+        - goal: Insurance-verification hold results and actions are exact.
+          weight: 2
+        - goal: Penalty, field-note, and disqualifying-conduct decisions are exact.
+          weight: 3
+        - goal: Deficiency counts match the standard answer exactly.
+          weight: 2
+        - goal: Bulletin-impact summary matches the standard answer exactly.
+          weight: 3
+
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+      rubric:
+        - goal: Correct target IDs, review month, and final recommendation.
+          weight: 3
+        - goal: Correct same-premises, settlement, incident-level, and overall risk classifications.
+          weight: 2
+        - goal: Correct incident, unresolved-disposition, and high-severity counts.
+          weight: 2
+        - goal: Correct standard-only control coverage and February comparison context.
+          weight: 2
+        - goal: Correct verification-gap set.
+          weight: 2
+        - goal: Correct standard-obligation controls with sources and evidence.
+          weight: 2
+        - goal: Correct location-specific restriction follow-up controls and first-90-day focus.
+          weight: 3
+
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+      rubric:
+        - goal: Queue contains exactly the expected 10 license IDs.
+          weight: 2
+        - goal: Ranks 1-3 are in the expected order.
+          weight: 2
+        - goal: Ranks 4-10 are in the expected order.
+          weight: 2
+        - goal: All queue match_confidence values are correct.
+          weight: 1
+        - goal: All violation_count_used values are correct.
+          weight: 2
+        - goal: All most_recent_date_used values are correct.
+          weight: 1
+        - goal: All next_step_label values are correct.
+          weight: 2
+        - goal: Release batch, boundary, queue size, and boundary-exclusion flags are correct.
+          weight: 2
+
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/evaluator.py
+      rubric:
+        - goal: Target batch and complete application decision list are present in application_id order.
+          weight: 1
+        - goal: Adverse prior registration and unresolved-penalty holds are correctly classified.
+          weight: 2
+        - goal: Cancelled-bond and short-bond applications receive the correct hold reasons.
+          weight: 2
+        - goal: Insurance verification and replacement cases are correctly held.
+          weight: 2
+        - goal: Field-note and correspondence/documentation holds are correctly classified.
+          weight: 2
+        - goal: Clean approval set is exactly the two no-deficiency applications.
+          weight: 2
+        - goal: Manual follow-up IDs and controlled follow-up reasons match the review queue.
+          weight: 3
+        - goal: Rule-change summary counts and Q1 2026 bulletin-changed application set are correct.
+          weight: 2
+
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/evaluator.py
+      rubric:
+        - goal: Correct recommendation and target identifiers.
+          weight: 2
+        - goal: Correct successor risk classification.
+          weight: 2
+        - goal: Correct verification gap set.
+          weight: 2
+        - goal: Correct standard obligation set.
+          weight: 2
+        - goal: Correct premises-specific control set.
+          weight: 3
+        - goal: Correct records request set.
+          weight: 2
+        - goal: Correct escalation trigger set.
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+      - test_tasks/001/input/payloads/endpoint_reference.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/evaluator.py
+      rubric:
+        - goal: Batch metadata and application coverage exactly include the 14 HS-2026-Q2A applications in required order.
+          weight: 1
+        - goal: Eligibility determination map is exact for all 14 applications.
+          weight: 3
+        - goal: Clean approval cases are correctly identified with no deficiency action.
+          weight: 2
+        - goal: Scoped bond and insurance hold results, bulletin IDs, and actions are exact.
+          weight: 3
+        - goal: Correspondence and field-note override holds are exact.
+          weight: 2
+        - goal: Unresolved-penalty, adverse-registration, and disqualifying-conduct results are exact.
+          weight: 3
+        - goal: Deficiency counts match the standard answer exactly.
+          weight: 2
+        - goal: Bulletin-impact summary matches the standard answer exactly.
+          weight: 3
+
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/evaluator.py
+      rubric:
+        - goal: Release metadata, queue size, and post-boundary exclusion count are exact.
+          weight: 1
+        - goal: Core board-review membership includes the six high-risk exact-match cases.
+          weight: 3
+        - goal: Top-three queue set captures the three strongest board-review cases.
+          weight: 2
+        - goal: Close-match fine-review cases are identified with correct confidence and label.
+          weight: 2
+        - goal: Shared-address manual-review case is identified with correct confidence and label.
+          weight: 2
+        - goal: Pre-boundary counts and most-recent dates are exact for core board-review cases.
+          weight: 2
+        - goal: Queue label-count summary is exact.
+          weight: 2
+        - goal: Full queue membership contains the expected 12 current license IDs.
+          weight: 2
+
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/evaluator.py
+      rubric:
+        - goal: Correct target IDs, review month, and issuance recommendation.
+          weight: 2
+        - goal: Correct same-premises, settlement, control-overlap, successor-risk, and overall-risk classifications.
+          weight: 2
+        - goal: Correct incident counts and source IDs for unresolved and high-severity incidents.
+          weight: 2
+        - goal: Correct standard/location-specific counts and separation/overlap flags.
+          weight: 2
+        - goal: Correct F-COM plus all-license standard obligation set with source IDs and evidence.
+          weight: 2
+        - goal: Correct premises-specific restriction set, overlap status, evidence, and first-90-day focus.
+          weight: 3
+        - goal: Correct verification-gap set with source IDs and statuses.
+          weight: 3
+        - goal: Correct ranked first-90-day inspection priorities with source IDs and timing.
+          weight: 3
+
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/evaluator.py
+      rubric:
+        - goal: Target batch, impact date, and complete application list are correct and ordered.
+          weight: 1
+        - goal: Current determination map is exact for all 13 applications.
+          weight: 2
+        - goal: Changed-by-bulletin list exactly identifies the applications whose decisions flip under 2026 bulletins.
+          weight: 3
+        - goal: Bond impact cases separate new-rule shortfalls from the pre-existing cancelled-bond hold.
+          weight: 2
+        - goal: Insurance, field-note, and experience-verification holds are classified with correct rule impact.
+          weight: 2
+        - goal: Penalty, correspondence, financial-statement, and denial cases distinguish pre-existing defects from added rule reasons.
+          weight: 2
+        - goal: Counterfactual counts match the standard answer exactly.
+          weight: 3
+        - goal: Management escalation and unchanged clean approval set are exact.
+          weight: 2
+
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/evaluator.py
+      rubric:
+        - goal: Renewal release metadata and post-boundary exclusion count are exact.
+          weight: 1
+        - goal: Top-two renewal queue cases are in the expected order.
+          weight: 2
+        - goal: Core board-review renewal membership contains the six strongest cases.
+          weight: 3
+        - goal: ALERT, fine, and shared-address manual-review tail cases are exact.
+          weight: 2
+        - goal: Renewal queue method flags for match and label counts are exact.
+          weight: 2
+        - goal: Successor premises target and risk counts are exact.
+          weight: 2
+        - goal: Successor recommendation and verification gaps are exact.
+          weight: 2
+        - goal: Successor standard obligations and premises controls are exact.
+          weight: 2
+        - goal: First-90-day successor inspection checks are exact.
+          weight: 2

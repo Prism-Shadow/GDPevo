@@ -1,0 +1,393 @@
+{
+  "description": "Return one normalized JSON object for the P-91804 neurology ServiceRequest validation. Arrays marked as sets may be emitted in any order; evaluators normalize them. Dates use YYYY-MM-DD. Do not include explanatory prose outside the JSON object.",
+  "required_top_level_keys": [
+    "task_id",
+    "request_identity",
+    "service_request",
+    "reason_code_validation",
+    "clinical_evidence",
+    "sbar_coverage",
+    "filing_decision"
+  ],
+  "schema": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_004"
+    },
+    "request_identity": {
+      "type": "object",
+      "required_keys": [
+        "service_request_id",
+        "patient"
+      ],
+      "fields": {
+        "service_request_id": {
+          "type": "string"
+        },
+        "patient": {
+          "type": "object",
+          "required_keys": [
+            "patient_id",
+            "enterprise_mrn",
+            "display_name",
+            "dob"
+          ],
+          "fields": {
+            "patient_id": {
+              "type": "string"
+            },
+            "enterprise_mrn": {
+              "type": "string"
+            },
+            "display_name": {
+              "type": "string"
+            },
+            "dob": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        }
+      }
+    },
+    "service_request": {
+      "type": "object",
+      "required_keys": [
+        "status",
+        "intent",
+        "priority",
+        "authored_on",
+        "occurrence_date",
+        "status_valid",
+        "intent_valid",
+        "priority_valid",
+        "date_sequence_valid",
+        "service_code",
+        "service_code_valid",
+        "requester_provider_id",
+        "performer_provider_id",
+        "performer_service_line"
+      ],
+      "fields": {
+        "status": {
+          "type": "enum",
+          "allowed_values": [
+            "draft",
+            "active",
+            "on-hold",
+            "revoked",
+            "completed",
+            "entered-in-error"
+          ]
+        },
+        "intent": {
+          "type": "enum",
+          "allowed_values": [
+            "proposal",
+            "plan",
+            "order",
+            "original-order",
+            "reflex-order",
+            "filler-order",
+            "instance-order",
+            "option"
+          ]
+        },
+        "priority": {
+          "type": "enum",
+          "allowed_values": [
+            "routine",
+            "urgent",
+            "asap",
+            "stat"
+          ]
+        },
+        "authored_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "occurrence_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "status_valid": {
+          "type": "boolean"
+        },
+        "intent_valid": {
+          "type": "boolean"
+        },
+        "priority_valid": {
+          "type": "boolean"
+        },
+        "date_sequence_valid": {
+          "type": "boolean"
+        },
+        "service_code": {
+          "type": "string"
+        },
+        "service_code_valid": {
+          "type": "boolean"
+        },
+        "requester_provider_id": {
+          "type": "string"
+        },
+        "performer_provider_id": {
+          "type": "string"
+        },
+        "performer_service_line": {
+          "type": "enum",
+          "allowed_values": [
+            "orthopedics",
+            "cardiology",
+            "pulmonology",
+            "neurology",
+            "skilled_nursing",
+            "oncology",
+            "primary_care"
+          ]
+        }
+      }
+    },
+    "reason_code_validation": {
+      "type": "object",
+      "required_keys": [
+        "reason_codes",
+        "codes"
+      ],
+      "fields": {
+        "reason_codes": {
+          "type": "array",
+          "items": "string",
+          "set_semantics": true
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required_keys": [
+              "code",
+              "valid",
+              "chapter",
+              "matches_patient_evidence",
+              "condition_id"
+            ],
+            "fields": {
+              "code": {
+                "type": "string"
+              },
+              "valid": {
+                "type": "boolean"
+              },
+              "chapter": {
+                "type": "string"
+              },
+              "matches_patient_evidence": {
+                "type": "boolean"
+              },
+              "condition_id": {
+                "type": "string"
+              }
+            }
+          },
+          "ordering": "sort_by_code"
+        }
+      }
+    },
+    "clinical_evidence": {
+      "type": "object",
+      "required_keys": [
+        "key_encounter",
+        "key_medication",
+        "supporting_active_condition_keys"
+      ],
+      "fields": {
+        "key_encounter": {
+          "type": "object",
+          "required_keys": [
+            "encounter_id",
+            "date",
+            "type",
+            "provider_id",
+            "signed_status",
+            "diagnosis_codes",
+            "medications_mentioned",
+            "care_plan_tag"
+          ],
+          "fields": {
+            "encounter_id": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string",
+              "format": "date"
+            },
+            "type": {
+              "type": "string"
+            },
+            "provider_id": {
+              "type": "string"
+            },
+            "signed_status": {
+              "type": "enum",
+              "allowed_values": [
+                "signed",
+                "unsigned",
+                "amended",
+                "unknown"
+              ]
+            },
+            "diagnosis_codes": {
+              "type": "array",
+              "items": "string",
+              "set_semantics": true
+            },
+            "medications_mentioned": {
+              "type": "array",
+              "items": "string",
+              "set_semantics": true
+            },
+            "care_plan_tag": {
+              "type": "string",
+              "description": "normalized care-plan evidence tag"
+            }
+          }
+        },
+        "key_medication": {
+          "type": "object",
+          "required_keys": [
+            "medication_id",
+            "medication",
+            "normalized_key",
+            "dose",
+            "route",
+            "frequency",
+            "status",
+            "supports_reason"
+          ],
+          "fields": {
+            "medication_id": {
+              "type": "string"
+            },
+            "medication": {
+              "type": "string"
+            },
+            "normalized_key": {
+              "type": "string"
+            },
+            "dose": {
+              "type": "string"
+            },
+            "route": {
+              "type": "string"
+            },
+            "frequency": {
+              "type": "string"
+            },
+            "status": {
+              "type": "enum",
+              "allowed_values": [
+                "active",
+                "inactive",
+                "unknown"
+              ]
+            },
+            "supports_reason": {
+              "type": "boolean"
+            }
+          }
+        },
+        "supporting_active_condition_keys": {
+          "type": "array",
+          "items": "condition normalized_key values",
+          "set_semantics": true
+        }
+      }
+    },
+    "sbar_coverage": {
+      "type": "object",
+      "required_keys": [
+        "complete",
+        "sections_present",
+        "missing_sections"
+      ],
+      "fields": {
+        "complete": {
+          "type": "boolean"
+        },
+        "sections_present": {
+          "type": "array",
+          "items": "enum",
+          "allowed_values": [
+            "situation",
+            "background",
+            "assessment",
+            "recommendation"
+          ],
+          "set_semantics": true
+        },
+        "missing_sections": {
+          "type": "array",
+          "items": "enum",
+          "allowed_values": [
+            "situation",
+            "background",
+            "assessment",
+            "recommendation"
+          ],
+          "set_semantics": true
+        }
+      }
+    },
+    "filing_decision": {
+      "type": "object",
+      "required_keys": [
+        "source_status",
+        "ready_to_file_status",
+        "action",
+        "ready_to_file",
+        "hold_reason_codes"
+      ],
+      "fields": {
+        "source_status": {
+          "type": "enum",
+          "allowed_values": [
+            "draft",
+            "active",
+            "on-hold",
+            "revoked",
+            "completed",
+            "entered-in-error"
+          ]
+        },
+        "ready_to_file_status": {
+          "type": "enum",
+          "allowed_values": [
+            "draft",
+            "active",
+            "on-hold",
+            "revoked",
+            "completed",
+            "entered-in-error"
+          ]
+        },
+        "action": {
+          "type": "enum",
+          "allowed_values": [
+            "file_as_active_order",
+            "hold_for_provider_review",
+            "cancel_draft",
+            "no_action"
+          ]
+        },
+        "ready_to_file": {
+          "type": "boolean"
+        },
+        "hold_reason_codes": {
+          "type": "array",
+          "items": "string",
+          "set_semantics": true
+        }
+      }
+    }
+  }
+}

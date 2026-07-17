@@ -1,0 +1,258 @@
+{
+  "description": "Expected JSON output for train_002 Orthopedic Referral Readiness: June Spine And Joint Batch.",
+  "top_level": {
+    "task_id": {
+      "type": "string",
+      "required": true,
+      "expected_value": "train_002"
+    },
+    "batch_id": {
+      "type": "string",
+      "required": true,
+      "expected_value": "ORTHO-JUN-01"
+    },
+    "referral_reviews": {
+      "type": "list",
+      "required": true,
+      "ordering": "ascending referral_id",
+      "item": {
+        "referral_id": "string",
+        "readiness_status": {
+          "type": "enum",
+          "allowed": [
+            "ready",
+            "blocked",
+            "under_review",
+            "admin_followup"
+          ]
+        },
+        "issue_codes": {
+          "type": "list",
+          "items": {
+            "type": "enum",
+            "allowed": [
+              "icd_chapter_mismatch",
+              "narrative_mismatch",
+              "laterality_mismatch",
+              "duplicate_referral",
+              "shared_insurance_anomaly",
+              "missing_records",
+              "missing_imaging",
+              "auth_blocker",
+              "already_scheduled"
+            ]
+          },
+          "ordering": "treat as unordered set"
+        },
+        "priority_tier": {
+          "type": "enum_or_null",
+          "allowed": [
+            "tier_1_immediate",
+            "tier_2_short_term",
+            "tier_3_administrative",
+            null
+          ]
+        }
+      }
+    },
+    "icd_discrepancies": {
+      "type": "list",
+      "required": true,
+      "ordering": "ascending referral_id",
+      "item": {
+        "referral_id": "string",
+        "icd10_code": "string",
+        "issue_types": {
+          "type": "list",
+          "items": {
+            "type": "enum",
+            "allowed": [
+              "icd_chapter_mismatch",
+              "narrative_mismatch",
+              "laterality_mismatch"
+            ]
+          },
+          "ordering": "treat as unordered set"
+        },
+        "observed_chapter": "string_or_null",
+        "expected_chapter": "string_or_null"
+      }
+    },
+    "duplicate_groups": {
+      "type": "list",
+      "required": true,
+      "ordering": "ascending group_id",
+      "item": {
+        "group_id": "string",
+        "referral_ids": {
+          "type": "list",
+          "ordering": "ascending referral_id"
+        },
+        "patient_id": "string",
+        "primary_referral_id": "string",
+        "recommendation": {
+          "type": "enum",
+          "allowed": [
+            "consolidate_to_primary",
+            "keep_separate"
+          ]
+        }
+      }
+    },
+    "shared_insurance_anomalies": {
+      "type": "list",
+      "required": true,
+      "ordering": "ascending insurance_id",
+      "item": {
+        "insurance_id": "string",
+        "referral_ids": {
+          "type": "list",
+          "ordering": "ascending referral_id"
+        },
+        "patient_ids": {
+          "type": "list",
+          "ordering": "ascending patient_id"
+        },
+        "disposition": {
+          "type": "enum",
+          "allowed": [
+            "verify_distinct_patient_policy_id",
+            "legitimate_duplicate_same_patient"
+          ]
+        }
+      }
+    },
+    "blocker_sets": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "missing_records": {
+          "type": "list",
+          "items": "referral_id",
+          "ordering": "ascending referral_id"
+        },
+        "missing_imaging": {
+          "type": "list",
+          "items": "referral_id",
+          "ordering": "ascending referral_id"
+        },
+        "auth_blockers": {
+          "type": "list",
+          "ordering": "ascending referral_id",
+          "item": {
+            "referral_id": "string",
+            "auth_status": {
+              "type": "enum",
+              "allowed": [
+                "pending",
+                "denied",
+                "not_submitted"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "ready_to_schedule": {
+      "type": "list",
+      "required": true,
+      "items": "referral_id",
+      "ordering": "ascending referral_id"
+    },
+    "action_plan": {
+      "type": "list",
+      "required": true,
+      "ordering": "ascending referral_id",
+      "item": {
+        "referral_id": "string",
+        "priority_tier": {
+          "type": "enum",
+          "allowed": [
+            "tier_1_immediate",
+            "tier_2_short_term",
+            "tier_3_administrative"
+          ]
+        },
+        "action_codes": {
+          "type": "list",
+          "items": {
+            "type": "enum",
+            "allowed": [
+              "request_corrected_icd",
+              "confirm_narrative",
+              "confirm_laterality",
+              "consolidate_duplicate",
+              "verify_insurance_id",
+              "request_records",
+              "request_imaging",
+              "resolve_authorization",
+              "review_existing_appointment"
+            ]
+          },
+          "ordering": "treat as unordered set"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "total_referrals": "integer",
+        "ready_to_schedule_count": "integer",
+        "follow_up_count": "integer",
+        "counts_by_urgency": {
+          "type": "object",
+          "integer_keys": [
+            "urgent",
+            "routine",
+            "admin"
+          ]
+        },
+        "counts_by_readiness_status": {
+          "type": "object",
+          "integer_keys": [
+            "ready",
+            "blocked",
+            "under_review",
+            "admin_followup"
+          ]
+        },
+        "counts_by_urgency_and_status": {
+          "type": "list",
+          "ordering": "urgency then readiness_status",
+          "item": {
+            "urgency": {
+              "type": "enum",
+              "allowed": [
+                "urgent",
+                "routine",
+                "admin"
+              ]
+            },
+            "readiness_status": {
+              "type": "enum",
+              "allowed": [
+                "ready",
+                "blocked",
+                "under_review",
+                "admin_followup"
+              ]
+            },
+            "count": "integer"
+          }
+        },
+        "issue_counts": {
+          "type": "object",
+          "integer_keys": [
+            "icd_discrepancy_referrals",
+            "duplicate_groups",
+            "shared_insurance_anomalies",
+            "missing_records_referrals",
+            "missing_imaging_referrals",
+            "auth_blocker_referrals"
+          ]
+        }
+      }
+    }
+  }
+}

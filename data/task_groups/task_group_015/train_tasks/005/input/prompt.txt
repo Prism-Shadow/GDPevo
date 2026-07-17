@@ -1,0 +1,5 @@
+You are preparing the March orthopedic referral audit for batch `MAR26-ORTHO-A`.
+
+Use the shared EHR quality environment at `<TASK_ENV_BASE_URL>` to inspect the referral batch and any related ICD-10, patient, and provider records needed to complete a formal audit. The relevant public endpoints include referral search/detail, ICD-10 lookup, patient detail/search, and provider directory endpoints.
+
+Return one JSON object that conforms to `input/payloads/answer_template.json`. The audit should identify invalid or out-of-range diagnosis-code referrals, laterality or narrative-code mismatches, duplicate referral groups, documentation and authorization follow-up queues, Tier 1/2/3 action-plan assignments, and summary counts. Keep the response as normalized JSON only, with stable IDs rather than narrative explanations.

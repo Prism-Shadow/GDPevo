@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Q2 maintenance-log integrity certification answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_decision",
+    "issue_counts",
+    "duplicate_groups",
+    "invalid_event_ids",
+    "regression_cases",
+    "edge_case_decisions",
+    "corrected_metrics",
+    "asset_risk_ranking",
+    "certification_status"
+  ],
+  "properties": {
+    "source_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "collection_id",
+        "as_of",
+        "authoritative_snapshot_id",
+        "snapshot_status",
+        "authoritative_row_count",
+        "scoped_raw_row_count"
+      ],
+      "properties": {
+        "collection_id": {"type": "string", "const": "maintenance_events_2026_q2"},
+        "as_of": {"type": "string", "format": "date-time"},
+        "authoritative_snapshot_id": {"type": "string"},
+        "snapshot_status": {"type": "string", "enum": ["CERTIFIED", "PROVISIONAL", "STALE"]},
+        "authoritative_row_count": {"type": "integer", "minimum": 0},
+        "scoped_raw_row_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "issue_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "missing_timestamp",
+        "invalid_timestamp",
+        "invalid_odometer",
+        "negative_labor",
+        "extreme_labor",
+        "odometer_regression"
+      ],
+      "properties": {
+        "missing_timestamp": {"type": "integer", "minimum": 0},
+        "invalid_timestamp": {"type": "integer", "minimum": 0},
+        "invalid_odometer": {"type": "integer", "minimum": 0},
+        "negative_labor": {"type": "integer", "minimum": 0},
+        "extreme_labor": {"type": "integer", "minimum": 0},
+        "odometer_regression": {"type": "integer", "minimum": 0}
+      }
+    },
+    "duplicate_groups": {
+      "type": "array",
+      "description": "All logical event IDs present in multiple source snapshots, sorted by logical_event_id ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["logical_event_id", "snapshot_ids", "retained_event_id", "retained_snapshot_id"],
+        "properties": {
+          "logical_event_id": {"type": "string", "pattern": "^ME-Q2-[0-9]{6}$"},
+          "snapshot_ids": {
+            "type": "array",
+            "items": {"type": "string"},
+            "minItems": 2,
+            "uniqueItems": true
+          },
+          "retained_event_id": {"type": "string", "pattern": "^ME-Q2-[0-9]{6}$"},
+          "retained_snapshot_id": {"type": "string"}
+        }
+      }
+    },
+    "invalid_event_ids": {
+      "type": "array",
+      "description": "Unique logical event IDs rejected for missing or unparsable event time, odometer below the minimum, or labor outside the stated limits. Regression-only events are excluded. Sort lexicographically.",
+      "items": {"type": "string", "pattern": "^ME-Q2-[0-9]{6}$"},
+      "uniqueItems": true
+    },
+    "regression_cases": {
+      "type": "array",
+      "description": "Unit-normalized continuity regressions, sorted by event_id ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "asset_id",
+          "prior_reliable_event_id",
+          "prior_odometer_km",
+          "current_odometer_km",
+          "drop_km"
+        ],
+        "properties": {
+          "event_id": {"type": "string", "pattern": "^ME-Q2-[0-9]{6}$"},
+          "asset_id": {"type": "string", "pattern": "^AST-[0-9]{4}$"},
+          "prior_reliable_event_id": {"type": "string", "pattern": "^ME-Q2-[0-9]{6}$"},
+          "prior_odometer_km": {"type": "number", "multipleOf": 0.1},
+          "current_odometer_km": {"type": "number", "multipleOf": 0.1},
+          "drop_km": {"type": "number", "minimum": 0.0, "multipleOf": 0.1}
+        }
+      }
+    },
+    "edge_case_decisions": {
+      "type": "array",
+      "description": "One decision for every event ID in case_scope.json decision_panel, sorted by event_id ascending.",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "selected_snapshot_id",
+          "source_choice_code",
+          "source_control_code",
+          "integrity_class",
+          "primary_issue_code",
+          "prior_reliable_event_id",
+          "normalized_odometer_km",
+          "history_action",
+          "history_route_code"
+        ],
+        "properties": {
+          "event_id": {"type": "string", "pattern": "^ME-Q2-[0-9]{6}$"},
+          "selected_snapshot_id": {"type": "string"},
+          "source_choice_code": {
+            "type": "string",
+            "description": "AUTHORITATIVE_OVERLAP_REPRESENTATIVE for the selected winner of an overlap; AUTHORITATIVE_UNIQUE_EVIDENCE for a sole record from the authoritative snapshot; UNIQUE_NON_AUTHORITATIVE_EVIDENCE for a sole provisional or stale record retained as non-overlapping evidence.",
+            "enum": [
+              "AUTHORITATIVE_OVERLAP_REPRESENTATIVE",
+              "AUTHORITATIVE_UNIQUE_EVIDENCE",
+              "UNIQUE_NON_AUTHORITATIVE_EVIDENCE"
+            ]
+          },
+          "source_control_code": {
+            "type": "string",
+            "enum": ["MS-12", "MS-47", "MS-86"]
+          },
+          "integrity_class": {
+            "type": "string",
+            "description": "The selected record's final integrity state after source reconciliation.",
+            "enum": ["RELIABLE", "NON_SEQUENCE_INVALID", "ODOMETER_REGRESSION"]
+          },
+          "primary_issue_code": {
+            "type": "string",
+            "enum": [
+              "MISSING_TIMESTAMP",
+              "INVALID_TIMESTAMP",
+              "INVALID_ODOMETER",
+              "NEGATIVE_LABOR",
+              "EXTREME_LABOR",
+              "ODOMETER_REGRESSION",
+              "NONE"
+            ]
+          },
+          "prior_reliable_event_id": {
+            "type": ["string", "null"],
+            "pattern": "^ME-Q2-[0-9]{6}$"
+          },
+          "normalized_odometer_km": {
+            "type": ["number", "null"],
+            "multipleOf": 0.1
+          },
+          "history_action": {
+            "type": "string",
+            "description": "The selected record's disposition in the reconstructed reliable history.",
+            "enum": [
+              "INCLUDE_RELIABLE_HISTORY",
+              "EXCLUDE_NON_SEQUENCE_INVALID",
+              "EXCLUDE_ODOMETER_REGRESSION"
+            ]
+          },
+          "history_route_code": {
+            "type": "string",
+            "enum": ["HR-19", "HR-33", "HR-74"]
+          }
+        }
+      }
+    },
+    "corrected_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reliable_continuity_event_count",
+        "q2_reliable_event_count",
+        "baseline_covered_asset_count",
+        "q2_distance_km"
+      ],
+      "properties": {
+        "reliable_continuity_event_count": {"type": "integer", "minimum": 0},
+        "q2_reliable_event_count": {"type": "integer", "minimum": 0},
+        "baseline_covered_asset_count": {"type": "integer", "minimum": 0},
+        "q2_distance_km": {
+          "type": "number",
+          "description": "Kilometers rounded to 2 decimal places.",
+          "multipleOf": 0.01
+        }
+      }
+    },
+    "asset_risk_ranking": {
+      "type": "array",
+      "description": "Exactly five Q2 risk rows in rank order under the case policy.",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rank", "asset_id", "rejected_q2_event_count", "regression_event_count"],
+        "properties": {
+          "rank": {"type": "integer", "minimum": 1, "maximum": 5},
+          "asset_id": {"type": "string", "pattern": "^AST-[0-9]{4}$"},
+          "rejected_q2_event_count": {"type": "integer", "minimum": 0},
+          "regression_event_count": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "certification_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "action"],
+      "properties": {
+        "status": {"type": "string", "enum": ["PASS", "PASS_WITH_EXCEPTIONS", "HOLD"]},
+        "action": {"type": "string", "enum": ["RELEASE", "REVIEW_EXCEPTIONS", "BLOCK_AND_REMEDIATE"]}
+      }
+    }
+  },
+  "x-ordering_rules": {
+    "duplicate_groups": "logical_event_id ascending; snapshot_ids lexicographically ascending",
+    "invalid_event_ids": "lexicographically ascending",
+    "regression_cases": "event_id ascending",
+    "edge_case_decisions": "event_id ascending, exactly the decision_panel event IDs",
+    "asset_risk_ranking": "rank ascending"
+  }
+}

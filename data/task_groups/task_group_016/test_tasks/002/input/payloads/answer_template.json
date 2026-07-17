@@ -1,0 +1,164 @@
+{
+  "template_name": "pediatric_head_injury_decision_support_answer",
+  "language": "English",
+  "output_contract": {
+    "format": "Return a single JSON object.",
+    "required_top_level_keys": [
+      "task_id",
+      "case_id",
+      "patient_id",
+      "primary_assessment",
+      "risk_tier",
+      "disposition",
+      "imaging_recommendation",
+      "red_flags",
+      "absent_red_flags",
+      "restrictions",
+      "follow_up",
+      "evidence_ids",
+      "safety_checks"
+    ],
+    "additional_top_level_keys": "permitted_but_not_required"
+  },
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "description": "Use the formal task identifier."
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Use the target case identifier from the prompt."
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Patient identifier from the clinic runtime records."
+    },
+    "primary_assessment": {
+      "type": "enum",
+      "allowed_values": [
+        "minor_head_impact_without_concussion_features",
+        "pediatric_head_injury_with_concussion_features",
+        "mild_traumatic_brain_injury_without_loss_of_consciousness",
+        "moderate_or_severe_traumatic_brain_injury"
+      ]
+    },
+    "risk_tier": {
+      "type": "enum",
+      "allowed_values": [
+        "low",
+        "intermediate",
+        "high"
+      ]
+    },
+    "disposition": {
+      "type": "enum",
+      "allowed_values": [
+        "home_observation_with_followup",
+        "ed_evaluation_ct_consideration"
+      ]
+    },
+    "imaging_recommendation": {
+      "type": "enum",
+      "allowed_values": [
+        "no_immediate_ct",
+        "ct_or_ed_per_protocol",
+        "defer_to_ed_clinician",
+        "not_applicable"
+      ]
+    },
+    "red_flags": {
+      "type": "list[enum]",
+      "allowed_values": [
+        "abnormal_gcs",
+        "basilar_skull_signs",
+        "brief_loss_of_consciousness",
+        "confusion",
+        "coordination_symptom_observe",
+        "dangerous_mechanism",
+        "focal_weakness",
+        "head_impact",
+        "loss_of_consciousness",
+        "mild_nausea",
+        "photophobia",
+        "repeated_vomiting",
+        "seizure",
+        "worsening_headache"
+      ],
+      "ordering": "Set-like field; order does not encode priority."
+    },
+    "absent_red_flags": {
+      "type": "list[enum]",
+      "allowed_values": [
+        "abnormal_gcs",
+        "basilar_skull_signs",
+        "brief_loss_of_consciousness",
+        "confusion",
+        "coordination_symptom_observe",
+        "dangerous_mechanism",
+        "focal_weakness",
+        "head_impact",
+        "loss_of_consciousness",
+        "mild_nausea",
+        "photophobia",
+        "repeated_vomiting",
+        "seizure",
+        "worsening_headache"
+      ],
+      "ordering": "Set-like field; order does not encode priority."
+    },
+    "restrictions": {
+      "type": "list[enum]",
+      "allowed_values": [
+        "no_driving_until_cleared",
+        "no_driving_until_symptom_free",
+        "no_high_risk_sports_until_cleared",
+        "relative_cognitive_physical_rest",
+        "return_to_learn_accommodations",
+        "same_day_return_to_play_allowed"
+      ],
+      "ordering": "Set-like field; order does not encode priority."
+    },
+    "follow_up": {
+      "type": "object",
+      "required_keys": [
+        "timeframe_hours",
+        "route"
+      ],
+      "properties": {
+        "timeframe_hours": {
+          "type": "integer",
+          "units": "hours",
+          "precision": "whole hours"
+        },
+        "route": {
+          "type": "enum",
+          "allowed_values": [
+            "primary_care_or_concussion_recheck",
+            "sports_medicine_or_concussion_clinic",
+            "emergency_department"
+          ]
+        }
+      }
+    },
+    "evidence_ids": {
+      "type": "list[string]",
+      "description": "Stable case, observation, or other source record identifiers copied exactly from the clinic runtime records.",
+      "ordering": "Set-like field; order does not encode priority."
+    },
+    "safety_checks": {
+      "type": "object",
+      "required_keys": [
+        "no_false_seizure",
+        "no_false_focal_weakness"
+      ],
+      "properties": {
+        "no_false_seizure": {
+          "type": "boolean"
+        },
+        "no_false_focal_weakness": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,406 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "certification_status": {
+      "additionalProperties": false,
+      "properties": {
+        "next_action": {
+          "enum": [
+            "BLOCK_AND_REMEDIATE",
+            "RELEASE",
+            "REVIEW_EXCEPTIONS"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "HOLD",
+            "PASS",
+            "PASS_WITH_EXCEPTIONS"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "next_action"
+      ],
+      "type": "object"
+    },
+    "channel_readiness": {
+      "additionalProperties": false,
+      "description": "Mutually exclusive counts across readiness-eligible canonical entities.",
+      "properties": {
+        "both": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "email_only": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "not_ready": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "phone_only": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "both",
+        "email_only",
+        "phone_only",
+        "not_ready"
+      ],
+      "type": "object"
+    },
+    "control_codes": {
+      "additionalProperties": false,
+      "properties": {
+        "anchored_cases": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "case_id": {
+                "pattern": "^PC-ASTERIA-[0-9]{2}$",
+                "type": "string"
+              },
+              "field_provenance_code": {
+                "enum": [
+                  "FP-20",
+                  "FP-55",
+                  "FP-75"
+                ],
+                "type": "string"
+              },
+              "identity_code": {
+                "enum": [
+                  "IC-25",
+                  "IC-40",
+                  "IC-70",
+                  "IC-90"
+                ],
+                "type": "string"
+              },
+              "outreach_code": {
+                "enum": [
+                  "OR-15",
+                  "OR-35",
+                  "OR-60",
+                  "OR-80"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "case_id",
+              "identity_code",
+              "outreach_code",
+              "field_provenance_code"
+            ],
+            "type": "object"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "focus_decisions": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "cluster_id": {
+                "pattern": "^partner_onboarding_2026w03-cluster-[0-9]{3}$",
+                "type": "string"
+              },
+              "field_provenance_code": {
+                "enum": [
+                  "FP-20",
+                  "FP-55",
+                  "FP-75"
+                ],
+                "type": "string"
+              },
+              "identity_code": {
+                "enum": [
+                  "IC-25",
+                  "IC-40",
+                  "IC-70",
+                  "IC-90"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "cluster_id",
+              "identity_code",
+              "field_provenance_code"
+            ],
+            "type": "object"
+          },
+          "maxItems": 5,
+          "minItems": 5,
+          "type": "array"
+        },
+        "inactive_exclusion": {
+          "additionalProperties": false,
+          "properties": {
+            "outreach_code": {
+              "enum": [
+                "OR-15",
+                "OR-35",
+                "OR-60",
+                "OR-80"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "outreach_code"
+          ],
+          "type": "object"
+        },
+        "quarantine_result": {
+          "additionalProperties": false,
+          "properties": {
+            "field_provenance_code": {
+              "enum": [
+                "FP-20",
+                "FP-55",
+                "FP-75"
+              ],
+              "type": "string"
+            },
+            "identity_code": {
+              "enum": [
+                "IC-25",
+                "IC-40",
+                "IC-70",
+                "IC-90"
+              ],
+              "type": "string"
+            },
+            "outreach_code": {
+              "enum": [
+                "OR-15",
+                "OR-35",
+                "OR-60",
+                "OR-80"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "identity_code",
+            "outreach_code",
+            "field_provenance_code"
+          ],
+          "type": "object"
+        },
+        "readiness_partition": {
+          "additionalProperties": false,
+          "properties": {
+            "both": {
+              "enum": [
+                "OR-15",
+                "OR-35",
+                "OR-60",
+                "OR-80"
+              ],
+              "type": "string"
+            },
+            "email_only": {
+              "enum": [
+                "OR-15",
+                "OR-35",
+                "OR-60",
+                "OR-80"
+              ],
+              "type": "string"
+            },
+            "not_ready": {
+              "enum": [
+                "OR-15",
+                "OR-35",
+                "OR-60",
+                "OR-80"
+              ],
+              "type": "string"
+            },
+            "phone_only": {
+              "enum": [
+                "OR-15",
+                "OR-35",
+                "OR-60",
+                "OR-80"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "both",
+            "email_only",
+            "phone_only",
+            "not_ready"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "focus_decisions",
+        "anchored_cases",
+        "quarantine_result",
+        "readiness_partition",
+        "inactive_exclusion"
+      ],
+      "type": "object"
+    },
+    "focus_clusters": {
+      "description": "Exactly one object for each case-scope focus_clusters label, sorted lexicographically by cluster_id. Each member_row_ids list is a deduplicated lexicographically sorted set.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_city": {
+            "type": "string"
+          },
+          "canonical_email": {
+            "description": "Normalized lowercase email address.",
+            "type": "string"
+          },
+          "canonical_phone_digits": {
+            "description": "Canonical phone represented as digits only; this remains a string.",
+            "pattern": "^[0-9]+$",
+            "type": "string"
+          },
+          "city_source_system": {
+            "enum": [
+              "CRM",
+              "Compliance Master",
+              "Partner Portal"
+            ],
+            "type": "string"
+          },
+          "cluster_id": {
+            "pattern": "^partner_onboarding_2026w03-cluster-[0-9]{3}$",
+            "type": "string"
+          },
+          "member_row_ids": {
+            "items": {
+              "pattern": "^PAR-C[0-9]{5}$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "survivor_row_id": {
+            "pattern": "^PAR-C[0-9]{5}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cluster_id",
+          "member_row_ids",
+          "survivor_row_id",
+          "canonical_email",
+          "canonical_phone_digits",
+          "canonical_city",
+          "city_source_system"
+        ],
+        "type": "object"
+      },
+      "maxItems": 5,
+      "minItems": 5,
+      "type": "array"
+    },
+    "quality_summary": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_entity_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "duplicate_cluster_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "quarantine_rate": {
+          "description": "Quarantined rows divided by canonical entities, rounded to 4 decimal places.",
+          "maximum": 1,
+          "minimum": 0,
+          "multipleOf": 0.0001,
+          "type": "number"
+        },
+        "raw_row_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "readiness_eligible_entity_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "raw_row_count",
+        "canonical_entity_count",
+        "readiness_eligible_entity_count",
+        "duplicate_cluster_count",
+        "quarantine_rate"
+      ],
+      "type": "object"
+    },
+    "quarantine_row_ids": {
+      "description": "Complete deduplicated set of unusable-contact row IDs, sorted lexicographically.",
+      "items": {
+        "pattern": "^PAR-C[0-9]{5}$",
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "region_rollup": {
+      "description": "Canonical-entity counts for all represented regions, sorted lexicographically by region.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_entity_count": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "region": {
+            "enum": [
+              "BE",
+              "England",
+              "MD",
+              "ON",
+              "SG",
+              "TX"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "region",
+          "canonical_entity_count"
+        ],
+        "type": "object"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "type": "array"
+    }
+  },
+  "required": [
+    "quality_summary",
+    "focus_clusters",
+    "quarantine_row_ids",
+    "channel_readiness",
+    "control_codes",
+    "region_rollup",
+    "certification_status"
+  ],
+  "title": "Partner onboarding contact-master certification answer",
+  "type": "object"
+}

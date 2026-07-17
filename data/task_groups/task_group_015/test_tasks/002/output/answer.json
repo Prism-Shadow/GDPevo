@@ -1,0 +1,152 @@
+{
+  "patient_referral": {
+    "patient_id": "P-66591",
+    "referral_id": "REF-APR-PULM-004",
+    "batch_id": "APR26-PULM",
+    "service_line": "pulmonology",
+    "requested_date": "2026-04-15"
+  },
+  "active_pulmonary_diagnoses": [
+    {
+      "code": "J44.9",
+      "description": "Chronic obstructive pulmonary disease",
+      "normalized_key": "copd",
+      "condition_ids": [
+        "COND-88307EA8",
+        "COND-E6A76D09"
+      ],
+      "referral_relevant": true,
+      "role": "primary_referral_diagnosis"
+    },
+    {
+      "code": "J45.40",
+      "description": "Moderate persistent asthma",
+      "normalized_key": "asthma_moderate_persistent",
+      "condition_ids": [
+        "COND-2BE85F79"
+      ],
+      "referral_relevant": true,
+      "role": "supporting_pulmonary_condition"
+    },
+    {
+      "code": "R06.02",
+      "description": "Shortness of breath",
+      "normalized_key": "dyspnea",
+      "condition_ids": [
+        "COND-3D6D1C87"
+      ],
+      "referral_relevant": true,
+      "role": "supporting_symptom"
+    }
+  ],
+  "referral_code_set": {
+    "primary_code": "J44.9",
+    "supporting_codes": [
+      "J45.40",
+      "R06.02"
+    ],
+    "icd_validation": "valid_matches_narrative",
+    "primary_code_chapter": "Respiratory",
+    "narrative_match": true
+  },
+  "active_respiratory_medications": [
+    {
+      "medication": "fluticasone/salmeterol",
+      "dose": "250/50 mcg",
+      "route": "inhaled",
+      "frequency": "twice daily",
+      "status": "active",
+      "normalized_key": "fluticasone_salmeterol",
+      "highlight_reason": "controller_inhaler"
+    },
+    {
+      "medication": "albuterol inhaler",
+      "dose": "2 puffs",
+      "route": "inhaled",
+      "frequency": "as needed",
+      "status": "active",
+      "normalized_key": "albuterol",
+      "highlight_reason": "rescue_inhaler"
+    }
+  ],
+  "allergy_readiness": {
+    "readiness_status": "complete_documented",
+    "ready_for_letter": true,
+    "allergies": [
+      {
+        "allergen": "levofloxacin",
+        "reaction": "tendon pain",
+        "severity": "moderate",
+        "status": "active",
+        "source": "referral_form"
+      }
+    ],
+    "follow_up_needed": false
+  },
+  "recent_encounter_evidence": {
+    "encounter_id": "ENC-66591-20260406",
+    "date": "2026-04-06",
+    "type": "office_visit",
+    "provider_id": "PRV-PCP-002",
+    "signed_status": "signed",
+    "diagnosis_codes": [
+      "J44.9",
+      "R06.02"
+    ],
+    "medications_mentioned": [
+      "fluticasone/salmeterol",
+      "albuterol inhaler"
+    ],
+    "care_plan_tag": "pulmonology_referral_for_copd_dyspnea"
+  },
+  "document_readiness": {
+    "chest_xray": {
+      "received": true,
+      "document_id": "DOC-CXR-66591",
+      "type": "chest_xray",
+      "date": "2026-03-30",
+      "status": "final"
+    },
+    "office_note_received": true,
+    "office_note_source": "signed_encounter",
+    "pulmonary_function_test": {
+      "received": false,
+      "document_id": null,
+      "type": null,
+      "date": null,
+      "status": "missing"
+    },
+    "missing_required_documents": [
+      "pulmonary_function_test"
+    ]
+  },
+  "receiving_provider": {
+    "provider_id": "PRV-PULM-030",
+    "name": "Dr. Leo Navarro",
+    "role": "Pulmonologist",
+    "facility": "Northgate Pulmonary Clinic",
+    "phone": "555-440-3030",
+    "fax": "555-440-3399"
+  },
+  "authorization_readiness": {
+    "authorization_status": "pending",
+    "referral_status": "open",
+    "urgency": "urgent",
+    "readiness_tier": "Tier 1",
+    "overall_readiness": "hold_for_missing_documents",
+    "blocking_issues": [
+      "authorization_pending",
+      "pulmonary_function_test_missing"
+    ]
+  },
+  "referral_letter_fields": {
+    "diagnosis_summary_choice": "primary_referral_diagnosis_with_symptom",
+    "allergy_statement_choice": "documented_active_allergy",
+    "recent_encounter_choice": "most_relevant_signed_referral_encounter",
+    "document_packet_choice": "requires_document_follow_up",
+    "medication_summary_choice": "include_controller_and_rescue_therapy",
+    "recipient_choice": "receiving_specialist_from_referral",
+    "authorization_statement_choice": "authorization_pending",
+    "readiness_choice": "hold_for_missing_required_document"
+  }
+}

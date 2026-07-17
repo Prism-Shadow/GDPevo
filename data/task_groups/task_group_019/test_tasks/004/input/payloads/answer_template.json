@@ -1,0 +1,138 @@
+{
+  "task_id": "test_004",
+  "schema_name": "contractor_regulatory_impact_screen_v1",
+  "output_format": "Return one JSON object only. Do not wrap it in Markdown.",
+  "required_top_level_keys": [
+    "batch_id",
+    "impact_screen_date",
+    "application_decisions",
+    "changed_by_bulletin",
+    "counterfactual_counts",
+    "management_escalations"
+  ],
+  "fields": {
+    "batch_id": {
+      "type": "string",
+      "required_value": "HS-2026-Q2B"
+    },
+    "impact_screen_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD",
+      "required_value": "2026-06-30"
+    },
+    "application_decisions": {
+      "type": "list",
+      "ordering": "ascending by application_id",
+      "length": "one object for each application in batch HS-2026-Q2B and no other applications",
+      "item": {
+        "application_id": "string",
+        "current_determination": "enum",
+        "current_reason_codes": "list of enum values, sorted in the reason_codes enum order",
+        "primary_bulletin_ids": "list of bulletin ID strings, ascending; use an empty list when no 2026 bulletin is a primary current reason",
+        "prior_rule_determination": "enum",
+        "prior_rule_reason_codes": "list of enum values, sorted in the reason_codes enum order",
+        "rule_impact": "enum"
+      }
+    },
+    "changed_by_bulletin": {
+      "type": "list",
+      "ordering": "ascending by application_id",
+      "coverage": "include only applications whose current determination differs from the prior-rule counterfactual because of a 2026 bulletin",
+      "item": {
+        "application_id": "string",
+        "current_determination": "enum",
+        "prior_rule_determination": "enum",
+        "changed_reason_codes": "list of enum values, sorted in the reason_codes enum order",
+        "bulletin_ids": "list of bulletin ID strings, ascending",
+        "rule_types": "list of enum values, sorted in the rule_types enum order"
+      }
+    },
+    "counterfactual_counts": {
+      "type": "object",
+      "required_keys": [
+        "current_decision_counts",
+        "prior_rule_decision_counts",
+        "decision_changed_by_bulletin_count",
+        "new_rule_caused_hold_count",
+        "pre_existing_deficiency_hold_count",
+        "pre_existing_denial_count",
+        "unchanged_approval_count",
+        "pre_existing_holds_with_added_new_rule_reason_count"
+      ],
+      "field_types": {
+        "current_decision_counts": {
+          "APPROVE": "integer",
+          "HOLD": "integer",
+          "DENY": "integer"
+        },
+        "prior_rule_decision_counts": {
+          "APPROVE": "integer",
+          "HOLD": "integer",
+          "DENY": "integer"
+        },
+        "decision_changed_by_bulletin_count": "integer",
+        "new_rule_caused_hold_count": "integer",
+        "pre_existing_deficiency_hold_count": "integer",
+        "pre_existing_denial_count": "integer",
+        "unchanged_approval_count": "integer",
+        "pre_existing_holds_with_added_new_rule_reason_count": "integer"
+      }
+    },
+    "management_escalations": {
+      "type": "list",
+      "ordering": "ascending by application_id",
+      "coverage": "include only applications requiring board, legal, or management-level escalation; use an empty list if none",
+      "item": {
+        "application_id": "string",
+        "escalation_type": "enum",
+        "reason_codes": "list of enum values, sorted in the reason_codes enum order"
+      }
+    }
+  },
+  "allowed_enums": {
+    "determination": [
+      "APPROVE",
+      "HOLD",
+      "DENY"
+    ],
+    "reason_codes": [
+      "NO_DEFICIENCY",
+      "BOND_SHORTFALL",
+      "BOND_CANCELLED",
+      "INSURANCE_VERIFY",
+      "UNRESOLVED_PENALTY",
+      "FIELD_NOTE_HOLD",
+      "DISQUALIFYING_CONDUCT",
+      "EXPERIENCE_VERIFY",
+      "CORRESPONDENCE_HOLD",
+      "ADVERSE_PRIOR_REGISTRATION",
+      "EXAM_SCORE_SHORTFALL",
+      "FINANCIAL_STATEMENT_MISSING"
+    ],
+    "rule_impact": [
+      "NEW_RULE_CAUSED_HOLD",
+      "PRE_EXISTING_DEFICIENCY",
+      "PRE_EXISTING_DEFICIENCY_WITH_NEW_RULE_REASON",
+      "PRE_EXISTING_DENIAL",
+      "NO_DEFICIENCY"
+    ],
+    "rule_types": [
+      "EXAM_MINIMUM",
+      "BOND_MINIMUM",
+      "INSURANCE_MINIMUM",
+      "EXPERIENCE_MINIMUM",
+      "BACKGROUND_SCREENING",
+      "CORRESPONDENCE_REVIEW",
+      "FIELD_NOTE_REVIEW"
+    ],
+    "escalation_type": [
+      "BOARD_DENIAL_REVIEW",
+      "LEGAL_ENFORCEMENT_REVIEW",
+      "ADVERSE_HISTORY_REVIEW"
+    ]
+  },
+  "numeric_precision": {
+    "all_counts": "integers only"
+  },
+  "scoring_relevance": "Use stable application IDs and controlled enums. Do not add prose explanations to scored fields."
+}

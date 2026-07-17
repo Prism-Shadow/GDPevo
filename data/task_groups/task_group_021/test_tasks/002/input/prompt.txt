@@ -1,0 +1,9 @@
+Asteria Fleet Sustainability is preparing the March fuel ledger for its monthly emissions filing and payment-control review. Audit the collection and cutoff in `payloads/case_scope.json` against the read-only Fleet Data Quality Hub at `<TASK_ENV_BASE_URL>`.
+
+The relevant workplace interfaces are `/api/catalog/collections`, `/api/catalog/schema`, `/api/transactions/fuel`, `/api/reference/aliases`, `/api/reference/conversions`, `/api/reference/fx`, `/api/source-snapshots`, and `/api/query`. Runtime access details, including any query credential, are provided separately in `environment_access.md`.
+
+Return the reconciled source population, corrected liters and USD totals, focus-asset compliance results, and the highest-intensity merchant exceptions. Also complete the two controlled review panels requested in the scope: resolve each effective-reference edge case, and classify each named transaction's retained source occurrence, description outcome, expected-versus-recognized relation, and reporting disposition. For every reference case, assign Asteria's internal reference-policy code; for every transaction case, assign its internal source-basis and ledger-disposition codes. The code expansions are intentionally not supplied in the test materials. Use only the enum values in the answer contract.
+
+A compliance exception is a retained logical transaction that is either a reportable category mismatch or quarantined. Merchant exception rate is distinct compliance exceptions divided by logical transactions; rank descending by that rate, then by exception count, and finally by merchant ID ascending. Quarantined transactions do not enter normalized totals.
+
+Write JSON only, conforming exactly to `payloads/answer_template.json`. Follow every stable-ID ordering rule and declared numeric precision in that contract.

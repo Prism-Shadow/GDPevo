@@ -1,0 +1,238 @@
+{
+  "description": "Expected JSON output for test_005 Referral-To-Chart Activation: Cardiology Pre-Visit Intake.",
+  "top_level_type": "object",
+  "required_top_level_keys": [
+    "batch_id",
+    "readiness_by_referral",
+    "clinical_code_discrepancy_referrals",
+    "blocker_sets",
+    "duplicate_handling",
+    "chart_activation_gaps",
+    "correspondence_queue",
+    "priority_order"
+  ],
+  "field_definitions": {
+    "batch_id": {
+      "type": "string",
+      "constant": "CARD-JUL-03"
+    },
+    "readiness_by_referral": {
+      "type": "list",
+      "ordering": "ascending referral_id",
+      "item_type": "object",
+      "required_keys": [
+        "referral_id",
+        "patient_id",
+        "readiness_status",
+        "blocker_codes"
+      ],
+      "fields": {
+        "referral_id": {
+          "type": "string"
+        },
+        "patient_id": {
+          "type": "string"
+        },
+        "readiness_status": {
+          "type": "enum",
+          "allowed_values": [
+            "ready",
+            "blocked",
+            "under_review",
+            "admin_followup"
+          ]
+        },
+        "blocker_codes": {
+          "type": "list",
+          "item_type": "enum",
+          "allowed_values": [
+            "clinical_code_discrepancy",
+            "records_missing",
+            "imaging_missing",
+            "authorization_blocked",
+            "duplicate_review",
+            "scheduled_before_clearance"
+          ],
+          "ordering": "unordered set"
+        }
+      }
+    },
+    "clinical_code_discrepancy_referrals": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "ascending referral_id"
+    },
+    "blocker_sets": {
+      "type": "object",
+      "required_keys": [
+        "authorization",
+        "records",
+        "imaging"
+      ],
+      "fields": {
+        "authorization": {
+          "type": "list",
+          "item_type": "string",
+          "ordering": "ascending referral_id"
+        },
+        "records": {
+          "type": "list",
+          "item_type": "string",
+          "ordering": "ascending referral_id"
+        },
+        "imaging": {
+          "type": "list",
+          "item_type": "string",
+          "ordering": "ascending referral_id"
+        }
+      }
+    },
+    "duplicate_handling": {
+      "type": "object",
+      "required_keys": [
+        "duplicate_groups",
+        "cleared_duplicate_review_referrals"
+      ],
+      "fields": {
+        "duplicate_groups": {
+          "type": "list",
+          "ordering": "ascending group_id",
+          "item_type": "object",
+          "required_keys": [
+            "group_id",
+            "referral_ids",
+            "keep_referral_id"
+          ],
+          "fields": {
+            "group_id": {
+              "type": "string"
+            },
+            "referral_ids": {
+              "type": "list",
+              "item_type": "string",
+              "ordering": "ascending referral_id"
+            },
+            "keep_referral_id": {
+              "type": "string"
+            }
+          }
+        },
+        "cleared_duplicate_review_referrals": {
+          "type": "list",
+          "item_type": "string",
+          "ordering": "ascending referral_id"
+        }
+      }
+    },
+    "chart_activation_gaps": {
+      "type": "list",
+      "ordering": "ascending referral_id; include ready referrals that still need chart work before confirmation",
+      "item_type": "object",
+      "required_keys": [
+        "referral_id",
+        "patient_id",
+        "chart_action",
+        "artifacts_to_create"
+      ],
+      "fields": {
+        "referral_id": {
+          "type": "string"
+        },
+        "patient_id": {
+          "type": "string"
+        },
+        "chart_action": {
+          "type": "enum",
+          "allowed_values": [
+            "create_chart",
+            "update_chart",
+            "no_chart_action"
+          ]
+        },
+        "artifacts_to_create": {
+          "type": "list",
+          "item_type": "enum",
+          "allowed_values": [
+            "demographics",
+            "active_problems",
+            "medications",
+            "allergies",
+            "vitals",
+            "consent"
+          ],
+          "ordering": "alphabetical by artifact enum string"
+        }
+      }
+    },
+    "correspondence_queue": {
+      "type": "list",
+      "ordering": "ascending referral_id",
+      "item_type": "object",
+      "required_keys": [
+        "referral_id",
+        "template_type",
+        "reason_codes"
+      ],
+      "fields": {
+        "referral_id": {
+          "type": "string"
+        },
+        "template_type": {
+          "type": "enum",
+          "allowed_values": [
+            "clinical_code_clarification",
+            "auth_records_request",
+            "duplicate_resolution",
+            "appointment_hold_notice"
+          ]
+        },
+        "reason_codes": {
+          "type": "list",
+          "item_type": "enum",
+          "allowed_values": [
+            "wrong_service_family",
+            "clinical_reason_mismatch",
+            "records_missing",
+            "authorization_pending",
+            "authorization_denied",
+            "duplicate_review",
+            "appointment_already_scheduled"
+          ],
+          "ordering": "unordered set"
+        }
+      }
+    },
+    "priority_order": {
+      "type": "list",
+      "ordering": "highest priority first, non-ready referrals only",
+      "item_type": "object",
+      "required_keys": [
+        "rank",
+        "referral_id",
+        "priority_tier"
+      ],
+      "fields": {
+        "rank": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "referral_id": {
+          "type": "string"
+        },
+        "priority_tier": {
+          "type": "enum",
+          "allowed_values": [
+            "tier_1_immediate",
+            "tier_2_short_term",
+            "tier_3_administrative"
+          ]
+        }
+      }
+    }
+  },
+  "normalization_notes": [
+    "Reason-code, blocker-code, and artifact arrays are treated as unordered sets.",
+    "Referral ID lists should use uppercase IDs exactly as shown by the portal.",
+    "No free-form explanation fields are required."
+  ]
+}

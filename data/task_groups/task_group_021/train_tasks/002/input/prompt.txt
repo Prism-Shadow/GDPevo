@@ -1,0 +1,9 @@
+Asteria Fleet Sustainability is preparing the January fuel ledger for carbon reporting and finance reconciliation. Audit the collection and cutoff identified in `payloads/case_scope.json` against the read-only Fleet Data Quality Hub at `<TASK_ENV_BASE_URL>`.
+
+The relevant workplace interfaces are `/api/catalog/collections`, `/api/catalog/schema`, `/api/transactions/fuel`, `/api/reference/aliases`, `/api/reference/conversions`, `/api/reference/fx`, `/api/source-snapshots`, and `/api/query`. Runtime access details, including any query credential, are provided separately in `environment_access.md`.
+
+Return a reconciled view of source coverage, category mismatches, descriptions that cannot be assigned to exactly one recognized fuel category, normalized liters and USD spend, the requested focus-asset rollups, and the five merchants with the most category or data-quality exceptions. A merchant exception is a logical transaction with an expected-versus-actual category mismatch or a quarantine condition. Use the applicable business-date evidence and do not include quarantined transactions in normalized totals.
+
+The control team also needs Asteria's internal reference-policy, source-basis, and ledger-disposition codes for the public stable IDs listed in the case scope. Infer the correct codes from the shared records and the reconciled audit. The answer contract lists the allowed code values.
+
+Write JSON only, conforming exactly to `payloads/answer_template.json`. Stable-ID lists must follow the ordering rules in that contract.

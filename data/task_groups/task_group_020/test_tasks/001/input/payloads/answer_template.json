@@ -1,0 +1,734 @@
+{
+  "deal_terms": {
+    "deal_id": {
+      "type": "string",
+      "description": "Aster Legal deal identifier."
+    },
+    "structure": {
+      "type": "enum",
+      "allowed_values": [
+        "STOCK_PURCHASE",
+        "ASSET_PURCHASE",
+        "MERGER",
+        "ROLLOVER_STOCK_PURCHASE"
+      ]
+    },
+    "target": {
+      "type": "string",
+      "description": "Exact target company name."
+    },
+    "buyer": {
+      "type": "string",
+      "description": "Exact buyer entity name."
+    },
+    "seller_group": {
+      "type": "string",
+      "description": "Exact seller group name from the deal record."
+    },
+    "signing_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "outside_closing_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "headline_purchase_price_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "equity_value_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "cash_at_close_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "rollover_equity_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "seller_note_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "earnout_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "active_cap_table_source_doc_id": {
+      "type": "string",
+      "description": "Document ID for the controlling active cap table or allocation schedule."
+    },
+    "active_cap_table_as_of": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "per_share_price_usd": {
+      "type": "number or null",
+      "units": "USD per share",
+      "precision": "two decimal places if calculable",
+      "description": "Use null if the controlling cap table does not provide a share count."
+    },
+    "per_share_price_basis": {
+      "type": "enum",
+      "allowed_values": [
+        "CALCULATED_FROM_ACTIVE_CAP_TABLE",
+        "NO_SHARE_COUNT_IN_ACTIVE_CAP_TABLE"
+      ]
+    },
+    "price_per_as_converted_percent_point_usd": {
+      "type": "integer",
+      "units": "USD per 1.00 ownership percentage point",
+      "precision": "whole dollars"
+    },
+    "general_escrow_percent": {
+      "type": "number",
+      "units": "percent of headline value",
+      "precision": "two decimal places"
+    },
+    "general_escrow_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "general_escrow_policy_status": {
+      "type": "enum",
+      "allowed_values": [
+        "WITHIN_POLICY",
+        "APPROVAL_REQUIRED",
+        "ESCALATE",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "tax_escrow_percent": {
+      "type": "number",
+      "units": "percent of headline value",
+      "precision": "two decimal places"
+    },
+    "tax_escrow_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "tax_escrow_policy_status": {
+      "type": "enum",
+      "allowed_values": [
+        "WITHIN_POLICY",
+        "APPROVAL_REQUIRED",
+        "ESCALATE",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "indemnity_cap_percent": {
+      "type": "number",
+      "units": "percent of headline value",
+      "precision": "two decimal places"
+    },
+    "indemnity_cap_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "basket_percent": {
+      "type": "number",
+      "units": "percent of headline value",
+      "precision": "two decimal places"
+    },
+    "basket_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "basket_type": {
+      "type": "enum",
+      "allowed_values": [
+        "DEDUCTIBLE",
+        "TIPPING",
+        "NONE"
+      ]
+    },
+    "de_minimis_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "nwc_target_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "nwc_collar_usd": {
+      "type": "integer",
+      "units": "USD",
+      "precision": "whole dollars"
+    },
+    "nwc_adjustment_mechanic": {
+      "type": "enum",
+      "allowed_values": [
+        "DOLLAR_FOR_DOLLAR_OUTSIDE_COLLAR",
+        "TRUE_UP_AGAINST_ACTIVE_BALANCE_SHEET",
+        "DOLLAR_FOR_DOLLAR_FROM_FIRST_DOLLAR",
+        "NO_POST_CLOSING_ADJUSTMENT"
+      ]
+    },
+    "nwc_collar_percent_of_equity_value": {
+      "type": "number",
+      "units": "percent",
+      "precision": "two decimal places"
+    }
+  },
+  "seller_allocations": [
+    {
+      "seller_name": {
+        "type": "string",
+        "description": "Exact seller name from the active cap table."
+      },
+      "role": {
+        "type": "string",
+        "description": "Seller role from the active cap table."
+      },
+      "ownership_percent": {
+        "type": "number",
+        "units": "percent",
+        "precision": "two decimal places"
+      },
+      "gross_proceeds_usd": {
+        "type": "integer",
+        "units": "USD",
+        "precision": "whole dollars"
+      }
+    }
+  ],
+  "closing_flags": {
+    "required_material_consents": [
+      {
+        "contract_name": {
+          "type": "string",
+          "description": "Exact material contract name."
+        },
+        "annual_revenue_usd": {
+          "type": "integer or null",
+          "units": "USD",
+          "precision": "whole dollars"
+        },
+        "condition_type": {
+          "type": "enum",
+          "allowed_values": [
+            "CLOSING",
+            "COVENANT",
+            "NOTICE",
+            "POST_CLOSING_NOTICE"
+          ]
+        },
+        "consent_required": {
+          "type": "boolean"
+        },
+        "source_doc_id": {
+          "type": "string",
+          "description": "Document ID supporting the consent treatment."
+        }
+      }
+    ],
+    "post_closing_notice_items": {
+      "type": "list",
+      "items": "string",
+      "description": "Contract or license names accepted as post-closing notice items; sort alphabetically."
+    },
+    "consent_condition_status": {
+      "type": "enum",
+      "allowed_values": [
+        "MATERIAL_CONSENTS_AS_CLOSING_CONDITIONS",
+        "MATERIAL_CONSENTS_AS_POST_CLOSING_COVENANTS",
+        "NO_MATERIAL_CONSENTS_REQUIRED"
+      ]
+    },
+    "hsr_required": {
+      "type": "boolean"
+    },
+    "hsr_condition": {
+      "type": "enum",
+      "allowed_values": [
+        "HSR_CLOSING_CONDITION",
+        "HSR_DRAFTING_POSITION",
+        "NOT_ADDRESSED"
+      ]
+    },
+    "hsr_basis_code": {
+      "type": "enum",
+      "allowed_values": [
+        "SIZE_OF_PERSON_TEST_NOT_MET",
+        "REPORTABLE_THRESHOLDS_MET",
+        "COUNSEL_MEMO_MISSING",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "hsr_source_doc_id": {
+      "type": "string",
+      "description": "Document ID supporting the HSR treatment."
+    },
+    "other_regulatory_approvals": {
+      "type": "list",
+      "items": "string",
+      "description": "List exact approval names, or an empty list if none; sort alphabetically."
+    },
+    "founder_employment_agreements_required": {
+      "type": "boolean"
+    },
+    "employment_agreement_term_months": {
+      "type": "integer or null",
+      "units": "months",
+      "description": "Use null if the source records require agreements but do not specify a duration."
+    },
+    "employment_employees": {
+      "type": "list",
+      "items": "string",
+      "description": "Exact named employees tied to the employment agreements, sorted alphabetically by displayed name."
+    },
+    "employment_source_doc_id": {
+      "type": "string",
+      "description": "Document ID supporting the employment and non-compete treatment."
+    },
+    "non_compete_duration_months": {
+      "type": "integer",
+      "units": "months"
+    },
+    "non_compete_scope": {
+      "type": "enum",
+      "allowed_values": [
+        "TARGET_PRODUCTS_AND_CURRENT_TERRITORIES",
+        "TARGET_PRODUCTS_ONLY",
+        "WORLDWIDE_ALL_AFFILIATES",
+        "NO_NON_COMPETE",
+        "OTHER_LIMITED_SCOPE"
+      ]
+    },
+    "broad_affiliate_covenant_allowed": {
+      "type": "boolean"
+    },
+    "transition_services_required": {
+      "type": "boolean"
+    },
+    "ip_assignment_confirmation_required": {
+      "type": "boolean"
+    },
+    "risk_posture_flags": {
+      "allocation_position": {
+        "type": "enum",
+        "allowed_values": [
+          "ACTIVE_CAP_TABLE_CONTROLS",
+          "STALE_CAP_TABLE_CONTROLS",
+          "COUNTERPARTY_ALLOCATION_CONTROLS"
+        ]
+      },
+      "stale_cap_table_reliance_position": {
+        "type": "enum",
+        "allowed_values": [
+          "ESCALATE_IF_USED",
+          "ACCEPT_IF_NO_NEWER_SCHEDULE",
+          "NOT_RELEVANT"
+        ]
+      },
+      "template_clause_position": {
+        "type": "enum",
+        "allowed_values": [
+          "DO_NOT_USE_TEMPLATE_PROVISIONS",
+          "USE_STANDARD_FORM_DEFAULTS",
+          "TEMPLATE_CONTROLS_IF_DRAFT_SILENT"
+        ]
+      },
+      "top_customer_post_close_position": {
+        "type": "enum",
+        "allowed_values": [
+          "ESCALATE_IF_TOP_CUSTOMERS_MOVED_POST_CLOSE",
+          "POST_CLOSING_NOTICE_ACCEPTABLE",
+          "NO_CUSTOMER_CONSENT_RISK"
+        ]
+      },
+      "approval_required_now": {
+        "type": "boolean"
+      },
+      "current_policy_exception_count": {
+        "type": "integer"
+      },
+      "conditional_escalation_triggers": {
+        "type": "list",
+        "items": "enum",
+        "allowed_values": [
+          "FINANCING_CONDITION_TRIGGER",
+          "BASKET_THRESHOLD_TRIGGER",
+          "RESTRICTIVE_COVENANT_SCOPE_TRIGGER",
+          "GENERAL_ESCROW_THRESHOLD_TRIGGER",
+          "CONSENT_TIMING_TRIGGER",
+          "ALLOCATION_SOURCE_TRIGGER",
+          "TAX_ESCROW_THRESHOLD_TRIGGER",
+          "HSR_ANALYSIS_TRIGGER"
+        ],
+        "description": "Conditional triggers that are not triggered by the current draft; sort alphabetically."
+      },
+      "non_triggered_policy_thresholds": {
+        "type": "list",
+        "items": "enum",
+        "allowed_values": [
+          "BASKET_THRESHOLD_TRIGGER",
+          "RESTRICTIVE_COVENANT_SCOPE_TRIGGER",
+          "CAP_THRESHOLD_TRIGGER",
+          "GENERAL_ESCROW_THRESHOLD_TRIGGER",
+          "TAX_ESCROW_THRESHOLD_TRIGGER",
+          "HSR_ANALYSIS_TRIGGER",
+          "NWC_VERIFICATION_TRIGGER"
+        ],
+        "description": "Policy thresholds reviewed but not triggered by the current active terms; sort alphabetically."
+      },
+      "conditional_escalation_details": [
+        {
+          "trigger_code": {
+            "type": "enum",
+            "allowed_values": [
+              "CONSENT_TIMING_TRIGGER",
+              "ALLOCATION_SOURCE_TRIGGER"
+            ]
+          },
+          "current_status": {
+            "type": "enum",
+            "allowed_values": [
+              "NOT_TRIGGERED",
+              "TRIGGERED"
+            ]
+          },
+          "affected_items": {
+            "type": "list",
+            "items": "string",
+            "description": "Exact affected contracts, documents, or issue objects; sort alphabetically."
+          },
+          "source_doc_ids": {
+            "type": "list",
+            "items": "string",
+            "description": "Source document IDs supporting this conditional trigger; sort alphabetically."
+          },
+          "posture": {
+            "type": "enum",
+            "allowed_values": [
+              "ESCALATE_IF_PROPOSED",
+              "ACCEPT_IF_PROPOSED",
+              "ALREADY_ESCALATED"
+            ]
+          }
+        }
+      ],
+      "superseded_doc_ids": {
+        "type": "list",
+        "items": "string",
+        "description": "Stale or template document IDs not used as controlling sources; sort alphabetically."
+      }
+    }
+  },
+  "source_precedence": {
+    "decisions": [
+      {
+        "decision_id": {
+          "type": "enum",
+          "allowed_values": [
+            "ALLOCATION_SOURCE",
+            "CLIENT_INSTRUCTION_SOURCE",
+            "CONSENTS_AND_REGULATORY_SOURCE",
+            "DRAFTING_TERMS_SOURCE",
+            "EMPLOYMENT_IP_SOURCE",
+            "FINANCIAL_TERMS_SOURCE",
+            "POLICY_SOURCE"
+          ]
+        },
+        "selected_doc_id": {
+          "type": "string"
+        },
+        "rejected_doc_ids": {
+          "type": "list",
+          "items": "string",
+          "description": "Rejected stale, template, or lower-precedence document IDs; sort alphabetically."
+        },
+        "precedence_basis": {
+          "type": "enum",
+          "allowed_values": [
+            "ACTIVE_DRAFT_OVER_IMPORTED_TEMPLATE",
+            "ACTIVE_FINANCIAL_SCHEDULE_OVER_TEMPLATE",
+            "ACTIVE_SCHEDULE_OVER_STALE_EXPORT",
+            "CLIENT_PLAYBOOK_OVER_GENERIC_FORM",
+            "DEAL_SPECIFIC_SCHEDULE_OVER_TEMPLATE",
+            "DISCLOSURE_SCHEDULE_OVER_GENERIC_FORM",
+            "LATEST_CLIENT_INSTRUCTION_OVER_TEMPLATE"
+          ]
+        },
+        "current_status": {
+          "type": "enum",
+          "allowed_values": [
+            "CONTROLLING",
+            "CONDITIONAL_ONLY",
+            "REJECTED"
+          ]
+        }
+      }
+    ],
+    "active_clause_ids": {
+      "type": "list",
+      "items": "string",
+      "description": "Active clause IDs used as clause-level cross-checks; sort alphabetically."
+    },
+    "template_conflict_clause_ids": {
+      "type": "list",
+      "items": "string",
+      "description": "Stale or template clause IDs rejected as controlling sources; sort alphabetically."
+    },
+    "superseded_doc_ids": {
+      "type": "list",
+      "items": "string",
+      "description": "Stale or template document IDs rejected as controlling sources; sort alphabetically."
+    }
+  },
+  "policy_checks": {
+    "policy_id": {
+      "type": "string"
+    },
+    "policy_version": {
+      "type": "string"
+    },
+    "checks": [
+      {
+        "check_id": {
+          "type": "enum",
+          "allowed_values": [
+            "BASKET_POLICY",
+            "CAP_POLICY",
+            "CONSENTS_POLICY",
+            "ESCROW_POLICY",
+            "HSR_POLICY",
+            "NONCOMPETE_POLICY",
+            "NWC_POLICY"
+          ]
+        },
+        "rule_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "enum",
+          "allowed_values": [
+            "WITHIN_POLICY",
+            "APPROVAL_REQUIRED",
+            "OVERRIDE_APPLIED",
+            "ESCALATE_IF_CHANGED"
+          ]
+        },
+        "approval_required": {
+          "type": "boolean"
+        },
+        "approval_category": {
+          "type": "enum",
+          "allowed_values": [
+            "DEAL_LEAD",
+            "EMPLOYMENT_COUNSEL",
+            "FINANCE_COMMITTEE",
+            "LEGAL_RISK_COMMITTEE",
+            "REGULATORY_COUNSEL"
+          ]
+        },
+        "measured_value_code": {
+          "type": "enum",
+          "allowed_values": [
+            "BASKET_POLICY_POSITION",
+            "CAP_POLICY_POSITION",
+            "CONSENTS_POLICY_POSITION",
+            "ESCROW_POLICY_POSITION",
+            "HSR_POLICY_POSITION",
+            "NONCOMPETE_POLICY_POSITION",
+            "NWC_POLICY_POSITION"
+          ]
+        }
+      }
+    ],
+    "policy_summary": {
+      "approval_required_now": {
+        "type": "boolean"
+      },
+      "current_policy_exception_count": {
+        "type": "integer"
+      },
+      "required_approval_bodies": {
+        "type": "list",
+        "items": "enum",
+        "allowed_values": [
+          "DEAL_LEAD",
+          "EMPLOYMENT_COUNSEL",
+          "FINANCE_COMMITTEE",
+          "LEGAL_RISK_COMMITTEE",
+          "REGULATORY_COUNSEL"
+        ],
+        "description": "Approval bodies required for current active terms; sort alphabetically."
+      },
+      "conditional_escalation_triggers": {
+        "type": "list",
+        "items": "enum",
+        "allowed_values": [
+          "CONSENT_TIMING_TRIGGER",
+          "ALLOCATION_SOURCE_TRIGGER",
+          "FINANCING_CONDITION_TRIGGER",
+          "BASKET_THRESHOLD_TRIGGER",
+          "RESTRICTIVE_COVENANT_SCOPE_TRIGGER",
+          "GENERAL_ESCROW_THRESHOLD_TRIGGER",
+          "TAX_ESCROW_THRESHOLD_TRIGGER",
+          "HSR_ANALYSIS_TRIGGER",
+          "CAP_THRESHOLD_TRIGGER",
+          "NWC_VERIFICATION_TRIGGER"
+        ],
+        "description": "Escalation triggers that would apply only if the seller changes the current active posture; sort alphabetically."
+      }
+    },
+    "risk_memo_overrides": {
+      "source_doc_ids": {
+        "type": "list",
+        "items": "string",
+        "description": "Active instruction, schedule, or memo document IDs supporting overrides; sort alphabetically."
+      },
+      "override_codes": {
+        "type": "list",
+        "items": "enum",
+        "allowed_values": [
+          "ACTIVE_CLIENT_INSTRUCTIONS_SUPERSEDE_TEMPLATE",
+          "REQUIRE_HSR_CONDITION_PER_COUNSEL_MEMO",
+          "USE_ACTIVE_CAP_TABLE_OVER_STALE_EXPORT",
+          "USE_ACTIVE_FINANCIAL_SCHEDULE_OVER_TEMPLATE",
+          "USE_ACTIVE_MATERIAL_CONTRACT_SCHEDULE",
+          "USE_ACTIVE_DRAFT_OVER_TEMPLATE",
+          "USE_CURRENT_DISCLOSURE_SCHEDULE",
+          "NO_RISK_MEMO_OVERRIDE"
+        ],
+        "description": "Sort alphabetically."
+      },
+      "superseded_doc_ids": {
+        "type": "list",
+        "items": "string",
+        "description": "Stale or template document IDs displaced by active instructions; sort alphabetically."
+      },
+      "hsr_override_basis": {
+        "type": "enum",
+        "allowed_values": [
+          "REPORTABLE_THRESHOLDS_MET_PER_ANTITRUST_MEMO",
+          "THRESHOLDS_NOT_MET_AFTER_DEBT_ADJUSTMENTS",
+          "SIZE_OF_PERSON_NOT_MET",
+          "COUNSEL_MEMO_MISSING",
+          "UNKNOWN"
+        ]
+      }
+    }
+  },
+  "drafting_positions": {
+    "form_position": {
+      "type": "enum",
+      "allowed_values": [
+        "BUYER_FORM",
+        "SELLER_FORM",
+        "STANDARD_FORM",
+        "TEMPLATE_ONLY"
+      ]
+    },
+    "consideration_schedule_position": {
+      "type": "enum",
+      "allowed_values": [
+        "ACTIVE_CAP_TABLE_ALLOCATION_BASIS",
+        "ACTIVE_ALLOCATION_SCHEDULE",
+        "STALE_CAP_TABLE",
+        "COUNTERPARTY_DRAFT"
+      ]
+    },
+    "consideration_position": {
+      "type": "enum",
+      "allowed_values": [
+        "CONSIDERATION_MIX_POSITION",
+        "CASH_ONLY",
+        "SELLER_NOTE_AND_ROLLOVER",
+        "EARNOUT_REQUIRED"
+      ]
+    },
+    "escrow_cap_position": {
+      "type": "enum",
+      "allowed_values": [
+        "CAP_DRAFTING_POSITION",
+        "CAP_ABOVE_ESCROW",
+        "CAP_BELOW_ESCROW",
+        "NO_CAP"
+      ]
+    },
+    "basket_position": {
+      "type": "enum",
+      "allowed_values": [
+        "DEDUCTIBLE_BASKET",
+        "TIPPING_BASKET",
+        "NO_BASKET"
+      ]
+    },
+    "nwc_position": {
+      "type": "enum",
+      "allowed_values": [
+        "TRUE_UP_AGAINST_ACTIVE_BALANCE_SHEET_WITH_COLLAR",
+        "DOLLAR_FOR_DOLLAR_OUTSIDE_COLLAR",
+        "SELLER_BUDGET_BASELINE",
+        "NO_NWC_TRUE_UP"
+      ]
+    },
+    "consent_position": {
+      "type": "enum",
+      "allowed_values": [
+        "SPECIFIED_MATERIAL_CONSENTS_AS_CLOSING_CONDITIONS",
+        "POST_CLOSING_COVENANT_ONLY",
+        "OMIT_CONSENTS"
+      ]
+    },
+    "hsr_position": {
+      "type": "enum",
+      "allowed_values": [
+        "HSR_FILING_CONDITION",
+        "HSR_DRAFTING_POSITION",
+        "HSR_UNCLEAR_ESCALATE"
+      ]
+    },
+    "non_compete_position": {
+      "type": "enum",
+      "allowed_values": [
+        "TARGETED_PRODUCT_SCOPE_RESTRICTIVE_COVENANT",
+        "TARGETED_TERRITORY_RESTRICTIVE_COVENANT",
+        "BROAD_GLOBAL_RESTRICTIVE_COVENANT",
+        "OMIT_RESTRICTIVE_COVENANT"
+      ]
+    },
+    "transition_services_position": {
+      "type": "enum",
+      "allowed_values": [
+        "NO_GENERAL_TSA_IP_CONFIRMATION_ONLY",
+        "FULL_TSA_REQUIRED",
+        "TSA_STATUS_UNCLEAR"
+      ]
+    },
+    "template_position": {
+      "type": "enum",
+      "allowed_values": [
+        "ACTIVE_DRAFT_SUPERSEDES_TEMPLATE",
+        "TEMPLATE_CONTROLS_IF_DRAFT_SILENT",
+        "STANDARD_FORM_DEFAULTS_CONTROL"
+      ]
+    }
+  },
+  "ordering_rules": {
+    "seller_allocations": "Sort by seller_name ascending.",
+    "required_material_consents": "Sort by contract_name ascending.",
+    "employment_employees": "Sort by displayed employee name ascending.",
+    "source_precedence.decisions": "Sort by decision_id ascending.",
+    "policy_checks.checks": "Sort by check_id ascending.",
+    "risk_posture_flags.conditional_escalation_details": "Sort by trigger_code ascending.",
+    "all_string_lists": "Sort alphabetically unless a field description states otherwise."
+  }
+}

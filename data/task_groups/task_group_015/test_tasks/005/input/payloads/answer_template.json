@@ -1,0 +1,120 @@
+{
+  "description": "Required JSON shape for the APR26-ORTHO-B referral audit. Output JSON only. Arrays of referral objects must be sorted by referral_id unless otherwise stated.",
+  "top_level_required_keys": [
+    "batch",
+    "invalid_or_out_of_range_code_referrals",
+    "laterality_or_narrative_mismatch_referrals",
+    "duplicate_groups",
+    "insurance_patient_anomalies",
+    "follow_up_queues",
+    "action_plan",
+    "summary_counts"
+  ],
+  "types": {
+    "batch": {
+      "batch_id": "string",
+      "service_line": "enum: orthopedics",
+      "requested_date": "date string, YYYY-MM-DD",
+      "record_count": "integer, count of referral rows audited",
+      "unique_patient_count": "integer, count of distinct patient_id values in the batch"
+    },
+    "invalid_or_out_of_range_code_referrals": [
+      {
+        "referral_id": "string",
+        "patient_id": "string",
+        "diagnosis_code": "string",
+        "actual_chapter": "string from ICD-10 directory",
+        "expected_chapter": "enum: Musculoskeletal",
+        "issue_type": "enum: out_of_range_chapter | unknown_code"
+      }
+    ],
+    "laterality_or_narrative_mismatch_referrals": [
+      {
+        "referral_id": "string",
+        "patient_id": "string",
+        "diagnosis_code": "string",
+        "diagnosis_narrative": "string copied from referral row",
+        "mismatch_types": "array of enum values: laterality_mismatch | narrative_mismatch | missing_laterality",
+        "expected_terms": "array of strings from the ICD-10 directory"
+      }
+    ],
+    "duplicate_groups": [
+      {
+        "group_id": "string",
+        "patient_id": "string",
+        "referral_ids": "array of strings sorted by referral_id",
+        "duplicate_type": "enum: same_patient_resubmission",
+        "recommended_disposition": "enum: consolidate_under_original"
+      }
+    ],
+    "insurance_patient_anomalies": [
+      {
+        "anomaly_id": "string",
+        "anomaly_type": "enum: shared_insurance_different_patients | same_patient_separate_clinical_referrals",
+        "patient_ids": "array of patient_id strings sorted ascending",
+        "referral_ids": "array of referral_id strings sorted ascending",
+        "insurance_id": "string or null",
+        "recommended_disposition": "enum: verify_insurance_membership_do_not_merge | separate_clinical_review_not_duplicate"
+      }
+    ],
+    "follow_up_queues": {
+      "authorization_missing": "array of referral_id strings sorted ascending",
+      "authorization_pending": "array of referral_id strings sorted ascending",
+      "records_request": "array of referral_id strings sorted ascending for missing office-note records",
+      "imaging_follow_up": "array of referral_id strings sorted ascending for missing required orthopedic imaging"
+    },
+    "action_plan": {
+      "tier_1_immediate": [
+        {
+          "referral_id": "string",
+          "patient_id": "string",
+          "tier": "enum: Tier 1",
+          "primary_reason": "enum: urgent_clinical_or_duplicate_blocker",
+          "owner_provider_id": "string"
+        }
+      ],
+      "tier_2_short_term": [
+        {
+          "referral_id": "string",
+          "patient_id": "string",
+          "tier": "enum: Tier 2",
+          "primary_reason": "enum: routine_coding_auth_or_document_blocker",
+          "owner_provider_id": "string"
+        }
+      ],
+      "tier_3_administrative": [
+        {
+          "referral_id": "string",
+          "patient_id": "string",
+          "tier": "enum: Tier 3",
+          "primary_reason": "enum: administrative_document_completion",
+          "owner_provider_id": "string"
+        }
+      ]
+    },
+    "summary_counts": {
+      "total_referral_rows": "integer",
+      "unique_patients": "integer",
+      "urgent_count": "integer",
+      "routine_count": "integer",
+      "invalid_or_out_of_range_count": "integer",
+      "mismatch_count": "integer",
+      "duplicate_group_count": "integer",
+      "insurance_patient_anomaly_count": "integer",
+      "authorization_missing_count": "integer",
+      "authorization_pending_count": "integer",
+      "records_request_count": "integer",
+      "imaging_follow_up_count": "integer",
+      "tier_1_count": "integer",
+      "tier_2_count": "integer",
+      "tier_3_count": "integer",
+      "validated_ready_no_follow_up_count": "integer"
+    }
+  },
+  "ordering_rules": {
+    "referral_object_arrays": "Sort by referral_id ascending.",
+    "id_arrays": "Sort strings ascending.",
+    "duplicate_groups": "Sort by group_id ascending; referral_ids inside each group sorted ascending.",
+    "insurance_patient_anomalies": "Sort by anomaly_id ascending; ids inside each anomaly sorted ascending."
+  }
+}

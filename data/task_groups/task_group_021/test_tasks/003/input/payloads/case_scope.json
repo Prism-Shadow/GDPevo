@@ -1,0 +1,78 @@
+{
+  "case_id": "MLIC-Q2-2026",
+  "collection_id": "maintenance_events_2026_q2",
+  "as_of": "2026-07-04T00:00:00Z",
+  "reporting_period": {
+    "start": "2026-04-01T00:00:00Z",
+    "end": "2026-06-30T23:59:59Z"
+  },
+  "continuity_baseline_period": {
+    "start": "2026-03-25T00:00:00Z",
+    "end": "2026-03-31T23:59:59Z"
+  },
+  "issue_population": "Retained logical events in the combined continuity-baseline and reporting periods.",
+  "reporting_period_assignment": {
+    "parseable_event": "event_time_raw",
+    "missing_or_unparseable_event_time": "business_updated_at"
+  },
+  "quality_limits": {
+    "odometer_km_minimum": 0.0,
+    "labor_hours_minimum": 0.0,
+    "labor_hours_maximum": 24.0
+  },
+  "odometer_reporting": {
+    "unit": "km",
+    "reading_precision_decimal_places": 1,
+    "distance_precision_decimal_places": 2
+  },
+  "q2_distance_metric": {
+    "definition": "For each asset with a reliable late-Q1 baseline and at least one reliable Q2 event, subtract the last reliable baseline odometer from the last reliable Q2 odometer, then sum the asset results.",
+    "unit": "km",
+    "precision_decimal_places": 2
+  },
+  "asset_risk_ranking": {
+    "limit": 5,
+    "population": "Events assigned to the Q2 reporting period.",
+    "primary_sort": "rejected_q2_event_count DESC",
+    "tie_breaks": [
+      "regression_event_count DESC",
+      "asset_id ASC"
+    ]
+  },
+  "decision_panel": {
+    "event_ids": [
+      "ME-Q2-000001",
+      "ME-Q2-000007",
+      "ME-Q2-000009",
+      "ME-Q2-000018",
+      "ME-Q2-000140",
+      "ME-Q2-000150",
+      "ME-Q2-000158",
+      "ME-Q2-000164",
+      "ME-Q2-000275",
+      "ME-Q2-000549",
+      "ME-Q2-000746",
+      "ME-Q2-000926"
+    ],
+    "primary_issue_precedence": [
+      "MISSING_TIMESTAMP",
+      "INVALID_TIMESTAMP",
+      "INVALID_ODOMETER",
+      "NEGATIVE_LABOR",
+      "EXTREME_LABOR",
+      "ODOMETER_REGRESSION",
+      "NONE"
+    ],
+    "normalized_odometer_rule": "Report the selected record's odometer in km at 1 decimal place; use null when the odometer itself is invalid.",
+    "prior_reliable_event_rule": "Report the last previously accepted event for the asset; use null when no prior reliable event exists.",
+    "required_internal_controls": [
+      "source_control_code",
+      "history_route_code"
+    ],
+    "ordering": "event_id ASC"
+  },
+  "certification_gate": {
+    "odometer_regression_status": "HOLD",
+    "odometer_regression_action": "BLOCK_AND_REMEDIATE"
+  }
+}

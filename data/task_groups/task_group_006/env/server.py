@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
@@ -159,19 +160,23 @@ class ProcureOpsHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
-        path_parts = [unquote(part) for part in parsed.path.strip("/").split("/") if part]
-        if path_parts == ["api", "judge"]:
-            length = int(self.headers.get("Content-Length", "0") or "0")
-            status, payload = judge_answer_request(self.rfile.read(length))
-            self.send_json(status, payload)
+        if parsed.path != "/api/judge":
+            self.send_json(404, {"error": "unknown endpoint"})
             return
-        self.send_json(404, {"error": "unknown endpoint"})
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            self.send_json(404, {"error": "unknown endpoint"})
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(status, payload)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Serve ProcureOps shared data.")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", default=8006, type=int)
+    parser.add_argument("--host", default=os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0")))
+    parser.add_argument(
+        "--port", default=int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9006"))), type=int
+    )
     args = parser.parse_args()
     httpd = ThreadingHTTPServer((args.host, args.port), ProcureOpsHandler)
     print(f"ProcureOps API listening on http://{args.host}:{args.port}")

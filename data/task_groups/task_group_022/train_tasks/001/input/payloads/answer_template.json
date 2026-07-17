@@ -1,0 +1,83 @@
+{
+  "title": "Spring campaign fulfillment scorecard answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eligible_production_order_count",
+    "effectively_complete_order_count",
+    "on_time_complete_order_rate",
+    "incomplete_order_count",
+    "worst_warehouse_regions",
+    "severe_exception_order_ids",
+    "overall_status"
+  ],
+  "properties": {
+    "eligible_production_order_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Count of eligible production orders; unit: orders."
+    },
+    "effectively_complete_order_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Count of eligible orders complete by the cutoff; unit: orders."
+    },
+    "on_time_complete_order_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "multipleOf": 0.0001,
+      "description": "Overall on-time complete-order ratio, rounded to 4 decimal places."
+    },
+    "incomplete_order_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Count of eligible orders that are not complete by the cutoff; unit: orders."
+    },
+    "worst_warehouse_regions": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Exactly two warehouse regions ordered by unrounded on-time complete-order rate ascending, then region ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "region",
+          "on_time_complete_order_rate"
+        ],
+        "properties": {
+          "region": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable warehouse region label."
+          },
+          "on_time_complete_order_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "multipleOf": 0.0001,
+            "description": "Regional ratio rounded to 4 decimal places."
+          }
+        }
+      }
+    },
+    "severe_exception_order_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Exact severe-exception order IDs sorted ascending.",
+      "items": {
+        "type": "string",
+        "pattern": "^ORD-[0-9]{6}$"
+      }
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": [
+        "HEALTHY",
+        "WATCH",
+        "CRITICAL"
+      ]
+    }
+  }
+}

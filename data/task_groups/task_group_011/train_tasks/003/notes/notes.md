@@ -15,3 +15,23 @@ Solution basis: The correct posture is `continue_with_tighter_conditions`. NC is
 Evaluation basis: The evaluator has seven exact-match scoring points with raw weights totaling 14. `SP001` weight 3 checks `segment_id` and the posture enum. `SP002` weight 2 checks all four NC benchmark metrics plus state and version. `SP003` weight 2 checks peer states and NC direction versus U.S. and peer median. `SP004` weight 2 checks controlled capacity/risk interpretation. `SP005` weight 2 checks the required checklist-gate set. `SP006` weight 2 checks the added operating-control set. `SP007` weight 1 checks escalation trigger conditions and owners. Likely pitfalls include treating state medians as institution-specific ratios, omitting peer medians, recommending routine continuation because capacity exists, or treating the minimum checklist as sufficient without added closing controls.
 
 Transfer design: As a train task, this task lets later solvers infer that credit-union posture tasks use the segment endpoint for target state, peer states, capacity, checklist, and internal context; use the NCUA benchmark endpoint for four state indicators; compare directions against national and peer medians; and treat the checklist as a minimum gate rather than a complete control package. It also establishes the committee judgment that available capacity can coexist with a `continue_with_tighter_conditions` posture when external state risk is weaker.
+
+Construction record: Author `train_003` task-builder worker. Created 2026-06-03. Updated 2026-06-03. Major changes: created the solver prompt, schema, hidden answer, exact-match evaluator, and bilingual notes for the Civic Carolinas equipment-loan posture task.
+
+## 中文
+
+数据来源与任务简述：本训练任务属于 `SCN_011_bank_branch_credit_risk_lending_committee`，来源示例为 `E001`、`E002`，并主要承接 `E003` 的信用社分部姿态判断流程。任务使用共享环境 `task_group_011_bank_branch_credit_risk_lending_committee/env/`，重点是公开 API `/api/manifest`、`/api/policies`、`/api/benchmarks/ncua/q1-2025` 和 `/api/credit-union-segments/CIVIC_NC_FIRE_EMS`。除答案结构模板外，没有额外的任务本地数据载荷。
+
+任务定义：求解者需要按 2025-03-31 的口径，为 `CIVIC_NC_FIRE_EMS` 分部生成贷款委员会可用的 JSON 姿态建议。可见提示只给出分部 ID 和 API 基础 URL 的使用方式。答案应覆盖 `segment_id`、`posture`、`state_metrics`、`peer_comparison`、`controls`、`escalation_triggers` 和 `interpretation`。求解过程需要读取分部上下文，提取北卡罗来纳州 NCUA 2025Q1 指标，将北卡与全国中位数及分部指定同业州比较，并把清单和控制背景转换为受控 JSON。
+
+场景适配：该任务对应任务组中的分部姿态与控制类工作。它不是单笔贷款审批，而是贷款委员会层面的经营姿态判断，需要把外部信用社环境、内部投放容量、近期控制缺陷和文件门槛合并成审慎的放款建议。
+
+材料地图：`credit_union_segments.json` 和分部 API 给出目标州 `NC`、同业州 `SC`、`TN`、`VA`、季度容量 2900000.00、当前余额 16850000.00、中等风险容忍度、近期拖欠 86 bps、保险凭证跟进缺失的控制问题、高级审批人员紧张，以及最低清单。`ncua_q1_2025.csv` 和 NCUA API 给出 NC 指标：拖欠 79 bps、贷存比 76%、ROAA 44 bps、正净收入机构占比 76%；全国中位数为 58、69、62、84。同业州为 SC 72/73/51/79、TN 64/71/59/81、VA 53/67/65/85，因此同业中位数为 64、71、59、81。`policies.json` 可用于共享枚举约定，但不会直接计算本任务答案。
+
+解答依据：正确姿态为 `continue_with_tighter_conditions`。NC 的拖欠和贷存比高于全国和同业中位数，ROAA 与正净收入占比低于全国和同业中位数，说明外部州级环境更弱。但该分部仍有季度容量且风险容忍度为中等，因此不应全面暂停贷款。必需清单门槛正是 CIVIC 分部最低清单：`board_authorization`、`equipment_invoice`、`public_contract_or_tax_support`、`proof_of_insurance` 和 `ucc_or_title_lien`。新增运营控制针对保险跟进缺失、留置权和放款前控制、高级审批资源，以及外部风险监测：`pre_close_insurance_binder_verification`、`lien_perfection_prior_to_funding`、`senior_underwriter_second_review`、`quarterly_state_benchmark_monitoring` 和 `monthly_segment_delinquency_watch`。升级触发项包括分部拖欠达到 90 bps 交由信用风险经理，保险或留置权例外交由运营控制经理，容量超限或例外申请交由贷款委员会主席。
+
+评估依据：评估器包含 7 个精确匹配评分点，原始权重合计 14。`SP001` 权重 3，检查 `segment_id` 和姿态枚举。`SP002` 权重 2，检查 NC 四项基准指标以及州和版本。`SP003` 权重 2，检查同业州以及 NC 相对全国和同业中位数的方向。`SP004` 权重 2，检查受控的容量和风险解释。`SP005` 权重 2，检查必需清单门槛集合。`SP006` 权重 2，检查新增运营控制集合。`SP007` 权重 1，检查升级触发条件和负责人。常见错误包括把州中位数误当成机构自身比率、漏掉同业中位数、因为仍有容量而建议常规继续审批，或把最低清单误认为已经足够而不增加放款前控制。
+
+迁移设计：作为训练任务，本任务让后续求解者推断信用社姿态任务应使用分部 API 获取目标州、同业州、容量、清单和内部背景；使用 NCUA 基准 API 获取四项州级指标；将方向同时与全国和同业中位数比较；并把清单视为最低门槛而不是完整控制包。它还建立了一个委员会判断：当外部州级风险较弱时，即使仍有容量，也应采用 `continue_with_tighter_conditions` 而非常规扩张。
+
+构建记录：作者为 `train_003` task-builder worker。创建日期 2026-06-03。更新日期 2026-06-03。主要变更：创建 Civic Carolinas 设备贷款姿态任务的求解提示、答案结构、隐藏标准答案、精确匹配评估器和双语说明。

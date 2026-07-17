@@ -13,7 +13,7 @@ The generator uses fixed seed `7007` and writes JSON fixtures plus `data/manifes
 ## Start API
 
 ```bash
-python server.py --host 127.0.0.1 --port ${PORT:-8007}
+TASK_ENV_PORT=9007 ./setup.sh
 ```
 
 Or use:
