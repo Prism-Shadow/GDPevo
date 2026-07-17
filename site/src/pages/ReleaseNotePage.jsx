@@ -198,7 +198,7 @@ function ReleaseTable({ columns, rows, compact = false, wide = false }) {
 
   return (
     <div className={className}>
-      <table className="release-table-desktop">
+      <table>
         <thead>
           <tr>
             {columns.map((column) => (
@@ -216,34 +216,6 @@ function ReleaseTable({ columns, rows, compact = false, wide = false }) {
           ))}
         </tbody>
       </table>
-      {wide ? (
-        <ol className="release-leaderboard-mobile">
-          {rows.map((row, rowIndex) => (
-            row[0] === "⋮" ? (
-              <li className="release-leaderboard-gap" key={`gap-${rowIndex}`} aria-hidden="true">⋮</li>
-            ) : (
-              <li className="release-leaderboard-row" key={`${row[0]}-${rowIndex}`}>
-                <header>
-                  <span className="release-leaderboard-rank">{row[0]}</span>
-                  <strong>{row[1]}</strong>
-                </header>
-                <p>
-                  <span>{row[2]}</span>
-                  <span>{row[3]}</span>
-                </p>
-                <dl>
-                  {columns.slice(4).map((column, columnIndex) => (
-                    <div key={column}>
-                      <dt>{column}</dt>
-                      <dd>{row[columnIndex + 4]}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </li>
-            )
-          ))}
-        </ol>
-      ) : null}
     </div>
   );
 }
