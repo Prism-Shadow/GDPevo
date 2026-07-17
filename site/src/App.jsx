@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
 import { Header, Footer } from "./components/Layout.jsx";
 import { homeContent } from "./content/home.js";
+import { BlogIndexPage } from "./pages/BlogIndexPage.jsx";
 import { BlogPage } from "./pages/BlogPage.jsx";
 import { HomePage } from "./pages/HomePage.jsx";
+import { ReleaseNotePage } from "./pages/ReleaseNotePage.jsx";
 import { initialLang, localize } from "./lib/i18n.jsx";
 import { initialThemeChoice, resolveTheme } from "./lib/theme.js";
 
 function currentPage() {
-  return window.location.pathname.endsWith("/blog.html") ? "blog" : "home";
+  const { pathname } = window.location;
+  if (pathname.endsWith("/blog-self-evolution.html")) return "blogArticle";
+  if (pathname.endsWith("/release-note.html")) return "releaseNote";
+  if (pathname.endsWith("/blog.html")) return "blogIndex";
+  return "home";
 }
 
 export default function App() {
@@ -24,8 +30,8 @@ export default function App() {
   }, [page]);
 
   useEffect(() => {
-    document.body.classList.toggle("blog", page === "blog");
-    document.title = localize(homeContent.documentTitle[page], lang);
+    document.body.classList.toggle("blog", page !== "home");
+    document.title = localize(homeContent.documentTitle[page] ?? homeContent.documentTitle.blogIndex, lang);
   }, [page, lang]);
 
   useEffect(() => {
@@ -57,8 +63,11 @@ export default function App() {
 
   return (
     <>
-      <Header page={page} lang={lang} setLang={setLang} themeChoice={themeChoice} setThemeChoice={setThemeChoice} />
-      {page === "blog" ? <BlogPage /> : <HomePage lang={lang} />}
+      <Header page={page === "home" ? "home" : "blog"} lang={lang} setLang={setLang} themeChoice={themeChoice} setThemeChoice={setThemeChoice} />
+      {page === "home" ? <HomePage lang={lang} /> : null}
+      {page === "blogIndex" ? <BlogIndexPage /> : null}
+      {page === "blogArticle" ? <BlogPage /> : null}
+      {page === "releaseNote" ? <ReleaseNotePage lang={lang} /> : null}
       <Footer />
     </>
   );

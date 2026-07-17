@@ -93,7 +93,7 @@ function ResultsSection({ lang }) {
           </p>
         ))}
         <p className="note">
-          <a href="blog.html#cost">
+          <a href="blog-self-evolution.html#cost">
             <Lang {...results.blogLink} />
           </a>
         </p>
