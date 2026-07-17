@@ -43,7 +43,7 @@ Dockerized Codex 进程负责难度校准：
 
 reviewer subagent 负责独立审查：
 
-- 检查结构、可解释性、数据生成、env 复杂度、prompt 泄漏、迁移设计、评测有效性、rubric 之间是否语义重复，以及每个 point 是否整体给分。
+- 检查结构、可解释性、数据生成、env 复杂度、prompt 泄漏、迁移设计、评测有效性，以及每个 point 是否整体给分。
 
 ## 阶段概览
 

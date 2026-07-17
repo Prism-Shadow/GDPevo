@@ -45,7 +45,7 @@ main construction agent's model or client defaults:
 
 The reviewer subagent owns independent review:
 
-- Check structure, interpretability, data generation, environment complexity, prompt leakage, transfer design, evaluation validity, semantic non-duplication across rubric points, and whole-point scoring.
+- Check structure, interpretability, data generation, environment complexity, prompt leakage, transfer design, evaluation validity, and whole-point scoring.
 
 ## Stage Overview
 

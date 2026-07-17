@@ -66,7 +66,7 @@ python3 scripts/check_task_group.py task_group/<task_group_id>
 - The script checks deterministic structure and consistency only; it does not judge data quality.
 - The 6 reviewers must have clean contexts. They must not see each other's conclusions, and the lead agent must not simulate all votes in one context.
 - Reviewers judge whether the task group is suitable benchmark data, not merely whether files exist.
-- Use `task_group/` and `scratch/` to check scenario lineage, train/test transfer design, transferable diversity, environment/container boundaries, leakage risk, note interpretability, evaluator trustworthiness, semantic non-duplication across rubric points, whole-point scoring, Dockerized difficulty calibration, and the construction process. Leakage risk only applies to the formal solver-visible task group surfaces, not construction evidence in `scratch/`.
+- Use `task_group/` and `scratch/` to check scenario lineage, train/test transfer design, transferable diversity, environment/container boundaries, leakage risk, note interpretability, evaluator trustworthiness, whole-point scoring, Dockerized difficulty calibration, and the construction process. Leakage risk only applies to the formal solver-visible task group surfaces, not construction evidence in `scratch/`.
 - Minor issues can be recorded as `concerns`; answer leakage, untrustworthy evaluation, invalid transfer, failed calibration, or missing structure should be `fail`.
 - A reworked task group must rerun the script check and receive a fresh 6-vote review. Do not reuse old votes.
 
@@ -75,5 +75,5 @@ python3 scripts/check_task_group.py task_group/<task_group_id>
 Use this short prompt for each reviewer subagent:
 
 ```text
-Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard. Inspect the actual evaluators and scratch/rubric_validation.md; verify that each task measures at least 4 semantically distinct business outcomes, does not reward the same underlying criterion or answer fact more than once, and gives each point either all of its assigned score or zero. Also verify the fixed-prompt Dockerized Codex calibration evidence. Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
+Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard. Inspect the actual evaluators and scratch/rubric_validation.md; verify that each point gives either all of its assigned score or zero. Also verify the fixed-prompt Dockerized Codex calibration evidence. Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
 ```

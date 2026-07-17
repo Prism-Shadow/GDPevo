@@ -189,12 +189,11 @@ reviewer subagent 应检查：
 - 每个 train/test task 是否都有 `input/payloads/answer_template.json`，且 `output/answer.json` 是否符合该模板。
 - 评测是否 rule-based、可复现，并覆盖关键业务判断。
 - 每个 task 是否有 6-10 个 scoring points，原始权重是否只使用 `1`、`2` 或 `3`，最终分数是否按 `weight / sum(weight)` 归一化。
-- rubric 是否覆盖至少 4 个语义上不同的业务结果，且没有换一种说法重复奖励同一个判断、答案事实或根本决策。
-- `scratch/rubric_validation.md` 是否确认 points 之间不存在语义重复，并且每个 point 完整满足要求时获得该点全部分值，否则得 `0` 分。
+- `scratch/rubric_validation.md` 是否确认每个 point 完整满足要求时获得该点全部分值，否则得 `0` 分。
 - scoring points 是否优先评估数值、枚举、布尔、排序、集合或规范化结构结果；如需字符串匹配，是否已改成受控选择字段以避免 schema 摩擦。
 - 大部分 scoring points 是否真实依赖 train 迁移、大量数据探索或长流程工作，而不是不学习 train、不深入探索数据也能拿到。
 - `scratch/difficulty_calibration.md` 是否包含 15 次有效 base 和 15 次有效 fewshot Dockerized `codex exec` attempts，且都使用固定 prompt、专属 staged work 和 Codex-home 目录。
 - 是否由 3 个相互隔离的 Dockerized 进程基于 5 个 train inputs 和对应标准答案生成了 3 个独立 fewshot skills，并分别保存到 `scratch/train_skill/fewshot_attempt_<nn>/`。
 - Overall base `avg@3` 是否约为 `0.40-0.60`，不合理的单题离群值是否已返工或说明。
-- Overall fewshot `avg@3` 是否大致低于 `0.80`，gain 是否约为 `0.10-0.30`，且收益来自预期的 transfer-dependent aspects，而不是重复 rubric points。
+- Overall fewshot `avg@3` 是否大致低于 `0.80`，gain 是否约为 `0.10-0.30`，且收益来自预期的 transfer-dependent aspects。
 - fewshot `avg@3` 是否避免在大部分或全部 test 上过度饱和；如果 skill 后大部分任务达到 `0.95` 以上或接近满分，是否需要返工 SOP、任务多样性、数据探索、env 或 scoring points。
