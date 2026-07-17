@@ -19,7 +19,7 @@ accuracy by +12.39 pp on average and change token cost by
 
 Efficiency metrics only count test solver subagent answer-writing. They are averaged across the 3 attempts for each test task first, then averaged across the 5 test tasks. Artifact generation, environment startup, evaluator execution, and main-agent aggregation are outside these metrics.
 
-This board displays `acc` as a percentage with population `std` in parentheses, `rounds avg` as solver model-response rounds, `tool calls avg` as solver tool-call requests, and token metrics in thousands (`k`). Cost is calculated from the raw token counts in the report YAML files, then rounded to two decimals for display.
+This board displays `acc` as the 3-attempt average percentage with population `std` in parentheses, `rounds avg` as solver model-response rounds, `tool calls avg` as solver tool-call requests, and token metrics in thousands (`k`). Cost is calculated from the raw token counts in the report YAML files, then rounded to two decimals for display.
 
 `cost USD avg` is calculated from report token metrics and the model price used for the run. Some report YAMLs store the calculated field directly; the board rounds it to two decimals for display.
 

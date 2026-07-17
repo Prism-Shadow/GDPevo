@@ -8,7 +8,7 @@
 
 效率指标只统计 test solver agent 写答案的过程。计算时先对每个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。Artifact 生成、环境启动、evaluator 执行和主 agent 汇总不计入这些指标。
 
-看板中的 `acc` 以百分比展示，括号中的 `±std` 表示 population 标准差；`rounds avg` 表示 solver attempt 的平均模型响应轮次，`tool calls avg` 表示 solver attempt 的平均工具调用次数，token 指标以 `k` 为单位展示。Cost 仍使用 report YAML 中的原始 token 数计算，并在看板中四舍五入到两位小数展示。
+看板中的 `acc` 是 3 次 attempt 的平均准确率，以百分比展示，括号中的 `±std` 表示 population 标准差；`rounds avg` 表示 solver attempt 的平均模型响应轮次，`tool calls avg` 表示 solver attempt 的平均工具调用次数，token 指标以 `k` 为单位展示。Cost 仍使用 report YAML 中的原始 token 数计算，并在看板中四舍五入到两位小数展示。
 
 `cost USD avg` 是看板层面的派生字段，由 report 中的 token 指标和该运行使用的模型价格计算得到；看板中展示为两位小数。
 

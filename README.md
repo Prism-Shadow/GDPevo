@@ -8,7 +8,7 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 ## Evaluation Results
 
-Accuracy is reported as `acc`, averaged over 12 task groups, with population `std` shown in parentheses. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt, where complete solver traces are available. Cost is reported in USD; lift and cost change are relative to `base`.
+Accuracy is reported as `acc`: each test task is run 3 times, then averaged over 12 task groups, with population `std` shown in parentheses. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt, where complete solver traces are available. Cost is reported in USD; lift and cost change are relative to `base`.
 
 | Harness | Model | Thinking level | `base` acc | `fewshot` acc | `self` acc | `reflect-3` acc | `base` rounds | `base` tool calls | `fewshot` rounds | `fewshot` tool calls | `self` rounds | `self` tool calls | `reflect-3` rounds | `reflect-3` tool calls | `fewshot` cost change | `self` cost change | `reflect-3` cost change | `fewshot` lift | `self` lift | `reflect-3` lift |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
