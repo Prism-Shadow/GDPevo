@@ -8,7 +8,7 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 ## Evaluation Results
 
-Except for the population `std` shown in parentheses, all metrics are averaged over 3 runs.accuracy is reported as `acc`. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt. Cost is reported in USD; lift and cost change are relative to `base`.
+Each experiment is run 3 times. Values in parentheses are standard deviations; all other values are means. Accuracy is reported as `acc`. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt. Cost is reported in USD; lift and cost change are relative to `base`.
 
 The released runs compare four modes:
 
