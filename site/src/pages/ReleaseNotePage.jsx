@@ -31,8 +31,9 @@ const release = {
     depthTitle: "② Depth — we tested more models, more thoroughly",
     depthIntro: "Beyond the previous agents (Codex · GPT-5.5, Claude Code · Opus 4.8, Panofy · Opus 4.6), this release evaluates more agents and reports both their overall scores and per-group breakdowns, so readers can compare agents apples-to-apples:",
     newAgents: ["Claude Code × DeepSeek V4 Pro", "Claude Code × Kimi K2.6", "Claude Code × GLM-5.2", "…and more"],
-    modeIntro: "Each agent is also run in base as the no-evolution control. The three evolution modes are:",
+    modeIntro: "Each agent is evaluated under four modes:",
     evolutionModes: [
+      ["base", "run the test tasks directly, without any evolution step."],
       ["self", "evolve its own working strategy from train inputs and the environment, without train answers."],
       ["fewshot", "learn from train inputs plus gold answers as demonstrations."],
       ["reflect-3", "iterate with train-only judge feedback, then consolidate the evolved workflow."]
@@ -119,8 +120,9 @@ const release = {
     depthTitle: "② 深度 —— 我们评测了更多模型，也更彻底理解 Agent 的行为",
     depthIntro: "在原有的 Agent（Codex · GPT-5.5、Claude Code · Opus 4.8、Panofy · Opus 4.6）之外，本次更新评测了更多 Agent，并同时给出它们的总体分数与分组 breakdown，方便读者做同口径对比：",
     newAgents: ["Claude Code × DeepSeek V4 Pro", "Claude Code × Kimi K2.6", "Claude Code × GLM-5.2", "……以及更多"],
-    modeIntro: "每个 Agent 也会跑 base（无进化）作为对照。三种进化 mode 分别是：",
+    modeIntro: "每个 Agent 都在四种 mode 下运行：",
     evolutionModes: [
+      ["base", "直接完成测试任务，不经过进化过程。"],
       ["self", "只看训练输入和环境，自己进化出更适合这类任务的工作策略。"],
       ["fewshot", "可以看到训练输入和标准答案，从示例中学习格式和规则。"],
       ["reflect-3", "通过训练阶段 judge 反馈持续迭代，形成进化后的工作流程。"]
