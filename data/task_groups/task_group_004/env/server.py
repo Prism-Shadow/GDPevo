@@ -5,9 +5,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
+
+from judge_api import judge_answer_request
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -216,15 +219,30 @@ class Handler(BaseHTTPRequestHandler):
 
         self.not_found()
 
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        if parsed.path != "/api/judge":
+            self.not_found()
+            return
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            self.not_found()
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(payload, status)
+
 
 def main() -> None:
     global STORE
     parser = argparse.ArgumentParser(description="Serve the ApexCloud Retention Operations dataset.")
-    parser.add_argument("--port", type=int, default=8074)
+    parser.add_argument("--host", default=os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0")))
+    parser.add_argument(
+        "--port", type=int, default=int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9004")))
+    )
     args = parser.parse_args()
     STORE = DataStore()
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
-    print(f"Serving ApexCloud Retention Operations on http://127.0.0.1:{args.port}", flush=True)
+    server = ThreadingHTTPServer((args.host, args.port), Handler)
+    print(f"Serving ApexCloud Retention Operations on http://{args.host}:{args.port}", flush=True)
     server.serve_forever()
 
 

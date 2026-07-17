@@ -1,0 +1,312 @@
+#!/usr/bin/env python3
+import json
+import sys
+from pathlib import Path
+
+
+EXPECTED = {
+    "deal_id": "D-HARBOR-562",
+    "draft_terms": {
+        "consideration_mix_usd": {
+            "cash_at_close": 157000000,
+            "seller_note": 18500000,
+            "rollover_equity": 15000000,
+            "earnout": 8000000,
+            "total_consideration": 198500000,
+        },
+        "allocation_source_doc_id": "DOC-HARBOR562-CAP-ACTIVE",
+        "seller_allocations": [
+            {
+                "seller_id": "HARBORGRID_FOUNDERS_LLC",
+                "seller_name": "HarborGrid Founders LLC",
+                "seller_role": "founder seller",
+                "ownership_percent": 51.0,
+                "cash_at_close_usd": 80070000,
+                "seller_note_usd": 9435000,
+                "rollover_equity_usd": 7650000,
+                "earnout_usd": 4080000,
+                "total_proceeds_usd": 101235000,
+            },
+            {
+                "seller_id": "MANAGEMENT_OPTION_SELLERS",
+                "seller_name": "Management Option Sellers",
+                "seller_role": "management",
+                "ownership_percent": 18.0,
+                "cash_at_close_usd": 28260000,
+                "seller_note_usd": 3330000,
+                "rollover_equity_usd": 2700000,
+                "earnout_usd": 1440000,
+                "total_proceeds_usd": 35730000,
+            },
+            {
+                "seller_id": "TERN_CYBER_FUND_I",
+                "seller_name": "Tern Cyber Fund I",
+                "seller_role": "fund seller",
+                "ownership_percent": 31.0,
+                "cash_at_close_usd": 48670000,
+                "seller_note_usd": 5735000,
+                "rollover_equity_usd": 4650000,
+                "earnout_usd": 2480000,
+                "total_proceeds_usd": 61535000,
+            },
+        ],
+        "indemnity": {
+            "general_escrow_percent": 10.0,
+            "general_escrow_amount_usd": 19850000,
+            "tax_escrow_percent": 2.0,
+            "tax_escrow_amount_usd": 3970000,
+            "aggregate_escrow_percent": 12.0,
+            "aggregate_escrow_amount_usd": 23820000,
+            "indemnity_cap_percent": 10.0,
+            "indemnity_cap_amount_usd": 19850000,
+            "basket_type": "DEDUCTIBLE",
+            "basket_percent": 0.75,
+            "basket_amount_usd": 1488750,
+            "de_minimis_usd": 50000,
+            "general_reps_survival_months": 18,
+            "fundamental_reps_survival_months": 72,
+            "tax_reps_survival_months": 72,
+        },
+        "closing_conditions": {
+            "material_consents_as_closing_conditions": [
+                "BlueBank MDR Agreement",
+                "Federal SOC Platform Order",
+            ],
+            "post_closing_notice_items": ["GovCloud Hosting Addendum"],
+            "hsr_status": "NOT_REQUIRED",
+            "hsr_filing_condition": False,
+            "hsr_clause_position": "COOPERATION_COVENANT_ONLY",
+            "other_approvals": ["Federal customer novation consent"],
+        },
+        "drafting_positions": {
+            "form_position": "BUYER_FORM",
+            "consideration_schedule_position": "ACTIVE_CAP_TABLE_PRORATA_ALLOCATION",
+            "escrow_cap_position": "CAP_EQUALS_GENERAL_ESCROW",
+            "basket_position": "DEDUCTIBLE_BASKET",
+            "consent_position": "SPECIFIED_MATERIAL_CONSENTS_AS_CLOSING_CONDITIONS",
+            "hsr_position": "NO_HSR_CONDITION_COOPERATION_ONLY",
+            "earnout_position": "OBJECTIVE_REVENUE_BASED_FALLBACK",
+            "non_compete_position": "TARGETED_PRODUCT_SCOPE_RESTRICTIVE_COVENANT",
+            "transition_services_position": "NO_GENERAL_TSA_LIMITED_CUSTOMER_NOTICE_SUPPORT",
+            "ip_transition_position": "REQUIRE_OPEN_SOURCE_AUDIT_AND_FEDRAMP_ASSIGNMENT",
+        },
+    },
+    "policy_checks": {
+        "checks": [
+            {
+                "check_id": "BASKET_POLICY",
+                "rule_id": "BUY-MID-BASKET",
+                "status": "WITHIN_POLICY",
+                "approval_required": False,
+                "approval_category": "DEAL_LEAD",
+                "measured_value": "0.75% deductible; 50000 de minimis",
+            },
+            {
+                "check_id": "CAP_POLICY",
+                "rule_id": "BUY-MID-CAP",
+                "status": "WITHIN_POLICY",
+                "approval_required": False,
+                "approval_category": "LEGAL_RISK_COMMITTEE",
+                "measured_value": "10.00%; 19850000",
+            },
+            {
+                "check_id": "CONSENTS_POLICY",
+                "rule_id": "BUY-MID-CONSENTS",
+                "status": "WITHIN_POLICY",
+                "approval_required": False,
+                "approval_category": "DEAL_LEAD",
+                "measured_value": "Federal SOC Platform Order and BlueBank MDR Agreement as closing conditions",
+            },
+            {
+                "check_id": "ESCROW_POLICY",
+                "rule_id": "BUY-MID-ESCROW",
+                "status": "WITHIN_POLICY",
+                "approval_required": False,
+                "approval_category": "LEGAL_RISK_COMMITTEE",
+                "measured_value": "10.00% general; 2.00% tax",
+            },
+            {
+                "check_id": "HSR_POLICY",
+                "rule_id": "BUY-MID-HSR",
+                "status": "OVERRIDE_APPLIED",
+                "approval_required": False,
+                "approval_category": "REGULATORY_COUNSEL",
+                "measured_value": "no HSR filing condition; thresholds not met after debt adjustments",
+            },
+            {
+                "check_id": "NONCOMPETE_POLICY",
+                "rule_id": "BUY-MID-NONCOMPETE",
+                "status": "WITHIN_POLICY",
+                "approval_required": False,
+                "approval_category": "EMPLOYMENT_COUNSEL",
+                "measured_value": "24 months; cybersecurity threat detection only",
+            },
+            {
+                "check_id": "NWC_POLICY",
+                "rule_id": "BUY-MID-NWC",
+                "status": "WITHIN_POLICY",
+                "approval_required": False,
+                "approval_category": "FINANCE_COMMITTEE",
+                "measured_value": "21400000 target; 900000 collar; dollar-for-dollar outside collar",
+            },
+        ],
+        "policy_summary": {
+            "approval_required_now": False,
+            "current_policy_exception_count": 0,
+            "required_approval_bodies": [],
+            "conditional_escalation_triggers": [
+                "ADD_FINANCING_CONDITION",
+                "REMOVE_FEDERAL_SOC_CONSENT",
+            ],
+        },
+        "risk_memo_overrides": {
+            "source_doc_ids": [
+                "DOC-HARBOR562-EMAIL-03",
+                "DOC-HARBOR562-MATCON-05",
+            ],
+            "override_codes": [
+                "ACTIVE_CLIENT_INSTRUCTIONS_SUPERSEDE_TEMPLATE",
+                "NO_HSR_CONDITION_DESPITE_CYBER_ASSETS",
+                "USE_ACTIVE_CAP_TABLE_OVER_STALE_EXPORT",
+            ],
+            "superseded_doc_ids": [
+                "DOC-HARBOR562-CAP-STALE",
+                "DOC-HARBOR562-TEMPLATE-99",
+            ],
+            "hsr_override_basis": "THRESHOLDS_NOT_MET_AFTER_DEBT_ADJUSTMENTS",
+        },
+    },
+}
+
+
+POINTS = [
+    {
+        "id": "consideration_mix_and_allocation",
+        "weight": 3,
+        "paths": [
+            ("draft_terms", "consideration_mix_usd"),
+            ("draft_terms", "allocation_source_doc_id"),
+            ("draft_terms", "seller_allocations"),
+        ],
+    },
+    {
+        "id": "escrow_cap_basket_math",
+        "weight": 3,
+        "paths": [("draft_terms", "indemnity")],
+    },
+    {
+        "id": "consent_hsr_flags",
+        "weight": 2,
+        "paths": [("draft_terms", "closing_conditions")],
+    },
+    {
+        "id": "risk_memo_overrides",
+        "weight": 2,
+        "paths": [("policy_checks", "risk_memo_overrides")],
+    },
+    {
+        "id": "policy_exceptions_approvals",
+        "weight": 2,
+        "paths": [
+            ("policy_checks", "checks"),
+            ("policy_checks", "policy_summary"),
+        ],
+    },
+    {
+        "id": "drafting_position_enums",
+        "weight": 2,
+        "paths": [("draft_terms", "drafting_positions")],
+    },
+]
+
+
+SORT_KEYS = {
+    "seller_allocations": "seller_id",
+    "checks": "check_id",
+}
+
+
+def load_json(path: Path):
+    with path.open("r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def get_path(obj, path):
+    cur = obj
+    for key in path:
+        if not isinstance(cur, dict) or key not in cur:
+            return None
+        cur = cur[key]
+    return cur
+
+
+def normalize(value, context_key=None):
+    if isinstance(value, dict):
+        return {key: normalize(value[key], key) for key in sorted(value)}
+    if isinstance(value, list):
+        items = [normalize(item) for item in value]
+        sort_key = SORT_KEYS.get(context_key)
+        if sort_key and all(isinstance(item, dict) and sort_key in item for item in items):
+            return sorted(items, key=lambda item: item[sort_key])
+        return sorted(items, key=lambda item: json.dumps(item, sort_keys=True))
+    if isinstance(value, float):
+        return round(value, 4)
+    return value
+
+
+def main():
+    prediction_path = Path(sys.argv[1])
+    try:
+        prediction = load_json(prediction_path)
+    except Exception as exc:
+        result = {
+            "score": 0.0,
+            "earned_weight": 0,
+            "total_weight": sum(point["weight"] for point in POINTS),
+            "error": f"Could not parse prediction JSON: {exc}",
+            "points": [],
+        }
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+
+    point_results = []
+    earned_weight = 0
+    total_weight = sum(point["weight"] for point in POINTS)
+
+    for point in POINTS:
+        mismatches = []
+        for path in point["paths"]:
+            actual = get_path(prediction, path)
+            expected = get_path(EXPECTED, path)
+            if normalize(actual, path[-1]) != normalize(expected, path[-1]):
+                mismatches.append(
+                    {
+                        "path": ".".join(path),
+                        "expected": expected,
+                        "actual": actual,
+                    }
+                )
+        matched = not mismatches
+        if matched:
+            earned_weight += point["weight"]
+        point_results.append(
+            {
+                "id": point["id"],
+                "weight": point["weight"],
+                "matched": matched,
+                "mismatches": mismatches,
+            }
+        )
+
+    result = {
+        "score": earned_weight / total_weight if total_weight else 0.0,
+        "earned_weight": earned_weight,
+        "total_weight": total_weight,
+        "points": point_results,
+    }
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

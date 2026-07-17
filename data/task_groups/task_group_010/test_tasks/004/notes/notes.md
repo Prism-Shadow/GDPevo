@@ -12,4 +12,26 @@ Material map: `risk_board_packet.json` provides committee context, an older fixe
 
 Solution basis: Current HY exposure is USD 17.0m, so HY allocation is 17.0 / 74.0 * 100 = 22.97%, above the 20.0% cap by 2.973 percentage points. The local packet lists `BND_DRIFTWOOD_2028` at USD 7.0m, but the current portfolio record is USD 9.0m, so the current record overrides the local snapshot. Current fixed-income duration is `(9*2.9 + 8*2.3 + 13*4.5 + 16*4.2) / 46 = 3.70` years. The answer sells `BND_DRIFTWOOD_2028` USD 9.0m and `BND_PACREF_2028` USD 8.0m, then buys `BND_BLUEGAS_2030` USD 8.0m and `BND_QUARTZ_2031` USD 9.0m. Post-trade HY allocation is 0.00%, post-trade fixed-income duration is 4.37 years, and watchlist exposure is cleared. Among current CYGNUS equity sleeves, the highest correlation pair is `IDX_AC_ASIA_PAC_EX_JP` and `IDX_EM`, with Pearson correlation 0.937 over 11 monthly return observations from levels dated 2025-05-30 through 2026-04-30. The threshold excess is 0.137. The equity action trims `IDX_AC_ASIA_PAC_EX_JP` USD 4.0m and adds `IDX_LATAM` USD 4.0m; `IDX_LATAM` has a -0.743 correlation with the trimmed Asia sleeve over the same window.
 
+Evaluation basis: The evaluator has eight exact-match scoring points with raw weights `[2, 3, 2, 3, 2, 2, 2, 2]`: source reconciliation; ranked exceptions with severity evidence; current credit metrics; post-rotation credit metrics; correlation pair and diversifier evidence; rebalance package; pass/fail flags; and combined board decision. Numeric fields are rounded to the precision declared in `answer_template.json`. Lists are normalized by stable keys where appropriate. The rework intentionally reduces prompt leakage and shifts score away from easy exception labels toward transfer-dependent source precedence, HY/duration/watchlist calculations, Pearson correlation conventions, and combined credit/correlation judgment.
+
 Transfer design: This test should benefit from `train_004` for HY allocation, duration weighting, watchlist handling, and risk-reduction rotation structure; `train_001` for credit constraint conventions; `train_002` for Pearson correlation and three-decimal pair output; and `train_005` for combining correlation concentration with action enums and board-level triggers. Transfer-dependent scoring points are `SP001`, `SP002`, `SP004`, `SP005`, and `SP008`. Task-specific exploration remains because CYGNUS has a new portfolio composition, a local snapshot conflict, and a combined exception ranking rather than a single-family output.
+
+Construction record: Created by task-builder 9 on 2026-06-03. Reworked on 2026-06-03 after direct calibration scored 0.615 avg@2, adding source reconciliation, exception severity evidence, diversifier evidence, and combined board-decision scoring while keeping the task inside the fixed-income plus correlation risk-board family.
+
+## 中文
+
+数据来源：本任务属于 `SCN_010_institutional_investment_strategy_portfolio_risk`，对应来源示例 `E001`、`E002` 和 `E003`。任务 brief 要求为 `PF-MA-CYGNUS` 构建风险委员会 JSON，同时覆盖固定收益约束检查和国际股票相关性集中度。当前数据来自共享 Asteria 环境，主要包括 `portfolios.json`、`bonds.json`、`issuers.json`、`policies.json` 和 `index_levels.json`。本任务的本地材料是 `input/payloads/risk_board_packet.json`。
+
+任务定义：求解者会看到委员会请求、本地快照包和答案模板。正确做法是以共享环境中的当前记录为准，核对本地快照，排序两个重大风险例外，提出信用和股票再平衡方案，并输出规范化 JSON。关键对象包括 `PF-MA-CYGNUS`、当前固定收益持仓、当前股票袖套 `IDX_EM`、`IDX_AC_ASIA_PAC_EX_JP` 和 `IDX_CHINA`、可能的分散化标的 `IDX_LATAM`，以及债券发行人的 watchlist 状态、HY 上限、久期区间和高相关性阈值。
+
+场景匹配：本任务属于机构 CIO 风险管理流程。它结合了 `train_001` 和 `train_004` 中的固定收益约束检查，也结合了 `train_002` 和 `train_005` 中的相关性审查。多资产风险委员会场景要求模型处理来源冲突、信用风险轮换、相关性集中度测算，并形成受控枚举的综合委员会判断。
+
+材料说明：`risk_board_packet.json` 提供会议背景、较早的固定收益快照、候选债券讨论名单和股票讨论名单，但它不是数量和相关性窗口的权威来源。`portfolios.json` 给出当前组合市值 74.0 百万美元及当前持仓。`bonds.json` 和 `issuers.json` 表明 `BND_DRIFTWOOD_2028` 与 `BND_PACREF_2028` 是 HY 且发行人在 watchlist 中。`policies.json` 给出 HY 上限 20.0%、久期区间 3.0-5.0 年和高相关阈值 0.80。`index_levels.json` 用于计算月度收益的 Pearson 相关系数。
+
+解答依据：当前 HY 敞口为 17.0 百万美元，因此 HY 占组合市值比例为 17.0 / 74.0 * 100 = 22.97%，超过 20.0% 上限 2.973 个百分点。本地包中 `BND_DRIFTWOOD_2028` 数量是 7.0 百万美元，但当前组合记录是 9.0 百万美元，所以必须用当前记录覆盖本地快照。当前固定收益久期为 `(9*2.9 + 8*2.3 + 13*4.5 + 16*4.2) / 46 = 3.70` 年。标准答案卖出 `BND_DRIFTWOOD_2028` 9.0 百万美元和 `BND_PACREF_2028` 8.0 百万美元，买入 `BND_BLUEGAS_2030` 8.0 百万美元和 `BND_QUARTZ_2031` 9.0 百万美元。交易后 HY 占比为 0.00%，固定收益久期为 4.37 年，watchlist 敞口清零。CYGNUS 当前股票袖套中最高相关组合为 `IDX_AC_ASIA_PAC_EX_JP` 和 `IDX_EM`，使用 2025-05-30 至 2026-04-30 的月度水平计算 11 个收益观察值，Pearson 相关系数为 0.937，超过阈值 0.137。股票动作是减持 `IDX_AC_ASIA_PAC_EX_JP` 4.0 百万美元并增持 `IDX_LATAM` 4.0 百万美元；`IDX_LATAM` 与被减持的 Asia 袖套在同一窗口下相关性为 -0.743。
+
+评估依据：评估器包含八个精确匹配评分点，原始权重为 `[2, 3, 2, 3, 2, 2, 2, 2]`，分别检查来源核对、带严重度证据的例外排序、当前信用指标、交易后信用指标、相关性和分散化证据、再平衡动作包、约束通过/失败标记，以及综合委员会决策。数值字段按 `answer_template.json` 中声明的精度四舍五入，列表按稳定键规范化。本次返工有意减少 prompt 泄漏，把分数从容易猜到的例外标签转向更依赖迁移的来源优先级、HY/久期/watchlist 计算、Pearson 相关性约定和信用加相关性的综合判断。
+
+迁移设计：本测试依赖 `train_004` 中的 HY 占比、久期加权、watchlist 处理和降风险轮换结构；依赖 `train_001` 中的信用约束习惯；依赖 `train_002` 中的 Pearson 相关性和三位小数 pair 输出；依赖 `train_005` 中将相关性集中度与动作枚举和委员会触发项结合的做法。迁移相关评分点是 `SP001`、`SP002`、`SP004`、`SP005` 和 `SP008`。任务特定探索仍然存在，因为 CYGNUS 是新的组合结构，包含本地快照冲突，并要求综合例外排序而不是单一业务线输出。
+
+构建记录：由 task-builder 9 于 2026-06-03 创建。因直接校准 avg@2 为 0.615，已于 2026-06-03 返工，新增来源核对、例外严重度证据、分散化证据和综合委员会决策评分，同时保持在固定收益加相关性风险委员会任务族内。

@@ -2,8 +2,8 @@
 
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
-This directory contains the released GDPevo benchmark data: **120 GDP-worthy
-tasks** organized into **12 task groups**. Each task group packages one shared
+This directory contains the released GDPevo benchmark data: **240 GDP-worthy
+tasks** organized into **24 task groups**. Each task group packages one shared
 business environment, **5 train tasks**, **5 held-out test tasks**, reference
 answers, deterministic evaluators, and task notes.
 
@@ -21,8 +21,9 @@ evaluation. Train tasks drive the evolve step inside one business environment;
 held-out test tasks measure whether the resulting update transfers to later
 work it has not seen.
 
-The released task groups cover real company interfaces across CRM, ERP, and
-Finance. They are seeded from real-job sources such as GDPval and SOP-Bench,
+The released task groups cover real company interfaces across CRM, ERP,
+Finance, healthcare, legal, data analysis, and engineering operations. They are
+seeded from real-job sources such as GDPval and SOP-Bench,
 then expanded into shared environments with lookalike records, recurring
 operational rules, and deterministic rule-based graders.
 

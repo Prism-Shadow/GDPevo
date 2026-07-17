@@ -1,0 +1,7 @@
+The Public Health Observatory is reviewing whether the countries in its highest preventable-mortality burden profile have experienced a stall in longevity. Prepare the formal 2023 audit described in `analysis_request.json`.
+
+Use the Observatory's public data portal at <TASK_ENV_BASE_URL> as the evidence source. Reconcile the named cohort to stable country identifiers, resolve the governing publication and revision state, distinguish applicable corrections from unresolved scale breaks, and account for missing indicator observations. Report the retained burden PCA, the requested four country profiles, and the region-controlled 2018-2023 longevity panel comparison. The high-burden profile is the cluster with the highest mean burden PC1 score.
+
+For the final classification, `STALL_SUPPORTED` requires both a negative high-burden-by-year interaction with p < 0.05 and a non-positive estimated annual longevity slope for the high-burden profile. Use `STALL_NOT_SUPPORTED` when the usable evidence fails that rule, and `INDETERMINATE` only when the requested analysis cannot be estimated from the published evidence.
+
+Return one JSON object that follows `answer_template.json`. Use four decimal places for every reported numeric statistic, uppercase ISO3 identifiers, and the list ordering declared by the template. Do not include narrative outside the JSON object.

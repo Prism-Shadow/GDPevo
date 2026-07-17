@@ -1,0 +1,96 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "Outage ticket TCK-5401 is pending action without diagnostics.",
+      "weight": 2,
+      "checks": [
+        {"path": "ticket_decisions[0].final_resolution_status"},
+        {"path": "ticket_decisions[0].key_blocker"},
+        {"path": "ticket_decisions[0].diagnostic_required"}
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "Voice profile ticket TCK-5402 is resolved through diagnostics.",
+      "weight": 2,
+      "checks": [
+        {"path": "ticket_decisions[1].final_resolution_status"},
+        {"path": "ticket_decisions[1].route_team"},
+        {"path": "ticket_decisions[1].diagnostic_required"}
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "Invalid account ticket TCK-5403 is failed correctly.",
+      "weight": 2,
+      "checks": [
+        {"path": "ticket_decisions[2].final_resolution_status"},
+        {"path": "ticket_decisions[2].key_blocker"},
+        {"path": "ticket_decisions[2].diagnostic_required"}
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "Authentication failure ticket TCK-5404 is failed correctly.",
+      "weight": 2,
+      "checks": [
+        {"path": "ticket_decisions[3].final_resolution_status"},
+        {"path": "ticket_decisions[3].key_blocker"},
+        {"path": "ticket_decisions[3].diagnostic_required"}
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "Overdue suspended ticket TCK-5405 is routed to accounts payable and failed.",
+      "weight": 2,
+      "checks": [
+        {"path": "ticket_decisions[4].final_resolution_status"},
+        {"path": "ticket_decisions[4].route_team"},
+        {"path": "ticket_decisions[4].key_blocker"}
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "Backbone capacity ticket TCK-5406 is network engineering escalation.",
+      "weight": 3,
+      "checks": [
+        {"path": "ticket_decisions[5].final_resolution_status"},
+        {"path": "ticket_decisions[5].route_team"},
+        {"path": "ticket_decisions[5].key_blocker"}
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Provisioning ticket TCK-5407 is tier-2 escalation.",
+      "weight": 3,
+      "checks": [
+        {"path": "ticket_decisions[6].final_resolution_status"},
+        {"path": "ticket_decisions[6].route_team"},
+        {"path": "ticket_decisions[6].key_blocker"}
+      ]
+    },
+    {
+      "id": "SP008",
+      "goal": "Final status queue counts are correct.",
+      "weight": 1,
+      "checks": [
+        {"path": "queue_summary.FAILED"},
+        {"path": "queue_summary.PENDING_ACTION"},
+        {"path": "queue_summary.RESOLVED"},
+        {"path": "queue_summary.ESCALATED"}
+      ]
+    },
+    {
+      "id": "SP009",
+      "goal": "Escalation-team queue counts are correct.",
+      "weight": 1,
+      "checks": [
+        {"path": "queue_summary.TIER2_SUPPORT"},
+        {"path": "queue_summary.FIELD_OPS"},
+        {"path": "queue_summary.NETWORK_ENGINEERING"},
+        {"path": "queue_summary.ACCOUNTS_PAYABLE"}
+      ]
+    }
+  ]
+}

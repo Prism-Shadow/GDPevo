@@ -1,0 +1,178 @@
+{
+  "collection_id": "freight_charges_2026_04",
+  "cutoff_at": "2026-04-30T23:59:59Z",
+  "base_currency": "USD",
+  "canonical_weight_unit": "KG",
+  "canonical_distance_unit": "KM",
+  "reference_alias_ids": [
+    "FRA-005",
+    "FRA-016",
+    "FRA-017",
+    "FRA-018"
+  ],
+  "required_alias_control": "reference_control_code",
+  "decision_charge_ids": [
+    "FC-202604-000001",
+    "FC-202604-000002",
+    "FC-202604-000007",
+    "FC-202604-000012",
+    "FC-202604-000020",
+    "FC-202604-000088",
+    "FC-202604-000092",
+    "FC-202604-000102",
+    "FC-202604-000108"
+  ],
+  "required_charge_controls": [
+    "ledger_disposition_code",
+    "source_control_code"
+  ],
+  "focus_lane_ids": [
+    "LANE-001",
+    "LANE-016",
+    "LANE-048",
+    "LANE-082"
+  ],
+  "carrier_ranking_limit": 5,
+  "integrated_close_evidence_release_assessment": {
+    "purpose": "Determine which provisional evidence must remain available through close for a task-specific non-focus invoice population. This diagnostic does not change retained charges, booked certified amounts, ledger dispositions, original invoice routes, or graph containment.",
+    "population": "The eligible population contains every original retained-row invoice except an invoice having at least one retained logical charge in decision_charge_ids or on a lane in focus_lane_ids. Every retained logical charge of an eligible invoice contributes once.",
+    "source_dependency": "An invoice is source-dependent when at least one retained logical charge exists only in a PROVISIONAL source snapshot; losing provisional source evidence would remove that business charge.",
+    "fx_comparison_dependency": "An invoice is FX-comparison-dependent when at least one of its valid included non-USD retained charges has both same-service-date CERTIFIED and PROVISIONAL public FX rates. CERTIFIED remains the booked rate; PROVISIONAL preserves comparison evidence.",
+    "action_cohorts": [
+      "ARCHIVE_PROVISIONAL_EVIDENCE",
+      "RETAIN_FX_COMPARISON_ONLY",
+      "RETAIN_SOURCE_AND_FX_COMPARISON",
+      "RETAIN_SOURCE_ONLY"
+    ],
+    "action_assignment": "ARCHIVE_PROVISIONAL_EVIDENCE has neither dependency; RETAIN_FX_COMPARISON_ONLY has only FX-comparison dependency; RETAIN_SOURCE_AND_FX_COMPARISON has both; RETAIN_SOURCE_ONLY has only source dependency.",
+    "source_control_application": "Apply the same established Asteria source_control_code used for retained-source decisions to every retained charge in each action cohort. Report the complete SB-24, SB-61, SB-79 distribution in code order, including zeros.",
+    "ledger_control_application": "Apply the same established Asteria ledger_disposition_code used for charge decisions to every retained charge in each action cohort. Report the complete LD-14, LD-31, LD-53, LD-72, LD-88 distribution in code order, including zeros.",
+    "booked_measure": "valid_charge_count and certified_booked_spend_usd use the ordinary valid included population. Convert every currency, including USD, with the same-service-date CERTIFIED public rate and use the same per-charge cent rounding as normalized_totals.",
+    "source_risk_measure": "source_dependent_charge_count counts retained charges that exist only in a PROVISIONAL source snapshot. For invoice priority, certified_booked_spend_at_source_risk_usd sums the ordinary certified-booked amounts of the valid source-dependent charges.",
+    "fx_measure": "fx_comparison_charge_count counts qualifying valid dual-rate charges. provisional_fx_comparison_delta_usd sums each charge's cent-rounded PROVISIONAL amount minus cent-rounded CERTIFIED amount, then rounds to 2 decimals.",
+    "priority_measure": "For each evidence-sensitive invoice, evidence_priority_usd equals certified_booked_spend_at_source_risk_usd plus provisional_fx_comparison_delta_usd, rounded to 2 decimals.",
+    "priority_selection": "Within each non-archive action cohort, report its three highest evidence_priority_usd invoices, ordered descending with invoice_id ascending as the tie-break. cohort_rank restarts at 1. Output cohorts in action_cohorts order with the archive cohort omitted."
+  },
+  "invoice_routing_policy": {
+    "population": "Retained logical charges grouped by the retained row's invoice_id.",
+    "route_precedence": [
+      "BLOCK_QUARANTINE",
+      "REVIEW_MISMATCH",
+      "CLEAR"
+    ],
+    "block_quarantine_rule": "Use BLOCK_QUARANTINE when an invoice contains at least one quarantined logical charge.",
+    "review_mismatch_rule": "Otherwise use REVIEW_MISMATCH when an invoice contains at least one valid included charge whose recognized service class differs from its expected service class.",
+    "clear_rule": "Otherwise use CLEAR."
+  },
+  "unsafe_aggregation_containment_plan": {
+    "purpose": "Contain conflicts induced by the union of two explicitly unsafe charge business keys. The graph, labels, and isolated invoice sets are counterfactual controls and do not replace charge_id, invoice_id, retained-source, ledger, route, or certified-FX decisions in the actual close.",
+    "node_population": "One node for every distinct retained-row invoice_id. Every retained logical charge contributes once to its original invoice node, using the retained row's public fields.",
+    "scenarios": [
+      {
+        "scenario_id": "CARRIER_DATE_CLASS_KEY",
+        "unsafe_charge_key_fields": [
+          "carrier_id",
+          "service_date",
+          "expected_service_class"
+        ]
+      },
+      {
+        "scenario_id": "LANE_LINE_KEY",
+        "unsafe_charge_key_fields": [
+          "lane_id",
+          "invoice_line_no"
+        ]
+      }
+    ],
+    "scenario_order": "scenario_id ascending",
+    "scenario_edge_rule": "Within each scenario, connect two distinct invoice nodes when each contains at least one retained charge with the same complete unsafe key. Count a direct unordered invoice pair once within a scenario even if it shares several keys. A collision key is a distinct complete key represented in at least two invoice nodes.",
+    "union_rule": "The unsafe union graph contains every node and the set union of both scenarios' direct unordered invoice pairs. Count an overlapping pair once in the union and once in overlapping_direct_pair_count.",
+    "source_stability_labels": {
+      "SOURCE_FRAGILE": "The invoice contains at least one retained logical charge whose source_treatment is RETAIN_PROVISIONAL_ONLY, so deleting the provisional source snapshot would remove a charge.",
+      "SOURCE_STABLE": "The invoice contains no retained logical charge whose source_treatment is RETAIN_PROVISIONAL_ONLY."
+    },
+    "fx_stability_labels": {
+      "FX_SENSITIVE": "The invoice contains at least one valid included non-USD retained charge for which both CERTIFIED and PROVISIONAL public FX rates exist for the charge's service_date and currency, so deleting provisional FX evidence would remove a dual-rate comparison.",
+      "FX_INSENSITIVE": "The invoice contains no such qualifying dual-rate charge."
+    },
+    "population_impact_rule": "For the named invoice population, count all retained charges and report source treatments as CERTIFIED_ONLY for RETAIN_CERTIFIED_ONLY, CERTIFIED_OVERLAP for RETAIN_CERTIFIED_OVERLAP, and PROVISIONAL_ONLY for RETAIN_PROVISIONAL_ONLY. valid_charge_count and valid_spend_usd are the contribution of those invoices to the ordinary valid included population and normalized_totals.total_spend_usd. Apply that same numerical treatment: convert every currency, including USD, with its same-service-date CERTIFIED public usd_per_unit rate, round each charge to cents, then sum and round to 2 decimals. fx_affected_charge_count and fx_counterfactual_increase_usd use the same qualifying non-USD dual-rate population as fx_certification_counterfactual, with per-charge cent rounding before aggregation.",
+    "source_treatment_order": [
+      "CERTIFIED_ONLY",
+      "CERTIFIED_OVERLAP",
+      "PROVISIONAL_ONLY"
+    ],
+    "separation_stages": [
+      {
+        "stage_id": "SOURCE_STABILITY_SEPARATION",
+        "left_label": "SOURCE_FRAGILE",
+        "right_label": "SOURCE_STABLE"
+      },
+      {
+        "stage_id": "FX_STABILITY_SEPARATION",
+        "left_label": "FX_SENSITIVE",
+        "right_label": "FX_INSENSITIVE"
+      }
+    ],
+    "stage_contract": "The stages are state transitions in the listed order. The first stage's active population is the full node population; every later stage's active population excludes all invoice nodes isolated by earlier stages. A stage conflict graph is the induced unsafe-union graph on its active population restricted to direct edges whose endpoint labels differ for that stage. The required isolation set is a minimum-cardinality vertex cover of that stage conflict graph. Report the selected IDs ascending and measure isolated_population_impact only on that stage's selected cover.",
+    "minimum_vertex_cover_tie_break": "If several minimum-cardinality vertex covers exist, sort the invoice IDs within every candidate cover ascending and select the candidate whose resulting ID array is lexicographically smallest under ordinary string comparison. This is a global result tie-break and does not prescribe an optimization algorithm.",
+    "final_component_rule": "After both covers are removed, compute undirected connected components of the induced unsafe-union graph over all remaining nodes, including singleton components. Report the complete histogram keyed by source_stability_label, fx_stability_label, and invoice_count_per_component. A mixed-label component has more than one value of that label.",
+    "final_signature_order": "source_stability_label ascending, then fx_stability_label ascending, then invoice_count_per_component ascending",
+    "stable_id_order": "Every reported invoice-ID array is sorted ascending."
+  },
+  "invoice_route_ledger_control_audit": {
+    "population": "Every retained logical charge, grouped by its invoice's final route.",
+    "control_field": "ledger_disposition_code",
+    "control_domain": [
+      "LD-14",
+      "LD-31",
+      "LD-53",
+      "LD-72",
+      "LD-88"
+    ],
+    "assignment_rule": "Apply the same established Asteria ledger disposition control used for charge decisions to every retained logical charge. Each charge contributes once to exactly one control count.",
+    "required_routes": [
+      "BLOCK_QUARANTINE",
+      "CLEAR",
+      "REVIEW_MISMATCH"
+    ],
+    "output_order": "invoice_route ascending; ledger_disposition_code ascending; include zero counts."
+  },
+  "fx_certification_counterfactual": {
+    "population": "Valid included non-USD logical charges for which both a CERTIFIED and a PROVISIONAL public FX rate exist for the retained charge's service_date and currency.",
+    "certified_measure": "Convert each qualifying retained amount with the same-date CERTIFIED usd_per_unit rate and round the charge result to 2 decimal places.",
+    "provisional_measure": "Convert the same retained amount with the same-date PROVISIONAL usd_per_unit rate and round the charge result to 2 decimal places.",
+    "aggregation_rule": "Sum the cent-rounded charge results, then round each reported total to 2 decimal places.",
+    "increase_rule": "provisional_counterfactual_total_usd minus certified_total_usd.",
+    "currency_order": "currency ascending",
+    "carrier_ranking_limit": 5,
+    "carrier_ranking_population": "The same qualifying valid charges, grouped by carrier_id.",
+    "carrier_ranking_order": [
+      "counterfactual_increase_usd DESC",
+      "carrier_id ASC"
+    ],
+    "required_rate_controls": [
+      "certified_rate_reference_control_code",
+      "provisional_rate_reference_control_code",
+      "rate_source_control_code"
+    ],
+    "rate_reference_control_domain": [
+      "RB-17",
+      "RB-42",
+      "RB-83"
+    ],
+    "rate_source_control_domain": [
+      "SB-24",
+      "SB-61",
+      "SB-79"
+    ],
+    "ledger_control_domain": [
+      "LD-14",
+      "LD-31",
+      "LD-53",
+      "LD-72",
+      "LD-88"
+    ],
+    "control_application": "Apply the established training-time reference control to each rate status, the established source control to certified-over-provisional evidence selection, and the established ledger disposition control to every qualifying valid charge. The control meanings are intentionally not repeated here.",
+    "ledger_distribution_order": "ledger_disposition_code ascending; include only controls represented in the valid qualifying population."
+  }
+}

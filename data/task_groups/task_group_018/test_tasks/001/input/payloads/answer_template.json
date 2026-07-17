@@ -1,0 +1,485 @@
+{
+  "template_name": "columbia_criminal_disposition_register",
+  "version": "1.5",
+  "output_format": "JSON object only",
+  "required_top_level_keys": [
+    "task_id",
+    "county",
+    "register_date",
+    "currency",
+    "rows",
+    "aggregate_summary",
+    "aggregate_recompute_audit",
+    "source_precedence_summary",
+    "financial_reconciliation_summary"
+  ],
+  "top_level_fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_001"
+    },
+    "county": {
+      "type": "string",
+      "required_value": "Columbia"
+    },
+    "register_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD"
+    },
+    "currency": {
+      "type": "enum",
+      "allowed_values": [
+        "USD"
+      ]
+    }
+  },
+  "rows": {
+    "type": "list",
+    "ordering": "ascending by case_number",
+    "required_count": 6,
+    "row_identity": "case_number",
+    "required_object_keys": [
+      "case_number",
+      "defendant_name",
+      "disposition_date",
+      "register_disposition",
+      "charge_result_code",
+      "defense_type",
+      "source_precedence_audit",
+      "approved_fee_codes",
+      "fee_component_total",
+      "fee_component_audit",
+      "assessed_total",
+      "restitution_amount",
+      "current_ledger_principal",
+      "financial_delta",
+      "ledger_reconciliation",
+      "docket_action_code",
+      "entry_readiness_code",
+      "probation_months"
+    ],
+    "field_definitions": {
+      "case_number": {
+        "type": "string",
+        "format": "stable clerk case number"
+      },
+      "defendant_name": {
+        "type": "string",
+        "format": "live clerk record display name"
+      },
+      "disposition_date": {
+        "type": "date",
+        "format": "YYYY-MM-DD"
+      },
+      "register_disposition": {
+        "type": "enum",
+        "allowed_values": [
+          "CONVICTION_ENTERED",
+          "DEFERRED_ENTRY_ACTIVE",
+          "PRIOR_DISPOSITION_CONFIRMED"
+        ]
+      },
+      "charge_result_code": {
+        "type": "enum",
+        "allowed_values": [
+          "CONVICTED_SINGLE_COUNT",
+          "DEFERRED_ONE_ACTIVE_TWO_DISMISSED",
+          "DEFERRED_SINGLE_COUNT_CONFIRMED",
+          "PRIOR_CONVICTION_CONFIRMED",
+          "PRIOR_REVIEW_ONLY"
+        ]
+      },
+      "defense_type": {
+        "type": "enum",
+        "allowed_values": [
+          "retained",
+          "public_defender",
+          "appointed_private",
+          "unknown"
+        ]
+      },
+      "source_precedence_audit": {
+        "type": "object",
+        "required_object_keys": [
+          "disposition_source_code",
+          "representation_source_code",
+          "noncontrolling_source_codes"
+        ],
+        "field_definitions": {
+          "disposition_source_code": {
+            "type": "enum",
+            "allowed_values": [
+              "HEARING_PACKET",
+              "LIVE_DOCKET_CORRECTION",
+              "LIVE_PRIOR_ORDER",
+              "LIVE_RECORD_OVER_STALE_EXPORT"
+            ]
+          },
+          "representation_source_code": {
+            "type": "enum",
+            "allowed_values": [
+              "COUNSEL_DESK_REVIEW",
+              "LIVE_APPEARANCE_RECORD"
+            ]
+          },
+          "noncontrolling_source_codes": {
+            "type": "list",
+            "items": {
+              "type": "enum",
+              "allowed_values": [
+                "FINANCE_SCRATCH_WORKPAPER",
+                "PREHEARING_LIVE_ATTORNEY",
+                "PREHEARING_LIVE_STATUS",
+                "SIMILAR_NAME_ALERT",
+                "STALE_EXPORT"
+              ]
+            },
+            "ordering": "ascending alphabetically; use an empty list when no conflicting source is identified"
+          }
+        }
+      },
+      "approved_fee_codes": {
+        "type": "list",
+        "items": {
+          "type": "enum",
+          "allowed_values": [
+            "CR-CONV",
+            "CR-FILING",
+            "CR-PROB",
+            "CR-REST-ADM"
+          ]
+        },
+        "ordering": "ascending by fee_code"
+      },
+      "fee_component_total": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD",
+        "description": "Sum of approved scheduled fee components only, excluding restitution principal."
+      },
+      "fee_component_audit": {
+        "type": "object",
+        "required_object_keys": [
+          "excluded_candidate_fee_codes",
+          "added_scheduled_fee_codes",
+          "restitution_component_policy_code"
+        ],
+        "field_definitions": {
+          "excluded_candidate_fee_codes": {
+            "type": "list",
+            "items": {
+              "type": "string"
+            },
+            "ordering": "ascending alphabetically; include workpaper candidate labels excluded from approved_fee_codes"
+          },
+          "added_scheduled_fee_codes": {
+            "type": "list",
+            "items": {
+              "type": "string"
+            },
+            "ordering": "ascending alphabetically; include scheduled fee codes added even if absent from the workpaper"
+          },
+          "restitution_component_policy_code": {
+            "type": "enum",
+            "allowed_values": [
+              "NO_RESTITUTION",
+              "SEPARATE_RESTITUTION_PRINCIPAL_NO_ADMIN_FEE",
+              "SEPARATE_RESTITUTION_PRINCIPAL_WITH_ADMIN_FEE"
+            ]
+          }
+        }
+      },
+      "assessed_total": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD",
+        "description": "Approved fee_component_total plus restitution_amount."
+      },
+      "restitution_amount": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "current_ledger_principal": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD",
+        "description": "Current live ledger principal before the register action; use 0.00 when no live obligation exists."
+      },
+      "financial_delta": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD",
+        "description": "assessed_total minus current_ledger_principal."
+      },
+      "ledger_reconciliation": {
+        "type": "object",
+        "required_object_keys": [
+          "ledger_principal_before",
+          "ledger_principal_after",
+          "ledger_delta",
+          "ledger_action_code"
+        ],
+        "field_definitions": {
+          "ledger_principal_before": {
+            "type": "number",
+            "precision": "currency rounded to 2 decimals",
+            "unit": "USD"
+          },
+          "ledger_principal_after": {
+            "type": "number",
+            "precision": "currency rounded to 2 decimals",
+            "unit": "USD"
+          },
+          "ledger_delta": {
+            "type": "number",
+            "precision": "currency rounded to 2 decimals",
+            "unit": "USD"
+          },
+          "ledger_action_code": {
+            "type": "enum",
+            "allowed_values": [
+              "CREATE_NEW_ORDER",
+              "REISSUE_MATCHING_LIVE_ORDER",
+              "RETAIN_LIVE_ORDER",
+              "UPDATE_EXISTING_ORDER_NO_PRINCIPAL_CHANGE"
+            ]
+          }
+        }
+      },
+      "docket_action_code": {
+        "type": "enum",
+        "allowed_values": [
+          "CONFIRM_PRIOR_NO_ENTRY",
+          "ENTER_DISPOSITION",
+          "ENTER_DISPOSITION_AND_RECALL_WARRANT",
+          "ENTER_FINANCIAL_REVIEW",
+          "UPDATE_CHARGES_AND_FEES"
+        ]
+      },
+      "entry_readiness_code": {
+        "type": "enum",
+        "allowed_values": [
+          "CONFIRM_PRIOR_NO_ENTRY",
+          "FINANCIAL_REVIEW_ONLY",
+          "READY_ENTER_NEW_CONVICTION_ASSESSMENT",
+          "READY_RECALL_WARRANT_REISSUE_LEDGER",
+          "READY_UPDATE_DEFERRED_AND_FEES"
+        ]
+      },
+      "probation_months": {
+        "type": "integer",
+        "unit": "months"
+      }
+    }
+  },
+  "aggregate_summary": {
+    "type": "object",
+    "required_object_keys": [
+      "case_count",
+      "conviction_register_count",
+      "deferred_entry_count",
+      "review_only_or_prior_count",
+      "warrant_recall_count",
+      "total_fee_components",
+      "total_assessed",
+      "total_restitution",
+      "total_ledger_principal_before",
+      "total_ledger_principal_after",
+      "total_financial_delta",
+      "ledger_reissue_count",
+      "new_assessment_count"
+    ],
+    "field_definitions": {
+      "case_count": {
+        "type": "integer"
+      },
+      "conviction_register_count": {
+        "type": "integer"
+      },
+      "deferred_entry_count": {
+        "type": "integer"
+      },
+      "review_only_or_prior_count": {
+        "type": "integer"
+      },
+      "warrant_recall_count": {
+        "type": "integer"
+      },
+      "total_fee_components": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "total_assessed": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "total_restitution": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "total_ledger_principal_before": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "total_ledger_principal_after": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "total_financial_delta": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "ledger_reissue_count": {
+        "type": "integer"
+      },
+      "new_assessment_count": {
+        "type": "integer"
+      }
+    }
+  },
+  "aggregate_recompute_audit": {
+    "type": "object",
+    "required_object_keys": [
+      "recomputed_case_count",
+      "row_fee_component_total",
+      "row_assessed_total",
+      "row_restitution_total",
+      "row_ledger_before_total",
+      "row_ledger_after_total",
+      "row_ledger_delta_total",
+      "rows_with_excluded_candidate_fee_codes",
+      "rows_with_restitution_as_separate_principal"
+    ],
+    "field_definitions": {
+      "recomputed_case_count": {
+        "type": "integer"
+      },
+      "row_fee_component_total": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "row_assessed_total": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "row_restitution_total": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "row_ledger_before_total": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "row_ledger_after_total": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "row_ledger_delta_total": {
+        "type": "number",
+        "precision": "currency rounded to 2 decimals",
+        "unit": "USD"
+      },
+      "rows_with_excluded_candidate_fee_codes": {
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "ordering": "ascending by case_number"
+      },
+      "rows_with_restitution_as_separate_principal": {
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "ordering": "ascending by case_number"
+      }
+    }
+  },
+  "source_precedence_summary": {
+    "type": "object",
+    "required_object_keys": [
+      "counsel_review_source_count",
+      "rows_using_counsel_review_source",
+      "rows_using_live_record_over_stale_export",
+      "rows_using_hearing_packet_disposition_source"
+    ],
+    "field_definitions": {
+      "counsel_review_source_count": {
+        "type": "integer",
+        "description": "Count of rows whose final representation source is the counsel desk review log."
+      },
+      "rows_using_counsel_review_source": {
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "ordering": "ascending by case_number"
+      },
+      "rows_using_live_record_over_stale_export": {
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "ordering": "ascending by case_number"
+      },
+      "rows_using_hearing_packet_disposition_source": {
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "ordering": "ascending by case_number"
+      }
+    }
+  },
+  "financial_reconciliation_summary": {
+    "type": "object",
+    "required_object_keys": [
+      "rows_with_added_scheduled_fee_codes",
+      "rows_with_restitution_principal",
+      "rows_reissued_without_principal_delta",
+      "rows_ready_for_new_assessment"
+    ],
+    "field_definitions": {
+      "rows_with_added_scheduled_fee_codes": {
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "ordering": "ascending by case_number"
+      },
+      "rows_with_restitution_principal": {
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "ordering": "ascending by case_number"
+      },
+      "rows_reissued_without_principal_delta": {
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "ordering": "ascending by case_number"
+      },
+      "rows_ready_for_new_assessment": {
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "ordering": "ascending by case_number"
+      }
+    }
+  }
+}

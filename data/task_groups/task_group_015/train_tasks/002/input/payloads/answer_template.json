@@ -1,0 +1,120 @@
+{
+  "description": "Normalized cardiology referral coordination packet. Return JSON only, with the same top-level keys and field types shown here.",
+  "top_level_required_keys": [
+    "patient_referral",
+    "active_diagnoses",
+    "referral_code_set",
+    "allergy_readiness",
+    "recent_encounter_evidence",
+    "required_document_evidence",
+    "receiving_provider",
+    "authorization_readiness",
+    "medication_highlights",
+    "referral_letter_fields"
+  ],
+  "patient_referral": {
+    "patient_id": "string",
+    "referral_id": "string",
+    "batch_id": "string",
+    "service_line": "enum: cardiology|orthopedics|pulmonology|neurology|skilled_nursing|oncology",
+    "requested_date": "date string YYYY-MM-DD"
+  },
+  "active_diagnoses": [
+    {
+      "code": "ICD-10 code string",
+      "description": "string from active condition record",
+      "normalized_key": "string",
+      "source": "string",
+      "referral_relevant": "boolean"
+    }
+  ],
+  "active_diagnoses_ordering": "Sort by code ascending, unless your implementation uses a stable object order; evaluation treats this list as a set by code.",
+  "referral_code_set": {
+    "primary_code": "ICD-10 code string",
+    "supporting_codes": [
+      "ICD-10 code string"
+    ],
+    "icd_validation": "enum: valid_matches_narrative|valid_but_narrative_mismatch|invalid_code|wrong_service_chapter",
+    "primary_code_chapter": "string from ICD lookup",
+    "narrative_match": "boolean"
+  },
+  "allergy_readiness": {
+    "readiness_status": "enum: complete_documented|incomplete_needs_clarification|no_known_allergies|conflicting_allergy_records",
+    "ready_for_letter": "boolean",
+    "allergies": [
+      {
+        "allergen": "string",
+        "reaction": "string",
+        "severity": "enum: mild|moderate|severe|unknown",
+        "status": "enum: active|inactive|entered-in-error|unknown",
+        "source": "string"
+      }
+    ],
+    "follow_up_needed": "boolean"
+  },
+  "recent_encounter_evidence": {
+    "encounter_id": "string",
+    "date": "date string YYYY-MM-DD",
+    "type": "string",
+    "provider_id": "string",
+    "signed_status": "enum: signed|unsigned|amended|unknown",
+    "diagnosis_codes": [
+      "ICD-10 code string"
+    ],
+    "medications_mentioned": [
+      "medication name string"
+    ],
+    "care_plan_tag": "enum: cardiology_referral_for_hfpef_dyspnea|hypertension_followup|unrelated_recent_visit|other"
+  },
+  "required_document_evidence": {
+    "echo": {
+      "received": "boolean",
+      "document_id": "string or null",
+      "type": "string or null",
+      "date": "date string YYYY-MM-DD or null",
+      "status": "enum: final|preliminary|cancelled|missing|null"
+    },
+    "office_note_received": "boolean",
+    "missing_required_documents": [
+      "enum values: echocardiogram|office_note|authorization|medication_list|allergy_confirmation"
+    ]
+  },
+  "receiving_provider": {
+    "provider_id": "string",
+    "name": "string",
+    "role": "string",
+    "facility": "string",
+    "phone": "string",
+    "fax": "string"
+  },
+  "authorization_readiness": {
+    "authorization_status": "enum: approved|pending|denied|not_required|unknown",
+    "referral_status": "enum: open|closed|cancelled|draft",
+    "urgency": "enum: routine|urgent|stat",
+    "overall_readiness": "enum: ready_to_send|hold_for_authorization|hold_for_missing_documents|hold_for_clinical_clarification",
+    "blocking_issues": [
+      "enum values: authorization_missing|echo_missing|office_note_missing|allergy_incomplete|provider_missing|diagnosis_code_invalid|clinical_mismatch"
+    ]
+  },
+  "medication_highlights": [
+    {
+      "medication": "string",
+      "dose": "string",
+      "route": "string",
+      "frequency": "string",
+      "status": "enum: active|inactive|unknown",
+      "highlight_reason": "enum: heart_failure_diuretic|blood_pressure_management|diabetes_management|lipid_management|other_active_medication"
+    }
+  ],
+  "medication_highlights_ordering": "Put referral-relevant medications first; evaluation treats this list as a set by lowercased medication name.",
+  "referral_letter_fields": {
+    "diagnosis_summary_choice": "enum: hfpef_with_exertional_dyspnea|hypertension_followup_only|diabetes_cardiology_clearance|other",
+    "allergy_statement_choice": "enum: active_sulfa_antibiotics_rash_moderate|no_known_allergies|allergy_details_incomplete|conflicting_allergy_records",
+    "recent_encounter_choice": "enum: pcp_2026_02_11_hfpef_dyspnea|pcp_2026_01_18_hypertension|latest_visit_unrelated|other",
+    "document_packet_choice": "enum: final_echo_and_office_note_available|echo_missing|office_note_missing|document_packet_incomplete",
+    "medication_summary_choice": "enum: include_furosemide_and_lisinopril|include_furosemide_only|include_all_active_meds_without_highlight|no_relevant_active_meds",
+    "recipient_choice": "enum: renee_okafor_summit_heart_center|primary_care_provider|provider_unresolved|other",
+    "authorization_statement_choice": "enum: authorization_approved|authorization_pending|authorization_denied|authorization_unknown",
+    "readiness_choice": "enum: send_without_blocker|hold_for_missing_document|hold_for_allergy_clarification|hold_for_authorization|hold_for_code_issue"
+  }
+}

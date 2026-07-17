@@ -1,0 +1,23 @@
+{
+  "request_id": "CQR-2026-03-EAST-03",
+  "import_batch_id": "BATCH-03-01-2",
+  "warehouse_id": "WH-EAST-01",
+  "as_of_cutoff": "2026-03-19T23:59:59Z",
+  "cohort": {
+    "population": "PRODUCTION_SHIPMENTS",
+    "shipment_membership": "HAS_EFFECTIVE_SCAN_IN_NAMED_BATCH_AT_OR_BEFORE_CUTOFF",
+    "backlog_definition": "EFFECTIVE_FINAL_CARRIER_STATUS_IS_NOT_DELIVERED"
+  },
+  "approved_correction": {
+    "scope": "MINIMAL_CANONICAL_FIELD_ONLY",
+    "reason_code": "SOURCE_RECONCILIATION",
+    "actor": "ops-data-quality",
+    "audit_id": "AUD-CQR-20260320-003",
+    "correction_key": "CQR-20260320-EAST-CARRIER-003",
+    "corrected_at": "2026-03-20T09:30:00Z"
+  },
+  "correction_status_rule": {
+    "APPLIED": "Exactly one business row and one audit row commit, and a post-change query confirms the corrected canonical value.",
+    "NOT_APPLIED": "Any other outcome."
+  }
+}

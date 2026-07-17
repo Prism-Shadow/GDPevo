@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill
+name: task-group-009-fewshot-attempt-01
 description: SOP for Crescent Finance Ops API reporting tasks. Use when a task provides environment_access.json, request_memo.json, and answer_template.json for branch or regional finance reporting, ensemble compensation summaries or forecasts, or touring production weekly payroll reviews.
 ---
 

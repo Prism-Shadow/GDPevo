@@ -1,0 +1,138 @@
+{
+  "patient_referral": {
+    "patient_id": "P-20177",
+    "referral_id": "REF-FEB-CARD-007",
+    "batch_id": "FEB26-CARD",
+    "service_line": "cardiology",
+    "requested_date": "2026-02-15"
+  },
+  "active_diagnoses": [
+    {
+      "code": "E11.9",
+      "description": "Type 2 diabetes mellitus without complications",
+      "normalized_key": "diabetes_type_2",
+      "source": "problem_list",
+      "referral_relevant": false
+    },
+    {
+      "code": "I10",
+      "description": "Essential hypertension",
+      "normalized_key": "hypertension",
+      "source": "problem_list",
+      "referral_relevant": false
+    },
+    {
+      "code": "I50.32",
+      "description": "Chronic diastolic heart failure",
+      "normalized_key": "heart_failure_diastolic",
+      "source": "problem_list",
+      "referral_relevant": true
+    },
+    {
+      "code": "M17.11",
+      "description": "Unilateral primary osteoarthritis, right knee",
+      "normalized_key": "right_knee_oa",
+      "source": "problem_list",
+      "referral_relevant": false
+    },
+    {
+      "code": "R06.02",
+      "description": "Shortness of breath",
+      "normalized_key": "dyspnea",
+      "source": "referral_intake",
+      "referral_relevant": true
+    }
+  ],
+  "referral_code_set": {
+    "primary_code": "I50.32",
+    "supporting_codes": [
+      "R06.02"
+    ],
+    "icd_validation": "valid_matches_narrative",
+    "primary_code_chapter": "Circulatory",
+    "narrative_match": true
+  },
+  "allergy_readiness": {
+    "readiness_status": "complete_documented",
+    "ready_for_letter": true,
+    "allergies": [
+      {
+        "allergen": "sulfa antibiotics",
+        "reaction": "rash",
+        "severity": "moderate",
+        "status": "active",
+        "source": "referral_form"
+      }
+    ],
+    "follow_up_needed": false
+  },
+  "recent_encounter_evidence": {
+    "encounter_id": "ENC-20177-20260211",
+    "date": "2026-02-11",
+    "type": "office_visit",
+    "provider_id": "PRV-PCP-002",
+    "signed_status": "signed",
+    "diagnosis_codes": [
+      "I50.32",
+      "R06.02"
+    ],
+    "medications_mentioned": [
+      "furosemide"
+    ],
+    "care_plan_tag": "cardiology_referral_for_hfpef_dyspnea"
+  },
+  "required_document_evidence": {
+    "echo": {
+      "received": true,
+      "document_id": "DOC-ECHO-20177",
+      "type": "echocardiogram",
+      "date": "2025-11-12",
+      "status": "final"
+    },
+    "office_note_received": true,
+    "missing_required_documents": []
+  },
+  "receiving_provider": {
+    "provider_id": "PRV-CARD-020",
+    "name": "Dr. Renee Okafor",
+    "role": "Cardiologist",
+    "facility": "Summit Heart Center",
+    "phone": "555-430-2020",
+    "fax": "555-430-2299"
+  },
+  "authorization_readiness": {
+    "authorization_status": "approved",
+    "referral_status": "open",
+    "urgency": "routine",
+    "overall_readiness": "ready_to_send",
+    "blocking_issues": []
+  },
+  "medication_highlights": [
+    {
+      "medication": "furosemide",
+      "dose": "20 mg",
+      "route": "oral",
+      "frequency": "daily",
+      "status": "active",
+      "highlight_reason": "heart_failure_diuretic"
+    },
+    {
+      "medication": "lisinopril",
+      "dose": "10 mg",
+      "route": "oral",
+      "frequency": "daily",
+      "status": "active",
+      "highlight_reason": "blood_pressure_management"
+    }
+  ],
+  "referral_letter_fields": {
+    "diagnosis_summary_choice": "hfpef_with_exertional_dyspnea",
+    "allergy_statement_choice": "active_sulfa_antibiotics_rash_moderate",
+    "recent_encounter_choice": "pcp_2026_02_11_hfpef_dyspnea",
+    "document_packet_choice": "final_echo_and_office_note_available",
+    "medication_summary_choice": "include_furosemide_and_lisinopril",
+    "recipient_choice": "renee_okafor_summit_heart_center",
+    "authorization_statement_choice": "authorization_approved",
+    "readiness_choice": "send_without_blocker"
+  }
+}

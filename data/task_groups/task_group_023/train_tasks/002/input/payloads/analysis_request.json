@@ -1,0 +1,107 @@
+{
+  "briefing_id": "PHO-COUNTY-MED-2023-MS-ALGORITHMIC-AUDIT",
+  "protocol_id": "PHO_COUNTY_MEDIATION_TRANSPORT_V1",
+  "business_request": "Audit whether the county poverty-to-adult-obesity mediation signal through physical inactivity is reproducible across instrumented changes, out-of-state prediction, clustered resampling, grouped calibration, confounding sensitivity, and four-year trajectory stability.",
+  "years": [2021, 2022, 2023, 2024],
+  "primary_year": 2023,
+  "regions": ["Midwest", "South"],
+  "outcome": "adult_obesity",
+  "exposure": "poverty",
+  "mediator": "physical_inactivity",
+  "precision": {
+    "calculation": "unrounded",
+    "reported_nonintegers_decimal_places": 4,
+    "integer_and_boolean_types": "natural JSON types"
+  },
+  "publication_selection": {
+    "health_measures": ["adult_obesity", "physical_inactivity"],
+    "health_filters": {"value_type": "CRUDE", "release_status": "FINAL"},
+    "health_revision_priority": ["revision", "released_at", "observation_id"],
+    "socioeconomic_fields": ["poverty", "median_income", "bachelors", "unemployment", "net_migration", "uninsured"],
+    "socioeconomic_filters": {"release_status": "FINAL"},
+    "socioeconomic_revision_priority": ["revision", "released_at", "record_id"],
+    "basic_complete_year": "Selected health values are present, nonsuppressed, and non-null; poverty, median_income, bachelors, and RUCC are non-null.",
+    "primary_cohort": "Basic-complete in 2023.",
+    "balanced_panel_cohort": "Basic-complete in all four requested years.",
+    "machine_learning_cohort": "Primary-cohort members also complete for 2023 unemployment, net_migration, and uninsured.",
+    "required_audit_outputs": ["selected release counts by year", "annual complete counts", "primary cohort count", "balanced cohort count", "machine-learning cohort count", "state count"]
+  },
+  "shared_design": {
+    "income_semantics": "median_income per 10000",
+    "rucc_semantics": "categorical indicators RUCC2 through RUCC9 with RUCC1 as reference",
+    "primary_total_terms": ["poverty", "income", "bachelors", "RUCC2", "RUCC3", "RUCC4", "RUCC5", "RUCC6", "RUCC7", "RUCC8", "RUCC9"],
+    "primary_path_a_outcome": "physical_inactivity",
+    "primary_direct_additional_term": "physical_inactivity"
+  },
+  "difference_gmm_mediation": {
+    "standard_method": "STATE_CLUSTERED_DIFFERENCE_GMM_MEDIATION_WITH_CROSS_EQUATION_DELTA_INFERENCE",
+    "cohort": "balanced_panel_cohort",
+    "change_end_years": [2023, 2024],
+    "change_controls": ["income", "bachelors"],
+    "period_indicator": "end_year_2024",
+    "exposure_instrument": "poverty level lagged two years",
+    "mediator_instrument": "physical_inactivity level lagged two years",
+    "cluster_unit": "state",
+    "required_audit_outputs": ["panel dimensions", "four clustered coefficient summaries", "two first-stage partial F statistics", "stacked indirect effect and interval", "all state-deletion diagnostics"]
+  },
+  "nested_state_ridge": {
+    "standard_method": "NESTED_LEAVE_STATE_OUT_RIDGE_WITH_TRAINING_ONLY_STANDARDIZATION",
+    "cohort": "machine_learning_cohort",
+    "target": "2023 adult_obesity",
+    "feature_maps": {
+      "base_order": ["poverty", "income", "bachelors", "unemployment", "net_migration", "uninsured", "poverty^2", "income^2", "bachelors^2", "poverty*income", "poverty*bachelors", "income*bachelors", "RUCC2", "RUCC3", "RUCC4", "RUCC5", "RUCC6", "RUCC7", "RUCC8", "RUCC9"],
+      "augmented_append_order": ["physical_inactivity", "physical_inactivity^2", "poverty*physical_inactivity", "physical_inactivity*income"]
+    },
+    "lambda_grid": [0.02, 0.2, 2.0, 20.0, 200.0],
+    "outer_grouping": "state",
+    "inner_grouping": "state",
+    "required_audit_outputs": ["cohort and fold counts", "lambda grid", "pooled base and augmented RMSE", "augmented state-win count", "every outer state's aligned inner grids, selected lambdas, and held-out RMSE"]
+  },
+  "wild_cluster_bootstrap_t": {
+    "standard_method": "RESTRICTED_NULL_PAIRED_STATE_XORSHIFT32_BOOTSTRAP_T",
+    "source_models": "three primary-year OLS models",
+    "target_order": ["TOTAL_POVERTY", "PATH_A_POVERTY", "PATH_B_INACTIVITY"],
+    "cluster_unit": "state",
+    "seed": 23032023,
+    "replicates": 2047,
+    "checkpoint_replicates": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2047],
+    "required_audit_outputs": ["method and randomization metadata", "three observed and bootstrap inference summaries", "all requested PRNG and t-statistic checkpoints"]
+  },
+  "state_grouped_conformal": {
+    "standard_method": "STATE_GROUPED_SPLIT_CONFORMAL",
+    "cohort": "machine_learning_cohort",
+    "source_model": "augmented ridge feature map",
+    "fixed_lambda": 2.0,
+    "partition_count": 5,
+    "nominal_coverage": 0.90,
+    "required_audit_outputs": ["overall coverage and mean width", "state threshold count", "all five calibration cycles", "every state's coverage and width"]
+  },
+  "mediation_sensitivity_surface": {
+    "standard_method": "PARTIAL_R2_MEDIATION_SENSITIVITY_SURFACE",
+    "baseline_sources": ["primary path-a poverty coefficient", "primary direct-model physical-inactivity coefficient", "classical path-b standard error", "direct-model residual degrees of freedom"],
+    "r2_mediator_confounder_values": [0.04, 0.08, 0.16, 0.24, 0.32],
+    "r2_outcome_confounder_values": [0.04, 0.08, 0.16, 0.24, 0.32],
+    "bias_direction_order": ["NEGATIVE", "POSITIVE"],
+    "required_audit_outputs": ["baseline quantities", "equal-strength tipping R2", "complete ordered sensitivity surface"]
+  },
+  "trajectory_pca_clustering": {
+    "standard_method": "STATE_TRAJECTORY_PCA_WITH_DETERMINISTIC_KMEANS_AND_LEAVE_YEAR_OUT_ARI",
+    "cohort": "balanced_panel_cohort",
+    "aggregation_unit": "state",
+    "feature_years": [2021, 2022, 2023, 2024],
+    "within_year_feature_order": ["POVERTY", "INACTIVITY", "OBESITY"],
+    "retained_component_count": 2,
+    "cluster_count": 3,
+    "stability_omitted_years": [2021, 2022, 2023, 2024],
+    "required_audit_outputs": ["dimensions and iterations", "leading PCA spectrum", "signed loadings", "all state scores and clusters", "all leave-year-out ARIs and summaries"]
+  },
+  "controlled_conclusion": {
+    "difference_gmm_supported": "Stacked indirect 95% interval excludes zero.",
+    "nested_ridge_supported": "Augmented pooled RMSE is lower and augmented RMSE wins in at least 16 states.",
+    "bootstrap_supported": "PATH_A_POVERTY and PATH_B_INACTIVITY bootstrap p-values are below 0.05.",
+    "grouped_conformal_calibrated": "Overall coverage is at least 0.90 and at least 24 states have coverage at least 0.80.",
+    "sensitivity_robust": "Every POSITIVE row with both R2 values at most 0.08 preserves the nonzero baseline indirect-effect sign.",
+    "trajectory_stable": "Mean leave-year-out ARI is at least 0.60 and minimum ARI is at least 0.40.",
+    "classification_precedence": ["CONSISTENT_OBESITY_MEDIATION_AUDIT when all six flags pass", "PARTIAL_OBESITY_MEDIATION_AUDIT when at least four flags pass", "FRAGILE_OBESITY_MEDIATION_AUDIT when at least two flags pass", "NO_OBESITY_MEDIATION_AUDIT otherwise"]
+  }
+}

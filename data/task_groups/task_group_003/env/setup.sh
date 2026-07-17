@@ -7,7 +7,6 @@ if [[ "${REGENERATE:-0}" == "1" || ! -f data/support_data.json || ! -f data/mani
   python3 generate_data.py
 fi
 
-PORT="${PORT:-8057}"
-echo "Starting support console API at http://127.0.0.1:${PORT}"
-echo "Health endpoint: http://127.0.0.1:${PORT}/health"
+export TASK_ENV_BIND="${TASK_ENV_BIND:-${TASK_ENV_HOST:-0.0.0.0}}"
+export TASK_ENV_PORT="${TASK_ENV_PORT:-${PORT:-9003}}"
 exec python3 server.py

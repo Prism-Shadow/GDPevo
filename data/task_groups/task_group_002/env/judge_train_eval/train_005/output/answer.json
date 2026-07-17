@@ -1,0 +1,86 @@
+{
+  "engagement_reconciliation": {
+    "as_of_date": "2026-06-01",
+    "opportunity_id": "OPP-TR-MERIDIAN",
+    "customer_id": "CUST-MERIDIAN",
+    "customer_name": "Meridian Public Health",
+    "stage": "WON",
+    "won_amount": 100000.00,
+    "phase_total_amount": 100000.00,
+    "opportunity_matches_phase_total": true,
+    "total_paid_amount": 75000.00,
+    "outstanding_balance": 25000.00,
+    "primary_contact": {
+      "contact_name": "Daniel Rees",
+      "customer_id": "CUST-MERIDIAN"
+    },
+    "milestones": [
+      {
+        "milestone_id": "MS1",
+        "amount": 30000.00,
+        "invoice_state": "PAID",
+        "payment_state": "PAID",
+        "paid_amount": 30000.00,
+        "due_date": null,
+        "recognition_status": "RECOGNIZED"
+      },
+      {
+        "milestone_id": "MS2",
+        "amount": 45000.00,
+        "invoice_state": "PAID",
+        "payment_state": "PAID",
+        "paid_amount": 45000.00,
+        "due_date": null,
+        "recognition_status": "MISSING_REVENUE_JOURNAL"
+      },
+      {
+        "milestone_id": "MS3",
+        "amount": 25000.00,
+        "invoice_state": "OPEN",
+        "payment_state": "UNPAID",
+        "paid_amount": 0.00,
+        "due_date": "2026-07-15",
+        "recognition_status": "NOT_REQUIRED_UNPAID"
+      }
+    ]
+  },
+  "invoice_actions": {
+    "primary_accounting_action": "RECORD_REVENUE_MS2",
+    "collection_action": "MONITOR_UNPAID_NOT_DUE",
+    "accounting_action": {
+      "action": "RECORD_REVENUE_MS2",
+      "milestone_id": "MS2",
+      "amount": 45000.00,
+      "debit_account": "DEFERRED_REVENUE",
+      "credit_account": "IMPLEMENTATION_SERVICES_REVENUE",
+      "owner_queue": "ACCOUNTING"
+    },
+    "collection_task": {
+      "action": "MONITOR_UNPAID_NOT_DUE",
+      "milestone_id": "MS3",
+      "amount": 25000.00,
+      "due_date": "2026-07-15",
+      "owner_queue": "ACCOUNT_MANAGEMENT",
+      "contact_name": "Daniel Rees"
+    }
+  },
+  "event_actions": {
+    "event_id": "EVT-MERIDIAN-BRIEFING",
+    "event_status": "SCHEDULED",
+    "voucher": {
+      "voucher_code": "MERIDIANBRIEF50",
+      "voucher_status": "ACTIVE",
+      "discount_amount": 50.00,
+      "max_uses": 20
+    },
+    "invite_action": "SEND_BRIEFING_INVITE",
+    "invite_task": {
+      "action": "SEND_BRIEFING_INVITE",
+      "event_id": "EVT-MERIDIAN-BRIEFING",
+      "voucher_code": "MERIDIANBRIEF50",
+      "owner_queue": "ACCOUNT_MANAGEMENT",
+      "contact_name": "Daniel Rees",
+      "customer_id": "CUST-MERIDIAN"
+    }
+  }
+}

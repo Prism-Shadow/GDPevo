@@ -1,0 +1,177 @@
+{
+  "task_id": "train_002",
+  "plan_date": "2026-06-01",
+  "kit_targets": [
+    {
+      "bom_id": "BOM-300",
+      "kit_name": "Retrofit Kit 1",
+      "warehouse_id": "WH_WEST",
+      "build_quantity": 18,
+      "build_date": "2026-06-06"
+    },
+    {
+      "bom_id": "BOM-301",
+      "kit_name": "Emergency Kit 2",
+      "warehouse_id": "WH_WEST",
+      "build_quantity": 18,
+      "build_date": "2026-06-10"
+    }
+  ],
+  "component_plan": [
+    {
+      "sku": "NW-1005",
+      "total_required": 90,
+      "target_effective_available": -16,
+      "timely_po_qty": 335,
+      "transfer_qty": 0,
+      "purchase_requisition_qty": 0,
+      "final_action": "timely_po_covered",
+      "coverage_po_ids": [
+        "PO-50066"
+      ],
+      "exclusion_reason": "timely_po_covers_gap"
+    },
+    {
+      "sku": "NW-1014",
+      "total_required": 216,
+      "target_effective_available": 21,
+      "timely_po_qty": 0,
+      "transfer_qty": 90,
+      "purchase_requisition_qty": 105,
+      "final_action": "purchase_required",
+      "coverage_po_ids": [],
+      "exclusion_reason": "none"
+    },
+    {
+      "sku": "NW-1034",
+      "total_required": 72,
+      "target_effective_available": -51,
+      "timely_po_qty": 0,
+      "transfer_qty": 0,
+      "purchase_requisition_qty": 123,
+      "final_action": "purchase_required",
+      "coverage_po_ids": [],
+      "exclusion_reason": "none"
+    },
+    {
+      "sku": "NW-1039",
+      "total_required": 144,
+      "target_effective_available": 166,
+      "timely_po_qty": 0,
+      "transfer_qty": 0,
+      "purchase_requisition_qty": 0,
+      "final_action": "overstock_excluded",
+      "coverage_po_ids": [],
+      "exclusion_reason": "target_overstock"
+    },
+    {
+      "sku": "NW-1049",
+      "total_required": 144,
+      "target_effective_available": 80,
+      "timely_po_qty": 0,
+      "transfer_qty": 64,
+      "purchase_requisition_qty": 0,
+      "final_action": "transfer_only",
+      "coverage_po_ids": [],
+      "exclusion_reason": "none"
+    },
+    {
+      "sku": "NW-1050",
+      "total_required": 108,
+      "target_effective_available": 14,
+      "timely_po_qty": 0,
+      "transfer_qty": 62,
+      "purchase_requisition_qty": 32,
+      "final_action": "purchase_required",
+      "coverage_po_ids": [],
+      "exclusion_reason": "none"
+    }
+  ],
+  "transfer_requests": [
+    {
+      "sku": "NW-1014",
+      "from_warehouse_id": "WH_NORTH",
+      "to_warehouse_id": "WH_WEST",
+      "quantity": 66,
+      "needed_by": "2026-06-06"
+    },
+    {
+      "sku": "NW-1014",
+      "from_warehouse_id": "WH_CENTRAL",
+      "to_warehouse_id": "WH_WEST",
+      "quantity": 24,
+      "needed_by": "2026-06-06"
+    },
+    {
+      "sku": "NW-1049",
+      "from_warehouse_id": "WH_NORTH",
+      "to_warehouse_id": "WH_WEST",
+      "quantity": 64,
+      "needed_by": "2026-06-06"
+    },
+    {
+      "sku": "NW-1050",
+      "from_warehouse_id": "WH_CENTRAL",
+      "to_warehouse_id": "WH_WEST",
+      "quantity": 49,
+      "needed_by": "2026-06-10"
+    },
+    {
+      "sku": "NW-1050",
+      "from_warehouse_id": "WH_NORTH",
+      "to_warehouse_id": "WH_WEST",
+      "quantity": 13,
+      "needed_by": "2026-06-10"
+    }
+  ],
+  "purchase_requisitions": [
+    {
+      "sku": "NW-1014",
+      "supplier_id": "SUP-011",
+      "warehouse_id": "WH_WEST",
+      "quantity": 105,
+      "needed_by": "2026-06-10",
+      "unit_cost": 367.63,
+      "extended_cost": 38601.15
+    },
+    {
+      "sku": "NW-1034",
+      "supplier_id": "SUP-004",
+      "warehouse_id": "WH_WEST",
+      "quantity": 123,
+      "needed_by": "2026-06-10",
+      "unit_cost": 84.57,
+      "extended_cost": 10402.11
+    },
+    {
+      "sku": "NW-1050",
+      "supplier_id": "SUP-011",
+      "warehouse_id": "WH_WEST",
+      "quantity": 32,
+      "needed_by": "2026-06-10",
+      "unit_cost": 95.08,
+      "extended_cost": 3042.56
+    }
+  ],
+  "excluded_components": [
+    {
+      "sku": "NW-1005",
+      "reason": "timely_po_covers_gap",
+      "supporting_po_ids": [
+        "PO-50066"
+      ]
+    },
+    {
+      "sku": "NW-1039",
+      "reason": "target_overstock",
+      "supporting_po_ids": []
+    }
+  ],
+  "summary": {
+    "component_count": 6,
+    "total_purchase_units": 260,
+    "total_purchase_cost": 52045.82,
+    "total_transfer_units": 216,
+    "timely_po_covered_units": 106
+  }
+}

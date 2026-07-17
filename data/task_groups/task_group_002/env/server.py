@@ -9,6 +9,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_PATH = BASE_DIR / "data" / "business_data.json"
@@ -149,6 +151,18 @@ class Handler(BaseHTTPRequestHandler):
         self.send_cors_headers()
         self.end_headers()
 
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        if parsed.path != "/api/judge":
+            self.send_json(404, {"error": "not_found", "message": "Endpoint not found."})
+            return
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            self.send_json(404, {"error": "not_found", "message": "Endpoint not found."})
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(status, payload)
+
     def handle_collection(self, parts: list[str], query: dict[str, list[str]]) -> None:
         collection_slug = parts[0]
         if collection_slug not in COLLECTIONS:
@@ -220,9 +234,10 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    port = int(os.environ.get("PORT", "8002"))
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"MedBridge Sales Ops API listening on http://127.0.0.1:{port}", flush=True)
+    host = os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0"))
+    port = int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9002")))
+    server = ThreadingHTTPServer((host, port), Handler)
+    print(f"MedBridge Sales Ops API listening on http://{host}:{port}", flush=True)
     server.serve_forever()
 
 

@@ -1,0 +1,236 @@
+{
+  "matter_id": "M-BAY-144",
+  "hold_date": "2024-12-06",
+  "record_class_findings": [
+    {
+      "issue_id": "RC-2020-LAB",
+      "record_classes": [
+        "2020 emissions lab data"
+      ],
+      "category_ids": [
+        "B-01"
+      ],
+      "timing_class": "pre_hold_policy",
+      "severity": "medium",
+      "quantity": 6,
+      "event_date": "2023-01-27",
+      "source_event_ids": [
+        "CE-0019",
+        "DE-0008",
+        "RR-0011"
+      ],
+      "primary_action": "no_action_policy_gap",
+      "notice_required": false
+    },
+    {
+      "issue_id": "RC-EMAIL-VAULTSEVEN",
+      "record_classes": [
+        "executive email"
+      ],
+      "category_ids": [
+        "B-03"
+      ],
+      "timing_class": "recoverable_archive",
+      "severity": "low",
+      "quantity": 9220,
+      "event_date": "2025-01-14",
+      "source_event_ids": [
+        "CE-0021",
+        "RR-0013"
+      ],
+      "primary_action": "supplemental_collection",
+      "notice_required": false
+    },
+    {
+      "issue_id": "RC-TEAMS-PURGE",
+      "record_classes": [
+        "Teams channels"
+      ],
+      "category_ids": [
+        "B-02"
+      ],
+      "timing_class": "post_hold_spoliation",
+      "severity": "critical",
+      "quantity": 11,
+      "event_date": "2025-02-05",
+      "source_event_ids": [
+        "CE-0020",
+        "DE-0009",
+        "RR-0012"
+      ],
+      "primary_action": "regulator_notice",
+      "notice_required": true
+    },
+    {
+      "issue_id": "RC-TIDEWATER-AUDIT",
+      "record_classes": [
+        "2024 Tidewater audit report"
+      ],
+      "category_ids": [
+        "B-04"
+      ],
+      "timing_class": "retained_missing",
+      "severity": "high",
+      "quantity": 1,
+      "event_date": "2025-01-22",
+      "source_event_ids": [
+        "CE-0022",
+        "PL-0026",
+        "RR-0014"
+      ],
+      "primary_action": "vendor_retrieval",
+      "notice_required": false
+    }
+  ],
+  "hold_defects": [
+    {
+      "defect_id": "HD-OFFSITE-VENDOR",
+      "defect_type": "offsite_vendor_not_on_hold",
+      "category_ids": [
+        "B-05"
+      ],
+      "affected_sources": [
+        "off-site vendor boxes"
+      ],
+      "severity": "high",
+      "source_event_ids": [
+        "CE-0023",
+        "PL-0027"
+      ],
+      "primary_action": "hold_refresh",
+      "notice_required": false
+    },
+    {
+      "defect_id": "HD-PERSONAL-DEVICE",
+      "defect_type": "personal_device_notice_omission",
+      "category_ids": [
+        "B-05"
+      ],
+      "affected_sources": [
+        "personal phone"
+      ],
+      "severity": "high",
+      "source_event_ids": [
+        "CE-0023",
+        "PL-0027"
+      ],
+      "primary_action": "supplemental_collection",
+      "notice_required": false
+    }
+  ],
+  "recoverable_sources": [
+    {
+      "source_id": "RS-AUDIT-TIDEWATER",
+      "source_name": "Tidewater audit vendor copy",
+      "record_class": "2024 Tidewater audit report",
+      "category_ids": [
+        "B-04"
+      ],
+      "recovery_status": "retained_missing",
+      "count": 1,
+      "source_event_ids": [
+        "CE-0022",
+        "RR-0014"
+      ],
+      "primary_action": "vendor_retrieval"
+    },
+    {
+      "source_id": "RS-EMAIL-VAULTSEVEN",
+      "source_name": "VaultSeven executive archive",
+      "record_class": "executive email",
+      "category_ids": [
+        "B-03"
+      ],
+      "recovery_status": "available",
+      "count": 9220,
+      "source_event_ids": [
+        "CE-0021",
+        "RR-0013"
+      ],
+      "primary_action": "supplemental_collection"
+    },
+    {
+      "source_id": "RS-LAB-SUMMARY-EXPORTS",
+      "source_name": "summary exports",
+      "record_class": "2020 emissions lab data",
+      "category_ids": [
+        "B-01"
+      ],
+      "recovery_status": "partial",
+      "count": 0,
+      "source_event_ids": [
+        "DE-0008"
+      ],
+      "primary_action": "supplemental_collection"
+    }
+  ],
+  "remediation_plan": [
+    {
+      "rank": 1,
+      "action_id": "RA-REGULATOR-NOTICE",
+      "action": "regulator_notice",
+      "issue_ids": [
+        "RC-TEAMS-PURGE"
+      ],
+      "owner_queue": "legal",
+      "due_basis": "immediate post-hold Teams purge disclosure"
+    },
+    {
+      "rank": 2,
+      "action_id": "RA-AUDIT-RETRIEVAL",
+      "action": "vendor_retrieval",
+      "issue_ids": [
+        "RC-TIDEWATER-AUDIT"
+      ],
+      "owner_queue": "records",
+      "due_basis": "before production deadline"
+    },
+    {
+      "rank": 3,
+      "action_id": "RA-HOLD-REFRESH",
+      "action": "hold_refresh",
+      "issue_ids": [
+        "HD-OFFSITE-VENDOR",
+        "HD-PERSONAL-DEVICE"
+      ],
+      "owner_queue": "litigation_support",
+      "due_basis": "same day as remediation approval"
+    },
+    {
+      "rank": 4,
+      "action_id": "RA-SUPPLEMENTAL-COLLECTION",
+      "action": "supplemental_collection",
+      "issue_ids": [
+        "HD-OFFSITE-VENDOR",
+        "HD-PERSONAL-DEVICE",
+        "RC-EMAIL-VAULTSEVEN"
+      ],
+      "owner_queue": "e_discovery",
+      "due_basis": "before supplemental production"
+    },
+    {
+      "rank": 5,
+      "action_id": "RA-POLICY-GAP-LOG",
+      "action": "no_action_policy_gap",
+      "issue_ids": [
+        "RC-2020-LAB"
+      ],
+      "owner_queue": "records",
+      "due_basis": "document in production deficiency log"
+    }
+  ],
+  "overall": {
+    "disclosure_required": true,
+    "blocked_category_ids": [
+      "B-02",
+      "B-04",
+      "B-05"
+    ],
+    "policy_gap_category_ids": [
+      "B-01"
+    ],
+    "post_hold_spoliation_issue_ids": [
+      "RC-TEAMS-PURGE"
+    ]
+  }
+}

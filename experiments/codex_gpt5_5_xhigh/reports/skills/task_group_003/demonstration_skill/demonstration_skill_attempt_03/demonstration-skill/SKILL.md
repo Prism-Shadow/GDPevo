@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill
+name: task-group-003-fewshot-attempt-03
 description: Use this for task_group_003 support-console tasks involving wireline service tickets, mobile support cases, or enterprise export incidents. It gives API lookup steps, routing rules, output-field meanings, and pitfalls learned from training inputs and answers.
 ---
 

@@ -2,7 +2,7 @@
 
 ## Train-Predict Goal
 
-The task group should implement a train-predict workflow: the agent first attempts real train tasks, compares those attempts against the standard answers, reflects on mistakes, and then transfers the distilled experience to test tasks.
+The task group should implement a train-predict workflow: an isolated fewshot generator reads the solver-visible inputs and standard answers of the real train tasks, distills transferable experience into a skill, and test solvers apply that skill to unseen tasks.
 
 The design should satisfy all of the following:
 
@@ -10,7 +10,7 @@ The design should satisfy all of the following:
 - Train tasks must not be teaching problems, tutorials, worked examples, easier versions of test tasks, or explicit SOP demonstrations. They are formal business tasks that happen to be exposed first in the calibration workflow.
 - Train and test tasks must not be simple template variants. They need diversity across sub-scenarios, data forms, environment entry points, output schemas, or decision goals.
 - Every formal task should align with the complexity and difficulty of the stage 1 examples and preserve long-horizon task characteristics.
-- Test tasks must not be solvable only from local input materials. Some SOPs, key facts, field conventions, tool-selection experience, or business-judgment habits must be inferred from blind train-task attempts, answer comparison, and reflection.
+- Test tasks must not be solvable only from local input materials. Some SOPs, key facts, field conventions, tool-selection experience, or business-judgment habits must be inferred from the train inputs and standard answers available to fewshot skill generation.
 
 ## Example Difficulty Alignment
 
@@ -30,7 +30,7 @@ Train/test transfer should be close enough that a real train-derived skill can h
 
 ## Diversity Band
 
-Diversity should stay inside a transfer band. A task group should not use its 5 train tasks to cover five unrelated workflow families, then test each family once. That creates a broad but shallow train-derived skill: the skill records many isolated facts, but post-skill attempts still need to rediscover each test task's main business logic.
+Diversity should stay inside a transfer band. A task group should not use its 5 train tasks to cover five unrelated workflow families, then test each family once. That creates a broad but shallow train-derived skill: the skill records many isolated facts, but fewshot attempts still need to rediscover each test task's main business logic.
 
 Prefer 2-3 recurring operation families within the same scenario. Vary the entities, accounts, events, campaigns, products, data volume, noise patterns, source conflicts, environment surfaces, and output schemas while preserving enough repeated decision frames for train-derived experience to transfer.
 
@@ -50,7 +50,7 @@ Bad diversity changes:
 - a new hidden policy, scoring logic, or source-precedence rule that cannot be inferred from train;
 - an integrated board or rollup task when train has no comparable aggregation or repeated component workflows.
 
-Each test task should have a meaningful transfer core: some high-weight scoring points whose correct solution depends on SOPs, source-precedence rules, field conventions, calculations, output conventions, or business judgments that can be inferred from real train-task attempts and answer comparison. These transfer-dependent scoring points should have explicit train anchors, but those anchors should be real tasks rather than instructional examples. Other high-weight points may come from task-specific exploration, data scale, noisy evidence, or long-horizon work.
+Each test task should have a meaningful transfer core: some high-weight scoring points whose correct solution depends on SOPs, source-precedence rules, field conventions, calculations, output conventions, or business judgments that can be inferred from the train inputs and standard answers. These transfer-dependent scoring points should have explicit train anchors, but those anchors should be real tasks rather than simplified teaching examples. Other high-weight points may come from task-specific exploration, data scale, noisy evidence, or long-horizon work.
 
 For every test task, the design draft must include a transfer coverage matrix for the scoring points that are intended to depend on train transfer:
 
@@ -60,14 +60,14 @@ For every test task, the design draft must include a transfer coverage matrix fo
 
 There is no requirement that every high-weight scoring point map to train. The requirement is that a nontrivial subset of high-weight points can only be solved well by transferring methods inferred from real train tasks. Unanchored high-weight points are allowed when they measure genuine task-specific data exploration or long-horizon work rather than an unstated new SOP.
 
-Avoid far-transfer-only design. If post-skill attempts fail to improve over direct attempts, first check whether diversity is too wide: too many unrelated workflow families, too many one-off train anchors, or test-only SOPs that never recur in train. Rework by narrowing the operation-family spread, adding real train coverage for recurring conventions, tightening train/test distribution alignment, or clarifying which high-weight points depend on transfer versus task-specific exploration before making the task easier in superficial ways.
+Avoid far-transfer-only design. If fewshot attempts fail to improve over base attempts, first check whether diversity is too wide: too many unrelated workflow families, too many one-off train anchors, or test-only SOPs that never recur in train. Rework by narrowing the operation-family spread, adding real train coverage for recurring conventions, tightening train/test distribution alignment, or clarifying which high-weight points depend on transfer versus task-specific exploration before making the task easier in superficial ways.
 
 ## Sources Of Complexity
 
 Test difficulty should come from two sources:
 
 - Transferring SOPs and key facts from train tasks.
-- Intrinsic task complexity, such as long workflows, many tools, many APIs, many Web pages, complex exposed databases, large data, messy data, dirty data, conflicting similar sources, or stale local materials.
+- Intrinsic task complexity, such as long workflows, many tools, many APIs, many Web pages, complex SQLite-backed query surfaces, large data, messy data, dirty data, conflicting similar sources, or stale local materials.
 
 Do not create difficulty through arbitrary ambiguity, bad formatting, or unrecoverable missing information. Difficulty should come from real business complexity, long-horizon operations, information discovery, source selection, and transfer failure.
 
@@ -84,6 +84,12 @@ Do not plainly write these in the prompt or input files:
 - Standard answers, evaluation rules, or notes content.
 
 The prompt should read like a real user request: state the goal, necessary context, available materials or environment entry points, and output requirements, without teaching the solver how to complete the task step by step.
+
+When a task uses a shared API, web app, or other running environment, solver-visible
+prompts and payloads must use the placeholder `<TASK_ENV_BASE_URL>` for the base
+URL. Do not write hard-coded localhost URLs, private IPs, public deployment URLs,
+ports, or setup commands into `prompt.txt` or `input/payloads/`. The concrete
+endpoint is configured by the evaluation workspace through `.env`.
 
 `input/payloads/` should contain realistic, diverse, sufficiently large, and potentially noisy materials. Payloads may include solver-visible small exports, emails, spreadsheets, logs, templates, or local materials, but they must not become solution manuals.
 
@@ -111,9 +117,9 @@ The draft should include at least:
 - A transfer coverage matrix that maps transfer-dependent test scoring points to one or more train anchors and states exactly what transfers.
 - Shared environment blueprint, or a pointer to `scratch/env_blueprint.md`.
 - Programmatic data-generation plan for the env-builder coding subagent to implement.
-- Evaluation and calibration plan, including each task's expected 6-10 scoring points, `1`/`2`/`3` raw weights, and exact-match business results.
+- Evaluation and calibration plan, including each task's expected 6-10 scoring points, `1`/`2`/`3` raw weights, at least 4 semantically distinct business outcomes, no duplicate scoring of the same criterion or answer fact, and deterministic whole-point pass/fail logic.
 - Output-shape plan for `answer_template.json`, including numeric precision and controlled-choice fields for string-like outputs.
-- Labels for which scoring points depend on train-derived experience and which depend on substantial data exploration or long-horizon work, ensuring most score cannot be obtained by direct test attempts through simple reading.
-- A skill-saturation check: the train-derived skill should improve test performance but should not make most or all test tasks near-perfect.
+- Labels for which scoring points depend on train-derived experience and which depend on substantial data exploration or long-horizon work, ensuring most score cannot be obtained by base attempts through simple reading.
+- A skill-saturation check: the train-derived skill should improve test performance, but overall fewshot `avg@3` should remain roughly below `0.80`; it should also not make most or all test tasks score `0.95` or higher or otherwise approach a perfect score.
 
 The design draft should assign task ownership and provide enough task-specific brief material for each task-builder subagent. It should not directly generate every task's `input/`, `notes/`, `output/`, and `eval/`. Those files are produced later by 10 task-builder subagents, one per task.

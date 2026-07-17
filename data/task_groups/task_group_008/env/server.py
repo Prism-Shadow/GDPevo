@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
 from advisory_rules import load_data
+from judge_api import judge_answer_request
 
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
@@ -107,11 +109,23 @@ class Handler(BaseHTTPRequestHandler):
             return html_response(self, html)
         return json_response(self, {"error": "unknown endpoint", "path": path}, 404)
 
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        if parsed.path.rstrip("/") != "/api/judge":
+            return json_response(self, {"error": "unknown endpoint", "path": parsed.path}, 404)
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            return json_response(self, {"error": "unknown endpoint", "path": parsed.path}, 404)
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        return json_response(self, payload, status)
+
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", default=8057, type=int)
+    parser.add_argument("--host", default=os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0")))
+    parser.add_argument(
+        "--port", default=int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9008"))), type=int
+    )
     args = parser.parse_args()
     global DATA
     DATA = load_data(DATA_DIR)

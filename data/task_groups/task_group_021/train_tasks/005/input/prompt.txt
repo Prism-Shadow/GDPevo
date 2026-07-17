@@ -1,0 +1,9 @@
+Asteria Fleet Finance is preparing the February carrier accrual close. Audit the freight collection and cutoff identified in `payloads/case_scope.json` against the read-only Fleet Data Quality Hub at `<TASK_ENV_BASE_URL>`.
+
+The relevant workplace interfaces are `/api/catalog/collections`, `/api/catalog/schema`, `/api/transactions/freight`, `/api/reference/aliases`, `/api/reference/conversions`, `/api/reference/fx`, `/api/source-snapshots`, and `/api/query`. Runtime access details, including any query credential, are provided separately in `environment_access.md`.
+
+Return a reconciled view of source coverage, expected-versus-actual service-class mismatches, charges that cannot enter the accrual because their class or physical measures are unresolved, overlapping charge occurrences and the retained source occurrence, normalized physical and USD totals by recognized service class, and the requested carrier ranking. Also complete the internal reference-row, source-retention, and ledger-routing code panels for the public IDs listed in the scope. Apply the allowed compact codes from the answer contract; their expansions are intentionally not supplied in the task materials.
+
+For the carrier ranking, accrual exposure is normalized USD on valid charges whose recognized service class differs from the expected class; order carriers by that exposure descending and use carrier ID ascending to break ties. Quarantined charges do not enter normalized totals, while valid class mismatches do.
+
+Write JSON only, conforming exactly to `payloads/answer_template.json`. Stable-ID lists and ranked arrays must follow the ordering rules in that contract.

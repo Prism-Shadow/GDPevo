@@ -1,0 +1,192 @@
+{
+  "schema_name": "test_001_ald_first_production_gap_review",
+  "schema_version": "1.0",
+  "description": "Return one JSON object matching this contract. Do not include this schema metadata in the response.",
+  "required_top_level_keys": [
+    "matter_id",
+    "production_phase",
+    "category_findings",
+    "priority_issues",
+    "disclosure_required",
+    "next_actions"
+  ],
+  "top_level_order": [
+    "matter_id",
+    "production_phase",
+    "category_findings",
+    "priority_issues",
+    "disclosure_required",
+    "next_actions"
+  ],
+  "ordering_rules": {
+    "category_findings": "Include only materially deficient subpoena categories and sort by category_id ascending.",
+    "priority_issues": "Sort by issue_id ascending.",
+    "next_actions": "Sort by rank ascending, with consecutive integer ranks starting at 1.",
+    "category_ids": "Sort category IDs ascending.",
+    "custodian_ids": "Sort custodian IDs ascending.",
+    "document_ids": "Sort document IDs ascending.",
+    "source_event_ids": "Sort IDs ascending by prefix group and numeric suffix.",
+    "affected_sources": "Sort source names alphabetically.",
+    "issue_ids": "Sort issue IDs ascending unless next_actions rank defines the row order.",
+    "secondary_actions": "Sort action enums ascending."
+  },
+  "enums": {
+    "production_phase": [
+      "first_rolling"
+    ],
+    "category_status": [
+      "blocked",
+      "needs_supplemental_production",
+      "needs_privilege_correction",
+      "needs_privilege_review",
+      "needs_source_collection"
+    ],
+    "issue_type": [
+      "personal_channel_gap",
+      "review_coding_error",
+      "privilege_log_gap",
+      "privilege_overdesignation",
+      "source_gap"
+    ],
+    "severity": [
+      "critical",
+      "high",
+      "medium",
+      "low"
+    ],
+    "timing_class": [
+      "post_hold_spoliation",
+      "coding_error",
+      "privilege_protocol_defect",
+      "recoverable_source_gap"
+    ],
+    "action": [
+      "regulator_notice",
+      "supplemental_collection",
+      "reprocess_qc",
+      "supplemental_production",
+      "privilege_log_supplement",
+      "privilege_review",
+      "produce_nonprivileged",
+      "forensic_recovery",
+      "custodian_declaration",
+      "hold_refresh"
+    ],
+    "owner_queue": [
+      "legal",
+      "e_discovery",
+      "review_vendor",
+      "privilege_team",
+      "client_it"
+    ]
+  },
+  "fields": {
+    "matter_id": {
+      "type": "string",
+      "required_value": "M-ALD-507"
+    },
+    "production_phase": {
+      "type": "enum",
+      "required_value": "first_rolling"
+    },
+    "category_findings": {
+      "type": "list<object>",
+      "required_object_keys": [
+        "category_id",
+        "finding_id",
+        "category_status",
+        "blocked",
+        "issue_ids",
+        "affected_sources",
+        "source_event_ids",
+        "primary_action",
+        "notice_required"
+      ],
+      "object_fields": {
+        "category_id": "string subpoena category ID",
+        "finding_id": "string stable category finding ID",
+        "category_status": "enum",
+        "blocked": "boolean",
+        "issue_ids": "list<string>",
+        "affected_sources": "list<string>",
+        "source_event_ids": "list<string> from API records",
+        "primary_action": "enum action",
+        "notice_required": "boolean"
+      }
+    },
+    "priority_issues": {
+      "type": "list<object>",
+      "required_object_keys": [
+        "issue_id",
+        "issue_type",
+        "severity",
+        "timing_class",
+        "category_ids",
+        "custodian_ids",
+        "document_ids",
+        "source_event_ids",
+        "affected_sources",
+        "affected_count",
+        "produced_count",
+        "withheld_count",
+        "privilege_logged_count",
+        "unlogged_privilege_count",
+        "primary_action",
+        "secondary_actions",
+        "notice_required"
+      ],
+      "object_fields": {
+        "issue_id": "string stable issue ID",
+        "issue_type": "enum",
+        "severity": "enum",
+        "timing_class": "enum",
+        "category_ids": "list<string>",
+        "custodian_ids": "list<string>",
+        "document_ids": "list<string>",
+        "source_event_ids": "list<string> from API records",
+        "affected_sources": "list<string>",
+        "affected_count": "integer count; use 0 if not applicable",
+        "produced_count": "integer count; use 0 if not applicable",
+        "withheld_count": "integer count; use 0 if not applicable",
+        "privilege_logged_count": "integer count; use 0 if not applicable",
+        "unlogged_privilege_count": "integer count; use 0 if not applicable",
+        "primary_action": "enum action",
+        "secondary_actions": "list<enum action>",
+        "notice_required": "boolean"
+      }
+    },
+    "disclosure_required": {
+      "type": "boolean"
+    },
+    "next_actions": {
+      "type": "list<object>",
+      "required_object_keys": [
+        "rank",
+        "action_id",
+        "action",
+        "issue_ids",
+        "category_ids",
+        "owner_queue",
+        "disclosure_step",
+        "due_basis"
+      ],
+      "object_fields": {
+        "rank": "integer starting at 1",
+        "action_id": "string stable action ID",
+        "action": "enum action",
+        "issue_ids": "list<string>",
+        "category_ids": "list<string>",
+        "owner_queue": "enum owner_queue",
+        "disclosure_step": "boolean",
+        "due_basis": "short string"
+      }
+    }
+  },
+  "normalization_rules": [
+    "Use exact enum casing shown in this template.",
+    "Use integer counts only.",
+    "Use true and false JSON booleans.",
+    "Do not include unscored narrative fields.",
+    "Do not include categories that have only noisy or stale non-material records."
+  ]
+}

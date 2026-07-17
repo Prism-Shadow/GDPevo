@@ -1,0 +1,69 @@
+{
+  "request_id": "FULFILLMENT-RECOVERY-2026-06-28",
+  "requested_by": "Fulfillment Recovery Command",
+  "warehouse_ids": [
+    "WH-WEST-01",
+    "WH-CENTRAL-01"
+  ],
+  "task_created_window": {
+    "start_at": "2026-06-22T00:00:00Z",
+    "end_at": "2026-06-28T23:59:59Z",
+    "boundary": "inclusive"
+  },
+  "state_cutoff_at": "2026-06-28T20:00:00Z",
+  "carrier_cutoff_assessment_at": "2026-06-28T22:00:00Z",
+  "recovery_horizon": {
+    "end_at": "2026-06-29T08:00:00Z",
+    "hours": 12
+  },
+  "reporting_definitions": {
+    "eligible_production_work": "Production warehouse work in the requested facilities and task-created window that exists no later than the state cutoff. Unlinked facility work remains in scope. Order-linked work must belong to a production account and is excluded when the order's effective state at the cutoff is CANCELLED. An unfinished warehouse task stays in scope even if the linked order's lifecycle state at the cutoff is DELIVERED; delivery does not by itself remove remaining warehouse work.",
+    "backlog_task": "Eligible production work that is not effectively completed by the state cutoff. Backlog units are planned units.",
+    "active_employee": "An employee assigned to the facility whose active interval includes the state cutoff.",
+    "employee_units_per_hour": "For each active employee, divide total units from effectively completed eligible production outcomes by the productive minutes attached to those outcomes, then multiply by 60. Employees without positive productive minutes are not ranked.",
+    "employee_ranking": "Rank within each facility by unrounded units per hour descending, then employee_id ascending.",
+    "projected_capacity_units": "Multiply the sum of the three best active employee rates in a facility by the 12-hour recovery horizon.",
+    "recoverable_units": "For each facility, use the smaller of backlog planned units and projected capacity units.",
+    "projected_coverage": "Facility recoverable units divided by facility backlog planned units. Rank facilities by unrounded projected coverage descending, then warehouse_id ascending.",
+    "carrier_cutoff_exposed_order": "An order linked to at least one backlog task is exposed when it has no effectively delivered physical shipment at the state cutoff and the backlog task facility's local daily carrier cutoff has passed at the carrier cutoff assessment. Convert the assessment timestamp with the facility timezone; passed means the local assessment clock is strictly later than daily_cutoff_local.",
+    "severe_linked_support_escalation": "A distinct support case linked to an exposed order, with priority URGENT or HIGH, that is active at the state cutoff. A reopened case remains active until a later effective resolution.",
+    "aggregate_projected_coverage": "Total unrounded recoverable units across both facilities divided by total backlog planned units across both facilities.",
+    "rounding": "Use unrounded values for ranking and policy thresholds. Round only final displayed units-per-hour and total recoverable units to 2 decimal places, and displayed facility coverage to 4 decimal places."
+  },
+  "output_ordering": {
+    "employee_candidates_by_facility": "warehouse_id ascending; return the first two employees from each facility ranking",
+    "carrier_cutoff_exposed_order_ids": "order_id ascending"
+  },
+  "recommended_action_rules": [
+    {
+      "action": "REALLOCATE_AND_EXPEDITE",
+      "condition": "severe linked support escalations > 0 and aggregate projected coverage < 0.80"
+    },
+    {
+      "action": "EXPEDITE_CARRIER",
+      "condition": "exposed orders exist and aggregate projected coverage >= 0.80"
+    },
+    {
+      "action": "REALLOCATE_LABOR",
+      "condition": "aggregate projected coverage < 0.80 and severe linked support escalations = 0"
+    },
+    {
+      "action": "MONITOR",
+      "condition": "otherwise"
+    }
+  ],
+  "recovery_status_rules": [
+    {
+      "status": "ON_TRACK",
+      "condition": "aggregate projected coverage >= 1.00 and the exposed-order set is empty"
+    },
+    {
+      "status": "AT_RISK",
+      "condition": "aggregate projected coverage >= 0.80"
+    },
+    {
+      "status": "CRITICAL",
+      "condition": "otherwise"
+    }
+  ]
+}

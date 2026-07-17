@@ -1,0 +1,97 @@
+{
+  "batch_id": "fall_webinar_import",
+  "campaign_code": "WEB-FALL-2026",
+  "clean_contacts": [
+    {
+      "clean_contact_id": "fw_002",
+      "source_row_id": "fw_002",
+      "company_name": "HelioWare Mfg.",
+      "contact_name": "Dana Ruiz",
+      "email": "dana.ruiz@helioware.example",
+      "phone": "14155550188",
+      "source_name": "partner_upload",
+      "captured_at": "2026-11-14T09:05:00Z",
+      "crm_action": "update_existing",
+      "existing_account_id": "acct_helio_ware",
+      "existing_contact_id": null
+    },
+    {
+      "clean_contact_id": "fw_005",
+      "source_row_id": "fw_005",
+      "company_name": "Monarch Foods",
+      "contact_name": "Kenji Sato",
+      "email": "kenji.sato@monarchfoods.example",
+      "phone": "",
+      "source_name": "webinar_form",
+      "captured_at": "2026-11-11T10:00:00Z",
+      "crm_action": "create_account",
+      "existing_account_id": null,
+      "existing_contact_id": null
+    },
+    {
+      "clean_contact_id": "fw_008",
+      "source_row_id": "fw_008",
+      "company_name": "Quartz Foods",
+      "contact_name": "Evan Blake",
+      "email": "evan.blake@quartzfoods.example",
+      "phone": "12065550150",
+      "source_name": "partner_upload",
+      "captured_at": "2026-11-10T15:20:00Z",
+      "crm_action": "create_account",
+      "existing_account_id": null,
+      "existing_contact_id": null
+    }
+  ],
+  "duplicate_summary": {
+    "duplicate_removed_count": 2,
+    "duplicate_keys": [
+      {
+        "key": "email:dana.ruiz@helioware.example",
+        "winner_row_id": "fw_002",
+        "removed_row_ids": [
+          "fw_001"
+        ]
+      },
+      {
+        "key": "email:evan.blake@quartzfoods.example",
+        "winner_row_id": "fw_008",
+        "removed_row_ids": [
+          "fw_003"
+        ]
+      }
+    ]
+  },
+  "removal_summary": {
+    "unusable_removed_count": 1,
+    "suppressed_removed_count": 2,
+    "removed_rows": [
+      {
+        "row_id": "fw_001",
+        "reason": "duplicate"
+      },
+      {
+        "row_id": "fw_003",
+        "reason": "duplicate"
+      },
+      {
+        "row_id": "fw_004",
+        "reason": "suppressed"
+      },
+      {
+        "row_id": "fw_006",
+        "reason": "missing_contact"
+      },
+      {
+        "row_id": "fw_007",
+        "reason": "suppressed"
+      }
+    ]
+  },
+  "import_action_totals": {
+    "create_account": 2,
+    "update_existing": 1,
+    "no_import": 3,
+    "suppress": 2
+  },
+  "campaign_member_import_count": 3
+}

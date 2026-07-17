@@ -1,8 +1,7 @@
 # Metric And Scoring
 
-The main evaluation metric is `acc@3`. Cost is reported alongside accuracy, in
-Panofy's native units (points + a 3-bucket token usage), read straight from the
-SDK (no transcript parsing).
+The main evaluation metrics are `acc@3` and population `std@3`. Efficiency
+information is the SDK-reported 3-bucket token usage.
 
 ## Single Run
 
@@ -20,7 +19,8 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 
 `func_input.json` is exactly what was sent to `predict()`. `answer.json` is the
 parsed `FUNC_OUTPUT`. `score.yaml` is written after running the task evaluator.
-`run_metadata.yaml` records the unique attempt id and the SDK-reported cost.
+`run_metadata.yaml` records the unique attempt id, SDK-reported token usage,
+and Panofy agent / run identifiers.
 
 ## Scoring
 
@@ -38,21 +38,20 @@ and prints a JSON object with `total_score` (already normalised). If only
 and some take extra arguments that `eval.sh` already supplies.
 
 The agent must return JSON matching `answer_template` exactly — wrong keys,
-types, or enum spellings cost points at the evaluator.
+types, or enum spellings lose evaluator score.
 
-## Cost Accounting (Panofy)
+## Token Accounting (Panofy)
 
 `predict_with_metadata()` returns, per run:
 
-- `run.points_consumed` — the platform's billed **points**. This is the primary
-  cost unit; aggregate and compare it across conditions.
 - `run.usage` — a 3-bucket token usage: `cache_read`, `cache_write`,
   `output_token`. Record as `cache_read_tokens`, `cache_write_tokens`,
   `output_tokens`.
 
-Panofy exposes no separate uncached-input bucket, so **points** is the headline
-cost; the three token buckets are secondary. Values come from the SDK, never from
-manual counting. Recommended `run_metadata.yaml`:
+Panofy exposes no separate uncached-input bucket. Record the three token buckets
+from the SDK; if any bucket is unavailable, write `null` and preserve the reason
+in the run record. Token values come from the SDK, never from manual counting.
+Recommended `run_metadata.yaml`:
 
 ```yaml
 eval_attempt_id: <task_group_id>__<condition>__<task_id>__attempt_<nn>__<timestamp>
@@ -65,13 +64,11 @@ run:
   run_id: <sdk run id>
   panofy_task_id: <sdk task id>
   status: COMPLETED
-  points_consumed: <int>
 token_usage:
   source: panofy_last_usage
   cache_read_tokens: <int>
   cache_write_tokens: <int>
   output_tokens: <int>
-  points_consumed: <int>
 ```
 
 ## acc@3
@@ -86,6 +83,40 @@ task acc@3 = (attempt_01_score + attempt_02_score + attempt_03_score) / 3
 
 The overall `acc@3` for a condition is the average of the 5 test-task `acc@3`
 values.
+
+## std@3
+
+`std@3` records score stability across the same 3 attempts and uses
+population standard deviation. For one test task:
+
+```text
+task std@3 = sqrt(((s1 - task_acc@3)^2 + (s2 - task_acc@3)^2 + (s3 - task_acc@3)^2) / 3)
+```
+
+The overall `std@3` for a condition uses the same aggregation shape as
+`acc@3`: first compute each test task's `std@3`, then average the 5 test-task
+`std@3` values.
+
+```text
+overall std@3 = (test_001_std@3 + test_002_std@3 + test_003_std@3 + test_004_std@3 + test_005_std@3) / 5
+```
+
+
+## rounds@3 and tool calls@3 / trace efficiency
+
+`rounds_avg_3` counts solver assistant/model-response turns. During evaluation, record the Panofy `agent_id`, SDK run id, task id, and SDK usage metadata; leave turn and tool-call counts as `null` unless a packaged service log has already been supplied to the workspace. Panofy service logs are archived after the experiment and can be used to backfill `rounds_avg_3` and `tool_calls_avg_3`.
+
+When packaged service logs are available, `tool_calls_avg_3` counts assistant `tool_call` content items in the formal scored `predict()` trace. Do not count tool results, training traces, evaluator execution, or replaced failed attempts.
+
+```text
+task rounds@3 = (attempt_01_turns + attempt_02_turns + attempt_03_turns) / 3
+overall rounds@3 = (test_001_rounds@3 + test_002_rounds@3 + test_003_rounds@3 + test_004_rounds@3 + test_005_rounds@3) / 5
+
+task tool calls@3 = (attempt_01_tool_calls + attempt_02_tool_calls + attempt_03_tool_calls) / 3
+overall tool calls@3 = (test_001_tool_calls@3 + test_002_tool_calls@3 + test_003_tool_calls@3 + test_004_tool_calls@3 + test_005_tool_calls@3) / 5
+```
+
+If a formal attempt has no available packaged service log, write the turn count and tool-call count as `null`; do not estimate them manually.
 
 ## Score Range
 
@@ -109,13 +140,15 @@ a valid score, stop and report the issue.
 
 ## Aggregation Requirements
 
-After all `score.yaml` files are ready, check that all three conditions, 5 test
-tasks, and 3 runs per task are complete. Then compute per-task `acc@3`, overall
-`acc@3`, and condition-to-condition improvements, plus the average points and
-per-bucket tokens.
+After all `score.yaml` files are ready, check that all four conditions, 5 test
+tasks, and 3 runs per task are complete. Then compute per-task `acc@3` and
+`std@3`, overall `acc@3` and `std@3`, improvements from `fewshot`, `self`, and
+`reflect-3` over `base`, plus average per-bucket tokens. Include solver turns
+only when packaged service logs are available.
 
 These efficiency metrics only count the **test-task `predict()`** work. They do
-not include training (the evolution step), environment startup, or
-evaluator execution. They aggregate the same way as `acc@3`: average the 3
-attempts for one test task, then average the 5 test tasks. Temporary aggregation
-code may live under `scratch/`.
+not include training (the evolution step), remote environment checks, or
+evaluator execution. Token metrics come from the SDK during evaluation. Turn
+metrics, when available after log archival, aggregate the same way as `acc@3`:
+average the 3 attempts for one test task, then average the 5 test tasks.
+Temporary aggregation code may live under `scratch/`.

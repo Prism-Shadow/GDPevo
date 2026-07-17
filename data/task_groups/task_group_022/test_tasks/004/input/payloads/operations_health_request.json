@@ -1,0 +1,45 @@
+{
+  "request_id": "AOPS-Q2-2026-WEST-STRATEGIC",
+  "requested_by": "Director, Strategic Account Operations",
+  "business_purpose": "Quarter-end cross-functional operations health review and account escalation planning.",
+  "scope": {
+    "account_population": "Production accounts with segment STRATEGIC and region WEST",
+    "activity_start_inclusive": "2026-04-01T00:00:00Z",
+    "activity_end_inclusive": "2026-06-30T23:59:59Z",
+    "state_cutoff": "2026-06-30T23:59:59Z",
+    "refund_activity_date_field": "refund_attempts.service_date",
+    "refund_activity_scope": "Refund activity whose service_date is inside the activity window and whose linked order belongs to an eligible account. The numerator is not limited by the linked order's creation date.",
+    "eligible_support_case_rule": "A case for an eligible account with opened_at inside the activity window.",
+    "eligible_order_rule": "A production order for an eligible account with order_created_at inside the activity window."
+  },
+  "component_definitions": {
+    "fulfillment_failure_rate_per_account": "Eligible orders that are incomplete or not on time under the established effective fulfillment convention, divided by eligible orders.",
+    "refund_exposure_ratio_per_account": "Effective net refund USD for refund activity in the window, divided by gross eligible order USD.",
+    "gross_eligible_order_usd": "For each eligible order, convert gross_amount_minor from the order currency to USD with fx_rates.usd_per_unit on the UTC calendar date of order_created_at, then sum without intermediate rounding.",
+    "support_breach_rate_per_account": "Eligible cases whose active resolution time exceeds the priority resolution SLA, divided by eligible cases.",
+    "zero_denominator_rule": "If an eligible account has no observations for a component denominator, use 0 for that account's component rate."
+  },
+  "resolution_sla_hours_by_priority": {
+    "URGENT": 16,
+    "HIGH": 24,
+    "MEDIUM": 48,
+    "LOW": 96
+  },
+  "account_health": {
+    "formula": "0.45 * fulfillment_failure_rate + 0.30 * refund_exposure_ratio + 0.25 * support_breach_rate",
+    "critical_rule": "An account is critical when its unrounded health score is at least 0.60 or at least two of its three unrounded component rates are at least 0.60."
+  },
+  "portfolio_rollups": {
+    "fulfillment_failure_rate": "Total failed eligible orders divided by total eligible orders across the portfolio.",
+    "net_refund_exposure_usd": "Sum of effective net refund USD across eligible accounts.",
+    "support_breach_rate": "Total active-clock resolution breaches divided by total eligible cases across the portfolio.",
+    "bottom_three_accounts": "Rank all eligible accounts by unrounded health score descending, then account_id ascending, and return the first three.",
+    "dominant_risk_dimension": "Compare 0.45 times the arithmetic mean account fulfillment failure rate, 0.30 times the arithmetic mean account refund exposure ratio, and 0.25 times the arithmetic mean account support breach rate. Select the greatest contribution; break an exact tie in FULFILLMENT, REFUNDS, SUPPORT enum order.",
+    "portfolio_status": {
+      "HEALTHY": "Critical accounts are less than 10% of eligible accounts and the arithmetic mean unrounded account health score is less than 0.18.",
+      "WATCH": "The HEALTHY rule is not met, critical accounts are less than 25% of eligible accounts, and the arithmetic mean unrounded account health score is less than 0.28.",
+      "CRITICAL": "Otherwise."
+    }
+  },
+  "rounding": "Do not round intermediate account metrics, contributions, or classification inputs. Round only requested output numbers to the precision in the answer template."
+}

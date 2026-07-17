@@ -13,3 +13,21 @@ Solution and evaluation basis: The standard answer approves `EAS-APP-901` and `E
 The evaluator uses eight exact-match scoring goals with raw weights: SP001 decision sets, weight 3; SP002 gross committed and remaining capacity, weight 2; SP003 Retail CRE participation and Residential sector-breach handling, weight 3; SP004 SBA/startup net-exposure conditions, weight 2; SP005 post-approval Healthcare and Retail CRE concentrations, weight 2; SP006 priority ranking, weight 1; SP007 low-quality decline reason sets, weight 2; SP008 capacity-driven decline for `EAS-APP-002`, weight 1. Currency is rounded to cents and ratios to four decimals.
 
 Transfer design: This is a test task anchored by `train_002` and `train_005`. From `train_002`, solvers should transfer the queue-allocation pattern, distinction between gross approved amount and bank-retained capacity, concentration-flag structure, SBA net-exposure convention, and controlled decline-reason style. From `train_005`, solvers should transfer the idea that CRE exposure constraints can make a strong credit require participation rather than routine full approval. The task-specific difficulty is Eastgate's exact application mix: Retail CRE needs a retained-exposure calculation, the SBA startup has high guaranty but still requires monitoring, Residential is low risk but blocked by sector exposure, and capacity remains insufficient for a lower-priority request after better approvals.
+
+Construction record: Author `test_002` task-builder worker. Created and updated on 2026-06-03. Major changes: created the Eastgate prompt, answer template, standard answer, evaluator, and bilingual notes under only `test_tasks/002/`.
+
+## Chinese
+
+数据与来源：本任务属于 `SCN_011_bank_branch_credit_risk_lending_committee`，来源示例为 `E001`、`E002` 和 `E003`，使用 `task_group_011_bank_branch_credit_risk_lending_committee` 的共享生成环境。任务只使用 `EASTGATE` 分行的公开环境数据：分行信息、2025Q1 分行指标、行业敞口、待审申请以及 `credit_policy_v2025Q1`。唯一的任务本地可见材料是 `input/payloads/answer_template.json`。
+
+任务定义：求解者需要在有限放款额度下，为 Eastgate 的 Q1 申请队列准备信贷委员会 JSON 包。答案必须覆盖 `branch_id`、`allocation`、逐笔 `decisions`、`concentration_flags`、受控的 `decline_reasons` 以及 `post_approval_concentrations`。关键对象包括关系较强的 `EAS-APP-901` 和 `EAS-APP-902`、初创 SBA 申请 `EAS-APP-903`、较小的 Healthcare 申请 `EAS-APP-005`，以及质量较弱或被约束阻挡的 `EAS-APP-001` 到 `EAS-APP-004` 和 `EAS-APP-006`。
+
+场景适配与材料地图：这是分行信贷委员会的申请分配流程，与来源示例中的审批和组合约束工作一致。`/api/branches/EASTGATE` 提供 Q1 额度 `4700000.00` 和默认行业上限 `0.19`。`/api/branches/EASTGATE/metrics` 提供贷款总额 `14960931.51`，与当前行业敞口合计一致。`/api/branches/EASTGATE/sector-exposures` 提供各行业当前敞口，其中 Residential 已超过单行业上限，Retail CRE 接近上限。`/api/branches/EASTGATE/applications` 提供九笔待审申请。`/api/policies` 提供额度、集中度、参与贷款和 SBA 担保规则。
+
+答案与评估依据：标准答案批准 `EAS-APP-901` 和 `EAS-APP-005`，有条件批准带 `participation_required` 的 `EAS-APP-902`，有条件批准带 `sba_guaranty_required` 和 `startup_monitoring` 的 `EAS-APP-903`，并拒绝 `EAS-APP-001`、`EAS-APP-002`、`EAS-APP-003`、`EAS-APP-004` 和 `EAS-APP-006`。总批准额为 `5074519.73`。银行实际占用额度为 `4247759.92`，剩余额度为 `452240.08`。`EAS-APP-902` 的总敞口为 `1750000.00`，但银行留存敞口为 `1569240.19`，使 Retail CRE 在其他留存审批之后维持在 `0.19` 的上限。`EAS-APP-903` 使用 85% SBA 担保，因此银行实际占用为 `114000.00`。Residential 已经超过上限，所以 `EAS-APP-004` 因 `sector_breach` 被拒绝。低质量拒绝使用受控原因码：`EAS-APP-001` 为 `high_ltv`，`EAS-APP-003` 为 `documentation_gap` 和 `weak_dscr`，`EAS-APP-006` 为 `low_fico`。
+
+评估器包含八个精确匹配得分点和原始权重：SP001 决策集合，权重 3；SP002 总批准额、实际占用和剩余额度，权重 2；SP003 Retail CRE 参与贷款和 Residential 行业突破处理，权重 3；SP004 SBA/初创净敞口条件，权重 2；SP005 审批后 Healthcare 和 Retail CRE 集中度，权重 2；SP006 优先级排序，权重 1；SP007 低质量拒绝原因集合，权重 2；SP008 `EAS-APP-002` 的额度驱动拒绝，权重 1。货币四舍五入到分，比例四舍五入到四位小数。
+
+迁移设计：本测试任务以 `train_002` 和 `train_005` 为锚点。求解者应从 `train_002` 迁移申请队列分配模式、总批准额与银行留存额度的区别、集中度标记结构、SBA 净敞口习惯以及受控拒绝原因风格。求解者应从 `train_005` 迁移 CRE 约束可能使强信用需要参与贷款而不是常规全额批准的判断。任务自身难点在于 Eastgate 的具体组合：Retail CRE 需要留存敞口计算，SBA 初创申请虽然有高担保但仍要监控，Residential 信用风险较低但被行业敞口阻挡，而较优审批完成后剩余额度不足以支持低优先级申请。
+
+构建记录：作者为 `test_002` task-builder worker。创建和更新日期为 2026-06-03。主要变更：仅在 `test_tasks/002/` 下创建 Eastgate 提示、答案模板、标准答案、评估器和双语 notes。

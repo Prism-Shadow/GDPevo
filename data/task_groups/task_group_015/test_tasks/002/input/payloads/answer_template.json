@@ -1,0 +1,133 @@
+{
+  "description": "Normalized pulmonology referral readiness packet. Return JSON only, with the same top-level keys and field types shown here.",
+  "top_level_required_keys": [
+    "patient_referral",
+    "active_pulmonary_diagnoses",
+    "referral_code_set",
+    "active_respiratory_medications",
+    "allergy_readiness",
+    "recent_encounter_evidence",
+    "document_readiness",
+    "receiving_provider",
+    "authorization_readiness",
+    "referral_letter_fields"
+  ],
+  "patient_referral": {
+    "patient_id": "string",
+    "referral_id": "string",
+    "batch_id": "string",
+    "service_line": "enum: cardiology|orthopedics|pulmonology|neurology|skilled_nursing|oncology",
+    "requested_date": "date string YYYY-MM-DD"
+  },
+  "active_pulmonary_diagnoses": [
+    {
+      "code": "ICD-10 code string",
+      "description": "string from active condition record or normalized clinical meaning",
+      "normalized_key": "string",
+      "condition_ids": [
+        "condition id string"
+      ],
+      "referral_relevant": "boolean",
+      "role": "enum: primary_referral_diagnosis|supporting_pulmonary_condition|supporting_symptom"
+    }
+  ],
+  "active_pulmonary_diagnoses_ordering": "Sort by code ascending, then normalized_key. Evaluation treats this list as a set by normalized_key.",
+  "referral_code_set": {
+    "primary_code": "ICD-10 code string",
+    "supporting_codes": [
+      "ICD-10 code string"
+    ],
+    "icd_validation": "enum: valid_matches_narrative|valid_but_narrative_mismatch|invalid_code|wrong_service_chapter",
+    "primary_code_chapter": "string from ICD lookup",
+    "narrative_match": "boolean"
+  },
+  "active_respiratory_medications": [
+    {
+      "medication": "string",
+      "dose": "string",
+      "route": "string",
+      "frequency": "string",
+      "status": "enum: active|inactive|unknown",
+      "normalized_key": "string",
+      "highlight_reason": "enum: controller_inhaler|rescue_inhaler|systemic_respiratory_medication|other_respiratory_medication"
+    }
+  ],
+  "active_respiratory_medications_ordering": "Put controller therapy before rescue therapy; evaluation treats this list as a set by lowercased medication name.",
+  "allergy_readiness": {
+    "readiness_status": "enum: complete_documented|incomplete_needs_clarification|no_known_allergies|conflicting_allergy_records",
+    "ready_for_letter": "boolean",
+    "allergies": [
+      {
+        "allergen": "string",
+        "reaction": "string",
+        "severity": "enum: mild|moderate|severe|unknown",
+        "status": "enum: active|inactive|entered-in-error|unknown",
+        "source": "string"
+      }
+    ],
+    "follow_up_needed": "boolean"
+  },
+  "recent_encounter_evidence": {
+    "encounter_id": "string",
+    "date": "date string YYYY-MM-DD",
+    "type": "string",
+    "provider_id": "string",
+    "signed_status": "enum: signed|unsigned|amended|unknown",
+    "diagnosis_codes": [
+      "ICD-10 code string"
+    ],
+    "medications_mentioned": [
+      "medication name string"
+    ],
+    "care_plan_tag": "enum: pulmonology_referral_for_copd_dyspnea|asthma_followup|unrelated_recent_visit|other"
+  },
+  "document_readiness": {
+    "chest_xray": {
+      "received": "boolean",
+      "document_id": "string or null",
+      "type": "string or null",
+      "date": "date string YYYY-MM-DD or null",
+      "status": "enum: final|preliminary|cancelled|missing|null"
+    },
+    "office_note_received": "boolean",
+    "office_note_source": "enum: signed_encounter|document_endpoint|referral_packet|missing",
+    "pulmonary_function_test": {
+      "received": "boolean",
+      "document_id": "string or null",
+      "type": "string or null",
+      "date": "date string YYYY-MM-DD or null",
+      "status": "enum: final|preliminary|cancelled|missing|null"
+    },
+    "missing_required_documents": [
+      "enum values: pulmonary_function_test|chest_xray|office_note|authorization|medication_list|allergy_confirmation"
+    ]
+  },
+  "receiving_provider": {
+    "provider_id": "string",
+    "name": "string",
+    "role": "string",
+    "facility": "string",
+    "phone": "string",
+    "fax": "string"
+  },
+  "authorization_readiness": {
+    "authorization_status": "enum: approved|pending|denied|not_required|unknown",
+    "referral_status": "enum: open|closed|cancelled|draft",
+    "urgency": "enum: routine|urgent|stat",
+    "readiness_tier": "enum: Tier 1|Tier 2|Tier 3",
+    "overall_readiness": "enum: ready_to_send|hold_for_authorization|hold_for_missing_documents|hold_for_clinical_clarification",
+    "blocking_issues": [
+      "enum values: authorization_pending|pulmonary_function_test_missing|chest_xray_missing|office_note_missing|allergy_incomplete|provider_missing|diagnosis_code_invalid|clinical_mismatch"
+    ]
+  },
+  "referral_letter_fields": {
+    "diagnosis_summary_choice": "enum: primary_referral_diagnosis_with_symptom|single_pulmonary_condition|symptom_without_active_diagnosis|other",
+    "allergy_statement_choice": "enum: documented_active_allergy|no_known_allergies|allergy_details_incomplete|conflicting_allergy_records",
+    "recent_encounter_choice": "enum: most_relevant_signed_referral_encounter|recent_respiratory_visit|latest_visit_unrelated|other",
+    "document_packet_choice": "enum: requires_document_follow_up|imaging_only|office_note_missing|complete_required_packet",
+    "medication_summary_choice": "enum: include_controller_and_rescue_therapy|include_rescue_only|include_all_active_meds_without_highlight|no_relevant_active_meds",
+    "recipient_choice": "enum: receiving_specialist_from_referral|primary_care_provider|provider_unresolved|other",
+    "authorization_statement_choice": "enum: authorization_approved|authorization_pending|authorization_denied|authorization_unknown",
+    "readiness_choice": "enum: hold_for_missing_required_document|hold_for_allergy_clarification|hold_for_authorization_only|send_without_blocker|hold_for_code_issue"
+  }
+}

@@ -1,5 +1,5 @@
 ---
-name: apexcloud-retention-analytics
+name: task-group-004-fewshot-attempt-02
 description: Use this skill whenever a task asks for ApexCloud CRM, ApexCloud Retention Operations API, renewal risk, retention action boards, QBR metrics packets, receivables and pipeline reviews, or churn export validation. It guides API collection, source precedence, controlled labels, ranking, precision, and JSON-only output for ApexCloud customer success and retention analytics.
 ---
 

@@ -4,7 +4,7 @@
 
 第二阶段构造可以使用主 agent 与多个 subagents 协作。
 
-本工作区要求使用 subagents 完成构造和校准。用户要求在本工作区构造 task group 时，应视为允许使用 subagents。如果并发能力有限，可以分批运行，但必须保持上下文隔离。
+本工作区要求使用 subagents 完成环境和 task 构造。用户要求在本工作区构造 task group 时，应视为允许使用这些构造 subagents。难度校准使用不同机制：不能使用主控系统的 subagent 进行校准，每次校准都必须按照 `calibration_runtime.md` 启动隔离的 Dockerized `codex exec` 进程。
 
 主 agent 负责整体一致性：
 
@@ -33,22 +33,17 @@ task-builder subagents 负责局部任务生产：
 - 可以通过主 agent 提出需要新增的环境能力或数据，但不直接各自实现独立 env。
 - 不应修改其他 subagent 的任务。
 
-skill-builder subagent 负责 train-derived skill：
+Dockerized Codex 进程负责难度校准：
 
-- 先只读取 train tasks 的 solver 可见输入，在不看答案的情况下完成 5 个真实 train tasks。
-- 再对照 train answers，总结可迁移 SOP、facts、字段口径和环境使用经验。
-- 输出校准用 skill，放在 `scratch/` 下。
-
-solver subagents 负责难度测试：
-
-- direct test：每个 test task 跑 2 次上下文干净尝试，5 个 test tasks 共 10 个 solver subagents。
-- post-skill test：skill distillation 后，每个 test task 带 train-derived skill 跑 2 次上下文干净尝试，5 个 test tasks 再用 10 个 solver subagents。
-- 每个 solver subagent 只处理一个目标 test task 和一次尝试。
-- 不接触 notes、标准答案、评测脚本或构造草稿。
+- 3 个相互隔离的 fewshot skill-generation 进程分别读取全部 5 个 train inputs 和对应标准答案，生成 3 个独立 skill package。
+- base：每个 test task 运行 3 个隔离进程，5 个 test tasks 共 15 个进程。
+- fewshot：每个 test task 运行 3 个隔离进程，attempt 01/02/03 分别使用对应的 skill package，5 个 test tasks 共 15 个进程。
+- 每个进程都有新建的 staged `/work`、专属 `CODEX_HOME`、固定 prompt，且只能看到该运行允许的文件。
+- 保留完整 Codex session trace；不能访问 notes、evaluator、环境源码、构造草稿或其他 runs。
 
 reviewer subagent 负责独立审查：
 
-- 检查结构、可解释性、数据生成、env 复杂度、prompt 泄漏、迁移设计和评测有效性。
+- 检查结构、可解释性、数据生成、env 复杂度、prompt 泄漏、迁移设计、评测有效性，以及每个 point 是否整体给分。
 
 ## 阶段概览
 
@@ -58,30 +53,29 @@ reviewer subagent 负责独立审查：
 | --- | --- | --- | --- |
 | 1. 理解场景 | 主 agent | 来源 example 难度审计和场景理解 | 主 agent 能说明来源 examples 的真实工作流、数据表面和难度来源 |
 | 2. Task group 设计 | 主 agent | 只写 `scratch/task_group_design.md` | 5 个 train、5 个 test、迁移计划、diversity 计划、scoring 计划和 task-builder 分派都已明确；本阶段不创建 task 文件、答案、evaluator 或 env 实现 |
-| 3. Env blueprint | 主 agent | `scratch/env_blueprint.md` | 共享业务系统、公开入口、数据契约、生成种子、setup 行为和 manifest 要求都已说明 |
-| 4. Env 实现 | 上下文干净的 env-builder coding subagent | `env/` | 环境服务于全部任务，按业务领域组织，可以运行，且没有接近答案的 per-task endpoint |
+| 3. Env blueprint | 主 agent | `scratch/env_blueprint.md` | 共享业务系统、公开入口、数据契约、生成种子、环境镜像与运行方式、state mode、仅限 Docker network 的访问方式、reset 行为和 manifest 要求都已说明 |
+| 4. Env 实现 | 上下文干净的 env-builder coding subagent | `env/` | 环境服务于全部任务，按业务领域组织，能被独立 agent 容器访问，且没有接近答案的 per-task endpoint |
 | 5. Task 构造 | 10 个 task-builder subagents | `train_tasks/` 和 `test_tasks/` 任务目录 | 每个任务都有 solver input、中英双语 notes、标准答案、evaluator 和 answer template |
-| 6. 集成和 evaluator 自检 | 主 agent | 最终 `task_group.yaml`、路径/schema 修正、evaluator 自检记录 | 每个 evaluator 对自己的 `output/answer.json` 都能打满分 |
-| 7. 难度校准 | skill-builder 和 solver subagents，主 agent 负责打分 | `scratch/difficulty_calibration.md`、blind train attempts、reflection、`SKILL.md`、direct/post-skill 结果 | direct 和 post-skill attempts 都是 clean-context，且达到难度目标、不过度饱和 |
+| 6. 集成和 evaluator 自检 | 主 agent | 最终 `task_group.yaml`、路径/schema 修正、`scratch/rubric_validation.md`、evaluator 与 Judge API 自检记录 | 每个 evaluator 对标准答案打满分；rubric 覆盖不同业务结果且没有重复计分；每个 point 完整满足要求时获得该点全部分值，否则得 `0` 分；`/api/judge` 拒绝 test id 且不暴露隐藏细节 |
+| 7. 难度校准 | Dockerized Codex 进程，主 agent 负责打分 | `scratch/difficulty_calibration.md`、traces、3 个独立 fewshot skill package、base/fewshot 结果 | 固定 prompt 运行彼此隔离；overall base 约为 `0.40-0.60`；fewshot 大致低于 `0.80`，gain 约为 `0.10-0.30`，且不过度饱和 |
 | 8. 独立 review 和返工 | reviewer subagent 和主 agent | review findings、返工记录、必要时重跑校准 | 结构、环境、notes、评测、迁移和难度要求都通过 |
 
 ## 构造流程
 
 1. 主 agent 编写 `scratch/task_group_design.md`，覆盖 10 个 task 的规划、task-builder 分派、任务 diversity、可迁移 SOP、train/test 角色、环境计划、数据生成计划和评测计划。这里只是设计文档阶段，不能创建 task 目录、prompt、notes、标准答案、evaluator 或 env 实现文件。
-2. 主 agent 编写 `scratch/env_blueprint.md`，说明共享业务系统、公开接口、数据契约、生成种子、manifest 要求和预期环境行为。
-3. 上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 实现 `env/`，包括 Web、API、PostgreSQL、数据生成脚本、生成数据、setup 脚本和 manifest。
+2. 主 agent 编写 `scratch/env_blueprint.md`，说明共享业务系统、公开接口、数据契约、生成种子、manifest 要求、`env/Dockerfile`、`env.state_mode`、`TASK_ENV_BIND`/`TASK_ENV_PORT`、`task-env` network 路径、judge 开关、reset 行为和预期环境行为。
+3. 上下文干净的 env-builder coding subagent 根据 `scratch/env_blueprint.md` 实现 `env/`，包括环境 Dockerfile、Web/API 服务、`env/endpoints.txt`、任务需要的容器内 SQLite 数据库及其带鉴权查询服务、数据生成脚本、生成数据、setup 脚本、manifest、health check 和由主 agent 控制的 reset/reseed 流程。
 4. 主 agent review 并集成 env-builder 产物，再记录 task builders 可使用的环境入口。
 5. 主 agent 启动 10 个 task-builder subagents，可以并行或分批运行：`train_001` 到 `train_005` 和 `test_001` 到 `test_005` 各 1 个。
 6. Task-builder subagents 分别生成自己负责 task 的 `input/`、`notes/`、`output/` 和 `eval/`。
 7. 主 agent 集成所有任务，统一修正路径、schema、notes 和 env 使用方式。
-8. 主 agent 运行每个 evaluator，对照标准答案检查可复现性。
-9. 难度校准前，主 agent 在 `8000-8100` 范围内随机选择可用端口启动 task-group 环境，并记录启动命令和端口；不要从 `8000` 开始顺序查找。
-10. direct calibration：10 个上下文干净 solver subagents 运行 no-skill 尝试，每个 test task 2 次。主 agent 在 solver 上下文外评分，并记录 direct `avg@2`。
-11. 上下文干净的 skill-builder subagent 先在不看答案的情况下完成 5 个 train inputs，并把 blind attempts 放到 `scratch/train_skill/blind_attempts/`。
-12. skill-builder 再对照 5 个 train 的 `output/answer.json`，写 `scratch/train_skill/reflection.md`，并将纠正后的方法沉淀为 `scratch/train_skill/SKILL.md`。
-13. post-skill calibration：10 个上下文干净 solver subagents 运行 post-skill 尝试，每个 test task 2 次。主 agent 在 solver 上下文外评分，并记录 post-skill `avg@2`。
-14. 上下文干净的 reviewer subagent 在生成、验证和校准后做独立 review。
-15. 主 agent 根据校准和 review 返工，重跑受影响的 subagents 和校准尝试，直到结构、迁移设计、数据生成、评测和难度目标都通过。
+8. 主 agent 运行每个 evaluator 对照标准答案自检并创建 `scratch/rubric_validation.md`，确认每个 task 至少覆盖 4 个不同业务结果，不重复评价同一个判断或答案事实，并且每个 point 完整满足要求时获得该点全部分值，否则得 `0` 分。随后把 `env/judge_api.py` 接入服务，验证 `/api/judge` 对 train 标准答案打满分、保留 evaluator 的加权总分、拒绝 test task id，且不会返回隐藏 evaluator 或答案内容。
+9. 难度校准前，主 agent 构建环境镜像，创建包含 user/run/task/stage 的独立 Docker network，并从同一 network 上的临时容器验证 `http://task-env:<TASK_ENV_PORT>/` 的 health endpoint。read-only 环境可在 judge 关闭的 calibration 阶段共享；mutable 环境为每个 attempt 启动独立 environment 和 network。
+10. base calibration：使用固定 base prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次。主 agent 在 Codex 进程外评分并记录 base `avg@3`。
+11. 使用固定 fewshot skill-generation prompt 启动 3 个相互隔离的 Dockerized `codex exec` 进程。每个进程接收全部 5 个 train inputs、对应 train answers 和环境入口，并把完整 package 写到 `scratch/train_skill/fewshot_attempt_<nn>/`，其中 `SKILL.md` 是入口文件。
+12. fewshot calibration：使用固定 fewshot prompt 启动 15 个独立 Dockerized `codex exec` runs，每个 test task 3 次；attempt 01/02/03 分别使用 `fewshot_attempt_01/02/03`。主 agent 在 Codex 进程外评分并记录 fewshot `avg@3`。
+13. 上下文干净的 reviewer subagent 在生成、验证和校准后做独立 review。
+14. 主 agent 根据校准和 review 返工，重跑受影响的 subagents 和校准尝试，直到结构、迁移设计、数据生成、评测和难度目标都通过。
 
 ## 禁止总 Builder 脚本
 
@@ -99,7 +93,9 @@ reviewer subagent 负责独立审查：
 - `scratch/task_group_design.md`
 - `scratch/env_blueprint.md`
 - `scratch/difficulty_calibration.md`
-- `scratch/train_skill/SKILL.md`
+- `scratch/train_skill/fewshot_attempt_01/SKILL.md`
+- `scratch/train_skill/fewshot_attempt_02/SKILL.md`
+- `scratch/train_skill/fewshot_attempt_03/SKILL.md`
 
 允许的脚本必须有清晰、狭窄的归属和用途：
 
@@ -107,7 +103,7 @@ reviewer subagent 负责独立审查：
 - task-builder 可以为自己负责的单个 task 写局部辅助脚本，例如 evaluator 或 task-local 数据转换。
 - 主 agent 可以运行集成后的校验脚本，检查路径、schema、evaluator 可复现性和一致性。
 
-设计文档必须先于实现产物形成，不能由同一个生成最终产物的脚本事后回填。`SKILL.md` 必须来自上下文干净的 blind-solve、答案对照和反思流程，不能从构造 specification 里预先写好。
+设计文档必须先于实现产物形成，不能由同一个生成最终产物的脚本事后回填。每个 `SKILL.md` 必须由隔离的 fewshot skill-generation 进程根据 staged train inputs 和标准答案生成，不能从构造 specification 里预先写好。
 
 ## 协作约束
 
@@ -115,7 +111,7 @@ reviewer subagent 负责独立审查：
 - env-builder coding subagent 拥有 `env/` 实现和程序化造数代码。
 - task-builder subagents 拥有 task 文件生成权。主 agent 不应直接用一个总 builder 脚本生成所有 task prompts、标准答案、notes 和 evaluators。
 - 一个同时生成 env、全部任务文件、答案、notes、evaluators、scratch docs 和 skill 的总脚本不能替代 subagent 构造流程。
-- 用于难度校准的 solver subagents 必须是上下文干净的，且只有在它们基于允许输入产出 prediction 后才计入校准。
+- 难度校准必须使用 Dockerized `codex exec`、专属 staged work 和 `CODEX_HOME` 目录、`calibration_runtime.md` 中的固定 prompts，并保留原始 traces。主控系统的 subagent runs 不能作为难度证据。
 - subagents 的写入范围应清晰，避免互相覆盖。
 - subagents 不应获得 notes、标准答案或 eval 以外泄到 solver-facing input 的形式。
 - 所有临时设计、solver runs、skill 和 review 记录都放在 `scratch/`。

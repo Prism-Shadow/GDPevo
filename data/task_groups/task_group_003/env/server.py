@@ -7,6 +7,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from judge_api import judge_answer_request
+
 
 BASE = Path(__file__).resolve().parent
 DATA = json.loads((BASE / "data" / "support_data.json").read_text(encoding="utf-8"))
@@ -147,10 +149,20 @@ class Handler(BaseHTTPRequestHandler):
 
         self.not_found()
 
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        if parsed.path != "/api/judge":
+            return self.not_found()
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            return self.not_found()
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        return self.send_json(payload, status=status)
+
 
 def main():
-    host = "127.0.0.1"
-    port = int(os.environ.get("PORT", "8057"))
+    host = os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0"))
+    port = int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9003")))
     server = ThreadingHTTPServer((host, port), Handler)
     print(f"Support console API listening on http://{host}:{port}")
     print(f"Health: http://{host}:{port}/health")

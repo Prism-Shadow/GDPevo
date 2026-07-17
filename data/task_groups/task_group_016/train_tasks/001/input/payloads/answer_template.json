@@ -1,0 +1,227 @@
+{
+  "template_name": "adult_respiratory_protocol_assessment",
+  "version": "1.0",
+  "required_top_level_keys": [
+    "task_id",
+    "case_id",
+    "patient_id",
+    "primary_assessment",
+    "risk_level",
+    "disposition",
+    "red_flags",
+    "recommended_tests",
+    "medication_plan",
+    "stabilization_actions",
+    "follow_up",
+    "return_precautions",
+    "evidence_ids",
+    "safety_checks"
+  ],
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "description": "Task identifier for this response."
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Target case identifier."
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Patient identifier from the clinic record."
+    },
+    "primary_assessment": {
+      "type": "enum",
+      "allowed_values": [
+        "community_acquired_pneumonia",
+        "viral_upper_respiratory_infection",
+        "pneumonia_protocol_pending"
+      ]
+    },
+    "risk_level": {
+      "type": "enum",
+      "allowed_values": [
+        "low",
+        "moderate",
+        "high"
+      ]
+    },
+    "disposition": {
+      "type": "enum",
+      "allowed_values": [
+        "outpatient_close_followup",
+        "ed_transfer"
+      ]
+    },
+    "red_flags": {
+      "type": "list",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "hypoxemia_92_93",
+          "hypoxemia_below_90",
+          "pleuritic_chest_pain",
+          "respiratory_distress",
+          "confusion",
+          "hemoptysis",
+          "persistent_fever",
+          "worsening_shortness_of_breath"
+        ]
+      },
+      "ordering": "No semantic ordering is required; evaluators normalize this as a set."
+    },
+    "recommended_tests": {
+      "type": "list",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "CXR-2V",
+          "SARS_FLU_RSV_PCR",
+          "PULSE_OX_RECHECK",
+          "CBC_BASIC"
+        ]
+      },
+      "ordering": "No semantic ordering is required; evaluators normalize this as a set."
+    },
+    "medication_plan": {
+      "type": "object",
+      "required_keys": [
+        "antibiotic_strategy",
+        "medication",
+        "dose",
+        "route",
+        "frequency",
+        "duration_days",
+        "avoid_allergens"
+      ],
+      "fields": {
+        "antibiotic_strategy": {
+          "type": "enum",
+          "allowed_values": [
+            "doxycycline_outpatient",
+            "defer_antibiotic_selection_to_ed",
+            "standard_outpatient_beta_lactam_plus_macrolide",
+            "supportive_care_no_antibiotic"
+          ]
+        },
+        "medication": {
+          "type": "string_or_null",
+          "description": "Medication name, or null if no medication is recommended in this setting."
+        },
+        "dose": {
+          "type": "string_or_null",
+          "description": "Medication dose with units, or null if not applicable."
+        },
+        "route": {
+          "type": "enum_or_null",
+          "allowed_values": [
+            "PO",
+            "IM",
+            "IV"
+          ]
+        },
+        "frequency": {
+          "type": "string_or_null",
+          "description": "Medication frequency, or null if not applicable."
+        },
+        "duration_days": {
+          "type": "integer_or_null",
+          "unit": "days",
+          "precision": "whole days"
+        },
+        "avoid_allergens": {
+          "type": "list",
+          "items": {
+            "type": "enum",
+            "allowed_values": [
+              "penicillin",
+              "sulfonamide",
+              "macrolide",
+              "tetracycline"
+            ]
+          },
+          "ordering": "No semantic ordering is required; evaluators normalize this as a set."
+        }
+      }
+    },
+    "stabilization_actions": {
+      "type": "list",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "supplemental_oxygen",
+          "urgent_ed_transfer"
+        ]
+      },
+      "ordering": "No semantic ordering is required; use an empty list if no immediate stabilization action is recommended."
+    },
+    "follow_up": {
+      "type": "object",
+      "required_keys": [
+        "timeframe_hours",
+        "route"
+      ],
+      "fields": {
+        "timeframe_hours": {
+          "type": "integer",
+          "unit": "hours",
+          "precision": "whole hours"
+        },
+        "route": {
+          "type": "enum",
+          "allowed_values": [
+            "primary_care_recheck",
+            "emergency_department",
+            "pulmonology_followup"
+          ]
+        }
+      }
+    },
+    "return_precautions": {
+      "type": "list",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "chest_pain",
+          "confusion",
+          "hemoptysis",
+          "hypoxia",
+          "persistent_fever",
+          "worsening_shortness_of_breath"
+        ]
+      },
+      "ordering": "No semantic ordering is required; evaluators normalize this as a set."
+    },
+    "evidence_ids": {
+      "type": "list",
+      "items": {
+        "type": "string"
+      },
+      "ordering": "No semantic ordering is required unless an evaluator for a task states otherwise."
+    },
+    "safety_checks": {
+      "type": "object",
+      "required_keys": [
+        "no_penicillin_or_sulfa",
+        "no_normal_cxr_claim",
+        "no_clear_lungs_claim"
+      ],
+      "fields": {
+        "no_penicillin_or_sulfa": {
+          "type": "boolean"
+        },
+        "no_normal_cxr_claim": {
+          "type": "boolean"
+        },
+        "no_clear_lungs_claim": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "numeric_precision": {
+    "follow_up.timeframe_hours": "integer hours",
+    "medication_plan.duration_days": "integer days or null"
+  },
+  "output_rule": "Return exactly one JSON object with the required keys. Do not include markdown, comments, or explanatory prose."
+}

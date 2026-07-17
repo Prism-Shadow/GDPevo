@@ -1,0 +1,106 @@
+{
+  "title": "May Peak delivery reliability scorecard answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eligible_production_order_count",
+    "effectively_complete_order_count",
+    "on_time_complete_order_rate",
+    "partial_or_unshipped_order_count",
+    "warehouse_reliability_ranking",
+    "severe_exception_order_ids",
+    "highest_late_rate_carrier",
+    "service_status"
+  ],
+  "properties": {
+    "eligible_production_order_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Eligible production-order count; unit: orders."
+    },
+    "effectively_complete_order_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Eligible orders complete by the cutoff; unit: orders."
+    },
+    "on_time_complete_order_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "multipleOf": 0.0001,
+      "description": "Overall on-time complete-order ratio, rounded to 4 decimal places."
+    },
+    "partial_or_unshipped_order_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Eligible orders with no shipment or at least one shipment not delivered by the cutoff; unit: orders."
+    },
+    "warehouse_reliability_ranking": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Every represented warehouse, ordered by unrounded on-time complete-order rate descending and then warehouse ID ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "warehouse_id",
+          "on_time_complete_order_rate"
+        ],
+        "properties": {
+          "warehouse_id": {
+            "type": "string",
+            "pattern": "^WH-[A-Z]+-[0-9]{2}$",
+            "description": "Stable warehouse identifier."
+          },
+          "on_time_complete_order_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "multipleOf": 0.0001,
+            "description": "Warehouse on-time complete-order ratio, rounded to 4 decimal places."
+          }
+        }
+      }
+    },
+    "severe_exception_order_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Exact severe-exception order IDs sorted ascending.",
+      "items": {
+        "type": "string",
+        "pattern": "^ORD-[0-9]{6}$"
+      }
+    },
+    "highest_late_rate_carrier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "carrier_code",
+        "late_shipment_rate"
+      ],
+      "properties": {
+        "carrier_code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "description": "Stable carrier code."
+        },
+        "late_shipment_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "multipleOf": 0.0001,
+          "description": "Late delivered shipments divided by effectively delivered shipments for the selected carrier, rounded to 4 decimal places."
+        }
+      }
+    },
+    "service_status": {
+      "type": "string",
+      "enum": [
+        "HEALTHY",
+        "WATCH",
+        "CRITICAL"
+      ]
+    }
+  }
+}

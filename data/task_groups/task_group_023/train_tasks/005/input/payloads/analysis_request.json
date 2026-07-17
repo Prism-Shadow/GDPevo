@@ -1,0 +1,97 @@
+{
+  "request_id": "WN-DIABETES-SIX-AUDIT-2026-08",
+  "protocol_id": "PHO_COUNTY_PANEL_TRANSPORT_V1",
+  "business_request": "Determine whether the West/Northeast diagnosed-diabetes county dynamics model is sufficiently reproducible, transportable, calibrated, and stable for an audited 2026 briefing.",
+  "scope_and_publication": {
+    "regions": ["West", "Northeast"],
+    "years": [2021, 2022, 2023, 2024],
+    "health_measure": "diagnosed_diabetes",
+    "socioeconomic_measures": ["poverty", "unemployment", "median_income", "net_migration"],
+    "health_release_status": "FINAL",
+    "health_value_type": "CRUDE",
+    "revision_selection": "HIGHEST_FINAL_REVISION_THEN_LATEST_RELEASE",
+    "required_health_validity": "nonsuppressed and nonmissing",
+    "required_socioeconomic_validity": "all requested values nonmissing",
+    "rucc_validity": "integer 1 through 9",
+    "balanced_panel_years": [2021, 2022, 2023, 2024],
+    "panel_end_years": [2022, 2023, 2024],
+    "required_audit_outputs": ["publication tokens", "balanced county and panel-row totals", "complete state census"]
+  },
+  "common_design": {
+    "outcome": "diabetes_change",
+    "baseline_terms_in_order": ["lagged_diabetes", "lagged_poverty", "rucc_2", "rucc_3", "rucc_4", "rucc_5", "rucc_6", "rucc_7", "rucc_8", "rucc_9", "end_2023", "end_2024"],
+    "dynamic_terms_in_order": ["poverty_change", "unemployment_change", "median_income_change_per_10000", "net_migration_change"],
+    "indicator_references": {"rucc": 1, "panel_end_year": 2022}
+  },
+  "delete_state_two_step_gmm": {
+    "standard_method": "DELETE_STATE_BIAS_CORRECTED_TWO_STEP_LINEAR_GMM",
+    "cluster_unit": "state",
+    "instrument_order": ["poverty_change", "unemployment_change", "median_income_change_per_10000", "net_migration_change", "poverty_change_x_end_2024", "unemployment_change_x_end_2024", "median_income_change_per_10000_x_end_2024", "net_migration_change_x_end_2024"],
+    "coefficient_order": ["poverty_change", "unemployment_change", "median_income_change_per_10000", "net_migration_change"],
+    "relative_pseudoinverse_cutoff": 1e-12,
+    "required_audit_outputs": ["design dimensions", "full two-step coefficients and Hansen J", "jackknife bias-corrected coefficients and maximum shifts", "all delete-state coefficients and Hansen J statistics"]
+  },
+  "nested_elastic_net": {
+    "standard_method": "STATE_BLOCKED_NESTED_ELASTIC_NET_WITH_TRAINING_ONLY_STANDARDIZATION",
+    "outer_fold_count": 5,
+    "inner_fold_count": 4,
+    "alpha_grid_in_order": [0.02, 0.2, 2.0, 20.0],
+    "l1_ratio_grid_in_order": [0.0, 0.45, 0.8],
+    "continuous_terms_to_standardize": ["lagged_diabetes", "lagged_poverty", "poverty_change", "unemployment_change", "median_income_change_per_10000", "net_migration_change"],
+    "indicator_terms": ["rucc_2", "rucc_3", "rucc_4", "rucc_5", "rucc_6", "rucc_7", "rucc_8", "rucc_9", "end_2023", "end_2024"],
+    "penalized_terms": "all non-intercept terms",
+    "required_audit_outputs": ["fold counts and coefficient order", "complete candidate grid", "every outer fold's states and row count", "all aligned inner-grid RMSE values", "selected hyperparameters and standardized coefficients", "outer and pooled OOF metrics"]
+  },
+  "wild_cluster_bootstrap_t": {
+    "standard_method": "RESTRICTED_NULL_STATE_WILD_CLUSTER_BOOTSTRAP_T_WITH_XORSHIFT32",
+    "target_term": "poverty_change",
+    "source_model": "unpenalized full OLS over common-design terms",
+    "cluster_unit": "state",
+    "seed": 7152026,
+    "replicate_count": 399,
+    "quantile_probabilities": [0.025, 0.5, 0.975],
+    "checkpoint_replicates": [1, 2, 4, 9, 20, 50, 100, 200, 399],
+    "required_audit_outputs": ["randomization metadata", "observed coefficient, CR1 standard error, and t statistic", "tail count and plus-one p-value", "bootstrap-t quantiles", "all requested PRNG/t checkpoints"]
+  },
+  "grouped_conformal_calibration": {
+    "standard_method": "CROSS_FOLD_GROUPED_SPLIT_CONFORMAL",
+    "prediction_source": "nested elastic-net outer OOF predictions",
+    "nominal_coverage": 0.90,
+    "state_groups": "all states",
+    "rucc_bands": [[1, 3], [4, 6], [7, 9]],
+    "prediction_decile_count": 10,
+    "required_audit_outputs": ["all fold interval diagnostics", "all state coverages", "all RUCC-band coverages", "all prediction-decile calibration rows", "overall and minimum-state coverage"]
+  },
+  "trajectory_pca_clustering": {
+    "standard_method": "COUNTY_TRAJECTORY_PCA_WITH_DETERMINISTIC_KMEANS_AND_DELETE_STATE_ARI",
+    "trajectory_variables_in_order": ["diabetes_change", "poverty_change", "unemployment_change", "median_income_change_per_10000", "net_migration_change"],
+    "trajectory_end_years": [2022, 2023, 2024],
+    "retained_component_count": 5,
+    "candidate_cluster_counts": [2, 3, 4, 5, 6],
+    "stability_deletion_unit": "state",
+    "required_audit_outputs": ["feature order and cohort size", "leading spectrum and loading vectors", "complete cluster grid and selected count", "all delete-state ARIs", "median and minimum ARI"]
+  },
+  "source_group_perturbation": {
+    "standard_method": "NO_RETUNE_OUTER_FOLD_SOURCE_GROUP_DELETION_AUDIT",
+    "ordered_groups": [
+      {"source_group": "lagged_outcome_context", "terms": ["lagged_diabetes"]},
+      {"source_group": "lagged_poverty_context", "terms": ["lagged_poverty"]},
+      {"source_group": "rurality_context", "terms": ["rucc_2", "rucc_3", "rucc_4", "rucc_5", "rucc_6", "rucc_7", "rucc_8", "rucc_9"]},
+      {"source_group": "interval_context", "terms": ["end_2023", "end_2024"]},
+      {"source_group": "poverty_dynamics", "terms": ["poverty_change"]},
+      {"source_group": "companion_economic_dynamics", "terms": ["unemployment_change", "median_income_change_per_10000", "net_migration_change"]}
+    ],
+    "reuse_full_model_selected_hyperparameters": true,
+    "required_audit_outputs": ["full-model OOF reference", "ordered source groups", "every group's removed terms, five outer-fold RMSE values, pooled RMSE, deterioration, worse-fold count, and rank"]
+  },
+  "reporting": {
+    "computed_real_decimal_places": 6,
+    "literal_grid_and_threshold_decimal_places": 4,
+    "integer_fields": ["counts", "ranks", "fold numbers", "seed", "PRNG states", "replicate numbers"],
+    "preserve_declared_output_orders": true
+  },
+  "decision_rule": {
+    "six_gates_in_order": ["bias-corrected poverty_change GMM coefficient > 0.04", "elastic-net OOF RMSE < 0.85", "wild-bootstrap plus-one p-value < 0.06", "overall grouped-conformal coverage >= 0.89", "median delete-state clustering ARI >= 0.70", "poverty_dynamics deletion RMSE deterioration >= 0.006"],
+    "precedence": ["DEPLOY_DIABETES_DYNAMICS if all six gates pass", "REVIEW_DIABETES_DYNAMICS if four or five gates pass", "RETAIN_LAGGED_DIABETES otherwise"]
+  }
+}

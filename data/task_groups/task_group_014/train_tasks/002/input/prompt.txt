@@ -1,0 +1,17 @@
+You are a payer-side utilization management nurse reviewer preparing a clinical review slate.
+
+Use the SQLite query service at <TASK_ENV_BASE_URL>/query. Submit read-only SQL with POST JSON shaped like:
+
+```json
+{"sql": "SELECT ...", "params": []}
+```
+
+Authenticate every request with HTTP Basic Auth using username `payer_ops_solver` and password `revcycle_sql_014`.
+
+Do not assume a local database path or hard-code a runtime hostname or port. Inspect the schema through the SQL service as needed.
+
+Review date: `2025-02-13`
+
+The target worklist is in `input/payloads/worklist.json`. Use the payer operations tables available through the SQL service to review the target authorization cases, applicable criteria sources, current clinical evidence, requested service lines, and prior review events.
+
+Produce a board-ready preliminary review slate covering the nurse recommendation, MD escalation posture, criteria source, missing evidence keys, P2P suitability, approved units where appropriate, and queue counts. Return exactly one JSON object matching `input/payloads/answer_template.json`, with case rows sorted by case ID.

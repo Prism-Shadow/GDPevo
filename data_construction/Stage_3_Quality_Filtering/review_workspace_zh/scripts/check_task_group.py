@@ -108,16 +108,34 @@ class Checker:
             self.fail("env must be a mapping")
             return
 
+        dockerfile = env.get("dockerfile")
+        if dockerfile != "env/Dockerfile":
+            self.fail("env.dockerfile must be exactly env/Dockerfile")
+        self.require_path(dockerfile, "env.dockerfile", kind="file")
         setup_path = self.require_path(env.get("setup"), "env.setup", kind="file")
         if setup_path is not None and setup_path.is_file() and not os.access(setup_path, os.X_OK):
             self.fail("env.setup must be executable")
+
+        state_mode = env.get("state_mode")
+        if state_mode not in {"read_only", "mutable"}:
+            self.fail("env.state_mode must be either read_only or mutable")
 
         files = env.get("files")
         if not isinstance(files, list) or not files:
             self.fail("env.files must be a non-empty list")
             return
+        has_dockerfile = False
+        has_judge_api = False
         for idx, item in enumerate(files):
             self.require_path(item, f"env.files[{idx}]", kind="file")
+            if isinstance(item, str):
+                parts = Path(item).parts
+                has_dockerfile = has_dockerfile or parts == ("env", "Dockerfile")
+                has_judge_api = has_judge_api or parts == ("env", "judge_api.py")
+        if not has_dockerfile:
+            self.fail("env.files must declare env/Dockerfile")
+        if not has_judge_api:
+            self.fail("env.files must declare env/judge_api.py")
 
     def check_task_list(self, data: dict[str, Any], split: str) -> None:
         tasks = data.get(split)
@@ -233,6 +251,12 @@ class Checker:
             self.fail(f"{prefix}.eval.rubric must be a non-empty list")
             return
 
+        if not 6 <= len(rubric) <= 10:
+            self.fail(
+                f"{prefix}.eval.rubric must contain 6-10 scoring points, "
+                f"found {len(rubric)}"
+            )
+
         for idx, item in enumerate(rubric):
             field = f"{prefix}.eval.rubric[{idx}]"
             if not isinstance(item, dict):
@@ -241,8 +265,12 @@ class Checker:
             if not isinstance(item.get("goal"), str) or not item["goal"].strip():
                 self.fail(f"{field}.goal must be a non-empty string")
             weight = item.get("weight")
-            if not is_number(weight) or float(weight) <= 0:
-                self.fail(f"{field}.weight must be a positive number")
+            if (
+                not isinstance(weight, int)
+                or isinstance(weight, bool)
+                or weight not in {1, 2, 3}
+            ):
+                self.fail(f"{field}.weight must be an integer in {{1, 2, 3}}")
 
     def check_eval_on_answer(self, script_path: Path, answer_path: Path, prefix: str) -> None:
         self.run_eval_and_check(
@@ -250,12 +278,6 @@ class Checker:
             cwd=self.root,
             prefix=prefix,
             mode="explicit answer path",
-        )
-        self.run_eval_and_check(
-            [str(script_path.resolve())],
-            cwd=script_path.parent,
-            prefix=prefix,
-            mode="default answer",
         )
 
     def run_eval_and_check(self, command: list[str], *, cwd: Path, prefix: str, mode: str) -> None:
@@ -354,15 +376,13 @@ def is_full_score(data: Any) -> bool:
     if not isinstance(data, dict):
         return False
 
-    for key in ("normalized_score", "score", "total_score"):
-        value = data.get(key)
-        if is_number(value) and abs(float(value) - 1.0) <= 1e-6:
-            return True
-
     if data.get("passed") is True:
         return True
 
     score_pairs = [
+        ("score", "max_score"),
+        ("raw_score", "raw_max_score"),
+        ("raw_score", "max_raw_score"),
         ("earned_score", "max_score"),
         ("earned_weight", "total_weight"),
         ("earned", "total"),
@@ -373,6 +393,11 @@ def is_full_score(data: Any) -> bool:
         if is_number(earned) and is_number(total) and float(total) > 0:
             if abs(float(earned) - float(total)) <= 1e-6:
                 return True
+
+    for key in ("normalized_score", "score", "total_score"):
+        value = data.get(key)
+        if is_number(value) and abs(float(value) - 1.0) <= 1e-6:
+            return True
 
     for key in ("points", "scoring_points", "details", "checks"):
         value = data.get(key)

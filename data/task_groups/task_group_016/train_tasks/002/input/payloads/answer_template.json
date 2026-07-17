@@ -1,0 +1,165 @@
+{
+  "format": "Return a single JSON object. Do not include markdown, comments, or extra top-level keys.",
+  "required_top_level_keys": [
+    "task_id",
+    "case_id",
+    "patient_id",
+    "primary_assessment",
+    "risk_tier",
+    "disposition",
+    "imaging_recommendation",
+    "red_flags",
+    "absent_red_flags",
+    "restrictions",
+    "follow_up",
+    "evidence_ids",
+    "safety_checks"
+  ],
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required": true,
+      "expected_constant": "train_002"
+    },
+    "case_id": {
+      "type": "string",
+      "required": true,
+      "expected_constant": "CASE-HEAD-207"
+    },
+    "patient_id": {
+      "type": "string",
+      "required": true,
+      "description": "Stable patient identifier from the clinic environment."
+    },
+    "primary_assessment": {
+      "type": "enum",
+      "required": true,
+      "allowed_values": [
+        "minor_head_injury_no_concussion_features",
+        "mild_traumatic_brain_injury_without_loss_of_consciousness",
+        "pediatric_head_injury_with_concussion_features",
+        "severe_head_injury"
+      ]
+    },
+    "risk_tier": {
+      "type": "enum",
+      "required": true,
+      "allowed_values": [
+        "low",
+        "intermediate",
+        "high"
+      ]
+    },
+    "disposition": {
+      "type": "enum",
+      "required": true,
+      "allowed_values": [
+        "home_observation_with_followup",
+        "ed_evaluation_ct_consideration"
+      ]
+    },
+    "imaging_recommendation": {
+      "type": "enum",
+      "required": true,
+      "allowed_values": [
+        "no_immediate_ct",
+        "ct_or_ed_per_protocol",
+        "urgent_ct"
+      ]
+    },
+    "red_flags": {
+      "type": "list[enum]",
+      "required": true,
+      "allowed_values": [
+        "head_impact",
+        "mild_nausea",
+        "coordination_symptom_observe",
+        "loss_of_consciousness",
+        "repeated_vomiting",
+        "seizure",
+        "focal_weakness",
+        "worsening_headache",
+        "basilar_skull_signs",
+        "photophobia"
+      ],
+      "ordering": "No semantic ordering; omit duplicates."
+    },
+    "absent_red_flags": {
+      "type": "list[enum]",
+      "required": true,
+      "allowed_values": [
+        "loss_of_consciousness",
+        "repeated_vomiting",
+        "seizure",
+        "focal_weakness",
+        "worsening_headache",
+        "basilar_skull_signs",
+        "photophobia"
+      ],
+      "ordering": "No semantic ordering; omit duplicates."
+    },
+    "restrictions": {
+      "type": "list[enum]",
+      "required": true,
+      "allowed_values": [
+        "relative_cognitive_physical_rest",
+        "return_to_learn_accommodations",
+        "no_high_risk_sports_until_cleared",
+        "no_driving_until_symptom_free",
+        "no_driving_until_cleared",
+        "normal_activity_as_tolerated"
+      ],
+      "ordering": "No semantic ordering; omit duplicates."
+    },
+    "follow_up": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "timeframe_hours",
+        "route"
+      ],
+      "fields": {
+        "timeframe_hours": {
+          "type": "integer",
+          "unit": "hours",
+          "precision": "whole hours"
+        },
+        "route": {
+          "type": "enum",
+          "allowed_values": [
+            "primary_care_or_concussion_recheck",
+            "emergency_department",
+            "neurology_referral",
+            "return_if_worse_only"
+          ]
+        }
+      }
+    },
+    "evidence_ids": {
+      "type": "list[string]",
+      "required": true,
+      "description": "Stable case, encounter, observation, imaging, or protocol identifiers used as evidence.",
+      "ordering": "Use a stable order; case identifier first when included, then clinical source identifiers."
+    },
+    "safety_checks": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "no_false_loc",
+        "no_false_vomiting",
+        "no_false_photophobia"
+      ],
+      "fields": {
+        "no_false_loc": {
+          "type": "boolean"
+        },
+        "no_false_vomiting": {
+          "type": "boolean"
+        },
+        "no_false_photophobia": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "schema_name": "train_004_marion_mixed_misdemeanor_update",
+  "version": "1.0",
+  "required_top_level_keys": [
+    "task_id",
+    "county",
+    "docket_date",
+    "case_rows",
+    "aggregate"
+  ],
+  "top_level_fields": {
+    "task_id": {
+      "type": "string",
+      "description": "Use the task identifier."
+    },
+    "county": {
+      "type": "string",
+      "description": "County name."
+    },
+    "docket_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD",
+      "description": "Packet docket or review date."
+    },
+    "case_rows": {
+      "type": "list",
+      "ordering": "Sort rows by case_number ascending.",
+      "description": "One row for each Marion mixed misdemeanor docket matter from the packet."
+    },
+    "aggregate": {
+      "type": "object",
+      "description": "Batch-level totals and mismatch lists."
+    }
+  },
+  "case_row_required_keys": [
+    "case_number",
+    "defendant_name",
+    "resolved_status",
+    "disposition_date",
+    "disposition_class",
+    "convicted_charge_count",
+    "corrected_defense_attorney",
+    "corrected_defense_type",
+    "representation_mismatch",
+    "approved_fee_codes",
+    "current_ledger_principal",
+    "corrected_assessment_total",
+    "financial_delta",
+    "docket_action"
+  ],
+  "case_row_fields": {
+    "case_number": {
+      "type": "string"
+    },
+    "defendant_name": {
+      "type": "string"
+    },
+    "resolved_status": {
+      "type": "enum",
+      "choices": [
+        "closed",
+        "deferred",
+        "open",
+        "probation_active",
+        "warrant"
+      ]
+    },
+    "disposition_date": {
+      "type": "string_or_null",
+      "format": "YYYY-MM-DD or null when no disposition has been entered"
+    },
+    "disposition_class": {
+      "type": "enum",
+      "choices": [
+        "convicted",
+        "deferred",
+        "dismissed",
+        "pending_no_disposition",
+        "ledger_review_only"
+      ]
+    },
+    "convicted_charge_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "corrected_defense_attorney": {
+      "type": "string"
+    },
+    "corrected_defense_type": {
+      "type": "enum",
+      "choices": [
+        "public_defender",
+        "retained",
+        "appointed_private",
+        "unknown"
+      ]
+    },
+    "representation_mismatch": {
+      "type": "boolean",
+      "description": "True when the stale export or live case representation details do not match the resolved counsel record used for this output."
+    },
+    "approved_fee_codes": {
+      "type": "list",
+      "items": {
+        "type": "enum",
+        "choices": [
+          "CR-CONV",
+          "CR-FILING",
+          "CR-PROB",
+          "CR-REST-ADM"
+        ]
+      },
+      "ordering": "Sort fee codes alphabetically."
+    },
+    "current_ledger_principal": {
+      "type": "number",
+      "precision": 2,
+      "unit": "USD",
+      "description": "Current live ledger principal_amount before this correction; use 0.00 if no live financial obligation exists."
+    },
+    "corrected_assessment_total": {
+      "type": "number",
+      "precision": 2,
+      "unit": "USD",
+      "description": "Final approved principal before payments, including any restitution when applicable."
+    },
+    "financial_delta": {
+      "type": "number",
+      "precision": 2,
+      "unit": "USD",
+      "description": "corrected_assessment_total minus current_ledger_principal."
+    },
+    "docket_action": {
+      "type": "enum",
+      "choices": [
+        "no_update_needed",
+        "financial_adjustment",
+        "update_status_and_representation",
+        "enter_disposition_and_assess",
+        "release_to_entry"
+      ]
+    }
+  },
+  "aggregate_required_keys": [
+    "case_count",
+    "financial_adjustment_count",
+    "total_financial_delta",
+    "representation_mismatch_cases"
+  ],
+  "aggregate_fields": {
+    "case_count": {
+      "type": "integer"
+    },
+    "financial_adjustment_count": {
+      "type": "integer",
+      "description": "Count of case rows where financial_delta is not 0.00."
+    },
+    "total_financial_delta": {
+      "type": "number",
+      "precision": 2,
+      "unit": "USD"
+    },
+    "representation_mismatch_cases": {
+      "type": "list",
+      "items": {
+        "type": "string",
+        "description": "Case number"
+      },
+      "ordering": "Sort case numbers ascending."
+    }
+  }
+}

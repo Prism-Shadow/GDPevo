@@ -1,0 +1,125 @@
+{
+  "task_id": "string; required value train_001",
+  "candidate_id": "string",
+  "merge": {
+    "target_patient_id": "string",
+    "source_patient_id": "string",
+    "disposition": "enum: ready_to_merge | needs_review | do_not_merge",
+    "canonical_reason_codes": [
+      "string; optional controlled reason labels, sorted alphabetically"
+    ]
+  },
+  "merge_decision": {
+    "disposition": "enum: merge_ready | merge_ready_with_conflict_review | needs_manual_review | do_not_merge",
+    "canonical_target_patient_id": "string patient id",
+    "source_patient_id": "string patient id",
+    "manual_review_required": "boolean",
+    "reason_codes": [
+      "standardized disposition reason code strings sorted alphabetically"
+    ]
+  },
+  "clinical_unions": {
+    "active_condition_keys": [
+      "string; normalized_key values from active condition records, sorted alphabetically"
+    ],
+    "active_medication_keys": [
+      "string; normalized_key values from active medication records, sorted alphabetically"
+    ],
+    "active_allergy_keys": [
+      "string; normalized_key values from active allergy records, sorted alphabetically"
+    ]
+  },
+  "active_key_unions": {
+    "condition_keys": [
+      "array of normalized active condition keys sorted alphabetically"
+    ],
+    "medication_keys": [
+      "array of normalized active medication keys sorted alphabetically"
+    ],
+    "allergy_keys": [
+      "array of normalized active allergy keys sorted alphabetically"
+    ]
+  },
+  "active_list_reconciliation": {
+    "authoritative_source": "enum: patient_active_list_endpoints_over_duplicate_preview",
+    "condition_keys_added_from_active_endpoints": [
+      "array of active condition keys present in patient endpoints but missing from duplicate preview"
+    ],
+    "medication_keys_added_from_active_endpoints": [
+      "array of active medication keys present in patient endpoints but missing from duplicate preview"
+    ],
+    "allergy_keys_added_from_active_endpoints": [
+      "array of active allergy keys present in patient endpoints but missing from duplicate preview"
+    ]
+  },
+  "identity_signals": {
+    "match_signals": [
+      "string; duplicate candidate match signal labels, sorted alphabetically"
+    ],
+    "conflict_signals": [
+      "string; duplicate candidate conflict signal labels, sorted alphabetically"
+    ],
+    "demographic_matches": [
+      "string; demographic fields or normalized business signals that match, sorted alphabetically"
+    ],
+    "demographic_conflicts": [
+      "string; demographic fields or normalized business signals that conflict, sorted alphabetically"
+    ]
+  },
+  "evidence": {
+    "document_ids": [
+      "string; relevant final document IDs for the merge packet, sorted alphabetically"
+    ],
+    "audit_ids": [
+      "string; relevant audit log IDs for the merge packet, sorted alphabetically"
+    ]
+  },
+  "excluded_distractors": {
+    "condition_keys": [
+      "array of normalized inactive or non-merge condition keys sorted alphabetically"
+    ],
+    "medication_keys": [
+      "array of normalized inactive or non-merge medication keys sorted alphabetically"
+    ],
+    "document_ids": [
+      "array of unrelated document_id values sorted alphabetically"
+    ],
+    "audit_ids": [
+      "array of unrelated audit_id values sorted alphabetically"
+    ]
+  },
+  "document_selection_policy": {
+    "packet_document_basis": "enum: identity_or_external_continuity_documents_only",
+    "excluded_document_types": [
+      "array of document type labels excluded from packet evidence"
+    ]
+  },
+  "packet_readiness": {
+    "ready_for_merge_packet": "boolean",
+    "readiness_status": "enum: ready | ready_with_review_note | blocked",
+    "required_review_notes": [
+      "array of normalized note codes sorted alphabetically"
+    ]
+  },
+  "packet_contact": {
+    "specialist_provider": {
+      "provider_id": "string",
+      "name": "string",
+      "role": "string",
+      "service_line": "string",
+      "facility": "string",
+      "phone": "string",
+      "fax": "string",
+      "contact_reason": "string"
+    },
+    "primary_care_provider": {
+      "provider_id": "string",
+      "name": "string",
+      "role": "string",
+      "service_line": "string",
+      "facility": "string",
+      "phone": "string",
+      "fax": "string"
+    }
+  }
+}

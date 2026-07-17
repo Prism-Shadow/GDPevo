@@ -1,0 +1,76 @@
+{
+  "branch_id": "HARBOR",
+  "applications_compared": [
+    {
+      "application_id": "HAR-APP-901",
+      "weighted_cdfi_score": 2.6,
+      "score_class": "conditional",
+      "decision": "participation_required",
+      "reason_codes": [
+        "fdic_adverse_variance",
+        "sector_breach"
+      ]
+    },
+    {
+      "application_id": "HAR-APP-902",
+      "weighted_cdfi_score": 4.4,
+      "score_class": "weak",
+      "decision": "defer",
+      "reason_codes": [
+        "fdic_adverse_variance",
+        "sector_breach",
+        "weak_dscr"
+      ]
+    }
+  ],
+  "recommended_path": {
+    "selected_application_id": "HAR-APP-901",
+    "path": "participation_required",
+    "unselected_application_id": "HAR-APP-902",
+    "unselected_disposition": "defer",
+    "unselected_reason_codes": [
+      "fdic_adverse_variance",
+      "sector_breach",
+      "weak_dscr"
+    ]
+  },
+  "stress": {
+    "formula": "dscr * 0.85 / 1.18",
+    "coverage_breach_threshold": 1.0,
+    "results": [
+      {
+        "application_id": "HAR-APP-901",
+        "base_dscr": 1.47,
+        "stressed_dscr": 1.06,
+        "breaches_threshold": false
+      },
+      {
+        "application_id": "HAR-APP-902",
+        "base_dscr": 1.32,
+        "stressed_dscr": 0.95,
+        "breaches_threshold": true
+      }
+    ]
+  },
+  "concentration": {
+    "cre_policy_limit_pct": 0.29,
+    "existing_cre_exposure": 7011570.24,
+    "existing_cre_concentration": 0.4695,
+    "selected_post_approval_cre_concentration": 0.5349,
+    "selected_policy_variance_bps": 2449.15,
+    "fdic_benchmark_metric": "total_real_estate_30_89_pct",
+    "branch_delinquency_ratio": 0.2853,
+    "fdic_benchmark_ratio": 0.0051,
+    "fdic_variance_ratio": 0.2802,
+    "fdic_variance_bps": 2802.0
+  },
+  "conditions": [
+    "bank_retained_exposure_cap",
+    "committee_cre_exception",
+    "minimum_dscr_covenant_1_25",
+    "no_additional_cre_without_committee_review",
+    "quarterly_financial_reporting",
+    "tenant_roll_and_lease_review",
+    "updated_appraisal_before_close"
+  ]
+}

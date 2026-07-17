@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-01
+name: task-group-001-fewshot-attempt-01
 description: Produce HarborCRM JSON answers for evaluation tasks that provide prompts, answer_template.json files, and HarborCRM API data. Use when reconciling event sponsorships, badge leads, campaign members, finance invoices, trade-show prospecting, or import batch hygiene into exact JSON output schemas with controlled enums, counts, dates, and CRM actions.
 ---
 

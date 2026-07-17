@@ -1,0 +1,114 @@
+{
+  "task_id": "train_001",
+  "roster_id": "NPI-JUN-01",
+  "requested_service_date": "2026-06-18",
+  "service_line": "primary_care",
+  "patient_results": [
+    {
+      "patient_id": "P001",
+      "insurance_status": "valid",
+      "prescription_status": "valid",
+      "pharmacy_status": "out_of_network",
+      "lifestyle_risk": "high",
+      "overall_risk": "high",
+      "registration_status": "clinical_review",
+      "blocked_reason_codes": [
+        "pharmacy_out_of_network",
+        "overall_risk_high"
+      ]
+    },
+    {
+      "patient_id": "P002",
+      "insurance_status": "valid",
+      "prescription_status": "invalid",
+      "pharmacy_status": "in_network",
+      "lifestyle_risk": "high",
+      "overall_risk": "high",
+      "registration_status": "clinical_review",
+      "blocked_reason_codes": [
+        "pbm_invalid",
+        "preferred_contact_unavailable",
+        "overall_risk_high"
+      ]
+    },
+    {
+      "patient_id": "P003",
+      "insurance_status": "invalid",
+      "prescription_status": "valid",
+      "pharmacy_status": "out_of_network",
+      "lifestyle_risk": "high",
+      "overall_risk": "high",
+      "registration_status": "rejected",
+      "blocked_reason_codes": [
+        "coverage_expired",
+        "excluded_service_line",
+        "pharmacy_out_of_network",
+        "overall_risk_high"
+      ]
+    },
+    {
+      "patient_id": "P004",
+      "insurance_status": "invalid",
+      "prescription_status": "invalid",
+      "pharmacy_status": "in_network",
+      "lifestyle_risk": "high",
+      "overall_risk": "high",
+      "registration_status": "rejected",
+      "blocked_reason_codes": [
+        "excluded_service_line",
+        "pbm_invalid",
+        "preferred_contact_unavailable",
+        "overall_risk_high"
+      ]
+    },
+    {
+      "patient_id": "P005",
+      "insurance_status": "invalid",
+      "prescription_status": "valid",
+      "pharmacy_status": "in_network",
+      "lifestyle_risk": "high",
+      "overall_risk": "high",
+      "registration_status": "clinical_review",
+      "blocked_reason_codes": [
+        "coverage_pending",
+        "missing_address",
+        "overall_risk_high"
+      ]
+    },
+    {
+      "patient_id": "P006",
+      "insurance_status": "invalid",
+      "prescription_status": "invalid",
+      "pharmacy_status": "out_of_network",
+      "lifestyle_risk": "medium",
+      "overall_risk": "high",
+      "registration_status": "rejected",
+      "blocked_reason_codes": [
+        "excluded_service_line",
+        "pbm_policy_mismatch",
+        "pharmacy_out_of_network",
+        "emergency_contact_missing",
+        "overall_risk_high"
+      ]
+    }
+  ],
+  "cohort_summary": {
+    "total_patients": 6,
+    "counts_by_registration_status": {
+      "approved": 0,
+      "hold": 0,
+      "clinical_review": 3,
+      "rejected": 3
+    },
+    "counts_by_overall_risk": {
+      "low": 0,
+      "medium": 0,
+      "high": 6
+    },
+    "counts_by_lifestyle_risk": {
+      "low": 0,
+      "medium": 1,
+      "high": 5
+    }
+  }
+}

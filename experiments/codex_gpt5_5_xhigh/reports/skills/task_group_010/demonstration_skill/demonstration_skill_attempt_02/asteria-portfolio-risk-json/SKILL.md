@@ -1,5 +1,5 @@
 ---
-name: asteria-portfolio-risk-json
+name: task-group-010-fewshot-attempt-02
 description: Generate JSON answers for Asteria Investment Office portfolio-risk tasks using the public Asteria API. Use when prompts ask for credit trade or rebalance packages, equity correlation reviews, active allocation views, or committee decision JSON based on portfolios, bonds, issuers, policies, index levels, prior views, and macro signals.
 ---
 

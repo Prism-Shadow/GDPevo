@@ -1,0 +1,72 @@
+{
+  "points": [
+    {
+      "id": "employee_identity",
+      "description": "Correctly identifies the employee under review as EMP-122.",
+      "weight": 1,
+      "fields": {
+        "employee_id": "EMP-122"
+      }
+    },
+    {
+      "id": "submitted_salary_assignment",
+      "description": "Selects the submitted salary assignment for Omar Patel.",
+      "weight": 1,
+      "fields": {
+        "salary_assignment_id": "PAY-122-SUB-03",
+        "payroll_source_status": "submitted"
+      }
+    },
+    {
+      "id": "salary_amount_and_effective_date",
+      "description": "Reports the submitted base salary and effective date.",
+      "weight": 1,
+      "fields": {
+        "base_salary": 98000,
+        "effective_date": "2026-04-01"
+      }
+    },
+    {
+      "id": "excluded_draft_assignment",
+      "description": "Excludes the draft payroll assignment.",
+      "weight": 1,
+      "fields": {
+        "excluded_assignment_id": "PAY-122-DRAFT-04",
+        "draft_exclusion_rule": "exclude_draft_assignment"
+      }
+    },
+    {
+      "id": "accrual_ready_state",
+      "description": "Confirms the accrual readiness flag.",
+      "weight": 1,
+      "fields": {
+        "accrual_ready": true
+      }
+    },
+    {
+      "id": "accrual_batch",
+      "description": "Reports the correct April 2026 accrual batch.",
+      "weight": 1,
+      "fields": {
+        "accrual_batch_id": "ACCR-2026-04-B"
+      }
+    },
+    {
+      "id": "audit_event",
+      "description": "Cites the supporting audit event.",
+      "weight": 1,
+      "fields": {
+        "audit_event_id": "AUD-PAY122-07",
+        "audit_scope": "payroll_assignment_readiness"
+      }
+    },
+    {
+      "id": "control_result",
+      "description": "Returns the final payroll accrual control result.",
+      "weight": 1,
+      "fields": {
+        "control_result": "ready_with_monitoring"
+      }
+    }
+  ]
+}

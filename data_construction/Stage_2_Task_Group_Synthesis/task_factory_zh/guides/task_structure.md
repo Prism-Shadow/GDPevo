@@ -22,7 +22,10 @@
 task_group_001/
 ├── task_group.yaml
 ├── env/
+│   ├── Dockerfile
 │   ├── setup.sh
+│   ├── judge_api.py
+│   ├── endpoints.txt
 │   └── <共享业务服务、数据、setup 文件和支持文件>
 ├── train_tasks/
 │   ├── 001/
@@ -68,9 +71,14 @@ task_group:
     Describe the train-predict benchmark and the shared business environment.
 
 env:
+  dockerfile: env/Dockerfile
   setup: env/setup.sh
+  state_mode: read_only # 或 mutable
   files:
+    - env/Dockerfile
     - env/setup.sh
+    - env/judge_api.py
+    - env/endpoints.txt
     - env/<shared_business_service_or_support_file>
 
 train_tasks:
@@ -123,10 +131,23 @@ test_tasks:
 | `task_group.source_examples` | 是 | 用于构造该 task group 的第一阶段 example ID 列表，必须来自同一个 scenario |
 | `task_group.domain` | 是 | 领域标签 |
 | `task_group.description` | 是 | task group 的共享背景说明，不作为 solver 默认输入 |
+| `env.dockerfile` | 是 | 隔离环境镜像的 Docker 构建入口；构建上下文只能是 `env/` |
 | `env.setup` | 是 | 环境准备入口 |
-| `env.files` | 是 | 需要在最终 task group 索引中声明的公共环境文件 |
+| `env.state_mode` | 是 | 只有并发 attempt 不可能改变后续 solver 可见结果时才用 `read_only`，否则使用 `mutable` |
+| `env.files` | 是 | 最终 task group 索引中声明的公共环境文件；必须包含 `env/endpoints.txt` |
 | `train_tasks` | 是 | 5 个 train task 条目：`train_001` 到 `train_005` |
 | `test_tasks` | 是 | 5 个 test task 条目：`test_001` 到 `test_005` |
+
+`env/endpoints.txt` 是纯 endpoint 清单。每个可访问 endpoint 只写一行
+`METHOD /path`，需要包含业务 endpoint、`/health` 和 `/api/judge`。不能写接口
+介绍、样例、host、凭据或调用说明。
+
+构造阶段必须明确填写 `env.state_mode`，calibration 和 evaluation 的主控 agent
+不能在运行时自行猜测。只有业务接口完全只读，并且 session、cache、鉴权状态、
+日志、限流或 judge 记录都不会影响后续 attempt 的可见行为时，才能使用
+`read_only`。只要任务包含写操作，或无法确认没有状态影响，就必须使用
+`mutable`。`read_only` 环境可以在同一个权限阶段供多个并发 attempt 共享；
+`mutable` 环境的每个 attempt 都必须使用新的环境容器和独立可写层。
 
 `train_tasks` 和 `test_tasks` 中的每一项表示一个正式任务：
 
@@ -141,7 +162,7 @@ test_tasks:
 | `answer_json` | 是 | 标准答案文件 |
 | `eval.script` | 是 | 评测入口脚本 |
 | `eval.files` | 是 | 评测相关文件列表 |
-| `eval.rubric` | 是 | 6-10 个 scoring points；每项只写 `goal` 和 `weight`；`weight` 只能为 `1`、`2` 或 `3`，实际得分权重为该点 `weight / sum(weight)` |
+| `eval.rubric` | 是 | 6-10 个 scoring points，覆盖至少 4 个语义不同且不重复的业务结果；每项只写 `goal` 和 `weight`；`weight` 只能为 `1`、`2` 或 `3`，该 point 只能获得全部 `weight / sum(weight)` 分值或零分；不允许 point 内部分得分或语义重复计分 |
 
 ## answer_template.json
 

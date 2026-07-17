@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-07-07T00:00:00Z",
+  "seeds": {
+    "master": 18072026,
+    "cases": 18072027,
+    "citations": 18072028,
+    "fees": 18072029,
+    "hearings": 18072030,
+    "finance": 18072031,
+    "stale_exports": 18072032
+  },
+  "record_counts": {
+    "counties": 8,
+    "attorneys": 16,
+    "cases": 112,
+    "citations": 68,
+    "fee_schedule_rows": 204,
+    "payment_policies": 8,
+    "financial_obligations": 102,
+    "docket_case_records": 112,
+    "docket_entries": 338,
+    "hearings": 58,
+    "stale_exports": 10,
+    "stale_export_records": 89
+  },
+  "files": [
+    "env/generate_data.py",
+    "env/server.py",
+    "env/setup.sh",
+    "env/data/clerk_ops.json",
+    "env/data/manifest.json"
+  ],
+  "endpoints": [
+    "GET /health",
+    "GET /api/counties",
+    "GET /api/cases",
+    "GET /api/cases?county=<county>&matter_type=<type>&status=<status>",
+    "GET /api/cases/<case_number>",
+    "GET /api/citations",
+    "GET /api/citations/<citation_number>",
+    "GET /api/hearings?date=<YYYY-MM-DD>&county=<county>",
+    "GET /api/attorneys",
+    "GET /api/fees?county=<county>&matter_type=<type>&effective_on=<YYYY-MM-DD>",
+    "GET /api/payment-policies?county=<county>",
+    "GET /api/financial-obligations?case_number=<case_number>",
+    "GET /api/docket?case_number=<case_number>",
+    "GET /api/stale-exports?county=<county>&name=<export_name>",
+    "GET /api/search?q=<text>",
+    "GET /docs"
+  ],
+  "selected_named_counties": [
+    "Benton",
+    "Lane",
+    "Gloucester",
+    "Marion",
+    "Wasco",
+    "Columbia",
+    "Jefferson",
+    "Middlesex"
+  ],
+  "known_noise_categories": [
+    "similar defendant names and nearby dates of birth",
+    "nearby case and citation numbers",
+    "obsolete fee rows with explicit effective dates",
+    "stale exports with older status, attorney, hearing, and ledger values",
+    "draft or needs-review hearing minute entries",
+    "docket correction entries that supersede older notes",
+    "missing first due dates for pending citations",
+    "payment policy placeholder value for unknown case-file fields"
+  ],
+  "non_solver_visible_note": "This manifest describes generated shared records and endpoints only. It contains no task IDs, answer keys, or scoring rubrics."
+}

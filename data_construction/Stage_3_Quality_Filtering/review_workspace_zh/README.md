@@ -66,7 +66,7 @@ python3 scripts/check_task_group.py task_group/<task_group_id>
 - 脚本只检查确定性的结构和自洽性，不判断数据质量。
 - 6 个 reviewer 必须上下文干净，不能互相参考结论，也不能由主 agent 在同一上下文里模拟投票。
 - Reviewer 应判断 task group 是否适合作为 benchmark 数据，而不是只看文件是否齐全。
-- 基于 `task_group/` 和 `scratch/` 重点检查来源场景一致性、train/test 迁移设计、可迁移的 diversity、公共环境边界、答案泄漏风险、notes 可解释性、评测可信度、难度校准和多 agent 构造过程。答案泄漏风险只看正式 task group 的 solver-visible surface，不把 `scratch/` 中的构造证据视为泄露。
+- 基于 `task_group/` 和 `scratch/` 重点检查来源场景一致性、train/test 迁移设计、可迁移的 diversity、环境与容器边界、答案泄漏风险、notes 可解释性、评测可信度、每个 rubric 是否整体给分、Dockerized 难度校准及构造过程。答案泄漏风险只看正式 task group 的 solver-visible surface，不把 `scratch/` 中的构造证据视为泄露。
 - 小问题可以作为 `concerns` 记录；答案泄漏、eval 不可信、迁移无效、校准失效或结构缺失应判为 `fail`。
 - 返工后的 task group 必须重新运行脚本检查，并重新组织 6 票审核；不能沿用返工前的投票。
 
@@ -75,6 +75,5 @@ python3 scripts/check_task_group.py task_group/<task_group_id>
 给每个 reviewer subagent 使用下面的简短任务说明：
 
 ```text
-Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard.
-Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
+Please independently review <task_group_path> and scratch/ using guides/review_criteria.md as the standard. Inspect the actual evaluators and scratch/rubric_validation.md; verify that each point gives either all of its assigned score or zero. Also verify the fixed-prompt Dockerized Codex calibration evidence. Do not use other reviewers' conclusions. Return one vote: pass or fail, with concise support for each required check.
 ```

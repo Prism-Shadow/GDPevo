@@ -1,0 +1,123 @@
+{
+  "title": "Enterprise support health review answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eligible_case_count",
+    "case_state_summary",
+    "first_response_breach_count",
+    "active_clock_resolution_breach_count",
+    "worst_accounts",
+    "severe_active_case_ids",
+    "median_active_resolution_hours",
+    "support_risk"
+  ],
+  "properties": {
+    "eligible_case_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Eligible production support cases in the requested opened window; unit: cases.",
+      "x-unit": "cases",
+      "x-precision": 0
+    },
+    "case_state_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "open_at_cutoff_count",
+        "reopened_at_cutoff_count"
+      ],
+      "properties": {
+        "open_at_cutoff_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Cases active at the cutoff, including the reopened subset; unit: cases.",
+          "x-unit": "cases",
+          "x-precision": 0
+        },
+        "reopened_at_cutoff_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Reopened subset of cases active at the cutoff; unit: cases.",
+          "x-unit": "cases",
+          "x-precision": 0
+        }
+      }
+    },
+    "first_response_breach_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Eligible cases beyond the priority first-response active-time threshold; unit: cases.",
+      "x-unit": "cases",
+      "x-precision": 0
+    },
+    "active_clock_resolution_breach_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Eligible cases beyond the priority resolution active-time threshold; unit: cases.",
+      "x-unit": "cases",
+      "x-precision": 0
+    },
+    "worst_accounts": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "description": "Exactly three eligible accounts ordered by severe active case count descending, active-clock breach count descending, then account ID ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "account_id",
+          "severe_active_case_count",
+          "active_clock_breach_count"
+        ],
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "pattern": "^ACC-[0-9]{4}$",
+            "description": "Stable account identifier."
+          },
+          "severe_active_case_count": {
+            "type": "integer",
+            "minimum": 0,
+            "x-unit": "cases",
+            "x-precision": 0
+          },
+          "active_clock_breach_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Resolution active-clock breaches among the account's eligible cases.",
+            "x-unit": "cases",
+            "x-precision": 0
+          }
+        }
+      }
+    },
+    "severe_active_case_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Exact severe active case IDs sorted ascending.",
+      "items": {
+        "type": "string",
+        "pattern": "^CASE-[0-9]{6}$"
+      }
+    },
+    "median_active_resolution_hours": {
+      "type": "number",
+      "minimum": 0,
+      "multipleOf": 0.01,
+      "description": "Median active resolution time across eligible cases resolved at the cutoff, rounded to 2 decimal places; unit: hours.",
+      "x-unit": "hours",
+      "x-precision": 2
+    },
+    "support_risk": {
+      "type": "string",
+      "enum": [
+        "CONTROLLED",
+        "ELEVATED",
+        "SEVERE"
+      ]
+    }
+  }
+}

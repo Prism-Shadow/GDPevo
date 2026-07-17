@@ -48,7 +48,7 @@ Object endpoints support exact-match query parameters for fields, plus `limit` a
 Examples:
 
 ```text
-http://127.0.0.1:8005/bills?status=paid&limit=20
-http://127.0.0.1:8005/gl/balances?account=1250&period=2025-04
-http://127.0.0.1:8005/compliance/objects?review_status=escalated
+http://<TASK_ENV_BASE_URL>/bills?status=paid&limit=20
+http://<TASK_ENV_BASE_URL>/gl/balances?account=1250&period=2025-04
+http://<TASK_ENV_BASE_URL>/compliance/objects?review_status=escalated
 ```

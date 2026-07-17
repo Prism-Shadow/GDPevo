@@ -1,0 +1,192 @@
+{
+  "business_cutoff": "2026-04-10T23:59:59Z",
+  "case_id": "dealer-renewal-certification-2026w11",
+  "collection_id": "dealer_contacts_2026w11",
+  "required_internal_control_families": [
+    "field_provenance_code",
+    "identity_code",
+    "outreach_code"
+  ],
+  "canonical_impact_fields": [
+    "city",
+    "consent_status",
+    "email",
+    "phone",
+    "record_status"
+  ],
+  "unsafe_identity_containment_robustness_policy": {
+    "policy_id": "DEALER_UNSAFE_IDENTITY_CONTAINMENT_ROBUSTNESS_V1",
+    "node_rule": "EVERY_FINAL_CANONICAL_ENTITY_IS_A_NODE_IDENTIFIED_BY_BASELINE_MASTER_ID",
+    "canonical_value_rule": "USE_THE_FINAL_SELECTED_CANONICAL_ROW_FOR_EMAIL_PHONE_NAME_CITY_AND_COUNTRY",
+    "normalization": {
+      "city": "TRIM_COLLAPSE_WHITESPACE_CASEFOLD",
+      "email": "TRIM_CASEFOLD_AND_TREAT_STANDARD_NULL_MARKERS_AS_UNUSABLE",
+      "name": "TRIM_COLLAPSE_WHITESPACE_CASEFOLD",
+      "phone": "DIGITS_ONLY_LAST_10"
+    },
+    "unsafe_edge_conditions": {
+      "NAME_CITY_DISTINCT_CONTACT": "BOTH_ENTITIES_HAVE_DISTINCT_USABLE_EMAILS; NORMALIZED_NAMES_AND_NORMALIZED_CITIES_ARE_NONEMPTY_AND_EQUAL; NORMALIZED_PHONES_ARE_DISTINCT",
+      "PHONE_DISTINCT_EMAIL": "NORMALIZED_PHONE_IS_USABLE_AND_EQUAL; BOTH_NORMALIZED_EMAILS_ARE_USABLE_AND_DISTINCT"
+    },
+    "combined_component_rule": "BUILD_CONNECTED_COMPONENTS_FROM_THE_UNION_OF_BOTH_DIRECT_EDGE_SETS",
+    "direct_edge_count_rule": "COUNT_EACH_UNORDERED_ENTITY_PAIR_ONCE_IN_THE_COMBINED_GRAPH_EVEN_IF_MULTIPLE_CONDITIONS_MATCH; CONDITION_COUNTS_ARE_COMPUTED_INDEPENDENTLY",
+    "component_id_rule": "LEXICOGRAPHICALLY_SMALLEST_BASELINE_MASTER_ID_IN_COMPONENT",
+    "cross_country_rule": "ERRONEOUS_MERGE_PAIRS_WHOSE_FINAL_CANONICAL_COUNTRIES_DIFFER",
+    "containment_repair": {
+      "candidate_rule": "FINAL_CANONICAL_ENTITIES_INCIDENT_TO_PHONE_DISTINCT_EMAIL_EDGES_IN_CROSS_COUNTRY_COMBINED_COMPONENTS",
+      "feasible_option_rule": "RETAIN_ALL_BRIDGE_CANDIDATES_FROM_ONE_REPRESENTED_COUNTRY_AND_REMOVE_ALL_OTHER_BRIDGE_CANDIDATES_THEN_REBUILD_THE_COMBINED_GRAPH",
+      "safety_constraint": "EVERY_RESIDUAL_NON_SINGLETON_COMBINED_COMPONENT_CONTAINS_EXACTLY_ONE_COUNTRY",
+      "objective_order": [
+        "MINIMIZE_REMOVED_ENTITY_COUNT",
+        "MINIMIZE_TOTAL_OPERATIONAL_LOSS_WEIGHT",
+        "retained_bridge_country ASC",
+        "removed_master_ids LEXICOGRAPHIC"
+      ],
+      "operational_loss_weight_by_readiness_reason": {
+        "UNIQUE_EMAIL_WITH_GRANTED_CONSENT": 5,
+        "CONSENT_NOT_GRANTED": 2,
+        "INACTIVE": 1,
+        "NO_USABLE_CONTACT": 1
+      }
+    },
+    "source_withdrawal_checks": {
+      "excluded_sources": [
+        "CRM",
+        "Compliance Master",
+        "Dealer Portal"
+      ],
+      "withdrawal_rule": "FIX_FINAL_BASELINE_ENTITY_MEMBERSHIP_REMOVE_THE_EXCLUDED_SOURCE_RESELECT_SURVIVORS_REBUILD_THE_GRAPH_AND_REOPTIMIZE_THE_SAME_CONTAINMENT_REPAIR",
+      "stability_metric": "JACCARD_OF_SCENARIO_SELECTED_REMOVALS_AND_SURVIVING_ORIGINAL_SELECTED_REMOVALS_ROUNDED_TO_4_DECIMAL_PLACES"
+    }
+  },
+  "fx_budgeted_evidence_recovery": {
+    "recovery_id": "DEALER_FX_BUDGETED_EVIDENCE_RECOVERY_V1",
+    "business_goal": "USE_A_LIMITED_REVIEW_BUDGET_TO_REDUCE_RELEASE_DISAGREEMENT_WITH_THE_FULL_BASELINE_WITHOUT_TRANSIENTLY_INCREASING_FALSE_RELEASES",
+    "baseline_rule": "USE_THE_FULL_FINAL_CONTACT_MASTER_AS_FIXED_ENTITY_MEMBERSHIP_MASTER_IDENTIFIERS_AND_RELEASE_TRUTH",
+    "initial_evidence_rule": "ADMIT_ONLY_ROWS_INGESTED_ON_OR_BEFORE_business_cutoff_FROM_SOURCES_WHOSE_MATCHING_SNAPSHOT_STATUS_IS_CERTIFIED",
+    "candidate_batch_rule": "FROM_ROWS_EXCLUDED_BY_THE_INITIAL_EVIDENCE_RULE_DERIVE_EVERY_NONEMPTY_SOURCE_SYSTEM_AND_COUNTRY_GROUP_AS_ONE_REVIEW_BATCH",
+    "batch_id_rule": "UPPERCASE_SOURCE_SYSTEM_REPLACE_NONALPHANUMERIC_RUNS_WITH_UNDERSCORE_TRIM_UNDERSCORES_THEN_APPEND_DOUBLE_UNDERSCORE_AND_COUNTRY",
+    "review_effect": "A_REVIEW_BATCH_ADMITS_ALL_ITS_EXCLUDED_ROWS; KEEP_FIXED_BASELINE_MEMBERSHIP_AND_RESELECT_CANONICAL_SURVIVORS_AFTER_EACH_STAGE",
+    "settlement_currency_by_country": {
+      "CA": "CAD",
+      "DE": "EUR",
+      "ES": "EUR",
+      "GB": "GBP",
+      "SG": "USD",
+      "US": "USD"
+    },
+    "review_cost_per_excluded_row_local": {
+      "CA": 8,
+      "DE": 7,
+      "ES": 6,
+      "GB": 5,
+      "SG": 4,
+      "US": 9
+    },
+    "fx_rule": "USE_THE_UNIQUE_CERTIFIED_v_fx_rates_ROW_AT_THE_UTC_DATE_OF_business_cutoff_FOR_THE_COUNTRY_SETTLEMENT_CURRENCY; USD_COST_EQUALS_EXCLUDED_ROW_COUNT_TIMES_LOCAL_PER_ROW_COST_TIMES_usd_per_unit",
+    "cost_precision_rule": "COMPARE_UNROUNDED_USD_COSTS_FOR_BUDGET_AND_RANKING; REPORT_RATES_AND_COSTS_ROUNDED_TO_4_DECIMAL_PLACES",
+    "plan_budget_usd": 95,
+    "candidate_plan_rule": "EVERY_ORDERED_PAIR_OF_TWO_DISTINCT_DERIVED_REVIEW_BATCHES; STAGE_1_APPLIES_THE_FIRST_BATCH_AND_STAGE_2_CUMULATIVELY_APPLIES_THE_SECOND",
+    "false_release_rule": "SCENARIO_RENEWAL_READY_BUT_NOT_FULL_BASELINE_RENEWAL_READY",
+    "false_block_rule": "FULL_BASELINE_RENEWAL_READY_BUT_NOT_SCENARIO_RENEWAL_READY_INCLUDING_UNAVAILABLE_ENTITIES",
+    "changed_selection_rule": "RETAINED_ENTITY_SCENARIO_SELECTED_ROW_DIFFERS_FROM_ITS_FULL_BASELINE_SELECTED_ROW",
+    "feasible_plan_rules": [
+      "UNROUNDED_TOTAL_PLAN_COST_IS_AT_MOST_plan_budget_usd",
+      "FALSE_RELEASE_COUNT_DOES_NOT_INCREASE_FROM_INITIAL_TO_STAGE_1_OR_FROM_STAGE_1_TO_STAGE_2",
+      "STAGE_2_FALSE_RELEASE_COUNT_IS_STRICTLY_LOWER_THAN_INITIAL_FALSE_RELEASE_COUNT"
+    ],
+    "plan_objective_order": [
+      "MINIMIZE_STAGE_2_FALSE_RELEASE_COUNT",
+      "MINIMIZE_STAGE_2_FALSE_BLOCK_COUNT",
+      "MINIMIZE_STAGE_2_UNAVAILABLE_ENTITY_COUNT",
+      "MINIMIZE_STAGE_2_CHANGED_SELECTION_COUNT",
+      "MINIMIZE_UNROUNDED_TOTAL_PLAN_COST_USD",
+      "plan_id ASC"
+    ],
+    "top_plan_limit": 5,
+    "output_order": "FX_RATES_BY_CURRENCY_ASC; BATCHES_BY_BATCH_ID_ASC; STAGES_BY_STAGE_NUMBER_ASC; ALL_MASTER_ID_SETS_ASC"
+  },
+  "source_sequence_release_stability_audit": {
+    "audit_id": "DEALER_SOURCE_SEQUENCE_RELEASE_STABILITY_V1",
+    "business_goal": "FIND_THE_SAFEST_CUMULATIVE_PUBLICATION_ORDER_FOR_THE_OBSERVED_CONTACT_SOURCES",
+    "baseline_rule": "USE_THE_FULL_FINAL_CONTACT_MASTER_AS_FIXED_ENTITY_MEMBERSHIP_MASTER_IDENTIFIERS_AND_RELEASE_TRUTH",
+    "candidate_source_rule": "DERIVE_DISTINCT_SOURCE_SYSTEMS_FROM_THE_SCOPED_CONTACT_ROWS_AND_REQUIRE_A_MATCHING_PUBLIC_SOURCE_SNAPSHOT",
+    "candidate_order_rule": "EVALUATE_EVERY_PERMUTATION_OF_THE_DERIVED_SOURCE_SYSTEMS",
+    "stage_rule": "AT_EACH_STAGE_CUMULATIVELY_ADMIT_ALL_ROWS_FROM_THE_NEXT_SOURCE_IN_THE_ORDER_KEEP_FIXED_BASELINE_MEMBERSHIP_AND_RESELECT_CANONICAL_SURVIVORS",
+    "stage_snapshot_rule": "REPORT_THE_MATCHING_PUBLIC_SOURCE_SNAPSHOT_STATUS_FOR_THE_SOURCE_ADDED_AT_EACH_STAGE",
+    "false_release_rule": "STAGE_RENEWAL_READY_BUT_NOT_FULL_BASELINE_RENEWAL_READY",
+    "false_block_rule": "FULL_BASELINE_RENEWAL_READY_BUT_NOT_STAGE_RENEWAL_READY_INCLUDING_UNAVAILABLE_ENTITIES",
+    "changed_selection_rule": "RETAINED_ENTITY_STAGE_SELECTED_ROW_DIFFERS_FROM_ITS_FULL_BASELINE_SELECTED_ROW",
+    "decision_state_rule": "EACH_BASELINE_ENTITY_IS_UNAVAILABLE_RENEWAL_READY_OR_NOT_RENEWAL_READY_AT_EACH_STAGE",
+    "decision_transition_rule": "COUNT_ENTITY_DECISION_STATE_CHANGES_BETWEEN_ADJACENT_STAGES",
+    "rollback_rule": "ENTITY_IS_RENEWAL_READY_AT_ONE_STAGE_AND_NOT_RENEWAL_READY_OR_UNAVAILABLE_AT_THE_NEXT_STAGE; REPORT_EACH_ROLLBACK_AS_MASTER_ID_FROM_STAGE_TO_STAGE_EVIDENCE",
+    "selected_row_transition_rule": "WHEN_AN_ENTITY_IS_RETAINED_AT_TWO_ADJACENT_STAGES_AND_ITS_SELECTED_ROW_CHANGES_REPORT_MASTER_ID_FROM_STAGE_TO_STAGE_FROM_ROW_ID_AND_TO_ROW_ID",
+    "cumulative_exposure_rule": "SUM_THE_PER_STAGE_COUNTS_ACROSS_ALL_STAGES_FOR_FALSE_RELEASE_FALSE_BLOCK_AND_CHANGED_SELECTION",
+    "recommendation_objective_order": [
+      "MINIMIZE_CUMULATIVE_FALSE_RELEASE_EXPOSURE",
+      "MINIMIZE_ROLLBACK_ENTITY_COUNT",
+      "MINIMIZE_CUMULATIVE_FALSE_BLOCK_EXPOSURE",
+      "MINIMIZE_CUMULATIVE_CHANGED_SELECTION_EXPOSURE",
+      "PREFER_CERTIFIED_FIRST_SOURCE",
+      "order_id ASC"
+    ],
+    "output_order": "ORDER_RESULTS_BY_order_id_ASC; STAGES_BY_STAGE_NUMBER_ASC; RANKED_ORDER_IDS_BY_RECOMMENDATION_OBJECTIVE; TRANSITION_LINKS_BY_FROM_STAGE_THEN_MASTER_ID_ASC"
+  },
+  "focus_cases": [
+    {
+      "focus_case_id": "dealer-renewal-focus-001",
+      "review_dimension": "CONTACT_KEY_MATCH_REVIEW",
+      "seed_row_id": "DEA-C00001"
+    },
+    {
+      "focus_case_id": "dealer-renewal-focus-002",
+      "review_dimension": "CONTACT_KEY_MATCH_REVIEW",
+      "seed_row_id": "DEA-C00007"
+    },
+    {
+      "focus_case_id": "dealer-renewal-focus-003",
+      "review_dimension": "CONTACT_KEY_MATCH_REVIEW",
+      "seed_row_id": "DEA-C00013"
+    },
+    {
+      "focus_case_id": "dealer-renewal-focus-004",
+      "review_dimension": "PHONE_COLLISION_REVIEW",
+      "seed_row_id": "DEA-C00118"
+    },
+    {
+      "focus_case_id": "dealer-renewal-focus-005",
+      "review_dimension": "PHONE_COLLISION_REVIEW",
+      "seed_row_id": "DEA-C00116"
+    },
+    {
+      "comparison_row_ids": [
+        "DEA-C00140"
+      ],
+      "focus_case_id": "dealer-renewal-focus-006",
+      "review_dimension": "NAME_COMPARISON_REVIEW",
+      "seed_row_id": "DEA-C00128"
+    },
+    {
+      "comparison_row_ids": [
+        "DEA-C00316"
+      ],
+      "focus_case_id": "dealer-renewal-focus-007",
+      "review_dimension": "NAME_COMPARISON_REVIEW",
+      "seed_row_id": "DEA-C00304"
+    },
+    {
+      "focus_case_id": "dealer-renewal-focus-008",
+      "review_dimension": "CONTACT_USABILITY_REVIEW",
+      "seed_row_id": "DEA-C00091"
+    }
+  ],
+  "status_action_map": {
+    "HOLD": "BLOCK_AND_REMEDIATE",
+    "PASS": "RELEASE",
+    "PASS_WITH_EXCEPTIONS": "REVIEW_EXCEPTIONS"
+  },
+  "status_thresholds": {
+    "pass_max_quarantine_rate": 0.0,
+    "pass_with_exceptions_max_quarantine_rate": 0.03
+  }
+}

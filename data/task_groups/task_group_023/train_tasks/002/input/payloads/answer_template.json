@@ -1,0 +1,58 @@
+{
+  "template_instructions": "Return required_output with every descriptor replaced by a value. Omit template_instructions. Report non-integers to four decimal places; integer metadata and booleans retain natural JSON types. Lists must use the specified order. Compact ridge arrays are aligned positionally to lambda_grid.",
+  "required_output": {
+    "cohort_audit": {
+      "requested_county_count": {"type": "integer"},
+      "selected_health_rows_by_year": {"type": "list[object]", "ordering": "2021, 2022, 2023, 2024", "required_keys": ["year", "count"]},
+      "selected_socioeconomic_rows_by_year": {"type": "list[object]", "ordering": "2021, 2022, 2023, 2024", "required_keys": ["year", "count"]},
+      "complete_count_by_year": {"type": "list[object]", "ordering": "2021, 2022, 2023, 2024", "required_keys": ["year", "count"]},
+      "primary_2023_count": {"type": "integer"},
+      "balanced_four_year_count": {"type": "integer"},
+      "machine_learning_complete_count": {"type": "integer"},
+      "state_count": {"type": "integer"}
+    },
+    "difference_gmm_mediation": {
+      "observation_count": {"type": "integer"}, "county_count": {"type": "integer"}, "state_count": {"type": "integer"},
+      "total_poverty": {"type": "object", "required_keys": ["coefficient", "cluster_se", "t_statistic", "confidence_interval_95"]},
+      "path_a_poverty": {"type": "object", "required_keys": ["coefficient", "cluster_se", "t_statistic", "confidence_interval_95"]},
+      "path_b_inactivity": {"type": "object", "required_keys": ["coefficient", "cluster_se", "t_statistic", "confidence_interval_95"]},
+      "direct_poverty": {"type": "object", "required_keys": ["coefficient", "cluster_se", "t_statistic", "confidence_interval_95"]},
+      "first_stage_partial_f": {"type": "object", "required_keys": ["delta_poverty", "delta_inactivity"]},
+      "stacked_indirect": {"type": "object", "required_keys": ["cross_equation_correction", "a_b_covariance", "estimate", "cluster_se", "confidence_interval_95"]},
+      "leave_one_state_out": {"type": "list[object]", "ordering": "omitted_state ascending", "required_keys": ["omitted_state", "n", "indirect_effect", "direct_poverty"]}
+    },
+    "nested_state_ridge": {
+      "n": {"type": "integer"}, "fold_count": {"type": "integer"},
+      "lambda_grid": {"type": "list[number]", "ordering": "0.02, 0.2, 2, 20, 200"},
+      "pooled_base_rmse": {"type": "number"}, "pooled_augmented_rmse": {"type": "number"}, "augmented_better_state_count": {"type": "integer"},
+      "outer_folds": {"type": "list[object]", "ordering": "state ascending", "required_keys": ["state", "n", "base_lambda", "augmented_lambda", "base_inner_rmse", "augmented_inner_rmse", "base_outer_rmse", "augmented_outer_rmse"], "inner_rmse_arrays": "each has five values aligned to lambda_grid"}
+    },
+    "wild_cluster_bootstrap_t": {
+      "method": {"type": "enum", "allowed_values": ["RESTRICTED_NULL_PAIRED_STATE_XORSHIFT32_BOOTSTRAP_T"]},
+      "seed": {"type": "integer"}, "replicate_count": {"type": "integer"}, "final_prng_state": {"type": "integer"},
+      "equations": {"type": "list[object]", "ordering": "TOTAL_POVERTY, PATH_A_POVERTY, PATH_B_INACTIVITY", "required_keys": ["equation", "observed_coefficient", "observed_cr1_se", "observed_t", "bootstrap_p_value", "bootstrap_t_q025", "bootstrap_t_q975", "confidence_interval_95"]},
+      "checkpoints": {"type": "list[object]", "ordering": "replicates 1,2,4,8,16,32,64,128,256,512,1024,2047", "required_keys": ["replicate", "prng_state", "total_poverty_t", "path_a_poverty_t", "path_b_inactivity_t"]}
+    },
+    "state_grouped_conformal": {
+      "nominal_coverage": {"type": "number"}, "fixed_lambda": {"type": "number"}, "overall_coverage": {"type": "number"}, "mean_interval_width": {"type": "number"}, "state_count_at_or_above_80pct": {"type": "integer"},
+      "cycles": {"type": "list[object]", "ordering": "test_fold 0 through 4", "required_keys": ["test_fold", "calibration_fold", "training_state_count", "calibration_state_count", "test_state_count", "calibration_count", "test_count", "qhat_state_max", "test_coverage", "mean_interval_width", "worst_test_state"]},
+      "state_coverage": {"type": "list[object]", "ordering": "state ascending", "required_keys": ["state", "n", "coverage", "mean_width"]}
+    },
+    "mediation_sensitivity_surface": {
+      "baseline_path_a": {"type": "number"}, "baseline_path_b": {"type": "number"}, "baseline_path_b_se": {"type": "number"}, "residual_degrees_of_freedom": {"type": "integer"}, "equal_strength_tipping_r2": {"type": "number"},
+      "surface": {"type": "list[object]", "ordering": "r2_mediator ascending, r2_outcome ascending, NEGATIVE then POSITIVE", "required_keys": ["r2_mediator", "r2_outcome", "direction", "adjusted_path_b", "adjusted_indirect", "adjusted_direct", "proportion"]}
+    },
+    "trajectory_pca_clustering": {
+      "state_count": {"type": "integer"}, "feature_count": {"type": "integer"}, "kmeans_iterations": {"type": "integer"},
+      "eigenvalues": {"type": "list[number]", "ordering": "PC1, PC2, PC3"}, "explained_variance_ratio": {"type": "list[number]", "ordering": "PC1, PC2, PC3"},
+      "loadings": {"type": "list[object]", "ordering": "year ascending; POVERTY, INACTIVITY, OBESITY", "required_keys": ["feature", "pc1", "pc2"]},
+      "states": {"type": "list[object]", "ordering": "state ascending", "required_keys": ["state", "balanced_county_count", "pc1_score", "pc2_score", "cluster"]},
+      "leave_one_year_out_stability": {"type": "list[object]", "ordering": "2021, 2022, 2023, 2024", "required_keys": ["omitted_year", "adjusted_rand_index"]},
+      "mean_stability_ari": {"type": "number"}, "minimum_stability_ari": {"type": "number"}
+    },
+    "controlled_conclusion": {
+      "difference_gmm_supported": {"type": "boolean"}, "nested_ridge_supported": {"type": "boolean"}, "bootstrap_supported": {"type": "boolean"}, "grouped_conformal_calibrated": {"type": "boolean"}, "sensitivity_robust": {"type": "boolean"}, "trajectory_stable": {"type": "boolean"}, "supported_module_count": {"type": "integer"},
+      "classification": {"type": "enum", "allowed_values": ["CONSISTENT_OBESITY_MEDIATION_AUDIT", "PARTIAL_OBESITY_MEDIATION_AUDIT", "FRAGILE_OBESITY_MEDIATION_AUDIT", "NO_OBESITY_MEDIATION_AUDIT"]}
+    }
+  }
+}

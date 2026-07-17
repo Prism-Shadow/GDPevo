@@ -1,0 +1,344 @@
+task_group:
+  task_group_id: task_group_023
+  scenario_id: SCN_023_public_health_statistical_modeling_audit
+  source_examples:
+  - E001
+  - E002
+  - E003
+  domain: Public Health Statistical Modeling and Data Audit
+  description: A train-predict benchmark for publication-grade state, county, and country public-health audits in a shared
+    Web data portal. Tasks reconcile releases and identifiers, construct analytic cohorts, fit and diagnose statistical models,
+    and issue controlled business conclusions.
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+  - env/Dockerfile
+  - env/README_OPERATOR.md
+  - env/endpoints.txt
+  - env/generate_data.py
+  - env/generated/manifest.json
+  - env/generated/noise_manifest.json
+  - env/generated/observatory.sqlite
+  - env/judge_api.py
+  - env/judge_assets/train_001/eval/evaluator.py
+  - env/judge_assets/train_002/eval/evaluator.py
+  - env/judge_assets/train_003/eval/evaluator.py
+  - env/judge_assets/train_004/eval/evaluator.py
+  - env/judge_assets/train_005/eval/evaluator.py
+  - env/judge_specs.json
+  - env/server.py
+  - env/setup.sh
+train_tasks:
+- task_id: train_001
+  input: train_tasks/001/input/
+  prompt_txt: train_tasks/001/input/prompt.txt
+  payloads:
+  - train_tasks/001/input/payloads/analysis_request.json
+  - train_tasks/001/input/payloads/answer_template.json
+  notes: train_tasks/001/notes/notes.md
+  output: train_tasks/001/output/
+  answer_json: train_tasks/001/output/answer.json
+  eval:
+    script: train_tasks/001/eval/eval.sh
+    files:
+    - train_tasks/001/eval/eval.sh
+    - train_tasks/001/eval/evaluator.py
+    rubric:
+    - goal: Resolve all declared releases and establish the yearly, balanced, and broad cohorts.
+      weight: 1
+    - goal: Run the full delete-one-state fixed-effects jackknife and bias-corrected inference.
+      weight: 3
+    - goal: Execute nested division-blocked ridge tuning and full out-of-division prediction.
+      weight: 3
+    - goal: Reproduce the declared PCG32 Webb-weight wild-cluster bootstrap-t audit.
+      weight: 3
+    - goal: Construct all grouped split-conformal folds and aggregate calibrated coverage and width.
+      weight: 3
+    - goal: Reproduce trajectory PCA, deterministic clustering, and five leave-year-out stability refits.
+      weight: 3
+    - goal: Exhaustively refit both exposure sources over all 16 three-to-five-year subsets.
+      weight: 3
+    - goal: Apply all six robustness gates and the controlled transportability classification.
+      weight: 2
+- task_id: train_002
+  input: train_tasks/002/input/
+  prompt_txt: train_tasks/002/input/prompt.txt
+  payloads:
+  - train_tasks/002/input/payloads/analysis_request.json
+  - train_tasks/002/input/payloads/answer_template.json
+  notes: train_tasks/002/notes/notes.md
+  output: train_tasks/002/output/
+  answer_json: train_tasks/002/output/answer.json
+  eval:
+    script: train_tasks/002/eval/eval.sh
+    files:
+    - train_tasks/002/eval/eval.sh
+    - train_tasks/002/eval/evaluator.py
+    rubric:
+    - goal: Four-year publication reconciliation and three linked cohorts
+      weight: 1
+    - goal: Cluster-robust multi-period difference-GMM mediation with ordered state deletions
+      weight: 3
+    - goal: Nested state-blocked ridge grids and outer-fold predictive diagnostics
+      weight: 3
+    - goal: Restricted-null paired-state wild-cluster bootstrap-t with PRNG checkpoints
+      weight: 3
+    - goal: State-grouped split-conformal calibration cycles and state coverage
+      weight: 3
+    - goal: Partial-R2 causal-mediation sensitivity surface and tipping boundary
+      weight: 3
+    - goal: Four-year trajectory PCA, deterministic clustering, and stability audit
+      weight: 3
+    - goal: Controlled six-module obesity-mediation decision
+      weight: 2
+- task_id: train_003
+  input: train_tasks/003/input/
+  prompt_txt: train_tasks/003/input/prompt.txt
+  payloads:
+  - train_tasks/003/input/payloads/analysis_request.json
+  - train_tasks/003/input/payloads/answer_template.json
+  notes: train_tasks/003/notes/notes.md
+  output: train_tasks/003/output/
+  answer_json: train_tasks/003/output/answer.json
+  eval:
+    script: train_tasks/003/eval/eval.sh
+    files:
+    - train_tasks/003/eval/build_gold.py
+    - train_tasks/003/eval/eval.sh
+    - train_tasks/003/eval/evaluator.py
+    rubric:
+    - goal: Reconcile all requested country labels to stable ISO3 identifiers.
+      weight: 2
+    - goal: Apply revision status correctly and identify unresolved scale breaks.
+      weight: 3
+    - goal: Construct the usable 2022 matrix and account for missing and imputed cells.
+      weight: 3
+    - goal: Retain the correct PCA dimension and PC1 explained variance.
+      weight: 2
+    - goal: Report the ordered strongest absolute PC1 loadings and their signed values.
+      weight: 2
+    - goal: Reproduce the candidate-k diagnostic and the requested three-cluster burden segmentation.
+      weight: 2
+    - goal: Estimate the region-adjusted life-expectancy association with PC1 burden.
+      weight: 3
+    - goal: Issue the controlled portfolio advisory supported by the panel result.
+      weight: 2
+- task_id: train_004
+  input: train_tasks/004/input/
+  prompt_txt: train_tasks/004/input/prompt.txt
+  payloads:
+  - train_tasks/004/input/payloads/analysis_request.json
+  - train_tasks/004/input/payloads/answer_template.json
+  notes: train_tasks/004/notes/notes.md
+  output: train_tasks/004/output/
+  answer_json: train_tasks/004/output/answer.json
+  eval:
+    script: train_tasks/004/eval/eval.sh
+    files:
+    - train_tasks/004/eval/eval.sh
+    - train_tasks/004/eval/evaluator.py
+    rubric:
+    - goal: Reconcile releases and construct the 2024 primary and strict balanced cohorts.
+      weight: 1
+    - goal: Reproduce the ordered delete-one-division reliability-weighted jackknife.
+      weight: 3
+    - goal: Reproduce every grouped nested elastic-net grid, fold diagnostic, and pooled metric.
+      weight: 3
+    - goal: Reproduce the seeded wild-division bootstrap-t stream, checkpoints, and test.
+      weight: 3
+    - goal: Construct the grouped out-of-fold conformal intervals and division diagnostics.
+      weight: 3
+    - goal: Reproduce trajectory PCA, deterministic clustering, and leave-one-year stability.
+      weight: 3
+    - goal: Enumerate all direct-versus-rollup scenarios and reproduce the Shapley decomposition.
+      weight: 3
+    - goal: Apply all six registered flags and the precedence decision.
+      weight: 2
+- task_id: train_005
+  input: train_tasks/005/input/
+  prompt_txt: train_tasks/005/input/prompt.txt
+  payloads:
+  - train_tasks/005/input/payloads/analysis_request.json
+  - train_tasks/005/input/payloads/answer_template.json
+  notes: train_tasks/005/notes/notes.md
+  output: train_tasks/005/output/
+  answer_json: train_tasks/005/output/answer.json
+  eval:
+    script: train_tasks/005/eval/eval.sh
+    files:
+    - train_tasks/005/eval/eval.sh
+    - train_tasks/005/eval/evaluator.py
+    rubric:
+    - goal: Balanced diabetes publication cohort and ordered state census
+      weight: 1
+    - goal: Delete-state bias-corrected two-step GMM
+      weight: 3
+    - goal: Full-grid nested state-blocked elastic net and ridge
+      weight: 3
+    - goal: Reproducible poverty wild-cluster bootstrap-t audit
+      weight: 3
+    - goal: Grouped conformal coverage and ordered calibration
+      weight: 3
+    - goal: Diabetes/economic trajectory PCA, clustering, and delete-state stability
+      weight: 3
+    - goal: Exhaustive source-group perturbation surface
+      weight: 3
+    - goal: Six-gate diabetes deployment decision
+      weight: 2
+test_tasks:
+- task_id: test_001
+  input: test_tasks/001/input/
+  prompt_txt: test_tasks/001/input/prompt.txt
+  payloads:
+  - test_tasks/001/input/payloads/analysis_request.json
+  - test_tasks/001/input/payloads/answer_template.json
+  notes: test_tasks/001/notes/notes.md
+  output: test_tasks/001/output/
+  answer_json: test_tasks/001/output/answer.json
+  eval:
+    script: test_tasks/001/eval/eval.sh
+    files:
+    - test_tasks/001/eval/eval.sh
+    - test_tasks/001/eval/evaluator.py
+    rubric:
+    - goal: Correct resolved publication counts, balanced-cohort dimensions, exclusions, and broad-cohort count.
+      weight: 1
+    - goal: Correct jackknife bias-corrected coefficient and minimum/maximum delete-state summary.
+      weight: 3
+    - goal: Correct pooled nested-ridge out-of-division prediction summary.
+      weight: 3
+    - goal: Correct wild-cluster bootstrap exceedance count and inferential result.
+      weight: 3
+    - goal: Correct aggregate grouped-conformal coverage and interval-width summary.
+      weight: 3
+    - goal: Correct leave-year-out trajectory-cluster stability and alignment result.
+      weight: 3
+    - goal: Correct strict dual-source sensitivity cohort.
+      weight: 3
+    - goal: Correct controlled transportability classification.
+      weight: 2
+- task_id: test_002
+  input: test_tasks/002/input/
+  prompt_txt: test_tasks/002/input/prompt.txt
+  payloads:
+  - test_tasks/002/input/payloads/analysis_request.json
+  - test_tasks/002/input/payloads/answer_template.json
+  notes: test_tasks/002/notes/notes.md
+  output: test_tasks/002/output/
+  answer_json: test_tasks/002/output/answer.json
+  eval:
+    script: test_tasks/002/eval/eval.sh
+    files:
+    - test_tasks/002/eval/eval.sh
+    - test_tasks/002/eval/evaluator.py
+    rubric:
+    - goal: Correct county universe and linked-cohort totals.
+      weight: 1
+    - goal: Correct difference-GMM panel design dimensions.
+      weight: 3
+    - goal: Correct pooled outer-fold ridge errors and state-win count.
+      weight: 3
+    - goal: Correct three restricted-null bootstrap-t equation distributions.
+      weight: 3
+    - goal: Correct pooled state-grouped conformal calibration performance.
+      weight: 3
+    - goal: Correct equal-strength partial-R2 tipping boundary.
+      weight: 3
+    - goal: Correct leave-year-out trajectory stability sequence and summaries.
+      weight: 3
+    - goal: Correct supported-module count and controlled evidence classification.
+      weight: 2
+- task_id: test_003
+  input: test_tasks/003/input/
+  prompt_txt: test_tasks/003/input/prompt.txt
+  payloads:
+  - test_tasks/003/input/payloads/analysis_request.json
+  - test_tasks/003/input/payloads/answer_template.json
+  notes: test_tasks/003/notes/notes.md
+  output: test_tasks/003/output/
+  answer_json: test_tasks/003/output/answer.json
+  eval:
+    script: test_tasks/003/eval/eval.sh
+    files:
+    - test_tasks/003/eval/eval.sh
+    - test_tasks/003/eval/evaluator.py
+    rubric:
+    - goal: Correct country-label reconciliation counts.
+      weight: 2
+    - goal: Correct complete applied-revision, unresolved-anomaly, and exclusion state.
+      weight: 3
+    - goal: Correct complete eligible-matrix and missingness audit.
+      weight: 2
+    - goal: Correct retained burden-PCA component count.
+      weight: 3
+    - goal: Correct ordered four-cluster burden size profile.
+      weight: 2
+    - goal: Correct highest-burden country set.
+      weight: 2
+    - goal: Correct complete region-controlled longevity panel summary.
+      weight: 3
+    - goal: Correct controlled longevity-stall conclusion.
+      weight: 2
+- task_id: test_004
+  input: test_tasks/004/input/
+  prompt_txt: test_tasks/004/input/prompt.txt
+  payloads:
+  - test_tasks/004/input/payloads/analysis_request.json
+  - test_tasks/004/input/payloads/answer_template.json
+  notes: test_tasks/004/notes/notes.md
+  output: test_tasks/004/output/
+  answer_json: test_tasks/004/output/answer.json
+  eval:
+    script: test_tasks/004/eval/eval.sh
+    files:
+    - test_tasks/004/eval/eval.sh
+    rubric:
+    - goal: Correct release registration and primary and balanced cohorts.
+      weight: 1
+    - goal: Correct bias-corrected panel-jackknife inference summary.
+      weight: 3
+    - goal: Correct pooled division-nested elastic-net prediction summary.
+      weight: 3
+    - goal: Correct wild-cluster bootstrap exceedance and plus-one test result.
+      weight: 3
+    - goal: Correct pooled grouped-conformal coverage summary.
+      weight: 3
+    - goal: Correct deterministic trajectory clustering and leave-year-out stability result.
+      weight: 3
+    - goal: Correct exhaustive source-perturbation stability count.
+      weight: 3
+    - goal: Correct controlled precedence conclusion.
+      weight: 2
+- task_id: test_005
+  input: test_tasks/005/input/
+  prompt_txt: test_tasks/005/input/prompt.txt
+  payloads:
+  - test_tasks/005/input/payloads/analysis_request.json
+  - test_tasks/005/input/payloads/answer_template.json
+  notes: test_tasks/005/notes/notes.md
+  output: test_tasks/005/output/
+  answer_json: test_tasks/005/output/answer.json
+  eval:
+    script: test_tasks/005/eval/eval.sh
+    files:
+    - test_tasks/005/eval/eval.sh
+    - test_tasks/005/eval/evaluator.py
+    rubric:
+    - goal: Correct balanced publication cohort and ordered state census.
+      weight: 1
+    - goal: Correct full two-step GMM and jackknife bias/shift summary.
+      weight: 3
+    - goal: Correct nested-validation fold design, coefficient order, and candidate grid.
+      weight: 3
+    - goal: Correct bootstrap tail count and plus-one inference.
+      weight: 3
+    - goal: Correct overall and minimum grouped-conformal coverage.
+      weight: 3
+    - goal: Correct trajectory-clustering stability summary.
+      weight: 3
+    - goal: Correct source-group deletion contract.
+      weight: 3
+    - goal: Correct six-gate deployment decision.
+      weight: 2

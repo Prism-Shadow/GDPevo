@@ -1,0 +1,136 @@
+{
+  "request_id": "PHO-STATE-MENTAL-HEALTH-ALGORITHMIC-AUDIT-2024",
+  "protocol_id": "PHO_STATE_TRANSPORT_AUDIT_V1",
+  "protocol_application": "Apply the named registered protocol using only the task-specific overrides in this request. Protocol defaults not overridden here remain in force.",
+  "geography_scope": "50_STATES_PLUS_DC",
+  "analysis_years": [2020, 2021, 2022, 2023, 2024],
+  "reference_year": 2024,
+  "publication_state": "FINAL",
+  "outcome": {
+    "dataset": "state_health",
+    "measure_id": "frequent_mental_distress"
+  },
+  "primary_exposure": {
+    "dataset": "state_health",
+    "measure_id": "food_insecurity"
+  },
+  "parallel_exposure": {
+    "dataset": "state_socioeconomic",
+    "field": "food_insecurity"
+  },
+  "health_measures_to_resolve": [
+    "frequent_mental_distress",
+    "food_insecurity",
+    "adult_obesity",
+    "adult_smoking",
+    "diagnosed_diabetes",
+    "physical_inactivity",
+    "life_expectancy",
+    "premature_mortality_rate"
+  ],
+  "release_filter_overrides": {
+    "state_health": "AGE_ADJUSTED_AND_DIRECT_SURVEY_AND_FINAL",
+    "state_socioeconomic": "FINAL"
+  },
+  "cohort_overrides": {
+    "core_balanced_panel": {
+      "variables": [
+        "frequent_mental_distress",
+        "health_food_insecurity",
+        "unemployment",
+        "bachelors",
+        "median_income"
+      ],
+      "scope": "JURISDICTIONS_COMPLETE_FOR_ALL_FIVE_VARIABLES_IN_EVERY_ANALYSIS_YEAR"
+    },
+    "reference_year_broad_cohort": {
+      "year": 2024,
+      "require_outcome_and_all_ordered_features": true,
+      "ordered_features": [
+        "health_food_insecurity",
+        "adult_obesity",
+        "adult_smoking",
+        "diagnosed_diabetes",
+        "physical_inactivity",
+        "life_expectancy",
+        "premature_mortality_rate",
+        "poverty",
+        "bachelors",
+        "median_income",
+        "unemployment",
+        "uninsured",
+        "socio_food_insecurity"
+      ]
+    },
+    "strict_dual_source_panel": {
+      "scope": "JURISDICTIONS_COMPLETE_IN_EVERY_ANALYSIS_YEAR",
+      "required_variables": [
+        "frequent_mental_distress",
+        "health_food_insecurity",
+        "socio_food_insecurity",
+        "unemployment",
+        "bachelors",
+        "median_income"
+      ]
+    }
+  },
+  "module_overrides": {
+    "delete_cluster_fixed_effects": {
+      "cohort": "core_balanced_panel",
+      "outcome": "frequent_mental_distress",
+      "ordered_predictors": [
+        "health_food_insecurity",
+        "unemployment",
+        "bachelors",
+        "median_income"
+      ]
+    },
+    "nested_ridge_division_cv": {
+      "cohort": "reference_year_broad_cohort",
+      "outcome": "frequent_mental_distress"
+    },
+    "wild_cluster_bootstrap": {
+      "cohort": "core_balanced_panel",
+      "seed": 23072026,
+      "stream": 54
+    },
+    "grouped_split_conformal": {
+      "cohort": "reference_year_broad_cohort",
+      "outcome": "frequent_mental_distress"
+    },
+    "trajectory_pca_clustering": {
+      "cohort": "core_balanced_panel",
+      "trajectory_pair": [
+        "frequent_mental_distress",
+        "health_food_insecurity"
+      ]
+    },
+    "source_year_perturbation": {
+      "cohort": "strict_dual_source_panel",
+      "primary_series": "health_food_insecurity",
+      "parallel_series": "socio_food_insecurity",
+      "ordered_adjustments": [
+        "unemployment",
+        "bachelors",
+        "median_income"
+      ]
+    }
+  },
+  "reporting_overrides": {
+    "numeric_decimal_places": 4,
+    "output_contract": "answer_template.json"
+  },
+  "robustness_gates": {
+    "delete_cluster_fe": "FULL_EXPOSURE_COEFFICIENT_IS_POSITIVE_AND_JACKKNIFE_P_VALUE_IS_AT_MOST_0_20",
+    "nested_ridge": "POOLED_Q_SQUARED_IS_AT_LEAST_0_50_AND_POOLED_RMSE_IS_AT_MOST_1_10",
+    "wild_cluster_bootstrap": "BOOTSTRAP_P_VALUE_IS_AT_MOST_0_20",
+    "grouped_split_conformal": "AGGREGATE_COVERAGE_IS_AT_LEAST_0_80_AND_AGGREGATE_MEAN_WIDTH_IS_AT_MOST_3_75",
+    "trajectory_stability": "MINIMUM_LEAVE_YEAR_OUT_ADJUSTED_RAND_INDEX_IS_AT_LEAST_0_80_AND_FIRST_TWO_COMPONENT_CUMULATIVE_EXPLAINED_RATIO_IS_AT_LEAST_0_85",
+    "source_year_stability": "SAME_SIGN_SUBSET_FRACTION_IS_AT_LEAST_0_75_AND_MAXIMUM_ABSOLUTE_PERCENT_SHIFT_IS_AT_MOST_150"
+  },
+  "decision_rule": {
+    "PRIMARY_TRANSPORTABLE_SIGNAL": "ALL_SIX_GATES_PASS",
+    "ROBUST_SECONDARY_SIGNAL": "AT_LEAST_FOUR_GATES_PASS_BUT_PRIMARY_RULE_DOES_NOT",
+    "NO_TRANSPORTABLE_SIGNAL": "ALL_REMAINING_CASES"
+  }
+}

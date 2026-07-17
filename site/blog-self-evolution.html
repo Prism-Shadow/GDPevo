@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GDPevo - Evaluating Agent Self-Evolution on Real Business Tasks</title>
+    <meta name="description" content="The story behind GDPevo: GDP-worthy tasks, self-evolution as the capability we care about, how the dataset is built and graded by agents, and why the evolve step can buy accuracy with fewer tokens.">
+    <meta property="og:title" content="GDPevo - Evaluating Agent Self-Evolution on Real Business Tasks">
+    <meta property="og:description" content="Can an agent evolve across related tasks and get better? The full story behind GDPevo.">
+    <meta property="og:type" content="article">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("gdpevo-lang");
+          var lang = saved || (navigator.language && navigator.language.toLowerCase().indexOf("zh") === 0 ? "zh" : "en");
+          document.documentElement.setAttribute("data-lang", lang);
+          document.documentElement.setAttribute("lang", lang === "zh" ? "zh-Hans" : "en");
+          var savedTheme = localStorage.getItem("gdpevo-theme");
+          var choice = savedTheme === "light" || savedTheme === "dark" || savedTheme === "system" ? savedTheme : "system";
+          var theme = choice === "system" && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : choice === "system" ? "light" : choice;
+          document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.setAttribute("data-theme-choice", choice);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="blog">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

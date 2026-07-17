@@ -13,8 +13,33 @@ task_group:
     attachments, and audit details.
 
 env:
+  dockerfile: env/Dockerfile
   setup: env/setup.sh
+  state_mode: read_only
   files:
+    - env/endpoints.txt
+    - env/Dockerfile
+    - env/judge_api.py
+    - env/judge_train_eval/train_001/eval/eval.sh
+    - env/judge_train_eval/train_001/eval/evaluate.py
+    - env/judge_train_eval/train_001/eval/rubric.json
+    - env/judge_train_eval/train_001/output/answer.json
+    - env/judge_train_eval/train_002/eval/eval.sh
+    - env/judge_train_eval/train_002/eval/evaluate.py
+    - env/judge_train_eval/train_002/eval/rubric.json
+    - env/judge_train_eval/train_002/output/answer.json
+    - env/judge_train_eval/train_003/eval/eval.sh
+    - env/judge_train_eval/train_003/eval/evaluate.py
+    - env/judge_train_eval/train_003/eval/rubric.json
+    - env/judge_train_eval/train_003/output/answer.json
+    - env/judge_train_eval/train_004/eval/eval.sh
+    - env/judge_train_eval/train_004/eval/evaluate.py
+    - env/judge_train_eval/train_004/eval/rubric.json
+    - env/judge_train_eval/train_004/output/answer.json
+    - env/judge_train_eval/train_005/eval/eval.sh
+    - env/judge_train_eval/train_005/eval/evaluate.py
+    - env/judge_train_eval/train_005/eval/rubric.json
+    - env/judge_train_eval/train_005/output/answer.json
     - env/setup.sh
     - env/app.py
     - env/generate_data.py

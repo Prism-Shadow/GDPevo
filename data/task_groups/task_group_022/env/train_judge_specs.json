@@ -1,0 +1,78 @@
+{
+  "train_001": {
+    "answer_file": "judge_answers/train_001.json",
+    "points": [
+      {"weight": 2, "checks": [{"path": ["eligible_production_order_count"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["effectively_complete_order_count"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["on_time_complete_order_rate"], "mode": "number"}]},
+      {"weight": 2, "checks": [{"path": ["incomplete_order_count"], "mode": "strict"}]},
+      {"weight": 2, "checks": [{"path": ["worst_warehouse_regions"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["severe_exception_order_ids"], "mode": "strict"}]},
+      {"weight": 1, "checks": [{"path": ["overall_status"], "mode": "strict"}]}
+    ]
+  },
+  "train_002": {
+    "answer_file": "judge_answers/train_002.json",
+    "points": [
+      {"weight": 2, "checks": [{"path": ["eligible_refunded_order_count"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["effective_settled_logical_refund_count"], "mode": "strict"}]},
+      {"weight": 2, "checks": [{"path": ["effective_linked_reversal_count"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["net_refund_amount_usd"], "mode": "money2"}]},
+      {"weight": 2, "checks": [{"path": ["top_two_reason_codes"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["unresolved_leakage_order_ids"], "mode": "strict"}]},
+      {"weight": 1, "checks": [{"path": ["cohort_risk"], "mode": "strict"}]}
+    ]
+  },
+  "train_003": {
+    "answer_file": "judge_answers/train_003.json",
+    "points": [
+      {"weight": 3, "checks": [{"path": ["correction_target", "scan_row_id"], "mode": "strict"}, {"path": ["correction_target", "shipment_id"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["correction_target", "field_name"], "mode": "strict"}, {"path": ["correction_target", "old_value"], "mode": "strict"}, {"path": ["correction_target", "new_value"], "mode": "strict"}]},
+      {"weight": 2, "checks": [{"path": ["mutation_result", "affected_business_rows"], "mode": "strict"}]},
+      {"weight": 2, "checks": [
+        {"path": ["mutation_result", "audit_rows"], "mode": "strict"},
+        {"path": ["audit_record", "audit_id"], "mode": "strict"},
+        {"path": ["audit_record", "correction_key"], "mode": "strict"},
+        {"path": ["audit_record", "entity_type"], "mode": "strict"},
+        {"path": ["audit_record", "entity_id"], "mode": "strict"},
+        {"path": ["audit_record", "source_row_id"], "mode": "strict"},
+        {"path": ["audit_record", "field_name"], "mode": "strict"},
+        {"path": ["audit_record", "old_value"], "mode": "strict"},
+        {"path": ["audit_record", "new_value"], "mode": "strict"},
+        {"path": ["audit_record", "reason_code"], "mode": "strict"},
+        {"path": ["audit_record", "corrected_at"], "mode": "strict"},
+        {"path": ["audit_record", "actor"], "mode": "strict"}
+      ]},
+      {"weight": 2, "checks": [{"path": ["backlog_analysis", "pre_correction_backlog_shipment_count"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["backlog_analysis", "post_correction_backlog_shipment_count"], "mode": "strict"}, {"path": ["backlog_analysis", "backlog_delta"], "mode": "strict"}]},
+      {"weight": 2, "checks": [{"path": ["backlog_analysis", "post_correction_delivered_shipment_count"], "mode": "strict"}]},
+      {"weight": 1, "checks": [{"path": ["correction_status"], "mode": "strict"}]}
+    ]
+  },
+  "train_004": {
+    "answer_file": "judge_answers/train_004.json",
+    "points": [
+      {"weight": 2, "checks": [{"path": ["eligible_production_task_count"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["completed_production_units"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["top_three_employee_ids"], "mode": "strict"}]},
+      {"weight": 2, "checks": [{"path": ["top_employee_units_per_hour"], "mode": "decimal"}]},
+      {"weight": 2, "checks": [{"path": ["rework_task_count"], "mode": "strict"}, {"path": ["rework_rate"], "mode": "decimal"}]},
+      {"weight": 3, "checks": [{"path": ["delayed_high_priority_task_ids"], "mode": "set_strings"}]},
+      {"weight": 1, "checks": [{"path": ["lowest_performing_team_id"], "mode": "strict"}]},
+      {"weight": 1, "checks": [{"path": ["facility_status"], "mode": "strict"}]}
+    ]
+  },
+  "train_005": {
+    "answer_file": "judge_answers/train_005.json",
+    "points": [
+      {"weight": 2, "checks": [{"path": ["eligible_case_count"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["case_state_summary", "open_at_cutoff_count"], "mode": "strict"}, {"path": ["case_state_summary", "reopened_at_cutoff_count"], "mode": "strict"}]},
+      {"weight": 2, "checks": [{"path": ["first_response_breach_count"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["active_clock_resolution_breach_count"], "mode": "strict"}]},
+      {"weight": 2, "checks": [{"path": ["worst_accounts"], "mode": "strict"}]},
+      {"weight": 3, "checks": [{"path": ["severe_active_case_ids"], "mode": "strict"}]},
+      {"weight": 2, "checks": [{"path": ["median_active_resolution_hours"], "mode": "number"}]},
+      {"weight": 1, "checks": [{"path": ["support_risk"], "mode": "strict"}]}
+    ]
+  }
+}

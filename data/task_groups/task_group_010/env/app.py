@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 
 from flask import Flask, abort, jsonify, request
+from judge_api import judge_answer_request
 
 
 ROOT = Path(__file__).resolve().parent
@@ -60,6 +61,11 @@ def index():
 </body>
 </html>
 """.strip()
+
+
+@app.get("/api/health")
+def health():
+    return jsonify({"status": "ok"})
 
 
 @app.get("/api/catalog")
@@ -117,6 +123,22 @@ def portfolio_detail(portfolio_id):
     for row in rows:
         if row["portfolio_id"] == portfolio_id:
             return jsonify(row)
+    abort(404, description=f"Unknown portfolio_id: {portfolio_id}")
+
+
+@app.get("/api/portfolios/<portfolio_id>/holdings")
+def portfolio_holdings(portfolio_id):
+    rows = load_json("portfolios.json")
+    for row in rows:
+        if row["portfolio_id"] == portfolio_id:
+            return jsonify(
+                {
+                    "portfolio_id": portfolio_id,
+                    "as_of_date": row["as_of_date"],
+                    "base_currency": row["base_currency"],
+                    "holdings": row["holdings"],
+                }
+            )
     abort(404, description=f"Unknown portfolio_id: {portfolio_id}")
 
 
@@ -180,10 +202,20 @@ def macro_signals():
     return jsonify(filter_rows(rows, {"quarter", "opportunity_set", "rationale_code"}))
 
 
+@app.post("/api/judge")
+def judge():
+    if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+        abort(404)
+    status, payload = judge_answer_request(request.get_data())
+    return jsonify(payload), status
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Run the Asteria Investment Office API.")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8073")))
+    parser.add_argument("--host", default=os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0")))
+    parser.add_argument(
+        "--port", type=int, default=int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9010")))
+    )
     return parser.parse_args()
 
 

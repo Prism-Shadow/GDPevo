@@ -1,5 +1,5 @@
 ---
-name: input-output-credit-json
+name: task-group-011-fewshot-attempt-01
 description: Prepare strict committee-ready JSON answers for task_group_011 credit-office input/output evaluation tasks using only the provided prompt, answer_template.json, and public credit-office API endpoints. Use when a task asks for branch rating migration, lending allocation, credit-union segment posture, watch-list stress/workout queues, or competing CRE application recommendations with controlled enums, ordered lists, rounded numeric fields, and no narrative outside JSON.
 ---
 

@@ -1,0 +1,154 @@
+{
+  "description": "Required JSON shape for New Patient Access Verification: June Primary Care Intake.",
+  "type": "object",
+  "required_top_level_keys": [
+    "task_id",
+    "roster_id",
+    "requested_service_date",
+    "service_line",
+    "patient_results",
+    "cohort_summary"
+  ],
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "train_001"
+    },
+    "roster_id": {
+      "type": "string",
+      "required_value": "NPI-JUN-01"
+    },
+    "requested_service_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "service_line": {
+      "type": "string",
+      "allowed_values": [
+        "primary_care"
+      ]
+    },
+    "patient_results": {
+      "type": "list",
+      "ordering": "ascending by patient_id",
+      "required_patient_ids": [
+        "P001",
+        "P002",
+        "P003",
+        "P004",
+        "P005",
+        "P006"
+      ],
+      "item_required_keys": [
+        "patient_id",
+        "insurance_status",
+        "prescription_status",
+        "pharmacy_status",
+        "lifestyle_risk",
+        "overall_risk",
+        "registration_status",
+        "blocked_reason_codes"
+      ],
+      "item_fields": {
+        "patient_id": {
+          "type": "string"
+        },
+        "insurance_status": {
+          "type": "enum",
+          "allowed_values": [
+            "valid",
+            "invalid",
+            "missing"
+          ]
+        },
+        "prescription_status": {
+          "type": "enum",
+          "allowed_values": [
+            "valid",
+            "invalid",
+            "missing"
+          ]
+        },
+        "pharmacy_status": {
+          "type": "enum",
+          "allowed_values": [
+            "in_network",
+            "out_of_network",
+            "unknown"
+          ]
+        },
+        "lifestyle_risk": {
+          "type": "enum",
+          "allowed_values": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "overall_risk": {
+          "type": "enum",
+          "allowed_values": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "registration_status": {
+          "type": "enum",
+          "allowed_values": [
+            "approved",
+            "hold",
+            "clinical_review",
+            "rejected"
+          ]
+        },
+        "blocked_reason_codes": {
+          "type": "list",
+          "ordering": "reason-code set; order is not meaningful",
+          "allowed_values": [
+            "coverage_expired",
+            "coverage_pending",
+            "emergency_contact_missing",
+            "excluded_service_line",
+            "missing_address",
+            "pbm_invalid",
+            "pbm_missing",
+            "pbm_policy_mismatch",
+            "pharmacy_out_of_network",
+            "pharmacy_unknown",
+            "preferred_contact_unavailable",
+            "overall_risk_high"
+          ]
+        }
+      }
+    },
+    "cohort_summary": {
+      "type": "object",
+      "required_keys": [
+        "total_patients",
+        "counts_by_registration_status",
+        "counts_by_overall_risk",
+        "counts_by_lifestyle_risk"
+      ],
+      "numeric_precision": "integer counts",
+      "count_keys": {
+        "counts_by_registration_status": [
+          "approved",
+          "hold",
+          "clinical_review",
+          "rejected"
+        ],
+        "counts_by_overall_risk": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "counts_by_lifestyle_risk": [
+          "low",
+          "medium",
+          "high"
+        ]
+      }
+    }
+  }
+}

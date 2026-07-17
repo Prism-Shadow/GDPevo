@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-02
+name: task-group-001-fewshot-attempt-02
 description: HarborCRM JSON handoff procedures for tasks that ask Codex to use HarborCRM API data and an answer template to prepare event sponsor reconciliation, badge and campaign-member handoffs, trade-show prospecting summaries, or CRM import batch cleanup. Use when outputs must be JSON-only, template-shaped, policy-aware, sorted, normalized, and reconciled against HarborCRM accounts, contacts, opportunities, invoices, campaign members, exhibitors, or suppression records.
 ---
 

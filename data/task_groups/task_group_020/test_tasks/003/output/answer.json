@@ -1,0 +1,136 @@
+{
+  "deal_id": "D-NOVA-674",
+  "escalation_terms": [
+    {
+      "term_id": "FIDUCIARY_OUT",
+      "source_clause_id": "CL-NOVA-674-002",
+      "policy_rule_id": "PUB-FIDUCIARY",
+      "escalation_required": true,
+      "committee_route": "BOARD_TRANSACTION_COMMITTEE",
+      "deviation_code": "TERMINATION_RIGHT_BLOCKED",
+      "severity": "HIGH",
+      "approval_recommendation": "DO_NOT_APPROVE_AS_DRAFTED",
+      "recommendation": "RESTORE_SUPERIOR_PROPOSAL_TERMINATION_RIGHT",
+      "quantification": {
+        "draft_percent": null,
+        "policy_threshold_percent": null,
+        "deviation_percent": null,
+        "draft_amount_dollars": null,
+        "excess_amount_dollars": null,
+        "exposure_amount_dollars": null,
+        "exposure_basis": "NON_QUANTIFIED_LEGAL_RISK",
+        "survival_months": null,
+        "benchmark_id": "BM-FIDUCIARY-PUBLIC-2026",
+        "benchmark_sample_size": 42,
+        "benchmark_count_above_threshold": 4,
+        "mae_omitted_carveouts": []
+      }
+    },
+    {
+      "term_id": "MAE_CARVEOUTS",
+      "source_clause_id": "CL-NOVA-674-004",
+      "policy_rule_id": "PUB-MAE",
+      "escalation_required": true,
+      "committee_route": "BOARD_TRANSACTION_COMMITTEE",
+      "deviation_code": "RESTRICTED_MAE_CARVEOUTS",
+      "severity": "HIGH",
+      "approval_recommendation": "DO_NOT_APPROVE_AS_DRAFTED",
+      "recommendation": "RESTORE_FULL_PUBLIC_COMPANY_MAE_CARVEOUTS",
+      "quantification": {
+        "draft_percent": null,
+        "policy_threshold_percent": null,
+        "deviation_percent": null,
+        "draft_amount_dollars": null,
+        "excess_amount_dollars": null,
+        "exposure_amount_dollars": null,
+        "exposure_basis": "NON_QUANTIFIED_LEGAL_RISK",
+        "survival_months": null,
+        "benchmark_id": "BM-MAE-HEALTHCARE-2026",
+        "benchmark_sample_size": 36,
+        "benchmark_count_above_threshold": 31,
+        "mae_omitted_carveouts": [
+          "CYBER_INCIDENT",
+          "INDUSTRY",
+          "PANDEMIC"
+        ]
+      }
+    },
+    {
+      "term_id": "RTF",
+      "source_clause_id": "CL-NOVA-674-001",
+      "policy_rule_id": "PUB-RTF",
+      "escalation_required": true,
+      "committee_route": "BOARD_TRANSACTION_COMMITTEE",
+      "deviation_code": "ABOVE_RTF_THRESHOLD",
+      "severity": "HIGH",
+      "approval_recommendation": "DO_NOT_APPROVE_AS_DRAFTED",
+      "recommendation": "RTF_POLICY_POSITION",
+      "quantification": {
+        "draft_percent": 6.25,
+        "policy_threshold_percent": 5.5,
+        "deviation_percent": 0.75,
+        "draft_amount_dollars": 53750000,
+        "excess_amount_dollars": 6450000,
+        "exposure_amount_dollars": 53750000,
+        "exposure_basis": "EQUITY_VALUE",
+        "survival_months": null,
+        "benchmark_id": "BM-RTF-HEALTHTECH-2026",
+        "benchmark_sample_size": 28,
+        "benchmark_count_above_threshold": 3,
+        "mae_omitted_carveouts": []
+      }
+    },
+    {
+      "term_id": "RW_SURVIVAL",
+      "source_clause_id": "CL-NOVA-674-003",
+      "policy_rule_id": "PUB-RW-SURVIVAL",
+      "escalation_required": true,
+      "committee_route": "BOARD_TRANSACTION_COMMITTEE",
+      "deviation_code": "POST_CLOSING_R_AND_W_SURVIVAL",
+      "severity": "HIGH",
+      "approval_recommendation": "DO_NOT_APPROVE_AS_DRAFTED",
+      "recommendation": "DELETE_POST_CLOSING_R_AND_W_SURVIVAL",
+      "quantification": {
+        "draft_percent": null,
+        "policy_threshold_percent": null,
+        "deviation_percent": null,
+        "draft_amount_dollars": null,
+        "excess_amount_dollars": null,
+        "exposure_amount_dollars": 860000000,
+        "exposure_basis": "FULL_EQUITY_VALUE_UNCAPPED",
+        "survival_months": 18,
+        "benchmark_id": null,
+        "benchmark_sample_size": null,
+        "benchmark_count_above_threshold": null,
+        "mae_omitted_carveouts": []
+      }
+    }
+  ],
+  "aggregate_risk": {
+    "committee_route": "BOARD_TRANSACTION_COMMITTEE",
+    "approval_required": true,
+    "committee_members": [
+      "Dr. Elaine Park",
+      "Carla Winthrop",
+      "Mateo Silva"
+    ],
+    "risk_tier": "HIGH",
+    "final_action": "ESCALATE_AND_RENEGOTIATE_BEFORE_SIGNING",
+    "primary_driver_term_ids": [
+      "FIDUCIARY_OUT",
+      "MAE_CARVEOUTS",
+      "RTF",
+      "RW_SURVIVAL"
+    ],
+    "escalation_term_count": 4,
+    "total_quantified_exposure_dollars": 913750000,
+    "total_policy_excess_dollars": 866450000,
+    "strategic_context": {
+      "batna_code": "LOWER_RISK_PRIVATE_PLATFORM",
+      "batna_leverage": "MODERATE",
+      "ownership_context": "ACTIVIST_PRESSURE_INDEX_FUNDS",
+      "strategic_rationale": "NEED_PLATFORM_BUT_MARKET_STANDARD_RISK",
+      "benchmark_memo_required": true
+    }
+  }
+}

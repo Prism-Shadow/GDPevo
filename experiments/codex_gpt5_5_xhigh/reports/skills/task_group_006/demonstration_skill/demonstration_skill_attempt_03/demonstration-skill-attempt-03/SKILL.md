@@ -1,5 +1,5 @@
 ---
-name: demonstration-skill-attempt-03
+name: task-group-006-fewshot-attempt-03
 description: Solve ProcureOps procurement, receiving, AP close, change-control, and release-decision tasks that provide local input payloads plus a shared ProcureOps API, returning strict JSON matching the task answer template.
 ---
 
@@ -10,7 +10,7 @@ Use this skill for task-group prompts that ask for a JSON answer from local payl
 ## Core Workflow
 
 1. Read the prompt, every file under the task's `input/payloads/`, and the answer template.
-2. Query the ProcureOps service. Use the base URL from the prompt/runner, commonly `http://127.0.0.1:8006`. If localhost curl uses a proxy, call it as `curl --noproxy '*' -sS "$BASE/<endpoint>"`.
+2. Query the ProcureOps service. Use the base URL from the prompt/runner, commonly `<environment_base_url>`. If localhost curl uses a proxy, call it as `curl --noproxy '*' -sS "$BASE/<endpoint>"`.
 3. Extract only records in scope:
    - IDs explicitly named in the prompt or local payload.
    - Records linked to those IDs by `po_id`, `receipt_id`, `invoice_id`, `supplier_id`, `program_id`, `contract_id`, `requisition_id`, or `sku`.

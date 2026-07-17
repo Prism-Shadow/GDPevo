@@ -1,0 +1,98 @@
+{
+  "task_id": "test_004",
+  "request_identity": {
+    "service_request_id": "SR-TE-004",
+    "patient": {
+      "patient_id": "P-91804",
+      "enterprise_mrn": "E10091804",
+      "display_name": "Owen Mercer",
+      "dob": "1970-12-06"
+    }
+  },
+  "service_request": {
+    "status": "active",
+    "intent": "order",
+    "priority": "routine",
+    "authored_on": "2026-04-10",
+    "occurrence_date": "2026-04-28",
+    "status_valid": true,
+    "intent_valid": true,
+    "priority_valid": true,
+    "date_sequence_valid": true,
+    "service_code": "NEURO-CONSULT",
+    "service_code_valid": true,
+    "requester_provider_id": "PRV-PCP-002",
+    "performer_provider_id": "PRV-NEURO-040",
+    "performer_service_line": "neurology"
+  },
+  "reason_code_validation": {
+    "reason_codes": [
+      "G20.A1",
+      "R41.3"
+    ],
+    "codes": [
+      {
+        "code": "G20.A1",
+        "valid": true,
+        "chapter": "Nervous system",
+        "matches_patient_evidence": true,
+        "condition_id": "COND-A6D0DA4D"
+      },
+      {
+        "code": "R41.3",
+        "valid": true,
+        "chapter": "Symptoms",
+        "matches_patient_evidence": true,
+        "condition_id": "COND-2EEFD6B5"
+      }
+    ]
+  },
+  "clinical_evidence": {
+    "key_encounter": {
+      "encounter_id": "ENC-91804-20260409",
+      "date": "2026-04-09",
+      "type": "office_visit",
+      "provider_id": "PRV-PCP-002",
+      "signed_status": "signed",
+      "diagnosis_codes": [
+        "G20.A1",
+        "R41.3"
+      ],
+      "medications_mentioned": [
+        "carbidopa/levodopa"
+      ],
+      "care_plan_tag": "neurology_referral_for_parkinson_memory"
+    },
+    "key_medication": {
+      "medication_id": "MED-05C47E07",
+      "medication": "carbidopa/levodopa",
+      "normalized_key": "carbidopa_levodopa",
+      "dose": "25/100 mg",
+      "route": "oral",
+      "frequency": "three times daily",
+      "status": "active",
+      "supports_reason": true
+    },
+    "supporting_active_condition_keys": [
+      "memory_loss",
+      "parkinson_disease"
+    ]
+  },
+  "sbar_coverage": {
+    "complete": true,
+    "sections_present": [
+      "situation",
+      "background",
+      "assessment",
+      "recommendation"
+    ],
+    "missing_sections": []
+  },
+  "filing_decision": {
+    "source_status": "draft",
+    "ready_to_file_status": "active",
+    "action": "file_as_active_order",
+    "ready_to_file": true,
+    "hold_reason_codes": []
+  }
+}

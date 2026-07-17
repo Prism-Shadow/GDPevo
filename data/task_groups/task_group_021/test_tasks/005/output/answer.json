@@ -1,0 +1,1993 @@
+{
+  "audit_summary": {
+    "collection_id": "freight_charges_2026_04",
+    "cutoff_at": "2026-04-30T23:59:59Z",
+    "authoritative_snapshot_id": "freight_charges_2026_04-certified",
+    "raw_row_count": 1375,
+    "logical_charge_count": 1325,
+    "duplicate_raw_count": 50,
+    "valid_charge_count": 1270,
+    "mismatch_count": 116,
+    "quarantine_count": 55,
+    "quarantine_reason_counts": {
+      "ambiguous_alias": 14,
+      "invalid_distance": 12,
+      "invalid_weight": 14,
+      "unrecognized_alias": 15
+    }
+  },
+  "alias_reference_cases": [
+    {
+      "alias_id": "FRA-005",
+      "reference_control_code": "RB-42",
+      "canonical_service_class": "EXPRESS",
+      "reference_status": "ACTIVE",
+      "effective_on_cutoff": true,
+      "status_eligible": true,
+      "recognition_eligible": true
+    },
+    {
+      "alias_id": "FRA-016",
+      "reference_control_code": "RB-42",
+      "canonical_service_class": "EXPRESS",
+      "reference_status": "ACTIVE",
+      "effective_on_cutoff": true,
+      "status_eligible": true,
+      "recognition_eligible": true
+    },
+    {
+      "alias_id": "FRA-017",
+      "reference_control_code": "RB-17",
+      "canonical_service_class": "STANDARD",
+      "reference_status": "INACTIVE",
+      "effective_on_cutoff": false,
+      "status_eligible": false,
+      "recognition_eligible": false
+    },
+    {
+      "alias_id": "FRA-018",
+      "reference_control_code": "RB-83",
+      "canonical_service_class": "STANDARD",
+      "reference_status": "PROVISIONAL",
+      "effective_on_cutoff": true,
+      "status_eligible": false,
+      "recognition_eligible": false
+    }
+  ],
+  "charge_decisions": [
+    {
+      "charge_id": "FC-202604-000001",
+      "ledger_disposition_code": "LD-53",
+      "retained_snapshot_id": "freight_charges_2026_04-certified",
+      "source_control_code": "SB-61",
+      "source_treatment": "RETAIN_CERTIFIED_OVERLAP",
+      "applicable_alias_ids": [
+        "FRA-001",
+        "FRA-002"
+      ],
+      "decisive_alias_ids": [
+        "FRA-002"
+      ],
+      "recognition_outcome": "UNIQUE",
+      "recognized_service_class": "STANDARD",
+      "class_relation": "MISMATCH",
+      "accrual_disposition": "QUARANTINE",
+      "quarantine_reason": "INVALID_WEIGHT",
+      "weight_eligible": false,
+      "distance_eligible": true,
+      "selected_fx_status": "CERTIFIED",
+      "selected_usd_per_unit": 0.998,
+      "converted_weight_kg": null,
+      "converted_distance_km": 439.111,
+      "converted_amount_usd": 1229.36,
+      "included_in_totals": false,
+      "included_spend_usd": null
+    },
+    {
+      "charge_id": "FC-202604-000002",
+      "ledger_disposition_code": "LD-72",
+      "retained_snapshot_id": "freight_charges_2026_04-certified",
+      "source_control_code": "SB-24",
+      "source_treatment": "RETAIN_CERTIFIED_ONLY",
+      "applicable_alias_ids": [
+        "FRA-005",
+        "FRA-016"
+      ],
+      "decisive_alias_ids": [
+        "FRA-005"
+      ],
+      "recognition_outcome": "UNIQUE",
+      "recognized_service_class": "EXPRESS",
+      "class_relation": "MATCH",
+      "accrual_disposition": "INCLUDE_MATCH",
+      "quarantine_reason": "NONE",
+      "weight_eligible": true,
+      "distance_eligible": true,
+      "selected_fx_status": "CERTIFIED",
+      "selected_usd_per_unit": 1.08432,
+      "converted_weight_kg": 4142.721,
+      "converted_distance_km": 873.481,
+      "converted_amount_usd": 898.96,
+      "included_in_totals": true,
+      "included_spend_usd": 898.96
+    },
+    {
+      "charge_id": "FC-202604-000007",
+      "ledger_disposition_code": "LD-72",
+      "retained_snapshot_id": "freight_charges_2026_04-provisional",
+      "source_control_code": "SB-79",
+      "source_treatment": "RETAIN_PROVISIONAL_ONLY",
+      "applicable_alias_ids": [
+        "FRA-004",
+        "FRA-006"
+      ],
+      "decisive_alias_ids": [
+        "FRA-006"
+      ],
+      "recognition_outcome": "UNIQUE",
+      "recognized_service_class": "EXPRESS",
+      "class_relation": "MATCH",
+      "accrual_disposition": "INCLUDE_MATCH",
+      "quarantine_reason": "NONE",
+      "weight_eligible": true,
+      "distance_eligible": true,
+      "selected_fx_status": "CERTIFIED",
+      "selected_usd_per_unit": 1.26746,
+      "converted_weight_kg": 9188.907,
+      "converted_distance_km": 1263.096,
+      "converted_amount_usd": 2005.95,
+      "included_in_totals": true,
+      "included_spend_usd": 2005.95
+    },
+    {
+      "charge_id": "FC-202604-000012",
+      "ledger_disposition_code": "LD-31",
+      "retained_snapshot_id": "freight_charges_2026_04-certified",
+      "source_control_code": "SB-24",
+      "source_treatment": "RETAIN_CERTIFIED_ONLY",
+      "applicable_alias_ids": [
+        "FRA-005",
+        "FRA-016"
+      ],
+      "decisive_alias_ids": [
+        "FRA-005"
+      ],
+      "recognition_outcome": "UNIQUE",
+      "recognized_service_class": "EXPRESS",
+      "class_relation": "MISMATCH",
+      "accrual_disposition": "INCLUDE_MISMATCH",
+      "quarantine_reason": "NONE",
+      "weight_eligible": true,
+      "distance_eligible": true,
+      "selected_fx_status": "CERTIFIED",
+      "selected_usd_per_unit": 0.74148,
+      "converted_weight_kg": 2866.723,
+      "converted_distance_km": 646.507,
+      "converted_amount_usd": 437.24,
+      "included_in_totals": true,
+      "included_spend_usd": 437.24
+    },
+    {
+      "charge_id": "FC-202604-000020",
+      "ledger_disposition_code": "LD-72",
+      "retained_snapshot_id": "freight_charges_2026_04-certified",
+      "source_control_code": "SB-61",
+      "source_treatment": "RETAIN_CERTIFIED_OVERLAP",
+      "applicable_alias_ids": [
+        "FRA-014"
+      ],
+      "decisive_alias_ids": [
+        "FRA-014"
+      ],
+      "recognition_outcome": "UNIQUE",
+      "recognized_service_class": "OVERSIZE",
+      "class_relation": "MATCH",
+      "accrual_disposition": "INCLUDE_MATCH",
+      "quarantine_reason": "NONE",
+      "weight_eligible": true,
+      "distance_eligible": true,
+      "selected_fx_status": "CERTIFIED",
+      "selected_usd_per_unit": 0.73926,
+      "converted_weight_kg": 3859.503,
+      "converted_distance_km": 974.99,
+      "converted_amount_usd": 616.28,
+      "included_in_totals": true,
+      "included_spend_usd": 616.28
+    },
+    {
+      "charge_id": "FC-202604-000088",
+      "ledger_disposition_code": "LD-14",
+      "retained_snapshot_id": "freight_charges_2026_04-certified",
+      "source_control_code": "SB-24",
+      "source_treatment": "RETAIN_CERTIFIED_ONLY",
+      "applicable_alias_ids": [],
+      "decisive_alias_ids": [],
+      "recognition_outcome": "UNRECOGNIZED",
+      "recognized_service_class": "UNRESOLVED",
+      "class_relation": "NOT_COMPARABLE",
+      "accrual_disposition": "QUARANTINE",
+      "quarantine_reason": "UNRECOGNIZED_ALIAS",
+      "weight_eligible": true,
+      "distance_eligible": true,
+      "selected_fx_status": "CERTIFIED",
+      "selected_usd_per_unit": 0.73704,
+      "converted_weight_kg": 3901.498,
+      "converted_distance_km": 1852.648,
+      "converted_amount_usd": 863.95,
+      "included_in_totals": false,
+      "included_spend_usd": null
+    },
+    {
+      "charge_id": "FC-202604-000092",
+      "ledger_disposition_code": "LD-88",
+      "retained_snapshot_id": "freight_charges_2026_04-certified",
+      "source_control_code": "SB-24",
+      "source_treatment": "RETAIN_CERTIFIED_ONLY",
+      "applicable_alias_ids": [
+        "FRA-001",
+        "FRA-004"
+      ],
+      "decisive_alias_ids": [
+        "FRA-001",
+        "FRA-004"
+      ],
+      "recognition_outcome": "AMBIGUOUS",
+      "recognized_service_class": "UNRESOLVED",
+      "class_relation": "NOT_COMPARABLE",
+      "accrual_disposition": "QUARANTINE",
+      "quarantine_reason": "AMBIGUOUS_ALIAS",
+      "weight_eligible": true,
+      "distance_eligible": true,
+      "selected_fx_status": "CERTIFIED",
+      "selected_usd_per_unit": 0.73482,
+      "converted_weight_kg": 2196.714,
+      "converted_distance_km": 3263.254,
+      "converted_amount_usd": 1104.9,
+      "included_in_totals": false,
+      "included_spend_usd": null
+    },
+    {
+      "charge_id": "FC-202604-000102",
+      "ledger_disposition_code": "LD-53",
+      "retained_snapshot_id": "freight_charges_2026_04-certified",
+      "source_control_code": "SB-24",
+      "source_treatment": "RETAIN_CERTIFIED_ONLY",
+      "applicable_alias_ids": [
+        "FRA-005",
+        "FRA-016"
+      ],
+      "decisive_alias_ids": [
+        "FRA-005"
+      ],
+      "recognition_outcome": "UNIQUE",
+      "recognized_service_class": "EXPRESS",
+      "class_relation": "MATCH",
+      "accrual_disposition": "QUARANTINE",
+      "quarantine_reason": "INVALID_WEIGHT",
+      "weight_eligible": false,
+      "distance_eligible": true,
+      "selected_fx_status": "CERTIFIED",
+      "selected_usd_per_unit": 1.07244,
+      "converted_weight_kg": null,
+      "converted_distance_km": 176.207,
+      "converted_amount_usd": 289.75,
+      "included_in_totals": false,
+      "included_spend_usd": null
+    },
+    {
+      "charge_id": "FC-202604-000108",
+      "ledger_disposition_code": "LD-53",
+      "retained_snapshot_id": "freight_charges_2026_04-certified",
+      "source_control_code": "SB-24",
+      "source_treatment": "RETAIN_CERTIFIED_ONLY",
+      "applicable_alias_ids": [
+        "FRA-008"
+      ],
+      "decisive_alias_ids": [
+        "FRA-008"
+      ],
+      "recognition_outcome": "UNIQUE",
+      "recognized_service_class": "REFRIGERATED",
+      "class_relation": "MATCH",
+      "accrual_disposition": "QUARANTINE",
+      "quarantine_reason": "INVALID_DISTANCE",
+      "weight_eligible": true,
+      "distance_eligible": false,
+      "selected_fx_status": "CERTIFIED",
+      "selected_usd_per_unit": 0.74296,
+      "converted_weight_kg": 4237.793,
+      "converted_distance_km": null,
+      "converted_amount_usd": 377.82,
+      "included_in_totals": false,
+      "included_spend_usd": null
+    }
+  ],
+  "class_mismatch_charge_ids": [
+    "FC-202604-000012",
+    "FC-202604-000023",
+    "FC-202604-000034",
+    "FC-202604-000045",
+    "FC-202604-000056",
+    "FC-202604-000067",
+    "FC-202604-000078",
+    "FC-202604-000089",
+    "FC-202604-000100",
+    "FC-202604-000111",
+    "FC-202604-000122",
+    "FC-202604-000133",
+    "FC-202604-000144",
+    "FC-202604-000155",
+    "FC-202604-000166",
+    "FC-202604-000177",
+    "FC-202604-000188",
+    "FC-202604-000199",
+    "FC-202604-000210",
+    "FC-202604-000221",
+    "FC-202604-000232",
+    "FC-202604-000243",
+    "FC-202604-000254",
+    "FC-202604-000265",
+    "FC-202604-000276",
+    "FC-202604-000287",
+    "FC-202604-000298",
+    "FC-202604-000309",
+    "FC-202604-000320",
+    "FC-202604-000331",
+    "FC-202604-000342",
+    "FC-202604-000353",
+    "FC-202604-000364",
+    "FC-202604-000375",
+    "FC-202604-000386",
+    "FC-202604-000397",
+    "FC-202604-000408",
+    "FC-202604-000419",
+    "FC-202604-000430",
+    "FC-202604-000441",
+    "FC-202604-000452",
+    "FC-202604-000463",
+    "FC-202604-000474",
+    "FC-202604-000485",
+    "FC-202604-000496",
+    "FC-202604-000507",
+    "FC-202604-000518",
+    "FC-202604-000529",
+    "FC-202604-000540",
+    "FC-202604-000551",
+    "FC-202604-000562",
+    "FC-202604-000573",
+    "FC-202604-000584",
+    "FC-202604-000595",
+    "FC-202604-000606",
+    "FC-202604-000617",
+    "FC-202604-000628",
+    "FC-202604-000639",
+    "FC-202604-000650",
+    "FC-202604-000661",
+    "FC-202604-000672",
+    "FC-202604-000683",
+    "FC-202604-000694",
+    "FC-202604-000705",
+    "FC-202604-000716",
+    "FC-202604-000727",
+    "FC-202604-000738",
+    "FC-202604-000749",
+    "FC-202604-000760",
+    "FC-202604-000771",
+    "FC-202604-000782",
+    "FC-202604-000793",
+    "FC-202604-000804",
+    "FC-202604-000815",
+    "FC-202604-000826",
+    "FC-202604-000837",
+    "FC-202604-000848",
+    "FC-202604-000859",
+    "FC-202604-000870",
+    "FC-202604-000881",
+    "FC-202604-000892",
+    "FC-202604-000903",
+    "FC-202604-000914",
+    "FC-202604-000925",
+    "FC-202604-000936",
+    "FC-202604-000947",
+    "FC-202604-000969",
+    "FC-202604-000980",
+    "FC-202604-000991",
+    "FC-202604-001013",
+    "FC-202604-001024",
+    "FC-202604-001035",
+    "FC-202604-001046",
+    "FC-202604-001057",
+    "FC-202604-001068",
+    "FC-202604-001079",
+    "FC-202604-001090",
+    "FC-202604-001101",
+    "FC-202604-001123",
+    "FC-202604-001134",
+    "FC-202604-001145",
+    "FC-202604-001156",
+    "FC-202604-001167",
+    "FC-202604-001189",
+    "FC-202604-001200",
+    "FC-202604-001211",
+    "FC-202604-001222",
+    "FC-202604-001233",
+    "FC-202604-001244",
+    "FC-202604-001255",
+    "FC-202604-001266",
+    "FC-202604-001277",
+    "FC-202604-001288",
+    "FC-202604-001299",
+    "FC-202604-001310",
+    "FC-202604-001321"
+  ],
+  "quarantine_charge_ids": [
+    "FC-202604-000001",
+    "FC-202604-000088",
+    "FC-202604-000092",
+    "FC-202604-000102",
+    "FC-202604-000108",
+    "FC-202604-000175",
+    "FC-202604-000183",
+    "FC-202604-000203",
+    "FC-202604-000215",
+    "FC-202604-000262",
+    "FC-202604-000274",
+    "FC-202604-000304",
+    "FC-202604-000322",
+    "FC-202604-000349",
+    "FC-202604-000365",
+    "FC-202604-000405",
+    "FC-202604-000429",
+    "FC-202604-000436",
+    "FC-202604-000456",
+    "FC-202604-000506",
+    "FC-202604-000523",
+    "FC-202604-000536",
+    "FC-202604-000547",
+    "FC-202604-000607",
+    "FC-202604-000610",
+    "FC-202604-000638",
+    "FC-202604-000643",
+    "FC-202604-000697",
+    "FC-202604-000708",
+    "FC-202604-000729",
+    "FC-202604-000750",
+    "FC-202604-000784",
+    "FC-202604-000809",
+    "FC-202604-000820",
+    "FC-202604-000857",
+    "FC-202604-000871",
+    "FC-202604-000910",
+    "FC-202604-000911",
+    "FC-202604-000958",
+    "FC-202604-000964",
+    "FC-202604-001002",
+    "FC-202604-001011",
+    "FC-202604-001045",
+    "FC-202604-001071",
+    "FC-202604-001093",
+    "FC-202604-001112",
+    "FC-202604-001132",
+    "FC-202604-001178",
+    "FC-202604-001184",
+    "FC-202604-001213",
+    "FC-202604-001219",
+    "FC-202604-001275",
+    "FC-202604-001285",
+    "FC-202604-001306",
+    "FC-202604-001314"
+  ],
+  "duplicate_groups": [
+    {
+      "charge_id": "FC-202604-000001",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000020",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000039",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000058",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000077",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000096",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000115",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000134",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000153",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000172",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000191",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000210",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000229",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000248",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000267",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000286",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000305",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000324",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000343",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000362",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000381",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000400",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000419",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000438",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000457",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000476",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000495",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000514",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000533",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000552",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000571",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000590",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000609",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000628",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000647",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000666",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000685",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000704",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000723",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000742",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000761",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000780",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000799",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000818",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000837",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000856",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000875",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000894",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000913",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    },
+    {
+      "charge_id": "FC-202604-000932",
+      "raw_occurrence_count": 2,
+      "snapshot_ids": [
+        "freight_charges_2026_04-certified",
+        "freight_charges_2026_04-provisional"
+      ],
+      "retained_snapshot_id": "freight_charges_2026_04-certified"
+    }
+  ],
+  "normalized_totals": {
+    "valid_charge_count": 1270,
+    "total_billed_weight_kg": 4581006.7,
+    "total_distance_km": 1760412.67,
+    "total_spend_usd": 1254777.88,
+    "service_class_totals": [
+      {
+        "service_class": "EXPRESS",
+        "charge_count": 254,
+        "billed_weight_kg": 926252.74,
+        "distance_km": 348221.77,
+        "spend_usd": 251068.78
+      },
+      {
+        "service_class": "HAZMAT",
+        "charge_count": 254,
+        "billed_weight_kg": 884041.62,
+        "distance_km": 356303.51,
+        "spend_usd": 248532.09
+      },
+      {
+        "service_class": "OVERSIZE",
+        "charge_count": 254,
+        "billed_weight_kg": 929280.6,
+        "distance_km": 335637.04,
+        "spend_usd": 247325.03
+      },
+      {
+        "service_class": "REFRIGERATED",
+        "charge_count": 253,
+        "billed_weight_kg": 890299.61,
+        "distance_km": 340022.0,
+        "spend_usd": 241893.08
+      },
+      {
+        "service_class": "STANDARD",
+        "charge_count": 255,
+        "billed_weight_kg": 951132.14,
+        "distance_km": 380228.35,
+        "spend_usd": 265958.9
+      }
+    ]
+  },
+  "focus_lanes": [
+    {
+      "lane_id": "LANE-001",
+      "logical_charge_count": 16,
+      "valid_charge_count": 16,
+      "mismatch_count": 1,
+      "quarantine_count": 0,
+      "exception_count": 1,
+      "exception_rate": 0.0625,
+      "billed_weight_kg": 55846.46,
+      "distance_km": 21665.76,
+      "spend_usd": 15618.22,
+      "accrual_usd_per_km": 0.7209,
+      "highest_spend_service_class": "STANDARD"
+    },
+    {
+      "lane_id": "LANE-016",
+      "logical_charge_count": 16,
+      "valid_charge_count": 14,
+      "mismatch_count": 2,
+      "quarantine_count": 2,
+      "exception_count": 4,
+      "exception_rate": 0.25,
+      "billed_weight_kg": 54589.18,
+      "distance_km": 21342.29,
+      "spend_usd": 14542.58,
+      "accrual_usd_per_km": 0.6814,
+      "highest_spend_service_class": "STANDARD"
+    },
+    {
+      "lane_id": "LANE-048",
+      "logical_charge_count": 16,
+      "valid_charge_count": 13,
+      "mismatch_count": 2,
+      "quarantine_count": 3,
+      "exception_count": 5,
+      "exception_rate": 0.3125,
+      "billed_weight_kg": 45843.23,
+      "distance_km": 19840.38,
+      "spend_usd": 12570.76,
+      "accrual_usd_per_km": 0.6336,
+      "highest_spend_service_class": "STANDARD"
+    },
+    {
+      "lane_id": "LANE-082",
+      "logical_charge_count": 15,
+      "valid_charge_count": 15,
+      "mismatch_count": 2,
+      "quarantine_count": 0,
+      "exception_count": 2,
+      "exception_rate": 0.1333,
+      "billed_weight_kg": 57619.04,
+      "distance_km": 23048.39,
+      "spend_usd": 16162.76,
+      "accrual_usd_per_km": 0.7013,
+      "highest_spend_service_class": "REFRIGERATED"
+    }
+  ],
+  "carrier_ranking": [
+    {
+      "rank": 1,
+      "carrier_id": "CAR-023",
+      "mismatch_count": 4,
+      "mismatch_spend_usd": 5418.33,
+      "quarantine_count": 2,
+      "exception_count": 6
+    },
+    {
+      "rank": 2,
+      "carrier_id": "CAR-003",
+      "mismatch_count": 4,
+      "mismatch_spend_usd": 5325.19,
+      "quarantine_count": 1,
+      "exception_count": 5
+    },
+    {
+      "rank": 3,
+      "carrier_id": "CAR-022",
+      "mismatch_count": 5,
+      "mismatch_spend_usd": 5317.61,
+      "quarantine_count": 1,
+      "exception_count": 6
+    },
+    {
+      "rank": 4,
+      "carrier_id": "CAR-001",
+      "mismatch_count": 4,
+      "mismatch_spend_usd": 4948.64,
+      "quarantine_count": 0,
+      "exception_count": 4
+    },
+    {
+      "rank": 5,
+      "carrier_id": "CAR-021",
+      "mismatch_count": 4,
+      "mismatch_spend_usd": 4891.52,
+      "quarantine_count": 0,
+      "exception_count": 4
+    }
+  ],
+  "integrated_close_evidence_release_assessment": {
+    "population_summary": {
+      "invoice_count": 272,
+      "retained_charge_count": 1085,
+      "valid_charge_count": 1045,
+      "certified_booked_spend_usd": 1023594.76,
+      "source_dependent_invoice_count": 176,
+      "source_dependent_charge_count": 176,
+      "fx_comparison_dependent_invoice_count": 264,
+      "fx_comparison_charge_count": 264,
+      "provisional_fx_comparison_delta_usd": 1559.57
+    },
+    "action_cohorts": [
+      {
+        "action_cohort": "ARCHIVE_PROVISIONAL_EVIDENCE",
+        "invoice_count": 3,
+        "retained_charge_count": 9,
+        "valid_charge_count": 7,
+        "certified_booked_spend_usd": 7608.46,
+        "source_dependent_charge_count": 0,
+        "fx_comparison_charge_count": 0,
+        "provisional_fx_comparison_delta_usd": 0.0,
+        "source_control_counts": [
+          {"source_control_code": "SB-24", "charge_count": 9},
+          {"source_control_code": "SB-61", "charge_count": 0},
+          {"source_control_code": "SB-79", "charge_count": 0}
+        ],
+        "ledger_disposition_counts": [
+          {"ledger_disposition_code": "LD-14", "charge_count": 0},
+          {"ledger_disposition_code": "LD-31", "charge_count": 1},
+          {"ledger_disposition_code": "LD-53", "charge_count": 1},
+          {"ledger_disposition_code": "LD-72", "charge_count": 6},
+          {"ledger_disposition_code": "LD-88", "charge_count": 1}
+        ]
+      },
+      {
+        "action_cohort": "RETAIN_FX_COMPARISON_ONLY",
+        "invoice_count": 93,
+        "retained_charge_count": 372,
+        "valid_charge_count": 361,
+        "certified_booked_spend_usd": 369479.71,
+        "source_dependent_charge_count": 0,
+        "fx_comparison_charge_count": 93,
+        "provisional_fx_comparison_delta_usd": 396.61,
+        "source_control_counts": [
+          {"source_control_code": "SB-24", "charge_count": 352},
+          {"source_control_code": "SB-61", "charge_count": 20},
+          {"source_control_code": "SB-79", "charge_count": 0}
+        ],
+        "ledger_disposition_counts": [
+          {"ledger_disposition_code": "LD-14", "charge_count": 4},
+          {"ledger_disposition_code": "LD-31", "charge_count": 32},
+          {"ledger_disposition_code": "LD-53", "charge_count": 4},
+          {"ledger_disposition_code": "LD-72", "charge_count": 329},
+          {"ledger_disposition_code": "LD-88", "charge_count": 3}
+        ]
+      },
+      {
+        "action_cohort": "RETAIN_SOURCE_AND_FX_COMPARISON",
+        "invoice_count": 171,
+        "retained_charge_count": 684,
+        "valid_charge_count": 662,
+        "certified_booked_spend_usd": 633413.46,
+        "source_dependent_charge_count": 171,
+        "fx_comparison_charge_count": 171,
+        "provisional_fx_comparison_delta_usd": 1162.96,
+        "source_control_counts": [
+          {"source_control_code": "SB-24", "charge_count": 493},
+          {"source_control_code": "SB-61", "charge_count": 20},
+          {"source_control_code": "SB-79", "charge_count": 171}
+        ],
+        "ledger_disposition_counts": [
+          {"ledger_disposition_code": "LD-14", "charge_count": 8},
+          {"ledger_disposition_code": "LD-31", "charge_count": 61},
+          {"ledger_disposition_code": "LD-53", "charge_count": 10},
+          {"ledger_disposition_code": "LD-72", "charge_count": 601},
+          {"ledger_disposition_code": "LD-88", "charge_count": 4}
+        ]
+      },
+      {
+        "action_cohort": "RETAIN_SOURCE_ONLY",
+        "invoice_count": 5,
+        "retained_charge_count": 20,
+        "valid_charge_count": 15,
+        "certified_booked_spend_usd": 13093.13,
+        "source_dependent_charge_count": 5,
+        "fx_comparison_charge_count": 0,
+        "provisional_fx_comparison_delta_usd": 0.0,
+        "source_control_counts": [
+          {"source_control_code": "SB-24", "charge_count": 15},
+          {"source_control_code": "SB-61", "charge_count": 0},
+          {"source_control_code": "SB-79", "charge_count": 5}
+        ],
+        "ledger_disposition_counts": [
+          {"ledger_disposition_code": "LD-14", "charge_count": 0},
+          {"ledger_disposition_code": "LD-31", "charge_count": 0},
+          {"ledger_disposition_code": "LD-53", "charge_count": 3},
+          {"ledger_disposition_code": "LD-72", "charge_count": 15},
+          {"ledger_disposition_code": "LD-88", "charge_count": 2}
+        ]
+      }
+    ],
+    "priority_invoice_ranking": [
+      {
+        "action_cohort": "RETAIN_FX_COMPARISON_ONLY",
+        "cohort_rank": 1,
+        "invoice_id": "INV-000114",
+        "source_dependent_charge_count": 0,
+        "fx_comparison_charge_count": 1,
+        "certified_booked_spend_at_source_risk_usd": 0.0,
+        "provisional_fx_comparison_delta_usd": 9.12,
+        "evidence_priority_usd": 9.12
+      },
+      {
+        "action_cohort": "RETAIN_FX_COMPARISON_ONLY",
+        "cohort_rank": 2,
+        "invoice_id": "INV-000028",
+        "source_dependent_charge_count": 0,
+        "fx_comparison_charge_count": 1,
+        "certified_booked_spend_at_source_risk_usd": 0.0,
+        "provisional_fx_comparison_delta_usd": 8.59,
+        "evidence_priority_usd": 8.59
+      },
+      {
+        "action_cohort": "RETAIN_FX_COMPARISON_ONLY",
+        "cohort_rank": 3,
+        "invoice_id": "INV-000199",
+        "source_dependent_charge_count": 0,
+        "fx_comparison_charge_count": 1,
+        "certified_booked_spend_at_source_risk_usd": 0.0,
+        "provisional_fx_comparison_delta_usd": 8.11,
+        "evidence_priority_usd": 8.11
+      },
+      {
+        "action_cohort": "RETAIN_SOURCE_AND_FX_COMPARISON",
+        "cohort_rank": 1,
+        "invoice_id": "INV-000127",
+        "source_dependent_charge_count": 1,
+        "fx_comparison_charge_count": 1,
+        "certified_booked_spend_at_source_risk_usd": 2311.0,
+        "provisional_fx_comparison_delta_usd": 3.48,
+        "evidence_priority_usd": 2314.48
+      },
+      {
+        "action_cohort": "RETAIN_SOURCE_AND_FX_COMPARISON",
+        "cohort_rank": 2,
+        "invoice_id": "INV-000154",
+        "source_dependent_charge_count": 1,
+        "fx_comparison_charge_count": 1,
+        "certified_booked_spend_at_source_risk_usd": 2164.11,
+        "provisional_fx_comparison_delta_usd": 6.89,
+        "evidence_priority_usd": 2171.0
+      },
+      {
+        "action_cohort": "RETAIN_SOURCE_AND_FX_COMPARISON",
+        "cohort_rank": 3,
+        "invoice_id": "INV-000286",
+        "source_dependent_charge_count": 1,
+        "fx_comparison_charge_count": 1,
+        "certified_booked_spend_at_source_risk_usd": 1989.35,
+        "provisional_fx_comparison_delta_usd": 6.73,
+        "evidence_priority_usd": 1996.08
+      },
+      {
+        "action_cohort": "RETAIN_SOURCE_ONLY",
+        "cohort_rank": 1,
+        "invoice_id": "INV-000250",
+        "source_dependent_charge_count": 1,
+        "fx_comparison_charge_count": 0,
+        "certified_booked_spend_at_source_risk_usd": 1495.26,
+        "provisional_fx_comparison_delta_usd": 0.0,
+        "evidence_priority_usd": 1495.26
+      },
+      {
+        "action_cohort": "RETAIN_SOURCE_ONLY",
+        "cohort_rank": 2,
+        "invoice_id": "INV-000328",
+        "source_dependent_charge_count": 1,
+        "fx_comparison_charge_count": 0,
+        "certified_booked_spend_at_source_risk_usd": 961.59,
+        "provisional_fx_comparison_delta_usd": 0.0,
+        "evidence_priority_usd": 961.59
+      },
+      {
+        "action_cohort": "RETAIN_SOURCE_ONLY",
+        "cohort_rank": 3,
+        "invoice_id": "INV-000267",
+        "source_dependent_charge_count": 1,
+        "fx_comparison_charge_count": 0,
+        "certified_booked_spend_at_source_risk_usd": 922.29,
+        "provisional_fx_comparison_delta_usd": 0.0,
+        "evidence_priority_usd": 922.29
+      }
+    ]
+  },
+  "unsafe_aggregation_containment_plan": {
+    "baseline_population": {
+      "invoice_node_count": 332,
+      "retained_charge_count": 1325,
+      "source_treatment_counts": [
+        {
+          "source_treatment": "CERTIFIED_ONLY",
+          "charge_count": 1063
+        },
+        {
+          "source_treatment": "CERTIFIED_OVERLAP",
+          "charge_count": 50
+        },
+        {
+          "source_treatment": "PROVISIONAL_ONLY",
+          "charge_count": 212
+        }
+      ],
+      "valid_charge_count": 1270,
+      "valid_spend_usd": 1254777.88,
+      "fx_affected_charge_count": 320,
+      "fx_counterfactual_increase_usd": 1888.85
+    },
+    "unsafe_union_graph": {
+      "scenario_edge_counts": [
+        {
+          "scenario_id": "CARRIER_DATE_CLASS_KEY",
+          "unsafe_key_collision_count": 372,
+          "direct_cross_invoice_pair_count": 207
+        },
+        {
+          "scenario_id": "LANE_LINE_KEY",
+          "unsafe_key_collision_count": 332,
+          "direct_cross_invoice_pair_count": 498
+        }
+      ],
+      "union_direct_cross_invoice_pair_count": 705,
+      "overlapping_direct_pair_count": 0,
+      "connected_component_count": 1,
+      "largest_component_invoice_count": 332
+    },
+    "separation_stages": [
+      {
+        "stage_id": "SOURCE_STABILITY_SEPARATION",
+        "active_invoice_count_before": 332,
+        "left_label": "SOURCE_FRAGILE",
+        "left_invoice_count_before": 212,
+        "right_label": "SOURCE_STABLE",
+        "right_invoice_count_before": 120,
+        "cross_label_direct_pair_count": 417,
+        "maximum_matching_size": 120,
+        "minimum_vertex_cover_size": 120,
+        "isolated_left_invoice_count": 7,
+        "isolated_right_invoice_count": 113,
+        "isolated_invoice_count": 120,
+        "isolated_invoice_ids": [
+          "INV-000000",
+          "INV-000002",
+          "INV-000005",
+          "INV-000008",
+          "INV-000011",
+          "INV-000014",
+          "INV-000017",
+          "INV-000020",
+          "INV-000023",
+          "INV-000026",
+          "INV-000028",
+          "INV-000029",
+          "INV-000031",
+          "INV-000032",
+          "INV-000033",
+          "INV-000035",
+          "INV-000038",
+          "INV-000041",
+          "INV-000044",
+          "INV-000047",
+          "INV-000050",
+          "INV-000053",
+          "INV-000056",
+          "INV-000057",
+          "INV-000059",
+          "INV-000062",
+          "INV-000065",
+          "INV-000068",
+          "INV-000071",
+          "INV-000074",
+          "INV-000077",
+          "INV-000080",
+          "INV-000083",
+          "INV-000085",
+          "INV-000086",
+          "INV-000088",
+          "INV-000089",
+          "INV-000091",
+          "INV-000092",
+          "INV-000095",
+          "INV-000098",
+          "INV-000101",
+          "INV-000104",
+          "INV-000107",
+          "INV-000110",
+          "INV-000113",
+          "INV-000119",
+          "INV-000122",
+          "INV-000125",
+          "INV-000128",
+          "INV-000131",
+          "INV-000134",
+          "INV-000137",
+          "INV-000140",
+          "INV-000143",
+          "INV-000146",
+          "INV-000149",
+          "INV-000152",
+          "INV-000155",
+          "INV-000158",
+          "INV-000161",
+          "INV-000164",
+          "INV-000167",
+          "INV-000170",
+          "INV-000173",
+          "INV-000176",
+          "INV-000179",
+          "INV-000182",
+          "INV-000185",
+          "INV-000188",
+          "INV-000191",
+          "INV-000194",
+          "INV-000200",
+          "INV-000203",
+          "INV-000206",
+          "INV-000209",
+          "INV-000212",
+          "INV-000215",
+          "INV-000218",
+          "INV-000221",
+          "INV-000224",
+          "INV-000225",
+          "INV-000227",
+          "INV-000228",
+          "INV-000230",
+          "INV-000233",
+          "INV-000236",
+          "INV-000239",
+          "INV-000242",
+          "INV-000245",
+          "INV-000248",
+          "INV-000251",
+          "INV-000254",
+          "INV-000257",
+          "INV-000260",
+          "INV-000263",
+          "INV-000266",
+          "INV-000269",
+          "INV-000272",
+          "INV-000275",
+          "INV-000278",
+          "INV-000280",
+          "INV-000281",
+          "INV-000282",
+          "INV-000284",
+          "INV-000287",
+          "INV-000290",
+          "INV-000293",
+          "INV-000296",
+          "INV-000299",
+          "INV-000302",
+          "INV-000305",
+          "INV-000311",
+          "INV-000314",
+          "INV-000317",
+          "INV-000320",
+          "INV-000323",
+          "INV-000326",
+          "INV-000329",
+          "INV-000331"
+        ],
+        "isolated_population_impact": {
+          "retained_charge_count": 477,
+          "source_treatment_counts": [
+            {
+              "source_treatment": "CERTIFIED_ONLY",
+              "charge_count": 448
+            },
+            {
+              "source_treatment": "CERTIFIED_OVERLAP",
+              "charge_count": 22
+            },
+            {
+              "source_treatment": "PROVISIONAL_ONLY",
+              "charge_count": 7
+            }
+          ],
+          "valid_charge_count": 458,
+          "valid_spend_usd": 465682.33,
+          "fx_affected_charge_count": 116,
+          "fx_counterfactual_increase_usd": 489.06
+        },
+        "active_invoice_count_after": 212
+      },
+      {
+        "stage_id": "FX_STABILITY_SEPARATION",
+        "active_invoice_count_before": 212,
+        "left_label": "FX_SENSITIVE",
+        "left_invoice_count_before": 204,
+        "right_label": "FX_INSENSITIVE",
+        "right_invoice_count_before": 8,
+        "cross_label_direct_pair_count": 22,
+        "maximum_matching_size": 8,
+        "minimum_vertex_cover_size": 8,
+        "isolated_left_invoice_count": 0,
+        "isolated_right_invoice_count": 8,
+        "isolated_invoice_count": 8,
+        "isolated_invoice_ids": [
+          "INV-000025",
+          "INV-000045",
+          "INV-000187",
+          "INV-000250",
+          "INV-000252",
+          "INV-000267",
+          "INV-000318",
+          "INV-000328"
+        ],
+        "isolated_population_impact": {
+          "retained_charge_count": 32,
+          "source_treatment_counts": [
+            {
+              "source_treatment": "CERTIFIED_ONLY",
+              "charge_count": 24
+            },
+            {
+              "source_treatment": "CERTIFIED_OVERLAP",
+              "charge_count": 0
+            },
+            {
+              "source_treatment": "PROVISIONAL_ONLY",
+              "charge_count": 8
+            }
+          ],
+          "valid_charge_count": 24,
+          "valid_spend_usd": 21633.49,
+          "fx_affected_charge_count": 0,
+          "fx_counterfactual_increase_usd": 0.0
+        },
+        "active_invoice_count_after": 204
+      }
+    ],
+    "final_containment": {
+      "total_isolated_invoice_count": 128,
+      "isolated_invoice_ids": [
+        "INV-000000",
+        "INV-000002",
+        "INV-000005",
+        "INV-000008",
+        "INV-000011",
+        "INV-000014",
+        "INV-000017",
+        "INV-000020",
+        "INV-000023",
+        "INV-000025",
+        "INV-000026",
+        "INV-000028",
+        "INV-000029",
+        "INV-000031",
+        "INV-000032",
+        "INV-000033",
+        "INV-000035",
+        "INV-000038",
+        "INV-000041",
+        "INV-000044",
+        "INV-000045",
+        "INV-000047",
+        "INV-000050",
+        "INV-000053",
+        "INV-000056",
+        "INV-000057",
+        "INV-000059",
+        "INV-000062",
+        "INV-000065",
+        "INV-000068",
+        "INV-000071",
+        "INV-000074",
+        "INV-000077",
+        "INV-000080",
+        "INV-000083",
+        "INV-000085",
+        "INV-000086",
+        "INV-000088",
+        "INV-000089",
+        "INV-000091",
+        "INV-000092",
+        "INV-000095",
+        "INV-000098",
+        "INV-000101",
+        "INV-000104",
+        "INV-000107",
+        "INV-000110",
+        "INV-000113",
+        "INV-000119",
+        "INV-000122",
+        "INV-000125",
+        "INV-000128",
+        "INV-000131",
+        "INV-000134",
+        "INV-000137",
+        "INV-000140",
+        "INV-000143",
+        "INV-000146",
+        "INV-000149",
+        "INV-000152",
+        "INV-000155",
+        "INV-000158",
+        "INV-000161",
+        "INV-000164",
+        "INV-000167",
+        "INV-000170",
+        "INV-000173",
+        "INV-000176",
+        "INV-000179",
+        "INV-000182",
+        "INV-000185",
+        "INV-000187",
+        "INV-000188",
+        "INV-000191",
+        "INV-000194",
+        "INV-000200",
+        "INV-000203",
+        "INV-000206",
+        "INV-000209",
+        "INV-000212",
+        "INV-000215",
+        "INV-000218",
+        "INV-000221",
+        "INV-000224",
+        "INV-000225",
+        "INV-000227",
+        "INV-000228",
+        "INV-000230",
+        "INV-000233",
+        "INV-000236",
+        "INV-000239",
+        "INV-000242",
+        "INV-000245",
+        "INV-000248",
+        "INV-000250",
+        "INV-000251",
+        "INV-000252",
+        "INV-000254",
+        "INV-000257",
+        "INV-000260",
+        "INV-000263",
+        "INV-000266",
+        "INV-000267",
+        "INV-000269",
+        "INV-000272",
+        "INV-000275",
+        "INV-000278",
+        "INV-000280",
+        "INV-000281",
+        "INV-000282",
+        "INV-000284",
+        "INV-000287",
+        "INV-000290",
+        "INV-000293",
+        "INV-000296",
+        "INV-000299",
+        "INV-000302",
+        "INV-000305",
+        "INV-000311",
+        "INV-000314",
+        "INV-000317",
+        "INV-000318",
+        "INV-000320",
+        "INV-000323",
+        "INV-000326",
+        "INV-000328",
+        "INV-000329",
+        "INV-000331"
+      ],
+      "isolated_population_impact": {
+        "retained_charge_count": 509,
+        "source_treatment_counts": [
+          {
+            "source_treatment": "CERTIFIED_ONLY",
+            "charge_count": 472
+          },
+          {
+            "source_treatment": "CERTIFIED_OVERLAP",
+            "charge_count": 22
+          },
+          {
+            "source_treatment": "PROVISIONAL_ONLY",
+            "charge_count": 15
+          }
+        ],
+        "valid_charge_count": 482,
+        "valid_spend_usd": 487315.82,
+        "fx_affected_charge_count": 116,
+        "fx_counterfactual_increase_usd": 489.06
+      },
+      "remaining_invoice_count": 204,
+      "remaining_direct_pair_count": 215,
+      "remaining_connected_component_count": 31,
+      "largest_remaining_component_invoice_count": 41,
+      "component_signature_distribution": [
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 1,
+          "component_count": 3
+        },
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 2,
+          "component_count": 14
+        },
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 3,
+          "component_count": 2
+        },
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 6,
+          "component_count": 1
+        },
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 7,
+          "component_count": 1
+        },
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 11,
+          "component_count": 1
+        },
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 12,
+          "component_count": 1
+        },
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 25,
+          "component_count": 2
+        },
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 33,
+          "component_count": 1
+        },
+        {
+          "source_stability_label": "SOURCE_FRAGILE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 41,
+          "component_count": 1
+        },
+        {
+          "source_stability_label": "SOURCE_STABLE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 1,
+          "component_count": 1
+        },
+        {
+          "source_stability_label": "SOURCE_STABLE",
+          "fx_stability_label": "FX_SENSITIVE",
+          "invoice_count_per_component": 2,
+          "component_count": 3
+        }
+      ],
+      "mixed_source_stability_component_count": 0,
+      "mixed_fx_stability_component_count": 0
+    }
+  },
+  "invoice_route_ledger_controls": [
+    {
+      "invoice_route": "BLOCK_QUARANTINE",
+      "ledger_disposition_counts": [
+        {
+          "ledger_disposition_code": "LD-14",
+          "charge_count": 15
+        },
+        {
+          "ledger_disposition_code": "LD-31",
+          "charge_count": 14
+        },
+        {
+          "ledger_disposition_code": "LD-53",
+          "charge_count": 26
+        },
+        {
+          "ledger_disposition_code": "LD-72",
+          "charge_count": 147
+        },
+        {
+          "ledger_disposition_code": "LD-88",
+          "charge_count": 14
+        }
+      ]
+    },
+    {
+      "invoice_route": "CLEAR",
+      "ledger_disposition_counts": [
+        {
+          "ledger_disposition_code": "LD-14",
+          "charge_count": 0
+        },
+        {
+          "ledger_disposition_code": "LD-31",
+          "charge_count": 0
+        },
+        {
+          "ledger_disposition_code": "LD-53",
+          "charge_count": 0
+        },
+        {
+          "ledger_disposition_code": "LD-72",
+          "charge_count": 701
+        },
+        {
+          "ledger_disposition_code": "LD-88",
+          "charge_count": 0
+        }
+      ]
+    },
+    {
+      "invoice_route": "REVIEW_MISMATCH",
+      "ledger_disposition_counts": [
+        {
+          "ledger_disposition_code": "LD-14",
+          "charge_count": 0
+        },
+        {
+          "ledger_disposition_code": "LD-31",
+          "charge_count": 102
+        },
+        {
+          "ledger_disposition_code": "LD-53",
+          "charge_count": 0
+        },
+        {
+          "ledger_disposition_code": "LD-72",
+          "charge_count": 306
+        },
+        {
+          "ledger_disposition_code": "LD-88",
+          "charge_count": 0
+        }
+      ]
+    }
+  ],
+  "fx_certification_impact": {
+    "affected_valid_charge_count": 320,
+    "certified_total_usd": 314818.75,
+    "provisional_counterfactual_total_usd": 316707.6,
+    "counterfactual_increase_usd": 1888.85,
+    "by_currency": [
+      {
+        "currency": "CAD",
+        "affected_valid_charge_count": 107,
+        "certified_total_usd": 69381.99,
+        "provisional_counterfactual_total_usd": 69798.33,
+        "counterfactual_increase_usd": 416.34,
+        "certified_rate_reference_control_code": "RB-42",
+        "provisional_rate_reference_control_code": "RB-83",
+        "rate_source_control_code": "SB-61",
+        "ledger_disposition_counts": [
+          {
+            "ledger_disposition_code": "LD-31",
+            "charge_count": 10
+          },
+          {
+            "ledger_disposition_code": "LD-72",
+            "charge_count": 97
+          }
+        ]
+      },
+      {
+        "currency": "EUR",
+        "affected_valid_charge_count": 106,
+        "certified_total_usd": 102647.39,
+        "provisional_counterfactual_total_usd": 103263.18,
+        "counterfactual_increase_usd": 615.79,
+        "certified_rate_reference_control_code": "RB-42",
+        "provisional_rate_reference_control_code": "RB-83",
+        "rate_source_control_code": "SB-61",
+        "ledger_disposition_counts": [
+          {
+            "ledger_disposition_code": "LD-31",
+            "charge_count": 9
+          },
+          {
+            "ledger_disposition_code": "LD-72",
+            "charge_count": 97
+          }
+        ]
+      },
+      {
+        "currency": "GBP",
+        "affected_valid_charge_count": 107,
+        "certified_total_usd": 142789.37,
+        "provisional_counterfactual_total_usd": 143646.09,
+        "counterfactual_increase_usd": 856.72,
+        "certified_rate_reference_control_code": "RB-42",
+        "provisional_rate_reference_control_code": "RB-83",
+        "rate_source_control_code": "SB-61",
+        "ledger_disposition_counts": [
+          {
+            "ledger_disposition_code": "LD-31",
+            "charge_count": 10
+          },
+          {
+            "ledger_disposition_code": "LD-72",
+            "charge_count": 97
+          }
+        ]
+      }
+    ],
+    "carrier_ranking": [
+      {
+        "rank": 1,
+        "carrier_id": "CAR-006",
+        "affected_valid_charge_count": 12,
+        "certified_total_usd": 13739.4,
+        "provisional_counterfactual_total_usd": 13821.83,
+        "counterfactual_increase_usd": 82.43,
+        "ledger_disposition_counts": [
+          {
+            "ledger_disposition_code": "LD-31",
+            "charge_count": 2
+          },
+          {
+            "ledger_disposition_code": "LD-72",
+            "charge_count": 10
+          }
+        ]
+      },
+      {
+        "rank": 2,
+        "carrier_id": "CAR-000",
+        "affected_valid_charge_count": 11,
+        "certified_total_usd": 13519.57,
+        "provisional_counterfactual_total_usd": 13600.69,
+        "counterfactual_increase_usd": 81.12,
+        "ledger_disposition_counts": [
+          {
+            "ledger_disposition_code": "LD-31",
+            "charge_count": 1
+          },
+          {
+            "ledger_disposition_code": "LD-72",
+            "charge_count": 10
+          }
+        ]
+      },
+      {
+        "rank": 3,
+        "carrier_id": "CAR-004",
+        "affected_valid_charge_count": 11,
+        "certified_total_usd": 12968.04,
+        "provisional_counterfactual_total_usd": 13045.85,
+        "counterfactual_increase_usd": 77.81,
+        "ledger_disposition_counts": [
+          {
+            "ledger_disposition_code": "LD-31",
+            "charge_count": 1
+          },
+          {
+            "ledger_disposition_code": "LD-72",
+            "charge_count": 10
+          }
+        ]
+      },
+      {
+        "rank": 4,
+        "carrier_id": "CAR-018",
+        "affected_valid_charge_count": 12,
+        "certified_total_usd": 12729.19,
+        "provisional_counterfactual_total_usd": 12805.56,
+        "counterfactual_increase_usd": 76.37,
+        "ledger_disposition_counts": [
+          {
+            "ledger_disposition_code": "LD-31",
+            "charge_count": 1
+          },
+          {
+            "ledger_disposition_code": "LD-72",
+            "charge_count": 11
+          }
+        ]
+      },
+      {
+        "rank": 5,
+        "carrier_id": "CAR-025",
+        "affected_valid_charge_count": 12,
+        "certified_total_usd": 12300.72,
+        "provisional_counterfactual_total_usd": 12374.51,
+        "counterfactual_increase_usd": 73.79,
+        "ledger_disposition_counts": [
+          {
+            "ledger_disposition_code": "LD-31",
+            "charge_count": 1
+          },
+          {
+            "ledger_disposition_code": "LD-72",
+            "charge_count": 11
+          }
+        ]
+      }
+    ]
+  },
+  "close_status": {
+    "status": "HOLD",
+    "routing": "BLOCK_AND_REMEDIATE"
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "business_cutoff": "2026-04-10T23:59:59Z",
+  "case_id": "WSO-2026W14-CONTACT-READINESS",
+  "collection_id": "warranty_contacts_2026w14",
+  "population_scope": "ALL_COLLECTION_ROWS",
+  "asteria_policy_reference": {
+    "baseline_contract": "Apply the established Asteria contact canonicalization, identity, field-provenance, contested-identifier, and outreach-readiness controls inferred from the solved train examples. This case scope supplies task-specific populations and reporting contracts; it does not restate those transferable controls.",
+    "internal_control_codes": [
+      "field_provenance_code",
+      "identity_code",
+      "outreach_code"
+    ],
+    "canonical_impact_field_order": [
+      "canonical_name",
+      "canonical_email",
+      "canonical_phone_digits",
+      "canonical_city",
+      "canonical_region_code",
+      "canonical_country_code",
+      "canonical_consent_status",
+      "canonical_record_status"
+    ]
+  },
+  "focus_owners": [
+    {
+      "focus_owner_id": "OWNER-001",
+      "seed_row_id": "WAR-C00001"
+    },
+    {
+      "focus_owner_id": "OWNER-002",
+      "seed_row_id": "WAR-C00007"
+    },
+    {
+      "focus_owner_id": "OWNER-003",
+      "seed_row_id": "WAR-C00118"
+    },
+    {
+      "focus_owner_id": "OWNER-004",
+      "seed_row_id": "WAR-C00091"
+    },
+    {
+      "focus_owner_id": "OWNER-005",
+      "seed_row_id": "WAR-C00304"
+    },
+    {
+      "focus_owner_id": "OWNER-006",
+      "seed_row_id": "WAR-C00133"
+    }
+  ],
+  "identifier_cases": [
+    {
+      "identifier_case_id": "IDENTIFIER-001",
+      "seed_row_id": "WAR-C00116"
+    },
+    {
+      "identifier_case_id": "IDENTIFIER-002",
+      "seed_row_id": "WAR-C00128"
+    },
+    {
+      "identifier_case_id": "IDENTIFIER-003",
+      "seed_row_id": "WAR-C00001"
+    }
+  ],
+  "field_precedence_cases": [
+    {
+      "field_name": "canonical_city",
+      "precedence_case_id": "PRECEDENCE-001",
+      "seed_row_id": "WAR-C00001"
+    },
+    {
+      "field_name": "canonical_consent_status",
+      "precedence_case_id": "PRECEDENCE-002",
+      "seed_row_id": "WAR-C00001"
+    },
+    {
+      "field_name": "canonical_phone_digits",
+      "precedence_case_id": "PRECEDENCE-003",
+      "seed_row_id": "WAR-C00001"
+    },
+    {
+      "field_name": "canonical_city",
+      "precedence_case_id": "PRECEDENCE-004",
+      "seed_row_id": "WAR-C00007"
+    },
+    {
+      "field_name": "canonical_email",
+      "precedence_case_id": "PRECEDENCE-005",
+      "seed_row_id": "WAR-C00007"
+    }
+  ],
+  "snapshot_admission_replay_contract": {
+    "scope": "Final baseline owners containing at least one row in the inclusive lexical range WAR-C00001 through WAR-C00140; include every final member row of each such owner.",
+    "baseline_reference": "Final owner membership, final master-ID labels, and the final contested-phone set remain fixed throughout this task-specific replay.",
+    "initial_state": "No scoped row has been admitted.",
+    "stage_sequence": [
+      {
+        "source_system": "Warranty Claims",
+        "stage_id": "S1"
+      },
+      {
+        "source_system": "Identity Registry",
+        "stage_id": "S2"
+      },
+      {
+        "source_system": "Dealer Service",
+        "stage_id": "S3"
+      }
+    ],
+    "event_order": "Within each stage, order rows by business_updated_at ascending and then row_id ascending lexicographically.",
+    "event_state": "For an admitted row, before state is its fixed final owner's canonical state over the earlier admitted rows of that owner; after state is the canonical state over that prefix plus the current row. Apply the established Asteria policies to each state. Null before-state fields mean that the owner was not yet present.",
+    "effect_definitions": {
+      "DISCOVERED": "No before state exists; changed_canonical_fields is empty.",
+      "CANONICAL_STATE_CHANGED": "A before state exists and its selected row, at least one canonical impact field, or readiness disposition differs after admission.",
+      "NONSELECTED": "A before state exists and those reported state elements do not differ after admission."
+    },
+    "running_count_contract": "running_present_owner_count and running_ready_owner_count are the scoped post-event counts; ready includes READY and READY_WITH_CHANNEL_RESTRICTION.",
+    "control_contract": "For every existing before or after state, report the established Asteria field-provenance and outreach codes for that state; use JSON null when no state exists.",
+    "output_order": "Return every scoped row event in the defined processing order and stage summaries in stage_sequence order."
+  },
+  "unsafe_identity_rule_impact_contract": {
+    "baseline_population": "All final baseline canonical owners, labelled by final master_id.",
+    "independent_counterfactual_partitions": [
+      {
+        "policy_id": "ANY_SHARED_PHONE",
+        "group_key": "the owner's non-null canonical_phone_digits, including values restricted by the established Asteria contested-identifier control"
+      },
+      {
+        "policy_id": "NORMALIZED_NAME_AND_REGION",
+        "group_key": "the owner's established-Asteria-normalized canonical_name together with canonical_region_code"
+      },
+      {
+        "policy_id": "NORMALIZED_NAME_ONLY",
+        "group_key": "the owner's established-Asteria-normalized canonical_name"
+      }
+    ],
+    "partition_semantics": "Evaluate each policy independently. Owners sharing its non-null group key form one counterfactual owner; all other owners remain singleton counterfactual owners. A group with more than one baseline owner is a multi-owner component, and each unordered pair within it is a false pair.",
+    "aggregate_definitions": {
+      "resulting_owner_count": "the number of counterfactual owners in the independent partition",
+      "collapsed_owner_count": "baseline owner count minus resulting_owner_count",
+      "affected_baseline_owner_count": "baseline owners in multi-owner components",
+      "multi_owner_component_count": "components containing at least two baseline owners",
+      "false_pair_count": "the sum of unordered baseline-owner pairs within multi-owner components",
+      "cross_region_false_pair_count": "false pairs whose canonical_region_code values differ"
+    },
+    "component_reporting": {
+      "scope": "Return every multi-owner component.",
+      "component_order": "Within a policy, sort by owner count descending and then by the lexicographically sorted master-ID array ascending; assign C001 onward.",
+      "largest_component_tie_break": "Greatest owner count, then lexicographically smallest sorted master-ID array.",
+      "histogram_order": "Include only sizes greater than one, ordered by component_size ascending.",
+      "member_order": "Sort baseline_master_ids lexicographically.",
+      "control_contract": "Apply the established Asteria shared/recycled-identifier identity control to ANY_SHARED_PHONE and the established name-only/noncorroborating identity control to both name policies. Select the matching controlled disposition from the answer contract."
+    },
+    "output_order": [
+      "ANY_SHARED_PHONE",
+      "NORMALIZED_NAME_AND_REGION",
+      "NORMALIZED_NAME_ONLY"
+    ]
+  },
+  "unsafe_household_outreach_contract": {
+    "baseline_population": "All final canonical owners, labelled by final master_id.",
+    "household_partition": "Group owners by the final surname token of canonical_name under established Asteria name normalization. Every group is a household component, including groups without a release anchor.",
+    "release_anchor": "An owner with at least one final member row whose consent_status is GRANTED under established Asteria value normalization.",
+    "unsafe_release": "A household having an anchor releases each member through that member's own email, or otherwise its own phone when that phone is not in the fixed final contested-phone set. This counterfactual ignores the member's final canonical consent and record status. Owners without such a route are not released.",
+    "wrongful_release": "An unsafe release whose correct final readiness is neither READY nor READY_WITH_CHANNEL_RESTRICTION.",
+    "market_groups": {
+      "AMER": [
+        "US",
+        "CA"
+      ],
+      "EMEA": [
+        "DE",
+        "ES",
+        "GB"
+      ],
+      "APAC": [
+        "SG"
+      ]
+    },
+    "wrongful_risk_units": "For one wrongful release: 1, plus the count of anchors in its household with a different canonical region, plus 4 when its correct readiness is BLOCKED_INACTIVE.",
+    "remediation_actions": {
+      "REVIEW_ALL_ANCHORS": "REVIEW:<component_id> prevents all releases from that component; cost is the sum over its anchors of 1 + floor((final member-row count - 1) / 2).",
+      "BLOCK_WRONGFUL_OWNER": "BLOCK:<baseline_master_id> prevents only that wrongful owner; cost is 2.",
+      "mutual_exclusion": "For one component, select REVIEW_ALL_ANCHORS or any subset of BLOCK_WRONGFUL_OWNER actions, never both."
+    },
+    "remediation_optimization": {
+      "budget_units": 32,
+      "minimum_prevented_wrongful_owners_by_market": {
+        "AMER": 15,
+        "EMEA": 15,
+        "APAC": 15
+      },
+      "objective_order": [
+        "maximize total prevented wrongful risk units",
+        "maximize otherwise-correct unsafe releases preserved",
+        "minimize remediation units spent",
+        "choose the lexicographically smallest sorted action-key array"
+      ]
+    },
+    "component_order": "Owner count descending, then sorted master-ID array ascending; assign SURNAME_HOUSEHOLD-C001 onward.",
+    "required_evidence": "Return the published budget, only the sorted optimal action-key objects, and the complete sorted prevented_wrongful_master_ids set."
+  },
+  "source_removal_stability_contract": {
+    "baseline_reference": "Keep final owner membership, final master-ID labels, and the final contested-phone set fixed.",
+    "designated_outage": {
+      "scenario_id": "SOURCE-OUTAGE-S04",
+      "removed_sources": [
+        "Warranty Claims",
+        "Identity Registry"
+      ],
+      "state_definition": "For each fixed owner, the outage state is its canonical state under established Asteria policies using only member rows outside the removed sources."
+    },
+    "restoration_candidate": "For an owner whose baseline selected row belongs to a removed source, restore only that row to the outage state. It is a candidate when selected row, all canonical impact fields, and readiness exactly equal the full baseline state.",
+    "candidate_cost_units": "Warranty Claims costs 2 and Identity Registry costs 3, plus 1 when the restored row is not verified.",
+    "candidate_recovery_value": {
+      "READY_WITH_CHANNEL_RESTRICTION": 9,
+      "READY": 8,
+      "BLOCKED_INACTIVE": 5,
+      "BLOCKED_NO_CONTACT": 3,
+      "BLOCKED_CONSENT": 2,
+      "verified_row_bonus": 2
+    },
+    "market_groups": {
+      "AMER": [
+        "US",
+        "CA"
+      ],
+      "EMEA": [
+        "DE",
+        "ES",
+        "GB"
+      ],
+      "APAC": [
+        "SG"
+      ]
+    },
+    "restoration_optimization": {
+      "budget_units": 64,
+      "minimum_selected_actions_by_market": {
+        "AMER": 5,
+        "EMEA": 5,
+        "APAC": 5
+      },
+      "minimum_selected_actions_by_source": {
+        "Warranty Claims": 5,
+        "Identity Registry": 5
+      },
+      "objective_order": [
+        "maximize total recovery value",
+        "maximize selected owners whose baseline readiness is READY or READY_WITH_CHANNEL_RESTRICTION",
+        "minimize units spent",
+        "choose the lexicographically smallest sorted restored-row-ID array"
+      ]
+    },
+    "required_evidence": "Return the outage ID, published budget, every selected action with the answer-contract evidence fields, and the complete sorted recovered_master_ids set."
+  },
+  "contact_transfer_adjudication_contract": {
+    "business_goal": "Derive the complete review population and decide whether proposed donor evidence belongs to the target's final canonical owner. Apply established Asteria identity and outreach controls; never carry another owner's channel into the target's release decision.",
+    "candidate_families": {
+      "INTRA": "Every final owner with more than one member row. target_row_id is its lexicographically smallest member; proposed_donor_row_id is its final master ID; candidate_id is TRANSFER-INTRA-<master_id>.",
+      "EXCEPTION": "Every single-row final owner whose canonical phone is in the fixed final contested-phone set or whose final readiness is BLOCKED_NO_CONTACT or BLOCKED_INACTIVE, when the donor selection contract yields another owner. target_row_id is its master ID; candidate_id is TRANSFER-EXCEPTION-<master_id>.",
+      "exception_donor_selection": "For a target bearing a contested canonical phone, select the lexicographically smallest different final master bearing that phone. Otherwise select the lexicographically smallest different final master having the same established-Asteria-normalized canonical name.",
+      "families_are_disjoint": true
+    },
+    "resolution_evidence": "Resolve target and donor independently under the established Asteria baseline policy and return both complete final memberships and stable master IDs.",
+    "relationship_evidence": "Report every normalized identifier shared by the two anchor rows in NAME, EMAIL, PHONE order, and select the applicable controlled relation_class under established Asteria identity policy.",
+    "target_evidence": "Return the target owner's final canonical channels, fixed contested-phone restriction, consent, record status, and readiness. Preserve JSON null for absent canonical channels.",
+    "decision_evidence": "Return the controlled transfer permission, adjudication action, and escalation flag consistent with the resolved relationship and target's final readiness under established Asteria controls.",
+    "candidate_order": "Return all INTRA candidates by target_owner_master_id ascending, then all EXCEPTION candidates by target_owner_master_id ascending. Sort every row-ID array lexicographically."
+  }
+}

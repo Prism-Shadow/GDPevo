@@ -1,0 +1,330 @@
+task_group:
+  task_group_id: task_group_013
+  scenario_id: SCN_013_healthcare_patient_intake_transfer
+  source_examples:
+    - E001
+    - E002
+    - E003
+    - E004
+    - E005
+  domain: Healthcare Operations
+  description: |
+    Train-predict task group for healthcare intake coordination. The shared Cedar
+    Ridge Intake Coordination Portal exposes patient, coverage, PBM, pharmacy,
+    referral, transfer, document, chart, ICD, and chronic-care program records.
+    Train and test tasks ask solvers to reconcile these records into structured
+    registration, scheduling, transfer, enrollment, and chart-activation decisions.
+
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+    - env/Dockerfile
+    - env/setup.sh
+    - env/app.py
+    - env/generate_data.py
+    - env/judge_api.py
+    - env/endpoints.txt
+    - env/data/clinic.db
+    - env/data/manifest.json
+    - env/judge_train_eval/train_001_evaluator.py
+    - env/judge_train_eval/train_002_evaluator.py
+    - env/judge_train_eval/train_003_evaluator.py
+    - env/judge_train_eval/train_004_evaluator.py
+    - env/judge_train_eval/train_005_evaluator.py
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/target_roster.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluator.py
+      rubric:
+        - goal: Correct primary insurance status for all target patients.
+          weight: 2
+        - goal: Correct prescription benefit status for all target patients.
+          weight: 2
+        - goal: Correct preferred-pharmacy network status for all target patients.
+          weight: 2
+        - goal: Correct lifestyle risk classification for all target patients.
+          weight: 2
+        - goal: Correct overall risk classification for all target patients.
+          weight: 2
+        - goal: Correct final registration status for all target patients.
+          weight: 3
+        - goal: Correct blocked reason-code set for every target patient.
+          weight: 3
+        - goal: Correct cohort summary counts by final status and risk.
+          weight: 1
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/evaluator.py
+      rubric:
+        - goal: Correct ICD chapter, narrative, or laterality discrepancy referrals.
+          weight: 3
+        - goal: Correct duplicate referral grouping and consolidation recommendation.
+          weight: 2
+        - goal: Correct shared insurance anomaly set excluding same-patient duplicate sharing.
+          weight: 2
+        - goal: Correct missing-records and missing-imaging blocker sets.
+          weight: 2
+        - goal: Correct authorization blocker set and statuses.
+          weight: 2
+        - goal: Correct ready-to-schedule referral set.
+          weight: 3
+        - goal: Correct priority tier and action-code assignment for follow-up referrals.
+          weight: 3
+        - goal: Correct summary counts by urgency, readiness status, and issue type.
+          weight: 1
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/evaluator.py
+      rubric:
+        - goal: Correct packet completeness status for all transfer patients.
+          weight: 3
+        - goal: Correct stale-document detection for freshness-limited packet items.
+          weight: 3
+        - goal: Correct missing required-document sets for all transfer patients.
+          weight: 2
+        - goal: Correct requested-start feasibility using packet readiness and chair capacity.
+          weight: 2
+        - goal: Correct final intake decision for each transfer patient.
+          weight: 3
+        - goal: Correct next-contact owner and route for each non-accepted patient.
+          weight: 2
+        - goal: Correct cohort summary counts.
+          weight: 1
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/evaluator.py
+      rubric:
+        - goal: Correct eligible and ineligible candidate sets for the full program panel.
+          weight: 3
+        - goal: Correct enrollment status and normalized reason-code sets for every candidate.
+          weight: 3
+        - goal: Correct follow-up cadence for each candidate.
+          weight: 2
+        - goal: Correct missing chart artifact set for each candidate.
+          weight: 2
+        - goal: Correct outreach channel for each candidate after fallback handling.
+          weight: 1
+        - goal: Correct initial monitoring package type, component set, and first check-in timing.
+          weight: 2
+        - goal: Correct cohort summary counts across status, cadence, outreach, and package categories.
+          weight: 1
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/evaluator.py
+      rubric:
+        - goal: Correct scheduling readiness status and blocker code set for all target referrals.
+          weight: 3
+        - goal: Correct clinical/code discrepancy referral set.
+          weight: 2
+        - goal: Correct authorization, records, and imaging blocker sets.
+          weight: 2
+        - goal: Correct duplicate handling, including clearing false duplicate-review flags.
+          weight: 2
+        - goal: Correct chart activation artifact needs for every ready referral.
+          weight: 2
+        - goal: Correct correspondence template type and reason codes for every non-ready referral.
+          weight: 2
+        - goal: Correct priority ordering and tier assignment for the non-ready action queue.
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+      - test_tasks/001/input/payloads/target_roster.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/evaluator.py
+      rubric:
+        - goal: Correct primary insurance status for all target patients.
+          weight: 2
+        - goal: Correct prescription benefit status for all target patients.
+          weight: 2
+        - goal: Correct preferred-pharmacy network status for all target patients.
+          weight: 2
+        - goal: Correct lifestyle risk classification for all target patients.
+          weight: 2
+        - goal: Correct overall risk classification for all target patients.
+          weight: 2
+        - goal: Correct final registration status for all target patients.
+          weight: 3
+        - goal: Correct blocked reason-code set for every target patient.
+          weight: 3
+        - goal: Correct cohort summary counts by final status and risk.
+          weight: 1
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/evaluator.py
+      rubric:
+        - goal: Correct ICD chapter, narrative, or laterality discrepancy referrals.
+          weight: 3
+        - goal: Correct duplicate referral grouping and consolidation recommendation.
+          weight: 2
+        - goal: Correct shared insurance anomaly set excluding same-patient duplicate sharing.
+          weight: 2
+        - goal: Correct missing-records and missing-imaging blocker sets.
+          weight: 2
+        - goal: Correct authorization blocker set and statuses.
+          weight: 2
+        - goal: Correct ready-to-schedule referral set.
+          weight: 3
+        - goal: Correct readiness statuses, priority tiers, issue codes, and action codes for follow-up referrals.
+          weight: 3
+        - goal: Correct summary counts by urgency, readiness status, and issue type.
+          weight: 1
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/evaluator.py
+      rubric:
+        - goal: Correct packet completeness status for all transfer patients.
+          weight: 3
+        - goal: Correct stale-document detection for freshness-limited packet items.
+          weight: 3
+        - goal: Correct missing required-document sets for all transfer patients.
+          weight: 2
+        - goal: Correct requested-start feasibility using packet readiness and chair capacity.
+          weight: 2
+        - goal: Correct final intake decision for each transfer patient.
+          weight: 3
+        - goal: Correct next-contact owner and route for each non-accepted patient.
+          weight: 2
+        - goal: Correct cohort summary counts.
+          weight: 1
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+      - test_tasks/004/input/payloads/program_policy.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/evaluator.py
+      rubric:
+        - goal: Correct candidate coverage and eligible/ineligible sets for RENAL-DM-2026B.
+          weight: 3
+        - goal: Correct enrollment status and normalized reason-code sets for every candidate.
+          weight: 3
+        - goal: Correct follow-up cadence for each candidate.
+          weight: 2
+        - goal: Correct renal-specific missing chart artifact set for each candidate.
+          weight: 2
+        - goal: Correct outreach channel for each candidate.
+          weight: 1
+        - goal: Correct monitoring package type, component set, and first check-in timing.
+          weight: 2
+        - goal: Correct cohort summary counts across status, cadence, outreach, and package categories.
+          weight: 1
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/evaluator.py
+      rubric:
+        - goal: Correct scheduling readiness status and blocker code set for all CARD-JUL-03 referrals.
+          weight: 3
+        - goal: Correct clinical/code discrepancy referral set.
+          weight: 2
+        - goal: Correct authorization, records, and imaging blocker sets.
+          weight: 2
+        - goal: Correct duplicate handling, including clearing false duplicate-review flags.
+          weight: 2
+        - goal: Correct chart activation gaps for ready referrals.
+          weight: 2
+        - goal: Correct correspondence template type and reason codes for every non-ready referral.
+          weight: 2
+        - goal: Correct priority ordering and tier assignment for the non-ready action queue.
+          weight: 2
