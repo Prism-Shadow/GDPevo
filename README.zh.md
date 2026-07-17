@@ -8,7 +8,7 @@
 
 ## 评测结果
 
-准确率使用 `acc`：每个 test task 运行 3 次后，再在 12 个任务组上取均值；括号中的 `±std` 表示 population 标准差。`rounds` 表示 solver 每次 attempt 的平均模型响应轮次，`tool calls` 表示 solver 每次 attempt 的平均工具调用次数。费用以美元计；准确率提升和费用变化均相对 `base` 计算。
+准确率用 `acc` 表示：每个 test task 运行 3 次后，再在 12 个任务组上取均值；括号中的 `±std` 表示 population 标准差。`rounds` 表示 solver 每次 attempt 的平均模型响应轮次，`tool calls` 表示 solver 每次 attempt 的平均工具调用次数。费用以美元计；准确率提升和费用变化均相对 `base` 计算。
 
 已发布评测对比四种 mode：
 
