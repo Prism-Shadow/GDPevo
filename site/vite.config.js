@@ -11,7 +11,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: resolve(__dirname, "index.html"),
-        blog: resolve(__dirname, "blog.html")
+        blog: resolve(__dirname, "blog.html"),
+        selfEvolution: resolve(__dirname, "blog-self-evolution.html"),
+        releaseNote: resolve(__dirname, "release-note.html")
       }
     }
   }
