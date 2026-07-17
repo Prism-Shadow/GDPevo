@@ -189,9 +189,15 @@ const assets = {
   wechat: "assets/release/wechat.jpg"
 };
 
-function ReleaseTable({ columns, rows, compact = false }) {
+function ReleaseTable({ columns, rows, compact = false, wide = false }) {
+  const className = [
+    "release-table",
+    compact ? "release-table-compact" : "",
+    wide ? "release-table-wide" : ""
+  ].filter(Boolean).join(" ");
+
   return (
-    <div className={compact ? "release-table release-table-compact" : "release-table"}>
+    <div className={className}>
       <table>
         <thead>
           <tr>
@@ -283,7 +289,7 @@ export function ReleaseNotePage({ lang = "en" }) {
 
           <h3 id="leaderboard">{copy.leaderboardTitle}</h3>
           <p>{copy.leaderboardIntro}</p>
-          <ReleaseTable columns={copy.leaderboardColumns} rows={copy.leaderboardRows} />
+          <ReleaseTable columns={copy.leaderboardColumns} rows={copy.leaderboardRows} wide />
           <p>{copy.findings}</p>
 
           <h2>{copy.lensTitle}</h2>
