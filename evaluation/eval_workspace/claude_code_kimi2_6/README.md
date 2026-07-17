@@ -1,6 +1,6 @@
 # Kimi 2.6 Claude Code Evaluation Workspace
 
-This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc@3`, population `std@3`, solver efficiency metrics, and separately reported evolve token/cost metrics across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
+This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc`, population `std`, solver efficiency metrics, and separately reported evolve token/cost metrics across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
 
 This workspace evaluates one task group at a time. Do not modify the task group under evaluation. If you find that the task group itself is invalid, record the risk in the report and send the data back to an earlier stage.
 
@@ -44,7 +44,7 @@ Read these files in order before starting evaluation:
 1. `guides/workflow.md` - main-agent evaluation workflow
 2. `guides/skill_modes.md` - the four conditions and information boundaries
 3. `guides/agent_prompts.md` - fixed skill-generation and solver prompts
-4. `guides/metric_and_scoring.md` - `acc@3`, population `std@3`, trace efficiency, single-attempt scoring, and aggregation rules
+4. `guides/metric_and_scoring.md` - `acc`, population `std`, trace efficiency, single-attempt scoring, and aggregation rules
 5. `guides/report_format.md` - final report format
 
 ## Launch Prompt
@@ -52,7 +52,7 @@ Read these files in order before starting evaluation:
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: Pro/moonshotai/Kimi-K2.6 via SiliconFlow.
-Run all four modes with acc@3/std@3, collect solver and evolve token/cost metrics, preserve complete traces, and write report/<task_group_id>.yaml.
+Run all four modes with acc/std, collect solver and evolve token/cost metrics, preserve complete traces, and write report/<task_group_id>.yaml.
 ```
 
 Use `.env` for the agent-container-visible task environment:
@@ -143,7 +143,7 @@ runs/<condition>/<test_id>/attempt_<nn>/score.yaml
 runs/<condition>/<test_id>/attempt_<nn>/run_metadata.yaml
 ```
 
-7. After all score records are ready, aggregate `acc@3` and population `std@3` for the four conditions, plus average token, round-count, tool-call, and cost fields for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. The report must include a `model_config` block with `claude_code_effort: xhigh` and `kimi_thinking: enabled`. The formal report field names are `input_tokens_avg_3`, `cache_creation_tokens_avg_3`, `cache_read_tokens_avg_3`, `output_tokens_avg_3`, `cost_usd_avg_3`, `rounds_avg_3`, and `tool_calls_avg_3`. Raw `run_metadata.yaml` may preserve provider-specific token names such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the report schema must use the normalized field names above. Solver efficiency only counts answer-writing by test solver Claude subprocesses: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, environment checks, evaluator execution, or orchestrator summarization into solver efficiency. Temporary checking or aggregation code must be placed under `scratch/`, not in the workspace root.
+7. After all score records are ready, aggregate `acc` and population `std` for the four conditions, plus average token, round-count, tool-call, and cost fields for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. The report must include a `model_config` block with `claude_code_effort: xhigh` and `kimi_thinking: enabled`. The formal report field names are `input_tokens_avg_3`, `cache_creation_tokens_avg_3`, `cache_read_tokens_avg_3`, `output_tokens_avg_3`, `cost_usd_avg_3`, `rounds_avg_3`, and `tool_calls_avg_3`. Raw `run_metadata.yaml` may preserve provider-specific token names such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the report schema must use the normalized field names above. Solver efficiency only counts answer-writing by test solver Claude subprocesses: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, environment checks, evaluator execution, or orchestrator summarization into solver efficiency. Temporary checking or aggregation code must be placed under `scratch/`, not in the workspace root.
 
 8. Before reporting completion, verify that every scored solver attempt has a
 matched raw Claude Code trace copied under `original_traces/`, and that the

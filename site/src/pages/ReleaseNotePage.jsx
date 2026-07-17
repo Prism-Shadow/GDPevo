@@ -44,7 +44,7 @@ const release = {
         A <strong>partial</strong> view — just the rows behind the findings below, keeping their original rank. The <strong>full 24-row leaderboard</strong> (all 6 agents × 4 modes, sortable) lives on the <a href="https://prism-shadow.github.io/GDPevo/index.html" target="_blank" rel="noreferrer">project site</a>. <strong>Lift</strong> is the gain over the same agent&apos;s base run.
       </>
     ),
-    leaderboardColumns: ["#", "Agent", "Mode", "Method", "avg@3", "Lift (pp)", "Cost (USD)", "Rounds", "Tokens"],
+    leaderboardColumns: ["#", "Agent", "Mode", "Method", "ACC", "Lift (pp)", "Cost (USD)", "Rounds", "Tokens"],
     leaderboardRows: [
       ["1", "Panofy · Opus 4.6", "fewshot", "Agent Training", "71.47%", "+21.07", "$0.81", "13.48", "385.5k"],
       ["2", "Claude Code · Opus 4.8", "fewshot", "Skill Creator", "70.90%", "+21.79", "$0.55", "11.10", "347.3k"],
@@ -60,7 +60,7 @@ const release = {
     ],
     findings: (
       <>
-        <strong>Findings.</strong> Self-evolution pays off for every agent — the <strong>fewshot</strong> mode lifts tests avg@3 by <strong>+18 to +22 pp</strong> over <strong>base</strong>. The lever is high enough to leapfrog model tiers: <strong>DeepSeek V4 Pro</strong> with <strong>fewshot</strong> reaches <strong>54.8%</strong>, above the <strong>base</strong> (no-evolution) scores of flagship agents like <strong>Opus 4.8</strong> (49.1%) and <strong>GPT-5.5</strong> (46.7%) — so evolving a cheaper model can beat running a flagship one as-is. At the bottom, <strong>Kimi K2.6</strong> is both the weakest (25–33%) and by far the most interaction-heavy, burning 30–46 rounds and up to 1.2M tokens per task.
+        <strong>Findings.</strong> Self-evolution pays off for every agent — the <strong>fewshot</strong> mode lifts tests ACC by <strong>+18 to +22 pp</strong> over <strong>base</strong>. The lever is high enough to leapfrog model tiers: <strong>DeepSeek V4 Pro</strong> with <strong>fewshot</strong> reaches <strong>54.8%</strong>, above the <strong>base</strong> (no-evolution) scores of flagship agents like <strong>Opus 4.8</strong> (49.1%) and <strong>GPT-5.5</strong> (46.7%) — so evolving a cheaper model can beat running a flagship one as-is. At the bottom, <strong>Kimi K2.6</strong> is both the weakest (25–33%) and by far the most interaction-heavy, burning 30–46 rounds and up to 1.2M tokens per task.
       </>
     ),
     lensTitle: "③ Lens — more ways to read the results",
@@ -72,8 +72,8 @@ const release = {
       ["Radar charts", "one agent's accuracy across all task groups, for comparing modes or models at a glance."]
     ],
     heatmapTitle: "Result 1 — skill-transfer heatmap",
-    heatmapIntro: "Each panel applies a skill learned on the row task group to the column target, showing avg@3 and its Δ vs base.",
-    heatmapFinding: "The diagonals (reusing a skill on its own domain) of fewshot and reflect-3 are reliably green — it lifts avg@3 by up to +9.6 pp (CRM fewshot). Off the diagonal, cross-domain transfer is riskier: a fewshot skill carried to a different domain can hurt (Finance → ERP −5.0 pp), but reflect-3 skills generalize far more safely, with nearly every cross-domain cell staying positive.",
+    heatmapIntro: "Each panel applies a skill learned on the row task group to the column target, showing ACC and its Δ vs base.",
+    heatmapFinding: "The diagonals (reusing a skill on its own domain) of fewshot and reflect-3 are reliably green — it lifts ACC by up to +9.6 pp (CRM fewshot). Off the diagonal, cross-domain transfer is riskier: a fewshot skill carried to a different domain can hurt (Finance → ERP −5.0 pp), but reflect-3 skills generalize far more safely, with nearly every cross-domain cell staying positive.",
     radarTitle: "Result 2 — radar views",
     radarIntro: "The radar chart supports two types of comparisons:",
     radarModeTitle: "Usage 1 — one agent, all modes.",
@@ -133,7 +133,7 @@ const release = {
         <strong>部分</strong>榜单——只列出下面 findings 涉及的几行，并保留其原始排名。<strong>完整的 24 行榜单</strong>（全部 6 个 Agent × 4 种模式，可排序）在<a href="https://prism-shadow.github.io/GDPevo/index.html" target="_blank" rel="noreferrer">项目站点</a>上查看。<strong>提升</strong>是相对该 Agent 自身 base 运行的增益。
       </>
     ),
-    leaderboardColumns: ["#", "Agent", "模式", "方法", "avg@3", "提升（pp）", "费用（USD）", "轮次", "令牌数"],
+    leaderboardColumns: ["#", "Agent", "模式", "方法", "ACC", "提升（pp）", "费用（USD）", "轮次", "令牌数"],
     leaderboardRows: [
       ["1", "Panofy · Opus 4.6", "fewshot", "Agent Training", "71.47%", "+21.07", "$0.81", "13.48", "385.5k"],
       ["2", "Claude Code · Opus 4.8", "fewshot", "Skill Creator", "70.90%", "+21.79", "$0.55", "11.10", "347.3k"],
@@ -149,7 +149,7 @@ const release = {
     ],
     findings: (
       <>
-        <strong>发现。</strong>自进化对每个 Agent 都奏效——<strong>fewshot</strong> 模式相比 <strong>base</strong> 把测试集 avg@3 抬高了 <strong>+18 到 +22 pp</strong>。而这个杠杆高到可以跨越模型档位：<strong>DeepSeek V4 Pro</strong> 配上 <strong>fewshot</strong> 达到 <strong>54.8%</strong>，超过了 <strong>Opus 4.8</strong>（49.1%）、<strong>GPT-5.5</strong>（46.7%）这些旗舰 Agent 在 <strong>base</strong>（无进化）下的分数——也就是说，让一个更便宜的模型自进化，能打过原样跑的旗舰模型。另一端，<strong>Kimi K2.6</strong> 既最弱（25–33%），交互也最重，每个任务要烧掉 30–46 轮、最多 120 万 token。
+        <strong>发现。</strong>自进化对每个 Agent 都奏效——<strong>fewshot</strong> 模式相比 <strong>base</strong> 把测试集 ACC 抬高了 <strong>+18 到 +22 pp</strong>。而这个杠杆高到可以跨越模型档位：<strong>DeepSeek V4 Pro</strong> 配上 <strong>fewshot</strong> 达到 <strong>54.8%</strong>，超过了 <strong>Opus 4.8</strong>（49.1%）、<strong>GPT-5.5</strong>（46.7%）这些旗舰 Agent 在 <strong>base</strong>（无进化）下的分数——也就是说，让一个更便宜的模型自进化，能打过原样跑的旗舰模型。另一端，<strong>Kimi K2.6</strong> 既最弱（25–33%），交互也最重，每个任务要烧掉 30–46 轮、最多 120 万 token。
       </>
     ),
     lensTitle: "③ 视角 —— 更多解读结果的方式",
@@ -161,8 +161,8 @@ const release = {
       ["雷达图（Radar）", "单个 Agent 在所有任务组上的准确率，方便一眼对比不同模式或不同模型。"]
     ],
     heatmapTitle: "例子 1 —— 技能迁移热力图",
-    heatmapIntro: "每个面板把在行任务组上学到的技能应用到列目标任务组，展示 avg@3 及其相对无技能 base 的 Δ。",
-    heatmapFinding: "fewshot 和 reflect-3 的对角线（把技能用回它自己的领域）稳定为绿——最高能把 avg@3 抬升 +9.6 pp（CRM fewshot）。而在对角线之外，跨领域迁移风险更大：fewshot 技能被搬到别的领域可能掉分（Finance → ERP −5.0 pp）；但 reflect-3 技能的泛化要安全得多，几乎每一个跨领域格子都保持为正。",
+    heatmapIntro: "每个面板把在行任务组上学到的技能应用到列目标任务组，展示 ACC 及其相对无技能 base 的 Δ。",
+    heatmapFinding: "fewshot 和 reflect-3 的对角线（把技能用回它自己的领域）稳定为绿——最高能把 ACC 抬升 +9.6 pp（CRM fewshot）。而在对角线之外，跨领域迁移风险更大：fewshot 技能被搬到别的领域可能掉分（Finance → ERP −5.0 pp）；但 reflect-3 技能的泛化要安全得多，几乎每一个跨领域格子都保持为正。",
     radarTitle: "例子 2 —— 雷达图用法",
     radarIntro: "同一张雷达图支持两类对比：",
     radarModeTitle: "用法 1 —— 固定一个 Agent，看所有模式。",
@@ -306,7 +306,7 @@ export function ReleaseNotePage({ lang = "en" }) {
           <p>{copy.heatmapIntro}</p>
           <ReleaseFigure
             src={assets.heatmap}
-            alt="Codex · GPT-5.5 skill-transfer heatmaps for base, fewshot, and reflect-3, with avg@3 and delta-vs-base per cell"
+            alt="Codex · GPT-5.5 skill-transfer heatmaps for base, fewshot, and reflect-3, with ACC and delta-vs-base per cell"
             width={960}
           />
           <p>{copy.heatmapFinding}</p>

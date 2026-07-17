@@ -8,16 +8,16 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 ## Evaluation Results
 
-Accuracy is reported as `acc@3`, averaged over 12 task groups. Stability is reported as population `std@3`. `rounds@3` reports the average number of solver model-response rounds per attempt, and `tool calls@3` reports the average number of solver tool-call requests per attempt, where complete solver traces are available. Cost is reported in USD; lift and cost change are relative to `base`.
+Accuracy is reported as `acc`, averaged over 12 task groups, with population `std` shown in parentheses. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt, where complete solver traces are available. Cost is reported in USD; lift and cost change are relative to `base`.
 
-| Harness | Model | Thinking level | `base` acc@3 | `base` std@3 | `fewshot` acc@3 | `fewshot` std@3 | `self` acc@3 | `self` std@3 | `reflect-3` acc@3 | `reflect-3` std@3 | `base` rounds@3 | `base` tool calls@3 | `fewshot` rounds@3 | `fewshot` tool calls@3 | `self` rounds@3 | `self` tool calls@3 | `reflect-3` rounds@3 | `reflect-3` tool calls@3 | `fewshot` cost change | `self` cost change | `reflect-3` cost change | `fewshot` lift | `self` lift | `reflect-3` lift |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Codex | GPT-5.5 | xhigh | 46.72% | 5.13% | 64.91% | 6.36% | 54.99% | 8.73% | 57.45% | 7.62% | 14.91 | 35.89 | 11.58 | 26.70 | 9.71 | 22.74 | 10.83 | 24.42 | -29.24% | -32.18% | -25.74% | +18.19 pp | +8.27 pp | +10.73 pp |
-| Claude Code | Opus 4.8 | xhigh | 49.11% | 5.25% | 70.90% | 6.38% | 57.37% | 6.79% | 62.72% | 6.68% | 14.62 | 17.17 | 11.10 | 15.02 | 11.78 | 15.84 | 12.15 | 16.26 | -9.61% | +0.53% | -0.34% | +21.79 pp | +8.26 pp | +13.62 pp |
-| Panofy | Opus 4.6 | high | 50.40% | 6.99% | 71.47% | 4.93% | 58.39% | 5.74% | 59.82% | 7.31% | 15.16 | 19.53 | 13.48 | 16.84 | 12.51 | 16.32 | 14.37 | 17.79 | +8.27% | -6.00% | +1.99% | +21.07 pp | +7.99 pp | +9.41 pp |
-| Claude Code | GLM-5.2 | max | 47.73% | 5.21% | 69.55% | 8.85% | 55.91% | 7.84% | 63.35% | 7.51% | 17.57 | 26.01 | 15.49 | 22.81 | 15.98 | 23.87 | 15.36 | 22.67 | -12.28% | -10.23% | -16.50% | +21.83 pp | +8.18 pp | +15.62 pp |
-| Claude Code | Kimi K2.6 | enabled | 25.14% | 12.15% | 30.48% | 13.22% | 29.16% | 14.18% | 32.68% | 14.25% | 46.24 | 67.31 | 37.87 | 56.65 | 32.67 | 49.53 | 31.68 | 45.31 | -14.79% | -26.18% | -17.19% | +5.34 pp | +4.02 pp | +7.54 pp |
-| Claude Code | DeepSeek V4 Pro | max | 46.06% | 6.90% | 54.80% | 9.65% | 48.69% | 8.75% | 49.22% | 8.67% | 13.22 | 24.51 | 11.46 | 21.02 | 10.53 | 19.21 | 10.26 | 19.13 | +2.15% | +1.19% | -1.91% | +8.74 pp | +2.63 pp | +3.16 pp |
+| Harness | Model | Thinking level | `base` acc | `fewshot` acc | `self` acc | `reflect-3` acc | `base` rounds | `base` tool calls | `fewshot` rounds | `fewshot` tool calls | `self` rounds | `self` tool calls | `reflect-3` rounds | `reflect-3` tool calls | `fewshot` cost change | `self` cost change | `reflect-3` cost change | `fewshot` lift | `self` lift | `reflect-3` lift |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Codex | GPT-5.5 | xhigh | 46.72% (±5.13%) | 64.91% (±6.36%) | 54.99% (±8.73%) | 57.45% (±7.62%) | 14.91 | 35.89 | 11.58 | 26.70 | 9.71 | 22.74 | 10.83 | 24.42 | -29.24% | -32.18% | -25.74% | +18.19 pp | +8.27 pp | +10.73 pp |
+| Claude Code | Opus 4.8 | xhigh | 49.11% (±5.25%) | 70.90% (±6.38%) | 57.37% (±6.79%) | 62.72% (±6.68%) | 14.62 | 17.17 | 11.10 | 15.02 | 11.78 | 15.84 | 12.15 | 16.26 | -9.61% | +0.53% | -0.34% | +21.79 pp | +8.26 pp | +13.62 pp |
+| Panofy | Opus 4.6 | high | 50.40% (±6.99%) | 71.47% (±4.93%) | 58.39% (±5.74%) | 59.82% (±7.31%) | 15.16 | 19.53 | 13.48 | 16.84 | 12.51 | 16.32 | 14.37 | 17.79 | +8.27% | -6.00% | +1.99% | +21.07 pp | +7.99 pp | +9.41 pp |
+| Claude Code | GLM-5.2 | max | 47.73% (±5.21%) | 69.55% (±8.85%) | 55.91% (±7.84%) | 63.35% (±7.51%) | 17.57 | 26.01 | 15.49 | 22.81 | 15.98 | 23.87 | 15.36 | 22.67 | -12.28% | -10.23% | -16.50% | +21.83 pp | +8.18 pp | +15.62 pp |
+| Claude Code | Kimi K2.6 | enabled | 25.14% (±12.15%) | 30.48% (±13.22%) | 29.16% (±14.18%) | 32.68% (±14.25%) | 46.24 | 67.31 | 37.87 | 56.65 | 32.67 | 49.53 | 31.68 | 45.31 | -14.79% | -26.18% | -17.19% | +5.34 pp | +4.02 pp | +7.54 pp |
+| Claude Code | DeepSeek V4 Pro | max | 46.06% (±6.90%) | 54.80% (±9.65%) | 48.69% (±8.75%) | 49.22% (±8.67%) | 13.22 | 24.51 | 11.46 | 21.02 | 10.53 | 19.21 | 10.26 | 19.13 | +2.15% | +1.19% | -1.91% | +8.74 pp | +2.63 pp | +3.16 pp |
 
 See the full experiment board in [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md).
 
@@ -72,7 +72,7 @@ These workspaces are agent-ready folders for building, reviewing, and evaluating
 
 - **Score Evaluation**: [`evaluation/eval_workspace/`](evaluation/eval_workspace/)
 
-  - **Purpose**: Run formal `acc@3`, population `std@3`, turn-count, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces.
+  - **Purpose**: Run formal `acc`, population `std`, turn-count, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces.
   - **Input data**: one released task group copied into the selected evaluator workspace, plus the credentials or config required by that workspace.
   - **Prompt**: `Read README.md and guides/, run score evaluation for the staged task group, and write report/<task_group_id>.yaml.`
 

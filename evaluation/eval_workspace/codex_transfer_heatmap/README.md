@@ -18,7 +18,7 @@ Finance  task_group_010
 
 - Row: the task group used to generate the skill.
 - Column: the target task group used for testing.
-- Cell: `acc@3` from solving the target task group's 5 test tasks with the 3
+- Cell: `acc` from solving the target task group's 5 test tasks with the 3
   independently generated skills from the row task group.
 - Diagonal cells where source and target are the same task group are not run.
 
@@ -52,7 +52,7 @@ Do not run `base`, `self`, or any non-Codex harness in this workspace.
 ```text
 Read README.md, CODEX_ORCHESTRATOR.md, RUN_SCOPE.md, and guides/. Run the Codex-only 3x3 cross-task
 skill transfer experiment for fewshot and reflect-3. Use three independent
-pre-generated skills per source task group for @3. Keep every solver attempt isolated under
+pre-generated skills per source task group for the three-run average. Keep every solver attempt isolated under
 runs/. Write per-cell reports under report/cells/, then build the two heatmaps
 under heatmaps/. Copy each matched raw Codex trace into original_traces/.
 Model: GPT-5.5, reasoning_effort: xhigh.

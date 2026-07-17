@@ -33,7 +33,7 @@ const filterProperties = {
 const copy = {
   en: {
     title: "Task-group performance explorer",
-    subtitle: "Compare ACC@3 profiles across task groups 001–012",
+    subtitle: "Compare ACC profiles across task groups 001–012",
     builder: "Comparison filters",
     builderHint: "Select any combination. Empty groups mean no restriction.",
     model: "Model",
@@ -51,13 +51,13 @@ const copy = {
     active: "Lines on chart",
     clear: "Clear",
     empty: "Choose conditions or use a quick comparison to add radar lines.",
-    average: "ACC@3",
+    average: "ACC",
     remove: "Remove comparison line",
-    accuracy: "ACC@3"
+    accuracy: "ACC"
   },
   zh: {
     title: "任务组表现对比",
-    subtitle: "比较任务组 001–012 上的 ACC@3 分布",
+    subtitle: "比较任务组 001–012 上的 ACC 分布",
     builder: "对比条件",
     builderHint: "可以同时勾选多个条件；某组未勾选时表示不限。",
     model: "模型",
@@ -75,9 +75,9 @@ const copy = {
     active: "当前曲线",
     clear: "清空",
     empty: "请选择实验条件，或使用快捷比较添加雷达曲线。",
-    average: "ACC@3",
+    average: "ACC",
     remove: "移除对比曲线",
-    accuracy: "ACC@3"
+    accuracy: "ACC"
   }
 };
 

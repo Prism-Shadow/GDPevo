@@ -109,8 +109,8 @@ export const homeContent = {
   },
   summary: {
     captionSuffix: {
-      en: "Acc@3 over 12 task groups",
-      zh: "12 个任务的平均准确率（Acc@3）"
+      en: "ACC over 12 task groups",
+      zh: "12 个任务组的平均准确率（ACC）"
     },
     columns: {
       mode: {
@@ -135,8 +135,8 @@ export const homeContent = {
     notes: [
       {
         key: "acc",
-        en: "**acc@3** = test-set accuracy averaged over 3 attempts per task. The current released leaderboard covers Codex GPT-5.5, Claude Code Opus 4.8 / GLM-5.2 / Kimi K2.6 / DeepSeek V4 Pro, and Panofy Opus 4.6.",
-        zh: "**acc@3** = 每个测试任务跑 3 次后取平均的准确率。当前 released leaderboard 覆盖 Codex GPT-5.5、Claude Code Opus 4.8 / GLM-5.2 / Kimi K2.6 / DeepSeek V4 Pro，以及 Panofy Opus 4.6。"
+        en: "**ACC** = test-set accuracy averaged over 3 attempts per task. The current released leaderboard covers Codex GPT-5.5, Claude Code Opus 4.8 / GLM-5.2 / Kimi K2.6 / DeepSeek V4 Pro, and Panofy Opus 4.6.",
+        zh: "**ACC** = 每个测试任务跑 3 次后取平均的准确率。当前 released leaderboard 覆盖 Codex GPT-5.5、Claude Code Opus 4.8 / GLM-5.2 / Kimi K2.6 / DeepSeek V4 Pro，以及 Panofy Opus 4.6。"
       },
       {
         key: "lift",
