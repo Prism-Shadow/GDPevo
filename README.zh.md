@@ -8,7 +8,14 @@
 
 ## 评测结果
 
-准确率使用 `acc`：每个 test task 运行 3 次后，再在 12 个任务组上取均值；括号中的 `±std` 表示 population 标准差。`rounds` 表示 solver 每次 attempt 的平均模型响应轮次，`tool calls` 表示 solver 每次 attempt 的平均工具调用次数；仅在 solver trace 完整的运行中展示。费用以美元计；准确率提升和费用变化均相对 `base` 计算。
+准确率使用 `acc`：每个 test task 运行 3 次后，再在 12 个任务组上取均值；括号中的 `±std` 表示 population 标准差。`rounds` 表示 solver 每次 attempt 的平均模型响应轮次，`tool calls` 表示 solver 每次 attempt 的平均工具调用次数。费用以美元计；准确率提升和费用变化均相对 `base` 计算。
+
+已发布评测对比四种 mode：
+
+- **base**：直接运行测试任务，不经过任何进化步骤。
+- **self**：只基于训练输入和环境，自行进化工作策略，不使用训练答案。
+- **fewshot**：从训练输入和标准答案组成的示例中学习。
+- **reflect-3**：通过仅限训练阶段的 judge 反馈迭代，再沉淀进化后的工作流程。
 
 | 评测框架 | 模型 | 思考强度 | `base` acc | `fewshot` acc | `self` acc | `reflect-3` acc | `base` 轮次 | `base` 工具调用 | `fewshot` 轮次 | `fewshot` 工具调用 | `self` 轮次 | `self` 工具调用 | `reflect-3` 轮次 | `reflect-3` 工具调用 | `fewshot` 费用变化 | `self` 费用变化 | `reflect-3` 费用变化 | `fewshot` 提升 | `self` 提升 | `reflect-3` 提升 |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
