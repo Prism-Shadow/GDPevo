@@ -8,7 +8,7 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 ## Evaluation Results
 
-Accuracy is reported as `acc`: each test task is run 3 times, then averaged over 12 task groups, with population `std` shown in parentheses. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt. Cost is reported in USD; lift and cost change are relative to `base`.
+Unless otherwise noted, each metric is computed from 3 runs per test task and then averaged over 12 task groups. Accuracy is reported as `acc`, with population `std` shown in parentheses. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt. Cost is reported in USD; lift and cost change are relative to `base`.
 
 The released runs compare four modes:
 
