@@ -181,7 +181,8 @@ function TasksSection() {
           </div>
           {taskGroups.map((group) => {
             const open = openGroup === group.id;
-            const chip = group.domain === "Finance" ? "fin" : group.domain.toLowerCase();
+            const chip = group.domainKey ?? (group.domain === "Finance" ? "fin" : group.domain.toLowerCase());
+            const domainLabel = group.domainLabel ?? { en: group.domain, zh: group.domain };
             return (
               <Fragment key={group.id}>
                 <button
@@ -194,7 +195,9 @@ function TasksSection() {
                 >
                   <span className="tg-id">{group.label}</span>
                   <span>
-                    <i className={`chip ${chip}`}>{group.domain}</i>
+                    <i className={`chip ${chip}`}>
+                      <Lang {...domainLabel} />
+                    </i>
                   </span>
                   <span>
                     <Lang en={group.en} zh={group.zh} />

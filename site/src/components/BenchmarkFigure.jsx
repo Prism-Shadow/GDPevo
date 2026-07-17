@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { leaderboardModes, leaderboardVersions } from "../content/benchmark.js";
+import { leaderboardDataset, leaderboardModes } from "../content/benchmark.js";
 import { blogBenchmark } from "../content/blog.js";
 import { Lang } from "../lib/i18n.jsx";
 
@@ -49,9 +49,8 @@ function compareRows(left, right, sort) {
 }
 
 export function BenchmarkFigure({ className = "", modeLabels = {}, caption = blogBenchmark.caption }) {
-  const [version, setVersion] = useState("v1");
   const [sort, setSort] = useState({ key: "acc", direction: "desc" });
-  const dataset = leaderboardVersions[version];
+  const dataset = leaderboardDataset;
   const versionRows = dataset.rows;
   const activeMetric = benchmarkMetrics.find((metric) => metric.key === sort.key) ?? benchmarkMetrics[0];
   const activeMax = activeMetric.max
@@ -87,8 +86,8 @@ export function BenchmarkFigure({ className = "", modeLabels = {}, caption = blo
             <Lang {...caption} />
             <em className="blog-benchmark-range">
               <Lang
-                en={`${dataset.label} · task groups ${dataset.taskRange}`}
-                zh={`${dataset.label} · 任务组 ${dataset.taskRange}`}
+                en={`task groups ${dataset.taskRange}`}
+                zh={`任务组 ${dataset.taskRange}`}
               />
             </em>
           </span>
@@ -102,20 +101,6 @@ export function BenchmarkFigure({ className = "", modeLabels = {}, caption = blo
               </i>
             ))}
           </span>
-          <div className={`benchmark-version-toggle is-${version}`} role="tablist" aria-label="Benchmark version">
-            {Object.entries(leaderboardVersions).map(([key, option]) => (
-              <button
-                aria-controls="gdpevo-leaderboard"
-                aria-selected={version === key}
-                key={key}
-                onClick={() => setVersion(key)}
-                role="tab"
-                type="button"
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
         </div>
       </figcaption>
 
