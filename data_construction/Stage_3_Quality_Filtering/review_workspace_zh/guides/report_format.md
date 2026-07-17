@@ -68,7 +68,7 @@ manual_review:
 | `environment_capabilities_check` | 每个阶段是否只开放允许的 endpoint，尤其是 `TASK_ENV_ENABLE_JUDGE=0` 时 `/api/judge` 是否不可访问 |
 | `transfer_design_check` | train/test 是否都是正式任务，test 是否能从 train 中迁移经验且不过度同质 |
 | `difficulty_check` | 固定 prompt 的 Dockerized 校准是否有效，overall base `avg@3` 是否约为 `0.40-0.60`，overall fewshot `avg@3` 是否大致低于 `0.80` 且 gain 约为 `0.10-0.30`，并避免大部分任务达到 `0.95` 以上或接近满分 |
-| `eval_design_check` | eval 是否围绕关键业务结果打分，并避免自由文本或 schema 摩擦 |
+| `eval_design_check` | eval 是否围绕业务结果打分，并避免自由文本或 schema 摩擦 |
 | `overall` | 最终质量审核结论 |
 
 通过第三阶段审核需要同时满足：

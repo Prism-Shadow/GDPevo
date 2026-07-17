@@ -68,7 +68,7 @@ manual_review:
 | `environment_capabilities_check` | Whether each stage exposes only allowed endpoints and `/api/judge` is absent whenever `TASK_ENV_ENABLE_JUDGE=0`, especially during formal tests. |
 | `transfer_design_check` | Whether train/test are both real tasks, and whether test tasks require transferable experience from train without being overly homogeneous. |
 | `difficulty_check` | Whether Dockerized fixed-prompt calibration is valid, overall base `avg@3` is about `0.40-0.60`, overall fewshot `avg@3` remains roughly below `0.80` with a gain of about `0.10-0.30`, and most tasks stay below `0.95` rather than approaching a perfect score. |
-| `eval_design_check` | Whether evaluation scores key business outcomes and avoids free-text or schema friction. |
+| `eval_design_check` | Whether evaluation scores business outcomes and avoids free-text or schema friction. |
 | `overall` | Final quality review decision. |
 
 Passing Stage 3 requires all of:
