@@ -1,0 +1,133 @@
+{
+  "request_id": "OBS-STATE-ALGORITHMIC-AUDIT-2022-PM-R4",
+  "protocol_id": "PHO_STATE_ROBUSTNESS_TRANSPORT_V1",
+  "protocol_application": "Execute the complete registered protocol established by the paired training task. This request supplies the independent held-out evidence scope and task-specific overrides only; inherit every unoverridden computational convention from the protocol.",
+  "scope": {
+    "geography": "50 states and the District of Columbia",
+    "study_years": [2020, 2021, 2022, 2023, 2024],
+    "reference_year": 2022,
+    "outcome": "premature_mortality_rate",
+    "focal_exposure": "adult_smoking",
+    "adjustments": ["poverty", "uninsured", "median_income", "region"]
+  },
+  "release_and_cohort_overrides": {
+    "state_health_filter": {
+      "value_type": "AGE_ADJUSTED",
+      "source_type": "DIRECT_SURVEY",
+      "release_status": "FINAL",
+      "required_measures": ["premature_mortality_rate", "adult_smoking"]
+    },
+    "state_socioeconomic_filter": {
+      "release_status": "FINAL",
+      "required_fields": ["poverty", "uninsured", "median_income", "region"]
+    },
+    "complete_case": "A year-state is complete only when its protocol-resolved outcome and exposure are nonsuppressed and nonmissing and its protocol-resolved poverty, uninsured, and median_income values are nonmissing. Never zero-fill.",
+    "primary_cohort": "All 2022 complete cases from the 51-jurisdiction universe.",
+    "balanced_cohort": "The intersection of the complete-case state sets for 2020 through 2024, retaining all five annual rows per state."
+  },
+  "linear_model_overrides": {
+    "weighting": "UNWEIGHTED",
+    "primary_design": {
+      "cohort": "primary_cohort",
+      "ordered_columns": ["intercept", "adult_smoking", "poverty", "uninsured", "median_income", "region_Northeast", "region_South", "region_West"],
+      "region_reference": "Midwest",
+      "coefficient_inference": "HC3"
+    },
+    "balanced_panel_design": {
+      "cohort": "balanced_cohort",
+      "effect_structure": "STATE_AND_YEAR_WITHIN",
+      "ordered_predictors": ["adult_smoking", "poverty", "uninsured", "median_income"],
+      "intercept_after_transform": false,
+      "cluster_unit": "STATE",
+      "cluster_covariance": "CR1"
+    }
+  },
+  "module_overrides": {
+    "cluster_jackknife": {
+      "cohort": "balanced_cohort",
+      "model": "balanced_panel_design",
+      "deleted_cluster": "STATE",
+      "target_coefficient": "adult_smoking"
+    },
+    "nested_elastic_net": {
+      "cohort": "primary_cohort",
+      "target": "premature_mortality_rate",
+      "outer_and_inner_group": "CENSUS_DIVISION",
+      "training_weighting": "UNWEIGHTED",
+      "ordered_features": [
+        "adult_smoking",
+        "poverty",
+        "uninsured",
+        "log(median_income)",
+        "adult_smoking^2",
+        "poverty^2",
+        "uninsured^2",
+        "log(median_income)^2",
+        "adult_smoking*poverty",
+        "adult_smoking*uninsured",
+        "adult_smoking*log(median_income)",
+        "poverty*uninsured",
+        "poverty*log(median_income)",
+        "uninsured*log(median_income)"
+      ],
+      "alpha": 0.65,
+      "lambda_grid": [0.25, 0.5, 1.0, 2.0, 4.0, 8.0]
+    },
+    "wild_cluster_bootstrap": {
+      "cohort": "balanced_cohort",
+      "model": "balanced_panel_design",
+      "cluster_unit": "STATE",
+      "null_hypothesis": "adult_smoking_coefficient=0",
+      "restricted_predictors": ["poverty", "uninsured", "median_income"],
+      "seed": 20220715
+    },
+    "grouped_conformal": {
+      "cohort": "primary_cohort",
+      "source_predictions": "nested_elastic_net_outer_predictions",
+      "group": "CENSUS_DIVISION",
+      "nominal_coverage": 0.90
+    },
+    "trajectory_pca_clustering": {
+      "cohort": "balanced_cohort",
+      "years": [2020, 2021, 2022, 2023, 2024],
+      "ordered_feature_blocks": ["adult_smoking", "poverty", "uninsured", "log(median_income)"],
+      "feature_order": "For each ordered feature block, append its values for 2020 through 2024 in year-ascending order.",
+      "principal_component_count_for_clustering": 3,
+      "cluster_count": 3
+    },
+    "exhaustive_source_perturbation": {
+      "cohort": "primary_cohort",
+      "target_coefficient": "adult_smoking",
+      "baseline_outcome_source": {
+        "measure_id": "premature_mortality_rate",
+        "value_type": "AGE_ADJUSTED",
+        "source_type": "DIRECT_SURVEY",
+        "release_status": "FINAL"
+      },
+      "replacement_outcome_source": {
+        "measure_id": "premature_mortality_rate",
+        "value_type": "CRUDE",
+        "source_type": "COUNTY_ROLLUP",
+        "release_status": "FINAL",
+        "require_nonsuppressed_nonmissing": true
+      },
+      "scenario_model": "primary_design"
+    }
+  },
+  "reporting_overrides": {
+    "numeric_decimal_places": 4,
+    "output_contract": "answer_template.json"
+  },
+  "decision_rule": {
+    "flags": {
+      "cluster_jackknife_supported": "bias-corrected coefficient>0, jackknife p<0.05, and maximum delete-one percent change<=20",
+      "nested_prediction_stable": "pooled outer OOF R2>=0.85",
+      "wild_bootstrap_supported": "plus-one p<=0.05",
+      "grouped_conformal_supported": "pooled coverage>=0.85",
+      "trajectory_stable": "minimum leave-one-year-out ARI>=0.60",
+      "source_exhaustive_stable": "every scenario is stable and maximum percent shift<=20; a stable scenario has a positive coefficient and HC3 p<0.05"
+    },
+    "precedence": ["CLUSTER_JACKKNIFE", "NESTED_PREDICTION", "WILD_BOOTSTRAP", "GROUPED_CONFORMAL", "TRAJECTORY", "SOURCE_EXHAUSTIVE"],
+    "conclusion": "If all flags are true, first_failed_module is NONE and conclusion is ROBUST_ACROSS_REGISTERED_MODULES. Otherwise use the first false precedence enum and NOT_ROBUST_AT_<MODULE>."
+  }
+}

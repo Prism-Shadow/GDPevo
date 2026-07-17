@@ -1,0 +1,164 @@
+{
+  "patient": {
+    "patient_id": "P-44702",
+    "enterprise_mrn": "E10044702",
+    "display_name": "Thomas Bennett",
+    "dob": "1949-02-27"
+  },
+  "recipient": {
+    "provider_id": "PRV-ORTHO-010",
+    "name": "Dr. Priya Nair",
+    "facility": "Cedar Orthopedic Institute",
+    "service_line": "orthopedics"
+  },
+  "active_condition_keys": [
+    "diabetes_type_2",
+    "hypertension",
+    "memory_loss",
+    "right_hip_oa",
+    "right_knee_oa"
+  ],
+  "active_medication_keys": [
+    "acetaminophen",
+    "baseline_med",
+    "insulin_glargine"
+  ],
+  "active_allergy_keys": [
+    "baseline_allergy",
+    "latex"
+  ],
+  "handoff_encounters": [
+    {
+      "encounter_id": "ENC-44702-0",
+      "date": "2026-03-01",
+      "type": "care_transition",
+      "signed_status": "signed"
+    },
+    {
+      "encounter_id": "ENC-44702-1",
+      "date": "2026-02-14",
+      "type": "office_visit",
+      "signed_status": "signed"
+    },
+    {
+      "encounter_id": "ENC-44702-2",
+      "date": "2026-01-29",
+      "type": "office_visit",
+      "signed_status": "signed"
+    },
+    {
+      "encounter_id": "ENC-44702-3",
+      "date": "2026-01-02",
+      "type": "office_visit",
+      "signed_status": "signed"
+    }
+  ],
+  "source_selection": {
+    "selection_basis": "orthopedic_surgical_handoff_window",
+    "selected_encounter_ids": [
+      "ENC-44702-0",
+      "ENC-44702-1",
+      "ENC-44702-2",
+      "ENC-44702-3"
+    ],
+    "excluded_encounter_ids": [
+      "ENC-0460F33D",
+      "ENC-0FE06CF3",
+      "ENC-44702-4",
+      "ENC-FA393BB8"
+    ]
+  },
+  "latest_immunization": {
+    "immunization_id": "IMM-1372CDAF",
+    "date": "2026-03-11",
+    "vaccine": "influenza high-dose"
+  },
+  "disclosure": {
+    "disclosure_id": "DISC-44702-ORTHO",
+    "date": "2026-03-02",
+    "status": "permitted",
+    "purpose": "surgical handoff",
+    "recipient_provider_id": "PRV-ORTHO-010"
+  },
+  "risk_flags": [
+    "cognitive_memory_loss",
+    "fall_risk_note_required",
+    "hypertension",
+    "insulin_dependent_diabetes",
+    "latex_allergy",
+    "perioperative_glucose_plan_needed"
+  ],
+  "risk_flag_evidence": [
+    {
+      "risk_flag": "cognitive_memory_loss",
+      "condition_keys": [
+        "memory_loss"
+      ],
+      "medication_keys": [],
+      "encounter_ids": [
+        "ENC-0460F33D"
+      ]
+    },
+    {
+      "risk_flag": "fall_risk_note_required",
+      "condition_keys": [
+        "right_hip_oa",
+        "right_knee_oa"
+      ],
+      "medication_keys": [
+        "acetaminophen"
+      ],
+      "encounter_ids": [
+        "ENC-44702-0"
+      ]
+    },
+    {
+      "risk_flag": "hypertension",
+      "condition_keys": [
+        "hypertension"
+      ],
+      "medication_keys": [],
+      "encounter_ids": [
+        "ENC-0460F33D"
+      ]
+    },
+    {
+      "risk_flag": "insulin_dependent_diabetes",
+      "condition_keys": [
+        "diabetes_type_2"
+      ],
+      "medication_keys": [
+        "insulin_glargine"
+      ],
+      "encounter_ids": [
+        "ENC-44702-0",
+        "ENC-44702-1",
+        "ENC-44702-2",
+        "ENC-44702-3"
+      ]
+    },
+    {
+      "risk_flag": "latex_allergy",
+      "condition_keys": [],
+      "medication_keys": [],
+      "encounter_ids": []
+    },
+    {
+      "risk_flag": "perioperative_glucose_plan_needed",
+      "condition_keys": [
+        "diabetes_type_2"
+      ],
+      "medication_keys": [
+        "insulin_glargine"
+      ],
+      "encounter_ids": [
+        "ENC-44702-0"
+      ]
+    }
+  ],
+  "packet_readiness": {
+    "status": "ready_with_risk_flags",
+    "ready_to_send": true,
+    "blocking_issue_codes": []
+  }
+}

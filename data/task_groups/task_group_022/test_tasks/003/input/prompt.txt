@@ -1,0 +1,7 @@
+Subject: West apparel month-end inventory control review
+
+Inventory Control needs the May month-end APPAREL availability report for WH-WEST-01 closed after reconciling a source-unit exception. The ERP control detail in `payloads/inventory_control_request.json` describes exactly one effective movement whose source unit evidence conflicts with its canonical each-unit normalization. Identify that movement, report its pre-correction availability, apply only the approved canonical correction with one audit record, and recalculate the requested stockout-risk results.
+
+The authenticated Atlas Commerce Operations workplace is available at `<TASK_ENV_BASE_URL>`. Its schema, data dictionary, SQL query service, controlled SQL transaction service, and correction-audit view are available through the documented API endpoints. Runtime authorization is provided separately by the environment. Raw quantities, source unit evidence, source identity fields, and unrelated business rows must remain unchanged.
+
+Return only one JSON object and write it to `answer.json`. It must conform exactly to `input/payloads/answer_template.json`, with no narrative or extra fields. Report `APPLIED` only when the transaction and post-change verification satisfy the success rule in the request; otherwise report `NOT_APPLIED` with the results actually observed.

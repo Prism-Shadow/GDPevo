@@ -1,0 +1,295 @@
+{
+  "schema_name": "custodian_production_issue_review",
+  "schema_version": "1.0",
+  "format": "JSON object only",
+  "required_top_level_keys_in_order": [
+    "matter_id",
+    "custodian_id",
+    "overall_status",
+    "notice_recommended",
+    "issue_findings",
+    "privilege_actions",
+    "attachment_failures",
+    "ranked_escalations"
+  ],
+  "field_definitions": {
+    "matter_id": {
+      "type": "string",
+      "description": "Matter identifier under review."
+    },
+    "custodian_id": {
+      "type": "string",
+      "description": "Custodian identifier under review."
+    },
+    "overall_status": {
+      "type": "enum",
+      "allowed_values": [
+        "ready",
+        "blocked",
+        "needs_escalation"
+      ]
+    },
+    "notice_recommended": {
+      "type": "boolean",
+      "description": "Whether the review recommends escalation for possible regulator or opposing-party notice."
+    },
+    "issue_findings": {
+      "type": "list<object>",
+      "ordering": "Sort by issue_id in ascending lexicographic order.",
+      "required_object_keys_in_order": [
+        "issue_id",
+        "present",
+        "issue_type",
+        "severity",
+        "timing_class",
+        "category_ids",
+        "affected_count",
+        "recovered_count",
+        "unrecovered_count",
+        "primary_action",
+        "secondary_actions",
+        "notice_recommended"
+      ],
+      "object_fields": {
+        "issue_id": {
+          "type": "enum",
+          "allowed_values": [
+            "archive_gap",
+            "attachment_failure",
+            "date_range_gap",
+            "duplicate_alias",
+            "laptop_wipe",
+            "personal_email_gap",
+            "privilege_miscoding",
+            "privilege_overdesignation",
+            "privilege_waiver",
+            "retention_policy_gap",
+            "shared_drive_deletion",
+            "stale_review_coding",
+            "unlogged_privilege"
+          ]
+        },
+        "present": {
+          "type": "boolean"
+        },
+        "issue_type": {
+          "type": "enum",
+          "allowed_values": [
+            "collection_gap",
+            "device_wipe",
+            "processing_failure",
+            "privilege_protocol_defect",
+            "review_coding_error",
+            "source_deletion",
+            "third_party_forward",
+            "uncollected_source"
+          ]
+        },
+        "severity": {
+          "type": "enum",
+          "allowed_values": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "timing_class": {
+          "type": "enum",
+          "allowed_values": [
+            "post_hold_spoliation",
+            "uncollected_source",
+            "privilege_waiver",
+            "privilege_protocol_defect",
+            "coding_error",
+            "processing_exception",
+            "not_applicable"
+          ]
+        },
+        "category_ids": {
+          "type": "list<string>",
+          "ordering": "Sort category IDs ascending."
+        },
+        "affected_count": {
+          "type": "integer",
+          "units": "records_or_sources"
+        },
+        "recovered_count": {
+          "type": "integer",
+          "units": "records_or_sources"
+        },
+        "unrecovered_count": {
+          "type": "integer",
+          "units": "records_or_sources"
+        },
+        "primary_action": {
+          "type": "enum",
+          "allowed_values": [
+            "clawback_check",
+            "custodian_declaration",
+            "forensic_recovery",
+            "hold_refresh",
+            "no_action",
+            "privilege_review",
+            "regulator_notice",
+            "reprocess_qc",
+            "supplemental_collection",
+            "waiver_assessment"
+          ]
+        },
+        "secondary_actions": {
+          "type": "list<enum>",
+          "allowed_values": [
+            "clawback_check",
+            "custodian_declaration",
+            "forensic_recovery",
+            "hold_refresh",
+            "privilege_log_correction",
+            "privilege_review",
+            "produce_business_only",
+            "regulator_notice",
+            "reprocess_qc",
+            "supplemental_collection",
+            "waiver_assessment"
+          ],
+          "ordering": "Sort action enums ascending."
+        },
+        "notice_recommended": {
+          "type": "boolean"
+        }
+      }
+    },
+    "privilege_actions": {
+      "type": "object",
+      "required_keys_in_order": [
+        "waiver_forward",
+        "overdesignation_review",
+        "miscoding_clawback"
+      ],
+      "common_fields": {
+        "record_count": {
+          "type": "integer"
+        },
+        "category_ids": {
+          "type": "list<string>",
+          "ordering": "Sort category IDs ascending."
+        },
+        "action": {
+          "type": "enum",
+          "allowed_values": [
+            "clawback_check",
+            "privilege_review",
+            "produce_business_only",
+            "waiver_assessment"
+          ]
+        }
+      },
+      "specific_fields": {
+        "waiver_forward": {
+          "waiver_risk": "boolean",
+          "recipient_role": {
+            "type": "enum",
+            "allowed_values": [
+              "outside_banker",
+              "outside_consultant",
+              "opposing_party",
+              "vendor",
+              "unknown"
+            ]
+          }
+        },
+        "overdesignation_review": {
+          "overdesignation_flag": "boolean",
+          "privilege_status": {
+            "type": "enum",
+            "allowed_values": [
+              "business_only",
+              "counsel_communications",
+              "privileged_investigation",
+              "work_product"
+            ]
+          }
+        },
+        "miscoding_clawback": {
+          "first_pass_coding": {
+            "type": "enum",
+            "allowed_values": [
+              "non_privileged",
+              "privileged",
+              "unknown"
+            ]
+          },
+          "production_status": {
+            "type": "enum",
+            "allowed_values": [
+              "produced",
+              "withheld",
+              "redacted",
+              "not_produced"
+            ]
+          },
+          "clawback_required": "boolean"
+        }
+      }
+    },
+    "attachment_failures": {
+      "type": "object",
+      "required_keys_in_order": [
+        "total_failed",
+        "password_protected",
+        "corrupt",
+        "category_ids",
+        "primary_action"
+      ],
+      "field_types": {
+        "total_failed": "integer",
+        "password_protected": "integer",
+        "corrupt": "integer",
+        "category_ids": "list<string>",
+        "primary_action": "enum"
+      }
+    },
+    "ranked_escalations": {
+      "type": "list<object>",
+      "ordering": "Sort by rank ascending; ranks must be consecutive integers starting at 1.",
+      "required_object_keys_in_order": [
+        "rank",
+        "issue_id",
+        "escalation_target",
+        "primary_action"
+      ],
+      "object_fields": {
+        "rank": {
+          "type": "integer"
+        },
+        "issue_id": {
+          "type": "enum",
+          "allowed_values_ref": "issue_findings.issue_id"
+        },
+        "escalation_target": {
+          "type": "enum",
+          "allowed_values": [
+            "case_team",
+            "client_it",
+            "client_legal",
+            "forensic_vendor",
+            "privilege_team",
+            "regulator_notice_review",
+            "review_vendor"
+          ]
+        },
+        "primary_action": {
+          "type": "enum",
+          "allowed_values_ref": "issue_findings.primary_action"
+        }
+      }
+    }
+  },
+  "normalization_rules": [
+    "Use exact enum casing shown in this template.",
+    "Use integer counts only.",
+    "Sort category_ids and secondary_actions ascending.",
+    "Sort issue_findings by issue_id ascending.",
+    "Sort ranked_escalations by rank ascending."
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "batch_id": "PULM-JUN-02",
+  "readiness_by_referral": [
+    {
+      "referral_id": "REF0010",
+      "patient_id": "P048",
+      "readiness_status": "ready",
+      "blocker_codes": []
+    },
+    {
+      "referral_id": "REF0011",
+      "patient_id": "P049",
+      "readiness_status": "under_review",
+      "blocker_codes": [
+        "clinical_code_discrepancy"
+      ]
+    },
+    {
+      "referral_id": "REF0012",
+      "patient_id": "P050",
+      "readiness_status": "blocked",
+      "blocker_codes": [
+        "authorization_blocked",
+        "records_missing"
+      ]
+    },
+    {
+      "referral_id": "REF0013",
+      "patient_id": "P051",
+      "readiness_status": "ready",
+      "blocker_codes": []
+    },
+    {
+      "referral_id": "REF0014",
+      "patient_id": "P052",
+      "readiness_status": "under_review",
+      "blocker_codes": [
+        "clinical_code_discrepancy"
+      ]
+    },
+    {
+      "referral_id": "REF0015",
+      "patient_id": "P053",
+      "readiness_status": "blocked",
+      "blocker_codes": [
+        "authorization_blocked",
+        "clinical_code_discrepancy",
+        "records_missing",
+        "scheduled_before_clearance"
+      ]
+    }
+  ],
+  "clinical_code_discrepancy_referrals": [
+    "REF0011",
+    "REF0014",
+    "REF0015"
+  ],
+  "blocker_sets": {
+    "authorization": [
+      "REF0012",
+      "REF0015"
+    ],
+    "records": [
+      "REF0012",
+      "REF0015"
+    ],
+    "imaging": []
+  },
+  "duplicate_handling": {
+    "duplicate_groups": [],
+    "cleared_duplicate_review_referrals": [
+      "REF0013",
+      "REF0014"
+    ]
+  },
+  "ready_referral_chart_needs": [
+    {
+      "referral_id": "REF0010",
+      "patient_id": "P048",
+      "chart_action": "update_chart",
+      "artifacts_to_create": [
+        "active_problems",
+        "allergies",
+        "consent",
+        "labs",
+        "vitals"
+      ]
+    },
+    {
+      "referral_id": "REF0013",
+      "patient_id": "P051",
+      "chart_action": "update_chart",
+      "artifacts_to_create": [
+        "active_problems",
+        "allergies",
+        "consent",
+        "demographics",
+        "labs",
+        "medications",
+        "vitals"
+      ]
+    }
+  ],
+  "correspondence_queue": [
+    {
+      "referral_id": "REF0011",
+      "template_type": "clinical_code_clarification",
+      "reason_codes": [
+        "wrong_service_family"
+      ]
+    },
+    {
+      "referral_id": "REF0012",
+      "template_type": "auth_records_request",
+      "reason_codes": [
+        "authorization_denied",
+        "records_missing"
+      ]
+    },
+    {
+      "referral_id": "REF0014",
+      "template_type": "clinical_code_clarification",
+      "reason_codes": [
+        "clinical_reason_mismatch"
+      ]
+    },
+    {
+      "referral_id": "REF0015",
+      "template_type": "appointment_hold_notice",
+      "reason_codes": [
+        "appointment_already_scheduled",
+        "authorization_denied",
+        "clinical_reason_mismatch",
+        "records_missing"
+      ]
+    }
+  ],
+  "priority_order": [
+    {
+      "rank": 1,
+      "referral_id": "REF0014",
+      "priority_tier": "tier_1_immediate"
+    },
+    {
+      "rank": 2,
+      "referral_id": "REF0015",
+      "priority_tier": "tier_2_short_term"
+    },
+    {
+      "rank": 3,
+      "referral_id": "REF0011",
+      "priority_tier": "tier_2_short_term"
+    },
+    {
+      "rank": 4,
+      "referral_id": "REF0012",
+      "priority_tier": "tier_2_short_term"
+    }
+  ]
+}

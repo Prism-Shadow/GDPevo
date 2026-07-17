@@ -1,0 +1,176 @@
+{
+  "task_id": "train_003",
+  "response_contract": {
+    "output": "Return one JSON object and no surrounding prose.",
+    "top_level_required_keys": [
+      "deal_id",
+      "escalation_terms",
+      "aggregate_risk"
+    ],
+    "deal_id": {
+      "type": "string",
+      "required_value": "D-CYPRESS-735"
+    }
+  },
+  "numeric_conventions": {
+    "currency_fields": "Integer US dollars, no commas or currency symbols.",
+    "percent_fields": "Number rounded to two decimal places, expressed as percentage points, e.g. 5.50.",
+    "month_fields": "Integer number of months.",
+    "not_applicable": "Use null for numeric fields that do not apply to the term."
+  },
+  "list_conventions": {
+    "escalation_terms": "Include terms that require committee-level escalation or recommendation. Sort by term_id alphabetically.",
+    "mae_omitted_carveouts": "Sort codes alphabetically.",
+    "committee_members": "Use the names exactly as shown in the Deal Desk committee record.",
+    "primary_driver_term_ids": "Use term_id enum values and sort alphabetically."
+  },
+  "enums": {
+    "term_id": [
+      "BREAK_FEE",
+      "FIDUCIARY_OUT",
+      "MAE_CARVEOUTS",
+      "REGULATORY_COVENANT",
+      "RTF",
+      "RW_SURVIVAL"
+    ],
+    "committee_route": [
+      "BOARD_TRANSACTION_COMMITTEE",
+      "CLIENT_BUSINESS_LEAD",
+      "NO_COMMITTEE_ROUTE"
+    ],
+    "deviation_code": [
+      "ABOVE_RTF_THRESHOLD",
+      "POST_CLOSING_R_AND_W_SURVIVAL",
+      "RESTRICTED_MAE_CARVEOUTS",
+      "TERMINATION_RIGHT_BLOCKED",
+      "WEAK_REGULATORY_COVENANT",
+      "WITHIN_POLICY"
+    ],
+    "severity": [
+      "LOW",
+      "MEDIUM",
+      "HIGH",
+      "CRITICAL"
+    ],
+    "approval_recommendation": [
+      "APPROVE_AS_DRAFTED",
+      "APPROVE_WITH_CONDITIONS",
+      "DO_NOT_APPROVE_AS_DRAFTED",
+      "NO_APPROVAL_NEEDED"
+    ],
+    "recommendation": [
+      "DELETE_POST_CLOSING_R_AND_W_SURVIVAL",
+      "RTF_POLICY_POSITION",
+      "RESTORE_FULL_PUBLIC_COMPANY_MAE_CARVEOUTS",
+      "RESTORE_SUPERIOR_PROPOSAL_TERMINATION_RIGHT",
+      "NO_CHANGE_REQUIRED"
+    ],
+    "exposure_basis": [
+      "EQUITY_VALUE",
+      "FULL_EQUITY_VALUE_UNCAPPED",
+      "NON_QUANTIFIED_LEGAL_RISK",
+      "NONE",
+      "POLICY_THRESHOLD_EXCESS"
+    ],
+    "mae_carveout_code": [
+      "ANNOUNCEMENT_EFFECTS",
+      "CYBER_INCIDENT",
+      "CUSTOMER_LOSS",
+      "INDUSTRY",
+      "LAW_CHANGE",
+      "MARKET",
+      "PANDEMIC",
+      "RATES",
+      "WAR"
+    ],
+    "risk_tier": [
+      "LOW",
+      "MEDIUM",
+      "HIGH",
+      "CRITICAL"
+    ],
+    "final_action": [
+      "ESCALATE_AND_APPROVE",
+      "ESCALATE_AND_RENEGOTIATE_BEFORE_SIGNING",
+      "ESCALATE_FOR_INFORMATION_ONLY",
+      "NO_ESCALATION"
+    ],
+    "batna_code": [
+      "COMPETING_SIGNED_DEAL",
+      "LOWER_RISK_PRIVATE_PLATFORM",
+      "NONE_IDENTIFIED",
+      "STATUS_QUO"
+    ],
+    "batna_leverage": [
+      "LOW",
+      "MODERATE",
+      "HIGH"
+    ],
+    "ownership_context": [
+      "ACTIVIST_PRESSURE_INDEX_FUNDS",
+      "DISPERSED_RETAIL_ONLY",
+      "FOUNDER_CONTROLLED",
+      "PRIVATE_SELLER_GROUP"
+    ],
+    "strategic_rationale": [
+      "DEFENSIVE_BLOCKING_ACQUISITION",
+      "NEED_PLATFORM_BUT_MARKET_STANDARD_RISK",
+      "NON_STRATEGIC_ADD_ON",
+      "PURE_FINANCIAL_BUY"
+    ]
+  },
+  "schema": {
+    "deal_id": "string",
+    "escalation_terms": [
+      {
+        "term_id": "enum:term_id",
+        "source_clause_id": "string or null",
+        "policy_rule_id": "string or null",
+        "escalation_required": "boolean",
+        "committee_route": "enum:committee_route",
+        "deviation_code": "enum:deviation_code",
+        "severity": "enum:severity",
+        "approval_recommendation": "enum:approval_recommendation",
+        "recommendation": "enum:recommendation",
+        "quantification": {
+          "draft_percent": "number or null",
+          "policy_threshold_percent": "number or null",
+          "deviation_percent": "number or null",
+          "draft_amount_dollars": "integer or null",
+          "excess_amount_dollars": "integer or null",
+          "exposure_amount_dollars": "integer or null",
+          "exposure_basis": "enum:exposure_basis",
+          "survival_months": "integer or null",
+          "benchmark_id": "string or null",
+          "benchmark_sample_size": "integer or null",
+          "benchmark_count_above_threshold": "integer or null",
+          "mae_omitted_carveouts": [
+            "enum:mae_carveout_code"
+          ]
+        }
+      }
+    ],
+    "aggregate_risk": {
+      "committee_route": "enum:committee_route",
+      "approval_required": "boolean",
+      "committee_members": [
+        "string"
+      ],
+      "risk_tier": "enum:risk_tier",
+      "final_action": "enum:final_action",
+      "primary_driver_term_ids": [
+        "enum:term_id"
+      ],
+      "escalation_term_count": "integer",
+      "total_quantified_exposure_dollars": "integer",
+      "total_policy_excess_dollars": "integer",
+      "strategic_context": {
+        "batna_code": "enum:batna_code",
+        "batna_leverage": "enum:batna_leverage",
+        "ownership_context": "enum:ownership_context",
+        "strategic_rationale": "enum:strategic_rationale",
+        "benchmark_memo_required": "boolean"
+      }
+    }
+  }
+}

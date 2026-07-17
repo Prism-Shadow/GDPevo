@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -113,19 +114,23 @@ class FinanceOpsHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urlparse(self.path)
-        path = parsed.path.rstrip("/") or "/"
-        if path == "/api/judge":
-            length = int(self.headers.get("Content-Length", "0") or "0")
-            status, payload = judge_answer_request(self.rfile.read(length))
-            self.send_json(payload, status=status)
+        if parsed.path != "/api/judge":
+            self.send_json({"error": "not found", "path": parsed.path}, status=404)
             return
-        self.send_json({"error": "not found", "path": path}, status=404)
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            self.send_json({"error": "not found", "path": parsed.path}, status=404)
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(payload, status=status)
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8047)
+    parser.add_argument("--host", default=os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0")))
+    parser.add_argument(
+        "--port", type=int, default=int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9009")))
+    )
     args = parser.parse_args()
 
     server = ThreadingHTTPServer((args.host, args.port), FinanceOpsHandler)

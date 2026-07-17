@@ -1,0 +1,323 @@
+task_group:
+  task_group_id: task_group_016
+  scenario_id: SCN_016_healthcare_clinical_protocol_decision_support
+  source_examples:
+    - E001
+    - E002
+    - E003
+    - E004
+    - E005
+  domain: Healthcare Clinical Decision Support
+  description: |
+    Synthetic protocol-bound clinical decision-support benchmark with a shared
+    clinic environment. Train and test tasks require acute visit assessment,
+    protocol-driven lab and medication decisions, FHIR-like Observation
+    retrieval, and high-risk care-management routing.
+
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+    - env/Dockerfile
+    - env/setup.sh
+    - env/app.py
+    - env/generate_data.py
+    - env/judge_api.py
+    - env/judge_evaluators/train_001_eval.py
+    - env/judge_evaluators/train_002_eval.py
+    - env/judge_evaluators/train_003_eval.py
+    - env/judge_evaluators/train_004_eval.py
+    - env/judge_evaluators/train_005_eval.py
+    - env/endpoints.txt
+    - env/generated/clinic.sqlite3
+    - env/generated/manifest.json
+    - env/generated/seed_manifest.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct primary respiratory classification and diagnosis evidence.
+          weight: 3
+        - goal: Correct outpatient-vs-ED disposition under oxygen and vital thresholds.
+          weight: 3
+        - goal: Correct required diagnostic tests from symptoms, CXR, and exposure context.
+          weight: 2
+        - goal: Correct allergy-safe antibiotic selection and avoidance flags.
+          weight: 3
+        - goal: Correct medication dose, route, frequency, and duration.
+          weight: 2
+        - goal: Correct return precautions as a controlled set.
+          weight: 2
+        - goal: Correct follow-up timing and no contradictory normal-lung or CXR assertions.
+          weight: 1
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct mild TBI/concussion classification with no unsupported LOC/vomiting.
+          weight: 3
+        - goal: Correct protocol risk tier from neuro and symptom details.
+          weight: 3
+        - goal: Correct imaging, ED, and observation disposition.
+          weight: 2
+        - goal: Correct red-flag set from the protocol.
+          weight: 2
+        - goal: Correct activity, return-to-play, driving, and school restrictions.
+          weight: 2
+        - goal: Correct follow-up window and sooner-escalation route.
+          weight: 2
+        - goal: Correct evidence IDs and contradiction-avoidance booleans.
+          weight: 1
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct latest final potassium observation and ignored stale or preliminary observations.
+          weight: 3
+        - goal: Correct replacement-needed boolean under threshold.
+          weight: 2
+        - goal: Correct oral potassium dose calculation.
+          weight: 3
+        - goal: Correct medication code and route/frequency instructions.
+          weight: 2
+        - goal: Correct follow-up LOINC and scheduled timestamp.
+          weight: 3
+        - goal: Correct no-urgent-escalation classification after renal and rhythm screen.
+          weight: 1
+        - goal: Correct patient/case identifiers and evidence list.
+          weight: 1
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct high-risk/complex-care classification from registry and chronic-condition triggers.
+          weight: 3
+        - goal: Correct diabetes/ESRD/HF/hyperphosphatemia/hypertension problem set with numeric anchors.
+          weight: 3
+        - goal: Correct pharmacist referral from polypharmacy/insulin burden.
+          weight: 2
+        - goal: Correct social-work and transportation/financial barrier routing.
+          weight: 2
+        - goal: Correct refusal-sensitive outreach stance and permission language classification.
+          weight: 2
+        - goal: Correct care-plan minimum structure and weekly cadence.
+          weight: 2
+        - goal: Correct clinical and behavioral-health escalation conditions.
+          weight: 2
+        - goal: Correct source provenance for chart vs member-disclosed facts.
+          weight: 1
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct window inclusion and boolean lab-found result.
+          weight: 3
+        - goal: Correct complete matched Observation id set and stable ordering.
+          weight: 3
+        - goal: Correct exclusion of canceled, preliminary, wrong-code, and wrong-window observations.
+          weight: 2
+        - goal: Correct latest final value and timestamp.
+          weight: 2
+        - goal: Correct protocol gate decision from the retrieved lab.
+          weight: 2
+        - goal: Correct repeat-lab recommendation and timing.
+          weight: 2
+        - goal: Correct task, case, patient, and target-code identifiers.
+          weight: 1
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct CAP classification using focal findings and imaging.
+          weight: 3
+        - goal: Correct ED escalation from O2 threshold and respiratory distress.
+          weight: 3
+        - goal: Correct test set, including CXR and viral testing.
+          weight: 2
+        - goal: Correct allergy/contraindication handling and no unsafe outpatient antibiotic recommendation.
+          weight: 2
+        - goal: Correct stabilization actions before transfer.
+          weight: 2
+        - goal: Correct return/escalation precautions and follow-up ownership.
+          weight: 1
+        - goal: Correct evidence ids and no contradictory normal-CXR assertion.
+          weight: 3
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct concussion/head-injury classification and key symptom extraction.
+          weight: 1
+        - goal: Correct high-risk tier from repeated vomiting/worsening headache.
+          weight: 1
+        - goal: Correct ED/CT disposition rather than home observation.
+          weight: 1
+        - goal: Correct red-flag and absent-red-flag sets without duplicate LOC or unsupported absent findings.
+          weight: 3
+        - goal: Correct no-return-to-play/driving/school restrictions.
+          weight: 2
+        - goal: Correct follow-up/escalation timing.
+          weight: 1
+        - goal: Correct complete source evidence ids and contradiction checks.
+          weight: 3
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct latest final potassium observation.
+          weight: 3
+        - goal: Correct urgent escalation classification because K is below 3.0 and symptoms are present.
+          weight: 3
+        - goal: Correct not to use routine oral-only protocol dose as final plan.
+          weight: 2
+        - goal: Correct urgent monitoring/electrocardiogram action set.
+          weight: 2
+        - goal: Correct follow-up potassium timing under urgent branch.
+          weight: 2
+        - goal: Correct contraindication/eGFR/rhythm evidence.
+          weight: 2
+        - goal: Correct medication and lab codes where applicable.
+          weight: 1
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct high-risk complex-care classification.
+          weight: 3
+        - goal: Correct priority problem set with numeric anchors.
+          weight: 3
+        - goal: Correct pharmacist referral from polypharmacy and high-risk medications.
+          weight: 2
+        - goal: Correct social-work referral from transportation, financial, and food barriers.
+          weight: 2
+        - goal: Correct refusal-sensitive outreach stance without pressure or jargon.
+          weight: 2
+        - goal: Correct care-plan minima and follow-up cadence.
+          weight: 2
+        - goal: Correct escalation condition set covering clinical and behavioral-health domains.
+          weight: 2
+        - goal: Correct source provenance handling.
+          weight: 1
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct target-window Observation boolean results.
+          weight: 2
+        - goal: Correct matched Observation id sets and stable ordering.
+          weight: 3
+        - goal: Correct exclusion of wrong-window/preliminary resources.
+          weight: 2
+        - goal: Correct protocol gate classification using CXR and viral result.
+          weight: 1
+        - goal: Correct remaining-test recommendation.
+          weight: 3
+        - goal: Correct disposition and antibiotic posture.
+          weight: 3
+        - goal: Correct patient/case identifiers.
+          weight: 2

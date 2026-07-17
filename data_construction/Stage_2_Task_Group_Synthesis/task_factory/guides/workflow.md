@@ -45,7 +45,7 @@ main construction agent's model or client defaults:
 
 The reviewer subagent owns independent review:
 
-- Check structure, interpretability, data generation, environment complexity, prompt leakage, transfer design, evaluation validity, rubric multidimensionality, and partial-credit behavior.
+- Check structure, interpretability, data generation, environment complexity, prompt leakage, transfer design, evaluation validity, and whole-point scoring.
 
 ## Stage Overview
 
@@ -58,8 +58,8 @@ Construction should move through these stages. Do not skip directly from reading
 | 3. Environment blueprint | Main agent | `scratch/env_blueprint.md` | Shared business systems, public entry points, data contracts, generation seeds, Docker image/runtime behavior, declared state mode, network-only access, reset behavior, and manifest requirements are specified |
 | 4. Environment implementation | Clean-context env-builder coding subagent | `env/` | The environment is shared across all tasks, domain-oriented, reachable from a separate agent container, and free of answer-like per-task endpoints |
 | 5. Task construction | 10 task-builder subagents | `train_tasks/` and `test_tasks/` task folders | Each assigned task has solver input, bilingual notes, standard answer, evaluator, and answer template |
-| 6. Integration and evaluator self-check | Main agent | Finalized `task_group.yaml`, path/schema fixes, `scratch/rubric_validation.md`, evaluator and judge-API self-check logs | Every evaluator scores its own answer fully, selective perturbations lose only intended credit, partial answers receive partial scores, and `/api/judge` rejects test ids without hidden details |
-| 7. Difficulty calibration | Dockerized Codex processes, scored by main agent | `scratch/difficulty_calibration.md`, traces, 3 independent fewshot skill packages, base/fewshot results | Fixed-prompt runs are isolated; overall base score is about `0.40-0.60`; fewshot gain is about `0.10-0.20` without saturation |
+| 6. Integration and evaluator self-check | Main agent | Finalized `task_group.yaml`, path/schema fixes, `scratch/rubric_validation.md`, evaluator and judge-API self-check logs | Every evaluator scores its own answer fully; the rubric covers distinct business outcomes without duplicate scoring; each point earns all of its assigned score or zero; and `/api/judge` rejects test ids without hidden details |
+| 7. Difficulty calibration | Dockerized Codex processes, scored by main agent | `scratch/difficulty_calibration.md`, traces, 3 independent fewshot skill packages, base/fewshot results | Fixed-prompt runs are isolated; overall base score is about `0.40-0.60`; fewshot remains roughly below `0.80` with a gain of about `0.10-0.30` and no saturation |
 | 8. Independent review and rework | Reviewer subagent and main agent | Review findings, rework records, rerun calibration where needed | Structure, environment, notes, evaluation, transfer, and difficulty requirements all pass |
 
 ## Construction Flow
@@ -71,7 +71,7 @@ Construction should move through these stages. Do not skip directly from reading
 5. The main agent launches 10 task-builder subagents, in parallel or batches: one for each `train_001` through `train_005` and `test_001` through `test_005`.
 6. Task-builder subagents generate their own assigned task `input/`, `notes/`, `output/`, and `eval/`.
 7. The main agent integrates all tasks and standardizes paths, schemas, notes, and environment usage.
-8. The main agent runs every evaluator against the standard answer, creates `scratch/rubric_validation.md`, and runs selective wrong-aspect and partial-answer probes to verify multidimensional, non-binary scoring. It connects `env/judge_api.py` to the service and verifies that `/api/judge` gives full credit to train standard answers, preserves evaluator partial scores, rejects test task ids, and returns no hidden evaluator or answer content.
+8. The main agent runs every evaluator against the standard answer and creates `scratch/rubric_validation.md`. It verifies that each task covers at least 4 distinct business outcomes, does not score the same criterion or answer fact more than once, and gives every point either all of its assigned score or zero. The main agent connects `env/judge_api.py` to the service and verifies that `/api/judge` gives full credit to train standard answers, preserves the evaluator's weighted aggregate score, rejects test task ids, and returns no hidden evaluator or answer content.
 9. Before difficulty calibration, the main agent builds the environment image, creates owner- and run-scoped Docker networks, and verifies `/health` from a disposable container at `http://task-env:<TASK_ENV_PORT>/`. Read-only environments may be shared within the judge-disabled calibration stage; mutable environments receive a fresh network and environment container per attempt.
 10. Base calibration: launch 15 independent Dockerized `codex exec` runs with the fixed base prompt, 3 attempts for each test task. The main agent scores predictions outside the Codex processes and records base `avg@3`.
 11. Launch 3 isolated Dockerized `codex exec` processes with the fixed fewshot skill-generation prompt. Each receives all 5 train inputs, the matching train answers, and the environment entrypoint, then writes one complete package under `scratch/train_skill/fewshot_attempt_<nn>/` with `SKILL.md` as its entry file.

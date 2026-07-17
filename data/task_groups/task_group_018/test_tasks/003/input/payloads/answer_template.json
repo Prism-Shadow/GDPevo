@@ -1,0 +1,347 @@
+{
+  "task_id": "test_003",
+  "output_type": "middlesex_dui_packet_review_v5",
+  "required_top_level_keys": [
+    "task_id",
+    "packet_id",
+    "county",
+    "defendants",
+    "packet_totals"
+  ],
+  "ordering_rules": {
+    "defendants": "Order by case_number ascending.",
+    "charge_outcomes": "Order by charge_id ascending.",
+    "assessed_fee_codes": "Sort ascending by code.",
+    "excluded_fee_or_charge_codes": "Sort ascending by code.",
+    "excluded_fee_or_charge_details": "Sort ascending by code.",
+    "placeholder_fields": "Sort ascending by field path.",
+    "rejected_disposition_source_details": "Sort ascending by source.",
+    "rejected_license_start_candidates": "Sort ascending by source, then date.",
+    "rejected_monthly_candidates": "Sort ascending by source, then amount.",
+    "case_number_lists": "Sort ascending."
+  },
+  "top_level_fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_003"
+    },
+    "packet_id": {
+      "type": "string"
+    },
+    "county": {
+      "type": "string",
+      "required_value": "Middlesex"
+    },
+    "defendants": {
+      "type": "list",
+      "required_count": 3
+    },
+    "packet_totals": {
+      "type": "object"
+    }
+  },
+  "defendant_item_schema": {
+    "required_item_keys": [
+      "case_number",
+      "defendant_name",
+      "source_resolution",
+      "charge_outcomes",
+      "identity_fields",
+      "placeholder_audit",
+      "collateral_orders",
+      "financial_order",
+      "payment_plan",
+      "return_to_court",
+      "follow_up_action"
+    ],
+    "case_number": {
+      "type": "string"
+    },
+    "defendant_name": {
+      "type": "string"
+    },
+    "source_resolution": {
+      "type": "object",
+      "required_keys": [
+        "controlling_source",
+        "live_case_status",
+        "conviction_posture",
+        "order_date",
+        "collateral_extract_used_as_final",
+        "rejected_disposition_source_details"
+      ],
+      "controlling_source_allowed_values": [
+        "live_record",
+        "packet_record",
+        "review_hold"
+      ],
+      "conviction_posture_allowed_values": [
+        "dui_conviction",
+        "amended_dui_reckless",
+        "dismissed_or_no_packet",
+        "not_ready"
+      ],
+      "rejected_disposition_source_details_item_schema": {
+        "source": {
+          "type": "enum",
+          "allowed_values": [
+            "stale_collateral_extract",
+            "live_open_case_snapshot",
+            "packet_queue_snapshot"
+          ]
+        },
+        "reason": {
+          "type": "enum",
+          "allowed_values": [
+            "older_extract",
+            "superseded_by_later_packet",
+            "not_target_packet"
+          ]
+        }
+      }
+    },
+    "charge_outcomes": {
+      "type": "list",
+      "item_schema": {
+        "charge_id": "string",
+        "statute": "string",
+        "disposition": {
+          "type": "enum",
+          "allowed_values": [
+            "convicted",
+            "convicted_no_separate_fee",
+            "amended",
+            "dismissed",
+            "deferred",
+            "pending"
+          ]
+        }
+      }
+    },
+    "identity_fields": {
+      "type": "object",
+      "required_keys": [
+        "sid_number",
+        "driver_license_number",
+        "defendant_phone",
+        "defendant_email",
+        "mailing_address",
+        "probation_officer"
+      ],
+      "unknown_value": "TBD from case file"
+    },
+    "placeholder_audit": {
+      "type": "object",
+      "required_keys": [
+        "placeholder_policy",
+        "placeholder_fields",
+        "placeholder_count",
+        "case_file_pull_required"
+      ],
+      "placeholder_policy_allowed_values": [
+        "case_file_pull",
+        "none"
+      ]
+    },
+    "collateral_orders": {
+      "type": "object",
+      "required_keys": [
+        "probation_required",
+        "probation_term_months",
+        "probation_report_date",
+        "probation_report_time",
+        "probation_report_location",
+        "license_suspension_required",
+        "license_suspension_months",
+        "license_suspension_start_date",
+        "license_start_basis",
+        "rejected_license_start_candidates",
+        "treatment_referral_required"
+      ],
+      "license_start_basis_allowed_values": [
+        "disposition_date",
+        "delayed_surrender_date",
+        "no_suspension"
+      ],
+      "rejected_license_start_candidates_item_schema": {
+        "source": {
+          "type": "enum",
+          "allowed_values": [
+            "custody_release_date",
+            "probation_report_date",
+            "stale_collateral_extract",
+            "local_draft_suspension_start"
+          ]
+        },
+        "date": "YYYY-MM-DD"
+      }
+    },
+    "financial_order": {
+      "type": "object",
+      "required_keys": [
+        "financial_source_resolution",
+        "amount_source",
+        "ledger_status",
+        "assessed_fee_codes",
+        "excluded_fee_or_charge_codes",
+        "excluded_fee_or_charge_details",
+        "unsupported_rejected_amount",
+        "principal_amount",
+        "amount_paid_as_of_packet",
+        "current_balance_due"
+      ],
+      "financial_source_resolution_allowed_values": [
+        "ledger_record",
+        "fee_schedule",
+        "finance_review_hold"
+      ],
+      "amount_source_allowed_values": [
+        "ledger_record",
+        "fee_schedule",
+        "packet_snapshot"
+      ],
+      "ledger_status_allowed_values": [
+        "current",
+        "pending_adjustment",
+        "not_open",
+        "paid",
+        "delinquent",
+        "unknown"
+      ],
+      "excluded_fee_or_charge_details_item_schema": {
+        "code": "string",
+        "amount": {
+          "type": "number",
+          "currency_precision": 2
+        }
+      }
+    },
+    "payment_plan": {
+      "type": "object",
+      "required_keys": [
+        "plan_action",
+        "monthly_amount",
+        "selected_amount_source",
+        "rejected_monthly_candidates",
+        "plan_basis",
+        "payment_math_rule",
+        "plan_basis_amount",
+        "first_due_date",
+        "regular_payment_count",
+        "regular_payment_total",
+        "final_payment_amount",
+        "total_installments",
+        "final_due_date"
+      ],
+      "plan_action_allowed_values": [
+        "retain_live_plan",
+        "open_new_account_plan",
+        "retain_live_plan_pending_return_to_court",
+        "no_plan"
+      ],
+      "selected_amount_source_allowed_values": [
+        "policy_minimum",
+        "signed_order",
+        "live_plan",
+        "no_plan"
+      ],
+      "plan_basis_allowed_values": [
+        "original_principal",
+        "current_balance",
+        "no_plan"
+      ],
+      "payment_math_rule_allowed_values": [
+        "original_principal_with_remainder",
+        "current_balance_with_remainder",
+        "no_plan"
+      ],
+      "rejected_monthly_candidates_item_schema": {
+        "source": {
+          "type": "enum",
+          "allowed_values": [
+            "pre_sentence_worksheet",
+            "stale_extract",
+            "unsigned_intake_sheet",
+            "withdrawn_or_unsigned_request"
+          ]
+        },
+        "amount": {
+          "type": "number",
+          "currency_precision": 2
+        }
+      }
+    },
+    "return_to_court": {
+      "type": "object",
+      "required_keys": [
+        "required",
+        "status",
+        "notice_date",
+        "basis"
+      ],
+      "status_allowed_values": [
+        "not_required",
+        "existing_notice_prepared",
+        "prepare_notice",
+        "hold_for_judge_review"
+      ],
+      "basis_allowed_values": [
+        "none",
+        "live_record_default",
+        "policy_review",
+        "packet_note"
+      ],
+      "notice_date": "YYYY-MM-DD or null"
+    },
+    "follow_up_action": {
+      "type": "enum",
+      "allowed_values": [
+        "enter_probation_license_payment_order",
+        "open_financial_account_and_enter_order",
+        "attach_existing_return_to_court_notice",
+        "hold_for_judge_review",
+        "no_action"
+      ]
+    }
+  },
+  "packet_totals_schema": {
+    "required_keys": [
+      "included_case_numbers",
+      "excluded_extract_case_numbers",
+      "live_disposition_case_count",
+      "local_packet_disposition_case_count",
+      "source_rejection_count",
+      "ledger_based_case_count",
+      "schedule_based_case_count",
+      "payment_plan_count",
+      "new_account_plan_count",
+      "live_plan_retained_count",
+      "original_principal_plan_count",
+      "return_to_court_case_numbers",
+      "principal_amount_total",
+      "current_balance_due_total",
+      "placeholder_field_count",
+      "case_file_pull_case_count",
+      "excluded_candidate_line_count",
+      "unsupported_rejected_amount_total",
+      "collateral_extract_used_count",
+      "rejected_monthly_candidate_count",
+      "rejected_license_start_candidate_count"
+    ],
+    "currency_precision": 2
+  },
+  "numeric_precision": {
+    "currency": "round to 2 decimal places",
+    "counts_and_months": "integers"
+  },
+  "date_format": "YYYY-MM-DD",
+  "time_format": "HH:MM",
+  "boolean_fields": [
+    "source_resolution.collateral_extract_used_as_final",
+    "placeholder_audit.case_file_pull_required",
+    "collateral_orders.probation_required",
+    "collateral_orders.license_suspension_required",
+    "collateral_orders.treatment_referral_required",
+    "return_to_court.required"
+  ]
+}

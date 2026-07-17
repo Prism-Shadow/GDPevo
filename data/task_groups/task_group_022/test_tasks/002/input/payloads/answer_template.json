@@ -1,0 +1,90 @@
+{
+  "type": "object",
+  "description": "PLATINUM production-account refund leakage and provider-exposure report.",
+  "required": [
+    "eligible_refunded_order_count",
+    "effective_settled_logical_refund_count",
+    "effective_reversed_amount_usd",
+    "net_provider_exposure_usd",
+    "provider_exposure_ranking",
+    "unresolved_leakage_order_ids",
+    "dominant_normalized_reason_code",
+    "exposure_status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eligible_refunded_order_count": {
+      "type": "integer",
+      "minimum": 0,
+      "unit": "distinct orders"
+    },
+    "effective_settled_logical_refund_count": {
+      "type": "integer",
+      "minimum": 0,
+      "unit": "distinct logical refunds"
+    },
+    "effective_reversed_amount_usd": {
+      "type": "number",
+      "minimum": 0,
+      "unit": "USD",
+      "precision": 2
+    },
+    "net_provider_exposure_usd": {
+      "type": "number",
+      "unit": "USD",
+      "precision": 2
+    },
+    "provider_exposure_ranking": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueBy": "provider",
+      "order": "net_exposure_usd descending, then provider ascending",
+      "items": {
+        "type": "object",
+        "required": [
+          "provider",
+          "net_exposure_usd"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "Stable payment provider identifier."
+          },
+          "net_exposure_usd": {
+            "type": "number",
+            "unit": "USD",
+            "precision": 2
+          }
+        }
+      }
+    },
+    "unresolved_leakage_order_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^ORD-[0-9]{6}$"
+      },
+      "order": "order_id ascending"
+    },
+    "dominant_normalized_reason_code": {
+      "type": "string",
+      "enum": [
+        "CUSTOMER_RETURN",
+        "DAMAGED",
+        "DUPLICATE_CHARGE",
+        "LATE_DELIVERY",
+        "NOT_AS_DESCRIBED"
+      ]
+    },
+    "exposure_status": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MODERATE",
+        "HIGH"
+      ]
+    }
+  }
+}

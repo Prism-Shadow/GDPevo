@@ -1,0 +1,1223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dealer renewal contact-master certification answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "quality_summary",
+    "focus_cases",
+    "renewal_ready_master_ids",
+    "quarantine_row_ids",
+    "country_rollup",
+    "unsafe_identity_containment_robustness",
+    "fx_budgeted_evidence_recovery",
+    "source_sequence_release_stability_audit",
+    "certification_status"
+  ],
+  "properties": {
+    "quality_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_row_count",
+        "canonical_entity_count",
+        "active_contactable_entity_count",
+        "duplicate_cluster_count",
+        "quarantine_rate"
+      ],
+      "properties": {
+        "raw_row_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "canonical_entity_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_contactable_entity_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Canonical entities with ACTIVE record status and at least one usable canonical email or phone, regardless of consent."
+        },
+        "duplicate_cluster_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quarantine_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "multipleOf": 0.0001,
+          "description": "Quarantined rows divided by canonical entities, rounded to 4 decimal places."
+        }
+      }
+    },
+    "focus_cases": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "description": "Exactly one object for each case-scope focus_case_id, sorted lexicographically by focus_case_id. Every row-ID list is a deduplicated lexicographically sorted set.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "focus_case_id",
+          "seed_row_id",
+          "internal_controls",
+          "identity_resolution",
+          "canonical_contact",
+          "field_provenance",
+          "renewal_readiness"
+        ],
+        "properties": {
+          "focus_case_id": {
+            "type": "string",
+            "pattern": "^dealer-renewal-focus-[0-9]{3}$"
+          },
+          "seed_row_id": {
+            "type": "string",
+            "pattern": "^DEA-C[0-9]{5}$"
+          },
+          "internal_controls": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Asteria internal controls assigned to this focus case.",
+            "required": [
+              "field_provenance_code",
+              "identity_code",
+              "outreach_code"
+            ],
+            "properties": {
+              "field_provenance_code": {
+                "type": "string",
+                "enum": [
+                  "FP-20",
+                  "FP-55",
+                  "FP-75"
+                ]
+              },
+              "identity_code": {
+                "type": "string",
+                "enum": [
+                  "IC-25",
+                  "IC-40",
+                  "IC-70",
+                  "IC-90"
+                ]
+              },
+              "outreach_code": {
+                "type": "string",
+                "enum": [
+                  "OR-15",
+                  "OR-35",
+                  "OR-60",
+                  "OR-80"
+                ]
+              }
+            }
+          },
+          "identity_resolution": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "identifier_conflict_type",
+              "resolution_action",
+              "evidence_row_ids",
+              "member_row_ids",
+              "master_id"
+            ],
+            "properties": {
+              "identifier_conflict_type": {
+                "type": "string",
+                "enum": [
+                  "SAFE_NORMALIZED_CONTACT_MATCH",
+                  "SHARED_PHONE_DISTINCT_EMAILS",
+                  "NAME_ONLY_COLLISION",
+                  "NO_USABLE_CONTACT"
+                ]
+              },
+              "resolution_action": {
+                "type": "string",
+                "enum": [
+                  "MERGE",
+                  "KEEP_SEPARATE",
+                  "QUARANTINE"
+                ]
+              },
+              "evidence_row_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^DEA-C[0-9]{5}$"
+                },
+                "description": "Rows that demonstrate the normalized contact-key collision or the scoped comparison evidence for this case."
+              },
+              "member_row_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^DEA-C[0-9]{5}$"
+                },
+                "minItems": 1,
+                "description": "Rows resolved to the seed row's canonical entity."
+              },
+              "master_id": {
+                "type": "string",
+                "pattern": "^DEA-C[0-9]{5}$"
+              }
+            }
+          },
+          "canonical_contact": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "email",
+              "phone_digits",
+              "city",
+              "consent_status",
+              "record_status"
+            ],
+            "properties": {
+              "email": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Normalized lowercase canonical email, or null when no usable email exists."
+              },
+              "phone_digits": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[0-9]+$",
+                "description": "Canonical phone as digits only, or null when no usable phone exists."
+              },
+              "city": {
+                "type": "string"
+              },
+              "consent_status": {
+                "type": "string",
+                "enum": [
+                  "GRANTED",
+                  "DENIED",
+                  "PENDING",
+                  "UNKNOWN"
+                ]
+              },
+              "record_status": {
+                "type": "string",
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ]
+              }
+            }
+          },
+          "field_provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "email",
+              "phone",
+              "city",
+              "consent_status",
+              "record_status",
+              "precedence_reason"
+            ],
+            "properties": {
+              "email": {
+                "type": "string",
+                "enum": [
+                  "Dealer Portal",
+                  "CRM",
+                  "Compliance Master",
+                  "NONE"
+                ]
+              },
+              "phone": {
+                "type": "string",
+                "enum": [
+                  "Dealer Portal",
+                  "CRM",
+                  "Compliance Master",
+                  "NONE"
+                ]
+              },
+              "city": {
+                "type": "string",
+                "enum": [
+                  "Dealer Portal",
+                  "CRM",
+                  "Compliance Master"
+                ]
+              },
+              "consent_status": {
+                "type": "string",
+                "enum": [
+                  "Dealer Portal",
+                  "CRM",
+                  "Compliance Master"
+                ]
+              },
+              "record_status": {
+                "type": "string",
+                "enum": [
+                  "Dealer Portal",
+                  "CRM",
+                  "Compliance Master"
+                ]
+              },
+              "precedence_reason": {
+                "type": "string",
+                "enum": [
+                  "VERIFIED_LATEST_BUSINESS_UPDATE",
+                  "SINGLE_SOURCE_ENTITY",
+                  "NO_USABLE_CONTACT_VALUE"
+                ]
+              }
+            }
+          },
+          "renewal_readiness": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "disposition",
+              "reason"
+            ],
+            "properties": {
+              "disposition": {
+                "type": "string",
+                "enum": [
+                  "RENEWAL_READY",
+                  "NOT_RENEWAL_READY",
+                  "QUARANTINED"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "UNIQUE_EMAIL_WITH_GRANTED_CONSENT",
+                  "CONSENT_NOT_GRANTED",
+                  "INACTIVE",
+                  "NO_USABLE_CONTACT"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "renewal_ready_master_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^DEA-C[0-9]{5}$"
+      },
+      "description": "Complete set of renewal-ready canonical master IDs, sorted lexicographically."
+    },
+    "quarantine_row_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^DEA-C[0-9]{5}$"
+      },
+      "description": "Complete set of unusable-contact row IDs, sorted lexicographically."
+    },
+    "country_rollup": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "description": "Canonical-entity counts for all represented countries, sorted lexicographically by country.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "country",
+          "canonical_entity_count"
+        ],
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "CA",
+              "DE",
+              "ES",
+              "GB",
+              "SG",
+              "US"
+            ]
+          },
+          "canonical_entity_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "unsafe_identity_containment_robustness": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One compact robustness evidence dimension spanning the unsafe graph, its minimum containment decision, and three prescribed source-withdrawal checks.",
+      "required": [
+        "policy_id",
+        "original_graph",
+        "minimum_containment_repair",
+        "source_withdrawal_checks",
+        "summary"
+      ],
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "enum": [
+            "DEALER_UNSAFE_IDENTITY_CONTAINMENT_ROBUSTNESS_V1"
+          ]
+        },
+        "original_graph": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "canonical_entity_count",
+            "unsafe_graph_node_count",
+            "direct_unsafe_edge_count",
+            "direct_edge_count_by_condition",
+            "combined_cross_country_component_ids",
+            "cross_country_erroneous_merge_pair_count"
+          ],
+          "properties": {
+            "canonical_entity_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unsafe_graph_node_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "direct_unsafe_edge_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "direct_edge_count_by_condition": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "NAME_CITY_DISTINCT_CONTACT",
+                "PHONE_DISTINCT_EMAIL"
+              ],
+              "properties": {
+                "NAME_CITY_DISTINCT_CONTACT": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "PHONE_DISTINCT_EMAIL": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "combined_cross_country_component_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^DEA-C[0-9]{5}$"
+              },
+              "description": "All cross-country combined component IDs sorted lexicographically."
+            },
+            "cross_country_erroneous_merge_pair_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "minimum_containment_repair": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bridge_candidate_master_ids",
+            "minimum_removed_entity_count",
+            "minimum_operational_loss_weight",
+            "selected_retained_bridge_country",
+            "selected_removed_master_ids",
+            "residual_component_count",
+            "residual_cross_country_pair_count",
+            "tied_minimum_loss_retained_countries"
+          ],
+          "properties": {
+            "bridge_candidate_master_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^DEA-C[0-9]{5}$"
+              },
+              "description": "Complete bridge-candidate set sorted lexicographically."
+            },
+            "minimum_removed_entity_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minimum_operational_loss_weight": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "selected_retained_bridge_country": {
+              "type": "string",
+              "enum": [
+                "CA",
+                "DE",
+                "ES",
+                "GB",
+                "SG",
+                "US"
+              ]
+            },
+            "selected_removed_master_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^DEA-C[0-9]{5}$"
+              },
+              "description": "Selected removals sorted lexicographically."
+            },
+            "residual_component_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "residual_cross_country_pair_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tied_minimum_loss_retained_countries": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "CA",
+                  "DE",
+                  "ES",
+                  "GB",
+                  "SG",
+                  "US"
+                ]
+              },
+              "description": "All countries tied at both minima, sorted lexicographically."
+            }
+          }
+        },
+        "source_withdrawal_checks": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "description": "Exactly one compact check per excluded source, sorted by excluded_source.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "excluded_source",
+              "surviving_canonical_entity_count",
+              "unsafe_graph_node_count",
+              "direct_unsafe_edge_count",
+              "minimum_removed_entity_count",
+              "selected_retained_bridge_country",
+              "selected_removed_master_ids",
+              "selected_operational_loss_weight",
+              "selected_repair_jaccard_4dp"
+            ],
+            "properties": {
+              "excluded_source": {
+                "type": "string",
+                "enum": [
+                  "CRM",
+                  "Compliance Master",
+                  "Dealer Portal"
+                ]
+              },
+              "surviving_canonical_entity_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "unsafe_graph_node_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "direct_unsafe_edge_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "minimum_removed_entity_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "selected_retained_bridge_country": {
+                "type": "string",
+                "enum": [
+                  "CA",
+                  "DE",
+                  "ES",
+                  "GB",
+                  "SG",
+                  "US"
+                ]
+              },
+              "selected_removed_master_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^DEA-C[0-9]{5}$"
+                },
+                "description": "Selected scenario removals sorted lexicographically."
+              },
+              "selected_operational_loss_weight": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "selected_repair_jaccard_4dp": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.0001
+              }
+            }
+          }
+        },
+        "summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "retained_country_changed_sources",
+            "minimum_selected_repair_jaccard_4dp",
+            "least_stable_source_withdrawals"
+          ],
+          "properties": {
+            "retained_country_changed_sources": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "CRM",
+                  "Compliance Master",
+                  "Dealer Portal"
+                ]
+              },
+              "description": "Sources whose selected retained country differs from baseline, sorted lexicographically."
+            },
+            "minimum_selected_repair_jaccard_4dp": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "multipleOf": 0.0001
+            },
+            "least_stable_source_withdrawals": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "CRM",
+                  "Compliance Master",
+                  "Dealer Portal"
+                ]
+              },
+              "description": "Every source tied at the minimum Jaccard, sorted lexicographically."
+            }
+          }
+        }
+      }
+    },
+    "fx_budgeted_evidence_recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Two-stage evidence-review optimization derived from public excluded-row batches and certified cutoff-date FX.",
+      "required": [
+        "recovery_id",
+        "fx_basis",
+        "candidate_batches",
+        "initial_state",
+        "plan_search"
+      ],
+      "properties": {
+        "recovery_id": {
+          "type": "string",
+          "enum": [
+            "DEALER_FX_BUDGETED_EVIDENCE_RECOVERY_V1"
+          ]
+        },
+        "fx_basis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "rate_date",
+            "currency_usd_rates"
+          ],
+          "properties": {
+            "rate_date": {
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+            },
+            "currency_usd_rates": {
+              "type": "array",
+              "uniqueItems": true,
+              "description": "Every settlement currency used by a derived batch, sorted by currency.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "currency",
+                  "usd_per_unit_4dp"
+                ],
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                  },
+                  "usd_per_unit_4dp": {
+                    "type": "number",
+                    "minimum": 0,
+                    "multipleOf": 0.0001
+                  }
+                }
+              }
+            }
+          }
+        },
+        "candidate_batches": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "Every nonempty derived review batch, sorted by batch_id.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "batch_id",
+              "source_system",
+              "country",
+              "excluded_row_count",
+              "settlement_currency",
+              "local_cost_per_row",
+              "usd_cost_4dp"
+            ],
+            "properties": {
+              "batch_id": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]+__(CA|DE|ES|GB|SG|US)$"
+              },
+              "source_system": {
+                "type": "string",
+                "minLength": 1
+              },
+              "country": {
+                "type": "string",
+                "enum": [
+                  "CA",
+                  "DE",
+                  "ES",
+                  "GB",
+                  "SG",
+                  "US"
+                ]
+              },
+              "excluded_row_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "settlement_currency": {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$"
+              },
+              "local_cost_per_row": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "usd_cost_4dp": {
+                "type": "number",
+                "minimum": 0,
+                "multipleOf": 0.0001
+              }
+            }
+          }
+        },
+        "initial_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "admitted_row_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "retained_entity_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unavailable_entity_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "renewal_ready_entity_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "false_release_master_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^DEA-C[0-9]{5}$"
+              },
+              "description": "Complete false-release master set, sorted lexicographically."
+            },
+            "false_block_master_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^DEA-C[0-9]{5}$"
+              },
+              "description": "Complete false-block master set, sorted lexicographically."
+            },
+            "changed_selected_baseline_master_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^DEA-C[0-9]{5}$"
+              },
+              "description": "Complete retained-entity set whose selected row differs from the full baseline, sorted lexicographically."
+            }
+          },
+          "required": [
+            "admitted_row_count",
+            "retained_entity_count",
+            "unavailable_entity_count",
+            "renewal_ready_entity_count",
+            "false_release_master_ids",
+            "false_block_master_ids",
+            "changed_selected_baseline_master_ids"
+          ]
+        },
+        "plan_search": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "candidate_batch_count",
+            "candidate_ordered_plan_count",
+            "feasible_plan_count",
+            "ranked_top_plan_ids",
+            "selected_plan"
+          ],
+          "properties": {
+            "candidate_batch_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "candidate_ordered_plan_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "feasible_plan_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ranked_top_plan_ids": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 5,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]+__(CA|DE|ES|GB|SG|US)=>[A-Z0-9_]+__(CA|DE|ES|GB|SG|US)$"
+              },
+              "description": "Up to the public top-plan limit in objective order."
+            },
+            "selected_plan": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "plan_id",
+                "selected_batch_ids",
+                "total_cost_usd_4dp",
+                "stage_results"
+              ],
+              "properties": {
+                "plan_id": {
+                  "type": "string",
+                  "pattern": "^[A-Z0-9_]+__(CA|DE|ES|GB|SG|US)=>[A-Z0-9_]+__(CA|DE|ES|GB|SG|US)$"
+                },
+                "selected_batch_ids": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]+__(CA|DE|ES|GB|SG|US)$"
+                  },
+                  "description": "Applied order, not a sorted set."
+                },
+                "total_cost_usd_4dp": {
+                  "type": "number",
+                  "minimum": 0,
+                  "multipleOf": 0.0001
+                },
+                "stage_results": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "uniqueItems": true,
+                  "description": "Exactly two cumulative stages in stage_number order.",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "stage_number": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2
+                      },
+                      "applied_batch_id": {
+                        "type": "string",
+                        "pattern": "^[A-Z0-9_]+__(CA|DE|ES|GB|SG|US)$"
+                      },
+                      "cumulative_reviewed_row_count": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "cumulative_cost_usd_4dp": {
+                        "type": "number",
+                        "minimum": 0,
+                        "multipleOf": 0.0001
+                      },
+                      "retained_entity_count": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "unavailable_entity_count": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "renewal_ready_entity_count": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "false_release_master_ids": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^DEA-C[0-9]{5}$"
+                        },
+                        "description": "Complete false-release master set, sorted lexicographically."
+                      },
+                      "false_block_master_ids": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^DEA-C[0-9]{5}$"
+                        },
+                        "description": "Complete false-block master set, sorted lexicographically."
+                      },
+                      "changed_selected_baseline_master_ids": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^DEA-C[0-9]{5}$"
+                        },
+                        "description": "Complete retained-entity set whose selected row differs from the full baseline, sorted lexicographically."
+                      }
+                    },
+                    "required": [
+                      "stage_number",
+                      "applied_batch_id",
+                      "cumulative_reviewed_row_count",
+                      "cumulative_cost_usd_4dp",
+                      "retained_entity_count",
+                      "unavailable_entity_count",
+                      "renewal_ready_entity_count",
+                      "false_release_master_ids",
+                      "false_block_master_ids",
+                      "changed_selected_baseline_master_ids"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "source_sequence_release_stability_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "All-source-order cumulative release stability audit derived from scoped contacts and matching source snapshots.",
+      "required": [
+        "audit_id",
+        "order_results",
+        "summary"
+      ],
+      "properties": {
+        "audit_id": {
+          "type": "string",
+          "enum": [
+            "DEALER_SOURCE_SEQUENCE_RELEASE_STABILITY_V1"
+          ]
+        },
+        "order_results": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "Every derived source permutation, sorted by order_id.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "order_id",
+              "source_order",
+              "stage_results",
+              "cumulative_false_release_exposure",
+              "cumulative_false_block_exposure",
+              "cumulative_changed_selection_exposure",
+              "decision_state_transition_count",
+              "rollback_entity_count",
+              "rollback_transition_links",
+              "selected_row_transition_count",
+              "selected_row_transition_links"
+            ],
+            "properties": {
+              "order_id": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]+(=>[A-Z0-9_]+)+$"
+              },
+              "source_order": {
+                "type": "array",
+                "minItems": 2,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Source application order."
+              },
+              "stage_results": {
+                "type": "array",
+                "minItems": 2,
+                "uniqueItems": true,
+                "description": "Cumulative stages in stage_number order.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "stage_number",
+                    "added_source",
+                    "snapshot_status",
+                    "retained_entity_count",
+                    "renewal_ready_entity_count",
+                    "false_release_count",
+                    "false_block_count",
+                    "changed_selection_count"
+                  ],
+                  "properties": {
+                    "stage_number": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "added_source": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "snapshot_status": {
+                      "type": "string",
+                      "enum": [
+                        "CERTIFIED",
+                        "PROVISIONAL"
+                      ]
+                    },
+                    "retained_entity_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "renewal_ready_entity_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false_release_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "false_block_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "changed_selection_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              },
+              "cumulative_false_release_exposure": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cumulative_false_block_exposure": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cumulative_changed_selection_exposure": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "decision_state_transition_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "rollback_entity_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "rollback_transition_links": {
+                "type": "array",
+                "uniqueItems": true,
+                "description": "Complete adjacent-stage rollback evidence sorted by master_id, from_stage_number, and to_stage_number.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "master_id",
+                    "from_stage_number",
+                    "to_stage_number"
+                  ],
+                  "properties": {
+                    "master_id": {
+                      "type": "string",
+                      "pattern": "^DEA-C[0-9]{5}$"
+                    },
+                    "from_stage_number": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "to_stage_number": {
+                      "type": "integer",
+                      "minimum": 2
+                    }
+                  }
+                }
+              },
+              "selected_row_transition_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "selected_row_transition_links": {
+                "type": "array",
+                "uniqueItems": true,
+                "description": "Complete adjacent-stage selected-row change evidence sorted by from_stage_number and master_id.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "master_id",
+                    "from_stage_number",
+                    "to_stage_number",
+                    "from_row_id",
+                    "to_row_id"
+                  ],
+                  "properties": {
+                    "master_id": {
+                      "type": "string",
+                      "pattern": "^DEA-C[0-9]{5}$"
+                    },
+                    "from_stage_number": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "to_stage_number": {
+                      "type": "integer",
+                      "minimum": 2
+                    },
+                    "from_row_id": {
+                      "type": "string",
+                      "pattern": "^DEA-C[0-9]{5}$"
+                    },
+                    "to_row_id": {
+                      "type": "string",
+                      "pattern": "^DEA-C[0-9]{5}$"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "candidate_source_count",
+            "candidate_order_count",
+            "ranked_order_ids",
+            "recommended_order_id"
+          ],
+          "properties": {
+            "candidate_source_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "candidate_order_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ranked_order_ids": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]+(=>[A-Z0-9_]+)+$"
+              },
+              "description": "Every order ID in recommendation-objective order."
+            },
+            "recommended_order_id": {
+              "type": "string",
+              "pattern": "^[A-Z0-9_]+(=>[A-Z0-9_]+)+$"
+            }
+          }
+        }
+      }
+    },
+    "certification_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "next_action"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "PASS_WITH_EXCEPTIONS",
+            "HOLD"
+          ]
+        },
+        "next_action": {
+          "type": "string",
+          "enum": [
+            "RELEASE",
+            "REVIEW_EXCEPTIONS",
+            "BLOCK_AND_REMEDIATE"
+          ]
+        }
+      }
+    }
+  }
+}

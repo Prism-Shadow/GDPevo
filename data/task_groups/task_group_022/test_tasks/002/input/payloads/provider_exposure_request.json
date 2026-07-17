@@ -1,0 +1,51 @@
+{
+  "request_id": "PX-2026-06-PLATINUM-CLOSE",
+  "requested_by": "Refund Operations and Payments Risk",
+  "business_purpose": "Reconcile provider refund exposure and isolate unresolved leakage candidates for the PLATINUM production-account close.",
+  "scope": {
+    "account_tier": "PLATINUM",
+    "account_population": "production accounts",
+    "effective_refund_service_date": {
+      "start": "2026-05-01",
+      "end": "2026-06-30",
+      "inclusive": true
+    },
+    "eligible_refunded_order_definition": "A distinct in-scope order with at least one effective settled logical refund."
+  },
+  "money_policy": {
+    "reporting_currency": "USD",
+    "fx_basis": "Use the daily fx_rates.usd_per_unit rate for each refund or reversal service_date and row currency.",
+    "provider_exposure_definition": "Effective settled USD less effective linked reversal USD.",
+    "order_gross_comparison": "Value the associated order gross in its order currency at the service_date of its in-scope settled refund.",
+    "display_decimals": 2
+  },
+  "provider_ranking": {
+    "coverage": "All providers represented by effective settled or effective linked reversal activity in scope.",
+    "primary_order": "net provider exposure USD descending",
+    "tie_break": "provider ascending",
+    "include_net_exposure_usd": true
+  },
+  "leakage_candidate_definition": {
+    "candidate_if_any": [
+      "The order's effective settled refund value after reversals is greater than its gross order value in USD.",
+      "The order has at least two unreversed effective settled logical refunds with the same normalized reason code."
+    ],
+    "output_order": "order_id ascending"
+  },
+  "dominant_reason_policy": {
+    "measure": "effective net refund USD",
+    "primary_order": "net USD descending",
+    "tie_break": "normalized reason code ascending"
+  },
+  "exposure_status_policy": {
+    "candidate_rate_denominator": "eligible refunded orders",
+    "evaluation_order": [
+      "LOW",
+      "MODERATE",
+      "HIGH"
+    ],
+    "LOW": "Leakage candidates are below 2% of eligible refunded orders and net provider exposure is below USD 25000.",
+    "MODERATE": "LOW does not apply, leakage candidates are below 6% of eligible refunded orders, and net provider exposure is below USD 60000.",
+    "HIGH": "All other outcomes."
+  }
+}

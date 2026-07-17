@@ -1,0 +1,252 @@
+{
+  "audit_batch": "test_intake_batch",
+  "case_outcomes": [
+    {
+      "case_id": "AUTH00013",
+      "first_failure": "none",
+      "final_disposition": "ready_for_clinical_review",
+      "sla_due_at": "2025-02-17T11:24",
+      "sla_rule_used": "TX Medicaid calendar 4 days",
+      "sla_source_trace": {
+        "state_used": "TX",
+        "plan_type_used": "Medicaid",
+        "duration_value": 4,
+        "duration_unit": "calendar_days",
+        "day_type": "calendar"
+      },
+      "sla_candidate_trace": [
+        {
+          "state": "TX",
+          "plan_type": "Medicaid",
+          "duration_value": 4,
+          "duration_unit": "calendar_days",
+          "computed_due_at": "2025-02-17T11:24"
+        }
+      ],
+      "sla_selection_reason": "single_applicable_rule",
+      "gold_card_decision": "not_eligible_plan_or_provider_or_service",
+      "queue_destination": "MedImage Review mandatory MD",
+      "duplicate_treatment": "no_matching_prior",
+      "notice_template": "none_clinical_review",
+      "intake_reason_code": "vendor_mandatory_md_review",
+      "duplicate_reason_code": "no_prior_match",
+      "sla_basis_code": "TX_Medicaid_calendar_4d",
+      "intake_source_trace": {
+        "service_covered": true,
+        "servicing_provider_network_status": "in_network",
+        "facility_in_service_area": true,
+        "blocking_duplicate_auth_ids": [],
+        "ignored_existing_auth_ids": []
+      }
+    },
+    {
+      "case_id": "AUTH00014",
+      "first_failure": "out_of_network_no_exception",
+      "final_disposition": "halted_in_intake",
+      "sla_due_at": "2025-02-19T12:31",
+      "sla_rule_used": "IL Exchange calendar 5 days",
+      "sla_source_trace": {
+        "state_used": "IL",
+        "plan_type_used": "Exchange",
+        "duration_value": 5,
+        "duration_unit": "calendar_days",
+        "day_type": "calendar"
+      },
+      "sla_candidate_trace": [
+        {
+          "state": "IL",
+          "plan_type": "Exchange",
+          "duration_value": 5,
+          "duration_unit": "calendar_days",
+          "computed_due_at": "2025-02-19T12:31"
+        }
+      ],
+      "sla_selection_reason": "single_applicable_rule",
+      "gold_card_decision": "not_evaluated_due_to_intake_halt",
+      "queue_destination": "network_exception_outreach",
+      "duplicate_treatment": "not_checked_due_to_earlier_failure",
+      "notice_template": "out_of_network_no_exception",
+      "intake_reason_code": "servicing_provider_out_of_network_no_exception",
+      "duplicate_reason_code": "out_of_network_halt",
+      "sla_basis_code": "IL_Exchange_calendar_5d",
+      "intake_source_trace": {
+        "service_covered": true,
+        "servicing_provider_network_status": "out_of_network",
+        "facility_in_service_area": true,
+        "blocking_duplicate_auth_ids": [],
+        "ignored_existing_auth_ids": [
+          "EXA00014"
+        ]
+      }
+    },
+    {
+      "case_id": "AUTH00015",
+      "first_failure": "none",
+      "final_disposition": "ready_for_clinical_review",
+      "sla_due_at": "2025-02-20T13:38",
+      "sla_rule_used": "CA Commercial calendar 5 days",
+      "sla_source_trace": {
+        "state_used": "CA",
+        "plan_type_used": "Commercial",
+        "duration_value": 5,
+        "duration_unit": "calendar_days",
+        "day_type": "calendar"
+      },
+      "sla_candidate_trace": [
+        {
+          "state": "CA",
+          "plan_type": "Commercial",
+          "duration_value": 5,
+          "duration_unit": "calendar_days",
+          "computed_due_at": "2025-02-20T13:38"
+        }
+      ],
+      "sla_selection_reason": "single_applicable_rule",
+      "gold_card_decision": "not_eligible_plan_or_provider_or_service",
+      "queue_destination": "medical_director_review",
+      "duplicate_treatment": "no_matching_prior",
+      "notice_template": "none_clinical_review",
+      "intake_reason_code": "mandatory_md_review",
+      "duplicate_reason_code": "no_prior_match",
+      "sla_basis_code": "CA_Commercial_calendar_5d",
+      "intake_source_trace": {
+        "service_covered": true,
+        "servicing_provider_network_status": "in_network",
+        "facility_in_service_area": true,
+        "blocking_duplicate_auth_ids": [],
+        "ignored_existing_auth_ids": []
+      }
+    },
+    {
+      "case_id": "AUTH00016",
+      "first_failure": "duplicate_authorization",
+      "final_disposition": "halted_in_intake",
+      "sla_due_at": "2025-02-19T14:45",
+      "sla_rule_used": "NY Dual Eligible business 3 days",
+      "sla_source_trace": {
+        "state_used": "NY",
+        "plan_type_used": "Dual Eligible",
+        "duration_value": 3,
+        "duration_unit": "business_days",
+        "day_type": "business"
+      },
+      "sla_candidate_trace": [
+        {
+          "state": "NY",
+          "plan_type": "Dual Eligible",
+          "duration_value": 3,
+          "duration_unit": "business_days",
+          "computed_due_at": "2025-02-19T14:45"
+        }
+      ],
+      "sla_selection_reason": "single_applicable_rule",
+      "gold_card_decision": "not_evaluated_due_to_intake_halt",
+      "queue_destination": "duplicate_resolution_queue",
+      "duplicate_treatment": "open_overlap_duplicate",
+      "notice_template": "duplicate_admin_closure",
+      "intake_reason_code": "open_overlap_duplicate",
+      "duplicate_reason_code": "open_overlap_duplicate",
+      "sla_basis_code": "NY_DualEligible_business_3d",
+      "intake_source_trace": {
+        "service_covered": true,
+        "servicing_provider_network_status": "in_network",
+        "facility_in_service_area": true,
+        "blocking_duplicate_auth_ids": [
+          "EXA00051"
+        ],
+        "ignored_existing_auth_ids": [
+          "EXA00016"
+        ]
+      }
+    },
+    {
+      "case_id": "AUTH00017",
+      "first_failure": "noncovered_service",
+      "final_disposition": "halted_in_intake",
+      "sla_due_at": "2025-02-22T15:52",
+      "sla_rule_used": "CA Commercial calendar 5 days",
+      "sla_source_trace": {
+        "state_used": "CA",
+        "plan_type_used": "Commercial",
+        "duration_value": 5,
+        "duration_unit": "calendar_days",
+        "day_type": "calendar"
+      },
+      "sla_candidate_trace": [
+        {
+          "state": "CA",
+          "plan_type": "Commercial",
+          "duration_value": 5,
+          "duration_unit": "calendar_days",
+          "computed_due_at": "2025-02-22T15:52"
+        }
+      ],
+      "sla_selection_reason": "single_applicable_rule",
+      "gold_card_decision": "not_evaluated_due_to_intake_halt",
+      "queue_destination": "benefit_denial_queue",
+      "duplicate_treatment": "not_checked_due_to_earlier_failure",
+      "notice_template": "noncovered_benefit",
+      "intake_reason_code": "noncovered_benefit",
+      "duplicate_reason_code": "benefit_halt",
+      "sla_basis_code": "CA_Commercial_calendar_5d",
+      "intake_source_trace": {
+        "service_covered": false,
+        "servicing_provider_network_status": "in_network",
+        "facility_in_service_area": true,
+        "blocking_duplicate_auth_ids": [],
+        "ignored_existing_auth_ids": []
+      }
+    },
+    {
+      "case_id": "AUTH00018",
+      "first_failure": "noncovered_service",
+      "final_disposition": "halted_in_intake",
+      "sla_due_at": "2025-02-20T16:59",
+      "sla_rule_used": "AZ Commercial calendar 2 days",
+      "sla_source_trace": {
+        "state_used": "AZ",
+        "plan_type_used": "Commercial",
+        "duration_value": 2,
+        "duration_unit": "calendar_days",
+        "day_type": "calendar"
+      },
+      "sla_candidate_trace": [
+        {
+          "state": "AZ",
+          "plan_type": "Commercial",
+          "duration_value": 2,
+          "duration_unit": "calendar_days",
+          "computed_due_at": "2025-02-20T16:59"
+        },
+        {
+          "state": "NY",
+          "plan_type": "Commercial",
+          "duration_value": 3,
+          "duration_unit": "business_days",
+          "computed_due_at": "2025-02-21T16:59"
+        }
+      ],
+      "sla_selection_reason": "earliest_due_at_from_multiple_rules",
+      "gold_card_decision": "not_evaluated_due_to_intake_halt",
+      "queue_destination": "benefit_denial_queue",
+      "duplicate_treatment": "not_checked_due_to_earlier_failure",
+      "notice_template": "noncovered_benefit",
+      "intake_reason_code": "noncovered_benefit",
+      "duplicate_reason_code": "benefit_halt",
+      "sla_basis_code": "AZ_Commercial_calendar_2d",
+      "intake_source_trace": {
+        "service_covered": false,
+        "servicing_provider_network_status": "out_of_network",
+        "facility_in_service_area": false,
+        "blocking_duplicate_auth_ids": [],
+        "ignored_existing_auth_ids": []
+      }
+    }
+  ],
+  "supervisor_metrics": {
+    "ready_for_clinical_review_count": 2,
+    "auto_approved_count": 0,
+    "duplicate_halt_count": 1,
+    "member_or_provider_notice_count": 4
+  }
+}

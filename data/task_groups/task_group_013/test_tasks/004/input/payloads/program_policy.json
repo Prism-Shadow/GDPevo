@@ -1,0 +1,36 @@
+{
+  "program_code": "RENAL-DM-2026B",
+  "as_of_date": "2026-07-15",
+  "eligibility_policy": {
+    "candidate_target_condition_required": "renal_diabetes",
+    "active_clinical_condition_required": "diabetes",
+    "ckd_required": false,
+    "renal_program_flag_source": "The candidate row target_condition value renal_diabetes is the renal program flag. Do not require a separate CKD diagnosis or a literal renal_diabetes diagnosis string in clinical_history."
+  },
+  "disposition_policy": {
+    "declined_consent": "reject",
+    "missing_consent_for_otherwise_eligible_candidate": "hold",
+    "signed_consent_with_missing_chart_consent_artifact": "hold for chart update rather than requesting a new consent packet",
+    "inactive_or_missing_chart_for_otherwise_eligible_candidate": "hold",
+    "draft_vitals_or_draft_renal_labs": "treat as missing recent chart artifacts"
+  },
+  "cadence_policy": {
+    "standard_enrolled_candidate": "monthly",
+    "recent_hospitalization_or_high_touch_candidate": "weekly",
+    "held_candidate": "deferred",
+    "rejected_candidate": "none"
+  },
+  "monitoring_policy": {
+    "standard_core_components": [
+      "bp_cuff",
+      "glucometer",
+      "renal_lab_order_egfr_uacr_cmp"
+    ],
+    "high_touch_additional_components": [
+      "medication_reconciliation",
+      "care_plan_setup"
+    ],
+    "standard_first_checkin_days": 30,
+    "high_touch_first_checkin_days": 7
+  }
+}

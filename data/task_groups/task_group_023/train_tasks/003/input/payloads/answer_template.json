@@ -1,0 +1,142 @@
+{
+  "template_name": "country_burden_revision_audit_v1",
+  "submission": {
+    "format": "one JSON object with no surrounding narrative",
+    "required_top_level_keys": [
+      "reconciliation",
+      "quality_audit",
+      "pca",
+      "clusters",
+      "panel_model",
+      "advisory"
+    ],
+    "numeric_rule": "Report scored decimal values to 4 decimal places. Counts are integers.",
+    "identifier_rule": "ISO3 values are uppercase. Set-like identifier lists are unique and sorted ascending."
+  },
+  "required_output": {
+    "reconciliation": {
+      "type": "object",
+      "required_keys": [
+        "requested_label_count",
+        "resolved_label_count",
+        "alias_resolution_count",
+        "resolved_iso3"
+      ],
+      "fields": {
+        "requested_label_count": "integer; labels in the analyst request",
+        "resolved_label_count": "integer; labels uniquely reconciled",
+        "alias_resolution_count": "integer; resolved labels that differ from the canonical country name",
+        "resolved_iso3": "list[string]; all uniquely resolved ISO3 identifiers, sorted ascending"
+      }
+    },
+    "quality_audit": {
+      "type": "object",
+      "required_keys": [
+        "applied_revision_event_ids",
+        "nonapplied_revision_event_ids",
+        "anomaly_observation_keys",
+        "raw_missing_2022_cells",
+        "anomaly_2022_cells",
+        "imputed_2022_cells",
+        "usable_country_count",
+        "usable_indicator_count"
+      ],
+      "fields": {
+        "applied_revision_event_ids": "list[string]; applicable APPLIED revision_event_id values, sorted ascending",
+        "nonapplied_revision_event_ids": "list[string]; applicable non-APPLIED revision_event_id values, sorted ascending",
+        "anomaly_observation_keys": "list[string]; unresolved scale-break cells as ISO3|YEAR|indicator_id, sorted ascending",
+        "raw_missing_2022_cells": "integer; missing requested indicator cells before anomaly exclusions",
+        "anomaly_2022_cells": "integer; unresolved scale-break cells in the 2022 cross-section",
+        "imputed_2022_cells": "integer; total 2022 cells imputed after quality exclusions",
+        "usable_country_count": "integer; rows in the completed PCA matrix",
+        "usable_indicator_count": "integer; columns in the completed PCA matrix"
+      }
+    },
+    "pca": {
+      "type": "object",
+      "required_keys": [
+        "retained_component_count",
+        "pc1_variance_fraction",
+        "top_absolute_loadings"
+      ],
+      "fields": {
+        "retained_component_count": "integer",
+        "pc1_variance_fraction": "number; fraction in [0,1], 4 decimals",
+        "top_absolute_loadings": {
+          "type": "list[object]",
+          "length": 3,
+          "ordering": "descending absolute loading; indicator_id ascending breaks an exact tie",
+          "item_required_keys": [
+            "indicator_id",
+            "loading"
+          ],
+          "item_fields": {
+            "indicator_id": "string; requested burden indicator identifier",
+            "loading": "number; signed PC1 coefficient, 4 decimals"
+          }
+        }
+      }
+    },
+    "clusters": {
+      "type": "object",
+      "required_keys": [
+        "requested_k",
+        "silhouette_selected_k",
+        "silhouette_by_k",
+        "sizes",
+        "high_burden_iso3"
+      ],
+      "fields": {
+        "requested_k": "integer",
+        "silhouette_selected_k": "integer; best candidate among 2, 3, 4, and 5",
+        "silhouette_by_k": {
+          "type": "object",
+          "required_keys": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "value_type": "number; silhouette coefficient, 4 decimals"
+        },
+        "sizes": {
+          "type": "object",
+          "required_keys": [
+            "LOW_BURDEN",
+            "MIDDLE_BURDEN",
+            "HIGH_BURDEN"
+          ],
+          "value_type": "integer; country count"
+        },
+        "high_burden_iso3": "list[string]; three-cluster high-burden membership, sorted ascending"
+      }
+    },
+    "panel_model": {
+      "type": "object",
+      "required_keys": [
+        "n_observations",
+        "pc1_coefficient",
+        "pc1_standard_error",
+        "pc1_p_value",
+        "r_squared",
+        "region_fixed_effects"
+      ],
+      "fields": {
+        "n_observations": "integer; country-year observations used",
+        "pc1_coefficient": "number; life-expectancy years per PC1 burden unit, 4 decimals",
+        "pc1_standard_error": "number; coefficient standard error, 4 decimals",
+        "pc1_p_value": "number; two-sided p-value, 4 decimals",
+        "r_squared": "number; fraction in [0,1], 4 decimals",
+        "region_fixed_effects": "boolean"
+      }
+    },
+    "advisory": {
+      "type": "enum",
+      "allowed_values": [
+        "PRIORITIZE_HIGH_BURDEN_CLUSTER",
+        "MONITOR_GRADIENT",
+        "NO_ADVERSE_GRADIENT"
+      ]
+    }
+  }
+}

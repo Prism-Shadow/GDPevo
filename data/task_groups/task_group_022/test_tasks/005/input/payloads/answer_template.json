@@ -1,0 +1,150 @@
+{
+  "title": "Warehouse disruption recovery answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "backlog_summary",
+    "total_projected_recoverable_units",
+    "facility_recovery_ranking",
+    "employee_candidates_by_facility",
+    "carrier_cutoff_exposed_order_ids",
+    "severe_linked_support_escalation_count",
+    "recommended_action",
+    "recovery_status"
+  ],
+  "properties": {
+    "backlog_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_count",
+        "planned_units"
+      ],
+      "properties": {
+        "task_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Effective backlog size across both facilities; unit: tasks."
+        },
+        "planned_units": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Planned units on effective backlog tasks across both facilities; unit: individual units."
+        }
+      }
+    },
+    "total_projected_recoverable_units": {
+      "type": "number",
+      "minimum": 0,
+      "multipleOf": 0.01,
+      "description": "Sum of facility recoverable units, rounded to 2 decimal places; unit: individual units."
+    },
+    "facility_recovery_ranking": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "description": "Both requested facilities, ordered by unrounded projected coverage descending and then warehouse_id ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "warehouse_id",
+          "projected_coverage"
+        ],
+        "properties": {
+          "warehouse_id": {
+            "type": "string",
+            "pattern": "^WH-[A-Z]+-[0-9]{2}$"
+          },
+          "projected_coverage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "multipleOf": 0.0001,
+            "description": "Recoverable units divided by backlog planned units, rounded to 4 decimal places."
+          }
+        }
+      }
+    },
+    "employee_candidates_by_facility": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "description": "One object per requested facility, ordered by warehouse_id ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "warehouse_id",
+          "candidates"
+        ],
+        "properties": {
+          "warehouse_id": {
+            "type": "string",
+            "pattern": "^WH-[A-Z]+-[0-9]{2}$"
+          },
+          "candidates": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "uniqueItems": true,
+            "description": "The top two active employees, ordered by unrounded units per hour descending and then employee_id ascending.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "employee_id",
+                "units_per_hour"
+              ],
+              "properties": {
+                "employee_id": {
+                  "type": "string",
+                  "pattern": "^EMP-[0-9]{4}$"
+                },
+                "units_per_hour": {
+                  "type": "number",
+                  "minimum": 0,
+                  "multipleOf": 0.01,
+                  "description": "Effective completed production units per productive hour, rounded to 2 decimal places."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "carrier_cutoff_exposed_order_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Exact carrier-cutoff exposed order IDs sorted ascending.",
+      "items": {
+        "type": "string",
+        "pattern": "^ORD-[0-9]{6}$"
+      }
+    },
+    "severe_linked_support_escalation_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Distinct severe active support cases linked to exposed orders; unit: cases."
+    },
+    "recommended_action": {
+      "type": "string",
+      "enum": [
+        "REALLOCATE_AND_EXPEDITE",
+        "EXPEDITE_CARRIER",
+        "REALLOCATE_LABOR",
+        "MONITOR"
+      ]
+    },
+    "recovery_status": {
+      "type": "string",
+      "enum": [
+        "ON_TRACK",
+        "AT_RISK",
+        "CRITICAL"
+      ]
+    }
+  }
+}

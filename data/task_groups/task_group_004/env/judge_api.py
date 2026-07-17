@@ -12,8 +12,8 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parent.parent
-TRAIN_TASKS = ROOT / "train_tasks"
+ROOT = Path(__file__).resolve().parent
+EVAL_ROOT = ROOT / "judge_train_eval"
 JUDGE_TIMEOUT = int(os.environ.get("JUDGE_TIMEOUT", "30"))
 JUDGE_SCOPE = "train_only"
 JUDGE_NOTICE = (
@@ -73,7 +73,7 @@ def _task_dir(task_id: Any) -> tuple[Path | None, str | None]:
     if not suffix.isdigit():
         return None, "task_id must be train_001..train_005 or 001..005"
     task_num = f"{int(suffix):03d}"
-    task_dir = TRAIN_TASKS / task_num
+    task_dir = EVAL_ROOT / f"train_{task_num}"
     if not task_dir.is_dir():
         return None, f"unknown train task: train_{task_num}"
     return task_dir, None
@@ -91,10 +91,6 @@ def judge_answer_request(raw_body: bytes) -> tuple[int, dict[str, Any]]:
 
     Expected JSON body:
       {"task_id": "train_001", "answer": {...}}
-
-    The endpoint intentionally rejects test task ids. It returns normalized score,
-    correctness, and a train-only usage notice; evaluator internals and gold
-    answers remain hidden.
     """
 
     try:
@@ -102,7 +98,9 @@ def judge_answer_request(raw_body: bytes) -> tuple[int, dict[str, Any]]:
     except ValueError as exc:
         return _response(400, {"ok": False, "error": "invalid_json", "message": str(exc)})
     if not isinstance(body, dict):
-        return _response(400, {"ok": False, "error": "invalid_request", "message": "request body must be a JSON object"})
+        return _response(
+            400, {"ok": False, "error": "invalid_request", "message": "request body must be a JSON object"}
+        )
 
     task_dir, error = _task_dir(body.get("task_id"))
     if error:
@@ -124,16 +122,20 @@ def judge_answer_request(raw_body: bytes) -> tuple[int, dict[str, Any]]:
 
         result = subprocess.run(
             [str(eval_script.resolve()), str(candidate_path)],
-            cwd=str(ROOT),
+            cwd=str(task_dir),
             text=True,
             capture_output=True,
             timeout=JUDGE_TIMEOUT,
             check=False,
         )
     except subprocess.TimeoutExpired:
-        return _response(504, {"ok": False, "error": "judge_timeout", "message": f"evaluator exceeded {JUDGE_TIMEOUT}s"})
+        return _response(
+            504, {"ok": False, "error": "judge_timeout", "message": f"evaluator exceeded {JUDGE_TIMEOUT}s"}
+        )
     except (TypeError, ValueError) as exc:
-        return _response(400, {"ok": False, "error": "invalid_answer", "message": f"answer is not JSON serializable: {exc}"})
+        return _response(
+            400, {"ok": False, "error": "invalid_answer", "message": f"answer is not JSON serializable: {exc}"}
+        )
     except OSError:
         return _response(500, {"ok": False, "error": "judge_error", "message": "failed to run evaluator"})
     finally:
@@ -143,25 +145,36 @@ def judge_answer_request(raw_body: bytes) -> tuple[int, dict[str, Any]]:
     try:
         evaluator_payload = json.loads(result.stdout)
     except json.JSONDecodeError:
-        return _response(500, {
-            "ok": False,
-            "error": "judge_parse_error",
-            "message": "evaluator did not return JSON",
-        })
+        return _response(
+            500,
+            {
+                "ok": False,
+                "error": "judge_parse_error",
+                "message": "evaluator did not return JSON",
+            },
+        )
 
     score = _score_from_evaluator(evaluator_payload)
     if score is None:
-        return _response(500, {
-            "ok": False,
-            "error": "judge_score_error",
-            "message": "evaluator output did not contain a normalized score",
-        })
+        return _response(
+            500,
+            {
+                "ok": False,
+                "error": "judge_score_error",
+                "message": "evaluator output did not contain a normalized score",
+            },
+        )
 
     normalized = round(score, 6)
-    task_id = f"train_{task_dir.name}"
-    return _response(200, {
-        "ok": True,
-        "task_id": task_id,
-        "score": normalized,
-        "correct": math.isclose(normalized, 1.0, abs_tol=1e-6),
-    })
+    task_id = str(body.get("task_id") or "").strip()
+    if not task_id.startswith("train_"):
+        task_id = f"train_{int(task_id):03d}"
+    return _response(
+        200,
+        {
+            "ok": True,
+            "task_id": task_id,
+            "score": normalized,
+            "correct": math.isclose(normalized, 1.0, abs_tol=1e-6),
+        },
+    )

@@ -11,10 +11,6 @@ fi
 
 "$PYTHON_BIN" generate_data.py
 
-PORT="${PORT:-8006}"
-echo "Start ProcureOps API with:"
-echo "  $PYTHON_BIN server.py --host 127.0.0.1 --port $PORT"
-
-if [[ "${1:-}" == "start" ]]; then
-  exec "$PYTHON_BIN" server.py --host 127.0.0.1 --port "$PORT"
-fi
+HOST="${TASK_ENV_BIND:-${TASK_ENV_HOST:-0.0.0.0}}"
+PORT="${TASK_ENV_PORT:-${PORT:-9006}}"
+exec "$PYTHON_BIN" server.py --host "$HOST" --port "$PORT"

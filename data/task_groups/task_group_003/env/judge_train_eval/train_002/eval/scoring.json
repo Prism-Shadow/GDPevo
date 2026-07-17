@@ -1,0 +1,82 @@
+{
+  "points": [
+    {
+      "id": "SP001",
+      "goal": "CASE-2101 selects the SIM reseat self-service fix.",
+      "weight": 2,
+      "checks": [
+        {"path": "case_decisions[0].case_id"},
+        {"path": "case_decisions[0].primary_action"},
+        {"path": "case_decisions[0].final_route"}
+      ]
+    },
+    {
+      "id": "SP002",
+      "goal": "CASE-2102 handles overdue suspension with payment and line resume.",
+      "weight": 3,
+      "checks": [
+        {"path": "case_decisions[1].primary_action"},
+        {"path": "case_decisions[1].secondary_action"},
+        {"path": "case_decisions[1].bill_id"},
+        {"path": "case_decisions[1].charge_amount_usd", "precision": 2},
+        {"path": "case_decisions[1].final_route"}
+      ]
+    },
+    {
+      "id": "SP003",
+      "goal": "CASE-2103 uses phone roaming toggle, not carrier update.",
+      "weight": 2,
+      "checks": [
+        {"path": "case_decisions[2].primary_action"},
+        {"path": "case_decisions[2].secondary_action"},
+        {"path": "case_decisions[2].final_route"}
+      ]
+    },
+    {
+      "id": "SP004",
+      "goal": "CASE-2104 grants the missing storage permission.",
+      "weight": 2,
+      "checks": [
+        {"path": "case_decisions[3].primary_action"},
+        {"path": "case_decisions[3].permission"},
+        {"path": "case_decisions[3].final_route"}
+      ]
+    },
+    {
+      "id": "SP005",
+      "goal": "CASE-2105 disconnects VPN for slow data.",
+      "weight": 2,
+      "checks": [
+        {"path": "case_decisions[4].primary_action"},
+        {"path": "case_decisions[4].final_route"}
+      ]
+    },
+    {
+      "id": "SP006",
+      "goal": "Queue summary self-service and billing counts are correct.",
+      "weight": 2,
+      "checks": [
+        {"path": "queue_summary.self_service_fixes"},
+        {"path": "queue_summary.billing_recoveries"}
+      ]
+    },
+    {
+      "id": "SP007",
+      "goal": "Queue summary correctly has no carrier updates or human transfers.",
+      "weight": 1,
+      "checks": [
+        {"path": "queue_summary.carrier_updates"},
+        {"path": "queue_summary.human_transfers"}
+      ]
+    },
+    {
+      "id": "SP008",
+      "goal": "Case identity mapping is preserved for the final two cases.",
+      "weight": 1,
+      "checks": [
+        {"path": "case_decisions[3].customer_id"},
+        {"path": "case_decisions[4].line_id"}
+      ]
+    }
+  ]
+}

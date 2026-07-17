@@ -1,0 +1,126 @@
+{
+  "template_version": "4.0",
+  "description": "Response contract for the registered 2024 reliability-weighted state algorithmic audit.",
+  "required_top_level_keys": ["request_id", "release_and_cohort", "cluster_jackknife", "nested_elastic_net", "wild_cluster_bootstrap", "grouped_conformal", "trajectory_pca_clustering", "exhaustive_source_perturbation", "decision_audit"],
+  "response": {
+    "request_id": {"type": "string", "required_value": "OBS-STATE-WEIGHTED-ALGORITHMIC-AUDIT-2024-DIAB-R4"},
+    "release_and_cohort": {
+      "type": "object",
+      "required_keys": ["reference_year", "jurisdiction_universe_count", "yearly_complete_case_counts", "primary_complete_case_count", "primary_excluded_state_codes", "balanced_state_count", "balanced_state_codes"],
+      "fields": {
+        "reference_year": {"type": "integer"},
+        "jurisdiction_universe_count": {"type": "integer"},
+        "yearly_complete_case_counts": {"type": "list[object]", "length": 5, "ordering": "year ascending", "object_keys": ["year", "count"]},
+        "primary_complete_case_count": {"type": "integer"},
+        "primary_excluded_state_codes": {"type": "list[string]", "cardinality": "complete exclusion set: every jurisdiction-universe state code absent from the reference-year primary complete-case cohort, and no others", "ordering": "ascending ASCII"},
+        "balanced_state_count": {"type": "integer"},
+        "balanced_state_codes": {"type": "list[string]", "cardinality": "complete strict balanced cohort: every state code complete in every requested study year, and no others", "ordering": "ascending ASCII"}
+      }
+    },
+    "cluster_jackknife": {
+      "type": "object",
+      "required_keys": ["cluster_definition", "full_weighted_food_insecurity_coefficient", "delete_one_cluster_results", "mean_delete_one_coefficient", "bias_corrected_coefficient", "jackknife_standard_error", "jackknife_t_statistic", "jackknife_t_p_value", "maximum_delete_one_absolute_percent_change", "most_influential_division"],
+      "fields": {
+        "cluster_definition": {"type": "string", "required_value": "CENSUS_DIVISION"},
+        "full_weighted_food_insecurity_coefficient": {"type": "number", "precision": 4},
+        "delete_one_cluster_results": {"type": "list[object]", "length": 9, "ordering": "registered division order", "object_keys": ["deleted_division", "deleted_state_count", "coefficient", "absolute_percent_change"], "numeric_precision": 4},
+        "mean_delete_one_coefficient": {"type": "number", "precision": 4},
+        "bias_corrected_coefficient": {"type": "number", "precision": 4},
+        "jackknife_standard_error": {"type": "number", "precision": 4},
+        "jackknife_t_statistic": {"type": "number", "precision": 4},
+        "jackknife_t_p_value": {"type": "number", "precision": 4},
+        "maximum_delete_one_absolute_percent_change": {"type": "number", "precision": 4},
+        "most_influential_division": {"type": "string"}
+      }
+    },
+    "nested_elastic_net": {
+      "type": "object",
+      "required_keys": ["alpha", "lambda_grid", "feature_count", "outer_folds", "pooled_oof_rmse", "pooled_oof_mae", "pooled_oof_r_squared"],
+      "fields": {
+        "alpha": {"type": "number", "precision": 4},
+        "lambda_grid": {"type": "list[number]", "length": 6, "ordering": "declared order", "numeric_precision": 4},
+        "feature_count": {"type": "integer"},
+        "outer_folds": {"type": "list[object]", "length": 9, "ordering": "registered division order", "object_keys": ["held_out_division", "held_out_count", "chosen_lambda", "nonzero_feature_count", "coordinate_cycles", "outer_rmse", "inner_grid"], "inner_grid": {"type": "list[object]", "length": 6, "ordering": "lambda grid order", "object_keys": ["lambda", "inner_grouped_rmse"]}},
+        "pooled_oof_rmse": {"type": "number", "precision": 4},
+        "pooled_oof_mae": {"type": "number", "precision": 4},
+        "pooled_oof_r_squared": {"type": "number", "precision": 4}
+      }
+    },
+    "wild_cluster_bootstrap": {
+      "type": "object",
+      "required_keys": ["cluster_definition", "seed", "bootstrap_count", "observed_absolute_cr1_t", "checkpoints", "exceedance_count", "plus_one_p_value", "absolute_t_q90", "absolute_t_q95", "absolute_t_q99", "final_prng_state"],
+      "fields": {
+        "cluster_definition": {"type": "string", "required_value": "CENSUS_DIVISION"},
+        "seed": {"type": "integer"},
+        "bootstrap_count": {"type": "integer"},
+        "observed_absolute_cr1_t": {"type": "number", "precision": 4},
+        "checkpoints": {"type": "list[object]", "length": 7, "ordering": "registered replicate order", "object_keys": ["replicate", "prng_state", "absolute_cluster_t"]},
+        "exceedance_count": {"type": "integer"},
+        "plus_one_p_value": {"type": "number", "precision": 4},
+        "absolute_t_q90": {"type": "number", "precision": 4},
+        "absolute_t_q95": {"type": "number", "precision": 4},
+        "absolute_t_q99": {"type": "number", "precision": 4},
+        "final_prng_state": {"type": "integer"}
+      }
+    },
+    "grouped_conformal": {
+      "type": "object",
+      "required_keys": ["nominal_coverage", "division_results", "pooled_covered_count", "pooled_state_count", "pooled_coverage_fraction", "held_out_weighted_mean_interval_width", "worst_coverage_division"],
+      "fields": {
+        "nominal_coverage": {"type": "number", "precision": 4},
+        "division_results": {"type": "list[object]", "length": 9, "ordering": "registered division order", "object_keys": ["held_out_division", "calibration_count", "finite_sample_rank", "interval_radius", "held_out_count", "covered_count", "coverage_fraction", "mean_interval_width", "maximum_excess"]},
+        "pooled_covered_count": {"type": "integer"},
+        "pooled_state_count": {"type": "integer"},
+        "pooled_coverage_fraction": {"type": "number", "precision": 4},
+        "held_out_weighted_mean_interval_width": {"type": "number", "precision": 4},
+        "worst_coverage_division": {"type": "string"}
+      }
+    },
+    "trajectory_pca_clustering": {
+      "type": "object",
+      "required_keys": ["trajectory_feature_count", "first_three_explained_variance_ratios", "initial_centroid_state_codes", "lloyd_update_count", "cluster_centroids_pc1_pc2_pc3", "state_assignments", "leave_one_year_out_stability", "minimum_adjusted_rand_index"],
+      "fields": {
+        "trajectory_feature_count": {"type": "integer"},
+        "first_three_explained_variance_ratios": {"type": "list[number]", "length": 3, "numeric_precision": 4},
+        "initial_centroid_state_codes": {"type": "list[string]", "length": 3, "ordering": "initialization order"},
+        "lloyd_update_count": {"type": "integer"},
+        "cluster_centroids_pc1_pc2_pc3": {"type": "list[object]", "length": 3, "ordering": "cluster_id", "object_keys": ["cluster_id", "pc1", "pc2", "pc3"]},
+        "state_assignments": {"type": "list[object]", "cardinality": "one assignment for each and only each state code in release_and_cohort.balanced_state_codes", "ordering": "same state-code order as release_and_cohort.balanced_state_codes", "object_keys": ["state_code", "cluster_id", "pc1", "pc2", "pc3"]},
+        "leave_one_year_out_stability": {"type": "list[object]", "length": 5, "ordering": "year ascending", "object_keys": ["omitted_year", "adjusted_rand_index", "aligned_assignment_changes"]},
+        "minimum_adjusted_rand_index": {"type": "number", "precision": 4}
+      }
+    },
+    "exhaustive_source_perturbation": {
+      "type": "object",
+      "required_keys": ["ordered_rollup_state_codes", "scenario_count", "by_replacement_count", "stable_scenario_count", "maximum_shift_bitmask", "maximum_shift_replaced_state_codes", "maximum_shift_coefficient", "maximum_shift_hc3_p_value", "maximum_absolute_percent_shift", "ordered_shapley_effects", "shapley_sum", "all_rollup_minus_all_direct_coefficient"],
+      "fields": {
+        "ordered_rollup_state_codes": {"type": "list[string]", "cardinality": "M, where M is the number of primary-cohort state codes for which both the requested baseline direct record and replacement rollup record resolve as eligible", "ordering": "registered disagreement order"},
+        "scenario_count": {"type": "integer"},
+        "by_replacement_count": {"type": "list[object]", "cardinality": "one stratum for every integer replacement_count from 0 through M inclusive, where M is ordered_rollup_state_codes cardinality", "ordering": "replacement_count ascending from 0 through M", "object_keys": ["replacement_count", "scenario_count", "minimum_coefficient", "maximum_coefficient", "minimum_hc3_p_value", "maximum_hc3_p_value", "mean_absolute_percent_shift"]},
+        "stable_scenario_count": {"type": "integer"},
+        "maximum_shift_bitmask": {"type": "integer"},
+        "maximum_shift_replaced_state_codes": {"type": "list[string]", "ordering": "registered disagreement order"},
+        "maximum_shift_coefficient": {"type": "number", "precision": 4},
+        "maximum_shift_hc3_p_value": {"type": "number", "precision": 4},
+        "maximum_absolute_percent_shift": {"type": "number", "precision": 4},
+        "ordered_shapley_effects": {"type": "list[object]", "cardinality": "one effect for each and only each ordered_rollup_state_codes item", "ordering": "one-to-one in the exact order of ordered_rollup_state_codes", "object_keys": ["state_code", "signed_shapley_coefficient_change"]},
+        "shapley_sum": {"type": "number", "precision": 4},
+        "all_rollup_minus_all_direct_coefficient": {"type": "number", "precision": 4}
+      }
+    },
+    "decision_audit": {
+      "type": "object",
+      "required_keys": ["cluster_jackknife_supported", "nested_prediction_stable", "wild_bootstrap_supported", "grouped_conformal_supported", "trajectory_stable", "source_exhaustive_stable", "first_failed_module", "conclusion"],
+      "fields": {
+        "cluster_jackknife_supported": {"type": "boolean"},
+        "nested_prediction_stable": {"type": "boolean"},
+        "wild_bootstrap_supported": {"type": "boolean"},
+        "grouped_conformal_supported": {"type": "boolean"},
+        "trajectory_stable": {"type": "boolean"},
+        "source_exhaustive_stable": {"type": "boolean"},
+        "first_failed_module": {"type": "enum", "allowed_values": ["NONE", "CLUSTER_JACKKNIFE", "NESTED_PREDICTION", "WILD_BOOTSTRAP", "GROUPED_CONFORMAL", "TRAJECTORY", "SOURCE_EXHAUSTIVE"]},
+        "conclusion": {"type": "enum", "allowed_values": ["ROBUST_ACROSS_REGISTERED_MODULES", "NOT_ROBUST_AT_CLUSTER_JACKKNIFE", "NOT_ROBUST_AT_NESTED_PREDICTION", "NOT_ROBUST_AT_WILD_BOOTSTRAP", "NOT_ROBUST_AT_GROUPED_CONFORMAL", "NOT_ROBUST_AT_TRAJECTORY", "NOT_ROBUST_AT_SOURCE_EXHAUSTIVE"]}
+      }
+    }
+  }
+}

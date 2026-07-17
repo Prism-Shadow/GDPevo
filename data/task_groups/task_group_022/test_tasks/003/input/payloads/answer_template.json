@@ -1,0 +1,171 @@
+{
+  "title": "West apparel inventory correction result",
+  "template_version": "1.0",
+  "output_file": "answer.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "correction_target",
+    "mutation_result",
+    "availability_reconciliation",
+    "stockout_analysis"
+  ],
+  "properties": {
+    "correction_target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "movement_row_id",
+        "movement_id",
+        "sku",
+        "canonical_quantity_each",
+        "canonical_uom_multiplier"
+      ],
+      "properties": {
+        "movement_row_id": {
+          "type": "string",
+          "description": "Stable inventory movement row identifier."
+        },
+        "movement_id": {
+          "type": "string",
+          "description": "Stable inventory movement business identifier."
+        },
+        "sku": {
+          "type": "string",
+          "description": "Stable product SKU."
+        },
+        "canonical_quantity_each": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "old",
+            "new"
+          ],
+          "properties": {
+            "old": {
+              "type": "integer",
+              "unit": "each units",
+              "decimal_places": 0
+            },
+            "new": {
+              "type": "integer",
+              "unit": "each units",
+              "decimal_places": 0
+            }
+          }
+        },
+        "canonical_uom_multiplier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "old",
+            "new"
+          ],
+          "properties": {
+            "old": {
+              "type": "integer",
+              "minimum": 1,
+              "unit": "each units per raw unit",
+              "decimal_places": 0
+            },
+            "new": {
+              "type": "integer",
+              "minimum": 1,
+              "unit": "each units per raw unit",
+              "decimal_places": 0
+            }
+          }
+        }
+      }
+    },
+    "mutation_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "affected_business_rows",
+        "audit_rows",
+        "correction_status"
+      ],
+      "properties": {
+        "affected_business_rows": {
+          "type": "integer",
+          "minimum": 0,
+          "unit": "rows",
+          "decimal_places": 0
+        },
+        "audit_rows": {
+          "type": "integer",
+          "minimum": 0,
+          "unit": "rows",
+          "decimal_places": 0
+        },
+        "correction_status": {
+          "type": "string",
+          "enum": [
+            "APPLIED",
+            "NOT_APPLIED"
+          ]
+        }
+      }
+    },
+    "availability_reconciliation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pre_correction_available_units",
+        "post_correction_available_units",
+        "available_units_delta"
+      ],
+      "properties": {
+        "pre_correction_available_units": {
+          "type": "integer",
+          "unit": "each units",
+          "decimal_places": 0
+        },
+        "post_correction_available_units": {
+          "type": "integer",
+          "unit": "each units",
+          "decimal_places": 0
+        },
+        "available_units_delta": {
+          "type": "integer",
+          "description": "Post-correction available units minus pre-correction available units.",
+          "unit": "each units",
+          "decimal_places": 0
+        }
+      }
+    },
+    "stockout_analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stockout_risk_sku_ids",
+        "highest_risk_sku_id",
+        "stockout_status"
+      ],
+      "properties": {
+        "stockout_risk_sku_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "description": "Stable product SKU."
+          },
+          "ordering": "sku ascending"
+        },
+        "highest_risk_sku_id": {
+          "type": "string",
+          "description": "First SKU after ordering active family SKUs by projected post-demand units ascending, then SKU ascending."
+        },
+        "stockout_status": {
+          "type": "string",
+          "enum": [
+            "CONTROLLED",
+            "WATCH",
+            "CRITICAL"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -2,13 +2,18 @@
 
 ## 校准目标
 
+本指南的所有目标都基于固定校准配置：Codex 使用 `gpt-5.5` 和 `xhigh`
+reasoning effort。运行 task construction workspace 的模型不是校准模型，校准进程
+不能继承该模型或客户端默认值。替换模型或 reasoning effort 的运行无效，不能计入
+`avg@3`。
+
 5 个 test tasks 的 overall base `avg@3` 目标约为 `0.40-0.60`。单个 task
 通常也应接近这一范围；允许存在有充分理由的离群值，但不能靠“很简单的题”和
 “几乎不可能完成的题”互相平均来通过校准。
 
 使用 train set 提炼出的 skill 后，overall fewshot `avg@3` 相对 base 的
-目标提升约为 `0.10-0.20`。还应逐题检查 intended transfer points 是否提升，
-同时避免大部分任务达到 `0.95` 以上或接近满分。
+目标提升约为 `0.10-0.30`，同时应大致低于 `0.80`。还应逐题检查 intended
+transfer points 是否提升，并避免大部分任务达到 `0.95` 以上或接近满分。
 
 train-derived skill 不应该让每个 test 都拿到特别高的分数。如果大部分或全部 test 在使用 skill 后达到 `0.95` 以上或接近满分，说明 SOP 可能过于简单、过于机械，或 test 解法太容易从 train tasks 中直接归纳出来。
 
@@ -126,7 +131,7 @@ scratch/difficulty_calibration.md
 - 每个 test task 的 base `avg@3`、fewshot `avg@3` 和 gain。
 - 5 个 test tasks 的 overall base `avg@3` 和 overall fewshot `avg@3`。
 - Overall base `avg@3` 是否约为 `0.40-0.60`，以及单题离群值是否有充分理由。
-- Overall fewshot gain 是否约为 `0.10-0.20`，并逐题说明哪些 transfer-dependent rubric points 发生变化。
+- Overall fewshot `avg@3` 是否大致低于 `0.80`，gain 是否约为 `0.10-0.30`，并逐题说明哪些 transfer-dependent rubric points 发生变化。
 - skill test 分数是否在大部分或全部 test 上过度饱和，如果是，记录哪些 scoring points 变得过于容易。
 - 低分来源是否来自迁移失败或任务复杂度，而不是 prompt 歧义、schema 摩擦或评测脆弱。
 
@@ -134,7 +139,7 @@ builder 手写、人工改写、合成或反事实 prediction 文件不能计入
 
 ## 返工闭环
 
-如果校准或 review 不通过，该 task group 必须返工并重新检查，不能直接进入 `data_construction/task_groups/<task_group_id>/`。
+如果校准或 review 不通过，该 task group 必须返工并重新检查，不能视为构造完成。
 
 当 overall base `avg@3` 不在约 `0.40-0.60` 范围内，或单题明显过易、
 几乎不可能完成时，主 agent 可以返工以下任意组合：
@@ -148,7 +153,7 @@ builder 手写、人工改写、合成或反事实 prediction 文件不能计入
 
 当 overall train-derived skill gain 低于约 `0.10` 时，返工应集中在 train/test 迁移距离和 diversity 宽度。检查那些设计为依赖迁移的高权重点是否真的依赖可从真实 train tasks 中归纳出的方法；同时检查 task group 是否覆盖了太多一次性工作流家族，导致每个 test 只有一个很窄的 train anchor。如果迁移距离过宽，应把 task group 收窄到 2-3 个反复出现的操作家族，让可复用口径在多个 train tasks 中重复出现，或重设 test scoring points，使其迁移核心来自重复的 train 证据。如果 test 需要 train 中无法覆盖的 SOP、来源优先级、计算方法或业务判断，应补充真实 train-task 覆盖或重设这些 scoring points。如果 test 中没有任何有意义的高权重点需要 train 迁移，应补充这样的 scoring points。不要求每个高权重点都有 train anchor，也不要通过把 train 写成教学题、把 test prompt 写成步骤清单或泄露 SOP 来修复迁移失败。
 
-当 overall gain 明显高于约 `0.20` 时，应检查 skill 是否过度揭示 test 解法、
+当 overall gain 明显高于约 `0.30` 时，应检查 skill 是否过度揭示 test 解法、
 train/test 变体是否过于机械相似，或相关 rubric points 是否都在重复奖励同一个
 学习到的判断。应返工迁移设计，而不是直接接受被放大的 gain。
 
@@ -184,13 +189,11 @@ reviewer subagent 应检查：
 - 每个 train/test task 是否都有 `input/payloads/answer_template.json`，且 `output/answer.json` 是否符合该模板。
 - 评测是否 rule-based、可复现，并覆盖关键业务判断。
 - 每个 task 是否有 6-10 个 scoring points，原始权重是否只使用 `1`、`2` 或 `3`，最终分数是否按 `weight / sum(weight)` 归一化。
-- rubric 是否覆盖至少 4 个可以独立失败的业务问题或方面，而不是把一个根本判断拆成许多会同时得分或失分的重复 points。
-- `scratch/rubric_validation.md` 是否记录 rubric dependency map，并通过 selective perturbation 证明不同错误只损失对应分值。
-- 不可拆分的 point 是否使用 deterministic exact match；天然可拆分的 point 是否使用文档化、确定性的 partial credit，并输出 `[0, 1]` 内的 earned fraction。
+- `scratch/rubric_validation.md` 是否确认每个 point 完整满足要求时获得该点全部分值，否则得 `0` 分。
 - scoring points 是否优先评估数值、枚举、布尔、排序、集合或规范化结构结果；如需字符串匹配，是否已改成受控选择字段以避免 schema 摩擦。
 - 大部分 scoring points 是否真实依赖 train 迁移、大量数据探索或长流程工作，而不是不学习 train、不深入探索数据也能拿到。
 - `scratch/difficulty_calibration.md` 是否包含 15 次有效 base 和 15 次有效 fewshot Dockerized `codex exec` attempts，且都使用固定 prompt、专属 staged work 和 Codex-home 目录。
 - 是否由 3 个相互隔离的 Dockerized 进程基于 5 个 train inputs 和对应标准答案生成了 3 个独立 fewshot skills，并分别保存到 `scratch/train_skill/fewshot_attempt_<nn>/`。
 - Overall base `avg@3` 是否约为 `0.40-0.60`，不合理的单题离群值是否已返工或说明。
-- Overall fewshot gain 是否约为 `0.10-0.20`，且收益来自预期的 transfer-dependent aspects，而不是重复 rubric points。
+- Overall fewshot `avg@3` 是否大致低于 `0.80`，gain 是否约为 `0.10-0.30`，且收益来自预期的 transfer-dependent aspects。
 - fewshot `avg@3` 是否避免在大部分或全部 test 上过度饱和；如果 skill 后大部分任务达到 `0.95` 以上或接近满分，是否需要返工 SOP、任务多样性、数据探索、env 或 scoring points。

@@ -1,0 +1,98 @@
+{
+  "checks": [
+    {
+      "name": "case_and_approval",
+      "points": 2,
+      "fields": [
+        "case_id",
+        "final_decision",
+        "approval_authority",
+        "approval_event_id"
+      ]
+    },
+    {
+      "name": "folder_readiness",
+      "points": 2,
+      "fields": [
+        "folder_ready",
+        "missing_files",
+        "required_tag_present",
+        "folder_required_tag_action"
+      ]
+    },
+    {
+      "name": "notice_quality",
+      "points": 2,
+      "fields": [
+        "notice_quality",
+        "notice_defects",
+        "notice_evidence_source"
+      ]
+    },
+    {
+      "name": "approval_gate_and_blockers",
+      "points": 3,
+      "fields": [
+        "approval_closeout_gate",
+        "closeout_blockers",
+        "final_control_result"
+      ]
+    },
+    {
+      "name": "source_order_and_audit",
+      "points": 2,
+      "fields": [
+        "evidence_source_order",
+        "audit_event_id",
+        "supporting_audit_event_ids",
+        "excluded_audit_event_ids",
+        "audit_scope"
+      ]
+    },
+    {
+      "name": "remediation",
+      "points": 3,
+      "fields": [
+        "next_action",
+        "escalation_action",
+        "records_remediation_owner",
+        "notice_remediation_action"
+      ]
+    }
+  ],
+  "gold": {
+    "case_id": "CASE-RW-221",
+    "final_decision": "approved_with_conditions",
+    "approval_authority": "HR Director",
+    "approval_event_id": "APP-221-FINAL",
+    "folder_ready": false,
+    "missing_files": [
+      "tax-equalization-agreement.pdf"
+    ],
+    "required_tag_present": true,
+    "notice_quality": "defective",
+    "notice_defects": [
+      "missing_appeal_instructions"
+    ],
+    "audit_event_id": "AUD-CASE221-09",
+    "supporting_audit_event_ids": [
+      "AUD-CASE221-09"
+    ],
+    "excluded_audit_event_ids": [],
+    "audit_scope": "document_notice_findings_only",
+    "next_action": "block_close_and_reissue_notice",
+    "approval_closeout_gate": "approval_not_sufficient_when_folder_or_notice_defective",
+    "closeout_blockers": [
+      "missing_required_files",
+      "defective_formal_notice"
+    ],
+    "evidence_source_order": "approval_history_folder_notice_audit",
+    "folder_required_tag_action": "no_tag_action",
+    "notice_evidence_source": "notice_packet_inspection",
+    "escalation_action": "open_records_remediation",
+    "records_remediation_owner": "Records",
+    "notice_remediation_action": "reissue_defective_notices"
+    ,
+    "final_control_result": "hold_for_folder_and_notice_defects"
+  }
+}

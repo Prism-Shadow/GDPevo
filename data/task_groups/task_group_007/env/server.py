@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -96,16 +97,6 @@ class ERPHandler(BaseHTTPRequestHandler):
             return
         self.send_json(payload)
 
-    def do_POST(self) -> None:
-        parsed = urlparse(self.path)
-        parts = [unquote(part) for part in parsed.path.rstrip("/").split("/") if part]
-        if parts == ["api", "judge"]:
-            length = int(self.headers.get("Content-Length", "0") or "0")
-            status, payload = judge_answer_request(self.rfile.read(length))
-            self.send_json(payload, HTTPStatus(status))
-            return
-        self.send_error_json(HTTPStatus.NOT_FOUND, "endpoint not found")
-
     def route(self, parts: list[str], query: dict[str, list[str]]) -> object:
         if not parts and query == {}:
             return {
@@ -182,6 +173,18 @@ class ERPHandler(BaseHTTPRequestHandler):
 
         raise KeyError("endpoint not found")
 
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        if parsed.path != "/api/judge":
+            self.send_error_json(HTTPStatus.NOT_FOUND, "endpoint not found")
+            return
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            self.send_error_json(HTTPStatus.NOT_FOUND, "endpoint not found")
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(payload, HTTPStatus(status))
+
     def find_one(self, collection: str, key: str, value: str) -> dict:
         for row in self.data[collection]:
             if str(row.get(key)) == value:
@@ -227,8 +230,10 @@ class ERPHandler(BaseHTTPRequestHandler):
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", default=8007, type=int)
+    parser.add_argument("--host", default=os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0")))
+    parser.add_argument(
+        "--port", default=int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9007"))), type=int
+    )
     args = parser.parse_args()
 
     ERPHandler.data = load_data()

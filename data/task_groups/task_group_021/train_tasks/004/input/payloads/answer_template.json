@@ -1,0 +1,157 @@
+{
+  "template_version": "1.0",
+  "output_type": "object",
+  "additional_top_level_keys_allowed": false,
+  "required_top_level_keys": [
+    "merge_summary",
+    "focus_people",
+    "contested_cluster_ids",
+    "dispatchable_master_ids",
+    "readiness_by_depot",
+    "policy_control_cases",
+    "release_decision"
+  ],
+  "field_contract": {
+    "merge_summary": {
+      "type": "object",
+      "required_keys": [
+        "raw_row_count",
+        "canonical_person_count",
+        "merged_duplicate_cluster_count",
+        "quarantine_row_count",
+        "contested_identifier_cluster_count",
+        "dispatchable_person_count"
+      ],
+      "fields": {
+        "raw_row_count": "integer, count of in-scope public source rows",
+        "canonical_person_count": "integer, count of resolved people including quarantined people",
+        "merged_duplicate_cluster_count": "integer, count of multi-row clusters merged as the same person",
+        "quarantine_row_count": "integer, count of source rows with no usable contact channel",
+        "contested_identifier_cluster_count": "integer, count of watchlist identifier cases that remain contested",
+        "dispatchable_person_count": "integer, count of IDs in dispatchable_master_ids"
+      }
+    },
+    "focus_people": {
+      "type": "list<object>",
+      "length": 5,
+      "ordering": "ascending by focus_person_id",
+      "item_required_keys": [
+        "focus_person_id",
+        "source_row_anchor",
+        "member_row_ids",
+        "master_id",
+        "canonical_name",
+        "canonical_email",
+        "canonical_phone_digits",
+        "canonical_city",
+        "depot_code",
+        "canonical_consent_status",
+        "canonical_record_status",
+        "name_source_system",
+        "contact_source_system",
+        "depot_source_system",
+        "consent_source_system",
+        "resolution_outcome"
+      ],
+      "item_fields": {
+        "focus_person_id": "string, one of FOCUS-001 through FOCUS-005",
+        "source_row_anchor": "string, exact public row ID from case_scope.json",
+        "member_row_ids": "list<string>, all public row IDs resolved to this person, sorted lexicographically",
+        "master_id": "string, selected public source row ID used as the stable master ID",
+        "canonical_name": "string, Unicode-preserving canonical display name",
+        "canonical_email": "string, trimmed Unicode NFKC lowercase email",
+        "canonical_phone_digits": "string, digits only",
+        "canonical_city": "string",
+        "depot_code": "string, canonical value of the public region field",
+        "canonical_consent_status": "enum: GRANTED | PENDING | DENIED | UNKNOWN",
+        "canonical_record_status": "enum: ACTIVE | INACTIVE",
+        "name_source_system": "enum: HR Directory | Dispatch | Identity Registry",
+        "contact_source_system": "enum: HR Directory | Dispatch | Identity Registry",
+        "depot_source_system": "enum: HR Directory | Dispatch | Identity Registry",
+        "consent_source_system": "enum: HR Directory | Dispatch | Identity Registry",
+        "resolution_outcome": "enum: FIELD_LEVEL_PRECEDENCE_APPLIED | SINGLE_SOURCE | CONTESTED_NO_AUTOMERGE | NO_USABLE_CONTACT"
+      }
+    },
+    "contested_cluster_ids": {
+      "type": "list<string>",
+      "allowed_values": [
+        "IDENTIFIER-CASE-001",
+        "IDENTIFIER-CASE-002",
+        "IDENTIFIER-CASE-003"
+      ],
+      "ordering": "lexicographic ascending",
+      "uniqueness": true
+    },
+    "dispatchable_master_ids": {
+      "type": "list<string>",
+      "item_format": "public row ID",
+      "ordering": "lexicographic ascending",
+      "uniqueness": true
+    },
+    "readiness_by_depot": {
+      "type": "list<object>",
+      "ordering": "lexicographic ascending by depot_code",
+      "item_required_keys": [
+        "depot_code",
+        "total_person_count",
+        "dispatchable_person_count",
+        "blocked_consent_count",
+        "blocked_no_contact_count",
+        "blocked_inactive_count"
+      ],
+      "item_fields": {
+        "depot_code": "string, value of the public region field",
+        "total_person_count": "integer",
+        "dispatchable_person_count": "integer",
+        "blocked_consent_count": "integer, active person with a usable channel but non-granted consent",
+        "blocked_no_contact_count": "integer, person with no usable canonical channel",
+        "blocked_inactive_count": "integer, inactive person with a usable channel"
+      },
+      "count_partition_rule": "For each depot, the four disposition counts sum to total_person_count."
+    },
+    "policy_control_cases": {
+      "type": "list<object>",
+      "length": 11,
+      "ordering": "lexicographic ascending by control_case_id",
+      "item_required_keys": [
+        "control_case_id",
+        "control_family",
+        "evidence_row_ids",
+        "control_code"
+      ],
+      "item_fields": {
+        "control_case_id": "string, one of CONTROL-001 through CONTROL-011",
+        "control_family": "enum: FIELD_PROVENANCE | IDENTITY | OUTREACH",
+        "evidence_row_ids": "list<string>, exact public row IDs supplied for this case in case_scope.json, sorted lexicographically",
+        "control_code": {
+          "type": "string",
+          "enum": [
+            "FP-20",
+            "FP-55",
+            "FP-75",
+            "IC-25",
+            "IC-40",
+            "IC-70",
+            "IC-90",
+            "OR-15",
+            "OR-35",
+            "OR-60",
+            "OR-80"
+          ]
+        }
+      }
+    },
+    "release_decision": {
+      "type": "object",
+      "required_keys": [
+        "status",
+        "action"
+      ],
+      "fields": {
+        "status": "enum: PASS | PASS_WITH_EXCEPTIONS | HOLD",
+        "action": "enum: RELEASE | REVIEW_EXCEPTIONS | BLOCK_AND_REMEDIATE"
+      }
+    }
+  },
+  "numeric_precision": "All counts are exact integers; no floating-point fields are permitted."
+}

@@ -1,0 +1,151 @@
+{
+  "template_name": "potassium_urgent_escalation_answer",
+  "language": "English",
+  "required_top_level_keys": [
+    "task_id",
+    "case_id",
+    "patient_id",
+    "current_time",
+    "latest_potassium",
+    "replacement_required",
+    "potassium_plan",
+    "oral_dose_mEq",
+    "medication_order",
+    "follow_up_lab",
+    "urgent_actions",
+    "contraindications",
+    "evidence_ids"
+  ],
+  "field_specification": {
+    "task_id": {
+      "type": "string",
+      "description": "Stable task identifier."
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Target clinic case identifier from the prompt."
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Patient identifier associated with the target case."
+    },
+    "current_time": {
+      "type": "string",
+      "format": "ISO-8601 UTC timestamp with trailing Z",
+      "description": "Clinical review time used for the recommendation."
+    },
+    "latest_potassium": {
+      "type": "object",
+      "required_keys": ["observation_id", "value_mmol_l", "effective_time"],
+      "fields": {
+        "observation_id": {
+          "type": "string",
+          "description": "Observation identifier for the latest eligible final serum potassium result."
+        },
+        "value_mmol_l": {
+          "type": "number",
+          "precision": "one decimal place",
+          "unit": "mmol/L"
+        },
+        "effective_time": {
+          "type": "string",
+          "format": "ISO-8601 UTC timestamp with trailing Z"
+        }
+      }
+    },
+    "replacement_required": {
+      "type": "boolean",
+      "description": "Whether potassium replacement or escalation is recommended under the applicable protocol."
+    },
+    "potassium_plan": {
+      "type": "enum",
+      "allowed_values": [
+        "routine_oral_repletion",
+        "no_replacement",
+        "urgent_escalation",
+        "hold_due_to_contraindication"
+      ]
+    },
+    "oral_dose_mEq": {
+      "type": ["integer", "null"],
+      "unit": "mEq",
+      "description": "Oral replacement dose when a routine oral plan applies; otherwise null."
+    },
+    "medication_order": {
+      "type": "object",
+      "required_keys": ["ndc", "medication", "route", "frequency", "status"],
+      "fields": {
+        "ndc": {
+          "type": ["string", "null"],
+          "description": "Medication code when a potassium medication recommendation is present."
+        },
+        "medication": {
+          "type": ["string", "null"],
+          "description": "Medication name."
+        },
+        "route": {
+          "type": ["enum", "null"],
+          "allowed_values": ["PO", "IV", "per_urgent_protocol", null]
+        },
+        "frequency": {
+          "type": ["enum", "null"],
+          "allowed_values": ["once", "BID", "TID", "per_urgent_protocol", null]
+        },
+        "status": {
+          "type": "enum",
+          "allowed_values": ["recommended", "not_recommended", "defer_to_urgent_clinician"]
+        }
+      }
+    },
+    "follow_up_lab": {
+      "type": "object",
+      "required_keys": ["loinc", "scheduled_time"],
+      "fields": {
+        "loinc": {
+          "type": ["string", "null"],
+          "description": "Follow-up serum potassium lab LOINC code when a follow-up lab is needed."
+        },
+        "scheduled_time": {
+          "type": ["string", "null"],
+          "format": "ISO-8601 UTC timestamp with trailing Z, or null"
+        }
+      }
+    },
+    "urgent_actions": {
+      "type": "list",
+      "item_type": "enum",
+      "allowed_values": [
+        "urgent_clinician_notification",
+        "ekg_now",
+        "telemetry_or_ed_evaluation"
+      ],
+      "ordering_rule": "Sort by clinical action sequence when actions are required; use an empty list when none are required."
+    },
+    "contraindications": {
+      "type": "object",
+      "required_keys": ["dialysis_dependent", "arrhythmia_symptoms", "egfr"],
+      "fields": {
+        "dialysis_dependent": {
+          "type": "boolean"
+        },
+        "arrhythmia_symptoms": {
+          "type": "boolean"
+        },
+        "egfr": {
+          "type": ["integer", "null"],
+          "unit": "mL/min/1.73m2"
+        }
+      }
+    },
+    "evidence_ids": {
+      "type": "list",
+      "item_type": "string",
+      "ordering_rule": "List the main observation, renal-function, and case evidence identifiers in descending relevance."
+    }
+  },
+  "output_rules": {
+    "extra_keys": "Do not include extra top-level keys.",
+    "nulls": "Use null only where the field specification permits it.",
+    "text": "Use controlled enum values rather than prose for scored status and action fields."
+  }
+}

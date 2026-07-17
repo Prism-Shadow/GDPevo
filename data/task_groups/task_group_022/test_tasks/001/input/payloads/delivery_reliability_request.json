@@ -1,0 +1,47 @@
+{
+  "request_id": "DELIVERY-RELIABILITY-MAYPEAK-2026",
+  "business_owner": "Delivery Programs and Network Operations",
+  "campaign_id": "CMP-MAYPEAK-26",
+  "cutoff_at": "2026-06-15T23:59:59Z",
+  "cohort": "Eligible production orders attributed to the named campaign and created during that campaign's official active window.",
+  "business_definitions": {
+    "complete_order": "An order is complete only when it has at least one physical shipment and every physical shipment associated with it is effectively DELIVERED by the cutoff. An order with no physical shipment is not complete.",
+    "on_time_complete_order": "A complete order is on time only when every associated shipment was effectively delivered no later than that shipment's promised_delivery_at.",
+    "partial_or_unshipped_order": "An eligible order is partial or unshipped when it has no physical shipments or at least one associated shipment is not effectively DELIVERED by the cutoff.",
+    "severe_exception": "An eligible order is severe when it is incomplete and the cutoff is more than 36 hours after its latest shipment promise, or when it completed with any shipment delivered more than 36 hours after that shipment's promise. An incomplete order with no shipment promise does not meet the first condition.",
+    "late_delivered_shipment": "An effectively delivered shipment is late when its effective delivery time is after its own promised_delivery_at."
+  },
+  "rollups": {
+    "on_time_complete_order_rate": "On-time complete eligible orders divided by all eligible production orders. Partial and unshipped eligible orders remain in the denominator.",
+    "warehouse_reliability": "Use the warehouse ID assigned to each order. Include every warehouse represented by an eligible order, and calculate the overall on-time complete-order rate within each warehouse.",
+    "warehouse_ranking": "Order all represented warehouses by the unrounded warehouse on-time complete-order rate descending, then warehouse ID ascending.",
+    "carrier_late_shipment_rate": "For each carrier represented by an effectively delivered shipment attached to an eligible order, divide its late delivered shipments by all of its effectively delivered shipments.",
+    "highest_late_rate_carrier": "Choose the carrier with the highest unrounded late-shipment rate, breaking an exact tie by carrier code ascending.",
+    "severe_exception_rate": "Severe exception orders divided by all eligible production orders; use this rate only for service-status classification."
+  },
+  "rounding": "Round only final reported rates to four decimal places.",
+  "service_status_rules": [
+    {
+      "status": "HEALTHY",
+      "condition": "on-time complete-order rate is at least 0.90 and severe-exception rate is below 0.04"
+    },
+    {
+      "status": "WATCH",
+      "condition": "on-time complete-order rate is at least 0.80 and severe-exception rate is below 0.10"
+    },
+    {
+      "status": "CRITICAL",
+      "condition": "neither HEALTHY nor WATCH applies"
+    }
+  ],
+  "required_output": [
+    "eligible_production_order_count",
+    "effectively_complete_order_count",
+    "on_time_complete_order_rate",
+    "partial_or_unshipped_order_count",
+    "warehouse_reliability_ranking",
+    "severe_exception_order_ids",
+    "highest_late_rate_carrier",
+    "service_status"
+  ]
+}

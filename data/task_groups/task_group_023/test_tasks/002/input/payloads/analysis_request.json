@@ -1,0 +1,85 @@
+{
+  "briefing_id": "PHO-COUNTY-MED-2024-NS-ALGORITHMIC-AUDIT",
+  "protocol_id": "PHO_COUNTY_MEDIATION_TRANSPORT_V1",
+  "protocol_application": "Execute the complete registered protocol. This request supplies the independent held-out data scope and task-specific overrides only; inherit every unoverridden computational convention from the registered protocol.",
+  "years": [2021, 2022, 2023, 2024],
+  "regions": ["Northeast", "South"],
+  "outcome": "depression",
+  "exposure": "severe_housing_cost_burden",
+  "mediator": "short_sleep",
+  "precision": "Do not round during calculation. Round every requested non-integer only in the final JSON to four decimal places.",
+  "publication_selection": {
+    "health_filter": "value_type=CRUDE and release_status=FINAL",
+    "health_rule": "Within each year, county, and required measure, retain greatest (revision, released_at, observation_id), compared in that order. A retained suppressed or null row remains in the selected-row count but is incomplete.",
+    "socioeconomic_filter": "release_status=FINAL",
+    "socioeconomic_rule": "Within each year and county, retain greatest (revision, released_at, record_id), compared in that order.",
+    "basic_complete_year": "All three selected health rows exist, are unsuppressed, and have non-null values; the selected socioeconomic row has non-null poverty and median_income; and RUCC is non-null.",
+    "primary_cohort": "Basic-complete in 2024.",
+    "balanced_panel_cohort": "Basic-complete in every year 2021 through 2024.",
+    "machine_learning_cohort": "Primary cohort members whose selected 2024 socioeconomic row also has non-null bachelors, unemployment, net_migration, and uninsured.",
+    "ordering": "Sort county rows by county_fips and states by state_abbr unless a module gives a more specific order."
+  },
+  "shared_design": {
+    "income": "median_income divided by 10000",
+    "rucc": "Fixed indicators RUCC=2,...,9 in that order, with RUCC=1 as reference.",
+    "primary_total": "Standard OLS total-effect model for depression with severe housing cost burden as exposure and poverty, scaled income, and the fixed RUCC indicators as covariates.",
+    "primary_path_a": "Standard OLS path-a model for short sleep with the same exposure and covariates as the total-effect model.",
+    "primary_direct": "Standard OLS direct-effect model for depression that adds short sleep to the total-effect specification."
+  },
+  "difference_gmm_mediation": {
+    "cohort": "balanced_panel_cohort",
+    "change_periods": [2023, 2024],
+    "outcome": "depression",
+    "exposure": "severe_housing_cost_burden",
+    "mediator": "short_sleep",
+    "change_controls": ["poverty", "income"],
+    "period_indicator": "year=2024",
+    "exposure_instrument": "severe_housing_cost_burden level lagged two years",
+    "direct_system_additional_instrument": "short_sleep level lagged two years"
+  },
+  "nested_state_ridge": {
+    "feature_maps": {
+      "base_order": ["housing", "poverty", "income", "bachelors", "unemployment", "net_migration", "uninsured", "housing^2", "poverty^2", "income^2", "housing*poverty", "housing*income", "RUCC2", "RUCC3", "RUCC4", "RUCC5", "RUCC6", "RUCC7", "RUCC8", "RUCC9"],
+      "augmented_append_order": ["short_sleep", "short_sleep^2", "housing*short_sleep", "short_sleep*poverty"]
+    },
+    "cohort": "machine_learning_cohort",
+    "target": "2024 depression",
+    "lambda_grid": [0.01, 0.1, 1.0, 10.0, 100.0]
+  },
+  "wild_cluster_bootstrap_t": {
+    "primary_year": 2024,
+    "target_order": ["TOTAL_HOUSING", "PATH_A_HOUSING", "PATH_B_SLEEP"],
+    "seed": 23022024
+  },
+  "state_grouped_conformal": {
+    "cohort": "machine_learning_cohort",
+    "source_model": "nested_state_ridge augmented feature map",
+    "fixed_lambda": 10
+  },
+  "mediation_sensitivity_surface": {
+    "baseline": "Use the 2024 primary OLS path-a housing coefficient, direct-model short-sleep coefficient, its classical OLS standard error, and the direct-model residual degrees of freedom.",
+    "r2_mediator_confounder_values": [0.05, 0.1, 0.2, 0.3, 0.4],
+    "r2_outcome_confounder_values": [0.05, 0.1, 0.2, 0.3, 0.4]
+  },
+  "trajectory_pca_clustering": {
+    "cohort": "balanced_panel_cohort",
+    "aggregation_unit": "state",
+    "years": [2021, 2022, 2023, 2024],
+    "within_year_feature_order": ["HOUSING", "SLEEP", "DEPRESSION"],
+    "source_measures": ["severe_housing_cost_burden", "short_sleep", "depression"]
+  },
+  "controlled_conclusion": {
+    "difference_gmm_supported": "The stacked indirect 95% interval excludes zero.",
+    "nested_ridge_supported": "Augmented pooled RMSE is below base pooled RMSE and augmented RMSE is lower in at least 14 outer states.",
+    "bootstrap_supported": "Both PATH_A_HOUSING and PATH_B_SLEEP bootstrap p-values are below 0.05.",
+    "grouped_conformal_calibrated": "Overall coverage is at least 0.90 and at least 20 states have coverage at least 0.80.",
+    "sensitivity_robust": "Every POSITIVE surface row with both R2 values at most 0.10 has the same nonzero indirect-effect sign as the baseline indirect.",
+    "trajectory_stable": "Mean leave-one-year-out ARI is at least 0.60 and minimum ARI is at least 0.40.",
+    "classification_order": [
+      "Return CONSISTENT_MULTI_SYSTEM_MEDIATION when all six flags are true.",
+      "Otherwise return PARTIAL_MULTI_SYSTEM_SUPPORT when at least four flags are true.",
+      "Otherwise return FRAGILE_MULTI_SYSTEM_SUPPORT when at least two flags are true.",
+      "Otherwise return NO_MULTI_SYSTEM_SUPPORT."
+    ]
+  }
+}

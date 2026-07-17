@@ -14,9 +14,10 @@ normally remain near that band; justified outliers are allowed, but a group
 should not pass because very easy and impossible tasks merely average together.
 
 After using a skill derived directly from the train set, overall fewshot
-`avg@3` should improve by roughly `0.10-0.20` over base `avg@3`. Inspect each
-task as well: the intended transfer points should improve without making most
-tasks score `0.95` or higher or otherwise approach a perfect score.
+`avg@3` should improve by roughly `0.10-0.30` over base `avg@3` while remaining
+roughly below `0.80`. Inspect each task as well: the intended transfer points
+should improve without making most tasks score `0.95` or higher or otherwise
+approach a perfect score.
 
 The train-derived skill should not make every test task score extremely high. If most or all test tasks score `0.95` or higher after using the skill, or otherwise approach a perfect score, the SOP is probably too simple, too mechanical, or too directly inferable from the train tasks.
 
@@ -142,7 +143,7 @@ Record at least:
 - Base `avg@3`, fewshot `avg@3`, and gain for each test task.
 - Overall base `avg@3` and overall fewshot `avg@3` across the 5 test tasks.
 - Whether overall base `avg@3` is about `0.40-0.60` and whether individual task outliers are justified.
-- Whether overall fewshot gain is about `0.10-0.20`, with a per-task explanation of which transfer-dependent rubric points changed.
+- Whether overall fewshot `avg@3` remains roughly below `0.80` and its gain is about `0.10-0.30`, with a per-task explanation of which transfer-dependent rubric points changed.
 - Whether fewshot scores saturate across most or all test tasks, and if so which scoring points became too easy.
 - Whether low scores come from transfer failure or task complexity, not prompt ambiguity, schema friction, or fragile evaluation.
 
@@ -150,7 +151,7 @@ Builder-authored, hand-mutated, synthetic, or counterfactual prediction files do
 
 ## Rework Loop
 
-If calibration or review fails, the task group must be reworked and checked again before it can move to `data_construction/task_groups/<task_group_id>/`.
+If calibration or review fails, the task group must be reworked and checked again before construction is considered complete.
 
 When overall base `avg@3` is outside roughly `0.40-0.60`, or individual tasks
 are implausibly easy or impossible, the main agent may rework any combination
@@ -184,7 +185,7 @@ skill reveals too much of the test solution, the train/test variants are too
 mechanically similar, or correlated rubric points all reward the same learned
 decision. Rework the transfer design rather than accepting an inflated gain.
 
-When train-derived skill scores are too high across most or all test tasks by fewshot `avg@3`, rework should make the SOP less mechanical and the test tasks less directly solved by train examples. The main agent may increase train/test diversity within the same real-task distribution, require more task-specific evidence discovery, add larger or messier data, broaden environment surfaces, move some easy payload information into `env/`, or redesign scoring points so that the skill helps but does not answer the whole task. Do not reduce scores by adding ambiguity, hidden information, brittle schemas, or unfair evaluator behavior.
+When overall fewshot `avg@3` reaches roughly `0.80` or higher, or train-derived skill scores are otherwise too high across most or all test tasks, rework should make the SOP less mechanical and the test tasks less directly solved by train examples. The main agent may increase train/test diversity within the same real-task distribution, require more task-specific evidence discovery, add larger or messier data, broaden environment surfaces, move some easy payload information into `env/`, or redesign scoring points so that the skill helps but does not answer the whole task. Do not reduce scores by adding ambiguity, hidden information, brittle schemas, or unfair evaluator behavior.
 
 When review finds structural, leakage, evaluation, or data-generation problems, the main agent assigns rework to the responsible subagent, reintegrates the result, reruns evaluators, reruns calibration when needed, and requests review again. Final acceptance requires three valid base attempts and three valid fewshot attempts for every test task after the last relevant rework.
 
@@ -217,13 +218,11 @@ The reviewer subagent should check:
 - Whether every train and test task has `input/payloads/answer_template.json`, and whether `output/answer.json` conforms to that template.
 - Whether evaluation is rule-based, reproducible, and covers key business judgments.
 - Whether every task has 6-10 scoring points, raw weights only use `1`, `2`, or `3`, and final score is normalized by `weight / sum(weight)`.
-- Whether the rubric spans at least 4 independently fail-able business questions or aspects, rather than splitting one root decision into duplicated points that all rise or fall together.
-- Whether `scratch/rubric_validation.md` maps rubric dependencies and contains selective perturbation probes showing that independent mistakes lose only the intended credit.
-- Whether indivisible points use deterministic exact match and naturally decomposable points can award documented partial credit with an earned fraction in `[0, 1]`.
+- Whether `scratch/rubric_validation.md` confirms that every point earns either all of its assigned score or zero.
 - Whether scoring points prefer numeric, enum, boolean, ranking, set, or normalized structured outputs; if string matching is needed, whether it has been converted into controlled-choice fields to avoid schema friction.
 - Whether most scoring points genuinely depend on train transfer, substantial data exploration, or long-horizon work, instead of being obtainable without train learning or deep data exploration.
 - Whether `scratch/difficulty_calibration.md` contains 15 valid base and 15 valid fewshot Dockerized `codex exec` attempts, all launched with `gpt-5.5`, `xhigh` reasoning effort, the fixed prompts, and dedicated staged work/Codex-home directories.
 - Whether 3 independent fewshot skills were generated from the 5 train inputs and matching standard answers, with isolated Dockerized processes and package roots under `scratch/train_skill/fewshot_attempt_<nn>/`.
 - Whether overall base `avg@3` is about `0.40-0.60`, with implausible per-task outliers reworked or justified.
-- Whether overall fewshot gain is about `0.10-0.20` and comes from intended transfer-dependent aspects rather than duplicated rubric points.
+- Whether overall fewshot `avg@3` remains roughly below `0.80`, with a gain of about `0.10-0.30` that comes from intended transfer-dependent aspects.
 - Whether fewshot `avg@3` avoids saturation across most or all test tasks; if most skill scores reach `0.95` or higher or otherwise approach a perfect score, whether the SOP, task diversity, data exploration, environment, or scoring points should be reworked.

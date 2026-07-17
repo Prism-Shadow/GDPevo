@@ -10,10 +10,8 @@ This directory defines the workspace structure, construction requirements, and f
 | --- | --- |
 | `guides/` | Construction guides split by topic |
 | `seed_scenario/` | One copied stage 1 scenario and its selected examples |
-| `task_group/` | The task group currently under construction |
+| `task_group/` | The task group under construction; keep the completed reviewed task group here |
 | `scratch/` | Design drafts, data-generation records, calibration records, review notes, and intermediate artifacts |
-
-After construction and review, move the completed task group to `data_construction/task_groups/<task_group_id>/`.
 
 ## Guides
 
@@ -48,12 +46,12 @@ Read these files in order before construction:
 - Scripts are allowed only when their scope is narrow and explicit, such as shared `env/` data generation, one task-builder's local transformation or evaluator helper, or validation. They must not replace the required env-builder and task-builder subagent workflow.
 - Generate 3 independent fewshot skill packages using 3 isolated processes. Each generator receives the 5 train inputs, the matching train `output/answer.json` files, and the environment entrypoint, then writes one complete package under `scratch/train_skill/fewshot_attempt_<nn>/` with `SKILL.md` as its entry file.
 - Difficulty calibration must not use orchestration subagents as solvers. Every fewshot skill-generation, base, and fewshot run is a separate Dockerized `codex exec` process using `gpt-5.5` with `xhigh` reasoning effort, a dedicated staged `/work`, temporary `CODEX_HOME`, fixed launch prompt, and preserved raw trace. Never inherit or substitute the construction agent's model for calibration.
-- Overall base `avg@3` should be about `0.40-0.60`; fewshot should add about `0.10-0.20` overall without broad score saturation.
+- Overall base `avg@3` should be about `0.40-0.60`; fewshot should add about `0.10-0.30` while remaining roughly below `0.80` overall and avoiding broad score saturation.
 - `notes/notes.md` is the interpretability file for each task. It records the problem definition, solution method, transfer source, model pitfalls, evaluation criteria, and data-generation notes.
 - `notes/notes.md` should be bilingual in English and Chinese for human review. It is the only final task-group artifact that should contain Chinese; solver-visible inputs, answer templates, standard answers, evaluators, task metadata, and environment files should remain English-only.
 - Every train and test task must include `input/payloads/answer_template.json`, which defines the required output JSON shape, field types, numeric precision, and allowed enum choices.
-- Each task should normally contain 6-10 scoring points spanning at least 4 independently fail-able business questions or aspects. Splitting one underlying decision into many correlated rows is not multidimensional evaluation.
-- Each point has raw weight `1`, `2`, or `3`, normalized by `weight / sum(weight)`. A point may award deterministic partial credit when its business result has meaningful independent subchecks; evaluators must expose the earned fraction and must not turn the whole rubric into one all-or-nothing dependency chain.
+- Each task should normally contain 6-10 scoring points spanning at least 4 distinct business questions or outcomes. Points should avoid using different wording to reward the same underlying criterion, answer fact, or root decision more than once. Splitting one decision into correlated or semantically duplicate rows is not multidimensional evaluation.
+- Each point has raw weight `1`, `2`, or `3`, converted into that point's assigned score by `weight / sum(weight)`. A point earns all of its assigned score when its complete goal passes, otherwise it earns zero. Do not award fractions within a point. Genuinely different outcomes that can be wrong separately should use separate meaningful points, but rephrasing the same outcome must not create extra credit.
 - Scoring points should prefer numeric, enum, boolean, ranking, set, or normalized structured results. If a scored field would otherwise require string matching, convert it into a controlled-choice field in `answer_template.json` to avoid schema friction.
 - Most scoring points must depend on transfer learning, substantial data exploration, or long-horizon work. Base attempts should not obtain most points by simply reading the prompt or filling a format.
 - Solver-visible `prompt.txt` and `input/payloads/` must not plainly leak SOPs, key facts, tool workflows, or step lists such as `(1)(2)(3)(4)`.

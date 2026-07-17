@@ -1,0 +1,79 @@
+{
+  "template_version": "1.0",
+  "output_file": "answer.json",
+  "type": "object",
+  "additional_properties": false,
+  "required": [
+    "eligible_production_task_count",
+    "completed_production_units",
+    "top_three_employee_ids",
+    "top_employee_units_per_hour",
+    "rework_task_count",
+    "rework_rate",
+    "delayed_high_priority_task_ids",
+    "lowest_performing_team_id",
+    "facility_status"
+  ],
+  "properties": {
+    "eligible_production_task_count": {
+      "type": "integer",
+      "minimum": 0,
+      "unit": "tasks"
+    },
+    "completed_production_units": {
+      "type": "integer",
+      "minimum": 0,
+      "unit": "individual units"
+    },
+    "top_three_employee_ids": {
+      "type": "array",
+      "min_items": 3,
+      "max_items": 3,
+      "unique_items": true,
+      "items": {
+        "type": "string",
+        "identifier": "employee_id"
+      },
+      "ordering": "units_per_hour descending, then employee_id ascending"
+    },
+    "top_employee_units_per_hour": {
+      "type": "number",
+      "minimum": 0,
+      "unit": "completed production units per productive hour",
+      "decimal_places": 2
+    },
+    "rework_task_count": {
+      "type": "integer",
+      "minimum": 0,
+      "unit": "tasks"
+    },
+    "rework_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "unit": "ratio of eligible production tasks",
+      "decimal_places": 4
+    },
+    "delayed_high_priority_task_ids": {
+      "type": "array",
+      "unique_items": true,
+      "items": {
+        "type": "string",
+        "identifier": "task_id"
+      },
+      "ordering": "task_id ascending"
+    },
+    "lowest_performing_team_id": {
+      "type": "string",
+      "identifier": "team_id"
+    },
+    "facility_status": {
+      "type": "string",
+      "enum": [
+        "STABLE",
+        "PRESSURED",
+        "AT_RISK"
+      ]
+    }
+  }
+}

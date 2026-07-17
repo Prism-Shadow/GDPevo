@@ -1,0 +1,293 @@
+{
+  "matter_id": "M-CRN-041",
+  "production_phase": "first_rolling",
+  "category_findings": [
+    {
+      "category_id": "CRN-03",
+      "finding_id": "CF-CRN-03-MISCODED-COMPLAINT",
+      "category_status": "needs_supplemental_production",
+      "blocked": true,
+      "issue_ids": [
+        "PI-CRN-QA-MISCODE"
+      ],
+      "affected_sources": [
+        "email"
+      ],
+      "source_event_ids": [
+        "CE-0002",
+        "DOC-CRN-TEST-ACC-001",
+        "PL-0001",
+        "QC-0001"
+      ],
+      "primary_action": "reprocess_qc",
+      "notice_required": false
+    },
+    {
+      "category_id": "CRN-04",
+      "finding_id": "CF-CRN-04-PRIVILEGE-LOG-GAP",
+      "category_status": "needs_privilege_correction",
+      "blocked": true,
+      "issue_ids": [
+        "PI-CRN-PRIV-UNLOGGED"
+      ],
+      "affected_sources": [
+        "email",
+        "legal hold system",
+        "review platform"
+      ],
+      "source_event_ids": [
+        "PL-0002",
+        "PV-0001"
+      ],
+      "primary_action": "privilege_log_supplement",
+      "notice_required": true
+    },
+    {
+      "category_id": "CRN-05",
+      "finding_id": "CF-CRN-05-PERSONAL-CHANNEL-GAP",
+      "category_status": "blocked",
+      "blocked": true,
+      "issue_ids": [
+        "PI-CRN-PERSONAL-DEVICE"
+      ],
+      "affected_sources": [
+        "Signal",
+        "WhatsApp",
+        "personal phone"
+      ],
+      "source_event_ids": [
+        "CE-0001"
+      ],
+      "primary_action": "regulator_notice",
+      "notice_required": true
+    },
+    {
+      "category_id": "CRN-06",
+      "finding_id": "CF-CRN-06-OVERBROAD-COUNSEL",
+      "category_status": "needs_privilege_review",
+      "blocked": true,
+      "issue_ids": [
+        "PI-CRN-COUNSEL-OVERBROAD"
+      ],
+      "affected_sources": [
+        "email",
+        "legal files"
+      ],
+      "source_event_ids": [
+        "PL-0003",
+        "PV-0002"
+      ],
+      "primary_action": "privilege_review",
+      "notice_required": false
+    }
+  ],
+  "priority_issues": [
+    {
+      "issue_id": "PI-CRN-COUNSEL-OVERBROAD",
+      "issue_type": "privilege_overdesignation",
+      "severity": "medium",
+      "timing_class": "privilege_protocol_defect",
+      "category_ids": [
+        "CRN-06"
+      ],
+      "custodian_ids": [
+        "C-GW-014"
+      ],
+      "document_ids": [],
+      "source_event_ids": [
+        "PL-0003",
+        "PV-0002"
+      ],
+      "affected_sources": [
+        "email",
+        "legal files"
+      ],
+      "affected_count": 1247,
+      "produced_count": 0,
+      "withheld_count": 1247,
+      "privilege_logged_count": 0,
+      "unlogged_privilege_count": 1247,
+      "primary_action": "privilege_review",
+      "secondary_actions": [
+        "produce_nonprivileged"
+      ],
+      "notice_required": false
+    },
+    {
+      "issue_id": "PI-CRN-PERSONAL-DEVICE",
+      "issue_type": "personal_channel_gap",
+      "severity": "critical",
+      "timing_class": "post_hold_spoliation",
+      "category_ids": [
+        "CRN-05"
+      ],
+      "custodian_ids": [
+        "C-GW-014"
+      ],
+      "document_ids": [],
+      "source_event_ids": [
+        "CE-0001"
+      ],
+      "affected_sources": [
+        "Signal",
+        "WhatsApp",
+        "personal phone"
+      ],
+      "affected_count": 1,
+      "produced_count": 0,
+      "withheld_count": 0,
+      "privilege_logged_count": 0,
+      "unlogged_privilege_count": 0,
+      "primary_action": "regulator_notice",
+      "secondary_actions": [
+        "custodian_declaration",
+        "forensic_recovery",
+        "hold_refresh",
+        "supplemental_collection"
+      ],
+      "notice_required": true
+    },
+    {
+      "issue_id": "PI-CRN-PRIV-UNLOGGED",
+      "issue_type": "privilege_log_gap",
+      "severity": "high",
+      "timing_class": "privilege_protocol_defect",
+      "category_ids": [
+        "CRN-04"
+      ],
+      "custodian_ids": [
+        "C-GW-014"
+      ],
+      "document_ids": [],
+      "source_event_ids": [
+        "PL-0002",
+        "PV-0001"
+      ],
+      "affected_sources": [
+        "email",
+        "legal hold system",
+        "review platform"
+      ],
+      "affected_count": 4232,
+      "produced_count": 618,
+      "withheld_count": 4232,
+      "privilege_logged_count": 1847,
+      "unlogged_privilege_count": 2385,
+      "primary_action": "privilege_log_supplement",
+      "secondary_actions": [
+        "privilege_review",
+        "regulator_notice"
+      ],
+      "notice_required": true
+    },
+    {
+      "issue_id": "PI-CRN-QA-MISCODE",
+      "issue_type": "review_coding_error",
+      "severity": "high",
+      "timing_class": "coding_error",
+      "category_ids": [
+        "CRN-03"
+      ],
+      "custodian_ids": [
+        "C-QA-027"
+      ],
+      "document_ids": [
+        "DOC-CRN-TEST-ACC-001"
+      ],
+      "source_event_ids": [
+        "CE-0002",
+        "DOC-CRN-TEST-ACC-001",
+        "PL-0001",
+        "QC-0001"
+      ],
+      "affected_sources": [
+        "email"
+      ],
+      "affected_count": 1,
+      "produced_count": 0,
+      "withheld_count": 0,
+      "privilege_logged_count": 0,
+      "unlogged_privilege_count": 0,
+      "primary_action": "reprocess_qc",
+      "secondary_actions": [
+        "supplemental_production"
+      ],
+      "notice_required": false
+    }
+  ],
+  "disclosure_required": true,
+  "next_actions": [
+    {
+      "rank": 1,
+      "action_id": "NA-REGULATOR-NOTICE",
+      "action": "regulator_notice",
+      "issue_ids": [
+        "PI-CRN-PERSONAL-DEVICE",
+        "PI-CRN-PRIV-UNLOGGED"
+      ],
+      "category_ids": [
+        "CRN-04",
+        "CRN-05"
+      ],
+      "owner_queue": "legal",
+      "disclosure_step": true,
+      "due_basis": "before SEC status call"
+    },
+    {
+      "rank": 2,
+      "action_id": "NA-PERSONAL-SOURCES",
+      "action": "supplemental_collection",
+      "issue_ids": [
+        "PI-CRN-PERSONAL-DEVICE"
+      ],
+      "category_ids": [
+        "CRN-05"
+      ],
+      "owner_queue": "client_it",
+      "disclosure_step": false,
+      "due_basis": "immediate forensic and custodian follow-up"
+    },
+    {
+      "rank": 3,
+      "action_id": "NA-QC-REPROCESS",
+      "action": "reprocess_qc",
+      "issue_ids": [
+        "PI-CRN-QA-MISCODE"
+      ],
+      "category_ids": [
+        "CRN-03"
+      ],
+      "owner_queue": "review_vendor",
+      "disclosure_step": false,
+      "due_basis": "before supplemental production"
+    },
+    {
+      "rank": 4,
+      "action_id": "NA-PRIVILEGE-LOG",
+      "action": "privilege_log_supplement",
+      "issue_ids": [
+        "PI-CRN-PRIV-UNLOGGED"
+      ],
+      "category_ids": [
+        "CRN-04"
+      ],
+      "owner_queue": "privilege_team",
+      "disclosure_step": true,
+      "due_basis": "with corrected rolling privilege log"
+    },
+    {
+      "rank": 5,
+      "action_id": "NA-COUNSEL-OVERDESIGNATION",
+      "action": "privilege_review",
+      "issue_ids": [
+        "PI-CRN-COUNSEL-OVERBROAD"
+      ],
+      "category_ids": [
+        "CRN-06"
+      ],
+      "owner_queue": "privilege_team",
+      "disclosure_step": false,
+      "due_basis": "before certifying first rolling production complete"
+    }
+  ]
+}

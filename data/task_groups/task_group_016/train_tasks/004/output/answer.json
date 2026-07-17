@@ -1,0 +1,52 @@
+{
+  "task_id": "train_004",
+  "case_id": "CASE-CM-411",
+  "patient_id": "PAT-4411",
+  "risk_tier": "high",
+  "program": "complex_care_management",
+  "priority_problems": [
+    "uncontrolled_diabetes",
+    "esrd_on_hemodialysis",
+    "hfpEF_post_volume_overload",
+    "hyperphosphatemia",
+    "hypertension",
+    "polypharmacy"
+  ],
+  "numeric_anchors": {
+    "risk_score": 0.84,
+    "hba1c_percent": 9.4,
+    "phosphorus_mg_dl": 7.1,
+    "blood_pressure": "152/88",
+    "active_medication_count": 21
+  },
+  "referrals": [
+    "dialysis_care_coordination",
+    "pharmacist",
+    "social_worker",
+    "transportation_benefits"
+  ],
+  "outreach_stance": "permission_based_plain_language",
+  "care_plan_minima": {
+    "min_problem_count": 3,
+    "weekly_follow_up": true,
+    "requires_member_stated_priority": true,
+    "min_disciplines": 2
+  },
+  "escalation_conditions": [
+    "missed_dialysis_or_volume_overload",
+    "phq9_increase_or_item9_positive"
+  ],
+  "source_provenance": {
+    "chart_facts": [
+      "risk_score",
+      "hba1c_percent",
+      "phosphorus_mg_dl",
+      "active_medication_count"
+    ],
+    "member_disclosure_needed": [
+      "transportation_barrier",
+      "financial_medication_barrier",
+      "dialysis_fatigue"
+    ]
+  }
+}

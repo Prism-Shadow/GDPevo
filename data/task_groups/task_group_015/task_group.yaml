@@ -1,0 +1,358 @@
+task_group:
+  task_group_id: task_group_015
+  scenario_id: SCN_015_healthcare_ehr_quality_governance
+  source_examples:
+    - E001
+    - E002
+    - E003
+    - E004
+    - E005
+  domain: Healthcare Data Operations
+  description: |
+    Train-predict benchmark for EHR data governance and clinical record quality
+    control. Tasks use one shared read-only EHR/referral environment to audit
+    duplicate charts, referral readiness, service requests, care-transition
+    packets, ICD/code quality, and follow-up queues.
+
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+    - env/Dockerfile
+    - env/setup.sh
+    - env/app.py
+    - env/generate_data.py
+    - env/judge_api.py
+    - env/endpoints.txt
+    - env/data/records.json
+    - env/data/manifest.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/merge_packet_request.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct candidate id, canonical target/source, and merge disposition.
+          weight: 3
+        - goal: Correct test-family merge decision fields and packet readiness.
+          weight: 2
+        - goal: Correct active condition normalized-key union after the merge.
+          weight: 2
+        - goal: Correct active medication normalized-key union after the merge.
+          weight: 2
+        - goal: Correct active allergy normalized-key union after the merge.
+          weight: 2
+        - goal: Correct duplicate match-signal and conflict-signal sets.
+          weight: 2
+        - goal: Correct relevant document evidence ids for the merge packet.
+          weight: 2
+        - goal: Correct relevant audit evidence ids for the merge packet.
+          weight: 2
+        - goal: Correct active-list source precedence and inactive clinical/unrelated document distractor exclusions.
+          weight: 2
+        - goal: Correct specialist provider contact for packet routing.
+          weight: 1
+
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct patient/referral identity and referral header fields.
+          weight: 2
+        - goal: Correct active diagnosis set and cardiology referral code validation.
+          weight: 2
+        - goal: Correct active sulfa allergy details and allergy readiness classification.
+          weight: 2
+        - goal: Correct referral-relevant signed encounter evidence.
+          weight: 2
+        - goal: Correct final echocardiogram evidence and document packet status.
+          weight: 2
+        - goal: Correct receiving cardiology provider and directory fields.
+          weight: 2
+        - goal: Correct referral-relevant medication highlights.
+          weight: 1
+        - goal: Correct authorization, blocker, overall readiness, and letter choices.
+          weight: 2
+
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct patient identity and orthopedic recipient directory details.
+          weight: 2
+        - goal: Correct active condition normalized-key set.
+          weight: 2
+        - goal: Correct active medication normalized-key set.
+          weight: 2
+        - goal: Correct active allergy normalized-key set.
+          weight: 1
+        - goal: Correct four selected handoff encounters and order.
+          weight: 3
+        - goal: Correct orthopedic handoff source-selection rule, selected encounter sequence, and excluded distractor encounters.
+          weight: 3
+        - goal: Correct latest immunization id, date, and vaccine.
+          weight: 1
+        - goal: Correct permitted orthopedic surgical handoff disclosure.
+          weight: 2
+        - goal: Correct risk flag set and packet readiness decision.
+          weight: 3
+        - goal: Correct condition, medication, and encounter evidence mapped to each risk flag.
+          weight: 3
+
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct duplicate review hold decision and patient ids.
+          weight: 2
+        - goal: Correct duplicate conflict and match signal sets.
+          weight: 2
+        - goal: Correct service request id, patient id, service code, and service-code validity.
+          weight: 2
+        - goal: Correct service request status, intent, priority, and dates.
+          weight: 2
+        - goal: Correct reason codes and ICD/chart validation.
+          weight: 2
+        - goal: Correct SBAR section completeness.
+          weight: 2
+        - goal: Correct requester and performer provider assignment.
+          weight: 2
+
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct March batch identity and row/patient counts.
+          weight: 3
+        - goal: Correct invalid or out-of-range chapter/code referral set.
+          weight: 3
+        - goal: Correct laterality or narrative mismatch referral set.
+          weight: 2
+        - goal: Correct same-patient duplicate referral group and duplicate-resubmission tiering policy.
+          weight: 2
+        - goal: Correct shared-insurance patient anomaly distinction.
+          weight: 2
+        - goal: Correct authorization, records, and imaging follow-up queues.
+          weight: 2
+        - goal: Correct Tier 1 immediate action assignments including duplicate-group blocker rows.
+          weight: 2
+        - goal: Correct Tier 2 short-term action assignments.
+          weight: 2
+        - goal: Correct Tier 3 administrative action assignments.
+          weight: 2
+        - goal: Correct summary counts for the referral audit.
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct merge disposition, canonical target/source, manual review flag, and disposition reason codes.
+          weight: 3
+        - goal: Correct normalized active condition key union.
+          weight: 2
+        - goal: Correct normalized active medication key union.
+          weight: 2
+        - goal: Correct normalized active allergy key union.
+          weight: 1
+        - goal: Correct match signals and suffix/nickname conflict signals.
+          weight: 2
+        - goal: Correct relevant audit evidence selection.
+          weight: 2
+        - goal: Correct exclusion of unrelated merge log.
+          weight: 1
+        - goal: Correct packet readiness, review note, documents, and provider evidence.
+          weight: 3
+
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct patient/referral identity and referral header fields.
+          weight: 1
+        - goal: Correct active pulmonary diagnosis set, deduplicated COPD evidence, and ICD validation.
+          weight: 3
+        - goal: Correct active respiratory medication highlights and exclusion of non-respiratory active medication.
+          weight: 2
+        - goal: Correct active levofloxacin allergy details and completeness classification.
+          weight: 2
+        - goal: Correct most relevant signed pulmonology referral encounter evidence.
+          weight: 2
+        - goal: Correct existing chest X-ray/office-note evidence and missing spirometry blocker.
+          weight: 3
+        - goal: Correct receiving pulmonology provider and directory fields.
+          weight: 1
+        - goal: Correct authorization status, urgency, readiness tier, blockers, and letter choices.
+          weight: 2
+
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct patient identity and Meadowbrook Skilled Nursing recipient directory details.
+          weight: 2
+        - goal: Correct normalized active condition key set.
+          weight: 2
+        - goal: Correct normalized active medication key set.
+          weight: 2
+        - goal: Correct normalized active allergy key set.
+          weight: 1
+        - goal: Correct five selected SNF handoff encounters and order.
+          weight: 3
+        - goal: Correct SNF transition source-selection rule, selected encounter sequence, and excluded distractor encounters.
+          weight: 3
+        - goal: Correct latest immunization id, date, and vaccine.
+          weight: 1
+        - goal: Correct permitted Meadowbrook post-acute care transition disclosure.
+          weight: 2
+        - goal: Correct SNF risk flags, final chart-summary support, and packet readiness decision.
+          weight: 3
+        - goal: Correct condition, medication, and encounter evidence mapped to each SNF risk flag.
+          weight: 3
+
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct service request and patient identity.
+          weight: 2
+        - goal: Correct service code and provider assignment.
+          weight: 2
+        - goal: Correct ready-to-file active status, intent, priority, dates, and date validation.
+          weight: 2
+        - goal: Correct draft-source to active-order filing disposition.
+          weight: 3
+        - goal: Correct reason codes and ICD/chart validation.
+          weight: 2
+        - goal: Correct key signed encounter evidence.
+          weight: 2
+        - goal: Correct medication and current condition support.
+          weight: 2
+        - goal: Correct SBAR section completeness.
+          weight: 2
+
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct April batch identity and row/patient counts.
+          weight: 3
+        - goal: Correct invalid or out-of-range chapter/code referral set.
+          weight: 3
+        - goal: Correct laterality or narrative mismatch referral set.
+          weight: 2
+        - goal: Correct same-patient duplicate referral group.
+          weight: 2
+        - goal: Correct authorization, records, and imaging follow-up queues.
+          weight: 2
+        - goal: Correct insurance and patient anomaly classifications.
+          weight: 2
+        - goal: Correct Tier 1 immediate action assignments for urgent and duplicate-blocker rows with owner providers.
+          weight: 3
+        - goal: Correct Tier 2 and Tier 3 action split.
+          weight: 2
+        - goal: Correct summary counts for the referral audit.
+          weight: 2

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -145,13 +146,15 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
-        route = parsed.path.rstrip("/") or "/"
-        if route == "/api/judge":
-            length = int(self.headers.get("Content-Length", "0") or "0")
-            status, payload = judge_answer_request(self.rfile.read(length))
-            self.send_json(payload, status=status)
+        if parsed.path != "/api/judge":
+            self.send_json({"error": "not_found", "path": parsed.path}, status=404)
             return
-        self.send_json({"error": "not_found", "path": route}, status=404)
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            self.send_json({"error": "not_found", "path": parsed.path}, status=404)
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(payload, status=status)
 
     def first_match(self, dataset_route, key, value):
         rows = [row for row in STORE.data[dataset_route] if str(row.get(key, "")).lower() == value.lower()]
@@ -230,9 +233,12 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8005
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"Serving task_group_005 environment at http://127.0.0.1:{port}", flush=True)
+    host = os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0"))
+    port = (
+        int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9005")))
+    )
+    server = ThreadingHTTPServer((host, port), Handler)
+    print(f"Serving task_group_005 environment at http://{host}:{port}", flush=True)
     server.serve_forever()
 
 

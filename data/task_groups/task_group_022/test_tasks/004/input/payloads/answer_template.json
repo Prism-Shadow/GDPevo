@@ -1,0 +1,83 @@
+{
+  "format": "JSON object",
+  "extra_top_level_fields_allowed": false,
+  "required_top_level_keys": [
+    "eligible_account_ids",
+    "portfolio_fulfillment_failure_rate",
+    "portfolio_net_refund_exposure_usd",
+    "portfolio_support_breach_rate",
+    "bottom_three_accounts",
+    "critical_account_ids",
+    "dominant_risk_dimension",
+    "portfolio_status"
+  ],
+  "fields": {
+    "eligible_account_ids": {
+      "type": "array",
+      "items": "string account_id",
+      "unique_items": true,
+      "ordering": "account_id ascending"
+    },
+    "portfolio_fulfillment_failure_rate": {
+      "type": "number",
+      "unit": "ratio",
+      "precision_decimal_places": 4
+    },
+    "portfolio_net_refund_exposure_usd": {
+      "type": "number",
+      "unit": "USD",
+      "precision_decimal_places": 2
+    },
+    "portfolio_support_breach_rate": {
+      "type": "number",
+      "unit": "ratio",
+      "precision_decimal_places": 4
+    },
+    "bottom_three_accounts": {
+      "type": "array",
+      "length": 3,
+      "ordering": "unrounded health_score descending, then account_id ascending",
+      "items": {
+        "type": "object",
+        "required_keys": [
+          "account_id",
+          "health_score"
+        ],
+        "extra_fields_allowed": false,
+        "fields": {
+          "account_id": {
+            "type": "string",
+            "unit": "account_id"
+          },
+          "health_score": {
+            "type": "number",
+            "unit": "weighted ratio",
+            "precision_decimal_places": 4
+          }
+        }
+      }
+    },
+    "critical_account_ids": {
+      "type": "array",
+      "items": "string account_id",
+      "unique_items": true,
+      "ordering": "account_id ascending"
+    },
+    "dominant_risk_dimension": {
+      "type": "enum",
+      "allowed_values": [
+        "FULFILLMENT",
+        "REFUNDS",
+        "SUPPORT"
+      ]
+    },
+    "portfolio_status": {
+      "type": "enum",
+      "allowed_values": [
+        "HEALTHY",
+        "WATCH",
+        "CRITICAL"
+      ]
+    }
+  }
+}

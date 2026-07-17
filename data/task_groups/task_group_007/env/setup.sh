@@ -3,17 +3,15 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-PYTHON_BIN="${PYTHON_BIN:-python}"
-PORT="${PORT:-8007}"
-HOST="${HOST:-127.0.0.1}"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  PYTHON_BIN="python"
+fi
+HOST="${TASK_ENV_BIND:-${TASK_ENV_HOST:-0.0.0.0}}"
+PORT="${TASK_ENV_PORT:-${PORT:-9007}}"
 
 if [ ! -f "data/manifest.json" ]; then
   "$PYTHON_BIN" generate_data.py
 fi
 
-echo "Data directory: $(pwd)/data"
-echo "Startup command: $PYTHON_BIN server.py --host $HOST --port $PORT"
-
-if [ "${1:-}" = "start" ]; then
-  exec "$PYTHON_BIN" server.py --host "$HOST" --port "$PORT"
-fi
+exec "$PYTHON_BIN" server.py --host "$HOST" --port "$PORT"

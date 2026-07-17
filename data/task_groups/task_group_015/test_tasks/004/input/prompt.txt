@@ -1,0 +1,10 @@
+You are supporting the EHR quality-governance queue for a neurology referral order.
+
+Use the shared read-only EHR environment at `<TASK_ENV_BASE_URL>` and produce the normalized JSON requested in `input/payloads/answer_template.json`.
+
+Case objects:
+
+- Patient: `P-91804`
+- Draft ServiceRequest: `SR-TE-004`
+
+The available environment includes patient, condition, medication, encounter, ServiceRequest, provider, service-code, and ICD-10 endpoints. Validate the draft ServiceRequest against the chart and directory evidence, including the order fields, coded reasons, key clinical support, SBAR coverage, and the filing disposition needed for a ready order. Do not include procedural notes or narrative SOP text in the answer.

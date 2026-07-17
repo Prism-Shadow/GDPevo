@@ -1,0 +1,7 @@
+Carrier Quality Review — East Batch Reconciliation
+
+Carrier Operations needs the March east-facility quality review closed before the backlog report is released. The review scope in `payloads/carrier_quality_request.json` contains exactly one raw/canonical carrier-status contradiction. Identify the affected scan and shipment from the shared records, report the backlog at the stated cutoff, apply only the approved minimal canonical correction with its audit record, and report the post-correction result.
+
+The authenticated Atlas workplace is available at `<TASK_ENV_BASE_URL>`. Its schema, data dictionary, SQL query service, controlled SQL transaction service, and correction-audit view are available through the documented API endpoints. Runtime authorization is provided separately by the environment. Raw source values, source identity fields, and unrelated business rows must remain unchanged.
+
+Write the final response as JSON to `answer.json`. It must conform exactly to `input/payloads/answer_template.json`. Use `APPLIED` only if the transaction and post-change verification satisfy the success rule in the request; otherwise report `NOT_APPLIED` with the results actually observed.

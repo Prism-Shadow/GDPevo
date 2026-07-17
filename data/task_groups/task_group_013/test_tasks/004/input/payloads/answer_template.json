@@ -1,0 +1,193 @@
+{
+  "description": "Required JSON output shape for the RENAL-DM-2026B chronic-care enrollment outreach panel.",
+  "type": "object",
+  "required_top_level_keys": [
+    "program_code",
+    "as_of_date",
+    "patients",
+    "summary"
+  ],
+  "program_code": {
+    "type": "string",
+    "required_value": "RENAL-DM-2026B"
+  },
+  "as_of_date": {
+    "type": "string",
+    "format": "YYYY-MM-DD"
+  },
+  "patients": {
+    "type": "list",
+    "ordering": "Sort by patient_id ascending.",
+    "item_required_keys": [
+      "patient_id",
+      "eligible",
+      "enrollment_status",
+      "reason_codes",
+      "follow_up_cadence",
+      "renal_missing_chart_artifacts",
+      "outreach_channel",
+      "monitoring_package"
+    ],
+    "patient_id": {
+      "type": "string"
+    },
+    "eligible": {
+      "type": "boolean"
+    },
+    "enrollment_status": {
+      "type": "enum",
+      "allowed_values": [
+        "enroll",
+        "hold",
+        "reject"
+      ]
+    },
+    "reason_codes": {
+      "type": "list",
+      "ordering": "Treat as an unordered set.",
+      "allowed_values": [
+        "meets_renal_dm_criteria",
+        "recent_hospitalization_high_touch",
+        "low_adherence_high_touch",
+        "fall_risk_biweekly",
+        "complex_medication_review",
+        "consent_declined",
+        "consent_missing",
+        "chart_not_active",
+        "missing_program_consent",
+        "missing_recent_vitals",
+        "missing_recent_renal_labs",
+        "missing_demographics",
+        "wrong_target_condition",
+        "missing_active_renal_diabetes_diagnosis"
+      ]
+    },
+    "follow_up_cadence": {
+      "type": "enum",
+      "allowed_values": [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "deferred",
+        "none"
+      ]
+    },
+    "renal_missing_chart_artifacts": {
+      "type": "list",
+      "ordering": "Treat as an unordered set.",
+      "allowed_values": [
+        "chart_record",
+        "demographics",
+        "active_problems",
+        "vitals",
+        "renal_labs",
+        "medications",
+        "program_consent"
+      ]
+    },
+    "outreach_channel": {
+      "type": "enum",
+      "allowed_values": [
+        "phone",
+        "portal",
+        "sms",
+        "email",
+        "none"
+      ]
+    },
+    "monitoring_package": {
+      "type": "object",
+      "required_keys": [
+        "package_type",
+        "components",
+        "first_checkin_days"
+      ],
+      "package_type": {
+        "type": "enum",
+        "allowed_values": [
+          "standard_renal_dm",
+          "high_touch_renal_dm",
+          "deferred",
+          "not_applicable"
+        ]
+      },
+      "components": {
+        "type": "list",
+        "ordering": "Treat as an unordered set.",
+        "allowed_values": [
+          "bp_cuff",
+          "glucometer",
+          "renal_lab_order_egfr_uacr_cmp",
+          "medication_reconciliation",
+          "nephrology_coordination",
+          "care_plan_setup",
+          "consent_packet",
+          "chart_update_request",
+          "renal_lab_refresh_request"
+        ]
+      },
+      "first_checkin_days": {
+        "type": "integer_or_null",
+        "units": "calendar days after enrollment start"
+      }
+    }
+  },
+  "summary": {
+    "type": "object",
+    "required_keys": [
+      "total_candidates",
+      "eligible_count",
+      "ineligible_count",
+      "status_counts",
+      "follow_up_counts",
+      "outreach_counts",
+      "monitoring_package_counts"
+    ],
+    "integer_count_fields": [
+      "total_candidates",
+      "eligible_count",
+      "ineligible_count"
+    ],
+    "status_counts": {
+      "type": "object",
+      "required_keys": [
+        "enroll",
+        "hold",
+        "reject"
+      ],
+      "value_type": "integer"
+    },
+    "follow_up_counts": {
+      "type": "object",
+      "required_keys": [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "deferred",
+        "none"
+      ],
+      "value_type": "integer"
+    },
+    "outreach_counts": {
+      "type": "object",
+      "required_keys": [
+        "phone",
+        "portal",
+        "sms",
+        "email",
+        "none"
+      ],
+      "value_type": "integer"
+    },
+    "monitoring_package_counts": {
+      "type": "object",
+      "required_keys": [
+        "standard_renal_dm",
+        "high_touch_renal_dm",
+        "deferred",
+        "not_applicable"
+      ],
+      "value_type": "integer"
+    }
+  }
+}

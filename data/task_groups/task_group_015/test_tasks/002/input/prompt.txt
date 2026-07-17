@@ -1,0 +1,5 @@
+Prepare the normalized pulmonology referral readiness packet for referral `REF-APR-PULM-004` and patient `P-66591`.
+
+Use the EHR/referral environment at `<TASK_ENV_BASE_URL>`. Relevant available endpoints include referral detail and search, patient detail, conditions, medications, allergies, encounters, documents, provider directory, and ICD-10 lookup.
+
+Return a single JSON object that conforms to `input/payloads/answer_template.json`. The packet should reconcile the referral with the active chart, identify active pulmonary diagnoses and active respiratory medications, document allergy completeness, cite the most relevant referral encounter, summarize required document evidence and unresolved document blockers, identify the receiving pulmonology provider, classify authorization/readiness tier, and choose the normalized referral-letter field values.

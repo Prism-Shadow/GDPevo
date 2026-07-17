@@ -1,0 +1,55 @@
+{
+  "reconciliation": {
+    "requested_label_count": "integer; number of supplied country labels",
+    "matched_iso3_count": "integer; number reconciled to one stable ISO3 identifier",
+    "portal_alias_match_count": "integer; supplied labels matched through a non-canonical portal label"
+  },
+  "revision_quality_audit": {
+    "applied_scale_correction_count": "integer",
+    "applied_scale_corrections": {
+      "type": "list",
+      "ordering": "ascending by year, then ISO3, then indicator_id",
+      "item_fields": {
+        "iso3": "uppercase ISO3 string",
+        "indicator_id": "string",
+        "year": "integer"
+      }
+    },
+    "unresolved_scale_anomaly_count": "integer",
+    "unresolved_scale_anomalies": {
+      "type": "list",
+      "ordering": "ascending by ISO3, then year, then indicator_id",
+      "item_fields": {
+        "iso3": "uppercase ISO3 string",
+        "indicator_id": "string",
+        "year": "integer",
+        "notice_status": "enum: PENDING or WITHDRAWN"
+      }
+    },
+    "excluded_anomaly_iso3": "list of unique uppercase ISO3 strings in ascending order"
+  },
+  "matrix_audit": {
+    "eligible_country_count": "integer; countries entering the 2023 PCA matrix after anomaly exclusions",
+    "raw_missing_cell_count": "integer; missing cells before imputation",
+    "countries_with_missing_indicator_count": "integer",
+    "median_imputed_cell_count": "integer"
+  },
+  "pca": {
+    "retained_component_count": "integer",
+    "pc1_variance_fraction": "number rounded to 4 decimals; fraction, not percent",
+    "pc1_absolute_loading_order": "list containing all nine indicator IDs from largest to smallest absolute PC1 loading"
+  },
+  "clusters": {
+    "sizes_by_ascending_burden": "list of four integers; position 1 is the lowest mean PC1 cluster and position 4 is the highest",
+    "high_burden_iso3": "list of uppercase ISO3 strings in ascending order"
+  },
+  "panel_model": {
+    "country_count": "integer",
+    "observation_count": "integer country-year rows",
+    "other_countries_annual_slope": "number rounded to 4 decimals; years of life expectancy per calendar year",
+    "high_burden_by_year_interaction": "number rounded to 4 decimals; years per calendar year",
+    "interaction_p_value": "number rounded to 4 decimals",
+    "high_burden_annual_slope": "number rounded to 4 decimals; years per calendar year"
+  },
+  "conclusion": "enum: STALL_SUPPORTED, STALL_NOT_SUPPORTED, or INDETERMINATE"
+}

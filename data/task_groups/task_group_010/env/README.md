@@ -5,7 +5,7 @@ Shared Flask API for the institutional portfolio risk task group.
 ## Start
 
 ```bash
-PORT=8073 python env/app.py
+TASK_ENV_PORT=9010 env/setup.sh
 ```
 
 or:
@@ -14,7 +14,7 @@ or:
 env/setup.sh
 ```
 
-The service listens on `127.0.0.1` and defaults to port `8073`.
+The service listens on `TASK_ENV_BIND` and defaults to port `9010`.
 
 ## Generate Data
 

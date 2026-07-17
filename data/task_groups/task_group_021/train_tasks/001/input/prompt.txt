@@ -1,0 +1,7 @@
+The Partner Operations team needs a certification decision for the onboarding contact population identified in `payloads/case_scope.json`. Use the shared Asteria Fleet Data Quality Hub at `<TASK_ENV_BASE_URL>` to reconcile the overlapping source records as of the stated business cutoff and produce the canonical partner-contact results requested by the answer contract.
+
+The hub provides its catalog and schema, contact records, source-snapshot metadata, and an authenticated read-only query interface. Runtime access details are supplied separately in `environment_access.md`.
+
+Report the scoped quality counts, the membership and survivor decision for every focus-cluster label and seed row requested in the case scope, canonical contact and city results, the complete quarantine row set, channel-readiness counts, the regional canonical-entity rollup, and the certification decision. Include the applicable opaque Asteria identity, outreach, and field-provenance control codes for every focus decision, anchored control case, quarantine result, readiness partition, and inactive exclusion required by the answer contract. For readiness reporting, an entity is eligible only when it is active and retains at least one usable email or phone; a channel is ready only when consent is granted. Apply the certification thresholds and action mapping in the case scope.
+
+Return only one JSON object matching `payloads/answer_template.json`. Do not include commentary or Markdown.

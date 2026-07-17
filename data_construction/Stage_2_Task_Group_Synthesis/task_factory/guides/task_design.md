@@ -117,10 +117,9 @@ The draft should include at least:
 - A transfer coverage matrix that maps transfer-dependent test scoring points to one or more train anchors and states exactly what transfers.
 - Shared environment blueprint, or a pointer to `scratch/env_blueprint.md`.
 - Programmatic data-generation plan for the env-builder coding subagent to implement.
-- Evaluation and calibration plan, including each task's expected 6-10 scoring points, `1`/`2`/`3` raw weights, at least 4 independently fail-able business aspects, and deterministic exact-match or partial-credit logic.
-- A rubric independence map showing which business question and answer fields each point measures, which points share upstream dependencies, and why the rubric will not behave as one duplicated all-or-nothing check.
+- Evaluation and calibration plan, including each task's expected 6-10 scoring points, `1`/`2`/`3` raw weights, at least 4 semantically distinct business outcomes, no duplicate scoring of the same criterion or answer fact, and deterministic whole-point pass/fail logic.
 - Output-shape plan for `answer_template.json`, including numeric precision and controlled-choice fields for string-like outputs.
 - Labels for which scoring points depend on train-derived experience and which depend on substantial data exploration or long-horizon work, ensuring most score cannot be obtained by base attempts through simple reading.
-- A skill-saturation check: the train-derived skill should improve test performance but should not make most or all test tasks score `0.95` or higher or otherwise approach a perfect score.
+- A skill-saturation check: the train-derived skill should improve test performance, but overall fewshot `avg@3` should remain roughly below `0.80`; it should also not make most or all test tasks score `0.95` or higher or otherwise approach a perfect score.
 
 The design draft should assign task ownership and provide enough task-specific brief material for each task-builder subagent. It should not directly generate every task's `input/`, `notes/`, `output/`, and `eval/`. Those files are produced later by 10 task-builder subagents, one per task.

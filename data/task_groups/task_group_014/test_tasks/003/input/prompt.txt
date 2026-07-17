@@ -1,0 +1,15 @@
+You are the appeals coordinator prioritizing a specialty medication appeal and assistance docket.
+
+Use the shared SQL query service at `<TASK_ENV_BASE_URL>/query`. Submit SQL as JSON, for example:
+
+```json
+{"sql": "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name", "params": []}
+```
+
+Authenticate every request with HTTP Basic Auth using username `payer_ops_solver` and password `revcycle_sql_014`.
+
+Do not assume any local database path or hard-code a runtime host or port. Use only `<TASK_ENV_BASE_URL>` for environment access.
+
+The target scope is provided in `input/payloads/worklist.json`. Use the SQL service to review the target medication cases and return a structured docket that covers appeal viability, appeal turnaround, evidence or step-therapy gaps, internal versus external review posture, manufacturer assistance routing, and docket totals.
+
+Return one JSON object matching `input/payloads/answer_template.json`. Use stable ascending `med_case_id` order in `case_actions`. Return only valid JSON with no narrative text outside the JSON.

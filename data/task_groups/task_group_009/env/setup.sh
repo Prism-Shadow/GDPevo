@@ -2,10 +2,11 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PORT_VALUE="${1:-${PORT:-8047}}"
+HOST="${TASK_ENV_BIND:-${TASK_ENV_HOST:-0.0.0.0}}"
+PORT_VALUE="${TASK_ENV_PORT:-${PORT:-${1:-9009}}}"
 
 if [ ! -f "${SCRIPT_DIR}/data/manifest.json" ]; then
   python3 "${SCRIPT_DIR}/generate_data.py"
 fi
 
-python3 "${SCRIPT_DIR}/server.py" --host 127.0.0.1 --port "${PORT_VALUE}"
+exec python3 "${SCRIPT_DIR}/server.py" --host "$HOST" --port "${PORT_VALUE}"

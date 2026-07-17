@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sqlite3
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -45,7 +46,7 @@ class CreditOfficeHandler(BaseHTTPRequestHandler):
     server_version = "CreditOfficeHTTP/1.0"
 
     def log_message(self, fmt, *args):
-        sys.stderr.write("%s - - [%s] %s\n" % (self.address_string(), self.log_date_time_string(), fmt % args))
+        sys.stderr.write(f"{self.address_string()} - - [{self.log_date_time_string()}] {fmt % args}\n")
 
     def send_json(self, status, value):
         payload = json.dumps(value, indent=2, sort_keys=True).encode("utf-8")
@@ -66,16 +67,6 @@ class CreditOfficeHandler(BaseHTTPRequestHandler):
             self.send_error_json(500, f"database error: {exc}")
         except Exception as exc:
             self.send_error_json(500, str(exc))
-
-    def do_POST(self):
-        parsed = urlparse(self.path)
-        path_parts = [unquote(part) for part in parsed.path.strip("/").split("/") if part]
-        if path_parts == ["api", "judge"]:
-            length = int(self.headers.get("Content-Length", "0") or "0")
-            status, payload = judge_answer_request(self.rfile.read(length))
-            self.send_json(status, payload)
-            return
-        self.send_error_json(404, "endpoint not found")
 
     def route_get(self):
         parsed = urlparse(self.path)
@@ -223,11 +214,25 @@ class CreditOfficeHandler(BaseHTTPRequestHandler):
 
         self.send_error_json(404, "endpoint not found")
 
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        if parsed.path != "/api/judge":
+            self.send_error_json(404, "endpoint not found")
+            return
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            self.send_error_json(404, "endpoint not found")
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(status, payload)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Run the credit office API server.")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", default=8057, type=int)
+    parser.add_argument("--host", default=os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0")))
+    parser.add_argument(
+        "--port", default=int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9011"))), type=int
+    )
     args = parser.parse_args()
 
     ensure_data()

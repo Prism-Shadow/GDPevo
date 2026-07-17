@@ -1,0 +1,67 @@
+{
+  "task_id": "test_001",
+  "candidate_id": "DUP-TE-001",
+  "merge_decision": {
+    "disposition": "enum: merge_ready_with_conflict_review | merge_ready | needs_manual_review | do_not_merge",
+    "canonical_target_patient_id": "string patient id",
+    "source_patient_id": "string patient id",
+    "manual_review_required": "boolean",
+    "reason_codes": [
+      "standardized disposition reason code strings sorted alphabetically"
+    ]
+  },
+  "active_key_unions": {
+    "condition_keys": [
+      "array of normalized active condition keys sorted alphabetically"
+    ],
+    "medication_keys": [
+      "array of normalized active medication keys sorted alphabetically"
+    ],
+    "allergy_keys": [
+      "array of normalized active allergy keys sorted alphabetically"
+    ]
+  },
+  "identity_signals": {
+    "match_signals": [
+      "array of normalized match signal codes sorted alphabetically"
+    ],
+    "conflict_signals": [
+      "array of normalized conflict signal codes sorted alphabetically"
+    ],
+    "conflict_detail_codes": [
+      "array of normalized conflict detail codes sorted alphabetically"
+    ]
+  },
+  "evidence": {
+    "selected_audit_ids": [
+      "array of relevant audit_id values sorted alphabetically"
+    ],
+    "excluded_audit_ids": [
+      "array of unrelated audit_id values sorted alphabetically"
+    ],
+    "document_ids": [
+      "array of document_id values used for packet evidence sorted alphabetically"
+    ],
+    "provider_ids": [
+      "array of provider_id values used for packet routing/evidence sorted alphabetically"
+    ]
+  },
+  "excluded_distractors": {
+    "condition_keys": [
+      "array of normalized inactive or non-merge condition keys sorted alphabetically"
+    ],
+    "medication_keys": [
+      "array of normalized inactive or non-merge medication keys sorted alphabetically"
+    ],
+    "audit_ids": [
+      "array of unrelated audit_id values sorted alphabetically"
+    ]
+  },
+  "packet_readiness": {
+    "ready_for_merge_packet": "boolean",
+    "readiness_status": "enum: ready_with_review_note | ready | blocked",
+    "required_review_notes": [
+      "array of normalized note codes sorted alphabetically"
+    ]
+  }
+}

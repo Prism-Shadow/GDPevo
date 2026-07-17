@@ -1,0 +1,65 @@
+{
+  "request_id": "SHR-2026-05-ENT-NE-005",
+  "review_name": "Enterprise North and East support response and resolution health",
+  "case_opened_window": {
+    "start_at": "2026-04-01T00:00:00Z",
+    "end_at": "2026-05-15T23:59:59Z",
+    "boundary": "INCLUSIVE"
+  },
+  "as_of_cutoff": "2026-05-31T23:59:59Z",
+  "account_scope": {
+    "population": "PRODUCTION_ACCOUNTS",
+    "segment": "ENTERPRISE",
+    "regions": [
+      "NORTH",
+      "EAST"
+    ]
+  },
+  "sla_thresholds_hours": {
+    "URGENT": {
+      "first_response": 2,
+      "resolution_active_time": 16
+    },
+    "HIGH": {
+      "first_response": 4,
+      "resolution_active_time": 24
+    },
+    "MEDIUM": {
+      "first_response": 8,
+      "resolution_active_time": 48
+    },
+    "LOW": {
+      "first_response": 24,
+      "resolution_active_time": 96
+    }
+  },
+  "reporting_definitions": {
+    "clock_basis": "SUPPORT_ACTIVE_TIME",
+    "first_response_breach": "ACTIVE_TIME_TO_FIRST_AGENT_RESPONSE_EXCEEDS_THE_PRIORITY_THRESHOLD; AN UNRESPONDED_CASE_USES_ACTIVE_ELAPSED_TIME_AT_THE_CUTOFF",
+    "active_clock_resolution_breach": "ACTIVE_TIME_TO_RESOLUTION_EXCEEDS_THE_PRIORITY_THRESHOLD; AN_ACTIVE_CASE_USES_ACTIVE_ELAPSED_TIME_AT_THE_CUTOFF",
+    "open_at_cutoff": "INCLUDES_CASES_IN_OPEN_OR_REOPENED_ACTIVE_STATE",
+    "reopened_at_cutoff": "REOPENED_SUBSET_OF_OPEN_AT_CUTOFF_CASES",
+    "severe_active_case": "OPEN_OR_REOPENED_AT_CUTOFF_AND_PRIORITY_URGENT_OR_HIGH_AND_BEYOND_THE_ACTIVE_TIME_RESOLUTION_THRESHOLD",
+    "resolved_case_median": "MEDIAN_ACTIVE_RESOLUTION_HOURS_ACROSS_CASES_RESOLVED_AT_THE_CUTOFF; FOR_AN_EVEN_COUNT_AVERAGE_THE_TWO_CENTRAL_VALUES"
+  },
+  "worst_account_ranking": {
+    "limit": 3,
+    "order": [
+      "SEVERE_ACTIVE_CASE_COUNT_DESC",
+      "ACTIVE_CLOCK_BREACH_COUNT_DESC",
+      "ACCOUNT_ID_ASC"
+    ]
+  },
+  "support_risk_policy": {
+    "rate_denominator": "ELIGIBLE_CASE_COUNT",
+    "CONTROLLED": {
+      "active_severe_case_rate_below": 0.03,
+      "first_response_breach_rate_below": 0.08
+    },
+    "ELEVATED": {
+      "active_severe_case_rate_below": 0.08,
+      "first_response_breach_rate_below": 0.15
+    },
+    "otherwise": "SEVERE"
+  }
+}

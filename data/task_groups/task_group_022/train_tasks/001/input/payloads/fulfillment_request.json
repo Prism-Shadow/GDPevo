@@ -1,0 +1,42 @@
+{
+  "request_id": "FULFILLMENT-SCORECARD-SPRING-2026",
+  "business_owner": "Fulfillment Leadership",
+  "campaign_id": "CMP-SPRING-26",
+  "cutoff_at": "2026-04-15T23:59:59Z",
+  "cohort": "Eligible production orders attributed to the named campaign and created during that campaign's official active window.",
+  "business_definitions": {
+    "complete_order": "An order is complete only when it has at least one physical shipment and every physical shipment associated with it is effectively DELIVERED by the cutoff. An order with no physical shipment is incomplete.",
+    "on_time_complete_order": "A complete order is on time only when every associated shipment was delivered no later than that shipment's promised_delivery_at.",
+    "severe_exception": "An eligible order is a severe exception when it is incomplete and the cutoff is more than 24 hours after its latest shipment promise, or when it completed with any shipment delivered more than 24 hours after that shipment's promise. An incomplete order with no shipment promise does not satisfy the first condition."
+  },
+  "rollups": {
+    "on_time_complete_order_rate": "On-time complete eligible orders divided by all eligible production orders. Incomplete eligible orders remain in the denominator.",
+    "warehouse_region": "Use the region of the warehouse assigned to the order.",
+    "regional_on_time_complete_order_rate": "Apply the overall rate formula within each warehouse region.",
+    "worst_warehouse_regions": "Return the first two regions ordered by the unrounded regional on-time complete-order rate ascending, then by region ascending."
+  },
+  "rounding": "Round only final reported rates to four decimal places.",
+  "overall_status_rules": [
+    {
+      "status": "HEALTHY",
+      "condition": "on-time complete-order rate is at least 0.88 and severe-exception rate is below 0.05"
+    },
+    {
+      "status": "WATCH",
+      "condition": "on-time complete-order rate is at least 0.78 and severe-exception rate is below 0.12"
+    },
+    {
+      "status": "CRITICAL",
+      "condition": "neither HEALTHY nor WATCH applies"
+    }
+  ],
+  "required_output": [
+    "eligible_production_order_count",
+    "effectively_complete_order_count",
+    "on_time_complete_order_rate",
+    "incomplete_order_count",
+    "worst_warehouse_regions",
+    "severe_exception_order_ids",
+    "overall_status"
+  ]
+}

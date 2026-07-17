@@ -1,0 +1,133 @@
+{
+  "description": "Normalized output schema for the P-44702 orthopedic surgery care transition packet.",
+  "required_top_level_keys": [
+    "patient",
+    "recipient",
+    "active_condition_keys",
+    "active_medication_keys",
+    "active_allergy_keys",
+    "handoff_encounters",
+    "source_selection",
+    "latest_immunization",
+    "disclosure",
+    "risk_flags",
+    "risk_flag_evidence",
+    "packet_readiness"
+  ],
+  "schema": {
+    "patient": {
+      "patient_id": "string",
+      "enterprise_mrn": "string",
+      "display_name": "string",
+      "dob": "YYYY-MM-DD"
+    },
+    "recipient": {
+      "provider_id": "string",
+      "name": "string",
+      "facility": "string",
+      "service_line": "enum: orthopedics, cardiology, pulmonology, neurology, skilled_nursing, oncology, primary_care"
+    },
+    "active_condition_keys": {
+      "type": "array[string]",
+      "items": "condition normalized_key values",
+      "ordering": "sort ascending by normalized_key"
+    },
+    "active_medication_keys": {
+      "type": "array[string]",
+      "items": "medication normalized_key values",
+      "ordering": "sort ascending by normalized_key"
+    },
+    "active_allergy_keys": {
+      "type": "array[string]",
+      "items": "allergy normalized_key values",
+      "ordering": "sort ascending by normalized_key"
+    },
+    "handoff_encounters": {
+      "type": "array[object]",
+      "length": 4,
+      "ordering": "newest to oldest by encounter date among selected handoff encounters",
+      "item_schema": {
+        "encounter_id": "string",
+        "date": "YYYY-MM-DD",
+        "type": "string",
+        "signed_status": "enum: signed, amended, draft, unsigned"
+      }
+    },
+    "source_selection": {
+      "selection_basis": "string normalized code for the handoff encounter selection rule",
+      "selected_encounter_ids": {
+        "type": "array[string]",
+        "items": "encounter ids included in handoff_encounters",
+        "ordering": "newest to oldest"
+      },
+      "excluded_encounter_ids": {
+        "type": "array[string]",
+        "items": "encounter ids reviewed but excluded as stale, outside-window, or not relevant",
+        "ordering": "sort ascending"
+      }
+    },
+    "latest_immunization": {
+      "immunization_id": "string",
+      "date": "YYYY-MM-DD",
+      "vaccine": "string"
+    },
+    "disclosure": {
+      "disclosure_id": "string",
+      "date": "YYYY-MM-DD",
+      "status": "enum: permitted, pending, denied, expired",
+      "purpose": "string",
+      "recipient_provider_id": "string"
+    },
+    "risk_flags": {
+      "type": "array[string]",
+      "allowed_values": [
+        "cognitive_memory_loss",
+        "fall_risk_note_required",
+        "hypertension",
+        "insulin_dependent_diabetes",
+        "latex_allergy",
+        "perioperative_glucose_plan_needed"
+      ],
+      "ordering": "sort ascending by code"
+    },
+    "risk_flag_evidence": {
+      "type": "array[object]",
+      "ordering": "sort ascending by risk_flag",
+      "item_schema": {
+        "risk_flag": "string matching a value emitted in risk_flags",
+        "condition_keys": {
+          "type": "array[string]",
+          "items": "active condition normalized_key values used as evidence",
+          "ordering": "sort ascending"
+        },
+        "medication_keys": {
+          "type": "array[string]",
+          "items": "active medication normalized_key values used as evidence",
+          "ordering": "sort ascending"
+        },
+        "encounter_ids": {
+          "type": "array[string]",
+          "items": "encounter ids used as evidence",
+          "ordering": "sort ascending"
+        }
+      }
+    },
+    "packet_readiness": {
+      "status": "enum: ready, ready_with_risk_flags, not_ready",
+      "ready_to_send": "boolean",
+      "blocking_issue_codes": {
+        "type": "array[string]",
+        "allowed_values": [
+          "missing_patient",
+          "missing_recipient",
+          "missing_active_lists",
+          "missing_handoff_encounters",
+          "missing_immunization",
+          "missing_disclosure",
+          "disclosure_not_permitted"
+        ],
+        "ordering": "sort ascending by code"
+      }
+    }
+  }
+}

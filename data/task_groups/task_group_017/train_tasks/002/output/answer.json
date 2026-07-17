@@ -1,0 +1,252 @@
+{
+  "matter_id": "M-NVK-219",
+  "hold_date": "2024-11-25",
+  "record_class_findings": [
+    {
+      "issue_id": "RC-2019-LAB",
+      "record_classes": [
+        "2019 lab data boxes"
+      ],
+      "category_ids": [
+        "N-01"
+      ],
+      "timing_class": "pre_hold_policy",
+      "severity": "medium",
+      "quantity": 4,
+      "source_event_ids": [
+        "CE-0003",
+        "DE-0002",
+        "RR-0001"
+      ],
+      "primary_action": "no_action_policy_gap",
+      "notice_required": false
+    },
+    {
+      "issue_id": "RC-AUDIT-OCT2023",
+      "record_classes": [
+        "environmental audit reports"
+      ],
+      "category_ids": [
+        "N-03"
+      ],
+      "timing_class": "retained_missing",
+      "severity": "high",
+      "quantity": 1,
+      "source_event_ids": [
+        "CE-0007",
+        "PL-0006",
+        "RR-0006"
+      ],
+      "primary_action": "vendor_retrieval",
+      "notice_required": false
+    },
+    {
+      "issue_id": "RC-EHS-BOX",
+      "record_classes": [
+        "EHS correspondence boxes"
+      ],
+      "category_ids": [
+        "N-02",
+        "N-05"
+      ],
+      "timing_class": "post_hold_spoliation",
+      "severity": "critical",
+      "quantity": 2,
+      "source_event_ids": [
+        "CE-0004",
+        "DE-0003",
+        "RR-0002"
+      ],
+      "primary_action": "regulator_notice",
+      "notice_required": true
+    },
+    {
+      "issue_id": "RC-EMAIL-ARCHIVE",
+      "record_classes": [
+        "executive email archive"
+      ],
+      "category_ids": [
+        "N-02",
+        "N-05"
+      ],
+      "timing_class": "recoverable_archive",
+      "severity": "low",
+      "quantity": 11320,
+      "source_event_ids": [
+        "CE-0006",
+        "RR-0005"
+      ],
+      "primary_action": "supplemental_collection",
+      "notice_required": false
+    },
+    {
+      "issue_id": "RC-TEAMS-VOICE",
+      "record_classes": [
+        "Teams chat",
+        "voicemail"
+      ],
+      "category_ids": [
+        "N-02"
+      ],
+      "timing_class": "uncollected_source",
+      "severity": "high",
+      "quantity": 1300,
+      "source_event_ids": [
+        "CE-0005",
+        "PL-0005",
+        "RR-0003",
+        "RR-0004"
+      ],
+      "primary_action": "supplemental_collection",
+      "notice_required": true
+    }
+  ],
+  "hold_defects": [
+    {
+      "defect_id": "HD-OFFSITE-VENDOR",
+      "defect_type": "offsite_vendor_not_on_hold",
+      "category_ids": [
+        "N-02",
+        "N-05"
+      ],
+      "affected_sources": [
+        "Vendor EHS correspondence boxes"
+      ],
+      "severity": "critical",
+      "primary_action": "hold_refresh",
+      "notice_required": true
+    },
+    {
+      "defect_id": "HD-PERSONAL-DEVICE",
+      "defect_type": "personal_device_notice_omission",
+      "category_ids": [
+        "N-06"
+      ],
+      "affected_sources": [
+        "SMS",
+        "personal phone"
+      ],
+      "severity": "high",
+      "primary_action": "supplemental_collection",
+      "notice_required": false
+    }
+  ],
+  "recoverable_sources": [
+    {
+      "source_id": "RS-AUDIT-VENDOR",
+      "source_name": "Audit vendor portal",
+      "record_class": "environmental audit reports",
+      "category_ids": [
+        "N-03"
+      ],
+      "recovery_status": "retained_missing",
+      "count": 1,
+      "source_event_ids": [
+        "CE-0007",
+        "RR-0006"
+      ],
+      "primary_action": "vendor_retrieval"
+    },
+    {
+      "source_id": "RS-EMAIL-IRONVAULT",
+      "source_name": "Ironvault seven-year archive",
+      "record_class": "executive email archive",
+      "category_ids": [
+        "N-02",
+        "N-05"
+      ],
+      "recovery_status": "available",
+      "count": 11320,
+      "source_event_ids": [
+        "CE-0006",
+        "RR-0005"
+      ],
+      "primary_action": "supplemental_collection"
+    },
+    {
+      "source_id": "RS-LAB-SUMMARIES",
+      "source_name": "lab summaries",
+      "record_class": "2019 lab data boxes",
+      "category_ids": [
+        "N-01"
+      ],
+      "recovery_status": "partial",
+      "count": 0,
+      "source_event_ids": [
+        "DE-0002"
+      ],
+      "primary_action": "supplemental_collection"
+    }
+  ],
+  "remediation_plan": [
+    {
+      "rank": 1,
+      "action_id": "RA-REGULATOR-NOTICE",
+      "action": "regulator_notice",
+      "issue_ids": [
+        "HD-OFFSITE-VENDOR",
+        "RC-EHS-BOX"
+      ],
+      "owner_queue": "legal",
+      "due_basis": "immediate post-hold destruction disclosure"
+    },
+    {
+      "rank": 2,
+      "action_id": "RA-AUDIT-RETRIEVAL",
+      "action": "vendor_retrieval",
+      "issue_ids": [
+        "RC-AUDIT-OCT2023"
+      ],
+      "owner_queue": "records",
+      "due_basis": "before production deadline"
+    },
+    {
+      "rank": 3,
+      "action_id": "RA-SUPPLEMENTAL-COLLECTION",
+      "action": "supplemental_collection",
+      "issue_ids": [
+        "HD-PERSONAL-DEVICE",
+        "RC-EMAIL-ARCHIVE",
+        "RC-TEAMS-VOICE"
+      ],
+      "owner_queue": "e_discovery",
+      "due_basis": "before supplemental production"
+    },
+    {
+      "rank": 4,
+      "action_id": "RA-HOLD-REFRESH",
+      "action": "hold_refresh",
+      "issue_ids": [
+        "HD-OFFSITE-VENDOR",
+        "HD-PERSONAL-DEVICE"
+      ],
+      "owner_queue": "litigation_support",
+      "due_basis": "same day as remediation approval"
+    },
+    {
+      "rank": 5,
+      "action_id": "RA-POLICY-GAP-LOG",
+      "action": "no_action_policy_gap",
+      "issue_ids": [
+        "RC-2019-LAB"
+      ],
+      "owner_queue": "records",
+      "due_basis": "document in production deficiency log"
+    }
+  ],
+  "overall": {
+    "disclosure_required": true,
+    "blocked_category_ids": [
+      "N-02",
+      "N-03",
+      "N-05",
+      "N-06"
+    ],
+    "policy_gap_category_ids": [
+      "N-01"
+    ],
+    "post_hold_spoliation_issue_ids": [
+      "RC-EHS-BOX"
+    ]
+  }
+}

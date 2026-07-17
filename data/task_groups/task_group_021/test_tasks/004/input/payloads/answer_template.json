@@ -1,0 +1,1067 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "field_precedence_decisions": {
+      "description": "Exactly one object for each field_precedence_cases label, sorted lexicographically by precedence_case_id.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_value": {
+            "description": "Final normalized value represented as a string, including digits-only phones and enum values.",
+            "type": "string"
+          },
+          "field_name": {
+            "enum": [
+              "canonical_city",
+              "canonical_consent_status",
+              "canonical_email",
+              "canonical_phone_digits"
+            ],
+            "type": "string"
+          },
+          "field_provenance_code": {
+            "enum": [
+              "FP-20",
+              "FP-55",
+              "FP-75"
+            ],
+            "type": "string"
+          },
+          "precedence_case_id": {
+            "enum": [
+              "PRECEDENCE-001",
+              "PRECEDENCE-002",
+              "PRECEDENCE-003",
+              "PRECEDENCE-004",
+              "PRECEDENCE-005"
+            ],
+            "type": "string"
+          },
+          "reason_code": {
+            "enum": [
+              "VERIFIED_BUSINESS_TIME_OVER_PROVISIONAL_CONFLICT",
+              "LATEST_VERIFIED_BUSINESS_UPDATE",
+              "SINGLE_SOURCE"
+            ],
+            "type": "string"
+          },
+          "seed_row_id": {
+            "pattern": "^WAR-C[0-9]{5}$",
+            "type": "string"
+          },
+          "selected_row_id": {
+            "pattern": "^WAR-C[0-9]{5}$",
+            "type": "string"
+          },
+          "selected_source_system": {
+            "enum": [
+              "Warranty Claims",
+              "Dealer Service",
+              "Identity Registry"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "precedence_case_id",
+          "seed_row_id",
+          "field_name",
+          "field_provenance_code",
+          "selected_source_system",
+          "selected_row_id",
+          "canonical_value",
+          "reason_code"
+        ],
+        "type": "object"
+      },
+      "maxItems": 5,
+      "minItems": 5,
+      "type": "array"
+    },
+    "focus_owners": {
+      "description": "Exactly one object for each focus_owners label, sorted lexicographically by focus_owner_id. member_row_ids is a deduplicated lexicographically sorted set.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_city": {
+            "type": "string"
+          },
+          "canonical_consent_status": {
+            "enum": [
+              "GRANTED",
+              "PENDING",
+              "DENIED",
+              "UNKNOWN"
+            ],
+            "type": "string"
+          },
+          "canonical_country_code": {
+            "enum": [
+              "CA",
+              "DE",
+              "ES",
+              "GB",
+              "SG",
+              "US"
+            ],
+            "type": "string"
+          },
+          "canonical_email": {
+            "description": "Trimmed Unicode NFKC lowercase email, or null when no usable email remains.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "canonical_name": {
+            "description": "Unicode-preserving canonical display name.",
+            "type": "string"
+          },
+          "canonical_phone_digits": {
+            "description": "National-significant phone digits as a string, or null when no usable phone remains.",
+            "pattern": "^[0-9]+$",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "canonical_record_status": {
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "type": "string"
+          },
+          "canonical_region_code": {
+            "enum": [
+              "BE",
+              "England",
+              "MD",
+              "ON",
+              "SG",
+              "TX"
+            ],
+            "type": "string"
+          },
+          "focus_owner_id": {
+            "enum": [
+              "OWNER-001",
+              "OWNER-002",
+              "OWNER-003",
+              "OWNER-004",
+              "OWNER-005",
+              "OWNER-006"
+            ],
+            "type": "string"
+          },
+          "master_id": {
+            "pattern": "^WAR-C[0-9]{5}$",
+            "type": "string"
+          },
+          "member_row_ids": {
+            "items": {
+              "pattern": "^WAR-C[0-9]{5}$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "readiness_decision": {
+            "additionalProperties": false,
+            "properties": {
+              "manual_escalation_required": {
+                "type": "boolean"
+              },
+              "outreach_code": {
+                "enum": [
+                  "OR-15",
+                  "OR-35",
+                  "OR-60",
+                  "OR-80"
+                ],
+                "type": "string"
+              },
+              "outreach_disposition": {
+                "enum": [
+                  "READY",
+                  "READY_WITH_CHANNEL_RESTRICTION",
+                  "BLOCKED_CONSENT",
+                  "BLOCKED_NO_CONTACT",
+                  "BLOCKED_INACTIVE"
+                ],
+                "type": "string"
+              },
+              "primary_route": {
+                "enum": [
+                  "EMAIL",
+                  "PHONE",
+                  "NONE"
+                ],
+                "type": "string"
+              },
+              "reason_code": {
+                "enum": [
+                  "ACTIVE_GRANTED_UNIQUE_CHANNELS",
+                  "GRANTED_EMAIL_AVAILABLE_SHARED_PHONE_RESTRICTED",
+                  "CONSENT_NOT_GRANTED",
+                  "NO_USABLE_CHANNEL",
+                  "OWNER_INACTIVE"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "outreach_disposition",
+              "primary_route",
+              "reason_code",
+              "manual_escalation_required",
+              "outreach_code"
+            ],
+            "type": "object"
+          },
+          "seed_row_id": {
+            "pattern": "^WAR-C[0-9]{5}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "focus_owner_id",
+          "seed_row_id",
+          "member_row_ids",
+          "master_id",
+          "canonical_name",
+          "canonical_email",
+          "canonical_phone_digits",
+          "canonical_city",
+          "canonical_region_code",
+          "canonical_country_code",
+          "canonical_consent_status",
+          "canonical_record_status",
+          "readiness_decision"
+        ],
+        "type": "object"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "type": "array"
+    },
+    "identifier_case_decisions": {
+      "description": "Exactly one object for each identifier_cases label, sorted lexicographically by identifier_case_id. related_row_ids is a deduplicated lexicographically sorted set.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "classification": {
+            "enum": [
+              "SHARED_MULTI_OWNER",
+              "UNIQUE_CONTACT",
+              "CORROBORATED_SAME_OWNER"
+            ],
+            "type": "string"
+          },
+          "identifier_case_id": {
+            "enum": [
+              "IDENTIFIER-001",
+              "IDENTIFIER-002",
+              "IDENTIFIER-003"
+            ],
+            "type": "string"
+          },
+          "identifier_type": {
+            "enum": [
+              "PHONE",
+              "EMAIL_AND_PHONE"
+            ],
+            "type": "string"
+          },
+          "identity_code": {
+            "enum": [
+              "IC-25",
+              "IC-40",
+              "IC-70",
+              "IC-90"
+            ],
+            "type": "string"
+          },
+          "manual_escalation_required": {
+            "type": "boolean"
+          },
+          "merge_action": {
+            "enum": [
+              "KEEP_SEPARATE_AND_RESTRICT_PHONE",
+              "KEEP_SINGLE_NO_ESCALATION",
+              "MERGE_CORROBORATED_ROWS"
+            ],
+            "type": "string"
+          },
+          "reason_code": {
+            "enum": [
+              "SAME_PHONE_DISTINCT_EMAILS",
+              "UNIQUE_EMAIL_PHONE_PAIR",
+              "NORMALIZED_EMAIL_AND_PHONE_AGREE"
+            ],
+            "type": "string"
+          },
+          "related_row_ids": {
+            "items": {
+              "pattern": "^WAR-C[0-9]{5}$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "seed_row_id": {
+            "pattern": "^WAR-C[0-9]{5}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "identifier_case_id",
+          "seed_row_id",
+          "identifier_type",
+          "identity_code",
+          "related_row_ids",
+          "classification",
+          "merge_action",
+          "reason_code",
+          "manual_escalation_required"
+        ],
+        "type": "object"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "merge_summary": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_owner_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "contested_identifier_case_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "merged_duplicate_cluster_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "outreach_ready_owner_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "quarantine_row_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "raw_row_count": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "raw_row_count",
+        "canonical_owner_count",
+        "merged_duplicate_cluster_count",
+        "quarantine_row_count",
+        "contested_identifier_case_count",
+        "outreach_ready_owner_count"
+      ],
+      "type": "object"
+    },
+    "snapshot_admission_replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Complete row-by-row replay for the bounded final-entity scope. Events are in exact processing order and no scoped row is omitted.",
+      "required": [
+        "scope_final_owner_count",
+        "scope_raw_row_count",
+        "events",
+        "stage_summaries",
+        "final_present_owner_count",
+        "final_ready_owner_count"
+      ],
+      "properties": {
+        "scope_final_owner_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scope_raw_row_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sequence",
+              "stage_id",
+              "source_system",
+              "final_master_id",
+              "admitted_row_id",
+              "effect",
+              "before_selected_row_id",
+              "after_selected_row_id",
+              "changed_canonical_fields",
+              "before_readiness",
+              "before_field_provenance_code",
+              "before_outreach_code",
+              "after_readiness",
+              "after_field_provenance_code",
+              "after_outreach_code",
+              "running_present_owner_count",
+              "running_ready_owner_count"
+            ],
+            "properties": {
+              "sequence": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "stage_id": {
+                "type": "string",
+                "enum": [
+                  "S1",
+                  "S2",
+                  "S3"
+                ]
+              },
+              "source_system": {
+                "type": "string",
+                "enum": [
+                  "Warranty Claims",
+                  "Identity Registry",
+                  "Dealer Service"
+                ]
+              },
+              "final_master_id": {
+                "type": "string",
+                "pattern": "^WAR-C[0-9]{5}$"
+              },
+              "admitted_row_id": {
+                "type": "string",
+                "pattern": "^WAR-C[0-9]{5}$"
+              },
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "DISCOVERED",
+                  "CANONICAL_STATE_CHANGED",
+                  "NONSELECTED"
+                ]
+              },
+              "before_selected_row_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^WAR-C[0-9]{5}$"
+              },
+              "after_selected_row_id": {
+                "type": "string",
+                "pattern": "^WAR-C[0-9]{5}$"
+              },
+              "changed_canonical_fields": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "canonical_name",
+                    "canonical_email",
+                    "canonical_phone_digits",
+                    "canonical_city",
+                    "canonical_region_code",
+                    "canonical_country_code",
+                    "canonical_consent_status",
+                    "canonical_record_status"
+                  ]
+                },
+                "description": "Fields that changed, in canonical_impact_field_order; empty for DISCOVERED and NONSELECTED."
+              },
+              "before_readiness": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "READY",
+                  "READY_WITH_CHANNEL_RESTRICTION",
+                  "BLOCKED_CONSENT",
+                  "BLOCKED_NO_CONTACT",
+                  "BLOCKED_INACTIVE",
+                  null
+                ]
+              },
+              "before_field_provenance_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "FP-20",
+                  "FP-55",
+                  "FP-75",
+                  null
+                ]
+              },
+              "before_outreach_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "OR-15",
+                  "OR-35",
+                  "OR-60",
+                  "OR-80",
+                  null
+                ]
+              },
+              "after_readiness": {
+                "type": "string",
+                "enum": [
+                  "READY",
+                  "READY_WITH_CHANNEL_RESTRICTION",
+                  "BLOCKED_CONSENT",
+                  "BLOCKED_NO_CONTACT",
+                  "BLOCKED_INACTIVE"
+                ]
+              },
+              "after_field_provenance_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "FP-20",
+                  "FP-55",
+                  "FP-75",
+                  null
+                ]
+              },
+              "after_outreach_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "OR-15",
+                  "OR-35",
+                  "OR-60",
+                  "OR-80",
+                  null
+                ]
+              },
+              "running_present_owner_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "running_ready_owner_count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "stage_summaries": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "stage_id",
+              "source_system",
+              "event_count",
+              "discovered_count",
+              "canonical_state_changed_count",
+              "nonselected_count",
+              "end_present_owner_count",
+              "end_ready_owner_count"
+            ],
+            "properties": {
+              "stage_id": {
+                "type": "string",
+                "enum": [
+                  "S1",
+                  "S2",
+                  "S3"
+                ]
+              },
+              "source_system": {
+                "type": "string",
+                "enum": [
+                  "Warranty Claims",
+                  "Identity Registry",
+                  "Dealer Service"
+                ]
+              },
+              "event_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "discovered_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "canonical_state_changed_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "nonselected_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end_present_owner_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end_ready_owner_count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "description": "Exactly S1, S2, S3 in stage order."
+        },
+        "final_present_owner_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "final_ready_owner_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "unsafe_identity_rule_impacts": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "Independent counterfactual graph audits ordered ANY_SHARED_PHONE, NORMALIZED_NAME_AND_REGION, NORMALIZED_NAME_ONLY.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "policy_id",
+          "resulting_owner_count",
+          "collapsed_owner_count",
+          "affected_baseline_owner_count",
+          "multi_owner_component_count",
+          "false_pair_count",
+          "cross_region_false_pair_count",
+          "largest_component_owner_count",
+          "largest_component_master_ids",
+          "component_size_histogram",
+          "component_controls"
+        ],
+        "properties": {
+          "policy_id": {
+            "type": "string",
+            "enum": [
+              "ANY_SHARED_PHONE",
+              "NORMALIZED_NAME_AND_REGION",
+              "NORMALIZED_NAME_ONLY"
+            ]
+          },
+          "resulting_owner_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "collapsed_owner_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "affected_baseline_owner_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "multi_owner_component_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "false_pair_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "cross_region_false_pair_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "largest_component_owner_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "largest_component_master_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^WAR-C[0-9]{5}$"
+            },
+            "description": "Sorted lexicographically for the tie-broken largest component."
+          },
+          "component_size_histogram": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "component_size",
+                "component_count"
+              ],
+              "properties": {
+                "component_size": {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                "component_count": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "description": "Only sizes greater than one, ordered by component_size ascending."
+          },
+          "component_controls": {
+            "type": "array",
+            "description": "Every multi-owner component for this policy in the case-scope component order. component_id uses the policy ID followed by -C001, -C002, and so on.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "component_id",
+                "baseline_master_ids",
+                "identity_code",
+                "control_disposition"
+              ],
+              "properties": {
+                "component_id": {
+                  "type": "string",
+                  "pattern": "^(ANY_SHARED_PHONE|NORMALIZED_NAME_AND_REGION|NORMALIZED_NAME_ONLY)-C[0-9]{3}$"
+                },
+                "baseline_master_ids": {
+                  "type": "array",
+                  "minItems": 2,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^WAR-C[0-9]{5}$"
+                  },
+                  "description": "Lexicographically sorted final baseline master IDs in this counterfactual component."
+                },
+                "identity_code": {
+                  "type": "string",
+                  "enum": [
+                    "IC-25",
+                    "IC-40",
+                    "IC-70",
+                    "IC-90"
+                  ]
+                },
+                "control_disposition": {
+                  "type": "string",
+                  "enum": [
+                    "RESTRICT_CONTESTED_PHONE_KEEP_BASELINE_OWNERS_SEPARATE",
+                    "REJECT_NONCORROBORATING_NAME_EDGE_KEEP_BASELINE_OWNERS_SEPARATE"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "unsafe_household_outreach_counterfactual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "optimized_remediation_portfolio"
+      ],
+      "properties": {
+        "optimized_remediation_portfolio": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "budget_units",
+            "actions",
+            "prevented_wrongful_master_ids"
+          ],
+          "properties": {
+            "budget_units": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "actions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "action_key"
+                ],
+                "properties": {
+                  "action_key": {
+                    "type": "string",
+                    "pattern": "^(REVIEW:SURNAME_HOUSEHOLD-C[0-9]{3}|BLOCK:WAR-C[0-9]{5})$"
+                  }
+                }
+              }
+            },
+            "prevented_wrongful_master_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^WAR-C[0-9]{5}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "source_removal_stability_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "optimized_restoration_portfolio"
+      ],
+      "properties": {
+        "optimized_restoration_portfolio": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "outage_scenario_id",
+            "budget_units",
+            "selected_actions",
+            "recovered_master_ids"
+          ],
+          "properties": {
+            "outage_scenario_id": {
+              "type": "string",
+              "pattern": "^SOURCE-OUTAGE-S0[1-6]$"
+            },
+            "budget_units": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "selected_actions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "baseline_master_id",
+                  "restored_row_id",
+                  "source_system",
+                  "market_group",
+                  "cost_units",
+                  "recovery_value",
+                  "baseline_readiness"
+                ],
+                "properties": {
+                  "baseline_master_id": {
+                    "type": "string",
+                    "pattern": "^WAR-C[0-9]{5}$"
+                  },
+                  "restored_row_id": {
+                    "type": "string",
+                    "pattern": "^WAR-C[0-9]{5}$"
+                  },
+                  "source_system": {
+                    "type": "string",
+                    "enum": [
+                      "Warranty Claims",
+                      "Identity Registry"
+                    ]
+                  },
+                  "market_group": {
+                    "type": "string",
+                    "enum": [
+                      "AMER",
+                      "EMEA",
+                      "APAC"
+                    ]
+                  },
+                  "cost_units": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "recovery_value": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "baseline_readiness": {
+                    "type": "string",
+                    "enum": [
+                      "READY",
+                      "READY_WITH_CHANNEL_RESTRICTION",
+                      "BLOCKED_CONSENT",
+                      "BLOCKED_NO_CONTACT",
+                      "BLOCKED_INACTIVE"
+                    ]
+                  }
+                }
+              }
+            },
+            "recovered_master_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^WAR-C[0-9]{5}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "contact_transfer_adjudications": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "target_row_id",
+          "proposed_donor_row_id",
+          "target_owner_master_id",
+          "target_owner_member_row_ids",
+          "donor_owner_master_id",
+          "donor_owner_member_row_ids",
+          "shared_normalized_identifiers",
+          "relation_class",
+          "target_canonical_email",
+          "target_canonical_phone_digits",
+          "target_phone_restricted",
+          "target_canonical_consent_status",
+          "target_canonical_record_status",
+          "target_readiness",
+          "channel_transfer_allowed",
+          "adjudication_action",
+          "manual_escalation_required"
+        ],
+        "properties": {
+          "candidate_id": {
+            "type": "string",
+            "pattern": "^TRANSFER-(INTRA|EXCEPTION)-WAR-C[0-9]{5}$"
+          },
+          "target_row_id": {
+            "type": "string",
+            "pattern": "^WAR-C[0-9]{5}$"
+          },
+          "proposed_donor_row_id": {
+            "type": "string",
+            "pattern": "^WAR-C[0-9]{5}$"
+          },
+          "target_owner_master_id": {
+            "type": "string",
+            "pattern": "^WAR-C[0-9]{5}$"
+          },
+          "target_owner_member_row_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^WAR-C[0-9]{5}$"
+            }
+          },
+          "donor_owner_master_id": {
+            "type": "string",
+            "pattern": "^WAR-C[0-9]{5}$"
+          },
+          "donor_owner_member_row_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^WAR-C[0-9]{5}$"
+            }
+          },
+          "shared_normalized_identifiers": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": ["NAME", "EMAIL", "PHONE"]
+            }
+          },
+          "relation_class": {
+            "type": "string",
+            "enum": [
+              "SAFE_SAME_OWNER",
+              "CONTESTED_PHONE_DISTINCT_OWNERS",
+              "NAME_ONLY_DISTINCT_OWNERS"
+            ]
+          },
+          "target_canonical_email": {
+            "anyOf": [
+              {"type": "string", "minLength": 1},
+              {"type": "null"}
+            ]
+          },
+          "target_canonical_phone_digits": {
+            "anyOf": [
+              {"type": "string", "pattern": "^[0-9]+$"},
+              {"type": "null"}
+            ]
+          },
+          "target_phone_restricted": {
+            "type": "boolean"
+          },
+          "target_canonical_consent_status": {
+            "type": "string",
+            "enum": ["GRANTED", "PENDING", "DENIED", "UNKNOWN"]
+          },
+          "target_canonical_record_status": {
+            "type": "string",
+            "enum": ["ACTIVE", "INACTIVE"]
+          },
+          "target_readiness": {
+            "type": "string",
+            "enum": ["READY", "READY_WITH_CHANNEL_RESTRICTION", "BLOCKED_CONSENT", "BLOCKED_NO_CONTACT", "BLOCKED_INACTIVE"]
+          },
+          "channel_transfer_allowed": {
+            "type": "boolean"
+          },
+          "adjudication_action": {
+            "type": "string",
+            "enum": [
+              "ACCEPT_SAME_OWNER_EVIDENCE_KEEP_BLOCKED",
+              "REJECT_TRANSFER_CONTINUE_EMAIL_ONLY",
+              "REJECT_TRANSFER_CONTINUE_OWN_CHANNELS",
+              "REJECT_TRANSFER_KEEP_BLOCKED",
+              "REJECT_TRANSFER_QUARANTINE_NO_CONTACT",
+              "REJECT_TRANSFER_EXCLUDE_INACTIVE"
+            ]
+          },
+          "manual_escalation_required": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "merge_summary",
+    "focus_owners",
+    "identifier_case_decisions",
+    "field_precedence_decisions",
+    "snapshot_admission_replay",
+    "unsafe_identity_rule_impacts",
+    "unsafe_household_outreach_counterfactual",
+    "source_removal_stability_audit",
+    "contact_transfer_adjudications"
+  ],
+  "title": "Warranty safety-outreach owner decision answer",
+  "type": "object"
+}

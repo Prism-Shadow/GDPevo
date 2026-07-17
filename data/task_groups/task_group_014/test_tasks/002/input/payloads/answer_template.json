@@ -1,0 +1,104 @@
+{
+  "field_conventions": {
+    "p2p_cases_order": "ascending case_id",
+    "p2p_session_status_allowed_values": [
+      "completed_with_new_information",
+      "completed_no_new_information",
+      "not_completed_additional_information_requested",
+      "completed_provider_no_show"
+    ],
+    "final_determination_allowed_values": [
+      "partial_approval",
+      "denied_upheld",
+      "pending_additional_information",
+      "direct_administrative_denial"
+    ],
+    "overturn_classification_allowed_values": [
+      "partial_overturn",
+      "upheld",
+      "not_finalized",
+      "direct_denial_exempt"
+    ],
+    "letter_queue_category_allowed_values": [
+      "partial_approval_with_appeal_rights",
+      "denial_upheld_with_appeal_rights",
+      "additional_information_request",
+      "administrative_denial_with_appeal_rights"
+    ],
+    "adverse_authority_status_allowed_values": [
+      "md_only_adverse_final",
+      "no_adverse_final_pending_info",
+      "mandatory_md_review_pending_info",
+      "direct_admin_final"
+    ],
+    "final_rationale_code_format": "source_id plus compact outcome reason",
+    "letter_authority_reason_code_format": "letter_queue_category, adverse_authority_status, and final_rationale_code joined with double underscores",
+    "criteria_source_ids": "list source IDs such as SRC003 in ascending order",
+    "criteria_source_selection_trace": "selected criteria source metadata after source-precedence filtering",
+    "criteria_gap_keys": "criterion_key values from coverage_criteria that are missing, stale, unclear, partial, or conflicting; sort ascending",
+    "p2p_source_trace": "values copied or normalized from p2p_sessions for the target case",
+    "review_event_trace": "clinical review event IDs and outcomes that affect finalization",
+    "admin_source_trace": "intake and service-line flags that affect direct administrative handling",
+    "letter_queue_order": "case IDs sorted ascending within each queue"
+  },
+  "board_date": "2025-02-27",
+  "target_bucket": "test_p2p_batch",
+  "p2p_cases": [
+    {
+      "case_id": "AUTH00000",
+      "service_categories": [
+        "Service Category"
+      ],
+      "p2p_session_status": "completed_no_new_information",
+      "criteria_source_ids": [
+        "SRC000"
+      ],
+      "criteria_source_selection_trace": {
+        "selected_source_id": "SRC000",
+        "selected_source_name": "source name",
+        "selected_precedence_rank": 0,
+        "excluded_lower_precedence_source_ids": []
+      },
+      "final_determination": "denied_upheld",
+      "overturn_classification": "upheld",
+      "letter_queue_category": "denial_upheld_with_appeal_rights",
+      "adverse_authority_status": "md_only_adverse_final",
+      "final_rationale_code": "SRC003_criteria_not_clearly_met_no_new_info",
+      "letter_authority_reason_code": "denial_upheld_with_appeal_rights__md_only_adverse_final__SRC003_criteria_not_clearly_met_no_new_info",
+      "criteria_gap_keys": [],
+      "p2p_source_trace": {
+        "p2p_id": "P2P00000",
+        "requesting_provider_joined": true,
+        "new_information": false,
+        "source_outcome": "no_show",
+        "duration_minutes": 0
+      },
+      "review_event_trace": {
+        "medical_director_event_ids": [],
+        "medical_director_outcomes": []
+      },
+      "admin_source_trace": {
+        "facility_in_service_area": true,
+        "oon_exception": false,
+        "mandatory_md_review": false
+      },
+      "additional_info_needed": false,
+      "appeal_rights_notice": false
+    }
+  ],
+  "finalization_counts": {
+    "approved_count": 0,
+    "partial_approval_count": 0,
+    "denied_or_upheld_count": 0,
+    "direct_admin_denial_count": 0,
+    "additional_info_needed_count": 0,
+    "appeal_rights_notice_count": 0
+  },
+  "letter_queue": {
+    "approval": [],
+    "partial_approval_with_appeal_rights": [],
+    "denial_upheld_with_appeal_rights": [],
+    "administrative_denial_with_appeal_rights": [],
+    "additional_information_request": []
+  }
+}

@@ -146,20 +146,22 @@ class Handler(BaseHTTPRequestHandler):
 
         self.send_json(404, {"error": "not_found", "message": "Endpoint not found."})
 
-    def do_POST(self) -> None:
-        parsed = urlparse(self.path)
-        path_parts = [unquote(part) for part in parsed.path.strip("/").split("/") if part]
-        if path_parts == ["api", "judge"]:
-            length = int(self.headers.get("Content-Length", "0") or "0")
-            status, payload = judge_answer_request(self.rfile.read(length))
-            self.send_json(status, payload)
-            return
-        self.send_json(404, {"error": "not_found", "message": "Endpoint not found."})
-
     def do_OPTIONS(self) -> None:
         self.send_response(204)
         self.send_cors_headers()
         self.end_headers()
+
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        if parsed.path != "/api/judge":
+            self.send_json(404, {"error": "not_found", "message": "Endpoint not found."})
+            return
+        if os.environ.get("TASK_ENV_ENABLE_JUDGE") != "1":
+            self.send_json(404, {"error": "not_found", "message": "Endpoint not found."})
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        status, payload = judge_answer_request(self.rfile.read(length))
+        self.send_json(status, payload)
 
     def handle_collection(self, parts: list[str], query: dict[str, list[str]]) -> None:
         collection_slug = parts[0]
@@ -224,7 +226,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def send_cors_headers(self) -> None:
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
 
     def log_message(self, format: str, *args) -> None:
@@ -232,9 +234,10 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    port = int(os.environ.get("PORT", "8002"))
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"MedBridge Sales Ops API listening on http://127.0.0.1:{port}", flush=True)
+    host = os.environ.get("TASK_ENV_BIND", os.environ.get("TASK_ENV_HOST", "0.0.0.0"))
+    port = int(os.environ.get("TASK_ENV_PORT", os.environ.get("PORT", "9002")))
+    server = ThreadingHTTPServer((host, port), Handler)
+    print(f"MedBridge Sales Ops API listening on http://{host}:{port}", flush=True)
     server.serve_forever()
 
 

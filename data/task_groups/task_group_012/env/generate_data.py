@@ -903,7 +903,7 @@ def main() -> None:
             "seed": SEED,
             "generated_at": "2026-06-05T00:00:00Z",
             "entry_points": {
-                "web": "http://127.0.0.1:${PORT:-8120}/",
+                "web": "<TASK_ENV_BASE_URL>/",
                 "api_summary": "/api/summary",
                 "api_cases": "/api/cases",
             },

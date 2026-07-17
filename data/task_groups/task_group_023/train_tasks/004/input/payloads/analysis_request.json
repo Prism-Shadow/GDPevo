@@ -1,0 +1,101 @@
+{
+  "request_id": "OBS-STATE-WEIGHTED-ALGORITHMIC-AUDIT-2024-DIAB-R4",
+  "protocol_id": "PHO_STATE_ROBUSTNESS_TRANSPORT_V1",
+  "business_task": "Determine whether the reliability-weighted association between food insecurity and diagnosed diabetes survives the registered six-module state audit.",
+  "scope": {
+    "geography": "50 states and the District of Columbia",
+    "study_years": [2020, 2021, 2022, 2023, 2024],
+    "reference_year": 2024,
+    "outcome": "diagnosed_diabetes",
+    "focal_exposure": "food_insecurity",
+    "adjustments": ["physical_inactivity", "median_income", "region"],
+    "reliability_weight": "selected diagnosed_diabetes sample_size"
+  },
+  "evidence_and_cohorts": {
+    "release_method": "REGISTERED_FINAL_RELEASE_RESOLUTION",
+    "health_filter": {"value_type": "AGE_ADJUSTED", "source_type": "DIRECT_SURVEY", "release_status": "FINAL"},
+    "health_measures": ["diagnosed_diabetes", "food_insecurity", "physical_inactivity"],
+    "socioeconomic_filter": {"release_status": "FINAL"},
+    "socioeconomic_fields": ["median_income", "region"],
+    "complete_case": "Selected direct health values are nonsuppressed and nonmissing; diagnosed_diabetes sample_size and selected median_income are nonmissing; never zero-fill.",
+    "primary_cohort": "REFERENCE_YEAR_COMPLETE_CASES_FROM_THE_51_JURISDICTION_UNIVERSE",
+    "balanced_cohort": "INTERSECTION_OF_COMPLETE_CASE_STATES_ACROSS_ALL_FIVE_STUDY_YEARS",
+    "weight_rule": "Use the selected diagnosed_diabetes direct-record sample_size as the fixed reliability weight, including source-perturbation fits."
+  },
+  "model_specification": {
+    "primary_method": "RELIABILITY_WEIGHTED_LINEAR_REGRESSION_WITH_HC3_INFERENCE",
+    "primary_design_order": ["intercept", "food_insecurity", "physical_inactivity", "median_income_per_10000", "region_Midwest", "region_South", "region_West"],
+    "region_reference": "Northeast",
+    "panel_method": "REGISTERED_BALANCED_PANEL_MODEL_WHEN_REQUIRED",
+    "cluster_group": "CENSUS_DIVISION"
+  },
+  "audit_modules": {
+    "cluster_jackknife": {
+      "method": "RELIABILITY_WEIGHTED_DELETE_ONE_CENSUS_DIVISION_JACKKNIFE",
+      "cohort": "PRIMARY_COHORT",
+      "target_coefficient": "food_insecurity",
+      "required_evidence": "Full coefficient, every division deletion diagnostic, bias-corrected inference, and influence summary."
+    },
+    "nested_elastic_net": {
+      "method": "DIVISION_GROUPED_NESTED_WEIGHTED_ELASTIC_NET",
+      "cohort": "PRIMARY_COHORT",
+      "target": "diagnosed_diabetes",
+      "feature_order": ["food", "physical", "log_income", "food_squared", "physical_squared", "log_income_squared", "food_times_physical", "food_times_log_income", "physical_times_log_income"],
+      "feature_semantics": {"food": "food_insecurity", "physical": "physical_inactivity", "log_income": "natural log of unscaled median_income"},
+      "alpha": 0.60,
+      "lambda_grid": [0.02, 0.05, 0.10, 0.20, 0.40, 0.80],
+      "required_evidence": "Every outer fold, complete inner grid, selected lambda, nonzero count, coordinate-cycle checkpoint, outer RMSE, and pooled metrics."
+    },
+    "wild_cluster_bootstrap": {
+      "method": "RESTRICTED_NULL_XORSHIFT32_WILD_CENSUS_DIVISION_BOOTSTRAP_T",
+      "cohort": "PRIMARY_COHORT",
+      "target_coefficient": "food_insecurity",
+      "seed": 24071544,
+      "replicates": 1999,
+      "checkpoint_replicates": [1, 10, 100, 500, 1000, 1500, 1999],
+      "quantile_probabilities": [0.90, 0.95, 0.99],
+      "required_evidence": "Observed statistic, all checkpoints, exceedance test, requested quantiles, and terminal generator state."
+    },
+    "grouped_conformal": {
+      "method": "DIVISION_GROUPED_OUT_OF_FOLD_CONFORMAL_CALIBRATION",
+      "cohort": "PRIMARY_COHORT",
+      "source_predictions": "NESTED_ELASTIC_NET_OUTER_PREDICTIONS",
+      "nominal_coverage": 0.90,
+      "required_evidence": "Every division calibration and interval diagnostic plus pooled coverage, width, and worst division."
+    },
+    "trajectory_pca_clustering": {
+      "method": "REGISTERED_COVARIANCE_PCA_DETERMINISTIC_THREE_MEANS_LEAVE_YEAR_OUT_STABILITY",
+      "cohort": "BALANCED_COHORT",
+      "years": [2020, 2021, 2022, 2023, 2024],
+      "ordered_feature_blocks": ["food_insecurity", "physical_inactivity", "diagnosed_diabetes", "log(diagnosed_diabetes_sample_size)"],
+      "principal_components_for_clustering": 3,
+      "cluster_count": 3,
+      "required_evidence": "Leading spectrum, initialization, update count, centroids, every state score and assignment, and all leave-year stability diagnostics."
+    },
+    "exhaustive_source_perturbation": {
+      "method": "EXHAUSTIVE_DIRECT_VERSUS_ROLLUP_SOURCE_PERTURBATION_WITH_EXACT_SHAPLEY",
+      "cohort": "PRIMARY_COHORT",
+      "target_coefficient": "food_insecurity",
+      "baseline_outcome_source": {"measure_id": "diagnosed_diabetes", "value_type": "AGE_ADJUSTED", "source_type": "DIRECT_SURVEY", "release_status": "FINAL"},
+      "replacement_outcome_source": {"measure_id": "diagnosed_diabetes", "value_type": "CRUDE", "source_type": "COUNTY_ROLLUP", "release_status": "FINAL", "require_nonsuppressed_nonmissing": true},
+      "required_evidence": "Registered source order, every scenario stratum, stability and maximum-shift summaries, and full exact Shapley attribution."
+    }
+  },
+  "reporting": {
+    "numeric_decimal_places": 4,
+    "full_ordered_evidence_required": true,
+    "output_contract": "answer_template.json"
+  },
+  "decision_rule": {
+    "flags": [
+      "cluster_jackknife_supported iff the bias-corrected coefficient is positive, jackknife p<0.05, and maximum delete-cluster percent change<=25.",
+      "nested_prediction_stable iff pooled outer OOF R2>=0.55.",
+      "wild_bootstrap_supported iff plus-one p<=0.05.",
+      "grouped_conformal_supported iff pooled coverage>=0.85.",
+      "trajectory_stable iff minimum leave-one-year adjusted Rand index>=0.55.",
+      "source_exhaustive_stable iff every scenario is stable and maximum absolute percent shift<=25."
+    ],
+    "precedence": ["CLUSTER_JACKKNIFE", "NESTED_PREDICTION", "WILD_BOOTSTRAP", "GROUPED_CONFORMAL", "TRAJECTORY", "SOURCE_EXHAUSTIVE"],
+    "controlled_conclusions": ["ROBUST_ACROSS_REGISTERED_MODULES", "NOT_ROBUST_AT_<FIRST_FAILED_MODULE>"]
+  }
+}

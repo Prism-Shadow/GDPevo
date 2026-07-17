@@ -1,0 +1,198 @@
+{
+  "schema_name": "care_management_routing_answer",
+  "schema_version": "1.0",
+  "output_type": "single_json_object",
+  "required_top_level_keys": [
+    "task_id",
+    "case_id",
+    "patient_id",
+    "risk_tier",
+    "program",
+    "priority_problems",
+    "numeric_anchors",
+    "referrals",
+    "outreach_stance",
+    "care_plan_minima",
+    "escalation_conditions",
+    "source_provenance"
+  ],
+  "fields": {
+    "task_id": {
+      "type": "string",
+      "required_value": "test_004"
+    },
+    "case_id": {
+      "type": "string",
+      "required_value": "CASE-CM-908"
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Stable clinic patient identifier for the target case."
+    },
+    "risk_tier": {
+      "type": "enum",
+      "allowed_values": ["low", "moderate", "high"]
+    },
+    "program": {
+      "type": "enum",
+      "allowed_values": ["complex_care_management", "routine_case_management", "not_eligible"]
+    },
+    "priority_problems": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "uncontrolled_diabetes",
+          "esrd_on_hemodialysis",
+          "chronic_kidney_disease_stage_4",
+          "heart_failure_recent_admission",
+          "hfpEF_post_volume_overload",
+          "hyperphosphatemia",
+          "hypertension",
+          "polypharmacy",
+          "transportation_barrier",
+          "financial_food_barrier",
+          "financial_medication_barrier",
+          "dialysis_fatigue",
+          "behavioral_health_need"
+        ]
+      },
+      "ordering_rule": "Order is not meaningful; use each selected code at most once."
+    },
+    "numeric_anchors": {
+      "type": "object",
+      "required_keys": [
+        "risk_score",
+        "hba1c_percent",
+        "egfr",
+        "blood_pressure",
+        "active_medication_count"
+      ],
+      "properties": {
+        "risk_score": {
+          "type": "number",
+          "unit": "probability",
+          "precision": "two decimal places"
+        },
+        "hba1c_percent": {
+          "type": "number",
+          "unit": "percent",
+          "precision": "one decimal place"
+        },
+        "egfr": {
+          "type": "integer",
+          "unit": "mL/min/1.73 m2"
+        },
+        "blood_pressure": {
+          "type": "string",
+          "format": "systolic/diastolic, for example 140/90"
+        },
+        "active_medication_count": {
+          "type": "integer",
+          "unit": "active medications"
+        }
+      }
+    },
+    "referrals": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "pharmacist",
+          "social_worker",
+          "dialysis_care_coordination",
+          "primary_care",
+          "behavioral_health_monitoring",
+          "transportation_benefits"
+        ]
+      },
+      "ordering_rule": "Order is not meaningful; use each selected referral code at most once."
+    },
+    "outreach_stance": {
+      "type": "enum",
+      "allowed_values": [
+        "permission_based_plain_language",
+        "standard_scripted_outreach",
+        "directive_clinician_instruction",
+        "defer_until_patient_requests_contact"
+      ]
+    },
+    "care_plan_minima": {
+      "type": "object",
+      "required_keys": [
+        "min_problem_count",
+        "weekly_follow_up",
+        "requires_member_stated_priority",
+        "min_disciplines"
+      ],
+      "properties": {
+        "min_problem_count": {
+          "type": "integer"
+        },
+        "weekly_follow_up": {
+          "type": "boolean"
+        },
+        "requires_member_stated_priority": {
+          "type": "boolean"
+        },
+        "min_disciplines": {
+          "type": "integer"
+        }
+      }
+    },
+    "escalation_conditions": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "missed_dialysis_or_volume_overload",
+          "dyspnea_weight_gain_or_ed_return",
+          "phq9_increase_or_item9_positive",
+          "severe_hypoglycemia_or_hyperglycemia",
+          "hypertensive_urgency",
+          "medication_access_failure"
+        ]
+      },
+      "ordering_rule": "Order is not meaningful; use each selected condition code at most once."
+    },
+    "source_provenance": {
+      "type": "object",
+      "required_keys": ["chart_facts", "member_disclosure_needed"],
+      "properties": {
+        "chart_facts": {
+          "type": "array",
+          "items": {
+            "type": "enum",
+            "allowed_values": [
+              "risk_score",
+              "hba1c_percent",
+              "phosphorus_mg_dl",
+              "egfr",
+              "blood_pressure",
+              "active_medication_count",
+              "recent_admission",
+              "dialysis_schedule"
+            ]
+          },
+          "ordering_rule": "Order is not meaningful; use each selected fact key at most once."
+        },
+        "member_disclosure_needed": {
+          "type": "array",
+          "items": {
+            "type": "enum",
+            "allowed_values": [
+              "transportation_barrier",
+              "financial_medication_barrier",
+              "financial_food_barrier",
+              "dialysis_fatigue",
+              "medication_access_barrier",
+              "care_goal_preference"
+            ]
+          },
+          "ordering_rule": "Order is not meaningful; use each selected fact key at most once."
+        }
+      }
+    }
+  },
+  "additional_properties": "Ignored by the evaluator unless they conflict with required structured fields."
+}

@@ -1,0 +1,171 @@
+{
+  "title": "Carrier quality correction result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "correction_target",
+    "mutation_result",
+    "audit_record",
+    "backlog_analysis",
+    "correction_status"
+  ],
+  "properties": {
+    "correction_target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scan_row_id",
+        "shipment_id",
+        "field_name",
+        "old_value",
+        "new_value"
+      ],
+      "properties": {
+        "scan_row_id": {
+          "type": "string",
+          "description": "Stable carrier scan row identifier."
+        },
+        "shipment_id": {
+          "type": "string",
+          "description": "Stable shipment business identifier."
+        },
+        "field_name": {
+          "type": "string",
+          "description": "Corrected canonical carrier-scan column name."
+        },
+        "old_value": {
+          "type": "string",
+          "description": "Canonical value before the correction."
+        },
+        "new_value": {
+          "type": "string",
+          "description": "Canonical value after the correction."
+        }
+      }
+    },
+    "mutation_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "affected_business_rows",
+        "audit_rows"
+      ],
+      "properties": {
+        "affected_business_rows": {
+          "type": "integer",
+          "minimum": 0,
+          "x-unit": "rows",
+          "x-precision": 0
+        },
+        "audit_rows": {
+          "type": "integer",
+          "minimum": 0,
+          "x-unit": "rows",
+          "x-precision": 0
+        }
+      }
+    },
+    "audit_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "audit_id",
+        "correction_key",
+        "entity_type",
+        "entity_id",
+        "source_row_id",
+        "field_name",
+        "old_value",
+        "new_value",
+        "reason_code",
+        "corrected_at",
+        "actor"
+      ],
+      "properties": {
+        "audit_id": {
+          "type": "string"
+        },
+        "correction_key": {
+          "type": "string"
+        },
+        "entity_type": {
+          "type": "string"
+        },
+        "entity_id": {
+          "type": "string",
+          "description": "Stable business entity identifier."
+        },
+        "source_row_id": {
+          "type": "string",
+          "description": "Stable corrected source-row identifier."
+        },
+        "field_name": {
+          "type": "string"
+        },
+        "old_value": {
+          "type": "string"
+        },
+        "new_value": {
+          "type": "string"
+        },
+        "reason_code": {
+          "type": "string",
+          "enum": [
+            "SOURCE_RECONCILIATION"
+          ]
+        },
+        "corrected_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actor": {
+          "type": "string"
+        }
+      }
+    },
+    "backlog_analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pre_correction_backlog_shipment_count",
+        "post_correction_backlog_shipment_count",
+        "backlog_delta",
+        "post_correction_delivered_shipment_count"
+      ],
+      "properties": {
+        "pre_correction_backlog_shipment_count": {
+          "type": "integer",
+          "minimum": 0,
+          "x-unit": "shipments",
+          "x-precision": 0
+        },
+        "post_correction_backlog_shipment_count": {
+          "type": "integer",
+          "minimum": 0,
+          "x-unit": "shipments",
+          "x-precision": 0
+        },
+        "backlog_delta": {
+          "type": "integer",
+          "description": "Post-correction backlog count minus pre-correction backlog count.",
+          "x-unit": "shipments",
+          "x-precision": 0
+        },
+        "post_correction_delivered_shipment_count": {
+          "type": "integer",
+          "minimum": 0,
+          "x-unit": "shipments",
+          "x-precision": 0
+        }
+      }
+    },
+    "correction_status": {
+      "type": "string",
+      "enum": [
+        "APPLIED",
+        "NOT_APPLIED"
+      ]
+    }
+  },
+  "x-list-ordering": "No arrays are permitted in this output."
+}

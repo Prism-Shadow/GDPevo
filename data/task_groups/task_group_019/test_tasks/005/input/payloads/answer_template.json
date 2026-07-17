@@ -1,0 +1,395 @@
+{
+  "description": "Required output schema for test_005 mixed renewal and restricted-premises review.",
+  "top_level_required_keys": [
+    "queue",
+    "successor_premises_review",
+    "method_flags"
+  ],
+  "properties": {
+    "queue": {
+      "type": "list",
+      "required": true,
+      "length": 12,
+      "ordering": "Rank ascending from 1 to 12. Rank is business-significant.",
+      "item_required_keys": {
+        "rank": {
+          "type": "integer",
+          "allowed_range": [
+            1,
+            12
+          ]
+        },
+        "license_id": {
+          "type": "string",
+          "format": "CLRP renewal license ID"
+        },
+        "facility_name": {
+          "type": "string",
+          "format": "Current facility name from the renewal roster"
+        },
+        "match_confidence": {
+          "type": "enum",
+          "allowed_values": [
+            "exact",
+            "close",
+            "shared_address_manual"
+          ]
+        },
+        "violation_count_used": {
+          "type": "integer",
+          "description": "Count of matched renewal violation records used for pre-boundary ranking."
+        },
+        "most_recent_date_used": {
+          "type": "string",
+          "format": "YYYY-MM-DD",
+          "description": "Most recent matched renewal violation date used for pre-boundary ranking."
+        },
+        "next_step_label": {
+          "type": "enum",
+          "allowed_values": [
+            "manual fine check",
+            "manual ALERT check",
+            "board review",
+            "additional record check"
+          ]
+        }
+      }
+    },
+    "successor_premises_review": {
+      "type": "object",
+      "required": true,
+      "required_keys": [
+        "review_month",
+        "application_id",
+        "premises_id",
+        "dba",
+        "recommendation",
+        "follow_up_required",
+        "risk_assessment",
+        "verification_gaps",
+        "standard_obligations",
+        "premises_specific_controls",
+        "first_90_day_checks"
+      ],
+      "field_definitions": {
+        "review_month": {
+          "type": "string",
+          "format": "YYYY-MM",
+          "expected_value": "2026-05"
+        },
+        "application_id": {
+          "type": "string",
+          "expected_value": "AA-2026-0017"
+        },
+        "premises_id": {
+          "type": "string",
+          "expected_value": "PM-2026-017"
+        },
+        "dba": {
+          "type": "string"
+        },
+        "recommendation": {
+          "type": "enum",
+          "allowed_values": [
+            "ISSUE_STANDARD",
+            "ISSUE_RESTRICTED_WITH_MONITORING",
+            "REQUEST_RECORDS_BEFORE_ISSUE",
+            "DENY"
+          ]
+        },
+        "follow_up_required": {
+          "type": "boolean"
+        },
+        "risk_assessment": {
+          "type": "object",
+          "required_keys": [
+            "same_premises_basis",
+            "prior_licensee",
+            "prior_incident_level",
+            "incident_count",
+            "unresolved_incident_count",
+            "high_severity_incident_count",
+            "unresolved_incident_ids",
+            "high_severity_incident_ids",
+            "settlement_posture",
+            "successor_risk_classification",
+            "overall_risk",
+            "current_premises_specific_control_count",
+            "standard_obligations_kept_separate"
+          ],
+          "fields": {
+            "same_premises_basis": {
+              "type": "enum",
+              "allowed_values": [
+                "NONE",
+                "PRIOR_SETTLEMENT_AT_ADDRESS",
+                "SAME_ADDRESS_OVERLAP"
+              ]
+            },
+            "prior_licensee": {
+              "type": "string"
+            },
+            "prior_incident_level": {
+              "type": "enum",
+              "allowed_values": [
+                "NONE",
+                "LOW",
+                "MODERATE",
+                "HIGH"
+              ]
+            },
+            "incident_count": {
+              "type": "integer"
+            },
+            "unresolved_incident_count": {
+              "type": "integer"
+            },
+            "high_severity_incident_count": {
+              "type": "integer"
+            },
+            "unresolved_incident_ids": {
+              "type": "list",
+              "item_type": "string",
+              "ordering": "ascending incident ID"
+            },
+            "high_severity_incident_ids": {
+              "type": "list",
+              "item_type": "string",
+              "ordering": "ascending incident ID"
+            },
+            "settlement_posture": {
+              "type": "enum",
+              "allowed_values": [
+                "NONE",
+                "PRIOR_WARNING_WITH_CONTROLS",
+                "PRIOR_RESTRICTED_OR_DENIAL",
+                "CURRENT_SETTLEMENT"
+              ]
+            },
+            "successor_risk_classification": {
+              "type": "enum",
+              "allowed_values": [
+                "LOW",
+                "MODERATE",
+                "HIGH"
+              ]
+            },
+            "overall_risk": {
+              "type": "enum",
+              "allowed_values": [
+                "LOW",
+                "MODERATE",
+                "ELEVATED",
+                "SEVERE"
+              ]
+            },
+            "current_premises_specific_control_count": {
+              "type": "integer"
+            },
+            "standard_obligations_kept_separate": {
+              "type": "boolean"
+            }
+          }
+        },
+        "verification_gaps": {
+          "type": "list",
+          "ordering": "ascending gap_code",
+          "item_schema": {
+            "type": "object",
+            "required_keys": [
+              "gap_code",
+              "source_ids",
+              "status"
+            ],
+            "properties": {
+              "gap_code": {
+                "type": "enum",
+                "allowed_values": [
+                  "LATE_NIGHT_DISORDER_CONTROL_GAP",
+                  "SUCCESSOR_CONTROL_SEPARATION",
+                  "UNRESOLVED_HIGH_SEVERITY_INCIDENT_DISPOSITION"
+                ]
+              },
+              "source_ids": {
+                "type": "list",
+                "item_type": "string",
+                "ordering": "ascending source ID"
+              },
+              "status": {
+                "type": "enum",
+                "allowed_values": [
+                  "REQUEST_BEFORE_FINAL",
+                  "MONITOR_IN_FIRST_90_DAYS"
+                ]
+              }
+            }
+          }
+        },
+        "standard_obligations": {
+          "type": "list",
+          "ordering": "ascending obligation_code",
+          "item_schema": {
+            "type": "object",
+            "required_keys": [
+              "obligation_code",
+              "source_obligation_id",
+              "evidence_required"
+            ],
+            "properties": {
+              "obligation_code": {
+                "type": "enum",
+                "allowed_values": [
+                  "INCIDENT_REPORT",
+                  "PUBLIC_RECORDS",
+                  "TAVERN_AGE",
+                  "TAVERN_HOURS",
+                  "TAVERN_SECURITY",
+                  "TRAINING_STANDARD"
+                ]
+              },
+              "source_obligation_id": {
+                "type": "string"
+              },
+              "evidence_required": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "premises_specific_controls": {
+          "type": "list",
+          "ordering": "ascending control_code",
+          "item_schema": {
+            "type": "object",
+            "required_keys": [
+              "control_code",
+              "source_ids",
+              "evidence_required",
+              "first_90_day_check"
+            ],
+            "properties": {
+              "control_code": {
+                "type": "enum",
+                "allowed_values": [
+                  "PATIO_LIMIT"
+                ]
+              },
+              "source_ids": {
+                "type": "list",
+                "item_type": "string",
+                "ordering": "ascending source ID"
+              },
+              "evidence_required": {
+                "type": "enum",
+                "allowed_values": [
+                  "patio closure log"
+                ]
+              },
+              "first_90_day_check": {
+                "type": "enum",
+                "allowed_values": [
+                  "PATIO_CLOSURE_LOG_REVIEW"
+                ]
+              }
+            }
+          }
+        },
+        "first_90_day_checks": {
+          "type": "list",
+          "ordering": "ascending check_rank",
+          "item_schema": {
+            "type": "object",
+            "required_keys": [
+              "check_rank",
+              "check_code",
+              "source_ids",
+              "timing"
+            ],
+            "properties": {
+              "check_rank": {
+                "type": "integer"
+              },
+              "check_code": {
+                "type": "enum",
+                "allowed_values": [
+                  "PATIO_CLOSURE_LOG_REVIEW",
+                  "POLICE_CALL_LOG_REVIEW",
+                  "TAVERN_STANDARD_OBLIGATION_CHECK"
+                ]
+              },
+              "source_ids": {
+                "type": "list",
+                "item_type": "string",
+                "ordering": "ascending source ID"
+              },
+              "timing": {
+                "type": "enum",
+                "allowed_values": [
+                  "FIRST_30_DAYS",
+                  "FIRST_60_DAYS",
+                  "FIRST_90_DAYS"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "method_flags": {
+      "type": "object",
+      "required": true,
+      "required_keys": {
+        "release_batch": {
+          "type": "string",
+          "expected_value": "RV-2026-FALL"
+        },
+        "release_boundary": {
+          "type": "string",
+          "format": "YYYY-MM-DD",
+          "expected_value": "2026-10-15"
+        },
+        "queue_size": {
+          "type": "integer",
+          "expected_value": 12
+        },
+        "excluded_post_boundary_count": {
+          "type": "integer"
+        },
+        "post_boundary_exclusion_applied": {
+          "type": "boolean"
+        },
+        "shared_address_records_not_spread": {
+          "type": "boolean"
+        },
+        "exact_match_count": {
+          "type": "integer"
+        },
+        "close_match_count": {
+          "type": "integer"
+        },
+        "shared_address_manual_count": {
+          "type": "integer"
+        },
+        "board_review_count": {
+          "type": "integer"
+        },
+        "manual_fine_check_count": {
+          "type": "integer"
+        },
+        "manual_ALERT_check_count": {
+          "type": "integer"
+        },
+        "additional_record_check_count": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "notes": [
+    "Return JSON only.",
+    "Do not include evidence text or free-form explanations.",
+    "Dates must use YYYY-MM-DD.",
+    "String enum values are case-sensitive.",
+    "Use current renewal roster facility names in queue[].facility_name."
+  ]
+}

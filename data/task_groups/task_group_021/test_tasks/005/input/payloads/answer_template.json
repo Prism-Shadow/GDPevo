@@ -1,0 +1,1459 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "April freight-charge cleanup, controlled decisions, and accrual reconciliation answer",
+  "type": "object",
+  "$defs": {
+    "populationImpact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "retained_charge_count",
+        "source_treatment_counts",
+        "valid_charge_count",
+        "valid_spend_usd",
+        "fx_affected_charge_count",
+        "fx_counterfactual_increase_usd"
+      ],
+      "properties": {
+        "retained_charge_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_treatment_counts": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "Exactly CERTIFIED_ONLY, CERTIFIED_OVERLAP, and PROVISIONAL_ONLY in that order; include zero counts.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_treatment",
+              "charge_count"
+            ],
+            "properties": {
+              "source_treatment": {
+                "type": "string",
+                "enum": [
+                  "CERTIFIED_ONLY",
+                  "CERTIFIED_OVERLAP",
+                  "PROVISIONAL_ONLY"
+                ]
+              },
+              "charge_count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "valid_charge_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "valid_spend_usd": {
+          "type": "number",
+          "description": "Sum of per-charge cent-rounded same-date CERTIFIED USD conversions, including conversion of USD charges."
+        },
+        "fx_affected_charge_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fx_counterfactual_increase_usd": {
+          "type": "number",
+          "description": "Provisional total minus certified total over qualifying valid non-USD charges, after per-charge cent rounding."
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "audit_summary",
+    "alias_reference_cases",
+    "charge_decisions",
+    "class_mismatch_charge_ids",
+    "quarantine_charge_ids",
+    "duplicate_groups",
+    "normalized_totals",
+    "focus_lanes",
+    "carrier_ranking",
+    "integrated_close_evidence_release_assessment",
+    "unsafe_aggregation_containment_plan",
+    "invoice_route_ledger_controls",
+    "fx_certification_impact",
+    "close_status"
+  ],
+  "properties": {
+    "audit_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "collection_id",
+        "cutoff_at",
+        "authoritative_snapshot_id",
+        "raw_row_count",
+        "logical_charge_count",
+        "duplicate_raw_count",
+        "valid_charge_count",
+        "mismatch_count",
+        "quarantine_count",
+        "quarantine_reason_counts"
+      ],
+      "properties": {
+        "collection_id": {
+          "type": "string",
+          "const": "freight_charges_2026_04"
+        },
+        "cutoff_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "authoritative_snapshot_id": {
+          "type": "string",
+          "description": "Stable snapshot ID used to resolve overlapping charge occurrences."
+        },
+        "raw_row_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "logical_charge_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicate_raw_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "valid_charge_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mismatch_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quarantine_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quarantine_reason_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ambiguous_alias",
+            "invalid_distance",
+            "invalid_weight",
+            "unrecognized_alias"
+          ],
+          "properties": {
+            "ambiguous_alias": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "invalid_distance": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "invalid_weight": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unrecognized_alias": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "alias_reference_cases": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "Exactly the requested reference_alias_ids, sorted by alias_id ascending. Eligibility is evaluated at cutoff_at.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "alias_id",
+          "reference_control_code",
+          "canonical_service_class",
+          "reference_status",
+          "effective_on_cutoff",
+          "status_eligible",
+          "recognition_eligible"
+        ],
+        "properties": {
+          "alias_id": {
+            "type": "string",
+            "enum": [
+              "FRA-005",
+              "FRA-016",
+              "FRA-017",
+              "FRA-018"
+            ]
+          },
+          "reference_control_code": {
+            "type": "string",
+            "enum": [
+              "RB-17",
+              "RB-42",
+              "RB-83"
+            ]
+          },
+          "canonical_service_class": {
+            "type": "string",
+            "enum": [
+              "EXPRESS",
+              "HAZMAT",
+              "OVERSIZE",
+              "REFRIGERATED",
+              "STANDARD"
+            ]
+          },
+          "reference_status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "PROVISIONAL"
+            ]
+          },
+          "effective_on_cutoff": {
+            "type": "boolean"
+          },
+          "status_eligible": {
+            "type": "boolean",
+            "description": "True only when the public reference status is eligible for recognition."
+          },
+          "recognition_eligible": {
+            "type": "boolean",
+            "description": "True only when both cutoff effectiveness and status eligibility hold."
+          }
+        }
+      }
+    },
+    "charge_decisions": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "description": "Exactly the requested decision_charge_ids, sorted by charge_id ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "charge_id",
+          "ledger_disposition_code",
+          "retained_snapshot_id",
+          "source_control_code",
+          "source_treatment",
+          "applicable_alias_ids",
+          "decisive_alias_ids",
+          "recognition_outcome",
+          "recognized_service_class",
+          "class_relation",
+          "accrual_disposition",
+          "quarantine_reason",
+          "weight_eligible",
+          "distance_eligible",
+          "selected_fx_status",
+          "selected_usd_per_unit",
+          "converted_weight_kg",
+          "converted_distance_km",
+          "converted_amount_usd",
+          "included_in_totals",
+          "included_spend_usd"
+        ],
+        "properties": {
+          "charge_id": {
+            "type": "string",
+            "enum": [
+              "FC-202604-000001",
+              "FC-202604-000002",
+              "FC-202604-000007",
+              "FC-202604-000012",
+              "FC-202604-000020",
+              "FC-202604-000088",
+              "FC-202604-000092",
+              "FC-202604-000102",
+              "FC-202604-000108"
+            ]
+          },
+          "ledger_disposition_code": {
+            "type": "string",
+            "enum": [
+              "LD-14",
+              "LD-31",
+              "LD-53",
+              "LD-72",
+              "LD-88"
+            ]
+          },
+          "retained_snapshot_id": {
+            "type": "string",
+            "description": "Stable snapshot ID of the retained source occurrence."
+          },
+          "source_control_code": {
+            "type": "string",
+            "enum": [
+              "SB-24",
+              "SB-61",
+              "SB-79"
+            ]
+          },
+          "source_treatment": {
+            "type": "string",
+            "enum": [
+              "RETAIN_CERTIFIED_OVERLAP",
+              "RETAIN_CERTIFIED_ONLY",
+              "RETAIN_PROVISIONAL_ONLY"
+            ]
+          },
+          "applicable_alias_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "Eligible complete-token or complete-phrase references matching the retained description, sorted by alias_id.",
+            "items": {
+              "type": "string",
+              "pattern": "^FRA-[0-9]{3}$"
+            }
+          },
+          "decisive_alias_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "Applicable references at the longest matching phrase length, sorted by alias_id.",
+            "items": {
+              "type": "string",
+              "pattern": "^FRA-[0-9]{3}$"
+            }
+          },
+          "recognition_outcome": {
+            "type": "string",
+            "enum": [
+              "UNIQUE",
+              "AMBIGUOUS",
+              "UNRECOGNIZED"
+            ]
+          },
+          "recognized_service_class": {
+            "type": "string",
+            "enum": [
+              "EXPRESS",
+              "HAZMAT",
+              "OVERSIZE",
+              "REFRIGERATED",
+              "STANDARD",
+              "UNRESOLVED"
+            ]
+          },
+          "class_relation": {
+            "type": "string",
+            "enum": [
+              "MATCH",
+              "MISMATCH",
+              "NOT_COMPARABLE"
+            ]
+          },
+          "accrual_disposition": {
+            "type": "string",
+            "enum": [
+              "INCLUDE_MATCH",
+              "INCLUDE_MISMATCH",
+              "QUARANTINE"
+            ]
+          },
+          "quarantine_reason": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "AMBIGUOUS_ALIAS",
+              "UNRECOGNIZED_ALIAS",
+              "INVALID_WEIGHT",
+              "INVALID_DISTANCE"
+            ]
+          },
+          "weight_eligible": {
+            "type": "boolean"
+          },
+          "distance_eligible": {
+            "type": "boolean"
+          },
+          "selected_fx_status": {
+            "type": "string",
+            "enum": [
+              "CERTIFIED",
+              "PROVISIONAL",
+              "UNAVAILABLE"
+            ]
+          },
+          "selected_usd_per_unit": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Selected business-date USD-per-unit rate, to 6 decimal places when available."
+          },
+          "converted_weight_kg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Converted kilograms to 3 decimal places when weight is eligible."
+          },
+          "converted_distance_km": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Converted kilometers to 3 decimal places when distance is eligible."
+          },
+          "converted_amount_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Business-date FX conversion to 2 decimal places when FX is available, even if another condition quarantines the charge."
+          },
+          "included_in_totals": {
+            "type": "boolean"
+          },
+          "included_spend_usd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Converted USD included in corrected totals, to 2 decimal places; null for quarantine."
+          }
+        }
+      }
+    },
+    "class_mismatch_charge_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "All valid expected-versus-recognized service-class mismatch charge IDs, sorted lexicographically.",
+      "items": {
+        "type": "string",
+        "pattern": "^FC-[0-9]{6}-[0-9]{6}$"
+      }
+    },
+    "quarantine_charge_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "All logical charge IDs quarantined for an unresolved class, nonpositive weight, or nonpositive distance, sorted lexicographically.",
+      "items": {
+        "type": "string",
+        "pattern": "^FC-[0-9]{6}-[0-9]{6}$"
+      }
+    },
+    "duplicate_groups": {
+      "type": "array",
+      "description": "One object per charge ID with multiple raw occurrences, sorted by charge_id ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "charge_id",
+          "raw_occurrence_count",
+          "snapshot_ids",
+          "retained_snapshot_id"
+        ],
+        "properties": {
+          "charge_id": {
+            "type": "string",
+            "pattern": "^FC-[0-9]{6}-[0-9]{6}$"
+          },
+          "raw_occurrence_count": {
+            "type": "integer",
+            "minimum": 2
+          },
+          "snapshot_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "Snapshot IDs containing this charge, sorted lexicographically.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "retained_snapshot_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "normalized_totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "valid_charge_count",
+        "total_billed_weight_kg",
+        "total_distance_km",
+        "total_spend_usd",
+        "service_class_totals"
+      ],
+      "properties": {
+        "valid_charge_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_billed_weight_kg": {
+          "type": "number",
+          "description": "Kilograms, rounded to 2 decimal places."
+        },
+        "total_distance_km": {
+          "type": "number",
+          "description": "Kilometers, rounded to 2 decimal places."
+        },
+        "total_spend_usd": {
+          "type": "number",
+          "description": "USD, rounded to 2 decimal places."
+        },
+        "service_class_totals": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "description": "Exactly one object per service_class, sorted by service_class ascending.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "service_class",
+              "charge_count",
+              "billed_weight_kg",
+              "distance_km",
+              "spend_usd"
+            ],
+            "properties": {
+              "service_class": {
+                "type": "string",
+                "enum": [
+                  "EXPRESS",
+                  "HAZMAT",
+                  "OVERSIZE",
+                  "REFRIGERATED",
+                  "STANDARD"
+                ]
+              },
+              "charge_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "billed_weight_kg": {
+                "type": "number",
+                "description": "Kilograms, rounded to 2 decimal places."
+              },
+              "distance_km": {
+                "type": "number",
+                "description": "Kilometers, rounded to 2 decimal places."
+              },
+              "spend_usd": {
+                "type": "number",
+                "description": "USD, rounded to 2 decimal places."
+              }
+            }
+          }
+        }
+      }
+    },
+    "focus_lanes": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "Exactly the focus_lane_ids from case_scope.json, sorted by lane_id ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lane_id",
+          "logical_charge_count",
+          "valid_charge_count",
+          "mismatch_count",
+          "quarantine_count",
+          "exception_count",
+          "exception_rate",
+          "billed_weight_kg",
+          "distance_km",
+          "spend_usd",
+          "accrual_usd_per_km",
+          "highest_spend_service_class"
+        ],
+        "properties": {
+          "lane_id": {
+            "type": "string",
+            "enum": [
+              "LANE-001",
+              "LANE-016",
+              "LANE-048",
+              "LANE-082"
+            ]
+          },
+          "logical_charge_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "valid_charge_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mismatch_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "quarantine_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "exception_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Distinct logical charges that are a valid class mismatch or are quarantined."
+          },
+          "exception_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "exception_count divided by logical_charge_count, rounded to 4 decimal places."
+          },
+          "billed_weight_kg": {
+            "type": "number",
+            "description": "Valid-charge kilograms, rounded to 2 decimal places."
+          },
+          "distance_km": {
+            "type": "number",
+            "description": "Valid-charge kilometers, rounded to 2 decimal places."
+          },
+          "spend_usd": {
+            "type": "number",
+            "description": "Valid-charge USD, rounded to 2 decimal places."
+          },
+          "accrual_usd_per_km": {
+            "type": "number",
+            "description": "Valid-charge spend_usd divided by valid-charge distance_km before display rounding, rounded to 4 decimal places."
+          },
+          "highest_spend_service_class": {
+            "type": "string",
+            "enum": [
+              "EXPRESS",
+              "HAZMAT",
+              "OVERSIZE",
+              "REFRIGERATED",
+              "STANDARD"
+            ]
+          }
+        }
+      }
+    },
+    "carrier_ranking": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "description": "Carriers ordered by mismatch_spend_usd descending, then carrier_id ascending.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rank",
+          "carrier_id",
+          "mismatch_count",
+          "mismatch_spend_usd",
+          "quarantine_count",
+          "exception_count"
+        ],
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "carrier_id": {
+            "type": "string",
+            "pattern": "^CAR-[0-9]{3}$"
+          },
+          "mismatch_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mismatch_spend_usd": {
+            "type": "number",
+            "description": "USD exposure from valid service-class mismatches, rounded to 2 decimal places."
+          },
+          "quarantine_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "exception_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "integrated_close_evidence_release_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "population_summary",
+        "action_cohorts",
+        "priority_invoice_ranking"
+      ],
+      "properties": {
+        "population_summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "invoice_count",
+            "retained_charge_count",
+            "valid_charge_count",
+            "certified_booked_spend_usd",
+            "source_dependent_invoice_count",
+            "source_dependent_charge_count",
+            "fx_comparison_dependent_invoice_count",
+            "fx_comparison_charge_count",
+            "provisional_fx_comparison_delta_usd"
+          ],
+          "properties": {
+            "invoice_count": {"type": "integer", "minimum": 0},
+            "retained_charge_count": {"type": "integer", "minimum": 0},
+            "valid_charge_count": {"type": "integer", "minimum": 0},
+            "certified_booked_spend_usd": {"type": "number"},
+            "source_dependent_invoice_count": {"type": "integer", "minimum": 0},
+            "source_dependent_charge_count": {"type": "integer", "minimum": 0},
+            "fx_comparison_dependent_invoice_count": {"type": "integer", "minimum": 0},
+            "fx_comparison_charge_count": {"type": "integer", "minimum": 0},
+            "provisional_fx_comparison_delta_usd": {"type": "number"}
+          }
+        },
+        "action_cohorts": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "description": "Exactly the four action cohorts in case_scope order.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action_cohort",
+              "invoice_count",
+              "retained_charge_count",
+              "valid_charge_count",
+              "certified_booked_spend_usd",
+              "source_dependent_charge_count",
+              "fx_comparison_charge_count",
+              "provisional_fx_comparison_delta_usd",
+              "source_control_counts",
+              "ledger_disposition_counts"
+            ],
+            "properties": {
+              "action_cohort": {
+                "type": "string",
+                "enum": [
+                  "ARCHIVE_PROVISIONAL_EVIDENCE",
+                  "RETAIN_FX_COMPARISON_ONLY",
+                  "RETAIN_SOURCE_AND_FX_COMPARISON",
+                  "RETAIN_SOURCE_ONLY"
+                ]
+              },
+              "invoice_count": {"type": "integer", "minimum": 0},
+              "retained_charge_count": {"type": "integer", "minimum": 0},
+              "valid_charge_count": {"type": "integer", "minimum": 0},
+              "certified_booked_spend_usd": {"type": "number"},
+              "source_dependent_charge_count": {"type": "integer", "minimum": 0},
+              "fx_comparison_charge_count": {"type": "integer", "minimum": 0},
+              "provisional_fx_comparison_delta_usd": {"type": "number"},
+              "source_control_counts": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "description": "Exactly SB-24, SB-61, SB-79 in ascending code order, including zeros.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["source_control_code", "charge_count"],
+                  "properties": {
+                    "source_control_code": {
+                      "type": "string",
+                      "enum": ["SB-24", "SB-61", "SB-79"]
+                    },
+                    "charge_count": {"type": "integer", "minimum": 0}
+                  }
+                }
+              },
+              "ledger_disposition_counts": {
+                "type": "array",
+                "minItems": 5,
+                "maxItems": 5,
+                "description": "Exactly LD-14, LD-31, LD-53, LD-72, LD-88 in ascending code order, including zeros.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["ledger_disposition_code", "charge_count"],
+                  "properties": {
+                    "ledger_disposition_code": {
+                      "type": "string",
+                      "enum": ["LD-14", "LD-31", "LD-53", "LD-72", "LD-88"]
+                    },
+                    "charge_count": {"type": "integer", "minimum": 0}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "priority_invoice_ranking": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "description": "Three ranked invoices for each non-archive action cohort, in the cohort and rank order declared by case_scope.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action_cohort",
+              "cohort_rank",
+              "invoice_id",
+              "source_dependent_charge_count",
+              "fx_comparison_charge_count",
+              "certified_booked_spend_at_source_risk_usd",
+              "provisional_fx_comparison_delta_usd",
+              "evidence_priority_usd"
+            ],
+            "properties": {
+              "action_cohort": {
+                "type": "string",
+                "enum": [
+                  "RETAIN_FX_COMPARISON_ONLY",
+                  "RETAIN_SOURCE_AND_FX_COMPARISON",
+                  "RETAIN_SOURCE_ONLY"
+                ]
+              },
+              "cohort_rank": {"type": "integer", "minimum": 1, "maximum": 3},
+              "invoice_id": {"type": "string", "pattern": "^INV-[0-9]{6}$"},
+              "source_dependent_charge_count": {"type": "integer", "minimum": 0},
+              "fx_comparison_charge_count": {"type": "integer", "minimum": 0},
+              "certified_booked_spend_at_source_risk_usd": {"type": "number"},
+              "provisional_fx_comparison_delta_usd": {"type": "number"},
+              "evidence_priority_usd": {"type": "number"}
+            }
+          }
+        }
+      }
+    },
+    "unsafe_aggregation_containment_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseline_population",
+        "unsafe_union_graph",
+        "separation_stages",
+        "final_containment"
+      ],
+      "properties": {
+        "baseline_population": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "invoice_node_count",
+            "retained_charge_count",
+            "source_treatment_counts",
+            "valid_charge_count",
+            "valid_spend_usd",
+            "fx_affected_charge_count",
+            "fx_counterfactual_increase_usd"
+          ],
+          "properties": {
+            "invoice_node_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "retained_charge_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "source_treatment_counts": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "description": "Exactly CERTIFIED_ONLY, CERTIFIED_OVERLAP, and PROVISIONAL_ONLY in that order; include zero counts.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "source_treatment",
+                  "charge_count"
+                ],
+                "properties": {
+                  "source_treatment": {
+                    "type": "string",
+                    "enum": [
+                      "CERTIFIED_ONLY",
+                      "CERTIFIED_OVERLAP",
+                      "PROVISIONAL_ONLY"
+                    ]
+                  },
+                  "charge_count": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            },
+            "valid_charge_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "valid_spend_usd": {
+              "type": "number"
+            },
+            "fx_affected_charge_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fx_counterfactual_increase_usd": {
+              "type": "number"
+            }
+          }
+        },
+        "unsafe_union_graph": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "scenario_edge_counts",
+            "union_direct_cross_invoice_pair_count",
+            "overlapping_direct_pair_count",
+            "connected_component_count",
+            "largest_component_invoice_count"
+          ],
+          "properties": {
+            "scenario_edge_counts": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "description": "Exactly CARRIER_DATE_CLASS_KEY then LANE_LINE_KEY.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "scenario_id",
+                  "unsafe_key_collision_count",
+                  "direct_cross_invoice_pair_count"
+                ],
+                "properties": {
+                  "scenario_id": {
+                    "type": "string",
+                    "enum": [
+                      "CARRIER_DATE_CLASS_KEY",
+                      "LANE_LINE_KEY"
+                    ]
+                  },
+                  "unsafe_key_collision_count": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "direct_cross_invoice_pair_count": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            },
+            "union_direct_cross_invoice_pair_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "overlapping_direct_pair_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "connected_component_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "largest_component_invoice_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "separation_stages": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Exactly SOURCE_STABILITY_SEPARATION then FX_STABILITY_SEPARATION.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "stage_id",
+              "active_invoice_count_before",
+              "left_label",
+              "left_invoice_count_before",
+              "right_label",
+              "right_invoice_count_before",
+              "cross_label_direct_pair_count",
+              "maximum_matching_size",
+              "minimum_vertex_cover_size",
+              "isolated_left_invoice_count",
+              "isolated_right_invoice_count",
+              "isolated_invoice_count",
+              "isolated_invoice_ids",
+              "isolated_population_impact",
+              "active_invoice_count_after"
+            ],
+            "properties": {
+              "stage_id": {
+                "type": "string",
+                "enum": [
+                  "SOURCE_STABILITY_SEPARATION",
+                  "FX_STABILITY_SEPARATION"
+                ]
+              },
+              "active_invoice_count_before": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "left_label": {
+                "type": "string",
+                "enum": [
+                  "SOURCE_FRAGILE",
+                  "FX_SENSITIVE"
+                ]
+              },
+              "left_invoice_count_before": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "right_label": {
+                "type": "string",
+                "enum": [
+                  "SOURCE_STABLE",
+                  "FX_INSENSITIVE"
+                ]
+              },
+              "right_invoice_count_before": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cross_label_direct_pair_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "maximum_matching_size": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "minimum_vertex_cover_size": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "isolated_left_invoice_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "isolated_right_invoice_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "isolated_invoice_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "isolated_invoice_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "description": "Every invoice in this stage's deterministic minimum vertex cover, sorted ascending.",
+                "items": {
+                  "type": "string",
+                  "pattern": "^INV-[0-9]{6}$"
+                }
+              },
+              "isolated_population_impact": {
+                "$ref": "#/$defs/populationImpact"
+              },
+              "active_invoice_count_after": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "final_containment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "total_isolated_invoice_count",
+            "isolated_invoice_ids",
+            "isolated_population_impact",
+            "remaining_invoice_count",
+            "remaining_direct_pair_count",
+            "remaining_connected_component_count",
+            "largest_remaining_component_invoice_count",
+            "component_signature_distribution",
+            "mixed_source_stability_component_count",
+            "mixed_fx_stability_component_count"
+          ],
+          "properties": {
+            "total_isolated_invoice_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "isolated_invoice_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "description": "Sorted union of the two stage covers.",
+              "items": {
+                "type": "string",
+                "pattern": "^INV-[0-9]{6}$"
+              }
+            },
+            "isolated_population_impact": {
+              "$ref": "#/$defs/populationImpact"
+            },
+            "remaining_invoice_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "remaining_direct_pair_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "remaining_connected_component_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "largest_remaining_component_invoice_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "component_signature_distribution": {
+              "type": "array",
+              "minItems": 1,
+              "description": "Complete final component histogram sorted by source label, FX label, and component size ascending.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "source_stability_label",
+                  "fx_stability_label",
+                  "invoice_count_per_component",
+                  "component_count"
+                ],
+                "properties": {
+                  "source_stability_label": {
+                    "type": "string",
+                    "enum": [
+                      "SOURCE_FRAGILE",
+                      "SOURCE_STABLE"
+                    ]
+                  },
+                  "fx_stability_label": {
+                    "type": "string",
+                    "enum": [
+                      "FX_INSENSITIVE",
+                      "FX_SENSITIVE"
+                    ]
+                  },
+                  "invoice_count_per_component": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "component_count": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            },
+            "mixed_source_stability_component_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "mixed_fx_stability_component_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "invoice_route_ledger_controls": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "Exactly one row per invoice route, sorted by invoice_route ascending. Every retained logical charge contributes once to one ledger-disposition count.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "invoice_route",
+          "ledger_disposition_counts"
+        ],
+        "properties": {
+          "invoice_route": {
+            "type": "string",
+            "enum": [
+              "BLOCK_QUARANTINE",
+              "CLEAR",
+              "REVIEW_MISMATCH"
+            ]
+          },
+          "ledger_disposition_counts": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "description": "Exactly one row per bounded control code, sorted by ledger_disposition_code ascending; include zero counts.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ledger_disposition_code",
+                "charge_count"
+              ],
+              "properties": {
+                "ledger_disposition_code": {
+                  "type": "string",
+                  "enum": [
+                    "LD-14",
+                    "LD-31",
+                    "LD-53",
+                    "LD-72",
+                    "LD-88"
+                  ]
+                },
+                "charge_count": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "fx_certification_impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "affected_valid_charge_count",
+        "certified_total_usd",
+        "provisional_counterfactual_total_usd",
+        "counterfactual_increase_usd",
+        "by_currency",
+        "carrier_ranking"
+      ],
+      "properties": {
+        "affected_valid_charge_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "certified_total_usd": {
+          "type": "number",
+          "description": "Sum of per-charge cent-rounded certified conversions, rounded to 2 decimal places."
+        },
+        "provisional_counterfactual_total_usd": {
+          "type": "number",
+          "description": "Sum of per-charge cent-rounded provisional counterfactual conversions, rounded to 2 decimal places."
+        },
+        "counterfactual_increase_usd": {
+          "type": "number",
+          "description": "Provisional counterfactual total minus certified total, rounded to 2 decimal places."
+        },
+        "by_currency": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "Exactly the qualifying non-USD currencies, sorted by currency ascending.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "currency",
+              "affected_valid_charge_count",
+              "certified_total_usd",
+              "provisional_counterfactual_total_usd",
+              "counterfactual_increase_usd",
+              "certified_rate_reference_control_code",
+              "provisional_rate_reference_control_code",
+              "rate_source_control_code",
+              "ledger_disposition_counts"
+            ],
+            "properties": {
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "CAD",
+                  "EUR",
+                  "GBP"
+                ]
+              },
+              "affected_valid_charge_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "certified_total_usd": {
+                "type": "number"
+              },
+              "provisional_counterfactual_total_usd": {
+                "type": "number"
+              },
+              "counterfactual_increase_usd": {
+                "type": "number"
+              },
+              "certified_rate_reference_control_code": {
+                "type": "string",
+                "enum": [
+                  "RB-17",
+                  "RB-42",
+                  "RB-83"
+                ]
+              },
+              "provisional_rate_reference_control_code": {
+                "type": "string",
+                "enum": [
+                  "RB-17",
+                  "RB-42",
+                  "RB-83"
+                ]
+              },
+              "rate_source_control_code": {
+                "type": "string",
+                "enum": [
+                  "SB-24",
+                  "SB-61",
+                  "SB-79"
+                ]
+              },
+              "ledger_disposition_counts": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "description": "Exactly the represented valid-charge ledger controls, sorted by ledger_disposition_code ascending.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "ledger_disposition_code",
+                    "charge_count"
+                  ],
+                  "properties": {
+                    "ledger_disposition_code": {
+                      "type": "string",
+                      "enum": [
+                        "LD-14",
+                        "LD-31",
+                        "LD-53",
+                        "LD-72",
+                        "LD-88"
+                      ]
+                    },
+                    "charge_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "carrier_ranking": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "description": "Carriers ranked by counterfactual_increase_usd descending, then carrier_id ascending, over the qualifying FX-impact population.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "rank",
+              "carrier_id",
+              "affected_valid_charge_count",
+              "certified_total_usd",
+              "provisional_counterfactual_total_usd",
+              "counterfactual_increase_usd",
+              "ledger_disposition_counts"
+            ],
+            "properties": {
+              "rank": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "carrier_id": {
+                "type": "string",
+                "pattern": "^CAR-[0-9]{3}$"
+              },
+              "affected_valid_charge_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "certified_total_usd": {
+                "type": "number"
+              },
+              "provisional_counterfactual_total_usd": {
+                "type": "number"
+              },
+              "counterfactual_increase_usd": {
+                "type": "number"
+              },
+              "ledger_disposition_counts": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "description": "Exactly the represented valid-charge ledger controls, sorted by ledger_disposition_code ascending.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "ledger_disposition_code",
+                    "charge_count"
+                  ],
+                  "properties": {
+                    "ledger_disposition_code": {
+                      "type": "string",
+                      "enum": [
+                        "LD-14",
+                        "LD-31",
+                        "LD-53",
+                        "LD-72",
+                        "LD-88"
+                      ]
+                    },
+                    "charge_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "close_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "routing"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "PASS_WITH_EXCEPTIONS",
+            "HOLD"
+          ]
+        },
+        "routing": {
+          "type": "string",
+          "enum": [
+            "RELEASE",
+            "REVIEW_EXCEPTIONS",
+            "BLOCK_AND_REMEDIATE"
+          ]
+        }
+      }
+    }
+  }
+}
