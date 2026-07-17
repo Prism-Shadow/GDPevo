@@ -1,3 +1,35 @@
+export const modes = ["base", "demo", "reflect"];
+
+export const summaryCards = [
+  {
+    title: "Codex · GPT-5.5",
+    thinking: "xhigh",
+    rows: [
+      { mode: "base", acc: "48.35%", tokens: "709.2", usd: "1.08" },
+      { mode: "demo", acc: "65.99%", tokens: "466.1", usd: "0.81" },
+      { mode: "reflect", acc: "67.13%", tokens: "458.7", usd: "0.79", best: true }
+    ]
+  },
+  {
+    title: "Claude Code · Opus 4.8",
+    thinking: "xhigh",
+    rows: [
+      { mode: "base", acc: "49.11%", tokens: "376.8", usd: "0.61" },
+      { mode: "demo", acc: "70.90%", tokens: "340.8", usd: "0.55", best: true },
+      { mode: "reflect", acc: "67.94%", tokens: "331.9", usd: "0.56" }
+    ]
+  },
+  {
+    title: "Panofy · Opus 4.6",
+    thinking: "high",
+    rows: [
+      { mode: "base", acc: "50.17%", tokens: "318.9", usd: "0.72" },
+      { mode: "demo", acc: "68.24%", tokens: "383.5", usd: "0.80", best: true },
+      { mode: "reflect", acc: "67.98%", tokens: "365.2", usd: "0.79" }
+    ]
+  }
+];
+
 const v1LeaderboardRuns = [
   {
     model: "GPT-5.5",
