@@ -35,7 +35,7 @@ const summaryMetrics = [
 const benchmarkMetrics = [
   {
     key: "acc",
-    label: { en: "ACC@3", zh: "准确率" },
+    label: { en: "ACC", zh: "准确率" },
     direction: "desc",
     max: 100,
     display: (value) => `${value.toFixed(2)}%`

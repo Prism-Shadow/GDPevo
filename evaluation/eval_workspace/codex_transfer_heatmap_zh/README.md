@@ -18,7 +18,7 @@ Finance  task_group_010
 - 行：skill 来源 task group。
 - 列：测试目标 task group。
 - 单元格：用行对应 task group 的 3 个既有独立 skill，分别求解列对应 task
-  group 的 5 个 test tasks 后得到的 `acc@3`。
+  group 的 5 个 test tasks 后得到的 `acc`。
 - source 和 target 相同的主对角线单元格不跑。
 
 本工作区只产出两张图：
@@ -51,7 +51,7 @@ reflect-3
 ```text
 请阅读 README.md、CODEX_ORCHESTRATOR.md、RUN_SCOPE.md 和 guides/。只运行 Codex 的 3x3 跨任务 skill
 迁移实验，mode 只包括 fewshot 和 reflect-3。每个 source task group 使用 3 个既有独立
-skill 计算 @3。每个 solver attempt 都隔离在 runs/ 下。将每个 cell report 写入
+skill 计算三次运行平均值。每个 solver attempt 都隔离在 runs/ 下。将每个 cell report 写入
 report/cells/，最后在 heatmaps/ 下生成两张热力图。将每个匹配到的 Codex
 原始 trace 复制到 original_traces/。
 Model: GPT-5.5, reasoning_effort: xhigh.
