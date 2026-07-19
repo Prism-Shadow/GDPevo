@@ -115,12 +115,18 @@ Stage only the materials allowed by `skill_modes.md`.
 - `reflect-3`: train inputs, container-visible environment entrypoint, and judge API
   instructions; no train answers.
 
-For every skill-generation run, create a dedicated mounted Claude config
-directory and unique session ID. Preserve the complete session trace under:
+For every skill-generation run, create a dedicated temporary mounted Claude
+config directory under `scratch/runtime_homes/` and a unique session ID. After
+the run, copy only the matching native session JSONL from
+`projects/<sanitized-cwd>/<claude_session_id>.jsonl` to:
 
 ```text
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
 ```
+
+Backfill and verify token, cost, turn, tool-call and metadata fields from the
+copied file, then delete the complete temporary Claude config directory. Do not retain its config, credentials, plugins,
+caches, logs, databases, or stdout/stderr as trace artifacts.
 
 Write the matching usage record under:
 
@@ -175,7 +181,7 @@ The solver writes `answer.json` in its own attempt directory.
 
 Each solver attempt is launched by the Codex orchestrator as a Dockerized
 Claude Code process from that attempt directory. Mount only the attempt
-directory and the per-attempt Claude config directory used for
+directory and the temporary per-attempt Claude config directory used for
 `CLAUDE_CONFIG_DIR`; do not mount the full workspace or task group.
 
 ## 5. Score And Aggregate
@@ -192,20 +198,25 @@ Every solver attempt must have a unique `eval_attempt_id`:
 The ID must appear in the solver prompt, attempt directory, and
 `run_metadata.yaml`.
 
-Backfill token usage, solver turn count, and tool-call count from the raw Claude
-Code session trace written into the attempt-mounted `CLAUDE_CONFIG_DIR`.
+After the run, identify the exact native Claude Code session JSONL named by the
+run's unique session ID in the attempt-mounted `CLAUDE_CONFIG_DIR`, verify the
+working directory, and copy only that file into `original_traces/`. Backfill
+token usage, solver turn count, and tool-call count from the copied file.
 Deduplicate by `message.id`: keep input/cache buckets from any record and the
 max `output_tokens` per message id, then sum across responses.
 
 Claude Code session traces should be under:
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
-Record the raw session trace path in `run_metadata.yaml`. If the raw session
-trace is missing, set the trace path to `null`, keep the token, turn, and
-tool-call fields `null`, and report the trace issue.
+Record the copied primary session trace path and verify all trace-derived fields
+in `run_metadata.yaml`, then delete the complete temporary Claude config directory. Do not preserve the full
+`CLAUDE_CONFIG_DIR` or stdout. If the session trace is missing or ambiguous,
+set the trace path to `null`, keep the token, turn, and tool-call fields `null`,
+record the reason, clean up the temporary directory, and rerun with a new
+session ID.
 
 After all runs complete, aggregate `acc@3`, population `std@3`, per-bucket tokens, and solver turn count and tool-call counts for all four
 conditions. Efficiency metrics count only test solver answer writing: average

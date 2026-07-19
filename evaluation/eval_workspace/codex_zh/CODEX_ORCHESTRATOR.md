@@ -9,7 +9,7 @@ tasks。
 
 ## Docker 隔离
 
-容器只挂载当前 staged 目录和每个 attempt 专用的 Codex home。不要挂载完整
+容器只挂载当前 staged 目录和每个 attempt 专用的临时 Codex home。不要挂载完整
 task group、完整 evaluation workspace、仓库根目录、上级 work 目录、home
 目录、`env/`、`notes/`、evaluator 文件、源答案或之前的 runs。
 
@@ -69,18 +69,24 @@ codex exec \
 
 ## Trace 保存
 
-将原始 Codex session 文件作为主 trace 保存。原始 session trace 通过每个
-attempt 的专用 `CODEX_HOME` 落盘：创建 attempt trace 目录下的 Codex home，
-仅在启动 agent 进程时设置 `CODEX_HOME=/codex_home`，并保存下面的文件：
+只保存 Codex 的主 session JSONL。每次 skill generation 和 solver attempt 都使用
+位于 `original_traces/` 外的临时 `CODEX_HOME`，仅在启动 agent 进程时设置
+`CODEX_HOME=/codex_home`。进程结束后，从临时 home 的
+`sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl` 中找到唯一匹配当前 run id 和
+`/work` 路径的文件，并复制到：
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
-stdout/stderr 命令运行日志不作为正式 trace 产物要求。不要把 stdout JSONL 当成
-原始 `rollout-*.jsonl` session trace 的替代品，也不要在 run 结束后依赖搜索用户
-全局 `~/.codex` 来猜测 trace。
+后续 token、费用、轮次、工具调用、污染检查和 metadata 都读取复制后的 JSONL。
+这些字段完整回填并核验后，才能删除整个临时 Codex home。不要保存完整
+`CODEX_HOME`，其中的配置、凭据、日志、skills、
+plugins、缓存、数据库和其他运行状态都不属于 trace。stdout/stderr 命令运行日志
+也不作为正式 trace 产物；不要把 stdout JSONL 当成原始 `rollout-*.jsonl` 的
+替代品，也不要在 run 结束后搜索用户全局 `~/.codex` 来猜测 trace。文件缺失或
+无法唯一匹配时，记录原因并使用新的 run id 重跑，不要随意挑选文件。
 
 一次 Docker run 只有在 `answer.json` 或以 `skill/SKILL.md` 为入口的完整 `skill/`
-目录包、以及主 session trace 或其
-缺失原因都已保存后，才算完成。
+目录包、主 session trace 或其缺失原因，以及临时 Codex home 已清理的记录都已
+保存后，才算完成。

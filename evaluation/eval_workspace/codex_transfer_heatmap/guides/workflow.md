@@ -146,17 +146,19 @@ Each attempt must have a unique `eval_attempt_id`:
 transfer__<mode>__<source>__to__<target>__<test_id>__attempt_<nn>__<timestamp>
 ```
 
-After scoring, read the solver's raw Codex session trace from the attempt-mounted
-`CODEX_HOME`:
+After scoring, read the solver's raw Codex session trace from the temporary
+attempt-mounted `CODEX_HOME`, verify it matches the run, and copy only that file to:
 
 ```text
-original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
 Confirm the trace uses the expected attempt directory and contains the matching
 `eval_attempt_id`. This raw session file is the primary trace. Record the raw
-session trace path in `run_metadata.yaml`. If the raw session trace is missing,
-set the trace path to `null` and report the issue.
+session trace path and any trace-derived token fields in `run_metadata.yaml`,
+verify them, then delete the complete temporary Codex home. Do not preserve the
+full home or stdout. If the raw session trace is missing or ambiguous, set the
+trace path to `null`, record the reason, clean up, and rerun with a new run ID.
 
 Token usage may be recorded in `run_metadata.yaml`, but the heatmap uses scores
 by default.

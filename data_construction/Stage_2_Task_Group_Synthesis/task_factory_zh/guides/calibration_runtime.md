@@ -5,12 +5,15 @@ fewshot 的每一次运行，都必须是 Docker 中独立启动的非交互式 
 
 ## 隔离契约
 
-每次运行都要新建 staged work 目录和专属 Codex home，只挂载这两个目录：
+每次运行都要新建 staged work 目录和专属的临时 Codex home，只挂载这两个目录：
 
 ```text
 scratch/calibration_runs/<run_kind>/<run_id>/work/       -> /work
 scratch/calibration_runs/<run_kind>/<run_id>/codex_home/ -> /codex_home
 ```
+
+挂载的 `codex_home/` 只是可删除的运行时目录，不是需要长期保存的校准产物。
+运行结束后，只保留下文说明的主 session JSONL。
 
 不能挂载仓库、完整 task group、父目录、用户 home、`env/`、notes、evaluators、
 该运行不允许看到的标准答案、其他 attempts 或 review 材料。
@@ -54,10 +57,29 @@ docker run --rm \
 ```
 
 `CODEX_HOME` 只是该进程运行时的临时变量。正式校准不能使用
-`codex exec --ephemeral`；应把专属 `codex_home/` 下完整的
-`rollout-*.jsonl` 保留为主 trace。校准记录还要保存模型、reasoning effort、
-agent 和环境镜像、owner、network 和容器名、state mode、run id、staged 文件、
-trace 路径和退出状态。
+`codex exec --ephemeral`。进程结束后，从下面的位置找到主 session 文件：
+
+```text
+<CODEX_HOME_DIR>/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+```
+
+一次隔离进程应当只对应一个 session 文件；复制前还要确认其中包含当前 run id
+和预期的 staged `/work` 路径。只把这个文件复制到：
+
+```text
+scratch/calibration_runs/<run_kind>/<run_id>/trace/rollout-*.jsonl
+```
+
+后续 token、费用、轮次、工具调用、污染检查和校准记录都读取复制后的 JSONL。
+这些字段完整回填并核验后，才能删除整个临时 `codex_home/`。不要保存或复制完整
+`CODEX_HOME`，尤其不要归档其中的配置、
+凭据、日志、skills、plugins、缓存、数据库或其他运行状态。stdout/stderr 以及
+`codex exec --json` 的输出都不能替代主 session JSONL，也不是必须保留的 trace。
+
+校准记录还要保存模型、reasoning effort、agent 和环境镜像、owner、network 和
+容器名、state mode、run id、staged 文件、复制后的 trace 路径、清理结果和退出
+状态。如果 session 文件缺失或无法唯一匹配，应记录原因，不要随意选择一个文件；
+删除临时 home，并使用新的 run id 重跑。
 
 ## Prompt 契约
 
@@ -119,7 +141,9 @@ Solve exactly one test task using only files staged in the current /work directo
 - 临时容器已在相同 Docker network 中通过
   `http://task-env:<TASK_ENV_PORT>/` 完成环境 health check；
 - 进程生成了预期的 `answer.json` 或完整 skill package；
-- 完整 Codex session trace 已保存，或明确记录了无法保存的原因；
+- 已将匹配的 Codex 主 session JSONL 复制到该 run 的 `trace/` 目录，或明确记录了无法保存的原因；
+- 已从复制后的 trace 回填并核验 token、费用、轮次、工具调用和校准记录；
+- 仅在上述核验完成后删除了临时 `codex_home/`；
 - trace 中没有访问禁止材料；
 - 评分由主 agent 在 Codex 进程之外执行。
 

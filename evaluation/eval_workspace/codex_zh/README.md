@@ -12,7 +12,7 @@
 | `task_group/` | 当前正在评估的单个正式 task group |
 | `skills/` | 生成的 `fewshot`、`self` 和 `reflect-3` skill 包；每个 attempt 是一个目录，入口文件为 `SKILL.md` |
 | `runs/` | 每种条件、每个 test task、每次 attempt 的 solver 输出和打分记录 |
-| `original_traces/` | 每个 solver attempt 跑完后复制进来的 Codex 原始 session trace |
+| `original_traces/` | 每次 skill generation 和 solver attempt 复制进来的单个 Codex 主 `rollout-*.jsonl` |
 | `scratch/` | 主评估 agent 创建的临时脚本、环境记录和中间检查 |
 | `report/` | 当前 task group 的最终评估报告 |
 
@@ -84,7 +84,7 @@ runs/reflect-3/
 
 每种条件下，每个 test task 独立运行 3 次。每次运行都必须由干净上下文的 Dockerized Codex run 完成。对于 skill 条件，solver 的 `attempt_<nn>` 使用相同编号的独立生成 skill。
 
-6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、Codex session trace、复制进工作区的原始 trace 路径、token 用量、solver turn count 和 tool-call count。使用每个 attempt 专用挂载的 `CODEX_HOME`，让 Codex 原始 session trace 写入 `original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/.../rollout-*.jsonl`，用于后续审计。
+6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、复制后的主 trace 路径、token 用量、solver turn count 和 tool-call count。每个 attempt 使用临时挂载的 `CODEX_HOME`；运行结束后，只把匹配的 `sessions/.../rollout-*.jsonl` 复制为 `original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl`。从该副本回填并核验 token、费用、轮次、工具调用和 metadata 后，才能删除整个临时 home。不要保存其中的配置、凭据、plugins、skills、缓存、日志、数据库，也不要把 stdout 当作 trace。
 
 7. 所有 score records 准备完成后，聚合四种条件的 `acc` 和 population `std`，并聚合每种条件的平均 cached/input/output tokens、solver turns 和 tool calls。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver 进程 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境检查、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
 

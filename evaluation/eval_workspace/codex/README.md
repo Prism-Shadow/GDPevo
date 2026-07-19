@@ -12,7 +12,7 @@ This workspace evaluates one task group at a time. Do not modify the task group 
 | `task_group/` | The single official task group currently under evaluation |
 | `skills/` | Generated `fewshot`, `self`, and `reflect-3` skill packages; each attempt is a directory whose entry file is `SKILL.md` |
 | `runs/` | Solver outputs and scoring records for each condition, test task, and attempt |
-| `original_traces/` | Complete raw Codex session traces for skill-generation runs and solver attempts |
+| `original_traces/` | One copied primary Codex `rollout-*.jsonl` per skill-generation run and solver attempt |
 | `scratch/` | Temporary scripts, environment notes, and intermediate checks created by the main evaluation agent |
 | `report/` | The final evaluation report for the current task group |
 
@@ -32,7 +32,7 @@ Read these files in order before starting evaluation:
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: <model>, <reasoning_effort>.
-Run all four modes with acc/std, collect solver and evolve token/cost metrics, preserve complete traces, and write report/<task_group_id>.yaml.
+Run all four modes with acc/std, collect solver and evolve token/cost metrics, preserve each primary session JSONL, and write report/<task_group_id>.yaml.
 ```
 
 Use `.env` for the agent-container-visible task environment:
@@ -73,11 +73,12 @@ skills/reflect-3/reflect-3_attempt_02/SKILL.md
 skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
-For every skill-generation run, use a dedicated mounted `CODEX_HOME`, preserve
-the complete raw session trace under
+For every skill-generation run, use a dedicated temporary mounted `CODEX_HOME`,
+copy only the matched primary `rollout-*.jsonl` under
 `original_traces/skill_generation/<condition>/attempt_<nn>/`, and write the
 matching `evolve_metadata.yaml` under `scratch/skill_generation/` with token
-usage and calculated USD cost.
+usage and calculated USD cost. Verify those fields from the copied trace before
+deleting the temporary Codex home.
 
 5. Run test tasks under all four conditions:
 
@@ -90,7 +91,7 @@ runs/reflect-3/
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context Dockerized Codex isolated agent run. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
 
-6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, Codex session trace, copied raw trace path, token usage, solver turn count, and tool-call count. Use a per-attempt mounted `CODEX_HOME` so the raw Codex session trace is written under `original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/.../rollout-*.jsonl` for audit.
+6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, copied primary trace path, token usage, solver turn count, and tool-call count. Use a temporary per-attempt mounted `CODEX_HOME`; after the run, copy only its matched `sessions/.../rollout-*.jsonl` to `original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl`. Populate and verify token, cost, turn, tool-call and metadata fields from that copy before deleting the complete temporary home. Do not retain config, credentials, plugins, skills, caches, logs, databases, or stdout as trace artifacts.
 
 7. After all score records are ready, aggregate `acc` and population `std` for the four conditions, plus average cached/input/output tokens, solver turns, and tool calls for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. Solver efficiency only counts answer-writing by test solver subagents: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, environment checks, evaluator execution, or main-agent summarization into solver efficiency. Temporary checking or aggregation code may be placed under `scratch/`.
 

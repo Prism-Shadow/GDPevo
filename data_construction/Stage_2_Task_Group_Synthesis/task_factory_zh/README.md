@@ -53,7 +53,7 @@
 - `scratch/build_task_group_*.py` 这类脚本不能从一个固定 specification 里同时创建共享环境、10 个任务目录、隐藏标准答案、notes、evaluators、task-group 索引、scratch 设计文档和校准 skill。即使生成文件结构看起来正确，这也属于流程违规。
 - 脚本只能用于边界清晰的局部工作，例如共享 `env/` 数据生成、单个 task-builder 自己任务内的转换或 evaluator 辅助、以及集成后的校验；不能替代 env-builder 和 task-builder subagents。
 - 使用 3 个相互隔离的进程生成 3 个独立 fewshot skill。每个 generator 接收 5 个 train inputs、对应的 train `output/answer.json` 和环境入口，并把完整 skill 目录包写到 `scratch/train_skill/fewshot_attempt_<nn>/`，其中 `SKILL.md` 是入口文件。
-- 难度校准不能把主控系统的 subagent 当 solver。fewshot skill generation、base 和 fewshot 的每次运行都必须是独立的 Dockerized `codex exec` 进程，使用专属 staged `/work`、临时 `CODEX_HOME`、固定 prompt，并保留原始 trace。
+- 难度校准不能把主控系统的 subagent 当 solver。fewshot skill generation、base 和 fewshot 的每次运行都必须是独立的 Dockerized `codex exec` 进程，使用专属 staged `/work`、临时 `CODEX_HOME` 和固定 prompt。只复制匹配的主 `sessions/.../rollout-*.jsonl` 作为 trace；从该副本回填并核验所有 trace 派生的校准数据后，才能删除临时 Codex home。不要归档完整 `CODEX_HOME`，也不要把 stdout 当作 trace。
 - 难度校准固定使用 Codex `gpt-5.5` 和 `xhigh`；overall base `avg` 目标约为 `0.40-0.60`，fewshot 的 overall gain 目标约为 `0.10-0.30`，且 overall fewshot `avg` 应大致低于 `0.80`，不能让大部分 test 达到 `0.95` 以上或接近满分。
 - `notes/notes.md` 是每个任务的可解释性文件，包含问题定义、解答方法、迁移来源、模型易错点、评测标准和数据生成说明；该文件应中英双语，方便人工审核。
 - 最终 task group 中只有 `notes/notes.md` 应包含中文；solver 可见输入、answer template、标准答案、evaluator、task metadata 和 env 文件应保持英文。

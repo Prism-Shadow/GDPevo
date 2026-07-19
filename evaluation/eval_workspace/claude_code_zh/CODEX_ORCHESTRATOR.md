@@ -69,13 +69,20 @@ attempt 前，应把实际观测到的值记录到 `scratch/`。不要加
 
 ## Trace 保存
 
-将完整的原始 Claude Code session 文件作为主 trace 保存。在对应 trace 目录下创建
-Claude config 目录，仅在启动 agent 进程时设置
-`CLAUDE_CONFIG_DIR=/claude_config`，传入唯一 `--session-id`，并保存下面的文件：
+每次 run 只保存一个完整的 Claude Code 主 session JSONL。把 attempt 专用的临时
+Claude config 目录建在 `scratch/runtime_homes/` 下、`original_traces/` 外，仅在
+启动进程时设置 `CLAUDE_CONFIG_DIR=/claude_config`，并传入唯一
+`--session-id`。进程结束后，从临时 config 目录找到该 session ID 对应的文件：
 
 ```text
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
-original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+<temporary_claude_config>/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+核对 session ID 和工作目录后，只把这一个 JSONL 复制到：
+
+```text
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
 每次 skill generation 还要写入对应的 token 与费用记录：
@@ -84,9 +91,13 @@ original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanit
 scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
 ```
 
-stdout/stderr 命令运行日志不作为正式 trace 产物要求。不要使用
-`--no-session-persistence`，也不要在 run 结束后依赖搜索用户全局 `~/.claude`
-来猜测 trace。
+先用复制后的主 session JSONL 回填并核验 token、费用、turn 和 tool-call 数据；确认
+trace 与 metadata 均已完整落盘后，再删除整个临时 `CLAUDE_CONFIG_DIR`。不要归档
+其中的配置、凭据、plugins、缓存、日志、数据库或其他运行状态。stdout/stderr
+命令运行日志不作为正式 trace 产物要求。不要使用 `--no-session-persistence`，也
+不要在 run 结束后依赖搜索用户全局 `~/.claude` 来猜测 trace。如果目标 session
+文件缺失或匹配不唯一，记录原因，清理临时 config 目录，并使用新的 session ID
+重跑。
 
 一次 Docker run 只有在 `answer.json` 或以 `skill/SKILL.md` 为入口的完整 `skill/`
 目录包、主 session trace 或其缺失

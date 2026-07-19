@@ -33,7 +33,7 @@ runs.
 | `task_group/` | The single official task group currently under evaluation |
 | `skills/` | Generated `fewshot`, `self`, and `reflect-3` skill packages; each attempt is a directory whose entry file is `SKILL.md` |
 | `runs/` | Solver outputs and scoring records for each condition, test task, and attempt |
-| `original_traces/` | Complete raw Dockerized Claude Code traces for skill-generation runs and solver attempts |
+| `original_traces/` | One copied primary Claude Code session JSONL per skill-generation run and solver attempt |
 | `scratch/` | Temporary scripts, environment notes, and intermediate checks created by the main evaluation agent |
 | `report/` | The final evaluation report for the current task group |
 
@@ -52,7 +52,7 @@ Read these files in order before starting evaluation:
 ```text
 Please evaluate task_group/<task_group_id> using README.md and guides/.
 Model: Pro/moonshotai/Kimi-K2.6 via SiliconFlow.
-Run all four modes with acc/std, collect solver and evolve token/cost metrics, preserve complete traces, and write report/<task_group_id>.yaml.
+Run all four modes with acc/std, collect solver and evolve token/cost metrics, preserve each primary session JSONL, and write report/<task_group_id>.yaml.
 ```
 
 Use `.env` for the agent-container-visible task environment:
@@ -111,11 +111,13 @@ skills/reflect-3/reflect-3_attempt_02/SKILL.md
 skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
-For every skill-generation run, use a dedicated mounted `CLAUDE_CONFIG_DIR` and
-unique session ID, preserve the complete raw Claude Code session trace under
-`original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/.../<claude_session_id>.jsonl`,
-and write the matching `evolve_metadata.yaml` under
-`scratch/skill_generation/` with token usage and calculated USD cost.
+For every skill-generation run, use a dedicated temporary mounted
+`CLAUDE_CONFIG_DIR` under `scratch/runtime_homes/` and a unique session ID. Copy
+only `projects/<sanitized-cwd>/<claude_session_id>.jsonl` to
+`original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl`,
+then populate and verify the matching `evolve_metadata.yaml` under
+`scratch/skill_generation/` with token usage and calculated USD cost. Delete
+the complete temporary config directory only after those fields are complete.
 
 Do not copy a whole train task or test task directory into any Claude run staging
 area. Stage only the files explicitly allowed by `guides/skill_modes.md` and
@@ -132,7 +134,7 @@ runs/reflect-3/
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context Dockerized solver subprocess. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
 
-6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, the matched session-trace reference, copied raw trace path, token usage, solver round count, and tool-call count. Copy the matched raw Dockerized Claude Code session JSONL from `.claude/projects/.../*.jsonl` into `original_traces/<condition>/<task_id>/attempt_<nn>/` for audit. The session JSONL is the primary trace source.
+6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, Claude session ID, copied primary trace path, token usage, solver round count, and tool-call count. Use a temporary per-attempt `CLAUDE_CONFIG_DIR`, match the exact `projects/<sanitized-cwd>/<claude_session_id>.jsonl`, and copy only that file to `original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl`. Populate and verify token, cost, round, tool-call and metadata fields from the copy before deleting the complete temporary config directory. Do not preserve the config tree or stdout.
 
 The run layout is mandatory. Do not invent flattened files such as
 `runs/base/test_001_attempt_01_answer.json`.
@@ -146,11 +148,12 @@ runs/<condition>/<test_id>/attempt_<nn>/run_metadata.yaml
 7. After all score records are ready, aggregate `acc` and population `std` for the four conditions, plus average token, round-count, tool-call, and cost fields for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. The report must include a `model_config` block with `claude_code_effort: xhigh` and `kimi_thinking: enabled`. The formal report field names are `input_tokens_avg_3`, `cache_creation_tokens_avg_3`, `cache_read_tokens_avg_3`, `output_tokens_avg_3`, `cost_usd_avg_3`, `rounds_avg_3`, and `tool_calls_avg_3`. Raw `run_metadata.yaml` may preserve provider-specific token names such as `cache_creation_input_tokens` and `cache_read_input_tokens`, but the report schema must use the normalized field names above. Solver efficiency only counts answer-writing by test solver Claude subprocesses: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, environment checks, evaluator execution, or orchestrator summarization into solver efficiency. Temporary checking or aggregation code must be placed under `scratch/`, not in the workspace root.
 
 8. Before reporting completion, verify that every scored solver attempt has a
-matched raw Claude Code trace copied under `original_traces/`, and that the
-corresponding report token, round-count, and tool-call fields are populated from
-that trace. If a trace cannot be matched uniquely, preserve the issue
-in the run record and report it explicitly instead of estimating efficiency
-fields.
+matched primary Claude Code session JSONL copied under `original_traces/`, that
+its per-run token, cost, round-count, tool-call and metadata fields were
+populated from that copy before its temporary config directory was removed, and
+that the report is reproducible from those retained artifacts. If a trace cannot
+be matched uniquely, preserve the issue in the run record, clean up, and rerun
+with a new session ID instead of estimating efficiency fields.
 
 ## Execution Boundaries
 
@@ -164,12 +167,12 @@ Mode-allowed training exposure is not contamination: for example, fewshot skill 
 
 If a solver Claude run accidentally accesses, lists, or reports seeing forbidden material such as `env/`, source `output/answer.json` during test solving, task notes, evaluator files, train tasks outside the allowed mode/stage, or another attempt's run files, treat that attempt as contaminated. Report the incident to the user, do not score or aggregate that attempt, record the reason in the attempt directory, and rerun the affected test in a fresh clean attempt directory.
 
-For each solver attempt, Codex stages the allowed files into a dedicated fresh attempt directory, such as `runs/base/test_001/attempt_01/`, and launches a Dockerized clean-context `claude -p` subprocess from that directory. The container should mount only the staged attempt directory and the matching trace/output directory; the Claude run must only read and write files under the staged directory and must not access any path outside it. Stage the current task `input/`, environment access instructions, and, for skill modes only, the complete matching skill package directory as `skill/`. The staged `environment_access.md` must explicitly override any localhost references in official task inputs with the container-visible `GDPEVO_ENV_BASE_URL`. Do not stage `notes/`, `eval/`, source `output/answer.json`, or whole task directories for test solvers. Do not reuse an attempt directory for a rerun; create a new clean directory and keep the invalidated run for audit. For skill generation, stage only the allowed train materials for that mode into a dedicated directory under `scratch/skill_generation/`, restrict that Dockerized Claude run to its own directory, and copy the generated `skill/` directory to the matching canonical attempt directory under `skills/`.
+For each solver attempt, Codex stages the allowed files into a dedicated fresh attempt directory, such as `runs/base/test_001/attempt_01/`, and launches a Dockerized clean-context `claude -p` subprocess from that directory. The container should mount only the staged attempt directory and its temporary `CLAUDE_CONFIG_DIR`; the Claude run must only read and write task artifacts under the staged directory and must not access any host path outside the two mounts. Stage the current task `input/`, environment access instructions, and, for skill modes only, the complete matching skill package directory as `skill/`. The staged `environment_access.md` must explicitly override any localhost references in official task inputs with the container-visible `GDPEVO_ENV_BASE_URL`. Do not stage `notes/`, `eval/`, source `output/answer.json`, or whole task directories for test solvers. Do not reuse an attempt directory for a rerun; create a new clean directory and keep the invalidated run for audit. For skill generation, stage only the allowed train materials for that mode into a dedicated directory under `scratch/skill_generation/`, restrict that Dockerized Claude run to its own directory, and copy the generated `skill/` directory to the matching canonical attempt directory under `skills/`.
 
 ## Fixed Agent Prompts
 
 Use the exact mode-specific skill-generation and test-solver templates in
 `guides/agent_prompts.md`. Replace only the declared placeholders and do not
 append hints or hidden context. Codex later uses each run id, the Docker run
-manifest, and preserved Claude Code trace files to backfill token usage, round
-count, and tool-call count.
+manifest, and copied primary Claude Code session JSONL to backfill token usage,
+round count, and tool-call count.

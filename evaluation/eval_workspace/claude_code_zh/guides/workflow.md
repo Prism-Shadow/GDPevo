@@ -107,12 +107,17 @@ scratch/skill_generation/reflect-3_attempt_03/
 - `reflect-3`：train inputs、容器可访问环境入口、judge API 调用说明；无 train
   answers。
 
-每次 skill-generation run 都创建专用挂载的 Claude config 目录和唯一 session
-ID，并将完整 session trace 保存到：
+每次 skill-generation run 都在 `scratch/runtime_homes/` 下创建专用临时 Claude
+config 目录和唯一 session ID。运行结束后，只把
+`projects/<sanitized-cwd>/<claude_session_id>.jsonl` 中匹配的主 session 文件复制到：
 
 ```text
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
 ```
+
+从复制后的文件回填并核验用量和费用，确认 trace 与 metadata 均已落盘后，再删除
+整个临时 Claude config 目录。不要保存其中的配置、凭据、plugins、缓存、日志、
+数据库，也不要把 stdout/stderr 当作 trace。
 
 对应的用量记录写到：
 
@@ -161,7 +166,7 @@ attempt 目录中重新测试受影响任务。污染 attempt 不打分、不纳
 Solver 在自己的 attempt 目录中写 `answer.json`。
 
 每次 solver attempt 都由 Codex 主控从该 attempt 目录启动一个 Dockerized Claude
-Code 进程。只挂载 attempt 目录和供 `CLAUDE_CONFIG_DIR` 使用的专用 Claude
+Code 进程。只挂载 attempt 目录和供 `CLAUDE_CONFIG_DIR` 使用的临时专用 Claude
 config 目录，不要挂载完整 workspace 或 task group。
 
 ## 5. 打分与聚合
@@ -177,20 +182,23 @@ config 目录，不要挂载完整 workspace 或 task group。
 
 该 ID 必须出现在 solver prompt、attempt 目录和 `run_metadata.yaml` 中。
 
-主 agent 从 attempt 专用 `CLAUDE_CONFIG_DIR` 里的 Claude Code 原始 session
-trace 中回填 token 用量、solver turn count 和 tool-call count。按 `message.id`
-去重：input/cache 桶取任一条记录，`output_tokens` 取同一 message id 的最大值，
-然后跨响应求和。
+运行结束后，主 agent 根据唯一 session ID 从 attempt 专用
+`CLAUDE_CONFIG_DIR` 找到对应的 Claude Code 主 session JSONL，核对工作目录，并只把
+这个文件复制到 `original_traces/`。从复制后的文件回填 token、费用、solver turn
+count 和 tool-call count。按 `message.id` 去重：input/cache 桶取任一条记录，
+`output_tokens` 取同一 message id 的最大值，然后跨响应求和。
 
 Claude Code session traces 应位于：
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
-在 `run_metadata.yaml` 中记录原始 session trace 路径。如果原始 session trace
-缺失，将 trace 路径写为 `null`，token、turn 和 tool-call 字段也保持 `null`，并
-报告 trace 问题。
+在 `run_metadata.yaml` 中记录复制后的主 session trace 路径。确认 trace、token、
+费用、turn、tool-call 和 metadata 都已完整落盘后，再删除整个临时 Claude config
+目录。不要保存完整 `CLAUDE_CONFIG_DIR` 或 stdout。如果 session trace 缺失或匹配
+不唯一，则 trace 路径写 `null`，token、turn 和 tool-call 字段也保持 `null`，记录
+原因，清理临时目录，并使用新的 session ID 重跑。
 
 所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3`、各桶 token 和 solver turn count 和 tool-call counts。效率指标只统计
 test solver 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对

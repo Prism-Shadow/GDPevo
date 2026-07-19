@@ -9,7 +9,7 @@ heatmaps，但不能直接解目标 test tasks。
 
 ## Docker 隔离
 
-容器只挂载当前 solver attempt 目录和每个 attempt 专用的 Codex home。不要挂载
+容器只挂载当前 solver attempt 目录和每个 attempt 专用的临时 Codex home。不要挂载
 完整 `task_groups/` 树、完整 evaluation workspace、仓库根目录、上级 work
 目录、home 目录、`env/`、notes、evaluator 文件、源答案或之前的 runs。
 
@@ -46,14 +46,18 @@ codex exec \
 
 ## Trace 保存
 
-将原始 Codex session 文件作为主 trace 保存。原始 session trace 通过每个
-attempt 的专用 `CODEX_HOME` 落盘：创建 attempt trace 目录下的 Codex home，
-仅在启动 solver 进程时设置 `CODEX_HOME=/codex_home`，并保存下面的文件：
+只保存 Codex 的主 session JSONL。临时 Codex home 放在
+`scratch/runtime_homes/`，仅在启动 solver 进程时设置
+`CODEX_HOME=/codex_home`。进程结束后，把唯一匹配当前 run 的
+`sessions/.../rollout-*.jsonl` 复制到：
 
 ```text
-original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
-stdout/stderr 命令运行日志不作为正式 trace 产物要求。不要把 stdout JSONL 当成
-原始 `rollout-*.jsonl` session trace 的替代品，也不要在 run 结束后依赖搜索用户
-全局 `~/.codex` 来猜测 trace。
+确认复制的文件包含预期 run id 和 `/work` 路径后，先回填并核验
+`run_metadata.yaml` 及 trace 派生的 token 字段，完成后才能删除整个临时 Codex home。
+不要归档其中的配置、凭据、plugins、skills、缓存、日志、数据库或其他运行状态。
+stdout/stderr 命令运行日志不作为正式 trace 产物要求；不要把 stdout JSONL 当成
+原始 `rollout-*.jsonl` session trace 的替代品，也不要在 run 结束后搜索用户全局
+`~/.codex` 来猜测 trace。

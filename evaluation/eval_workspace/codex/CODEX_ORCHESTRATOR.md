@@ -11,8 +11,8 @@ is Codex.
 
 ## Docker Isolation
 
-Mount only the current staged directory and a dedicated per-attempt Codex home
-into the container. Do not mount the full task group, full evaluation workspace,
+Mount only the current staged directory and a dedicated temporary per-attempt
+Codex home into the container. Do not mount the full task group, full evaluation workspace,
 repository root, parent work directory, home directory, `env/`, `notes/`,
 evaluator files, source answers, or previous runs.
 
@@ -81,28 +81,37 @@ must describe the run, not smuggle extra context into it.
 
 ## Trace Preservation
 
-Preserve the complete raw Codex session file as the primary trace. Create a
-dedicated mounted Codex home for every skill-generation run and solver attempt,
-set `CODEX_HOME=/codex_home` only when launching that agent process, and keep
-the resulting `rollout-*.jsonl` file in place.
+Preserve only the raw Codex primary session JSONL. Create a dedicated temporary
+mounted Codex home for every skill-generation run and solver attempt, outside
+`original_traces/`, and set `CODEX_HOME=/codex_home` only when launching that
+agent process. After the process exits, require exactly one matching file under
+`<temporary_codex_home>/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl`; verify its
+run id and `/work` path, then copy that file into the canonical trace directory.
 
 For skill-generation runs, use:
 
 ```text
-original_traces/skill_generation/<condition>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/skill_generation/<condition>/attempt_<nn>/rollout-*.jsonl
 ```
 
 For test solver attempts, use:
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
-Do not require stdout/stderr command logs as formal trace artifacts, do not treat
-stdout JSONL as a replacement for the raw `rollout-*.jsonl` session trace, and
-do not rely on searching the user's global `~/.codex` after the run.
+Use the copied JSONL to populate and verify token, cost, turn, tool-call,
+contamination, and metadata fields. Only after those fields are complete may
+the entire temporary Codex home be deleted. Never copy or retain
+the complete `CODEX_HOME`; this excludes config, credentials, logs, skills,
+plugins, caches, databases and other runtime state. Do not require stdout/stderr
+command logs as formal trace artifacts, do not treat stdout JSONL as a
+replacement for the raw `rollout-*.jsonl` session trace, and do not rely on
+searching the user's global `~/.codex` after the run. If the session file is
+missing or ambiguous, record the reason instead of choosing an arbitrary file,
+remove the temporary home, and rerun with a new run id.
 
 A Docker run is not complete until `answer.json` or the complete `skill/` package
-with `skill/SKILL.md` as its entry file, the complete
-primary session trace or its missing reason, and the corresponding metadata
-record have been preserved.
+with `skill/SKILL.md` as its entry file, the primary session trace or its missing
+reason, all trace-derived data and metadata, and confirmation that the temporary
+Codex home was removed only after verification have been preserved.

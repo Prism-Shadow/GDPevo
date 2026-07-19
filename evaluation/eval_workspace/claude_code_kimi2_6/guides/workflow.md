@@ -33,8 +33,8 @@ should be recorded as `enabled`; do not describe Kimi itself as using an
 When a user asks you to run evaluation in this workspace, that request is
 permission for Codex to orchestrate Dockerized `claude -p` subprocesses. Keep
 every skill-generation and solver run in a clean, dedicated directory, and mount
-only that staged directory plus the matching trace/output directory into the
-container. Use the exact mode-specific prompt in `agent_prompts.md` for every
+only that staged directory plus a dedicated temporary Claude config directory
+into the container. Use the exact mode-specific prompt in `agent_prompts.md` for every
 process; replace only declared placeholders and do not append task hints or
 extra paths.
 
@@ -145,14 +145,16 @@ train task, copy only:
 Never stage `notes/`, `eval/`, `env/`, `test_tasks/`, task-group manifests
 outside the staged inputs, or source files not explicitly allowed above.
 
-For every skill-generation run, mount a dedicated per-run Claude config
-directory as `CLAUDE_CONFIG_DIR=/claude_config`, pass a unique session ID, and
-preserve the exact session file under
-`original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl`.
-Write `scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml`.
-Backfill token buckets from the matched session using the same deduplication
-rules as solver traces, then calculate cost with `metric_and_scoring.md`. Report
-this as evolve usage; do not include it in solver efficiency metrics.
+For every skill-generation run, mount a dedicated temporary per-run Claude
+config directory from `scratch/runtime_homes/` as
+`CLAUDE_CONFIG_DIR=/claude_config` and pass a unique session ID. Copy only the
+matching `projects/<sanitized-cwd>/<claude_session_id>.jsonl` to
+`original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl`.
+Write `scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml`,
+then backfill and verify token buckets and cost from the copied session. Only
+after these fields are complete, delete the full temporary config directory.
+Do not archive config, credentials, plugins, caches, logs, databases, or stdout.
+Report this as evolve usage; do not include it in solver efficiency metrics.
 
 ## 4. Run Test Solvers
 
@@ -221,29 +223,33 @@ Every solver attempt must have a unique `eval_attempt_id`:
 The ID must appear in the solver prompt, attempt directory, and
 `run_metadata.yaml`.
 
-Backfill token usage from the matched Dockerized Claude Code solver session
-trace captured from the container's Claude home under
-`.claude/projects/.../*.jsonl`. Deduplicate by `message.id`: keep input/cache
-buckets from any record and the max `output_tokens` per message id, then sum
-across responses.
+Match the solver's exact native Claude Code session JSONL by its unique session
+ID under `projects/<sanitized-cwd>/`, verify the working directory, and copy only
+that file to `original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl`.
+Backfill token usage and cost from the copied file. Deduplicate by `message.id`:
+keep input/cache buckets from any record and the max `output_tokens` per message
+id, then sum across responses.
 From the same matched solver trace, also count solver assistant/model-response
 turns and assistant `tool_use` content blocks. Store these raw counts in
 `run_metadata.yaml` as `rounds` and `tool_calls`.
 
 Each Dockerized Claude run should also write a `docker_run_manifest.yaml` under
 the matching trace directory, recording the staged working directory, trace
-directory, session id when available, model, Claude Code effort, Kimi thinking mode,
-permission mode, timeout, exit code, and copied session trace files.
+directory, session ID, model, Claude Code effort, Kimi thinking mode, permission
+mode, timeout, exit code, and copied primary session file.
 
-After matching the trace, copy or preserve the raw trace files under:
+The copied primary session JSONL belongs under:
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/
+original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
-Record the copied workspace trace paths in `run_metadata.yaml`. If no unique
+Record the copied primary session path and all trace-derived fields in
+`run_metadata.yaml`. Verify them, then delete the complete temporary
+`CLAUDE_CONFIG_DIR`. Do not preserve the config tree or stdout. If no unique
 trace can be matched, set the copied trace path to `null`, keep the token,
-round-count, and tool-call fields `null`, and report the trace issue.
+round-count, and tool-call fields `null`, record the reason, clean up, and rerun
+with a new session ID.
 
 After all runs complete, aggregate `acc@3`, population `std@3`, per-bucket
 tokens, `rounds_avg_3`, and `tool_calls_avg_3` for all four conditions. Raw

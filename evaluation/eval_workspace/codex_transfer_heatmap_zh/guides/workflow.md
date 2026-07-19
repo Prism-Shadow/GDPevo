@@ -133,15 +133,18 @@ runs/<mode>/<source>__to__<target>/test_001/attempt_01/score.yaml
 transfer__<mode>__<source>__to__<target>__<test_id>__attempt_<nn>__<timestamp>
 ```
 
-评分后，从 attempt 专用 `CODEX_HOME` 读取 solver 的 Codex 原始 session trace：
+评分后，从 attempt 专用的临时 `CODEX_HOME` 读取 solver 的 Codex 原始 session
+trace，确认它与当前 run 匹配，并只复制该文件到：
 
 ```text
-original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
 应确认 trace 使用预期 attempt 目录，并且包含匹配的 `eval_attempt_id`。这个原始
-session 文件是主 trace。在 `run_metadata.yaml` 中记录原始 session trace 路径。
-如果原始 session trace 缺失，将 trace 路径写为 `null`，并报告问题。
+session 文件是主 trace。在 `run_metadata.yaml` 中记录复制后的 session trace 路径，
+回填并核验 trace 派生的 token 字段，完成后才能删除整个临时 Codex home；不要保存
+完整 home 或 stdout。如果原始 session trace 缺失或匹配不唯一，将 trace 路径写为
+`null`，记录原因，清理临时 home，并使用新的 run ID 重跑。
 
 token usage 可以在 `run_metadata.yaml` 里记录，但 heatmap 默认只使用 score。
 

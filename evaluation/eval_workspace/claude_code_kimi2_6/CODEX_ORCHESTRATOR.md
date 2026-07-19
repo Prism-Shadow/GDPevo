@@ -154,8 +154,10 @@ test stages. Test instances use `TASK_ENV_ENABLE_JUDGE=0`. Before scored runs,
 verify `/health` from a disposable container on the same network through the
 exact agent URL.
 
-Mount only the current staged working directory and a dedicated per-run Claude
-config directory into the container. Mount the latter at `/claude_config`; do
+Mount only the current staged working directory and a dedicated temporary
+per-run Claude config directory into the container. Create it under
+`scratch/runtime_homes/`, outside `original_traces/`, and mount it at
+`/claude_config`; do
 not mount the full task group, full
 evaluation workspace, parent `work/` directory, repository root, or home
 directory. This file isolation is the main protection against `notes/`, `eval/`,
@@ -199,12 +201,19 @@ runs/<condition>/<test_id>/attempt_<nn>/score.yaml
 runs/<condition>/<test_id>/attempt_<nn>/run_metadata.yaml
 ```
 
-Every skill-generation run and scored solver attempt must have its own raw
-Claude Code work trace copied under the matching path:
+Every skill-generation run and scored solver attempt must copy exactly one
+native Claude Code session JSONL. Match the exact file by the run's unique
+session ID under the temporary config directory:
 
 ```text
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
-original_traces/<condition>/<test_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+<temporary_claude_config>/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+Verify the session ID and working directory, then copy only that file to:
+
+```text
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
+original_traces/<condition>/<test_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
 Each skill-generation run must also write:
@@ -213,22 +222,28 @@ Each skill-generation run must also write:
 scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
 ```
 
-Populate token usage, round count, and tool-call count in `run_metadata.yaml`
-and the final report from the matched trace. Deduplicate token usage by
-`message.id` before summing. If a trace cannot be matched, record the issue
-explicitly and do not invent efficiency numbers.
+Populate and verify token usage, cost, round count, and tool-call count in the
+run's `run_metadata.yaml` or `evolve_metadata.yaml` from the copied primary
+trace. Deduplicate token usage by `message.id` before summing. Only after the
+trace and per-run metadata are complete, delete the full temporary
+`CLAUDE_CONFIG_DIR`. Do not archive its config, credentials, plugins, caches,
+logs, databases, stdout/stderr, or other runtime state. If a trace cannot be
+matched, record the issue explicitly, clean up the temporary directory, and
+rerun with a new session ID instead of inventing efficiency numbers.
+
+Aggregate the final report later from the retained primary JSONL and populated
+per-run metadata; deleting the temporary config directory must not remove either
+source.
 
 For `claude -p`, the primary trace for token usage, rounds, and tool-call
-counting is the JSONL written to the dedicated mounted
-`CLAUDE_CONFIG_DIR`. Match the exact file by the run's unique session ID. A
-Docker run is not complete until this session trace has been preserved.
+counting is the single JSONL named by the run's unique session ID. A Docker run
+is not complete until that file has been copied and its metadata populated.
 
 Before deleting or replacing any Docker container, verify that all required
 artifacts have been written to the host workspace:
 
 - `answer.json` or the complete `skill/` package with `skill/SKILL.md` as its entry file
-- Claude Code session trace, when available
-- debug logs, when used
+- copied primary Claude Code session JSONL, when available
 - score and run metadata files after Codex scoring, or evolve metadata for skill generation
 
 Final report:

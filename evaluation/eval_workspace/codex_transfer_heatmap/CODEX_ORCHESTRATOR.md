@@ -9,8 +9,8 @@ Docker. This workspace does not generate new skills.
 
 ## Docker Isolation
 
-Mount only the current solver attempt directory and a dedicated per-attempt
-Codex home into the container. Do not mount the full `task_groups/` tree, full
+Mount only the current solver attempt directory and a dedicated temporary
+per-attempt Codex home into the container. Do not mount the full `task_groups/` tree, full
 evaluation workspace, repository root, parent work directory, home directory,
 `env/`, notes, evaluator files, source answers, or previous runs.
 
@@ -50,14 +50,19 @@ summaries, evaluator details, or extra filesystem paths.
 
 ## Trace Preservation
 
-Preserve the raw Codex session file as the primary trace. Create the mounted
-Codex home under the attempt trace directory, set `CODEX_HOME=/codex_home` only
-when launching the solver process, and preserve the resulting file from:
+Preserve only the raw Codex primary session JSONL. Create the temporary mounted
+Codex home under `scratch/runtime_homes/`, set `CODEX_HOME=/codex_home` only
+when launching the solver process, and after it exits copy the unique matching
+`sessions/.../rollout-*.jsonl` to:
 
 ```text
-original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
-Do not require stdout/stderr command logs as formal trace artifacts, do not treat
-stdout JSONL as a replacement for the raw `rollout-*.jsonl` session trace, and
-do not rely on searching the user's global `~/.codex` after the run.
+Verify the copied file contains the expected run id and `/work` path, then
+populate and verify `run_metadata.yaml` and any trace-derived token fields. Only
+after that verification may the complete temporary Codex home be deleted. Do not archive its config, credentials,
+plugins, skills, caches, logs, databases or other runtime state. Do not require
+stdout/stderr command logs as formal trace artifacts, do not treat stdout JSONL
+as a replacement for the raw `rollout-*.jsonl` session trace, and do not rely on
+searching the user's global `~/.codex` after the run.

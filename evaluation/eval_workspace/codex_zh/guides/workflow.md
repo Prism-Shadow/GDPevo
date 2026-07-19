@@ -146,8 +146,9 @@ attempt 目录中重新测试受影响任务。污染 attempt 不打分、不纳
 Solver 在自己的 attempt 目录中写 `answer.json`。
 
 每次 solver attempt 都由 Codex 主控从该 attempt 目录启动一个 Dockerized Codex
-进程。只挂载 attempt 目录和供 `CODEX_HOME` 使用的专用 Codex home，不要挂载完整
-workspace 或 task group。
+进程。只挂载 attempt 目录和供 `CODEX_HOME` 使用的临时 Codex home，不要挂载完整
+workspace 或 task group。临时 home 放在 `scratch/runtime_homes/`，不能直接放进
+`original_traces/`。
 
 ## 5. 打分与聚合
 
@@ -162,14 +163,16 @@ workspace 或 task group。
 
 该 ID 必须出现在 solver prompt、attempt 目录和 `run_metadata.yaml` 中。
 
-主 agent 从 attempt 专用 `CODEX_HOME` 里的 Codex 原始 session trace 中回填
-token 用量、solver turn count 和 tool-call count。应确认 trace 使用预期 attempt
-目录，并包含匹配的 `eval_attempt_id`。
+进程结束后，主 agent 从 attempt 专用的临时 `CODEX_HOME` 中找到 Codex 主 session
+trace，确认它使用预期 attempt 目录并包含匹配的 `eval_attempt_id`。只把该 JSONL
+复制到正式 trace 目录，再从复制后的文件回填并核验 token 用量、费用、solver
+turn count、tool-call count 和 `run_metadata.yaml`。完成后才能删除整个临时 Codex
+home。
 
 Codex 原始 session traces 应位于：
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
 在 `run_metadata.yaml` 中记录原始 session trace 路径。如果原始 session trace

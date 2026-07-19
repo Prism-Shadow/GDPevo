@@ -77,14 +77,21 @@ must describe the run, not smuggle extra context into it.
 
 ## Trace Preservation
 
-Preserve the complete raw Claude Code session file as the primary trace. Create
-the mounted Claude config directory under the matching trace directory, set
-`CLAUDE_CONFIG_DIR=/claude_config` only when launching the agent process, pass a
-unique `--session-id`, and preserve the resulting file from:
+Preserve exactly one complete native Claude Code session JSONL as the primary
+trace. Create the mounted Claude config directory under
+`scratch/runtime_homes/`, outside `original_traces/`, and pass a unique
+`--session-id`. After the process exits, find the exact file named by that
+session ID under the temporary config directory:
 
 ```text
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
-original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+<temporary_claude_config>/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+```
+
+Verify its session ID and working directory, then copy only that JSONL to:
+
+```text
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
 For each skill-generation run, also write the matching token and cost record:
@@ -93,9 +100,14 @@ For each skill-generation run, also write the matching token and cost record:
 scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
 ```
 
-Do not require stdout/stderr command logs as formal trace artifacts, do not use
-`--no-session-persistence`, and do not rely on searching the user's global
-`~/.claude` after the run.
+Use the copied primary JSONL to populate and verify token, cost, turn, and
+tool-call data. Only after the trace and metadata are complete, delete the full
+temporary `CLAUDE_CONFIG_DIR`. Do not archive its config, credentials, plugins,
+caches, logs, databases, or other runtime state. Do not require stdout/stderr
+command logs as formal trace artifacts, do not use `--no-session-persistence`,
+and do not rely on searching the user's global `~/.claude` after the run. If the
+session file is missing or ambiguous, record the reason, clean up the temporary
+directory, and rerun with a new session ID.
 
 A Docker run is not complete until `answer.json` or the complete `skill/` package
 with `skill/SKILL.md` as its entry file, the primary

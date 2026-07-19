@@ -121,17 +121,19 @@ Give every skill-generation run a unique evolve attempt ID:
 <task_group_id>__skill_generation__<condition>__attempt_<nn>__<timestamp>
 ```
 
-Create a dedicated mounted `CODEX_HOME` for that run under:
+Create a dedicated temporary mounted `CODEX_HOME` for that run under:
 
 ```text
-original_traces/skill_generation/<condition>/attempt_<nn>/codex_home/
+scratch/runtime_homes/skill_generation/<condition>/attempt_<nn>/codex_home/
 ```
 
-After the run, preserve the complete raw `rollout-*.jsonl` session trace and
-write `evolve_metadata.yaml` in the matching staged directory under
+After the run, copy only the matched primary `rollout-*.jsonl` session trace to
+`original_traces/skill_generation/<condition>/attempt_<nn>/` and write
+`evolve_metadata.yaml` in the matching staged directory under
 `scratch/skill_generation/`. The metadata must contain the evolve attempt ID,
 skill output path, trace path, token usage, pricing inputs, and calculated USD
-cost. Token and cost values must come from the matched raw Codex trace.
+cost. Token and cost values must come from the copied Codex trace. Verify the
+metadata before deleting the temporary Codex home.
 
 Skill-generation token usage and cost are reported as evolve metrics. They are
 not included in test solver efficiency metrics.
@@ -177,9 +179,10 @@ contaminated attempt.
 The solver writes `answer.json` in its own attempt directory.
 
 Each solver attempt is launched by the Codex orchestrator as a Dockerized Codex
-process from that attempt directory. Mount only the attempt directory and the
-per-attempt Codex home used for `CODEX_HOME`; do not mount the full workspace or
-task group.
+process from that attempt directory. Mount only the attempt directory and a
+temporary per-attempt Codex home used for `CODEX_HOME`; do not mount the full
+workspace or task group. Keep that home under `scratch/runtime_homes/`, never
+under `original_traces/`.
 
 ## 5. Score And Aggregate
 
@@ -195,14 +198,17 @@ Every solver attempt must have a unique `eval_attempt_id`:
 The ID must appear in the solver prompt, attempt directory, and
 `run_metadata.yaml`.
 
-Backfill token usage, solver turn count, and tool-call count from the raw Codex
-session trace written into the attempt-mounted `CODEX_HOME`. Confirm the trace
-uses the expected attempt directory and contains the matching `eval_attempt_id`.
+After the process exits, find the raw Codex session trace in the temporary
+attempt-mounted `CODEX_HOME`. Confirm it uses the expected attempt directory and
+contains the matching `eval_attempt_id`, then copy only that primary JSONL into
+the canonical trace directory. Backfill and verify token usage, cost, solver
+turn count, tool-call count, and `run_metadata.yaml` from the copied file. Only
+then delete the temporary Codex home.
 
 Codex raw session traces should be under:
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
 Record the raw session trace path in `run_metadata.yaml`. If the raw session
@@ -218,7 +224,7 @@ or main-agent summarization in solver efficiency.
 
 Separately aggregate evolve token usage and cost across the 3 skill-generation
 runs for `fewshot`, `self`, and `reflect-3`. Preserve each attempt's metadata and
-trace path in the workspace audit files. In the formal report, keep only each
+copied primary trace path in the workspace audit files, not its runtime home. In the formal report, keep only each
 attempt's token and cost fields plus the arithmetic mean of each token bucket
 and USD cost, without mixing them into solver efficiency.
 
