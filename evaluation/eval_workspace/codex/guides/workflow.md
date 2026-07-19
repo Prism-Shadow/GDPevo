@@ -31,6 +31,13 @@ formal attempts. Use the exact mode-specific prompt in `agent_prompts.md` for
 every process; replace only declared placeholders and do not append task hints
 or extra paths.
 
+Before creating any temporary home, save the orchestrator's active Codex home
+as `HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"`. Seed each run home with only
+`$HOST_CODEX_HOME/auth.json` as mode `0600`, then confirm the mounted home with
+`CODEX_HOME=/codex_home codex login status` in the agent image. A missing or
+invalid login blocks the run. Do not copy the rest of the active Codex home or
+substitute the orchestrator for an unauthenticated tested-agent process.
+
 ## 1. Prepare The Task Group
 
 The task group under evaluation should be located at:

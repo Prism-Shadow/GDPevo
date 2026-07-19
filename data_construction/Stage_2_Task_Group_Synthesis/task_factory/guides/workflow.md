@@ -40,7 +40,7 @@ main construction agent's model or client defaults:
 - Three isolated fewshot skill-generation processes each read all 5 train inputs and matching standard answers, producing 3 independent skill packages.
 - Base: run 3 isolated processes per test task, for 15 processes total.
 - Fewshot: run 3 isolated processes per test task, pairing attempt 01/02/03 with the matching skill package, for another 15 processes total.
-- Every process receives a fresh staged `/work`, dedicated temporary `CODEX_HOME`, fixed prompt, and only the files allowed for that run.
+- Every process receives a fresh staged `/work`, a dedicated temporary `CODEX_HOME` seeded only with the active `auth.json` and verified by `codex login status`, a fixed prompt, and only the files allowed for that run.
 - Copy only the matched primary `sessions/.../rollout-*.jsonl` into the run's `trace/` directory. Populate and verify all trace-derived token, cost, turn, tool-call and calibration-record fields from that copy before deleting the temporary `CODEX_HOME`. Do not archive the full Codex home or use stdout as the trace. Calibration agents must not access notes, evaluator files, environment source, construction drafts, or other runs.
 
 The reviewer subagent owns independent review:

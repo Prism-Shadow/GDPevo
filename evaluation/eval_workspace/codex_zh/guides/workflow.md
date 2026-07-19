@@ -26,6 +26,13 @@ CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort
 正式 attempt 不要使用 `codex exec --ephemeral`。每个进程必须使用
 `agent_prompts.md` 中对应模式的固定 prompt，只替换声明的占位符，不追加提示或路径。
 
+创建临时 home 前，先把主控当前可用的 Codex home 保存为
+`HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"`。每个 run 的临时 home 只复制
+`$HOST_CODEX_HOME/auth.json`，权限设为 `0600`；随后在 agent image 中对同一挂载
+执行 `CODEX_HOME=/codex_home codex login status`。登录文件缺失或认证无效时，该
+run 应直接判定为 blocked。不能复制当前 Codex home 的其他内容，也不能让主控代替
+未认证的被测 agent 运行。
+
 ## 1. 准备 Task Group
 
 待评估 task group 应位于：

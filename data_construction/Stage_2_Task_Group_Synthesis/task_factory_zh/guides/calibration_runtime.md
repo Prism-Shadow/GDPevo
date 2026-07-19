@@ -12,6 +12,33 @@ scratch/calibration_runs/<run_kind>/<run_id>/work/       -> /work
 scratch/calibration_runs/<run_kind>/<run_id>/codex_home/ -> /codex_home
 ```
 
+在为任何运行改写 `CODEX_HOME` 之前，先在主控侧保存当前可用的 Codex home：
+
+```bash
+HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+```
+
+每个新建的临时 home 只继承当前登录凭据：
+
+```bash
+install -d -m 700 "$CODEX_HOME_DIR"
+test -f "$HOST_CODEX_HOME/auth.json" || {
+  echo "Calibration blocked: active Codex auth.json was not found" >&2
+  exit 1
+}
+install -m 600 "$HOST_CODEX_HOME/auth.json" "$CODEX_HOME_DIR/auth.json"
+```
+
+上述初始化必须由主控在宿主机上完成，再把临时目录挂载到 agent 容器。不要复制
+整个 Codex home，也不要复制 `config.toml`、历史 sessions、数据库、日志、skills、
+plugins、缓存或其他状态。模型和思考强度已经由启动命令固定，不需要继承宿主机
+配置。绝不能把 `auth.json` 放入 `/work` 或任何需要保留的实验产物。
+
+正式启动前，必须使用相同的 agent image 和临时 home 挂载，执行
+`CODEX_HOME=/codex_home codex login status`。只有确认当前登录有效后才能继续；
+否则应把 calibration 记录为 blocked，不能启动未认证的 attempt，也不能改用主控
+agent 或其他模型代跑。
+
 挂载的 `codex_home/` 只是可删除的运行时目录，不是需要长期保存的校准产物。
 运行结束后，只保留下文说明的主 session JSONL。
 
@@ -137,6 +164,8 @@ Solve exactly one test task using only files staged in the current /work directo
 
 一次运行只有在以下条件全部满足时才有效：
 
+- 临时 home 只继承当前 `auth.json`，并且已通过相同 image 和挂载执行
+  `codex login status` 预检；
 - `/work` 为新建目录，且只包含该模式允许的材料；
 - 临时容器已在相同 Docker network 中通过
   `http://task-env:<TASK_ENV_PORT>/` 完成环境 health check；

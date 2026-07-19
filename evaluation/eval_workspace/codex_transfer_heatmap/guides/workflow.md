@@ -23,6 +23,11 @@ process, not a task `.env` setting. Do not use `codex exec --ephemeral` for
 formal attempts. Use exactly the prompt in `guides/agent_prompts.md`; replace
 only its declared placeholders.
 
+Save the active Codex home before overriding it. Seed every temporary run home
+with only its `auth.json` as mode `0600`, and verify the mounted login with
+`CODEX_HOME=/codex_home codex login status`. Missing authentication blocks the
+run; never copy the complete active Codex home.
+
 Use the model configuration in `heatmap_scope.json` unless the user explicitly
 overrides it:
 

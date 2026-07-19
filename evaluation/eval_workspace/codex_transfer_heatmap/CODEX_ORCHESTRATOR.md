@@ -25,6 +25,17 @@ orchestration host with `TASK_ENV_BIND=0.0.0.0`; pass
 Use the model configuration in `heatmap_scope.json` unless the user explicitly
 overrides it. The default is `GPT-5.5` with `xhigh` reasoning effort.
 
+Before changing `CODEX_HOME`, resolve the orchestrator's active Codex home as
+`HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"`. For every solver attempt,
+create a fresh temporary home, copy only `$HOST_CODEX_HOME/auth.json` into it
+with mode `0600`, and do not copy `config.toml` or any other Codex state. Never
+stage the credential in `/work` or retain it as an experiment artifact.
+
+Before launching the formal solver, use the same agent image and temporary-home
+mount to run `CODEX_HOME=/codex_home codex login status`. Continue only when it
+confirms an active login. A missing or invalid login blocks the run; do not
+replace the tested solver with the orchestrator.
+
 The command shape inside Docker is:
 
 ```bash

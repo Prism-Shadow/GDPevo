@@ -21,6 +21,36 @@ scratch/calibration_runs/<run_kind>/<run_id>/work/       -> /work
 scratch/calibration_runs/<run_kind>/<run_id>/codex_home/ -> /codex_home
 ```
 
+Before changing `CODEX_HOME` for any run, resolve the active Codex home used by
+the orchestrator:
+
+```bash
+HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+```
+
+Seed every new temporary home with only the active login credential:
+
+```bash
+install -d -m 700 "$CODEX_HOME_DIR"
+test -f "$HOST_CODEX_HOME/auth.json" || {
+  echo "Calibration blocked: active Codex auth.json was not found" >&2
+  exit 1
+}
+install -m 600 "$HOST_CODEX_HOME/auth.json" "$CODEX_HOME_DIR/auth.json"
+```
+
+Do this on the orchestrator host before mounting the temporary directory into
+the agent container. Do not copy the full active Codex home, `config.toml`,
+sessions, databases, logs, skills, plugins, caches, or other state. The model
+and reasoning effort are fixed by the launch command, so host configuration is
+not needed. Never place `auth.json` in `/work` or any retained artifact.
+
+Before the formal process, use the same agent image and temporary-home mount to
+run `CODEX_HOME=/codex_home codex login status`. Continue only when it confirms
+an active login. Otherwise record calibration as blocked; do not launch an
+unauthenticated attempt and do not substitute the orchestration agent or a
+different model.
+
 The mounted `codex_home/` is disposable runtime state, not a calibration
 artifact. The only Codex-home file retained after the run is the matched primary
 session JSONL described below.
@@ -158,6 +188,8 @@ Solve exactly one test task using only files staged in the current /work directo
 
 A run is valid only when:
 
+- its temporary home was seeded only with the active `auth.json`, and
+  `codex login status` passed through the same image and mount;
 - it ran through the Codex harness with `gpt-5.5` and `xhigh` reasoning effort;
 - its work directory was fresh and contained only the materials allowed above;
 - the environment health check succeeded from a disposable container on the

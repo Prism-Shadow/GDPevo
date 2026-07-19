@@ -23,6 +23,16 @@ solver 容器都带 `--add-host=host.docker.internal:host-gateway`，并通过
 除非用户明确覆盖，使用 `heatmap_scope.json` 中的模型配置。默认是 `GPT-5.5`
 和 `xhigh` reasoning effort。
 
+改写 `CODEX_HOME` 前，先把主控当前可用的 Codex home 保存为
+`HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"`。每个 solver attempt 都新建
+临时 home，只把 `$HOST_CODEX_HOME/auth.json` 以 `0600` 权限复制进去；不要复制
+`config.toml` 或其他 Codex 状态。不能把凭据 staging 到 `/work`，也不能将其保留
+为实验产物。
+
+正式启动前，必须使用相同的 agent image 和临时 home 挂载，执行
+`CODEX_HOME=/codex_home codex login status`。只有确认登录有效后才能继续；认证
+缺失或失效时，该 run 应直接判定为 blocked，不能让主控代替被测 solver 运行。
+
 Docker 内命令形态如下：
 
 ```bash

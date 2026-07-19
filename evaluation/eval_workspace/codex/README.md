@@ -49,6 +49,8 @@ Codex is the main evaluation orchestrator. When a user asks you to run evaluatio
 
 Each skill-generation run and solver attempt must run inside Docker from only its staged directory. Use the command shape in `CODEX_ORCHESTRATOR.md`: `CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"`. `CODEX_HOME` is a runtime-only temporary environment variable for that agent process, not a task `.env` setting. Do not use `codex exec --ephemeral` for formal attempts.
 
+Before mounting each temporary home, copy only the orchestrator's active `auth.json` into it with mode `0600` and verify the mounted login with `codex login status`. Do not copy the complete active Codex home. Missing or invalid authentication blocks the run.
+
 1. Confirm that `task_group/` contains exactly one task group:
 
 ```text

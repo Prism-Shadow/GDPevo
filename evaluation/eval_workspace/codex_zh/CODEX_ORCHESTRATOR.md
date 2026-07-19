@@ -40,6 +40,32 @@ skill generation 必须与关闭 judge 的 calibration、其他 skill generation
 使用本次运行配置的模型。已发布 Codex workspace 使用 `gpt-5.5` 和 `xhigh`
 reasoning effort。
 
+在改写 `CODEX_HOME` 前，先在主控侧保存当前可用的 Codex home：
+
+```bash
+HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+```
+
+每次 skill generation 和 solver attempt 都要新建临时 home，并且只继承登录凭据：
+
+```bash
+install -d -m 700 "$CODEX_HOME_DIR"
+test -f "$HOST_CODEX_HOME/auth.json" || {
+  echo "Evaluation blocked: active Codex auth.json was not found" >&2
+  exit 1
+}
+install -m 600 "$HOST_CODEX_HOME/auth.json" "$CODEX_HOME_DIR/auth.json"
+```
+
+这一步由主控在宿主机上完成，然后再把临时目录挂载为 `/codex_home`。不要复制
+整个 Codex home，也不要复制 `config.toml`、历史 sessions、数据库、日志、skills、
+plugins、缓存或其他状态。模型和思考强度由启动参数明确指定。绝不能把
+`auth.json` staging 到 `/work`，也不能把它保留为实验产物。
+
+正式启动前，必须使用相同的 agent image 和临时 home 挂载，执行
+`CODEX_HOME=/codex_home codex login status`。只有确认当前登录有效后才能继续；
+否则应停止并报告该 run 被阻塞，不能启动未认证的 attempt，也不能让主控代跑。
+
 Docker 内命令形态如下：
 
 ```bash

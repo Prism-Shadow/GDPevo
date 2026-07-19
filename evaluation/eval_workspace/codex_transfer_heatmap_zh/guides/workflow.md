@@ -19,6 +19,11 @@ CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort
 正式 attempt 不要使用 `codex exec --ephemeral`。只能使用
 `guides/agent_prompts.md` 中的固定 prompt，并只替换声明的占位符。
 
+覆盖 `CODEX_HOME` 前先保存当前可用的 Codex home。每个临时 run home 只复制其中
+的 `auth.json`，权限设为 `0600`，并使用
+`CODEX_HOME=/codex_home codex login status` 验证挂载后的登录状态。认证缺失时该
+run 应直接判定为 blocked，不能复制完整 Codex home。
+
 除非用户明确覆盖，否则使用 `heatmap_scope.json` 里的模型配置：
 
 ```text

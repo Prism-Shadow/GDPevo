@@ -47,6 +47,36 @@ exact agent URL.
 Use the configured model for the run. The released Codex workspace uses
 `gpt-5.5` with `xhigh` reasoning effort.
 
+Before changing `CODEX_HOME`, resolve the active Codex home used by the
+orchestrator once:
+
+```bash
+HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+```
+
+For every skill-generation run and solver attempt, create a fresh temporary
+home and seed only its login credential:
+
+```bash
+install -d -m 700 "$CODEX_HOME_DIR"
+test -f "$HOST_CODEX_HOME/auth.json" || {
+  echo "Evaluation blocked: active Codex auth.json was not found" >&2
+  exit 1
+}
+install -m 600 "$HOST_CODEX_HOME/auth.json" "$CODEX_HOME_DIR/auth.json"
+```
+
+Run this on the orchestrator host before mounting the temporary directory at
+`/codex_home`. Do not copy the full active Codex home, `config.toml`, sessions,
+databases, logs, skills, plugins, caches, or other state. Model and reasoning
+settings come from the explicit launch arguments. Never stage `auth.json` in
+`/work` or retain it as an experiment artifact.
+
+Before launching the formal process, use the same agent image and temporary
+home mount to run `CODEX_HOME=/codex_home codex login status`. Continue only
+when it confirms an active login. Otherwise stop and report the run as blocked;
+do not launch an unauthenticated attempt or replace it with the orchestrator.
+
 The command shape inside Docker is:
 
 ```bash
