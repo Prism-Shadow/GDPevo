@@ -114,9 +114,10 @@ conditions:
 - `rounds_avg_3` 统计 solver 的 assistant/model-response turns；`tool_calls_avg_3` 统计 solver 发起的工具调用次数。两者在 task 层面先对同一 test task 的 3 次 attempts 取平均，condition 层面再对 5 个 test tasks 取平均。若某个正式 attempt 的 trace 不能匹配，对应字段写 `null`，并在对应 run record 中保留原因。
 - `skill_dirs` 只用于非 base 条件。路径相对于 report YAML 所在目录，attempt
   编号必须和使用该 skill 的 solver attempt 编号一致。
-- Token 字段来自写入 `original_traces/.../claude_config/` 下、并按
-  `message.id` 去重后的 Claude Code session traces。如果 transcript 缺失，应写
-  `null`，并在对应 run record 中保留问题。
+- Token 字段来自直接复制到对应
+  `original_traces/.../attempt_<nn>/` 目录、并按 `message.id` 去重后的 Claude Code
+  主 session JSONL。如果 session trace 缺失，应写 `null`，并在对应 run record
+  中保留问题。
 - `evolve` 只记录三个非 base 模式的 skill-generation 用量。保留 3 次 attempt
   的 token 和费用记录。metadata 和原始 trace 路径仅保留在工作区审计文件中，
   不写入正式 report；summary 保留每个 token bucket 和美元费用的三次

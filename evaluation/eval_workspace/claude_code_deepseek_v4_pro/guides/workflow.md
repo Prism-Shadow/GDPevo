@@ -34,11 +34,13 @@ thinking flag.
 
 When a user asks you to run evaluation in this workspace, that request is
 permission for Codex to orchestrate Dockerized `claude -p` subprocesses. Keep
-every skill-generation and solver run in a clean, dedicated directory, and mount
-only that staged directory plus a dedicated temporary Claude config directory
-into the container. Use the exact mode-specific prompt in `agent_prompts.md` for every
-process; replace only declared placeholders and do not append task hints or
-extra paths.
+every skill-generation and solver run in a clean, dedicated directory. Mount
+only that staged directory and keep
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` inside a named container without
+`--rm`; if authentication bootstrap is needed, mount only the minimum file
+read-only. Use the exact mode-specific prompt in `agent_prompts.md` for every
+process; replace only declared placeholders and do not append task hints or extra
+paths.
 
 ## 1. Prepare The Task Group
 
@@ -147,15 +149,18 @@ train task, copy only:
 Never stage `notes/`, `eval/`, `env/`, `test_tasks/`, task-group manifests
 outside the staged inputs, or source files not explicitly allowed above.
 
-For every skill-generation run, mount a dedicated temporary per-run Claude
-config directory from `scratch/runtime_homes/` as
-`CLAUDE_CONFIG_DIR=/claude_config` and pass a unique session ID. Copy only the
-matching `projects/<sanitized-cwd>/<claude_session_id>.jsonl` to
+For every skill-generation run, create a named agent container without `--rm`,
+keep `CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` inside it, and pass a unique
+session ID. Mount only the staged materials and, if needed, the minimum read-only
+authentication bootstrap file. After the run, use `docker cp` to copy only the
+matching `projects/<sanitized-cwd>/<claude_session_id>.jsonl` (or a temporary
+`projects/` subtree under `scratch/trace_extract/<run_id>/` for discovery) to
 `original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl`.
 Write `scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml`,
 then backfill and verify token buckets and cost from the copied session. Only
-after those fields are complete, delete the full temporary config directory.
-Do not archive config, credentials, plugins, caches, logs, databases, or stdout.
+after those fields are complete, delete the extraction directory and stopped
+container. Do not archive the complete container-local config, credentials,
+plugins, caches, logs, databases, or stdout.
 Report this as evolve usage; do not include it in solver efficiency metrics.
 
 ## 4. Run Test Solvers
@@ -225,9 +230,12 @@ Every solver attempt must have a unique `eval_attempt_id`:
 The ID must appear in the solver prompt, attempt directory, and
 `run_metadata.yaml`.
 
-Match the solver's exact native Claude Code session JSONL by its unique session
-ID under `projects/<sanitized-cwd>/`, verify the working directory, and copy only
-that file to `original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl`.
+Keep the named container stopped after the run. Match the solver's exact native
+Claude Code session JSONL by its unique session ID under
+`projects/<sanitized-cwd>/`, use `docker cp` to extract only that file (or a
+temporary `projects/` subtree under `scratch/trace_extract/<run_id>/` for
+discovery), verify the working directory, and copy only that file to
+`original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl`.
 Backfill token usage and cost from the copied file. Deduplicate by `message.id`:
 keep input/cache buckets from any record and the max `output_tokens` per message
 id, then sum across responses.
@@ -247,8 +255,9 @@ original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
 Record the copied primary session path and all trace-derived fields in
-`run_metadata.yaml`. Verify them, then delete the complete temporary
-`CLAUDE_CONFIG_DIR`. Do not preserve the config tree or stdout. If no unique
+`run_metadata.yaml`. Verify them, then delete the temporary extraction directory
+and stopped container. Do not preserve the container-local config tree or
+stdout. If no unique
 trace can be matched, set the copied trace path to `null`, keep the token,
 round-count, and tool-call fields `null`, record the reason, clean up, and rerun
 with a new session ID.

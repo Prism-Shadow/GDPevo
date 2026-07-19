@@ -47,7 +47,7 @@ GDPEVO_JUDGE_PATH=/api/judge
 
 Codex 是主控评估 agent。当用户要求你在这个工作区中运行评估时，该请求即视为允许 Codex staging 干净目录、通过 Docker 内的 `claude -p` 启动隔离 Claude Code run、调用 evaluators、保存 traces 并聚合 reports。不要减少 attempt 数量，不要把多个 test tasks 合并成一次 solver 运行，也不要让主 agent 直接解 test tasks。
 
-每次 skill-generation run 和 solver attempt 都必须只从自己的 staged 目录在 Docker 内运行。使用 `CODEX_ORCHESTRATOR.md` 中的命令形态：`CLAUDE_CONFIG_DIR=/claude_config claude -p --permission-mode bypassPermissions --session-id "$CLAUDE_SESSION_ID" "$PROMPT"`。`CLAUDE_CONFIG_DIR` 是该 agent 进程运行时临时设置的环境变量，不是任务 `.env` 配置。正式 attempt 不要使用 `--no-session-persistence`。
+每次 skill-generation run 和 solver attempt 都必须只从自己的 staged 目录在 Docker 内运行。使用 `CODEX_ORCHESTRATOR.md` 中的命令形态：`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config claude -p --permission-mode bypassPermissions --session-id "$CLAUDE_SESSION_ID" "$PROMPT"`。`CLAUDE_CONFIG_DIR` 是该 agent 进程运行时临时设置的环境变量，不是任务 `.env` 配置。正式 attempt 不要使用 `--no-session-persistence`。
 
 1. 确认 `task_group/` 下只包含一个 task group：
 
@@ -73,11 +73,14 @@ skills/reflect-3/reflect-3_attempt_02/SKILL.md
 skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
-每次 skill-generation run 都使用 `scratch/runtime_homes/` 下专用挂载的临时
-`CLAUDE_CONFIG_DIR`，只把匹配的主 session JSONL 复制到
+每次 skill-generation run 都启动一个不带 `--rm` 的 Docker 容器，并让
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` 留在容器内部。只挂载 staging 材料，
+需要认证时只读挂载最小凭据引导文件。运行结束后用 `docker cp` 只提取匹配的主
+session JSONL（必要时先暂存 `projects/` 到 `scratch/trace_extract/<run_id>/`），复制到
 `original_traces/skill_generation/<condition>/attempt_<nn>/`，并在
 `scratch/skill_generation/` 下写入对应的 `evolve_metadata.yaml`。从复制后的文件
-回填并核验 token、费用和 metadata，完成后再删除整个临时 config 目录。
+回填并核验 token、费用和 metadata，完成后再删除暂存目录和停止状态的容器，不保留
+完整的容器内 config 目录。
 
 5. 在四种条件下运行 test tasks：
 
@@ -90,7 +93,7 @@ runs/reflect-3/
 
 每种条件下，每个 test task 独立运行 3 次。每次运行都必须由干净上下文的 Dockerized Claude Code run 完成。对于 skill 条件，solver 的 `attempt_<nn>` 使用相同编号的独立生成 skill。
 
-6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、Claude session ID、复制后的主 session trace 路径、token 用量、solver turn count 和 tool-call count。每个 attempt 使用临时挂载的 `CLAUDE_CONFIG_DIR`；运行结束后只把 `projects/<sanitized-cwd>/<claude_session_id>.jsonl` 复制到 `original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl`。确认 trace 与 token、费用、turn、tool-call、metadata 都完整后，再删除整个临时 config 目录。不要保存其中的配置、凭据、plugins、缓存、日志、数据库，也不要把 stdout 当作 trace。
+6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、Claude session ID、复制后的主 session trace 路径、token 用量、solver turn count 和 tool-call count。每个 attempt 使用不带 `--rm` 的具名容器，并让 `CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` 留在容器内部；运行结束后用 `docker cp` 只把 `projects/<sanitized-cwd>/<claude_session_id>.jsonl` 复制到 `original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl`，必要时可先把 `projects/` 暂存到 `scratch/trace_extract/<run_id>/`。确认 trace 与 token、费用、turn、tool-call、metadata 都完整后，再删除暂存目录和停止状态的容器。不要保存完整配置、凭据、plugins、缓存、日志、数据库，也不要把 stdout 当作 trace。
 
 7. 所有 score records 准备完成后，聚合四种条件的 `acc` 和 population `std`，并聚合每种条件的平均 token、turn、tool-call 和 cost 字段。另行聚合每个非 base 模式 3 次 skill-generation runs 的 evolve token 与美元费用。最终报告写入 `report/<task_group_id>.yaml`。Solver 效率指标只统计 test solver runs 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要把 skill 生成、环境检查、evaluator 执行或主 agent 汇总混入 solver 效率指标。临时检查或聚合代码可以放在 `scratch/` 下。
 

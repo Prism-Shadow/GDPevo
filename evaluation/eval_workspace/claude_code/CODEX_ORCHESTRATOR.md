@@ -11,10 +11,13 @@ is Claude Code.
 
 ## Docker Isolation
 
-Mount only the current staged directory and a dedicated temporary per-attempt
-Claude config directory into the container. Do not mount the full task group, full
-evaluation workspace, repository root, parent work directory, home directory,
-`env/`, `notes/`, evaluator files, source answers, or previous runs.
+Mount only the current staged directory into the container. If authentication or
+configuration bootstrap is needed, mount only the minimum required file read-only
+at a dedicated path; never mount the host `.claude` directory, host home directory,
+or a complete Claude runtime tree. Set `CLAUDE_CONFIG_DIR` to the container-local
+path `/tmp/gdpevo-claude-config`. Do not mount the full task group, full evaluation
+workspace, repository root, parent work directory, `env/`, `notes/`, evaluator
+files, source answers, or previous runs.
 
 Build the task environment from `env/Dockerfile` and run it with each agent on
 an orchestrator-created Docker bridge network. The environment binds
@@ -50,14 +53,14 @@ workspace uses Claude Opus 4.8 with `xhigh` effort.
 The command shape inside Docker is:
 
 ```bash
-CLAUDE_CONFIG_DIR=/claude_config \
+CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config \
 claude -p \
   --permission-mode bypassPermissions \
   --session-id "$CLAUDE_SESSION_ID" \
   "$PROMPT"
 ```
 
-`CLAUDE_CONFIG_DIR=/claude_config` is a runtime-only environment variable for
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` is a runtime-only environment variable for
 this single agent process. Do not write it into `.env`, task materials,
 generated skills, or reports as a task environment setting.
 
@@ -81,14 +84,16 @@ must describe the run, not smuggle extra context into it.
 ## Trace Preservation
 
 Preserve exactly one complete native Claude Code session JSONL as the primary
-trace. Create the mounted Claude config directory under
-`scratch/runtime_homes/`, outside `original_traces/`, set
-`CLAUDE_CONFIG_DIR=/claude_config` only when launching the agent process, and
-pass a unique `--session-id`. After the process exits, find the exact file named
-by that session ID under the temporary config directory:
+trace. The runtime config remains inside a named container and is never a host
+bind mount. Create the container without `--rm`; after Claude exits, keep the
+stopped container until trace and metadata verification is complete. Set
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` inside the container and pass a
+unique `--session-id`. Use `docker cp` to copy only the exact session file, or
+the `projects/` subtree into a temporary `scratch/trace_extract/<run_id>/`
+directory when discovery is necessary:
 
 ```text
-<temporary_claude_config>/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+/tmp/gdpevo-claude-config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
 ```
 
 Verify its session ID and working directory, then copy only that JSONL to:
@@ -105,14 +110,15 @@ scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
 ```
 
 Populate and verify token, cost, turn, tool-call, contamination, and metadata
-fields from the copied primary session JSONL. Only after those fields are
-complete may the temporary `CLAUDE_CONFIG_DIR` be deleted. Do not archive its
-config, credentials, plugins, caches, logs, databases, or other runtime state.
-Do not require stdout/stderr command logs as formal trace artifacts, do not use
-`--no-session-persistence`, and do not rely on searching the user's global
-`~/.claude` after the run. If the expected session file is missing or ambiguous,
-record the reason, delete the temporary config directory, and rerun with a new
-session ID.
+fields from the copied primary session JSONL. Delete any temporary extraction
+directory, then remove the stopped container only after the answer or skill,
+copied trace (or its missing reason), and all metadata are written to the host
+workspace. Never preserve the complete container-local config, credentials,
+plugins, caches, logs, databases, or other runtime state. Do not require
+stdout/stderr command logs as formal trace artifacts, do not use
+`--no-session-persistence`, and do not search the user's global `~/.claude` after
+the run. If the expected session file is missing or ambiguous, record the reason
+and rerun with a new session ID.
 
 A Docker run is not complete until `answer.json` or the complete `skill/` package
 with `skill/SKILL.md` as its entry file, the primary

@@ -157,18 +157,21 @@ test stages. Test instances use `TASK_ENV_ENABLE_JUDGE=0`. Before scored runs,
 verify `/health` from a disposable container on the same network through the
 exact agent URL.
 
-Mount only the current staged working directory and a dedicated per-run Claude
-config directory into the container. Mount the latter at `/claude_config`; do
-not mount the full task group, full
-evaluation workspace, parent `work/` directory, repository root, or home
-directory. This file isolation is the main protection against `notes/`, `eval/`,
-`env/`, source answers, and previous runs leaking into Claude Code.
+Mount only the current staged working directory into the container. If an
+authentication or configuration bootstrap file is needed, mount only that
+minimum file read-only; never mount the host `.claude` directory, host home
+directory, or a complete Claude runtime tree. Set
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` inside the container. Do not mount
+the full task group, full evaluation workspace, parent `work/` directory,
+repository root, or home directory. This file isolation is the main protection
+against `notes/`, `eval/`, `env/`, source answers, and previous runs leaking into
+Claude Code.
 
 Generate a unique UUID for every skill-generation run and solver attempt, then
 launch Claude Code with the exact session-persistence shape:
 
 ```bash
-CLAUDE_CONFIG_DIR=/claude_config \
+CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config \
 claude -p \
   --permission-mode bypassPermissions \
   --session-id "$CLAUDE_SESSION_ID" \
@@ -203,11 +206,15 @@ runs/<condition>/<test_id>/attempt_<nn>/run_metadata.yaml
 ```
 
 Every skill-generation run and scored solver attempt must copy exactly one
-native Claude Code session JSONL. Match the exact file by the run's unique
-session ID under the temporary config directory:
+native Claude Code session JSONL. Create the agent container without `--rm` and
+keep it stopped until trace and metadata verification is complete. The runtime
+config stays inside the container at `/tmp/gdpevo-claude-config`; it is never a
+host bind mount. Use `docker cp` to copy only the exact file below, or only its
+`projects/` subtree to a temporary `scratch/trace_extract/<run_id>/` directory
+when discovery is necessary. Match the exact file by the run's unique session ID:
 
 ```text
-<temporary_claude_config>/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+/tmp/gdpevo-claude-config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
 ```
 
 Verify the session ID and working directory, then copy only that file to:
@@ -225,16 +232,16 @@ scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
 
 Populate and verify token usage, cost, round count, and tool-call count in the
 run's `run_metadata.yaml` or `evolve_metadata.yaml` from the copied primary
-trace. Deduplicate token usage by `message.id` before summing. Only after the
-trace and per-run metadata are complete, delete the full temporary
-`CLAUDE_CONFIG_DIR`. Do not archive its config, credentials, plugins, caches,
-logs, databases, stdout/stderr, or other runtime state. If a trace cannot be
-matched, record the issue explicitly, clean up the temporary directory, and
-rerun with a new session ID instead of inventing efficiency numbers.
+trace. Deduplicate token usage by `message.id` before summing. After the answer
+or skill, copied trace (or its missing reason), and per-run metadata are complete,
+delete the temporary extraction directory and then remove the stopped container.
+Do not archive the container-local config, credentials, plugins, caches, logs,
+databases, stdout/stderr, or other runtime state. If a trace cannot be matched,
+record the issue explicitly and rerun with a new session ID instead of inventing
+efficiency numbers.
 
 Aggregate the final report later from the retained primary JSONL and populated
-per-run metadata; deleting the temporary config directory must not remove either
-source.
+per-run metadata; removing the stopped container must not remove either source.
 
 For `claude -p`, the primary trace for token usage, rounds, and tool-call
 counting is the single JSONL named by the run's unique session ID. A Docker run

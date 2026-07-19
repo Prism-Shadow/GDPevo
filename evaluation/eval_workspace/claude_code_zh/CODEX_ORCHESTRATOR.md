@@ -9,9 +9,11 @@ tasks。
 
 ## Docker 隔离
 
-容器只挂载当前 staged 目录和每个 attempt 专用的 Claude config 目录。不要挂载
-完整 task group、完整 evaluation workspace、仓库根目录、上级 work 目录、home
-目录、`env/`、`notes/`、evaluator 文件、源答案或之前的 runs。
+容器只挂载当前 staged 目录。如果需要认证或配置 bootstrap，只以只读方式挂载最小
+必需文件到专用路径；不要挂载宿主机 `.claude` 目录、home 目录或完整 Claude 运行时
+目录。`CLAUDE_CONFIG_DIR` 在容器内部设置为 `/tmp/gdpevo-claude-config`。不要挂载
+完整 task group、完整 evaluation workspace、仓库根目录、上级 work 目录、`env/`、
+`notes/`、evaluator 文件、源答案或之前的 runs。
 
 主控从 `env/Dockerfile` 构建环境镜像，并把环境容器和 agent 接入主控创建的
 Docker bridge network。环境监听 `0.0.0.0:<TASK_ENV_PORT>`，network 别名为
@@ -43,14 +45,14 @@ Claude Opus 4.8 和 `xhigh` effort。
 Docker 内命令形态如下：
 
 ```bash
-CLAUDE_CONFIG_DIR=/claude_config \
+CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config \
 claude -p \
   --permission-mode bypassPermissions \
   --session-id "$CLAUDE_SESSION_ID" \
   "$PROMPT"
 ```
 
-`CLAUDE_CONFIG_DIR=/claude_config` 是启动这一次 agent 进程时临时注入的运行时
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` 是启动这一次 agent 进程时临时注入的运行时
 环境变量。不要把它写进 `.env`、task 材料、生成的 skill 或 report，避免被误解为
 任务环境配置。
 
@@ -69,13 +71,15 @@ attempt 前，应把实际观测到的值记录到 `scratch/`。不要加
 
 ## Trace 保存
 
-每次 run 只保存一个完整的 Claude Code 主 session JSONL。把 attempt 专用的临时
-Claude config 目录建在 `scratch/runtime_homes/` 下、`original_traces/` 外，仅在
-启动进程时设置 `CLAUDE_CONFIG_DIR=/claude_config`，并传入唯一
-`--session-id`。进程结束后，从临时 config 目录找到该 session ID 对应的文件：
+每次 run 只保存一个完整的 Claude Code 主 session JSONL。运行时 config 始终位于
+命名容器内部，绝不作为宿主机目录挂载。创建容器时不要使用 `--rm`；Claude 退出后
+先保留 stopped container，直到 trace 和 metadata 核验完成。在容器内设置
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config`，并传入唯一 `--session-id`。使用
+`docker cp` 直接复制准确的 session 文件；需要发现路径时，只把 `projects/` 子目录
+临时提取到 `scratch/trace_extract/<run_id>/`：
 
 ```text
-<temporary_claude_config>/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+/tmp/gdpevo-claude-config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
 ```
 
 核对 session ID 和工作目录后，只把这一个 JSONL 复制到：
@@ -91,13 +95,13 @@ original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
 ```
 
-先用复制后的主 session JSONL 回填并核验 token、费用、turn 和 tool-call 数据；确认
-trace 与 metadata 均已完整落盘后，再删除整个临时 `CLAUDE_CONFIG_DIR`。不要归档
-其中的配置、凭据、plugins、缓存、日志、数据库或其他运行状态。stdout/stderr
-命令运行日志不作为正式 trace 产物要求。不要使用 `--no-session-persistence`，也
-不要在 run 结束后依赖搜索用户全局 `~/.claude` 来猜测 trace。如果目标 session
-文件缺失或匹配不唯一，记录原因，清理临时 config 目录，并使用新的 session ID
-重跑。
+先用复制后的主 session JSONL 回填并核验 token、费用、turn 和 tool-call 数据。确认
+answer 或 skill、复制后的 trace（或缺失原因）和 metadata 都已写入宿主机后，删除临时
+提取目录，再删除 stopped container。不要归档容器内完整 config，其中的配置、凭据、
+plugins、缓存、日志、数据库或其他运行状态都不属于 trace。stdout/stderr 命令运行日志
+不作为正式 trace 产物要求。不要使用 `--no-session-persistence`，也不要在 run 结束后
+依赖搜索用户全局 `~/.claude` 来猜测 trace。如果目标 session 文件缺失或匹配不唯一，
+记录原因并使用新的 session ID 重跑。
 
 一次 Docker run 只有在 `answer.json` 或以 `skill/SKILL.md` 为入口的完整 `skill/`
 目录包、主 session trace 或其缺失

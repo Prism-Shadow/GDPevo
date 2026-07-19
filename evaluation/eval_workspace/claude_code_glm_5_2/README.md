@@ -56,7 +56,7 @@ Before starting the run, confirm that the Dockerized Claude Code command is conf
 for `GLM-5.2`: Claude Code runs at `xhigh` effort, while the GLM model setting
 reported for the released run is `max`. Each skill-generation run and solver
 attempt must run inside Docker from only its staged directory. Use the command
-shape in `CODEX_ORCHESTRATOR.md`: `CLAUDE_CONFIG_DIR=/claude_config claude -p
+shape in `CODEX_ORCHESTRATOR.md`: `CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config claude -p
 --permission-mode bypassPermissions --session-id "$CLAUDE_SESSION_ID" "$PROMPT"`.
 `CLAUDE_CONFIG_DIR` is a runtime-only temporary environment variable for that
 agent process, not a task `.env` setting. Do not use `--no-session-persistence`
@@ -86,12 +86,16 @@ skills/reflect-3/reflect-3_attempt_02/SKILL.md
 skills/reflect-3/reflect-3_attempt_03/SKILL.md
 ```
 
-For every skill-generation run, use a dedicated temporary mounted
-`CLAUDE_CONFIG_DIR` under `scratch/runtime_homes/`, copy only the matching native
-session JSONL to `original_traces/skill_generation/<condition>/attempt_<nn>/`,
-and populate and verify the matching `evolve_metadata.yaml` under
-`scratch/skill_generation/`. Delete the complete temporary config directory only
-after token and cost data are complete.
+For every skill-generation run, create a named Docker container without `--rm`
+and keep `CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` inside it. Mount only the
+staged materials and, if needed, a minimum read-only authentication bootstrap
+file. After the run, use `docker cp` to extract only the matching native session
+JSONL (or a temporary `projects/` subtree under
+`scratch/trace_extract/<run_id>/` for discovery) to
+`original_traces/skill_generation/<condition>/attempt_<nn>/`, and populate and
+verify the matching `evolve_metadata.yaml` under `scratch/skill_generation/`.
+Delete the extraction directory and stopped container only after token and cost
+data are complete. Never retain the complete container-local config.
 
 5. Run test tasks under all four conditions:
 
@@ -104,7 +108,7 @@ runs/reflect-3/
 
 For each condition, run each test task independently 3 times. Every run must be completed by a clean-context Dockerized Claude Code isolated agent run. For skill conditions, solver `attempt_<nn>` uses the independently generated skill with the same attempt number.
 
-6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, `model: glm-5.2, max`, the Claude session ID, copied primary session trace path, token usage, solver turn count, and tool-call count. Use a temporary per-attempt mounted `CLAUDE_CONFIG_DIR`; copy only `projects/<sanitized-cwd>/<claude_session_id>.jsonl` to `original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl`. Delete the complete temporary config directory only after all trace-derived data and metadata are populated and verified; never archive the full config tree or stdout.
+6. After each solver output, call the task evaluator and save the score in the corresponding attempt directory. Each attempt directory should also contain `run_metadata.yaml`, recording the unique `eval_attempt_id`, `model: glm-5.2, max`, the Claude session ID, copied primary session trace path, token usage, solver turn count, and tool-call count. Run the solver in a named container without `--rm`, with `CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` inside it. After the run, use `docker cp` to copy only `projects/<sanitized-cwd>/<claude_session_id>.jsonl` to `original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl` (a temporary `projects/` subtree under `scratch/trace_extract/<run_id>/` may be used for discovery). Delete the extraction directory and stopped container only after all trace-derived data and metadata are populated and verified; never archive the full config tree or stdout.
 
 7. After all score records are ready, aggregate `acc` and population `std` for the four conditions, plus average token, turn, tool-call, and cost fields for each condition. Separately aggregate evolve tokens and USD cost across the 3 skill-generation runs for each non-base mode. Write the final report to `report/<task_group_id>.yaml`. Solver efficiency only counts answer-writing by test solver runs: first average the 3 attempts for the same test task, then average the 5 test tasks. Do not mix skill generation, environment checks, evaluator execution, or main-agent summarization into solver efficiency. Temporary checking or aggregation code may be placed under `scratch/`.
 

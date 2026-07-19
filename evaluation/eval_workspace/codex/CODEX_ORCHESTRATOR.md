@@ -11,10 +11,13 @@ is Codex.
 
 ## Docker Isolation
 
-Mount only the current staged directory and a dedicated temporary per-attempt
-Codex home into the container. Do not mount the full task group, full evaluation workspace,
-repository root, parent work directory, home directory, `env/`, `notes/`,
-evaluator files, source answers, or previous runs.
+Mount only the current staged directory into the agent container. If authentication
+is needed, mount only the minimum bootstrap credential read-only at a dedicated path
+such as `/run/gdpevo-bootstrap/auth.json`; do not mount a host `CODEX_HOME`, the host
+home directory, or any complete runtime directory. The agent's `CODEX_HOME` is created
+inside the container, for example `/tmp/gdpevo-codex-home`. Do not mount the full task
+group, full evaluation workspace, repository root, parent work directory, `env/`,
+`notes/`, evaluator files, source answers, or previous runs.
 
 Build the task environment from `env/Dockerfile` and run it with each agent on
 an orchestrator-created Docker bridge network. The environment binds
@@ -47,40 +50,49 @@ exact agent URL.
 Use the configured model for the run. The released Codex workspace uses
 `gpt-5.5` with `xhigh` reasoning effort.
 
-Before changing `CODEX_HOME`, resolve the active Codex home used by the
-orchestrator once:
+Resolve the active host credential source once, without using it as the runtime home:
 
 ```bash
 HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 ```
 
-For every skill-generation run and solver attempt, create a fresh temporary
-home and seed only its login credential:
+For every skill-generation run and solver attempt, create a named agent container
+without `--rm`. If authentication is needed, bind only the host credential file
+read-only and copy it into the container-local runtime home before launching Codex:
 
 ```bash
-install -d -m 700 "$CODEX_HOME_DIR"
 test -f "$HOST_CODEX_HOME/auth.json" || {
   echo "Evaluation blocked: active Codex auth.json was not found" >&2
   exit 1
 }
-install -m 600 "$HOST_CODEX_HOME/auth.json" "$CODEX_HOME_DIR/auth.json"
+docker create --name "$CONTAINER_NAME" \
+  ... \
+  -v "$HOST_CODEX_HOME/auth.json:/run/gdpevo-bootstrap/auth.json:ro" \
+  ...
 ```
 
-Run this on the orchestrator host before mounting the temporary directory at
-`/codex_home`. Do not copy the full active Codex home, `config.toml`, sessions,
-databases, logs, skills, plugins, caches, or other state. Model and reasoning
-settings come from the explicit launch arguments. Never stage `auth.json` in
-`/work` or retain it as an experiment artifact.
+The container-side wrapper must initialize and use an internal home, for example:
 
-Before launching the formal process, use the same agent image and temporary
-home mount to run `CODEX_HOME=/codex_home codex login status`. Continue only
-when it confirms an active login. Otherwise stop and report the run as blocked;
-do not launch an unauthenticated attempt or replace it with the orchestrator.
+```bash
+export CODEX_HOME=/tmp/gdpevo-codex-home
+install -d -m 700 "$CODEX_HOME"
+install -m 600 /run/gdpevo-bootstrap/auth.json "$CODEX_HOME/auth.json"
+CODEX_HOME="$CODEX_HOME" codex login status
+```
+
+Do not copy or mount the full active Codex home, `config.toml`, sessions, databases,
+logs, skills, plugins, caches, or other state. Model and reasoning settings come from
+the explicit launch arguments. Never stage `auth.json` in `/work` or retain it as an
+experiment artifact. If the container-local home cannot be initialized or login is
+invalid, mark the run blocked before starting the formal attempt.
+
+Run the login check inside the same container-local setup before the formal command.
+Do not launch an unauthenticated attempt or replace it with the orchestrator.
 
 The command shape inside Docker is:
 
 ```bash
-CODEX_HOME=/codex_home \
+CODEX_HOME=/tmp/gdpevo-codex-home \
 codex exec \
   -C /work \
   -m gpt-5.5 \
@@ -90,7 +102,7 @@ codex exec \
   "$PROMPT"
 ```
 
-`CODEX_HOME=/codex_home` is a runtime-only environment variable for this single
+`CODEX_HOME=/tmp/gdpevo-codex-home` is a runtime-only environment variable for this single
 agent process. Do not write it into `.env`, task materials, generated skills, or
 reports as a task environment setting.
 
@@ -111,12 +123,15 @@ must describe the run, not smuggle extra context into it.
 
 ## Trace Preservation
 
-Preserve only the raw Codex primary session JSONL. Create a dedicated temporary
-mounted Codex home for every skill-generation run and solver attempt, outside
-`original_traces/`, and set `CODEX_HOME=/codex_home` only when launching that
-agent process. After the process exits, require exactly one matching file under
-`<temporary_codex_home>/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl`; verify its
-run id and `/work` path, then copy that file into the canonical trace directory.
+Preserve only the raw Codex primary session JSONL. The runtime home remains inside
+the named container and is never a host bind mount. Start the container without
+`--rm`; after the agent exits, keep the stopped container until trace and metadata
+verification is complete. Use `docker cp` to extract only the container's
+`/tmp/gdpevo-codex-home/sessions/` subtree into a temporary
+`scratch/trace_extract/<run_id>/` directory, or copy the exact known rollout file
+directly. Select exactly one `rollout-*.jsonl` matching the run id and `/work` path,
+then copy only that file into the canonical trace directory. Delete the temporary
+extraction directory after selection.
 
 For skill-generation runs, use:
 
@@ -131,15 +146,19 @@ original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
 Use the copied JSONL to populate and verify token, cost, turn, tool-call,
-contamination, and metadata fields. Only after those fields are complete may
-the entire temporary Codex home be deleted. Never copy or retain
-the complete `CODEX_HOME`; this excludes config, credentials, logs, skills,
-plugins, caches, databases and other runtime state. Do not require stdout/stderr
-command logs as formal trace artifacts, do not treat stdout JSONL as a
-replacement for the raw `rollout-*.jsonl` session trace, and do not rely on
-searching the user's global `~/.codex` after the run. If the session file is
-missing or ambiguous, record the reason instead of choosing an arbitrary file,
-remove the temporary home, and rerun with a new run id.
+contamination, and metadata fields. Only after those fields are complete may the
+container be removed. Never copy or retain the complete container-local
+`CODEX_HOME`; this excludes config, credentials, logs, skills, plugins, caches,
+databases and other runtime state. Do not require stdout/stderr command logs as
+formal trace artifacts, do not treat stdout JSONL as a replacement for the raw
+`rollout-*.jsonl` session trace, and do not search the user's global `~/.codex`
+after the run. If the session file is missing or ambiguous, record the reason
+instead of choosing an arbitrary file, clean up the temporary extraction, remove
+the stopped container, and rerun with a new run id.
+
+Remove the named agent container only after the answer or skill package, the copied
+primary trace (or its missing reason), all trace-derived metadata, and the report
+inputs have been written to the host workspace.
 
 A Docker run is not complete until `answer.json` or the complete `skill/` package
 with `skill/SKILL.md` as its entry file, the primary session trace or its missing

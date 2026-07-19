@@ -47,9 +47,9 @@ GDPEVO_JUDGE_PATH=/api/judge
 
 Codex 是主控评估 agent。当用户要求你在这个工作区中运行评估时，该请求即视为允许 Codex staging 干净目录、通过 Docker 内的 `codex exec` 启动隔离 agent run、调用 evaluators、保存 traces 并聚合 reports。不要减少 attempt 数量，不要把多个 test tasks 合并成一次 solver 运行，也不要让主 agent 直接解 test tasks。
 
-每次 skill-generation run 和 solver attempt 都必须只从自己的 staged 目录在 Docker 内运行。使用 `CODEX_ORCHESTRATOR.md` 中的命令形态：`CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"`。`CODEX_HOME` 是该 agent 进程运行时临时设置的环境变量，不是任务 `.env` 配置。正式 attempt 不要使用 `codex exec --ephemeral`。
+每次 skill-generation run 和 solver attempt 都必须只从自己的 staged 目录在 Docker 内运行。使用 `CODEX_ORCHESTRATOR.md` 中的命令形态：`CODEX_HOME=/tmp/gdpevo-codex-home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"`。`CODEX_HOME` 是该 agent 进程运行时临时设置的环境变量，不是任务 `.env` 配置。正式 attempt 不要使用 `codex exec --ephemeral`。
 
-挂载每个临时 home 前，只把主控当前可用的 `auth.json` 以 `0600` 权限复制进去，并使用 `codex login status` 验证挂载后的登录状态。不要复制完整 Codex home；认证文件缺失或登录无效时，该 run 应直接判定为 blocked。
+需要认证时，只把主控当前可用的 `auth.json` 只读挂载到 `/run/gdpevo-bootstrap/auth.json`，再以 `0600` 权限复制到容器内部的 `CODEX_HOME`，并在同一个具名容器内使用 `codex login status` 验证登录状态。不要挂载或复制完整 Codex home；认证文件缺失或登录无效时，该 run 应直接判定为 blocked。
 
 1. 确认 `task_group/` 下只包含一个 task group：
 
@@ -86,7 +86,7 @@ runs/reflect-3/
 
 每种条件下，每个 test task 独立运行 3 次。每次运行都必须由干净上下文的 Dockerized Codex run 完成。对于 skill 条件，solver 的 `attempt_<nn>` 使用相同编号的独立生成 skill。
 
-6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、复制后的主 trace 路径、token 用量、solver turn count 和 tool-call count。每个 attempt 使用临时挂载的 `CODEX_HOME`；运行结束后，只把匹配的 `sessions/.../rollout-*.jsonl` 复制为 `original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl`。从该副本回填并核验 token、费用、轮次、工具调用和 metadata 后，才能删除整个临时 home。不要保存其中的配置、凭据、plugins、skills、缓存、日志、数据库，也不要把 stdout 当作 trace。
+6. 每个 solver 输出完成后，调用对应 task evaluator，并将分数保存到对应 attempt 目录。每个 attempt 目录还应包含 `run_metadata.yaml`，记录唯一的 `eval_attempt_id`、复制后的主 trace 路径、token 用量、solver turn count 和 tool-call count。每个 attempt 使用不带 `--rm` 的具名容器，并让 `CODEX_HOME=/tmp/gdpevo-codex-home` 留在容器内部；运行结束后用 `docker cp` 只把匹配的 `sessions/.../rollout-*.jsonl` 复制为 `original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl`，必要时可先把 `sessions/` 暂存到 `scratch/trace_extract/<run_id>/`。从该副本回填并核验 token、费用、轮次、工具调用和 metadata 后，才能删除暂存目录和停止状态的容器。不要保存完整运行时 home、配置、凭据、plugins、skills、缓存、日志、数据库，也不要把 stdout 当作 trace。
 
 7. 所有 score records 准备完成后，聚合四种条件的 `acc` 和 population `std`，并聚合每种条件的平均 cached/input/output tokens、solver turns 和 tool calls。最终报告写入 `report/<task_group_id>.yaml`。这些效率指标只统计 test solver 进程 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对 5 个 test tasks 取平均。不要包含 skill 生成、环境检查、evaluator 执行或主 agent 汇总。临时检查或聚合代码可以放在 `scratch/` 下。
 
