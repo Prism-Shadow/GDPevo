@@ -1,0 +1,400 @@
+{
+  "notice": "Train-only judge scoring data. The API returns only score, correct, and notice.",
+  "schema_version": 2,
+  "tasks": {
+    "train_001": {
+      "points": [
+        {
+          "id": "P1_phone_preservation",
+          "weight": 3,
+          "checks": [
+            {
+              "type": "list_has_object",
+              "field": "critical_findings",
+              "key": "finding_id",
+              "key_value": "SRC-SENT-ALDEN-PHONE",
+              "checks": [
+                {"path": "issue_type", "expected": "preservation_failure"},
+                {"path": "severity", "expected": "critical"},
+                {"path": "source_status", "expected": "lost"},
+                {"path": "category_impacts", "type": "set", "expected": ["R09", "R15"]},
+                {"path": "recommended_action", "expected": "disclose_to_government"}
+              ]
+            },
+            {
+              "type": "list_has_object",
+              "field": "priority_actions",
+              "key": "action_id",
+              "key_value": "ACT-SENT-001",
+              "checks": [
+                {"path": "action_type", "expected": "disclose_to_government"},
+                {"path": "owner", "expected": "outside_counsel"},
+                {"path": "category_impacts", "type": "set", "expected": ["R09", "R15"]}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2_r09_miscoded_complaint",
+          "weight": 3,
+          "checks": [
+            {
+              "type": "list_has_object",
+              "field": "critical_findings",
+              "key": "finding_id",
+              "key_value": "DOC-SENT-ALDEN-DEALER-ESC",
+              "checks": [
+                {"path": "issue_type", "expected": "responsiveness_miscode"},
+                {"path": "production_impact", "expected": "not_produced"},
+                {"path": "category_impacts", "type": "set", "expected": ["R09"]},
+                {"path": "source_refs", "type": "set", "expected": ["DOC-SENT-ALDEN-DEALER-ESC", "QC-SENT-R09-NR"]},
+                {"path": "document_count", "type": "number", "expected": 1},
+                {"path": "recommended_action", "expected": "recode_and_produce"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P3_privilege_log_gap",
+          "weight": 3,
+          "checks": [
+            {
+              "type": "list_has_object",
+              "field": "critical_findings",
+              "key": "finding_id",
+              "key_value": "PRIV-SENT-LOG-GAP",
+              "checks": [
+                {"path": "issue_type", "expected": "privilege_log_gap"},
+                {"path": "finding_status", "expected": "protocol_noncompliant"},
+                {"path": "document_count", "type": "number", "expected": 3180},
+                {"path": "withheld_count", "type": "number", "expected": 3180},
+                {"path": "logged_count", "type": "number", "expected": 1410},
+                {"path": "unlogged_count", "type": "number", "expected": 1770},
+                {"path": "category_impacts", "type": "set", "expected": ["R11"]}
+              ]
+            },
+            {"field": "metrics.unlogged_privilege_docs", "type": "number", "expected": 1770}
+          ]
+        },
+        {
+          "id": "P4_board_sharepoint_gap",
+          "weight": 2,
+          "checks": [
+            {
+              "type": "list_has_object",
+              "field": "critical_findings",
+              "key": "finding_id",
+              "key_value": "SRC-SENT-BOARD-SP",
+              "checks": [
+                {"path": "issue_type", "expected": "collection_gap"},
+                {"path": "source_status", "expected": "not_collected"},
+                {"path": "category_impacts", "type": "set", "expected": ["R07", "R08", "R09"]},
+                {"path": "recommended_action", "expected": "collect_source"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P5_category_status_matrix",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "category_statuses", "key": "category_code", "key_value": "R07", "checks": [{"path": "status", "expected": "collection_gap"}]},
+            {"type": "list_has_object", "field": "category_statuses", "key": "category_code", "key_value": "R08", "checks": [{"path": "status", "expected": "collection_gap"}]},
+            {"type": "list_has_object", "field": "category_statuses", "key": "category_code", "key_value": "R09", "checks": [{"path": "status", "expected": "incomplete"}]},
+            {"type": "list_has_object", "field": "category_statuses", "key": "category_code", "key_value": "R11", "checks": [{"path": "status", "expected": "privilege_log_gap"}]},
+            {"type": "list_has_object", "field": "category_statuses", "key": "category_code", "key_value": "R15", "checks": [{"path": "status", "expected": "preservation_risk"}]}
+          ]
+        },
+        {
+          "id": "P6_metrics_and_readiness",
+          "weight": 1,
+          "checks": [
+            {"field": "metrics.miscoded_responsive_doc_count", "type": "number", "expected": 1},
+            {"field": "metrics.lost_personal_device_count", "type": "number", "expected": 1},
+            {"field": "metrics.uncollected_board_source_count", "type": "number", "expected": 1},
+            {"field": "metrics.categories_with_open_gaps", "type": "number", "expected": 5},
+            {"field": "metrics.rolling_production_ready", "type": "boolean", "expected": false}
+          ]
+        },
+        {
+          "id": "P7_priority_action_set",
+          "weight": 3,
+          "checks": [
+            {"type": "list_has_object", "field": "priority_actions", "key": "action_id", "key_value": "ACT-SENT-002", "checks": [{"path": "action_type", "expected": "forensic_recovery"}, {"path": "owner", "expected": "ediscovery_vendor"}]},
+            {"type": "list_has_object", "field": "priority_actions", "key": "action_id", "key_value": "ACT-SENT-003", "checks": [{"path": "action_type", "expected": "collect_source"}, {"path": "owner", "expected": "client_it"}]},
+            {"type": "list_has_object", "field": "priority_actions", "key": "action_id", "key_value": "ACT-SENT-004", "checks": [{"path": "action_type", "expected": "recode_and_produce"}, {"path": "owner", "expected": "review_vendor"}]},
+            {"type": "list_has_object", "field": "priority_actions", "key": "action_id", "key_value": "ACT-SENT-005", "checks": [{"path": "action_type", "expected": "supplement_privilege_log"}, {"path": "owner", "expected": "privilege_team"}]}
+          ]
+        }
+      ]
+    },
+    "train_002": {
+      "points": [
+        {
+          "id": "P01_matter_and_event_coverage",
+          "weight": 1,
+          "checks": [
+            {"field": "matter_id", "expected": "MTR-HARBORSTONE-GJ"},
+            {"type": "list_has_object", "field": "retention_events", "key": "event_id", "key_value": "RET-HARB-AUDIT"},
+            {"type": "list_has_object", "field": "retention_events", "key": "event_id", "key_value": "RET-HARB-EHS-POST"},
+            {"type": "list_has_object", "field": "retention_events", "key": "event_id", "key_value": "RET-HARB-LAB-2019"},
+            {"type": "list_has_object", "field": "retention_events", "key": "event_id", "key_value": "RET-HARB-TEAMS"},
+            {"type": "list_has_object", "field": "retention_events", "key": "event_id", "key_value": "RET-HARB-VOICE"}
+          ]
+        },
+        {
+          "id": "P02_pre_hold_policy_destruction",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "retention_events", "key": "event_id", "key_value": "RET-HARB-LAB-2019", "checks": [{"path": "status", "expected": "policy_destroyed_pre_hold"}, {"path": "risk_level", "expected": "low"}, {"path": "policy_section", "expected": "3.1"}, {"path": "event_date", "expected": "2023-01-18"}, {"path": "volume_count", "type": "number", "expected": 4}, {"path": "affected_categories", "type": "set", "expected": ["B"]}]}
+          ]
+        },
+        {
+          "id": "P03_post_hold_loss",
+          "weight": 3,
+          "checks": [
+            {"type": "list_has_object", "field": "retention_events", "key": "event_id", "key_value": "RET-HARB-EHS-POST", "checks": [{"path": "status", "expected": "post_hold_loss"}, {"path": "risk_level", "expected": "high"}, {"path": "event_date", "expected": "2025-01-06"}, {"path": "hold_date", "expected": "2024-11-14"}, {"path": "volume_count", "type": "number", "expected": 2}, {"path": "affected_categories", "type": "set", "expected": ["C", "D", "H"]}]},
+            {"type": "list_has_object", "field": "recommended_actions", "key": "target_id", "key_value": "RET-HARB-EHS-POST", "checks": [{"path": "action_type", "expected": "disclose_preservation_issue"}, {"path": "owner", "expected": "litigation_counsel"}]}
+          ]
+        },
+        {
+          "id": "P04_communication_gaps",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "communication_gaps", "key": "event_id", "key_value": "RET-HARB-VOICE", "checks": [{"path": "gap_type", "expected": "auto_purge"}, {"path": "purge_window_days", "type": "number", "expected": 90}, {"path": "affected_categories", "type": "set", "expected": ["D"]}]},
+            {"type": "list_has_object", "field": "communication_gaps", "key": "event_id", "key_value": "RET-HARB-TEAMS", "checks": [{"path": "status", "expected": "active_system_loss"}, {"path": "cutoff_date", "expected": "2022-02-01"}, {"path": "affected_categories", "type": "set", "expected": ["D", "E"]}]}
+          ]
+        },
+        {
+          "id": "P05_missing_audit_retention",
+          "weight": 3,
+          "checks": [
+            {"type": "list_has_object", "field": "retention_events", "key": "event_id", "key_value": "RET-HARB-AUDIT", "checks": [{"path": "status", "expected": "should_exist_missing"}, {"path": "risk_level", "expected": "high"}, {"path": "retention_period_months", "type": "number", "expected": 60}, {"path": "affected_categories", "type": "set", "expected": ["E", "F", "I"]}]},
+            {"type": "list_has_object", "field": "recommended_actions", "key": "target_id", "key_value": "RET-HARB-AUDIT", "checks": [{"path": "action_type", "expected": "locate_missing_record"}, {"path": "owner", "expected": "compliance_audit"}]}
+          ]
+        },
+        {
+          "id": "P06_archive_exception",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "available_archives", "key": "source_id", "key_value": "SRC-HARB-IRONVAULT", "checks": [{"path": "archive_status", "expected": "available_archive"}, {"path": "retention_years", "type": "number", "expected": 7}, {"path": "affected_categories", "type": "set", "expected": ["D", "E"]}, {"path": "action_type", "expected": "collect_archive"}]}
+          ]
+        },
+        {
+          "id": "P07_metrics",
+          "weight": 2,
+          "checks": [
+            {"field": "metrics.retention_event_count", "type": "number", "expected": 5},
+            {"field": "metrics.post_hold_loss_event_count", "type": "number", "expected": 1},
+            {"field": "metrics.communication_gap_event_count", "type": "number", "expected": 2},
+            {"field": "metrics.destroyed_box_count", "type": "number", "expected": 6},
+            {"field": "metrics.categories_with_any_gap_or_loss", "type": "set", "expected": ["B", "C", "D", "E", "F", "H", "I"]}
+          ]
+        },
+        {
+          "id": "P08_recommended_actions",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "recommended_actions", "key": "target_id", "key_value": "SRC-HARB-IRONVAULT", "checks": [{"path": "action_type", "expected": "collect_archive"}, {"path": "owner", "expected": "ediscovery_vendor"}]},
+            {"type": "list_has_object", "field": "recommended_actions", "key": "target_id", "key_value": "RET-HARB-TEAMS", "checks": [{"path": "action_type", "expected": "document_system_gap"}]},
+            {"type": "list_has_object", "field": "recommended_actions", "key": "target_id", "key_value": "RET-HARB-LAB-2019", "checks": [{"path": "action_type", "expected": "no_action_policy_loss"}]}
+          ]
+        }
+      ]
+    },
+    "train_003": {
+      "points": [
+        {
+          "id": "SP001",
+          "weight": 3,
+          "checks": [
+            {"type": "list_has_object", "field": "custodian_issues", "key": "source_id", "key_value": "SRC-GRAY-HALE-LAPTOP", "checks": [{"path": "status", "expected": "lost"}, {"path": "risk_class", "expected": "post_hold_preservation_failure"}, {"path": "event_date", "expected": "2023-12-01"}, {"path": "category_impacts", "type": "set", "expected": ["SEC-1", "SEC-4"]}, {"path": "priority", "expected": "critical"}, {"path": "recommended_action", "expected": "disclose_preservation_issue_and_pursue_forensics"}]}
+          ]
+        },
+        {
+          "id": "SP002",
+          "weight": 3,
+          "checks": [
+            {"field": "metrics.shared_drive_event_id", "expected": "RET-GRAY-SHARE-DEL"},
+            {"field": "metrics.shared_drive_deleted_count", "type": "number", "expected": 37},
+            {"field": "metrics.shared_drive_recovered_count", "type": "number", "expected": 29},
+            {"field": "metrics.shared_drive_unrecovered_count", "type": "number", "expected": 8},
+            {"field": "metrics.shared_drive_affected_categories", "type": "set", "expected": ["SEC-2", "SEC-3"]}
+          ]
+        },
+        {
+          "id": "SP003",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "unrecovered_files", "key": "doc_id", "key_value": "DOC-GRAY-CASCADE-V3", "checks": [{"path": "event_id", "expected": "RET-GRAY-SHARE-DEL"}, {"path": "recovery_status", "expected": "unrecovered"}]},
+            {"type": "list_has_object", "field": "unrecovered_files", "key": "doc_id", "key_value": "DOC-GRAY-ORION-DRAFT", "checks": [{"path": "event_id", "expected": "RET-GRAY-SHARE-DEL"}, {"path": "recovery_status", "expected": "unrecovered"}]},
+            {"field": "metrics.unrecovered_valuation_file_count", "type": "number", "expected": 2}
+          ]
+        },
+        {
+          "id": "SP004",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "custodian_issues", "key": "source_id", "key_value": "SRC-GRAY-HALE-GMAIL", "checks": [{"path": "status", "expected": "uncollected"}, {"path": "risk_class", "expected": "collection_gap"}, {"path": "category_impacts", "type": "set", "expected": ["SEC-1", "SEC-3"]}, {"path": "recommended_action", "expected": "collect_or_certify_unavailable"}]},
+            {"field": "metrics.personal_account_gap_count", "type": "number", "expected": 1}
+          ]
+        },
+        {
+          "id": "SP005",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "privilege_defects", "key": "defect_id", "key_value": "PRIV-GRAY-WINSLOW", "checks": [{"path": "defect_type", "expected": "third_party_waiver"}, {"path": "doc_count", "type": "number", "expected": 3}, {"path": "third_party", "expected": "Derek Winslow"}, {"path": "priority", "expected": "critical"}]}
+          ]
+        },
+        {
+          "id": "SP006",
+          "weight": 1,
+          "checks": [
+            {"type": "list_has_object", "field": "privilege_defects", "key": "defect_id", "key_value": "PRIV-GRAY-OVERDESIG", "checks": [{"path": "defect_type", "expected": "over_designation"}, {"path": "doc_count", "type": "number", "expected": 12}, {"path": "priority", "expected": "medium"}]}
+          ]
+        },
+        {
+          "id": "SP007",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "privilege_defects", "key": "defect_id", "key_value": "QC-GRAY-MISCODED-PRIV", "checks": [{"path": "defect_type", "expected": "privileged_coded_nonprivileged"}, {"path": "doc_count", "type": "number", "expected": 45}, {"path": "recommended_action", "expected": "privilege_recode_and_clawback_assessment"}]}
+          ]
+        },
+        {
+          "id": "SP008",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "substantive_red_flags", "key": "doc_id", "key_value": "DOC-GRAY-ORION-BACKINTO", "checks": [{"path": "red_flag_type", "expected": "valuation_back_into"}]},
+            {"type": "list_has_object", "field": "substantive_red_flags", "key": "doc_id", "key_value": "DOC-GRAY-CASCADE-97M", "checks": [{"path": "red_flag_type", "expected": "unsupported_valuation_mark"}]}
+          ]
+        },
+        {
+          "id": "SP009",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "recommended_actions", "key": "rank", "key_value": 1, "checks": [{"path": "target_id", "expected": "RET-GRAY-SHARE-DEL"}]},
+            {"type": "list_has_object", "field": "recommended_actions", "key": "rank", "key_value": 2, "checks": [{"path": "target_id", "expected": "SRC-GRAY-HALE-LAPTOP"}]},
+            {"type": "list_has_object", "field": "recommended_actions", "key": "rank", "key_value": 4, "checks": [{"path": "target_id", "expected": "PRIV-GRAY-WINSLOW"}]}
+          ]
+        }
+      ]
+    },
+    "train_004": {
+      "points": [
+        {
+          "id": "SP001",
+          "weight": 3,
+          "checks": [
+            {"type": "list_has_object", "field": "qc_defects", "key": "finding_id", "key_value": "DOC-NORTH-TRIAL-RISK", "checks": [{"path": "defect_type", "expected": "responsive_miscoding"}, {"path": "affected_category", "expected": "SEC-C"}, {"path": "document_count", "type": "number", "expected": 1}, {"path": "recommended_action", "expected": "recode_and_produce"}]}
+          ]
+        },
+        {
+          "id": "SP002",
+          "weight": 3,
+          "checks": [
+            {"type": "list_has_object", "field": "privilege_defects", "key": "defect_id", "key_value": "PRIV-NORTH-LOG-GAP", "checks": [{"path": "defect_type", "expected": "incomplete_privilege_log"}, {"path": "withheld_count", "type": "number", "expected": 840}, {"path": "logged_count", "type": "number", "expected": 365}, {"path": "unlogged_count", "type": "number", "expected": 475}]},
+            {"field": "metrics.unlogged_privileged_count", "type": "number", "expected": 475}
+          ]
+        },
+        {
+          "id": "SP003",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "privilege_defects", "key": "defect_id", "key_value": "PRIV-NORTH-CC-BIZ", "checks": [{"path": "defect_type", "expected": "over_designation"}, {"path": "document_count", "type": "number", "expected": 27}, {"path": "recommended_action", "expected": "downgrade_and_produce_nonprivileged"}]}
+          ]
+        },
+        {
+          "id": "SP004",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "privilege_defects", "key": "defect_id", "key_value": "PRIV-NORTH-CONSULTANT", "checks": [{"path": "defect_type", "expected": "third_party_waiver"}, {"path": "document_count", "type": "number", "expected": 5}, {"path": "third_party", "expected": "trial_consultant"}]}
+          ]
+        },
+        {
+          "id": "SP005",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "qc_defects", "key": "finding_id", "key_value": "QC-NORTH-MISCODED-PRIV", "checks": [{"path": "defect_type", "expected": "privilege_miscoding"}, {"path": "document_count", "type": "number", "expected": 31}, {"path": "recommended_action", "expected": "recode_as_privileged_and_log"}]}
+          ]
+        },
+        {
+          "id": "SP006",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "category_impacts", "key": "category_code", "key_value": "SEC-C", "checks": [{"path": "impact_status", "expected": "underproduced_due_to_responsive_miscode"}, {"path": "affected_count", "type": "number", "expected": 1}]},
+            {"type": "list_has_object", "field": "category_impacts", "key": "category_code", "key_value": "PRIVILEGE_PROTOCOL", "checks": [{"path": "impact_status", "expected": "privilege_corrections_required"}, {"path": "affected_count", "type": "number", "expected": 538}]}
+          ]
+        }
+      ]
+    },
+    "train_005": {
+      "points": [
+        {
+          "id": "matter_id",
+          "weight": 1,
+          "checks": [
+            {"field": "matter_id", "expected": "MTR-ALLOYWORKS-GJ"}
+          ]
+        },
+        {
+          "id": "offsite_post_hold_destruction",
+          "weight": 3,
+          "checks": [
+            {"type": "list_has_object", "field": "retention_risks", "key": "event_id", "key_value": "RET-ALLOY-BOX-POST", "checks": [{"path": "classification", "expected": "post_hold_loss"}, {"path": "volume_count", "type": "number", "expected": 6}, {"path": "volume_unit", "expected": "boxes"}, {"path": "affected_categories", "type": "set", "expected": ["A", "C", "F"]}, {"path": "recommended_action", "expected": "disclose_preservation_loss"}, {"path": "priority", "expected": "critical"}]}
+          ]
+        },
+        {
+          "id": "personal_messaging_gap_sources",
+          "weight": 3,
+          "checks": [
+            {"type": "list_has_object", "field": "source_gaps", "key": "source_id", "key_value": "SRC-ALLOY-KLINE-SIGNAL", "checks": [{"path": "source_type", "expected": "personal_signal"}, {"path": "collection_status", "expected": "uncollected"}, {"path": "affected_categories", "type": "set", "expected": ["D", "F"]}]},
+            {"type": "list_has_object", "field": "source_gaps", "key": "source_id", "key_value": "SRC-ALLOY-MORENO-SMS", "checks": [{"path": "source_type", "expected": "personal_sms"}, {"path": "collection_status", "expected": "uncollected"}, {"path": "affected_categories", "type": "set", "expected": ["D", "F"]}]}
+          ]
+        },
+        {
+          "id": "personal_messaging_collection_action",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "priority_actions", "key": "action", "key_value": "collect_personal_messaging", "checks": [{"path": "target_refs", "type": "set", "expected": ["SRC-ALLOY-KLINE-SIGNAL", "SRC-ALLOY-MORENO-SMS"]}, {"path": "owner", "expected": "forensics"}]}
+          ]
+        },
+        {
+          "id": "teams_archive_availability",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "available_archives", "key": "source_id", "key_value": "SRC-ALLOY-TEAMS-ARCHIVE", "checks": [{"path": "archive_type", "expected": "teams_archive"}, {"path": "active_system_issue", "expected": "deleted_channel"}, {"path": "affected_categories", "type": "set", "expected": ["D", "E"]}, {"path": "recommended_action", "expected": "search_archive"}]}
+          ]
+        },
+        {
+          "id": "zero_claim_document_corrections",
+          "weight": 3,
+          "checks": [
+            {"type": "list_has_object", "field": "responsive_doc_corrections", "key": "doc_id", "key_value": "DOC-ALLOY-BID-EMAIL-1", "checks": [{"path": "linked_qc_id", "expected": "QC-ALLOY-ZERO-CLAIM"}, {"path": "category_code", "expected": "F"}, {"path": "corrected_disposition", "expected": "responsive_produce"}]},
+            {"type": "list_has_object", "field": "responsive_doc_corrections", "key": "doc_id", "key_value": "DOC-ALLOY-BID-EMAIL-2", "checks": [{"path": "linked_qc_id", "expected": "QC-ALLOY-ZERO-CLAIM"}, {"path": "category_code", "expected": "F"}, {"path": "corrected_disposition", "expected": "responsive_produce"}]}
+          ]
+        },
+        {
+          "id": "numeric_metrics",
+          "weight": 2,
+          "checks": [
+            {"field": "metrics.destroyed_box_count", "type": "number", "expected": 6},
+            {"field": "metrics.personal_messaging_gap_count", "type": "number", "expected": 2},
+            {"field": "metrics.available_archive_count", "type": "number", "expected": 1},
+            {"field": "metrics.zero_claim_contradicted_document_count", "type": "number", "expected": 2},
+            {"field": "metrics.affected_category_count", "type": "number", "expected": 5}
+          ]
+        },
+        {
+          "id": "priority_action_order",
+          "weight": 2,
+          "checks": [
+            {"type": "list_has_object", "field": "priority_actions", "key": "rank", "key_value": 1, "checks": [{"path": "action", "expected": "notify_doj_preservation_issue"}]},
+            {"type": "list_has_object", "field": "priority_actions", "key": "rank", "key_value": 2, "checks": [{"path": "action", "expected": "collect_personal_messaging"}]},
+            {"type": "list_has_object", "field": "priority_actions", "key": "rank", "key_value": 3, "checks": [{"path": "action", "expected": "recode_and_produce_bid_emails"}]},
+            {"type": "list_has_object", "field": "priority_actions", "key": "rank", "key_value": 4, "checks": [{"path": "action", "expected": "search_teams_archive"}]}
+          ]
+        }
+      ]
+    }
+  }
+}

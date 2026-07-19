@@ -1,0 +1,171 @@
+{
+  "description": "Required JSON answer for the May therapy margin queue.",
+  "required_top_level_keys": [
+    "case_id",
+    "period",
+    "threshold_revenue_to_cost_ratio",
+    "rows",
+    "below_threshold_segments",
+    "charge_sensitive_segments",
+    "top_issue",
+    "gap_to_120pct",
+    "basis_audit"
+  ],
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "description": "Target queue business ID."
+    },
+    "period": {
+      "type": "string",
+      "format": "YYYY-MM"
+    },
+    "threshold_revenue_to_cost_ratio": {
+      "type": "number",
+      "precision": 4,
+      "units": "ratio"
+    },
+    "rows": {
+      "type": "list",
+      "ordering": "Use the same order as task_context.finance_memo.queue_row_ids.",
+      "item_required_keys": [
+        "month_id",
+        "payer_segment",
+        "service_domain",
+        "cpt_code",
+        "total_cost",
+        "margin",
+        "revenue_to_cost_ratio",
+        "below_threshold",
+        "charge_sensitive",
+        "recommended_action"
+      ],
+      "item_fields": {
+        "month_id": {
+          "type": "string"
+        },
+        "payer_segment": {
+          "type": "enum",
+          "choices": [
+            "medicaid",
+            "commercial",
+            "workers_comp"
+          ]
+        },
+        "service_domain": {
+          "type": "enum",
+          "choices": [
+            "physical_therapy",
+            "speech_therapy",
+            "occupational_therapy"
+          ]
+        },
+        "cpt_code": {
+          "type": "string"
+        },
+        "total_cost": {
+          "type": "number",
+          "precision": 2,
+          "units": "USD"
+        },
+        "margin": {
+          "type": "number",
+          "precision": 2,
+          "units": "USD"
+        },
+        "revenue_to_cost_ratio": {
+          "type": "number",
+          "precision": 4,
+          "units": "ratio"
+        },
+        "below_threshold": {
+          "type": "boolean"
+        },
+        "charge_sensitive": {
+          "type": "boolean"
+        },
+        "recommended_action": {
+          "type": "enum",
+          "choices": [
+            "payer_contract_review",
+            "monitor_charge_sensitive",
+            "monitor_no_action"
+          ]
+        }
+      }
+    },
+    "below_threshold_segments": {
+      "type": "list",
+      "item_type": "enum",
+      "choices": [
+        "medicaid",
+        "commercial",
+        "workers_comp"
+      ],
+      "ordering": "Alphabetical by enum value."
+    },
+    "charge_sensitive_segments": {
+      "type": "list",
+      "item_type": "enum",
+      "choices": [
+        "medicaid",
+        "commercial",
+        "workers_comp"
+      ],
+      "ordering": "Alphabetical by enum value."
+    },
+    "top_issue": {
+      "type": "enum",
+      "choices": [
+        "medicaid_97110",
+        "commercial_97530",
+        "workers_comp_97112",
+        "none"
+      ]
+    },
+    "gap_to_120pct": {
+      "type": "number",
+      "precision": 2,
+      "units": "USD",
+      "description": "Dollar gap between actual revenue and 120 percent of cost for the top below-threshold issue."
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Record the source-precedence rule, the ordered record precedence trail, the environment record IDs that directly control the result, and the exception/gap records that explain exclusions, denials, missing information, or route priority.",
+      "fields": {
+        "source_precedence": {
+          "type": "enum",
+          "choices": [
+            "current_clinical_records_over_stale_export",
+            "payer_appeal_before_manufacturer_assistance",
+            "effective_benchmark_by_plan_modifier_and_date",
+            "new_patient_specific_p2p_information",
+            "margin_threshold_then_charge_sensitivity",
+            "appeal_deadline_then_clinical_then_payment_integrity"
+          ]
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  }
+}

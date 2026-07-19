@@ -1,0 +1,347 @@
+task_group:
+  task_group_id: task_group_024
+  scenario_id: SCN_024_engineering_portfolio_work_item_analytics
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Engineering Operations Data Analysis
+  description: |
+    A train-predict benchmark for engineering portfolio analytics over shared
+    work-item, SLA, and release-readiness systems. Train and test tasks require
+    filtering noisy work items, classifying portfolio categories, calculating
+    delivery mix gaps, aging reliability/security queues, and rolling release
+    blockers and dependencies into operational decisions.
+
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+    - env/Dockerfile
+    - env/setup.sh
+    - env/app.py
+    - env/generate_data.py
+    - env/judge_api.py
+    - env/endpoints.txt
+    - env/data_manifest.json
+    - env/portfolio.db
+    - env/judge_evaluators/train_001.py
+    - env/judge_evaluators/train_002.py
+    - env/judge_evaluators/train_003.py
+    - env/judge_evaluators/train_004.py
+    - env/judge_evaluators/train_005.py
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct included closed portfolio work item set.
+          weight: 3
+        - goal: Correct count of included items by portfolio category.
+          weight: 3
+        - goal: Correct one-decimal actual percentage mix by category.
+          weight: 2
+        - goal: Correct target, actual, and gap percentage points by category.
+          weight: 2
+        - goal: Correct categories with negative target gaps.
+          weight: 2
+        - goal: Correct controlled follow-up action and category focus.
+          weight: 1
+        - goal: Correct duplicate/cancelled exclusion flags and stale-field flag.
+          weight: 1
+
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct seeded primary SLA population under scope, category, status, date, and duplicate rules.
+          weight: 2
+        - goal: Correct legacy primary SLA population under scope, category, status, date, and duplicate rules.
+          weight: 1
+        - goal: Duplicate records are not counted in the primary SLA population.
+          weight: 1
+        - goal: Correct overdue primary items using the right comparison date.
+          weight: 3
+        - goal: Correct aging bucket counts for included primary items.
+          weight: 2
+        - goal: Correct overdue counts by team and top owner/team hotspot.
+          weight: 2
+        - goal: Correct duplicate clusters reported outside the primary population.
+          weight: 1
+        - goal: Correct primary included records with missing owner.
+          weight: 1
+        - goal: Correct SLA breach rate rounded to three decimals.
+          weight: 2
+
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct release ship/no-ship decision enum.
+          weight: 3
+        - goal: Correct milestone completion counts and percentages.
+          weight: 3
+        - goal: Correct set of non-complete work items gating readiness.
+          weight: 3
+        - goal: Correct unresolved high-impact blocker cause counts.
+          weight: 2
+        - goal: Correct critical dependency chains.
+          weight: 2
+        - goal: Correct release readiness score.
+          weight: 1
+
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct included closed work item set.
+          weight: 3
+        - goal: Correct portfolio category counts.
+          weight: 3
+        - goal: Correct count, actual, target, and gap table.
+          weight: 2
+        - goal: Correct largest deficit category.
+          weight: 2
+        - goal: Correct recommended action owner team.
+          weight: 1
+        - goal: Correct excluded same-scope Q4 distractor set.
+          weight: 1
+
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct included primary work item set.
+          weight: 3
+        - goal: Correct overdue primary work item set.
+          weight: 3
+        - goal: Correct overdue counts by severity.
+          weight: 2
+        - goal: Correct priority order for the escalation queue.
+          weight: 2
+        - goal: Correct included primary ids with missing owners.
+          weight: 1
+        - goal: Correct duplicate clusters reported separately from primary work.
+          weight: 1
+        - goal: Correct SLA breach rate rounded to three decimals.
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/eval.py
+      rubric:
+        - goal: Correct qualifying Q4 portfolio work item set.
+          weight: 2
+        - goal: Correct category counts after portfolio classification.
+          weight: 2
+        - goal: Correct actual category percentages rounded to one decimal place.
+          weight: 1
+        - goal: Correct target percentage and actual-minus-target gap table.
+          weight: 1
+        - goal: Correct under-invested category list ordered by deficit.
+          weight: 1
+        - goal: Correct owner counts by portfolio category.
+          weight: 2
+        - goal: Correct team counts by portfolio category.
+          weight: 2
+        - goal: Correct Q4 same-scope excluded candidate ids.
+          weight: 3
+        - goal: Correct exclusion reason counts for same-scope candidates.
+          weight: 2
+        - goal: Correct recommended action enum.
+          weight: 3
+
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/eval.py
+      rubric:
+        - goal: Correct seeded primary SLA population under scope, category, status, date, and duplicate rules.
+          weight: 2
+        - goal: Correct legacy primary SLA population under scope, category, status, date, and duplicate rules.
+          weight: 1
+        - goal: Duplicate records are not counted in the primary SLA population.
+          weight: 1
+        - goal: Correct overdue primary items using the right comparison date.
+          weight: 3
+        - goal: Correct aging bucket counts for included primary items.
+          weight: 2
+        - goal: Correct overdue counts by team and top owner/team hotspot.
+          weight: 2
+        - goal: Correct duplicate clusters reported outside the primary population.
+          weight: 2
+        - goal: Correct primary included records with missing owner.
+          weight: 2
+        - goal: Correct SLA breach rate rounded to three decimals.
+          weight: 2
+
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/eval.py
+      rubric:
+        - goal: Correct release ship/no-ship decision enum.
+          weight: 3
+        - goal: Correct milestone completion counts and percentages.
+          weight: 3
+        - goal: Correct set of non-complete work items gating readiness.
+          weight: 3
+        - goal: Correct unresolved high-impact blocker cause counts.
+          weight: 2
+        - goal: Correct critical dependency chains.
+          weight: 2
+        - goal: Correct non-hard-gate watch work item set.
+          weight: 3
+        - goal: Correct unresolved low- and medium-impact blocker cause counts.
+          weight: 3
+        - goal: Correct watch milestone owner teams and watch-item counts.
+          weight: 3
+        - goal: Correct release readiness score.
+          weight: 1
+
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/eval.py
+      rubric:
+        - goal: Correct included P-series Q4 work item set for the scoped teams and product areas.
+          weight: 3
+        - goal: Correct included legacy Q4 work item set for the scoped teams and product areas.
+          weight: 1
+        - goal: Cancelled, duplicate-status, and duplicate-of distractors are absent from the included set.
+          weight: 3
+        - goal: Correct final portfolio category counts.
+          weight: 1
+        - goal: Correct sorted target, actual, and gap table.
+          weight: 1
+        - goal: Correct under-invested categories ordered by deficit.
+          weight: 1
+        - goal: Correct owner teams for follow-up on under-invested categories.
+          weight: 1
+        - goal: Correct included evidence ids grouped by final category.
+          weight: 1
+
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/eval.py
+      rubric:
+        - goal: Correct overdue primary ids in escalation priority order.
+          weight: 1
+        - goal: Correct included primary work item set under scope, category, state, date, and duplicate rules.
+          weight: 1
+        - goal: Correct overdue counts by severity.
+          weight: 1
+        - goal: Correct overdue primary records still open at the as-of date.
+          weight: 3
+        - goal: Correct overdue primary records closed inside the recent closed window.
+          weight: 3
+        - goal: Correct SLA breach rate rounded to three decimals.
+          weight: 1
+        - goal: Correct duplicate clusters reported separately from primary metrics.
+          weight: 3
+        - goal: Correct included primary ids with missing owners.
+          weight: 3
+        - goal: Correct oldest included primary record with no owner.
+          weight: 3
+        - goal: Correct top owner/team overdue hotspot.
+          weight: 3

@@ -1,0 +1,287 @@
+{
+  "template_name": "northbay_sec_production_readiness_answer",
+  "schema_version": "1.0",
+  "output_format": "single JSON object",
+  "required_top_level_keys": [
+    "matter_id",
+    "readiness_statuses",
+    "issue_ledger",
+    "privilege_corrections",
+    "metrics",
+    "priority_actions"
+  ],
+  "ordering_rules": {
+    "readiness_statuses": "Sort by category_code ascending.",
+    "issue_ledger": "Sort by issue_id ascending.",
+    "privilege_corrections": "Sort by correction_id ascending.",
+    "priority_actions": "Sort by priority_rank ascending, with 1 as the highest priority."
+  },
+  "enums": {
+    "readiness_status": [
+      "ready",
+      "not_ready_zero_claim_contradicted",
+      "not_ready_personal_source_gap",
+      "not_ready_privilege_log_incomplete",
+      "not_ready_privilege_waiver",
+      "not_ready_multiple_blockers",
+      "unknown"
+    ],
+    "production_impact": [
+      "no_current_gap",
+      "underproduced",
+      "not_produced",
+      "source_missing",
+      "partial_source_missing",
+      "withheld_unlogged",
+      "privilege_waiver",
+      "multiple_impacts",
+      "unknown"
+    ],
+    "issue_type": [
+      "zero_claim_contradiction",
+      "responsive_miscoding",
+      "personal_email_gap",
+      "personal_phone_gap",
+      "privilege_log_gap",
+      "third_party_waiver",
+      "collection_gap",
+      "other"
+    ],
+    "severity": [
+      "critical",
+      "high",
+      "medium",
+      "low"
+    ],
+    "issue_status": [
+      "confirmed",
+      "open",
+      "not_collected",
+      "partial_collection",
+      "incomplete_log",
+      "waived",
+      "cleared",
+      "unknown"
+    ],
+    "source_status": [
+      "not_applicable",
+      "not_collected",
+      "partial_collection",
+      "collected",
+      "unknown"
+    ],
+    "coding": [
+      "responsive",
+      "nonresponsive",
+      "privileged",
+      "nonprivileged",
+      "unknown",
+      "not_applicable"
+    ],
+    "produced_status": [
+      "produced",
+      "not_produced",
+      "withheld",
+      "unknown",
+      "not_applicable"
+    ],
+    "corrected_disposition": [
+      "responsive_produce",
+      "supplement_log",
+      "waiver_assessment",
+      "supplemental_collection",
+      "no_change",
+      "not_applicable"
+    ],
+    "privilege_correction_type": [
+      "supplement_log",
+      "waiver_assessment",
+      "privilege_recode",
+      "downgrade",
+      "no_action"
+    ],
+    "privilege_status": [
+      "incomplete_log",
+      "waived",
+      "logged",
+      "over_designated",
+      "no_issue",
+      "unknown"
+    ],
+    "action_type": [
+      "recode_and_produce",
+      "collect_personal_email",
+      "collect_signal_messages",
+      "supplement_privilege_log",
+      "waiver_assessment_and_disclosure",
+      "qc_remediation",
+      "production_readiness_hold",
+      "no_action"
+    ],
+    "owner": [
+      "review_qc",
+      "forensics",
+      "privilege_team",
+      "privilege_counsel",
+      "outside_counsel",
+      "review_operations",
+      "client_it"
+    ],
+    "priority": [
+      "P0",
+      "P1",
+      "P2",
+      "P3"
+    ]
+  },
+  "fields": {
+    "matter_id": {
+      "type": "string",
+      "description": "Matter identifier under review."
+    },
+    "readiness_statuses": {
+      "type": "list",
+      "description": "One object for each request category that is not production-ready or that requires readiness attention.",
+      "item_required_keys": [
+        "category_code",
+        "readiness_status",
+        "production_impact",
+        "blocking_refs",
+        "required_actions"
+      ],
+      "item_fields": {
+        "category_code": "string request category code",
+        "readiness_status": "enum:readiness_status",
+        "production_impact": "enum:production_impact",
+        "blocking_refs": "list of hub record IDs supporting the readiness status, sorted ascending",
+        "required_actions": "list of enum:action_type values sorted by operational priority"
+      }
+    },
+    "issue_ledger": {
+      "type": "list",
+      "description": "Material non-privilege and privilege-readiness issues keyed by a stable hub record ID where available.",
+      "item_required_keys": [
+        "issue_id",
+        "issue_type",
+        "severity",
+        "issue_status",
+        "source_status",
+        "category_impacts",
+        "record_refs",
+        "document_count",
+        "withheld_count",
+        "logged_count",
+        "unlogged_count",
+        "third_party",
+        "missing_component",
+        "current_coding",
+        "produced_status",
+        "corrected_disposition",
+        "recommended_action",
+        "owner",
+        "priority"
+      ],
+      "item_fields": {
+        "issue_id": "string stable issue key",
+        "issue_type": "enum:issue_type",
+        "severity": "enum:severity",
+        "issue_status": "enum:issue_status",
+        "source_status": "enum:source_status",
+        "category_impacts": "list of request category codes sorted ascending",
+        "record_refs": "list of hub record IDs supporting the issue, sorted ascending",
+        "document_count": "integer count, use 0 when not applicable",
+        "withheld_count": "integer count, use 0 when not applicable",
+        "logged_count": "integer count, use 0 when not applicable",
+        "unlogged_count": "integer count, use 0 when not applicable",
+        "third_party": "string or null",
+        "missing_component": "string or null",
+        "current_coding": "enum:coding",
+        "produced_status": "enum:produced_status",
+        "corrected_disposition": "enum:corrected_disposition",
+        "recommended_action": "enum:action_type",
+        "owner": "enum:owner",
+        "priority": "enum:priority"
+      }
+    },
+    "privilege_corrections": {
+      "type": "list",
+      "description": "Privilege-specific correction package for withheld, logged, waiver, downgrade, and recoding issues.",
+      "item_required_keys": [
+        "correction_id",
+        "correction_type",
+        "privilege_status",
+        "category_impacts",
+        "document_count",
+        "withheld_count",
+        "logged_count",
+        "unlogged_count",
+        "third_party",
+        "recommended_action",
+        "owner",
+        "priority"
+      ],
+      "item_fields": {
+        "correction_id": "string stable privilege record ID",
+        "correction_type": "enum:privilege_correction_type",
+        "privilege_status": "enum:privilege_status",
+        "category_impacts": "list of request category codes sorted ascending",
+        "document_count": "integer count",
+        "withheld_count": "integer withheld documents",
+        "logged_count": "integer logged documents",
+        "unlogged_count": "integer withheld minus logged",
+        "third_party": "string or null",
+        "recommended_action": "enum:action_type",
+        "owner": "enum:owner",
+        "priority": "enum:priority"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required_keys": [
+        "withheld_privilege_docs",
+        "logged_privilege_docs",
+        "unlogged_privilege_docs",
+        "waived_privilege_doc_count",
+        "miscoded_responsive_doc_count",
+        "personal_email_gap_source_count",
+        "personal_phone_partial_source_count",
+        "nonready_category_count",
+        "production_ready"
+      ],
+      "field_types": {
+        "withheld_privilege_docs": "integer documents",
+        "logged_privilege_docs": "integer documents",
+        "unlogged_privilege_docs": "integer documents",
+        "waived_privilege_doc_count": "integer documents",
+        "miscoded_responsive_doc_count": "integer documents",
+        "personal_email_gap_source_count": "integer sources",
+        "personal_phone_partial_source_count": "integer sources",
+        "nonready_category_count": "integer request categories",
+        "production_ready": "boolean"
+      },
+      "numeric_precision": "All counts are whole integers."
+    },
+    "priority_actions": {
+      "type": "list",
+      "description": "Prioritized production-readiness action plan.",
+      "item_required_keys": [
+        "action_id",
+        "priority_rank",
+        "priority",
+        "action_type",
+        "owner",
+        "target_refs",
+        "category_impacts"
+      ],
+      "item_fields": {
+        "action_id": "string stable action key",
+        "priority_rank": "integer rank, 1 is highest priority",
+        "priority": "enum:priority",
+        "action_type": "enum:action_type",
+        "owner": "enum:owner",
+        "target_refs": "list of hub record IDs targeted by the action, sorted ascending",
+        "category_impacts": "list of request category codes sorted ascending"
+      }
+    }
+  }
+}

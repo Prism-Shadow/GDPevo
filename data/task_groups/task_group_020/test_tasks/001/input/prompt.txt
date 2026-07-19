@@ -1,0 +1,22 @@
+You are seller-side counsel for Keystone Instruments LLC. Review the buyer APA paper for Project Keystone (`PRJ_KEYSTONE`) and prepare a structured issue register for the legal and business team.
+
+Use the M&A deal workbench at <TASK_ENV_BASE_URL>. You may use the web pages and these read-only API routes:
+
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE/terms`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE/benchmarks`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE/risk-estimates`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE/consents`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE/employees`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE/material-contracts`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE/regulatory`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE/diligence-findings`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_KEYSTONE/notes`
+- `GET <TASK_ENV_BASE_URL>/api/playbooks/PB_SELLER_A/rules`
+- If SQL access is available, `POST <TASK_ENV_BASE_URL>/api/query` with token `deal-workbench-readonly`.
+
+Compare current buyer draft terms against the seller playbook and the supporting deal records. Use the output template's issue identifiers and fields to determine the complete issue register, including missing seller-protective terms when the deal records show the seller needs an affirmative provision.
+
+Use headline value as the purchase-price or enterprise-value base unless a controlling rule explicitly uses another base. Currency values must be integer US dollars. Percentages must be stated as percent points to one decimal place.
+
+Return only JSON that follows `input/payloads/answer_template.json`. Do not include markdown, citations, or explanatory prose outside the JSON.

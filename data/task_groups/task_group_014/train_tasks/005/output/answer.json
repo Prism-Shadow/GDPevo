@@ -1,0 +1,68 @@
+{
+  "case_id": "QUEUE-TR-005",
+  "period": "2026-05",
+  "threshold_revenue_to_cost_ratio": 1.2,
+  "rows": [
+    {
+      "month_id": "SM-TR-005-MCD",
+      "payer_segment": "medicaid",
+      "service_domain": "physical_therapy",
+      "cpt_code": "97110",
+      "total_cost": 26240.0,
+      "margin": -2550.0,
+      "revenue_to_cost_ratio": 0.9028,
+      "below_threshold": true,
+      "charge_sensitive": false,
+      "recommended_action": "payer_contract_review"
+    },
+    {
+      "month_id": "SM-TR-005-COM",
+      "payer_segment": "commercial",
+      "service_domain": "physical_therapy",
+      "cpt_code": "97530",
+      "total_cost": 31700.0,
+      "margin": 13570.0,
+      "revenue_to_cost_ratio": 1.4281,
+      "below_threshold": false,
+      "charge_sensitive": true,
+      "recommended_action": "monitor_charge_sensitive"
+    },
+    {
+      "month_id": "SM-TR-005-WC",
+      "payer_segment": "workers_comp",
+      "service_domain": "physical_therapy",
+      "cpt_code": "97112",
+      "total_cost": 13520.0,
+      "margin": 12240.0,
+      "revenue_to_cost_ratio": 1.9053,
+      "below_threshold": false,
+      "charge_sensitive": true,
+      "recommended_action": "monitor_charge_sensitive"
+    }
+  ],
+  "below_threshold_segments": [
+    "medicaid"
+  ],
+  "charge_sensitive_segments": [
+    "commercial",
+    "workers_comp"
+  ],
+  "top_issue": "medicaid_97110",
+  "gap_to_120pct": 7798.0,
+  "basis_audit": {
+    "source_precedence": "margin_threshold_then_charge_sensitivity",
+    "controlling_record_ids": [
+      "SM-TR-005-MCD",
+      "SM-TR-005-COM",
+      "SM-TR-005-WC"
+    ],
+    "exception_record_ids": [
+      "SM-TR-005-MCD"
+    ],
+    "precedence_record_order": [
+      "SM-TR-005-MCD",
+      "SM-TR-005-COM",
+      "SM-TR-005-WC"
+    ]
+  }
+}

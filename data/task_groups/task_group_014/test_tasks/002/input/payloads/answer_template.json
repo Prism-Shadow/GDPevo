@@ -1,0 +1,197 @@
+{
+  "title": "Expedited specialty drug appeal and assistance disposition",
+  "format": "Return a single JSON object with the required top-level keys. Do not include markdown or explanatory prose.",
+  "required_top_level_keys": [
+    "case_id",
+    "appeal_id",
+    "drug",
+    "appeal_path",
+    "expedited",
+    "expedited_basis",
+    "appeal_deadline",
+    "owner",
+    "documented_failures",
+    "assistance",
+    "required_packet_items",
+    "missing_packet_items",
+    "next_action",
+    "basis_audit"
+  ],
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "description": "Northstar case identifier."
+    },
+    "appeal_id": {
+      "type": "string",
+      "description": "Northstar appeal identifier."
+    },
+    "drug": {
+      "type": "enum",
+      "choices": [
+        "Vraylar",
+        "Dupixent",
+        "Humira",
+        "Ozempic",
+        "Rinvoq",
+        "Skyrizi"
+      ]
+    },
+    "appeal_path": {
+      "type": "enum",
+      "choices": [
+        "standard_internal",
+        "expedited_internal",
+        "external_review",
+        "not_eligible"
+      ]
+    },
+    "expedited": {
+      "type": "boolean"
+    },
+    "expedited_basis": {
+      "type": "enum",
+      "choices": [
+        "provider_attested_serious_health_risk",
+        "member_requested_expedited_review",
+        "clinical_record_only",
+        "not_requested",
+        "not_applicable"
+      ]
+    },
+    "appeal_deadline": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "owner": {
+      "type": "enum",
+      "choices": [
+        "appeals-rx",
+        "um-nurse",
+        "medical-director",
+        "payment-integrity",
+        "member-services"
+      ]
+    },
+    "documented_failures": {
+      "type": "list",
+      "item_type": "string",
+      "item_format": "lowercase therapy or medication name",
+      "ordering_rule": "Sort selected failures by trial start date, earliest first."
+    },
+    "assistance": {
+      "type": "object",
+      "required_keys": [
+        "program_name",
+        "status",
+        "missing_fields"
+      ],
+      "fields": {
+        "program_name": {
+          "type": "enum",
+          "choices": [
+            "Vraylar Connect",
+            "Dupixent MyWay",
+            "Humira Complete",
+            "not_applicable"
+          ]
+        },
+        "status": {
+          "type": "enum",
+          "choices": [
+            "eligible_ready",
+            "eligible_missing_information",
+            "not_eligible",
+            "not_applicable"
+          ]
+        },
+        "missing_fields": {
+          "type": "list",
+          "item_type": "enum",
+          "choices": [
+            "household_income_proof",
+            "denial_notice",
+            "insurance_card",
+            "member_signature",
+            "prescriber_signature"
+          ],
+          "ordering_rule": "Sort selected field IDs in ascending alphabetical order."
+        }
+      }
+    },
+    "required_packet_items": {
+      "type": "list",
+      "item_type": "enum",
+      "choices": [
+        "denial_notice",
+        "member_authorization",
+        "prescriber_rationale",
+        "formulary_failure_evidence",
+        "household_income_proof",
+        "expedited_risk_attestation",
+        "pharmacy_claim_history",
+        "diagnosis_confirmation"
+      ],
+      "ordering_rule": "Use operational packet order: payer appeal items before assistance items."
+    },
+    "missing_packet_items": {
+      "type": "list",
+      "item_type": "enum",
+      "choices": [
+        "denial_notice",
+        "member_authorization",
+        "prescriber_rationale",
+        "formulary_failure_evidence",
+        "household_income_proof",
+        "expedited_risk_attestation",
+        "pharmacy_claim_history",
+        "diagnosis_confirmation"
+      ],
+      "ordering_rule": "Use case-specific gap order: appeal evidence gaps before assistance information gaps."
+    },
+    "next_action": {
+      "type": "enum",
+      "choices": [
+        "request_more_information",
+        "file_appeal",
+        "complete_expedited_appeal_and_request_income_proof",
+        "submit_assistance_application",
+        "issue_denial",
+        "close_not_eligible"
+      ]
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Populate it using the source-precedence and record-grounding convention inferred from solved examples; use environment record IDs and business gap keys, not invented control codes.",
+      "fields": {
+        "source_precedence": {
+          "type": "string",
+          "description": "Use the concise source-precedence category convention inferred from solved examples."
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  },
+  "numeric_precision": "No numeric currency, ratio, or percentage fields are required for this answer.",
+  "additional_properties": "Allowed but not evaluated."
+}

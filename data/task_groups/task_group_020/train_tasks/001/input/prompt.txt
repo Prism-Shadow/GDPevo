@@ -1,0 +1,19 @@
+You are seller-side counsel for Calyx Systems Inc. reviewing Northstar Holdings LLC's buyer APA paper for Project Juniper (`PRJ_JUNIPER`), an asset purchase agreement for Juniper Field Services.
+
+Use the M&A deal workbench at `<TASK_ENV_BASE_URL>` to gather the deal record, current draft terms, seller playbook rules, risk estimates, employee data, consents, regulatory facts, benchmarks, and notes. Useful entry points include:
+
+- `<TASK_ENV_BASE_URL>/api/deals/PRJ_JUNIPER`
+- `<TASK_ENV_BASE_URL>/api/deals/PRJ_JUNIPER/terms`
+- `<TASK_ENV_BASE_URL>/api/playbooks/PB_SELLER_A/rules`
+- `<TASK_ENV_BASE_URL>/api/deals/PRJ_JUNIPER/risk-estimates`
+- `<TASK_ENV_BASE_URL>/api/deals/PRJ_JUNIPER/employees`
+- `<TASK_ENV_BASE_URL>/api/deals/PRJ_JUNIPER/consents`
+- `<TASK_ENV_BASE_URL>/api/deals/PRJ_JUNIPER/regulatory`
+- `<TASK_ENV_BASE_URL>/api/deals/PRJ_JUNIPER/benchmarks`
+- `<TASK_ENV_BASE_URL>/api/deals/PRJ_JUNIPER/notes`
+
+If read-only SQL access is available, use `POST /api/query` with token `deal-workbench-readonly` for cross-table checks.
+
+Prepare a structured seller issue register, priority order, and summary metrics. Compare the buyer draft against seller playbook `PB_SELLER_A`; treat absent seller-protective APA terms as issues where the surrounding deal data shows the term is needed. Calculate dollar amounts from the deal's headline purchase price unless a source explicitly states a different basis. Currency amounts must be integer dollars, percentages must be decimal numbers in percent points to two decimal places, and month values must be integers.
+
+Return only JSON conforming to `input/payloads/answer_template.json`. Do not include explanatory prose outside the JSON.

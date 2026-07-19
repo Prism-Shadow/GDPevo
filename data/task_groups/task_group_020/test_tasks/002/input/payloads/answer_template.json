@@ -1,0 +1,165 @@
+{
+  "schema_name": "committee_escalation_package",
+  "schema_version": "1.0",
+  "instructions": {
+    "language": "English only",
+    "ordering": {
+      "escalation_terms": "Sort by priority_rank ascending.",
+      "condition_codes": "Sort alphabetically within each term.",
+      "carveout_classifications": "Sort by carveout_code ascending.",
+      "exposure_components": "Sort by component ascending.",
+      "out_of_policy_categories": "Sort alphabetically."
+    },
+    "numeric_precision": {
+      "currency": "Integer USD.",
+      "percent_points": "Number with up to two decimal places, expressed as percent points such as 4.8.",
+      "share_pct": "Decimal share percentage rounded to four places, such as 0.3410.",
+      "months": "Integer months."
+    }
+  },
+  "allowed_enums": {
+    "policy_status": [
+      "out_of_policy",
+      "restricted_escalation",
+      "in_policy_watch_item"
+    ],
+    "risk_rating": [
+      "LOW",
+      "MEDIUM",
+      "HIGH"
+    ],
+    "recommendation": [
+      "approve",
+      "approve_with_conditions",
+      "reject"
+    ],
+    "category": [
+      "reverse_termination_fee",
+      "fiduciary_out",
+      "rw_survival",
+      "mae_carveouts",
+      "termination_fee",
+      "voting_agreements"
+    ],
+    "fiduciary_change_code": [
+      "board_change_process_limited_to_superior_proposal",
+      "intervening_event_trigger_removed",
+      "match_right_shortened_or_missing"
+    ],
+    "condition_code": [
+      "add_disproportionate_effect_carveback",
+      "cap_rtf_at_or_below_policy",
+      "delete_clinical_trial_hold_carveout",
+      "preserve_remedy_cap",
+      "reduce_all_rep_survival_to_policy",
+      "restore_full_board_change_process",
+      "restore_intervening_event_trigger",
+      "restore_required_match_right"
+    ],
+    "carveout_classification": [
+      "restricted_general_event",
+      "restricted_industry_event",
+      "target_specific_regulatory_risk"
+    ],
+    "carveout_disposition": [
+      "delete",
+      "narrow_with_disproportionate_effect_carveback"
+    ],
+    "strategic_pressure_reason_code": [
+      "rival_bidder_active",
+      "none"
+    ]
+  },
+  "required_output_shape": {
+    "deal_id": "string",
+    "routing": {
+      "package_type": "string enum: committee_escalation",
+      "prepared_for": "string",
+      "approval_required": "string",
+      "policy_id": "string",
+      "project_name": "string",
+      "client_name": "string",
+      "counterparty_name": "string",
+      "signing_date": "YYYY-MM-DD",
+      "meeting_date": "YYYY-MM-DD"
+    },
+    "escalation_terms": [
+      {
+        "priority_rank": "integer",
+        "term_id": "string",
+        "category": "category enum",
+        "policy_status": "policy_status enum",
+        "risk_rating": "risk_rating enum",
+        "recommendation": "recommendation enum",
+        "approval_required": "string",
+        "condition_codes": [
+          "condition_code enum"
+        ],
+        "rtf_analysis": {
+          "draft_percent_points": "number or null",
+          "policy_threshold_percent_points": "number or null",
+          "deviation_percent_points": "number or null",
+          "equity_value_usd": "integer or null",
+          "draft_amount_usd": "integer or null",
+          "policy_max_amount_usd": "integer or null",
+          "policy_excess_amount_usd": "integer or null",
+          "benchmark_median_percent_points": "number or null",
+          "benchmark_upper_quartile_percent_points": "number or null",
+          "draft_vs_upper_quartile_percent_points": "number or null"
+        },
+        "fiduciary_out_analysis": {
+          "change_codes": [
+            "fiduciary_change_code enum"
+          ],
+          "required_match_right_business_days": "integer or null"
+        },
+        "survival_analysis": {
+          "fundamental_survival_months": "integer or null",
+          "general_survival_months": "integer or null",
+          "policy_threshold_months": "integer or null",
+          "fundamental_deviation_months": "integer or null",
+          "general_deviation_months": "integer or null",
+          "benchmark_median_months": "number or null",
+          "benchmark_upper_quartile_months": "number or null",
+          "exposure_low_usd": "integer or null",
+          "exposure_high_usd": "integer or null"
+        },
+        "mae_analysis": {
+          "additional_carveout_count": "integer or null",
+          "policy_threshold_count": "integer or null",
+          "count_delta": "integer or null",
+          "carveout_classifications": [
+            {
+              "carveout_code": "string",
+              "classification": "carveout_classification enum",
+              "recommended_disposition": "carveout_disposition enum"
+            }
+          ]
+        }
+      }
+    ],
+    "aggregate_summary": {
+      "out_of_policy_categories": [
+        "category enum"
+      ],
+      "escalation_count": "integer",
+      "restricted_term_count": "integer",
+      "approve_with_conditions_count": "integer",
+      "reject_count": "integer",
+      "legal_blocker_count": "integer",
+      "highest_priority_category": "category enum",
+      "aggregate_quantified_exposure_usd": "integer",
+      "exposure_components": [
+        {
+          "component": "string",
+          "amount_usd": "integer"
+        }
+      ],
+      "largest_support_holder_pct": "share_pct number",
+      "voting_agreement_policy_threshold_pct": "share_pct number",
+      "voting_agreement_policy_breach": "boolean",
+      "strategic_pressure_flag": "boolean",
+      "strategic_pressure_reason_code": "strategic_pressure_reason_code enum"
+    }
+  }
+}

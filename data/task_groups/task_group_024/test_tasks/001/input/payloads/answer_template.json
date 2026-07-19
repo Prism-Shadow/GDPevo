@@ -1,0 +1,198 @@
+{
+  "schema_name": "test_001_portfolio_mix_answer",
+  "schema_version": 1,
+  "required_top_level_keys": [
+    "scope_id",
+    "quarter",
+    "teams",
+    "product_area",
+    "included_work_item_ids",
+    "category_counts",
+    "category_percentages_pct",
+    "gap_table",
+    "under_invested_categories",
+    "category_owner_counts",
+    "category_team_counts",
+    "excluded_work_item_ids",
+    "excluded_reason_counts",
+    "recommended_action"
+  ],
+  "field_specification": {
+    "scope_id": {
+      "type": "string",
+      "required_value": "test_001"
+    },
+    "quarter": {
+      "type": "string",
+      "required_value": "2025-Q4"
+    },
+    "teams": {
+      "type": "array[string]",
+      "required_values": [
+        "Data Platform",
+        "Observability"
+      ],
+      "ordering": "exactly as shown"
+    },
+    "product_area": {
+      "type": "string",
+      "required_value": "Data Reliability"
+    },
+    "included_work_item_ids": {
+      "type": "array[string]",
+      "ordering": "ascending work item id",
+      "duplicates_allowed": false
+    },
+    "category_counts": {
+      "type": "object",
+      "keys": [
+        "NewFeature",
+        "TechDebt",
+        "Reliability",
+        "Security"
+      ],
+      "values": "integer work item counts"
+    },
+    "category_percentages_pct": {
+      "type": "object",
+      "keys": [
+        "NewFeature",
+        "TechDebt",
+        "Reliability",
+        "Security"
+      ],
+      "values": "number, percent units, rounded to 1 decimal place"
+    },
+    "gap_table": {
+      "type": "array[object]",
+      "ordering": "NewFeature, TechDebt, Reliability, Security",
+      "row_fields": {
+        "category": "one of NewFeature, TechDebt, Reliability, Security",
+        "target_pct": "number, target percent units from the mix target, rounded to 1 decimal place",
+        "actual_pct": "number, actual percent units, rounded to 1 decimal place",
+        "gap_pct": "number, actual_pct minus target_pct, rounded to 1 decimal place"
+      }
+    },
+    "under_invested_categories": {
+      "type": "array[string]",
+      "allowed_values": [
+        "NewFeature",
+        "TechDebt",
+        "Reliability",
+        "Security"
+      ],
+      "ordering": "most negative gap_pct first; use gap_table category order for ties"
+    },
+    "category_owner_counts": {
+      "type": "object",
+      "keys": [
+        "NewFeature",
+        "TechDebt",
+        "Reliability",
+        "Security"
+      ],
+      "values": "object mapping owner name, or UNASSIGNED for missing owner, to included work item count in that category; omit owners with zero count"
+    },
+    "category_team_counts": {
+      "type": "object",
+      "keys": [
+        "NewFeature",
+        "TechDebt",
+        "Reliability",
+        "Security"
+      ],
+      "values": "object mapping team name to included work item count in that category; omit teams with zero count"
+    },
+    "excluded_work_item_ids": {
+      "type": "array[string]",
+      "meaning": "Q4 2025 same-team and same-product candidate work item ids reviewed but excluded from the final portfolio mix",
+      "ordering": "ascending work item id",
+      "duplicates_allowed": false
+    },
+    "excluded_reason_counts": {
+      "type": "object",
+      "keys": [
+        "cancelled",
+        "duplicate_status",
+        "duplicate_of"
+      ],
+      "values": "integer counts among Q4 2025 same-team and same-product candidate records excluded from the final portfolio mix; a record may contribute to both duplicate_status and duplicate_of when both are true"
+    },
+    "recommended_action": {
+      "type": "string enum",
+      "allowed_values": [
+        "MAINTAIN_MIX",
+        "REBALANCE_CAPACITY",
+        "INVESTIGATE_DATA_QUALITY"
+      ]
+    }
+  },
+  "answer_shape": {
+    "scope_id": "test_001",
+    "quarter": "2025-Q4",
+    "teams": [
+      "Data Platform",
+      "Observability"
+    ],
+    "product_area": "Data Reliability",
+    "included_work_item_ids": [],
+    "category_counts": {
+      "NewFeature": 0,
+      "TechDebt": 0,
+      "Reliability": 0,
+      "Security": 0
+    },
+    "category_percentages_pct": {
+      "NewFeature": 0.0,
+      "TechDebt": 0.0,
+      "Reliability": 0.0,
+      "Security": 0.0
+    },
+    "gap_table": [
+      {
+        "category": "NewFeature",
+        "target_pct": 0.0,
+        "actual_pct": 0.0,
+        "gap_pct": 0.0
+      },
+      {
+        "category": "TechDebt",
+        "target_pct": 0.0,
+        "actual_pct": 0.0,
+        "gap_pct": 0.0
+      },
+      {
+        "category": "Reliability",
+        "target_pct": 0.0,
+        "actual_pct": 0.0,
+        "gap_pct": 0.0
+      },
+      {
+        "category": "Security",
+        "target_pct": 0.0,
+        "actual_pct": 0.0,
+        "gap_pct": 0.0
+      }
+    ],
+    "under_invested_categories": [],
+    "category_owner_counts": {
+      "NewFeature": {},
+      "TechDebt": {},
+      "Reliability": {},
+      "Security": {}
+    },
+    "category_team_counts": {
+      "NewFeature": {},
+      "TechDebt": {},
+      "Reliability": {},
+      "Security": {}
+    },
+    "excluded_work_item_ids": [],
+    "excluded_reason_counts": {
+      "cancelled": 0,
+      "duplicate_status": 0,
+      "duplicate_of": 0
+    },
+    "recommended_action": "MAINTAIN_MIX"
+  }
+}

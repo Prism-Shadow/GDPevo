@@ -1,0 +1,146 @@
+{
+  "schema_name": "contractor_batch_eligibility_review",
+  "schema_version": "1.1",
+  "description": "Required JSON output for test_004 contractor batch eligibility review.",
+  "instructions": {
+    "top_level_keys": [
+      "application_decisions",
+      "summary"
+    ],
+    "ordering": "application_decisions must be ordered by application_id ascending.",
+    "dates": "Dates, if any are added by the solver, must use YYYY-MM-DD. No dates are required in this schema.",
+    "empty_values": "Use an empty list when no deficiency code, required action, source-precedence code, or summary id applies.",
+    "additional_output": "Do not include prose, citations, markdown, comments, or keys not shown in this template."
+  },
+  "application_decisions": {
+    "type": "list",
+    "required_length": 15,
+    "item_schema": {
+      "application_id": {
+        "type": "enum",
+        "allowed_values": [
+          "C-TE4-001",
+          "C-TE4-002",
+          "C-TE4-003",
+          "C-TE4-004",
+          "C-TE4-005",
+          "C-TE4-006",
+          "C-TE4-007",
+          "C-TE4-008",
+          "C-TE4-009",
+          "C-TE4-010",
+          "C-TE4-011",
+          "C-TE4-012",
+          "C-TE4-013",
+          "C-TE4-014",
+          "C-TE4-015"
+        ]
+      },
+      "determination": {
+        "type": "enum",
+        "allowed_values": [
+          "APPROVE",
+          "HOLD",
+          "DENY"
+        ]
+      },
+      "deficiency_codes": {
+        "type": "list[string]",
+        "ordering": "Sort codes alphabetically within each application.",
+        "allowed_values": [
+          "active_suspension",
+          "bond_shortfall",
+          "endorsement_not_verified",
+          "experience_shortfall",
+          "insurance_expired",
+          "insurance_not_current",
+          "insurance_shortfall",
+          "no_active_bond",
+          "unresolved_serious_complaint"
+        ]
+      },
+      "required_actions": {
+        "type": "list[string]",
+        "ordering": "Sort action codes alphabetically within each application.",
+        "allowed_values": [
+          "board_review",
+          "clear_suspension",
+          "document_experience",
+          "file_active_bond",
+          "increase_bond",
+          "increase_insurance",
+          "provide_current_insurance",
+          "renew_insurance",
+          "resolve_complaint",
+          "verify_endorsement"
+        ]
+      },
+      "risk_tier": {
+        "type": "enum",
+        "allowed_values": [
+          "low",
+          "medium",
+          "high"
+        ]
+      },
+      "policy_impacted": {
+        "type": "boolean",
+        "meaning": "Whether the current policy baseline materially changes the eligibility analysis for this application."
+      },
+      "policy_impact_basis": {
+        "type": "enum",
+        "allowed_values": [
+          "none",
+          "bond_minimum_increase",
+          "specialty_endorsement_requirement"
+        ],
+        "meaning": "Use none when policy_impacted is false."
+      },
+      "source_precedence_codes": {
+        "type": "list[string]",
+        "ordering": "Sort codes alphabetically within each application.",
+        "allowed_values": [
+          "cancelled_bond_not_current",
+          "closed_serious_violation_not_blocking",
+          "correspondence_not_controlling",
+          "expired_insurance_not_current",
+          "open_nonserious_violation_not_denial",
+          "open_serious_violation_controls",
+          "pending_insurance_not_current",
+          "prior_license_suspension_controls",
+          "verified_flag_controls_correspondence"
+        ],
+        "meaning": "Use these codes for non-obvious source-precedence judgments that materially affect the application decision or batch rollup."
+      }
+    }
+  },
+  "summary": {
+    "type": "object",
+    "required_keys": {
+      "approve_count": {
+        "type": "integer",
+        "units": "applications"
+      },
+      "hold_count": {
+        "type": "integer",
+        "units": "applications"
+      },
+      "deny_count": {
+        "type": "integer",
+        "units": "applications"
+      },
+      "high_risk_application_ids": {
+        "type": "list[string]",
+        "ordering": "Sort application ids ascending."
+      },
+      "policy_impacted_application_ids": {
+        "type": "list[string]",
+        "ordering": "Sort application ids ascending."
+      },
+      "stale_or_unverified_correspondence_ids": {
+        "type": "list[string]",
+        "ordering": "Sort correspondence ids ascending."
+      }
+    }
+  }
+}

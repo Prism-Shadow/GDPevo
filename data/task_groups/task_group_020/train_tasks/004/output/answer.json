@@ -1,0 +1,292 @@
+{
+  "deal_id": "PRJ_ORION",
+  "client_side": "seller",
+  "transition_issues": [
+    {
+      "issue_id": "CUSTOMER_CONSENT_TERMINATION_RIGHT",
+      "category": "customer_consent_condition",
+      "source_term_ids": ["TERM_PRJ_ORION_03"],
+      "source_record_ids": ["CNS_PRJ_ORION_01", "CNS_PRJ_ORION_03", "MAT_PRJ_ORION_01", "MAT_PRJ_ORION_03"],
+      "issue_status": "draft_exceeds_playbook",
+      "risk_rating": "HIGH",
+      "recommended_action": "revise",
+      "draft_value_normalized": {
+        "buyer_termination_right": "any_top_five_utility_customer_consent_missing",
+        "draft_contract_count": 5
+      },
+      "required_position_normalized": {
+        "limit_to_required_closing_consents": true,
+        "exclude_notice_only_consents": true,
+        "material_adverse_impact_standard_required": true
+      },
+      "quantified_impact_dollars": 11740000
+    },
+    {
+      "issue_id": "FIELD_EMPLOYEE_CONTINUITY_PTO",
+      "category": "employee_transfer",
+      "source_term_ids": ["TERM_PRJ_ORION_04"],
+      "source_record_ids": ["EMP_PRJ_ORION_03"],
+      "issue_status": "out_of_policy",
+      "risk_rating": "HIGH",
+      "recommended_action": "revise",
+      "draft_value_normalized": {
+        "buyer_cherry_pick_right": true,
+        "rejects_accrued_pto": true,
+        "affected_employee_group": "field and operations",
+        "affected_employee_count": 124
+      },
+      "required_position_normalized": {
+        "defined_transfer_process": true,
+        "service_credit_required": true,
+        "accrued_pto_allocation_required": true,
+        "comparable_terms_required": true
+      },
+      "quantified_impact_dollars": 1240000
+    },
+    {
+      "issue_id": "GOVERNING_LAW_FORUM_FIX",
+      "category": "governing_law_forum",
+      "source_term_ids": [],
+      "source_record_ids": ["DOC_PRJ_ORION_01"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "MEDIUM",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "governing_law_specified": false,
+        "forum_specified": false
+      },
+      "required_position_normalized": {
+        "governing_law": "Delaware",
+        "forum": "Delaware Court of Chancery or Delaware federal court",
+        "apply_to_ancillary_documents": true
+      },
+      "quantified_impact_dollars": null
+    },
+    {
+      "issue_id": "IP_DOMAIN_TRANSITION_MISSING",
+      "category": "ip_domain_transition",
+      "source_term_ids": [],
+      "source_record_ids": ["DOC_PRJ_ORION_01"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "HIGH",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "transitional_trademark_license_present": false,
+        "domain_redirect_present": false
+      },
+      "required_position_normalized": {
+        "trademark_license_days": 180,
+        "domain_redirect_months": 12,
+        "redirect_type": "301_OR_302",
+        "all_pages_and_subdomains": true,
+        "buyer_maintain_domains": true
+      },
+      "quantified_impact_dollars": null
+    },
+    {
+      "issue_id": "OUTSIDE_DATE_EXTENSION_MISSING",
+      "category": "closing_deadline",
+      "source_term_ids": [],
+      "source_record_ids": ["REG_PRJ_ORION"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "HIGH",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "outside_date_present": false,
+        "seller_regulatory_extension_present": false,
+        "hsr_required": true
+      },
+      "required_position_normalized": {
+        "initial_outside_date_days": 120,
+        "seller_regulatory_extension_days": 30,
+        "maximum_without_board_approval_days": 240
+      },
+      "quantified_impact_dollars": 8910000
+    },
+    {
+      "issue_id": "SECTION_1060_ALLOCATION_MISSING",
+      "category": "tax_allocation",
+      "source_term_ids": [],
+      "source_record_ids": ["DOC_PRJ_ORION_01"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "MEDIUM",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "section_1060_allocation_method": null,
+        "form_8594_consistency": false
+      },
+      "required_position_normalized": {
+        "tax_allocation_method": "mutually_agreed_section_1060",
+        "mutually_agreed_within_days": 90,
+        "form_8594_consistency": true
+      },
+      "quantified_impact_dollars": null
+    },
+    {
+      "issue_id": "TRANSFER_TAX_SPLIT_MISSING",
+      "category": "transfer_tax",
+      "source_term_ids": [],
+      "source_record_ids": ["DOC_PRJ_ORION_01"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "MEDIUM",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "transfer_tax_allocation_specified": false
+      },
+      "required_position_normalized": {
+        "seller_percent": 50,
+        "buyer_percent": 50,
+        "bulk_sale_costs_same_split": true
+      },
+      "quantified_impact_dollars": null
+    },
+    {
+      "issue_id": "TSA_SCOPE_DURATION_FEES",
+      "category": "transition_services",
+      "source_term_ids": ["TERM_PRJ_ORION_01", "TERM_PRJ_ORION_02"],
+      "source_record_ids": ["RSK_PRJ_ORION_03"],
+      "issue_status": "draft_exceeds_playbook",
+      "risk_rating": "HIGH",
+      "recommended_action": "revise",
+      "draft_value_normalized": {
+        "draft_months": 15,
+        "services": ["billing", "dispatch", "HR"],
+        "fee_model": "at_cost",
+        "stranded_cost_gap_dollars": 3800000
+      },
+      "required_position_normalized": {
+        "preferred_months": 6,
+        "fallback_months": 9,
+        "excess_months_over_fallback": 6,
+        "fee_model": "cost_plus_stranded_overhead",
+        "clean_termination_right": true
+      },
+      "quantified_impact_dollars": 3800000
+    }
+  ],
+  "required_redlines": [
+    {
+      "redline_id": "CUSTOMER_CONSENT_CONDITION",
+      "related_issue_id": "CUSTOMER_CONSENT_TERMINATION_RIGHT",
+      "redline_action": "revise",
+      "must_have_terms": {
+        "limit_to_required_closing_consents": true,
+        "required_closing_consent_ids": ["CNS_PRJ_ORION_01", "CNS_PRJ_ORION_03"],
+        "exclude_notice_only_consents": true,
+        "material_adverse_impact_standard_required": true
+      }
+    },
+    {
+      "redline_id": "EMPLOYEE_CONTINUITY",
+      "related_issue_id": "FIELD_EMPLOYEE_CONTINUITY_PTO",
+      "redline_action": "revise",
+      "must_have_terms": {
+        "affected_employee_group": "field and operations",
+        "must_offer_all_field_operations": true,
+        "affected_employee_count": 124,
+        "service_credit_required": true,
+        "accrued_pto_allocation_required": true,
+        "pto_liability_dollars": 1240000,
+        "warn_risk": "medium"
+      }
+    },
+    {
+      "redline_id": "GOVERNING_LAW_FORUM",
+      "related_issue_id": "GOVERNING_LAW_FORUM_FIX",
+      "redline_action": "add",
+      "must_have_terms": {
+        "governing_law": "Delaware",
+        "forum": "Delaware Court of Chancery or Delaware federal court",
+        "apply_to_ancillary_documents": true
+      }
+    },
+    {
+      "redline_id": "IP_DOMAIN_TRANSITION",
+      "related_issue_id": "IP_DOMAIN_TRANSITION_MISSING",
+      "redline_action": "add",
+      "must_have_terms": {
+        "transitional_trademark_license_required": true,
+        "trademark_license_days": 180,
+        "domain_redirect_required": true,
+        "domain_redirect_months": 12,
+        "redirect_type": "301_OR_302",
+        "all_pages_and_subdomains": true,
+        "buyer_maintain_domains": true
+      }
+    },
+    {
+      "redline_id": "OUTSIDE_DATE_EXTENSION",
+      "related_issue_id": "OUTSIDE_DATE_EXTENSION_MISSING",
+      "redline_action": "add",
+      "must_have_terms": {
+        "initial_outside_date_days": 120,
+        "seller_regulatory_extension_days": 30,
+        "applies_because_hsr_required": true,
+        "maximum_without_board_approval_days": 240
+      }
+    },
+    {
+      "redline_id": "SECTION_1060_ALLOCATION",
+      "related_issue_id": "SECTION_1060_ALLOCATION_MISSING",
+      "redline_action": "add",
+      "must_have_terms": {
+        "tax_allocation_method": "mutually_agreed_section_1060",
+        "mutually_agreed_within_days": 90,
+        "form_8594_consistency": true
+      }
+    },
+    {
+      "redline_id": "TRANSFER_TAX_SPLIT",
+      "related_issue_id": "TRANSFER_TAX_SPLIT_MISSING",
+      "redline_action": "add",
+      "must_have_terms": {
+        "seller_percent": 50,
+        "buyer_percent": 50,
+        "bulk_sale_costs_same_split": true
+      }
+    },
+    {
+      "redline_id": "TSA_SCOPE_FEES",
+      "related_issue_id": "TSA_SCOPE_DURATION_FEES",
+      "redline_action": "revise",
+      "must_have_terms": {
+        "max_duration_months": 9,
+        "preferred_duration_months": 6,
+        "services": ["billing", "dispatch", "HR"],
+        "fee_model": "cost_plus_stranded_overhead",
+        "stranded_cost_reimbursement_dollars": 3800000,
+        "clean_termination_right": true
+      }
+    }
+  ],
+  "operational_risk": {
+    "overall_risk_rating": "HIGH",
+    "overall_posture": "revise_before_signing",
+    "priority_order": [
+      "TSA_SCOPE_DURATION_FEES",
+      "IP_DOMAIN_TRANSITION_MISSING",
+      "FIELD_EMPLOYEE_CONTINUITY_PTO",
+      "CUSTOMER_CONSENT_TERMINATION_RIGHT",
+      "OUTSIDE_DATE_EXTENSION_MISSING",
+      "SECTION_1060_ALLOCATION_MISSING",
+      "TRANSFER_TAX_SPLIT_MISSING",
+      "GOVERNING_LAW_FORUM_FIX"
+    ],
+    "quantified_exposures": {
+      "stranded_cost_gap_dollars": 3800000,
+      "field_operations_pto_liability_dollars": 1240000,
+      "required_closing_consent_amount_at_risk_dollars": 11740000,
+      "top_customer_annual_revenue_at_risk_dollars": 16830000,
+      "transition_disruption_high_dollars": 3563999
+    },
+    "required_closing_consent_ids": ["CNS_PRJ_ORION_01", "CNS_PRJ_ORION_03"],
+    "material_contract_consent_ids": ["MAT_PRJ_ORION_01", "MAT_PRJ_ORION_03"],
+    "business_outcomes_protected": [
+      "seller separation cost recovery",
+      "continuity of transferred field operations",
+      "customer consent closing certainty",
+      "tax reporting consistency",
+      "Delaware dispute forum predictability"
+    ]
+  }
+}

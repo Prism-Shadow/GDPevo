@@ -1,0 +1,119 @@
+{
+  "schema_name": "contractor_batch_eligibility_v1",
+  "description": "Contractor application batch eligibility output schema for application ids C-TE1-001 through C-TE1-009. Return one JSON object with exactly these business fields; extra explanatory prose is not required.",
+  "required_top_level_keys": [
+    "application_decisions",
+    "summary"
+  ],
+  "application_decisions": {
+    "type": "list",
+    "length": 9,
+    "ordering": "Order entries by application_id ascending. Include exactly one entry for each target application id C-TE1-001 through C-TE1-009.",
+    "item": {
+      "application_id": {
+        "type": "string",
+        "stable_identifier": true
+      },
+      "determination": {
+        "type": "enum",
+        "allowed_values": [
+          "APPROVE",
+          "HOLD",
+          "DENY"
+        ]
+      },
+      "deficiency_codes": {
+        "type": "list",
+        "item": {
+          "type": "enum",
+          "allowed_values": [
+            "active_suspension",
+            "bond_not_current",
+            "bond_shortfall",
+            "endorsement_missing",
+            "endorsement_pending",
+            "experience_shortfall",
+            "insurance_expired",
+            "insurance_pending",
+            "insurance_shortfall",
+            "open_nonserious_violation",
+            "open_serious_violation",
+            "site_recheck_required"
+          ]
+        },
+        "ordering": "Sort codes ascending and remove duplicates. Use an empty list when no deficiency applies."
+      },
+      "required_actions": {
+        "type": "list",
+        "item": {
+          "type": "enum",
+          "allowed_values": [
+            "complete_site_recheck",
+            "increase_bond",
+            "obtain_current_bond",
+            "obtain_required_endorsement",
+            "provide_current_insurance",
+            "refer_board_discipline",
+            "resolve_open_complaints",
+            "submit_experience_affidavit",
+            "verify_current_insurance"
+          ]
+        },
+        "ordering": "Sort codes ascending and remove duplicates. Use an empty list when no staff action applies."
+      },
+      "risk_tier": {
+        "type": "enum",
+        "allowed_values": [
+          "low",
+          "medium",
+          "high"
+        ]
+      },
+      "policy_impacted": {
+        "type": "boolean"
+      }
+    }
+  },
+  "summary": {
+    "type": "object",
+    "required_keys": [
+      "approve_count",
+      "hold_count",
+      "deny_count",
+      "high_risk_application_ids",
+      "policy_impacted_application_ids",
+      "stale_or_unverified_correspondence_ids"
+    ],
+    "fields": {
+      "approve_count": {
+        "type": "integer",
+        "units": "applications"
+      },
+      "hold_count": {
+        "type": "integer",
+        "units": "applications"
+      },
+      "deny_count": {
+        "type": "integer",
+        "units": "applications"
+      },
+      "high_risk_application_ids": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort application ids ascending."
+      },
+      "policy_impacted_application_ids": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort application ids ascending."
+      },
+      "stale_or_unverified_correspondence_ids": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort correspondence ids ascending."
+      }
+    }
+  },
+  "numeric_precision": "All counts are integers. No decimal numeric fields are required.",
+  "date_format": "YYYY-MM-DD when dates are used inside optional unscored fields."
+}

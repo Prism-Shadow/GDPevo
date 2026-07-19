@@ -1,0 +1,58 @@
+{
+  "case_id": "QUEUE-TE-005",
+  "as_of_date": "2026-06-11",
+  "queue_items": [
+    {
+      "item_id": "appeal_deadline",
+      "route": "appeals_deadline",
+      "route_priority": 1,
+      "next_action": "complete_standard_internal_appeal",
+      "deadline": "2026-06-12",
+      "reason": "none",
+      "recovery_amount": 0.0
+    },
+    {
+      "item_id": "md_escalation",
+      "route": "medical_director_escalation",
+      "route_priority": 2,
+      "next_action": "route_md_review",
+      "deadline": "",
+      "reason": "PET-FACTOR not_met",
+      "recovery_amount": 0.0
+    },
+    {
+      "item_id": "claim_correction",
+      "route": "payment_integrity_correction",
+      "route_priority": 3,
+      "next_action": "resubmit_corrected_claim",
+      "deadline": "",
+      "reason": "none",
+      "recovery_amount": 152.0
+    }
+  ],
+  "aggregate_counts": {
+    "appeals_deadline": 1,
+    "medical_director_escalation": 1,
+    "payment_integrity_correction": 1
+  },
+  "top_priority_item": "appeal_deadline",
+  "total_recovery_amount": 152.0,
+  "basis_audit": {
+    "source_precedence": "appeal_deadline_then_clinical_then_payment_integrity",
+    "controlling_record_ids": [
+      "DOC-TE-005-APPEAL",
+      "DOC-TE-005-MD",
+      "DOC-TE-005-CLAIM"
+    ],
+    "exception_record_ids": [
+      "appeal_deadline",
+      "md_escalation",
+      "claim_correction"
+    ],
+    "precedence_record_order": [
+      "DOC-TE-005-APPEAL",
+      "DOC-TE-005-MD",
+      "DOC-TE-005-CLAIM"
+    ]
+  }
+}

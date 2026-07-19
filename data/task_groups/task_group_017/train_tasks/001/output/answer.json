@@ -1,0 +1,215 @@
+{
+  "matter_id": "MTR-SENTINEL-GJ",
+  "critical_findings": [
+    {
+      "finding_id": "DOC-SENT-ALDEN-DEALER-ESC",
+      "issue_type": "responsiveness_miscode",
+      "severity": "high",
+      "finding_status": "open",
+      "source_status": "not_applicable",
+      "production_impact": "not_produced",
+      "category_impacts": [
+        "R09"
+      ],
+      "source_refs": [
+        "DOC-SENT-ALDEN-DEALER-ESC",
+        "QC-SENT-R09-NR"
+      ],
+      "document_count": 1,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "recommended_action": "recode_and_produce"
+    },
+    {
+      "finding_id": "PRIV-SENT-LOG-GAP",
+      "issue_type": "privilege_log_gap",
+      "severity": "high",
+      "finding_status": "protocol_noncompliant",
+      "source_status": "not_applicable",
+      "production_impact": "withheld_unlogged",
+      "category_impacts": [
+        "R11"
+      ],
+      "source_refs": [
+        "PRIV-SENT-LOG-GAP"
+      ],
+      "document_count": 3180,
+      "withheld_count": 3180,
+      "logged_count": 1410,
+      "unlogged_count": 1770,
+      "recommended_action": "supplement_privilege_log"
+    },
+    {
+      "finding_id": "SRC-SENT-ALDEN-PHONE",
+      "issue_type": "preservation_failure",
+      "severity": "critical",
+      "finding_status": "open",
+      "source_status": "lost",
+      "production_impact": "source_lost",
+      "category_impacts": [
+        "R09",
+        "R15"
+      ],
+      "source_refs": [
+        "SRC-SENT-ALDEN-PHONE"
+      ],
+      "document_count": 0,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "recommended_action": "disclose_to_government"
+    },
+    {
+      "finding_id": "SRC-SENT-BOARD-SP",
+      "issue_type": "collection_gap",
+      "severity": "high",
+      "finding_status": "open",
+      "source_status": "not_collected",
+      "production_impact": "source_missing",
+      "category_impacts": [
+        "R07",
+        "R08",
+        "R09"
+      ],
+      "source_refs": [
+        "SRC-SENT-BOARD-SP"
+      ],
+      "document_count": 0,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "recommended_action": "collect_source"
+    }
+  ],
+  "category_statuses": [
+    {
+      "category_code": "R07",
+      "status": "collection_gap",
+      "production_impact": "source_missing",
+      "source_refs": [
+        "SRC-SENT-BOARD-SP"
+      ],
+      "recommended_action": "collect_source"
+    },
+    {
+      "category_code": "R08",
+      "status": "collection_gap",
+      "production_impact": "source_missing",
+      "source_refs": [
+        "SRC-SENT-BOARD-SP"
+      ],
+      "recommended_action": "collect_source"
+    },
+    {
+      "category_code": "R09",
+      "status": "incomplete",
+      "production_impact": "underproduced",
+      "source_refs": [
+        "DOC-SENT-ALDEN-DEALER-ESC",
+        "QC-SENT-R09-NR",
+        "SRC-SENT-ALDEN-PHONE",
+        "SRC-SENT-BOARD-SP"
+      ],
+      "recommended_action": "recode_and_produce"
+    },
+    {
+      "category_code": "R11",
+      "status": "privilege_log_gap",
+      "production_impact": "withheld_unlogged",
+      "source_refs": [
+        "PRIV-SENT-LOG-GAP"
+      ],
+      "recommended_action": "supplement_privilege_log"
+    },
+    {
+      "category_code": "R15",
+      "status": "preservation_risk",
+      "production_impact": "source_lost",
+      "source_refs": [
+        "SRC-SENT-ALDEN-PHONE"
+      ],
+      "recommended_action": "disclose_to_government"
+    }
+  ],
+  "metrics": {
+    "unlogged_privilege_docs": 1770,
+    "miscoded_responsive_doc_count": 1,
+    "lost_personal_device_count": 1,
+    "uncollected_board_source_count": 1,
+    "categories_with_open_gaps": 5,
+    "rolling_production_ready": false
+  },
+  "priority_actions": [
+    {
+      "action_id": "ACT-SENT-001",
+      "priority_rank": 1,
+      "priority": "P0",
+      "action_type": "disclose_to_government",
+      "owner": "outside_counsel",
+      "target_refs": [
+        "SRC-SENT-ALDEN-PHONE"
+      ],
+      "category_impacts": [
+        "R09",
+        "R15"
+      ]
+    },
+    {
+      "action_id": "ACT-SENT-002",
+      "priority_rank": 2,
+      "priority": "P0",
+      "action_type": "forensic_recovery",
+      "owner": "ediscovery_vendor",
+      "target_refs": [
+        "SRC-SENT-ALDEN-PHONE"
+      ],
+      "category_impacts": [
+        "R09",
+        "R15"
+      ]
+    },
+    {
+      "action_id": "ACT-SENT-003",
+      "priority_rank": 3,
+      "priority": "P1",
+      "action_type": "collect_source",
+      "owner": "client_it",
+      "target_refs": [
+        "SRC-SENT-BOARD-SP"
+      ],
+      "category_impacts": [
+        "R07",
+        "R08",
+        "R09"
+      ]
+    },
+    {
+      "action_id": "ACT-SENT-004",
+      "priority_rank": 4,
+      "priority": "P1",
+      "action_type": "recode_and_produce",
+      "owner": "review_vendor",
+      "target_refs": [
+        "DOC-SENT-ALDEN-DEALER-ESC",
+        "QC-SENT-R09-NR"
+      ],
+      "category_impacts": [
+        "R09"
+      ]
+    },
+    {
+      "action_id": "ACT-SENT-005",
+      "priority_rank": 5,
+      "priority": "P1",
+      "action_type": "supplement_privilege_log",
+      "owner": "privilege_team",
+      "target_refs": [
+        "PRIV-SENT-LOG-GAP"
+      ],
+      "category_impacts": [
+        "R11"
+      ]
+    }
+  ]
+}

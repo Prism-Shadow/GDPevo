@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "test_004 Q4 2025 Integrations and Billing portfolio mix answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scope_id",
+    "quarter",
+    "teams",
+    "product_areas",
+    "included_work_item_ids",
+    "category_counts",
+    "gap_table",
+    "under_invested_categories",
+    "action_owner_teams",
+    "evidence_ids_by_category"
+  ],
+  "properties": {
+    "scope_id": {
+      "type": "string",
+      "const": "test_004"
+    },
+    "quarter": {
+      "type": "string",
+      "const": "2025-Q4"
+    },
+    "teams": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Integrations",
+          "Billing",
+          "API Foundations",
+          "Revenue Platform"
+        ]
+      },
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "List in this order: Integrations, Billing, API Foundations, Revenue Platform."
+    },
+    "product_areas": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "API Connectivity",
+          "Revenue Systems"
+        ]
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "List in this order: API Connectivity, Revenue Systems."
+    },
+    "included_work_item_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Unique included work item ids ordered by work item id ascending."
+    },
+    "category_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "NewFeature",
+        "TechDebt",
+        "Reliability",
+        "Security"
+      ],
+      "properties": {
+        "NewFeature": {
+          "type": "integer"
+        },
+        "TechDebt": {
+          "type": "integer"
+        },
+        "Reliability": {
+          "type": "integer"
+        },
+        "Security": {
+          "type": "integer"
+        }
+      }
+    },
+    "gap_table": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "Rows sorted by gap_pct ascending, then category name ascending. Percentages are percentage points rounded to 1 decimal place.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category",
+          "target_pct",
+          "actual_pct",
+          "gap_pct"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "NewFeature",
+              "TechDebt",
+              "Reliability",
+              "Security"
+            ]
+          },
+          "target_pct": {
+            "type": "number",
+            "description": "Target share as percentage points, rounded to 1 decimal place."
+          },
+          "actual_pct": {
+            "type": "number",
+            "description": "Actual share as percentage points, rounded to 1 decimal place."
+          },
+          "gap_pct": {
+            "type": "number",
+            "description": "actual_pct minus target_pct, in percentage points, rounded to 1 decimal place."
+          }
+        }
+      }
+    },
+    "under_invested_categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "NewFeature",
+          "TechDebt",
+          "Reliability",
+          "Security"
+        ]
+      },
+      "description": "Categories with negative gap_pct, ordered by gap_pct ascending, then category name ascending."
+    },
+    "action_owner_teams": {
+      "type": "array",
+      "description": "One row per under-invested category, in the same order as under_invested_categories.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category",
+          "owner_teams"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "NewFeature",
+              "TechDebt",
+              "Reliability",
+              "Security"
+            ]
+          },
+          "owner_teams": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Integrations",
+                "Billing",
+                "API Foundations",
+                "Revenue Platform"
+              ]
+            },
+            "description": "Owner team names sorted alphabetically when more than one team is listed."
+          }
+        }
+      }
+    },
+    "evidence_ids_by_category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "NewFeature",
+        "TechDebt",
+        "Reliability",
+        "Security"
+      ],
+      "properties": {
+        "NewFeature": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Included ids in this final category, sorted ascending."
+        },
+        "TechDebt": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Included ids in this final category, sorted ascending."
+        },
+        "Reliability": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Included ids in this final category, sorted ascending."
+        },
+        "Security": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Included ids in this final category, sorted ascending."
+        }
+      }
+    }
+  }
+}

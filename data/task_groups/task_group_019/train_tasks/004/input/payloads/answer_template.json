@@ -1,0 +1,101 @@
+{
+  "schema_name": "contractor_batch_eligibility_review",
+  "schema_version": "1.0",
+  "instructions": {
+    "top_level_keys": [
+      "application_decisions",
+      "summary"
+    ],
+    "ordering": "application_decisions must be ordered by application_id ascending.",
+    "dates": "Dates, if any are added by the solver, must use YYYY-MM-DD. No dates are required in this schema.",
+    "empty_values": "Use an empty list when no deficiency code, required action, or summary id applies."
+  },
+  "application_decisions_item": {
+    "application_id": {
+      "type": "string",
+      "allowed_values": [
+        "C-TR4-001",
+        "C-TR4-002",
+        "C-TR4-003",
+        "C-TR4-004",
+        "C-TR4-005",
+        "C-TR4-006",
+        "C-TR4-007"
+      ]
+    },
+    "determination": {
+      "type": "enum",
+      "allowed_values": [
+        "APPROVE",
+        "HOLD",
+        "DENY"
+      ]
+    },
+    "deficiency_codes": {
+      "type": "list[string]",
+      "allowed_values": [
+        "no_active_bond",
+        "bond_shortfall",
+        "insurance_not_current",
+        "insurance_expired",
+        "insurance_shortfall",
+        "endorsement_not_verified",
+        "experience_shortfall",
+        "active_suspension",
+        "unresolved_serious_complaint"
+      ],
+      "ordering": "Sort codes alphabetically within each application."
+    },
+    "required_actions": {
+      "type": "list[string]",
+      "allowed_values": [
+        "file_active_bond",
+        "increase_bond",
+        "provide_current_insurance",
+        "renew_insurance",
+        "increase_insurance",
+        "verify_endorsement",
+        "document_experience",
+        "clear_suspension",
+        "resolve_complaint",
+        "board_review"
+      ],
+      "ordering": "Sort action codes alphabetically within each application."
+    },
+    "risk_tier": {
+      "type": "enum",
+      "allowed_values": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "policy_impacted": {
+      "type": "boolean",
+      "meaning": "True when a current 2025 contractor policy standard creates a deficiency or material review flag that would not have applied under the prior baseline."
+    }
+  },
+  "summary": {
+    "approve_count": {
+      "type": "integer"
+    },
+    "hold_count": {
+      "type": "integer"
+    },
+    "deny_count": {
+      "type": "integer"
+    },
+    "high_risk_application_ids": {
+      "type": "list[string]",
+      "ordering": "Sort application ids ascending."
+    },
+    "policy_impacted_application_ids": {
+      "type": "list[string]",
+      "ordering": "Sort application ids ascending."
+    },
+    "stale_or_unverified_correspondence_ids": {
+      "type": "list[string]",
+      "ordering": "Sort correspondence ids ascending."
+    }
+  }
+}

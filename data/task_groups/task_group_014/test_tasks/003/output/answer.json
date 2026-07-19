@@ -1,0 +1,52 @@
+{
+  "claim_id": "CLAIM-TE-003",
+  "case_id": "CLAIM-TE-003",
+  "auth_number": "NPA-2406121",
+  "plan_type": "workers_comp",
+  "benchmark_source": "Northstar WC Surgery Schedule",
+  "benchmark_version": "2026",
+  "paid_total": 2010.0,
+  "correct_allowed_total": 2420.0,
+  "recovery_amount": 410.0,
+  "lines": [
+    {
+      "line_id": "CL-TE-003-1",
+      "cpt_code": "29881",
+      "modifier": "RT",
+      "units": 1,
+      "paid_amount": 1660.0,
+      "correct_allowed_amount": 2420.0,
+      "recovery_amount": 760.0,
+      "disposition": "correct_upward"
+    },
+    {
+      "line_id": "CL-TE-003-2",
+      "cpt_code": "29881",
+      "modifier": "59",
+      "units": 1,
+      "paid_amount": 350.0,
+      "correct_allowed_amount": 0.0,
+      "recovery_amount": -350.0,
+      "disposition": "deny_unsupported_modifier"
+    }
+  ],
+  "resubmission_route": "payment_integrity_correction",
+  "priority": "standard",
+  "basis_audit": {
+    "source_precedence": "effective_benchmark_by_plan_modifier_and_date",
+    "controlling_record_ids": [
+      "CL-TE-003-1",
+      "CL-TE-003-2",
+      "BM-TE-003-29881RT",
+      "BM-TE-003-2988159"
+    ],
+    "exception_record_ids": [
+      "CL-TE-003-2"
+    ],
+    "precedence_record_order": [
+      "BM-TE-003-29881RT",
+      "BM-TE-003-2988159",
+      "CL-TE-003-2"
+    ]
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "description": "Return one JSON object matching this shape. Currency values are numbers rounded to two decimals. Dates use ISO YYYY-MM-DD. Lists marked as sorted must be sorted by case_number, then field_name where applicable.",
+  "top_level_keys": {
+    "batch_id": "string",
+    "court": {
+      "jurisdiction_code": "string",
+      "court_name": "string",
+      "hearing_date": "YYYY-MM-DD",
+      "judge": "string",
+      "clerk": "string"
+    },
+    "included_case_numbers": {
+      "type": "list[string]",
+      "sorting": "ascending case_number",
+      "meaning": "Cases receiving final disposition and financial entries in this closeout."
+    },
+    "excluded_matters": [
+      {
+        "case_number": "string",
+        "status": "enum: pending | continued | deferred | disposed | closed",
+        "exclusion_reason": "enum: pending_no_signed_order | continued_no_final_order | duplicate_matter | unsupported_target",
+        "draft_disposition_entry": "enum: do_not_post | post_final_entry",
+        "next_status_check_date": "YYYY-MM-DD",
+        "financial_posting_allowed": "boolean"
+      }
+    ],
+    "audit_findings": [
+      {
+        "case_number": "string",
+        "field_name": "enum: counsel_type | filed_date | source_system | departure_status | merged_counts | disposition_status | user_fee",
+        "local_value": "string",
+        "portal_value": "string",
+        "recommended_resolution": "enum: use_cms | use_hearing_notes | use_corrob_memo | use_fee_schedule | exclude_pending | verify_before_entry",
+        "resolved_value": "string"
+      }
+    ],
+    "case_dispositions": [
+      {
+        "case_number": "string",
+        "defendant_name": "string",
+        "dob": "YYYY-MM-DD",
+        "counsel_type": "enum: public_defender | retained | appointed_private | unknown",
+        "attorney_name": "string",
+        "case_status": "enum: disposed | pending | continued | deferred | closed",
+        "closeout_action": "enum: enter_disposition | hold_unsigned_order | no_closeout",
+        "disposition_date": "YYYY-MM-DD or null",
+        "charge": {
+          "active_count_no": "integer",
+          "merged_counts": "list[integer]",
+          "merged_count_handling": "enum: no_merged_counts | merge_no_separate_financial | not_applicable_pending",
+          "offense_code": "string",
+          "statute": "string",
+          "plea": "enum: guilty | no contest | not guilty | none",
+          "charge_disposition": "enum: guilty | nolle_prosequi | deferred | pending | dismissed",
+          "trial_or_plea_posture": "enum: guilty_plea | no_contest_plea | bench_trial | nolle_no_plea | continued_no_plea",
+          "departure_status": "enum: no_departure | durational_departure | dispositional_departure | not_applicable"
+        },
+        "sentence": {
+          "jail_days_imposed": "integer",
+          "jail_days_suspended": "integer",
+          "probation_months": "integer",
+          "fine_ordered": "number currency"
+        }
+      }
+    ],
+    "fee_reconciliation": [
+      {
+        "case_number": "string",
+        "fee_status": "enum: post | hold | exclude",
+        "user_fee_decision": "enum: not_applicable_non_pd | post_public_defender_user_fee | waived_by_court | do_not_post_pending",
+        "fee_items": [
+          {
+            "fee_code": "enum: fine | court_cost | user_fee | assessment",
+            "amount": "number currency"
+          }
+        ],
+        "case_total": "number currency"
+      }
+    ],
+    "docket_entries": [
+      {
+        "case_number": "string",
+        "entry_date": "YYYY-MM-DD or null",
+        "docket_entry_type": "enum: disposition | financial | disposition_hold",
+        "entry_code": "enum: sentencing_order_entered | deferred_order_entered | dismissal_order_entered | continued_no_disposition",
+        "action_code": "enum: enter_final_disposition_and_financials | exclude_no_final_order",
+        "language_code": "enum: bench_trial_conviction_no_departure | merged_counts_deferred_departure | nolle_pd_fee_waived | continued_no_closeout",
+        "amount_due": "number currency"
+      }
+    ],
+    "register_totals": {
+      "included_case_count": "integer",
+      "excluded_pending_count": "integer",
+      "disposition_entry_count": "integer",
+      "financial_entry_count": "integer",
+      "fine_total": "number currency",
+      "mandatory_court_cost_total": "number currency",
+      "user_fee_total": "number currency",
+      "assessment_total": "number currency",
+      "grand_total_due": "number currency"
+    },
+    "source_summary": {
+      "case_record_basis": "enum: portal_plus_hearing_notes | local_notes_only | worksheet_only",
+      "fee_schedule_basis": "enum: current_portal_schedule | worksheet_only | mixed_unverified",
+      "pending_matter_handling": "enum: exclude_from_final_entries | include_draft_entry"
+    }
+  }
+}

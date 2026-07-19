@@ -1,0 +1,144 @@
+{
+  "format": "Return a single JSON object with the required top-level keys. Do not include markdown or explanatory prose.",
+  "required_top_level_keys": [
+    "case_id",
+    "as_of_date",
+    "queue_items",
+    "aggregate_counts",
+    "top_priority_item",
+    "total_recovery_amount",
+    "basis_audit"
+  ],
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "description": "Target queue business ID."
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "queue_items": {
+      "type": "list",
+      "ordering": "Sort by route_priority ascending, with priority 1 first.",
+      "item_required_keys": [
+        "item_id",
+        "route",
+        "route_priority",
+        "next_action",
+        "deadline",
+        "reason",
+        "recovery_amount"
+      ],
+      "item_fields": {
+        "item_id": {
+          "type": "enum",
+          "choices": [
+            "appeal_deadline",
+            "md_escalation",
+            "claim_correction"
+          ]
+        },
+        "route": {
+          "type": "enum",
+          "choices": [
+            "appeals_deadline",
+            "medical_director_escalation",
+            "payment_integrity_correction",
+            "monitor_no_action"
+          ]
+        },
+        "route_priority": {
+          "type": "integer",
+          "precision": "whole number",
+          "description": "Use 1 for the highest priority item. Values must be unique across returned queue items."
+        },
+        "next_action": {
+          "type": "enum",
+          "choices": [
+            "complete_standard_internal_appeal",
+            "route_md_review",
+            "resubmit_corrected_claim",
+            "request_more_information",
+            "monitor_no_action"
+          ]
+        },
+        "deadline": {
+          "type": "string",
+          "format": "YYYY-MM-DD or empty string",
+          "description": "Use the appeal deadline date when applicable; otherwise use an empty string."
+        },
+        "reason": {
+          "type": "enum",
+          "choices": [
+            "PET-FACTOR not_met",
+            "none"
+          ],
+          "description": "Use the controlled reason for an MD escalation item; otherwise use none."
+        },
+        "recovery_amount": {
+          "type": "number",
+          "precision": 2,
+          "units": "USD",
+          "description": "Use the recovery amount for a claim correction item; otherwise use 0.00."
+        }
+      }
+    },
+    "aggregate_counts": {
+      "type": "object",
+      "required_keys": [
+        "appeals_deadline",
+        "medical_director_escalation",
+        "payment_integrity_correction"
+      ],
+      "value_type": "integer",
+      "precision": "whole count",
+      "description": "Count returned queue items by final route."
+    },
+    "top_priority_item": {
+      "type": "enum",
+      "choices": [
+        "appeal_deadline",
+        "md_escalation",
+        "claim_correction"
+      ]
+    },
+    "total_recovery_amount": {
+      "type": "number",
+      "precision": 2,
+      "units": "USD",
+      "description": "Sum of recovery amounts across all routed queue items."
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Populate it using the source-precedence and record-grounding convention inferred from solved examples; use environment record IDs and business gap keys, not invented control codes.",
+      "fields": {
+        "source_precedence": {
+          "type": "string",
+          "description": "Use the concise source-precedence category convention inferred from solved examples."
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  }
+}

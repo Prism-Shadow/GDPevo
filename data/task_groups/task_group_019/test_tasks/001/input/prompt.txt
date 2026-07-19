@@ -1,0 +1,17 @@
+You are supporting the State Contractors Licensing Board with a pending contractor application batch review.
+
+Review application ids C-TE1-001 through C-TE1-009 for current eligibility and staff release handling.
+
+Use the licensing environment at <TASK_ENV_BASE_URL>. The relevant public endpoints are:
+
+- GET /api/policies
+- GET /api/contractor/applications
+- GET /api/contractor/bonds
+- GET /api/contractor/insurance
+- GET /api/contractor/license-history
+- GET /api/contractor/violations
+- GET /api/contractor/correspondence
+- GET /api/contractor/inspections
+- POST /api/sql, if SQL access is available in your environment instructions
+
+Return only a JSON object matching input/payloads/answer_template.json. Include one decision object for each target application, ordered by application_id, and include the batch summary fields needed by release staff.

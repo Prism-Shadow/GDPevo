@@ -1,0 +1,28 @@
+You are buyer-side counsel for Helix Diagnostics Corp. on Project Helix (`PRJ_HELIX`), a stock purchase agreement for Helix Clinical Labs. Prepare the SPA closing and economics package requested by the deal team.
+
+Use the running M&A deal workbench at `<TASK_ENV_BASE_URL>`. The relevant records are available through the web UI and APIs, including:
+
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_HELIX`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_HELIX/terms`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_HELIX/cap-table`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_HELIX/consents`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_HELIX/employees`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_HELIX/material-contracts`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_HELIX/regulatory`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_HELIX/diligence-findings`
+- `GET <TASK_ENV_BASE_URL>/api/deals/PRJ_HELIX/risk-estimates`
+- `GET <TASK_ENV_BASE_URL>/api/playbooks/PB_BUYER_A/rules`
+
+If read-only SQL access is available, you may also use `POST <TASK_ENV_BASE_URL>/api/query` with token `deal-workbench-readonly`.
+
+Return one JSON object following `input/payloads/answer_template.json`. Use integer dollars, percentage points to one decimal place, holder percentages to four decimals, and stable source IDs from the workbench. Do not include narrative outside the JSON.
+
+Your package must cover:
+
+- economics and holder-level consideration allocation;
+- indemnity cap, special indemnity, escrow, survival, materiality scrape, and working-capital mechanics;
+- required closing consents, non-blocking notices, and material-contract conditions;
+- debt payoff status, using the controlled template status when the workbench has no quantified debt-payoff record;
+- HSR and regulatory closing status;
+- employee service-credit, PTO, WARN-risk, restrictive-covenant, D&O tail, and expense treatment;
+- final closing readiness, blocker classification, and summary totals.

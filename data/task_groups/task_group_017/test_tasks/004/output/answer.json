@@ -1,0 +1,288 @@
+{
+  "matter_id": "MTR-COBALTRIDGE-GJ",
+  "readiness_statuses": [
+    {
+      "category_code": "CR-06",
+      "readiness_status": "not_ready_zero_claim_contradicted",
+      "production_impact": "multiple_impacts",
+      "blocking_refs": [
+        "DOC-COBALT-BANKER-SIDE",
+        "PRIV-COBALT-SELLER-WAIVER",
+        "QC-COBALT-ZERO-CR06",
+        "SRC-COBALT-PARK-GMAIL"
+      ],
+      "required_actions": [
+        "recode_and_produce",
+        "collect_personal_email",
+        "waiver_assessment_and_disclosure"
+      ]
+    },
+    {
+      "category_code": "CR-11",
+      "readiness_status": "not_ready_privilege_log_incomplete",
+      "production_impact": "withheld_unlogged",
+      "blocking_refs": [
+        "PRIV-COBALT-LOG-GAP"
+      ],
+      "required_actions": [
+        "supplement_privilege_log"
+      ]
+    },
+    {
+      "category_code": "CR-15",
+      "readiness_status": "not_ready_personal_source_gap",
+      "production_impact": "partial_source_missing",
+      "blocking_refs": [
+        "SRC-COBALT-PARK-GMAIL",
+        "SRC-COBALT-PARK-PHONE"
+      ],
+      "required_actions": [
+        "collect_personal_email",
+        "collect_signal_messages"
+      ]
+    }
+  ],
+  "issue_ledger": [
+    {
+      "issue_id": "DOC-COBALT-BANKER-SIDE",
+      "issue_type": "zero_claim_contradiction",
+      "severity": "high",
+      "issue_status": "confirmed",
+      "source_status": "not_applicable",
+      "category_impacts": [
+        "CR-06"
+      ],
+      "record_refs": [
+        "DOC-COBALT-BANKER-SIDE",
+        "QC-COBALT-ZERO-CR06"
+      ],
+      "document_count": 1,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "missing_component": null,
+      "current_coding": "nonresponsive",
+      "produced_status": "not_produced",
+      "corrected_disposition": "responsive_produce",
+      "recommended_action": "recode_and_produce",
+      "owner": "review_qc",
+      "priority": "P0"
+    },
+    {
+      "issue_id": "PRIV-COBALT-LOG-GAP",
+      "issue_type": "privilege_log_gap",
+      "severity": "high",
+      "issue_status": "incomplete_log",
+      "source_status": "not_applicable",
+      "category_impacts": [
+        "CR-11"
+      ],
+      "record_refs": [
+        "PRIV-COBALT-LOG-GAP"
+      ],
+      "document_count": 1290,
+      "withheld_count": 1290,
+      "logged_count": 480,
+      "unlogged_count": 810,
+      "third_party": null,
+      "missing_component": null,
+      "current_coding": "not_applicable",
+      "produced_status": "not_applicable",
+      "corrected_disposition": "supplement_log",
+      "recommended_action": "supplement_privilege_log",
+      "owner": "privilege_team",
+      "priority": "P1"
+    },
+    {
+      "issue_id": "PRIV-COBALT-SELLER-WAIVER",
+      "issue_type": "third_party_waiver",
+      "severity": "high",
+      "issue_status": "waived",
+      "source_status": "not_applicable",
+      "category_impacts": [
+        "CR-06"
+      ],
+      "record_refs": [
+        "PRIV-COBALT-SELLER-WAIVER"
+      ],
+      "document_count": 6,
+      "withheld_count": 6,
+      "logged_count": 6,
+      "unlogged_count": 0,
+      "third_party": "seller_side_banker",
+      "missing_component": null,
+      "current_coding": "privileged",
+      "produced_status": "not_applicable",
+      "corrected_disposition": "waiver_assessment",
+      "recommended_action": "waiver_assessment_and_disclosure",
+      "owner": "privilege_counsel",
+      "priority": "P1"
+    },
+    {
+      "issue_id": "SRC-COBALT-PARK-GMAIL",
+      "issue_type": "personal_email_gap",
+      "severity": "high",
+      "issue_status": "not_collected",
+      "source_status": "not_collected",
+      "category_impacts": [
+        "CR-06",
+        "CR-15"
+      ],
+      "record_refs": [
+        "SRC-COBALT-PARK-GMAIL"
+      ],
+      "document_count": 0,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "missing_component": null,
+      "current_coding": "not_applicable",
+      "produced_status": "not_applicable",
+      "corrected_disposition": "supplemental_collection",
+      "recommended_action": "collect_personal_email",
+      "owner": "forensics",
+      "priority": "P1"
+    },
+    {
+      "issue_id": "SRC-COBALT-PARK-PHONE",
+      "issue_type": "personal_phone_gap",
+      "severity": "high",
+      "issue_status": "partial_collection",
+      "source_status": "partial_collection",
+      "category_impacts": [
+        "CR-15"
+      ],
+      "record_refs": [
+        "SRC-COBALT-PARK-PHONE"
+      ],
+      "document_count": 0,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "missing_component": "signal_messages",
+      "current_coding": "not_applicable",
+      "produced_status": "not_applicable",
+      "corrected_disposition": "supplemental_collection",
+      "recommended_action": "collect_signal_messages",
+      "owner": "forensics",
+      "priority": "P1"
+    }
+  ],
+  "privilege_corrections": [
+    {
+      "correction_id": "PRIV-COBALT-LOG-GAP",
+      "correction_type": "supplement_log",
+      "privilege_status": "incomplete_log",
+      "category_impacts": [
+        "CR-11"
+      ],
+      "document_count": 1290,
+      "withheld_count": 1290,
+      "logged_count": 480,
+      "unlogged_count": 810,
+      "third_party": null,
+      "recommended_action": "supplement_privilege_log",
+      "owner": "privilege_team",
+      "priority": "P1"
+    },
+    {
+      "correction_id": "PRIV-COBALT-SELLER-WAIVER",
+      "correction_type": "waiver_assessment",
+      "privilege_status": "waived",
+      "category_impacts": [
+        "CR-06"
+      ],
+      "document_count": 6,
+      "withheld_count": 6,
+      "logged_count": 6,
+      "unlogged_count": 0,
+      "third_party": "seller_side_banker",
+      "recommended_action": "waiver_assessment_and_disclosure",
+      "owner": "privilege_counsel",
+      "priority": "P1"
+    }
+  ],
+  "metrics": {
+    "withheld_privilege_docs": 1290,
+    "logged_privilege_docs": 480,
+    "unlogged_privilege_docs": 810,
+    "waived_privilege_doc_count": 6,
+    "miscoded_responsive_doc_count": 1,
+    "personal_email_gap_source_count": 1,
+    "personal_phone_partial_source_count": 1,
+    "nonready_category_count": 3,
+    "production_ready": false
+  },
+  "priority_actions": [
+    {
+      "action_id": "ACT-COBALT-001",
+      "priority_rank": 1,
+      "priority": "P0",
+      "action_type": "recode_and_produce",
+      "owner": "review_qc",
+      "target_refs": [
+        "DOC-COBALT-BANKER-SIDE",
+        "QC-COBALT-ZERO-CR06"
+      ],
+      "category_impacts": [
+        "CR-06"
+      ]
+    },
+    {
+      "action_id": "ACT-COBALT-002",
+      "priority_rank": 2,
+      "priority": "P1",
+      "action_type": "collect_personal_email",
+      "owner": "forensics",
+      "target_refs": [
+        "SRC-COBALT-PARK-GMAIL"
+      ],
+      "category_impacts": [
+        "CR-06",
+        "CR-15"
+      ]
+    },
+    {
+      "action_id": "ACT-COBALT-003",
+      "priority_rank": 3,
+      "priority": "P1",
+      "action_type": "collect_signal_messages",
+      "owner": "forensics",
+      "target_refs": [
+        "SRC-COBALT-PARK-PHONE"
+      ],
+      "category_impacts": [
+        "CR-15"
+      ]
+    },
+    {
+      "action_id": "ACT-COBALT-004",
+      "priority_rank": 4,
+      "priority": "P1",
+      "action_type": "supplement_privilege_log",
+      "owner": "privilege_team",
+      "target_refs": [
+        "PRIV-COBALT-LOG-GAP"
+      ],
+      "category_impacts": [
+        "CR-11"
+      ]
+    },
+    {
+      "action_id": "ACT-COBALT-005",
+      "priority_rank": 5,
+      "priority": "P1",
+      "action_type": "waiver_assessment_and_disclosure",
+      "owner": "privilege_counsel",
+      "target_refs": [
+        "PRIV-COBALT-SELLER-WAIVER"
+      ],
+      "category_impacts": [
+        "CR-06"
+      ]
+    }
+  ]
+}

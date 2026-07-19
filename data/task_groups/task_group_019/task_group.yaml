@@ -1,0 +1,325 @@
+task_group:
+  task_group_id: task_group_019
+  scenario_id: SCN_019_regulatory_licensing_eligibility_and_compliance_review
+  source_examples:
+  - E001
+  - E002
+  - E003
+  domain: Legal
+  description: 'A train-predict benchmark for administrative licensing examiners reviewing contractor eligibility batches, restricted liquor license applications, and alcohol-license renewal manual-review queues. Solvers use a shared read-only licensing office environment with policy, application, bond, insurance, settlement, incident, violation, correspondence, inspection, and renewal data exposed through business APIs and a token-gated read-only SQL endpoint. Construction metadata is hidden from public endpoints and SQL.
+
+    '
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+  - env/Dockerfile
+  - env/setup.sh
+  - env/app.py
+  - env/generate_data.py
+  - env/judge_api.py
+  - env/endpoints.txt
+  - env/data/licensing.db
+  - env/data/manifest.json
+  - env/data/train_judge_data.json
+train_tasks:
+- task_id: train_001
+  input: train_tasks/001/input/
+  prompt_txt: train_tasks/001/input/prompt.txt
+  payloads:
+  - train_tasks/001/input/payloads/answer_template.json
+  notes: train_tasks/001/notes/notes.md
+  output: train_tasks/001/output/
+  answer_json: train_tasks/001/output/answer.json
+  eval:
+    script: train_tasks/001/eval/eval.sh
+    files:
+    - train_tasks/001/eval/eval.sh
+    - train_tasks/001/eval/evaluator.py
+    rubric:
+    - goal: Includes exactly the target applications in application_id order.
+      weight: 1
+    - goal: Correct approve, hold, or deny determination for every target application.
+      weight: 3
+    - goal: Correct deficiency code set for each target application.
+      weight: 3
+    - goal: Correct required action set for each target application.
+      weight: 2
+    - goal: Correct risk tiers and high-risk application summary.
+      weight: 2
+    - goal: Correct current-policy impact flags and policy-impact summary set.
+      weight: 2
+    - goal: Correct approve, hold, and deny batch summary counts.
+      weight: 2
+    - goal: Correct stale or unverified correspondence summary identifiers.
+      weight: 1
+- task_id: train_002
+  input: train_tasks/002/input/
+  prompt_txt: train_tasks/002/input/prompt.txt
+  payloads:
+  - train_tasks/002/input/payloads/answer_template.json
+  notes: train_tasks/002/notes/notes.md
+  output: train_tasks/002/output/
+  answer_json: train_tasks/002/output/answer.json
+  eval:
+    script: train_tasks/002/eval/eval.sh
+    files:
+    - train_tasks/002/eval/eval.sh
+    - train_tasks/002/eval/evaluator.py
+    rubric:
+    - goal: Correct recommended issuance posture for the restricted transfer package.
+      weight: 3
+    - goal: Correctly applies the same-premises basis to the target location.
+      weight: 2
+    - goal: Identifies the complete covered risk-code set from settlement and incident history.
+      weight: 2
+    - goal: Identifies the complete unresolved verification-gap set.
+      weight: 3
+    - goal: Separates standard Restaurant license obligations from location controls.
+      weight: 2
+    - goal: Identifies active location-specific settlement controls.
+      weight: 2
+    - goal: Selects the correct first-90-day monitoring checks and timing windows.
+      weight: 2
+    - goal: Identifies the correct escalation trigger codes for staff monitoring.
+      weight: 1
+- task_id: train_003
+  input: train_tasks/003/input/
+  prompt_txt: train_tasks/003/input/prompt.txt
+  payloads:
+  - train_tasks/003/input/payloads/answer_template.json
+  notes: train_tasks/003/notes/notes.md
+  output: train_tasks/003/output/
+  answer_json: train_tasks/003/output/answer.json
+  eval:
+    script: train_tasks/003/eval/eval.sh
+    files:
+    - train_tasks/003/eval/eval.sh
+    - train_tasks/003/eval/evaluator.py
+    rubric:
+    - goal: Correct queue membership and exact rank order.
+      weight: 3
+    - goal: Correct matched violation evidence sets, including successor evidence.
+      weight: 3
+    - goal: Correct pre-boundary violation counts and most recent dates.
+      weight: 2
+    - goal: Correct match confidence classifications and close-match summary.
+      weight: 2
+    - goal: Correct controlled next-step labels.
+      weight: 2
+    - goal: Correct exclusion of post-boundary violations.
+      weight: 2
+    - goal: Correct risk tiers and board-review set.
+      weight: 2
+    - goal: Correct queue summary and facility identity fields.
+      weight: 1
+- task_id: train_004
+  input: train_tasks/004/input/
+  prompt_txt: train_tasks/004/input/prompt.txt
+  payloads:
+  - train_tasks/004/input/payloads/answer_template.json
+  notes: train_tasks/004/notes/notes.md
+  output: train_tasks/004/output/
+  answer_json: train_tasks/004/output/answer.json
+  eval:
+    script: train_tasks/004/eval/eval.sh
+    files:
+    - train_tasks/004/eval/eval.sh
+    - train_tasks/004/eval/evaluator.py
+    rubric:
+    - goal: Correct complete APPROVE/HOLD/DENY determination set for the seven target applications.
+      weight: 3
+    - goal: Correct financial security deficiencies and corrective actions for bond and insurance issues.
+      weight: 3
+    - goal: Correct specialty endorsement and experience deficiencies and corrective actions.
+      weight: 3
+    - goal: Correct treatment of blocking unresolved serious complaint and active suspension conflicts.
+      weight: 3
+    - goal: Correct risk tier classifications and high-risk application summary.
+      weight: 2
+    - goal: Correct current-policy impact flags and policy-impacted application summary.
+      weight: 2
+    - goal: Correct approve, hold, and deny summary counts.
+      weight: 1
+    - goal: Correct stale or unverified correspondence id set.
+      weight: 1
+- task_id: train_005
+  input: train_tasks/005/input/
+  prompt_txt: train_tasks/005/input/prompt.txt
+  payloads:
+  - train_tasks/005/input/payloads/answer_template.json
+  notes: train_tasks/005/notes/notes.md
+  output: train_tasks/005/output/
+  answer_json: train_tasks/005/output/answer.json
+  eval:
+    script: train_tasks/005/eval/eval.sh
+    files:
+    - train_tasks/005/eval/eval.sh
+    - train_tasks/005/eval/evaluator.py
+    rubric:
+    - goal: Correct target application and recommended issuance posture.
+      weight: 3
+    - goal: Correctly determines whether same-premises history remains applicable.
+      weight: 2
+    - goal: Correctly identifies risks covered by current active controls.
+      weight: 2
+    - goal: Correctly identifies unresolved verification gaps.
+      weight: 3
+    - goal: Correctly separates ordinary standard obligations for the license class.
+      weight: 2
+    - goal: Correctly identifies current location-specific controls.
+      weight: 2
+    - goal: Correctly provides the first-90-day monitoring plan in operational sequence.
+      weight: 2
+    - goal: Correctly identifies escalation triggers for field staff.
+      weight: 2
+test_tasks:
+- task_id: test_001
+  input: test_tasks/001/input/
+  prompt_txt: test_tasks/001/input/prompt.txt
+  payloads:
+  - test_tasks/001/input/payloads/answer_template.json
+  notes: test_tasks/001/notes/notes.md
+  output: test_tasks/001/output/
+  answer_json: test_tasks/001/output/answer.json
+  eval:
+    script: test_tasks/001/eval/eval.sh
+    files:
+    - test_tasks/001/eval/eval.sh
+    - test_tasks/001/eval/evaluator.py
+    rubric:
+    - goal: Correct application coverage and required decision ordering.
+      weight: 1
+    - goal: Correct approve, hold, or deny determination for every target application.
+      weight: 3
+    - goal: Correct complete deficiency-code sets for every target application.
+      weight: 3
+    - goal: Correct required staff action-code sets for every target application.
+      weight: 2
+    - goal: Correct risk tiers and high-risk application summary.
+      weight: 2
+    - goal: Correct current-policy impact flags and summary set.
+      weight: 2
+    - goal: Correct approve, hold, and deny batch counts.
+      weight: 2
+    - goal: Correct stale or unverified correspondence exclusion summary.
+      weight: 1
+- task_id: test_002
+  input: test_tasks/002/input/
+  prompt_txt: test_tasks/002/input/prompt.txt
+  payloads:
+  - test_tasks/002/input/payloads/answer_template.json
+  notes: test_tasks/002/notes/notes.md
+  output: test_tasks/002/output/
+  answer_json: test_tasks/002/output/answer.json
+  eval:
+    script: test_tasks/002/eval/eval.sh
+    files:
+    - test_tasks/002/eval/eval.sh
+    - test_tasks/002/eval/evaluator.py
+    rubric:
+    - goal: Correct queue membership and exact rank order.
+      weight: 3
+    - goal: Correct pre-boundary violation counts and most recent dates.
+      weight: 2
+    - goal: Correct match confidence classifications and close-match summary.
+      weight: 2
+    - goal: Correct controlled next-step labels.
+      weight: 3
+    - goal: Correct exclusion of post-boundary violations.
+      weight: 2
+    - goal: Correct risk tiers and board-review set.
+      weight: 2
+    - goal: Correct queue summary and facility identity fields.
+      weight: 1
+- task_id: test_003
+  input: test_tasks/003/input/
+  prompt_txt: test_tasks/003/input/prompt.txt
+  payloads:
+  - test_tasks/003/input/payloads/answer_template.json
+  notes: test_tasks/003/notes/notes.md
+  output: test_tasks/003/output/
+  answer_json: test_tasks/003/output/answer.json
+  eval:
+    script: test_tasks/003/eval/eval.sh
+    files:
+    - test_tasks/003/eval/eval.sh
+    - test_tasks/003/eval/evaluator.py
+    rubric:
+    - goal: Correct target application and recommended issuance posture.
+      weight: 3
+    - goal: Correctly determines whether same-premises history applies to the target location.
+      weight: 2
+    - goal: Correctly identifies risks covered by the current restricted package.
+      weight: 2
+    - goal: Correctly identifies unresolved verification gaps.
+      weight: 3
+    - goal: Correctly separates ordinary standard obligations for the license class.
+      weight: 2
+    - goal: Correctly identifies active location-specific settlement controls.
+      weight: 2
+    - goal: Correctly selects first-90-day monitoring checks and timing windows.
+      weight: 2
+    - goal: Correctly identifies escalation triggers for field staff.
+      weight: 2
+- task_id: test_004
+  input: test_tasks/004/input/
+  prompt_txt: test_tasks/004/input/prompt.txt
+  payloads:
+  - test_tasks/004/input/payloads/answer_template.json
+  notes: test_tasks/004/notes/notes.md
+  output: test_tasks/004/output/
+  answer_json: test_tasks/004/output/answer.json
+  eval:
+    script: test_tasks/004/eval/eval.sh
+    files:
+    - test_tasks/004/eval/eval.sh
+    - test_tasks/004/eval/evaluator.py
+    rubric:
+    - goal: Includes exactly the fifteen target applications in application_id order.
+      weight: 1
+    - goal: Correct complete APPROVE/HOLD/DENY determination set for the target applications.
+      weight: 3
+    - goal: Correct financial-security deficiencies and corrective actions.
+      weight: 3
+    - goal: Correct endorsement and experience deficiencies and corrective actions.
+      weight: 3
+    - goal: Correct release-blocker treatment for active suspension and unresolved serious enforcement records.
+      weight: 3
+    - goal: Correct current-policy impact flags, bases, and summary set.
+      weight: 3
+    - goal: Correct source-precedence codes and stale or unverified correspondence rollup.
+      weight: 3
+    - goal: Correct risk tier classifications and high-risk application summary.
+      weight: 2
+    - goal: Correct approve, hold, and deny summary counts.
+      weight: 1
+- task_id: test_005
+  input: test_tasks/005/input/
+  prompt_txt: test_tasks/005/input/prompt.txt
+  payloads:
+  - test_tasks/005/input/payloads/answer_template.json
+  notes: test_tasks/005/notes/notes.md
+  output: test_tasks/005/output/
+  answer_json: test_tasks/005/output/answer.json
+  eval:
+    script: test_tasks/005/eval/eval.sh
+    files:
+    - test_tasks/005/eval/eval.sh
+    - test_tasks/005/eval/evaluator.py
+    rubric:
+    - goal: Correct queue membership and exact rank order.
+      weight: 3
+    - goal: Correct pre-boundary violation counts and most recent dates.
+      weight: 2
+    - goal: Correct match confidence classifications and close-match summary.
+      weight: 2
+    - goal: Correct controlled next-step labels.
+      weight: 2
+    - goal: Correct exclusion of post-boundary violations.
+      weight: 2
+    - goal: Correct risk tiers and board-review set.
+      weight: 2
+    - goal: Correct queue summary and facility identity fields.
+      weight: 1

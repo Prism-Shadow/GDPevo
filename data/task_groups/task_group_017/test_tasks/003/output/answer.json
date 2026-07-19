@@ -1,0 +1,176 @@
+{
+  "matter_id": "MTR-BRIARGATE-SEC",
+  "custodian_issues": [
+    {
+      "source_id": "SRC-BRIAR-LIN-LAPTOP",
+      "custodian": "Evelyn Lin",
+      "source_type": "laptop",
+      "status": "lost",
+      "risk_class": "post_hold_preservation_failure",
+      "event_date": "2024-04-12",
+      "category_impacts": [
+        "SEC-A",
+        "SEC-D"
+      ],
+      "priority": "critical",
+      "recommended_action": "disclose_preservation_issue_and_pursue_forensics"
+    },
+    {
+      "source_id": "SRC-BRIAR-LIN-PMAIL",
+      "custodian": "Evelyn Lin",
+      "source_type": "personal_email",
+      "status": "uncollected",
+      "risk_class": "collection_gap",
+      "event_date": null,
+      "category_impacts": [
+        "SEC-A",
+        "SEC-C"
+      ],
+      "priority": "high",
+      "recommended_action": "collect_or_certify_unavailable"
+    }
+  ],
+  "unrecovered_files": [
+    {
+      "event_id": "RET-BRIAR-CLOUD-DEL",
+      "doc_id": "DOC-BRIAR-NOVA-WATERFALL",
+      "file_class": "investor_communication",
+      "recovery_status": "unrecovered",
+      "category_impacts": [
+        "SEC-B",
+        "SEC-C"
+      ],
+      "priority": "critical"
+    },
+    {
+      "event_id": "RET-BRIAR-CLOUD-DEL",
+      "doc_id": "DOC-BRIAR-SOLARIS-MODEL",
+      "file_class": "valuation_workpaper",
+      "recovery_status": "unrecovered",
+      "category_impacts": [
+        "SEC-B",
+        "SEC-C"
+      ],
+      "priority": "critical"
+    }
+  ],
+  "privilege_defects": [
+    {
+      "defect_id": "PRIV-BRIAR-ADVISER-WAIVER",
+      "defect_type": "third_party_waiver",
+      "doc_count": 4,
+      "third_party": "outside placement adviser",
+      "priority": "critical",
+      "recommended_action": "waiver_analysis_and_disclosure_position"
+    },
+    {
+      "defect_id": "QC-BRIAR-MISCODED-PRIV",
+      "defect_type": "privileged_coded_nonprivileged",
+      "doc_count": 38,
+      "third_party": null,
+      "priority": "high",
+      "recommended_action": "privilege_recode_and_clawback_assessment"
+    },
+    {
+      "defect_id": "PRIV-BRIAR-OVERDESIG",
+      "defect_type": "over_designation",
+      "doc_count": 15,
+      "third_party": null,
+      "priority": "medium",
+      "recommended_action": "downgrade_overdesignated_business_docs"
+    }
+  ],
+  "substantive_red_flags": [
+    {
+      "doc_id": "DOC-BRIAR-NOVA-BACKSOLVE",
+      "red_flag_type": "valuation_back_into",
+      "category_impacts": [
+        "SEC-A"
+      ],
+      "priority": "high",
+      "recommended_action": "escalate_valuation_red_flags"
+    },
+    {
+      "doc_id": "DOC-BRIAR-SOLARIS-OVERRIDE",
+      "red_flag_type": "unsupported_valuation_mark",
+      "category_impacts": [
+        "SEC-A"
+      ],
+      "priority": "high",
+      "recommended_action": "escalate_valuation_red_flags"
+    }
+  ],
+  "metrics": {
+    "sync_folder_event_id": "RET-BRIAR-CLOUD-DEL",
+    "sync_folder_deleted_count": 24,
+    "sync_folder_recovered_count": 17,
+    "sync_folder_unrecovered_count": 7,
+    "sync_folder_affected_categories": [
+      "SEC-B",
+      "SEC-C"
+    ],
+    "unrecovered_investigation_relevant_file_count": 2,
+    "personal_account_gap_count": 1,
+    "privileged_forwarded_count": 4,
+    "over_designated_count": 15,
+    "miscoded_privileged_count": 38
+  },
+  "recommended_actions": [
+    {
+      "rank": 1,
+      "target_id": "RET-BRIAR-CLOUD-DEL",
+      "action_type": "forensic_recovery_and_sec_disclosure_review",
+      "owner": "ediscovery_counsel",
+      "priority": "critical",
+      "due_days": 2
+    },
+    {
+      "rank": 2,
+      "target_id": "SRC-BRIAR-LIN-LAPTOP",
+      "action_type": "forensic_recovery_and_sec_disclosure_review",
+      "owner": "ediscovery_counsel",
+      "priority": "critical",
+      "due_days": 2
+    },
+    {
+      "rank": 3,
+      "target_id": "SRC-BRIAR-LIN-PMAIL",
+      "action_type": "personal_account_collection",
+      "owner": "forensics_team",
+      "priority": "high",
+      "due_days": 5
+    },
+    {
+      "rank": 4,
+      "target_id": "PRIV-BRIAR-ADVISER-WAIVER",
+      "action_type": "privilege_waiver_review",
+      "owner": "privilege_counsel",
+      "priority": "critical",
+      "due_days": 3
+    },
+    {
+      "rank": 5,
+      "target_id": "QC-BRIAR-MISCODED-PRIV",
+      "action_type": "privilege_recode",
+      "owner": "review_qc_lead",
+      "priority": "high",
+      "due_days": 5
+    },
+    {
+      "rank": 6,
+      "target_id": "PRIV-BRIAR-OVERDESIG",
+      "action_type": "overdesignation_cleanup",
+      "owner": "privilege_counsel",
+      "priority": "medium",
+      "due_days": 7
+    },
+    {
+      "rank": 7,
+      "target_id": "DOC-BRIAR-NOVA-BACKSOLVE",
+      "action_type": "valuation_red_flag_escalation",
+      "owner": "investigation_team",
+      "priority": "high",
+      "due_days": 4
+    }
+  ]
+}

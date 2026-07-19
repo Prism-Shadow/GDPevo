@@ -1,0 +1,152 @@
+{
+  "task_id": "train_002",
+  "matter_id": {
+    "type": "string",
+    "required": true,
+    "description": "The stable matter identifier reviewed in the Investigation Review Hub."
+  },
+  "required_top_level_keys": [
+    "matter_id",
+    "retention_events",
+    "communication_gaps",
+    "available_archives",
+    "metrics",
+    "recommended_actions"
+  ],
+  "ordering_rules": {
+    "retention_events": "Sort by event_id ascending.",
+    "communication_gaps": "Sort by event_id ascending.",
+    "available_archives": "Sort by source_id ascending.",
+    "recommended_actions": "Sort by priority_rank ascending, then target_id ascending.",
+    "category_sets": "Use uppercase category codes and sort ascending."
+  },
+  "enum_choices": {
+    "retention_status": [
+      "policy_destroyed_pre_hold",
+      "post_hold_loss",
+      "auto_purged",
+      "active_system_loss",
+      "should_exist_missing",
+      "available_archive",
+      "preserved_available",
+      "collection_pending",
+      "not_applicable"
+    ],
+    "risk_level": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "volume_unit": [
+      "boxes",
+      "days",
+      "months",
+      "records",
+      "not_applicable"
+    ],
+    "gap_type": [
+      "auto_purge",
+      "active_system_loss",
+      "uncollected_source",
+      "missing_required_record",
+      "not_applicable"
+    ],
+    "archive_status": [
+      "available_archive",
+      "unavailable",
+      "unknown"
+    ],
+    "action_type": [
+      "no_action_policy_loss",
+      "document_system_gap",
+      "disclose_preservation_issue",
+      "collect_archive",
+      "restore_from_backup",
+      "locate_missing_record",
+      "custodian_followup",
+      "escalate_to_counsel"
+    ],
+    "owner": [
+      "litigation_counsel",
+      "records_management",
+      "ediscovery_vendor",
+      "it_messaging",
+      "compliance_audit",
+      "legal_operations"
+    ]
+  },
+  "schema": {
+    "matter_id": "string",
+    "retention_events": [
+      {
+        "event_id": "string",
+        "status": "enum:retention_status",
+        "risk_level": "enum:risk_level",
+        "affected_categories": "array<string category_code>",
+        "record_type": "string",
+        "event_date": "string YYYY-MM-DD or null",
+        "hold_date": "string YYYY-MM-DD or null",
+        "policy_section": "string or null",
+        "retention_period_months": "integer or null",
+        "volume_count": "integer or null",
+        "volume_unit": "enum:volume_unit",
+        "cutoff_date": "string YYYY-MM-DD or null"
+      }
+    ],
+    "communication_gaps": [
+      {
+        "event_id": "string",
+        "system": "string",
+        "gap_type": "enum:gap_type",
+        "status": "enum:retention_status",
+        "risk_level": "enum:risk_level",
+        "affected_categories": "array<string category_code>",
+        "purge_window_days": "integer or null",
+        "cutoff_date": "string YYYY-MM-DD or null",
+        "archive_exception_source_id": "string or null"
+      }
+    ],
+    "available_archives": [
+      {
+        "source_id": "string",
+        "archive_status": "enum:archive_status",
+        "source_type": "string",
+        "retention_years": "integer",
+        "affected_categories": "array<string category_code>",
+        "limits_irretrievable_loss_for_categories": "array<string category_code>",
+        "action_type": "enum:action_type",
+        "owner": "enum:owner"
+      }
+    ],
+    "metrics": {
+      "retention_event_count": "integer",
+      "pre_hold_policy_destroyed_event_count": "integer",
+      "post_hold_loss_event_count": "integer",
+      "communication_gap_event_count": "integer",
+      "should_exist_missing_event_count": "integer",
+      "available_archive_count": "integer",
+      "destroyed_box_count": "integer",
+      "pre_hold_destroyed_box_count": "integer",
+      "post_hold_destroyed_box_count": "integer",
+      "unique_affected_category_count": "integer",
+      "categories_with_any_gap_or_loss": "array<string category_code>"
+    },
+    "recommended_actions": [
+      {
+        "target_id": "string",
+        "action_type": "enum:action_type",
+        "owner": "enum:owner",
+        "priority_rank": "integer, 1 is highest priority",
+        "risk_level": "enum:risk_level",
+        "affected_categories": "array<string category_code>"
+      }
+    ]
+  },
+  "numeric_precision": {
+    "counts": "whole integers",
+    "retention_years": "whole years",
+    "retention_period_months": "whole months",
+    "priority_rank": "whole integers"
+  }
+}

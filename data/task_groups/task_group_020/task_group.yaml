@@ -1,0 +1,337 @@
+task_group:
+  task_group_id: task_group_020
+  scenario_id: SCN_020_ma_transaction_contract_review_and_negotiation
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Legal
+  description: |
+    A train-predict benchmark for corporate M&A transaction-counsel workflows.
+    Solvers use a shared M&A deal workbench to review draft transaction terms,
+    compare them with seller or buyer playbooks and committee policies, quantify
+    legal and economic deviations, and return structured issue registers,
+    closing packages, or escalation matrices. Train and test tasks share
+    recurring source-precedence, percentage-base, risk-rating, escalation, and
+    negotiation-position conventions while using different deals and output
+    schemas.
+
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+    - env/Dockerfile
+    - env/setup.sh
+    - env/app.py
+    - env/generate_data.py
+    - env/judge_api.py
+    - env/endpoints.txt
+    - env/requirements.txt
+    - env/data/ma_workbench.db
+    - env/data/manifest.json
+    - env/data/construction_manifest.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Correct issue set for seller APA review.
+          weight: 3
+        - goal: Correct financing condition, reverse break fee, HSR, and regulatory effort treatment.
+          weight: 3
+        - goal: Correct escrow amount, release, and investment-control calculations.
+          weight: 2
+        - goal: Correct indemnity cap, basket, and survival treatment.
+          weight: 2
+        - goal: Correct non-compete and non-solicit treatment.
+          weight: 1
+        - goal: Correct employee continuity and TSA treatment.
+          weight: 2
+        - goal: Correct tax allocation and law/forum treatment.
+          weight: 1
+        - goal: Correct priority order and summary metrics.
+          weight: 2
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: Correct holder-level cash, stock, total consideration, shares, and percentages.
+          weight: 3
+        - goal: Correct buyer indemnity fallback, escrow amount, survival, release, and materiality scrape.
+          weight: 2
+        - goal: Correct NWC collar and dollar-for-dollar adjustment posture.
+          weight: 2
+        - goal: Correct required consents, material-contract closing conditions, and non-blocking notices.
+          weight: 3
+        - goal: Correct HSR status and regulatory closing condition.
+          weight: 2
+        - goal: Correct employee service-credit, PTO, WARN-risk, and restrictive-covenant treatment.
+          weight: 2
+        - goal: Correct D&O tail and transaction-expense allocation.
+          weight: 1
+        - goal: Correct final readiness, blocker classification, and business-risk totals.
+          weight: 3
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: Correct out-of-policy committee term set.
+          weight: 3
+        - goal: Correct reverse termination fee threshold, dollar delta, and benchmark position.
+          weight: 3
+        - goal: Correct fiduciary-out deviation and mitigation conditions.
+          weight: 2
+        - goal: Correct representation survival exposure analysis.
+          weight: 2
+        - goal: Correct restricted MAE carve-out classification.
+          weight: 2
+        - goal: Correct recommendation for each escalated term.
+          weight: 2
+        - goal: Correct aggregate exposure summary.
+          weight: 2
+        - goal: Correct committee memo routing and dates.
+          weight: 1
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: Correct transition issue and redline identifier sets for Project Orion.
+          weight: 2
+        - goal: Correct missing trademark license and domain redirect redline.
+          weight: 2
+        - goal: Correct TSA duration, scope, fee, and stranded-cost treatment.
+          weight: 3
+        - goal: Correct Section 1060 and transfer-tax allocation redlines.
+          weight: 2
+        - goal: Correct field employee continuity and PTO treatment.
+          weight: 2
+        - goal: Correct outside date and seller regulatory extension protection.
+          weight: 1
+        - goal: Correct Delaware law and forum fix.
+          weight: 1
+        - goal: Correct operational risk posture, priority order, and quantified exposure summary.
+          weight: 3
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: Correct buyer SPA issue set and statuses.
+          weight: 2
+        - goal: Correct indemnity cap and basket treatment.
+          weight: 3
+        - goal: Correct survival, knowledge, and escrow treatment.
+          weight: 2
+        - goal: Correct materiality scrape position.
+          weight: 1
+        - goal: Correct consent and HSR blockers.
+          weight: 2
+        - goal: Correct material-contract blockers.
+          weight: 2
+        - goal: Correct final positions and priority order.
+          weight: 2
+        - goal: Correct risk totals.
+          weight: 2
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/evaluate.py
+      rubric:
+        - goal: Correct current issue set and excludes distractors.
+          weight: 2
+        - goal: Correct financing, reverse break fee, and HHW/regulatory treatment.
+          weight: 3
+        - goal: Correct escrow percentages, dollars, release period, and action.
+          weight: 2
+        - goal: Correct indemnity cap and basket treatment.
+          weight: 2
+        - goal: Correct milestone protection and non-compete posture.
+          weight: 1
+        - goal: Correct employee transfer, PTO, service credit, and TSA treatment.
+          weight: 2
+        - goal: Correct tax allocation and law/forum fixes.
+          weight: 1
+        - goal: Correct priority order and summary metrics.
+          weight: 2
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/evaluate.py
+      rubric:
+        - goal: Correct out-of-policy term set.
+          weight: 2
+        - goal: Correct reverse termination fee math and benchmark support.
+          weight: 3
+        - goal: Correct fiduciary-out mitigation.
+          weight: 2
+        - goal: Correct survival exposure.
+          weight: 2
+        - goal: Correct MAE carve-out classification.
+          weight: 2
+        - goal: Correct term recommendations.
+          weight: 2
+        - goal: Correct aggregate exposure and strategic context.
+          weight: 2
+        - goal: Correct routing and dates.
+          weight: 1
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/evaluate.py
+      rubric:
+        - goal: Correct holder-level cash, stock, total consideration, shares, and percentages.
+          weight: 3
+        - goal: Correct indemnity cap, special indemnity shortfall, survival, and materiality scrape posture.
+          weight: 2
+        - goal: Correct general escrow and NWC collar mechanics.
+          weight: 2
+        - goal: Correct required closing consents and non-blocking consent notice.
+          weight: 2
+        - goal: Correct HSR status and regulatory closing condition.
+          weight: 2
+        - goal: Correct employment, restrictive covenant, D&O tail, and expense treatment.
+          weight: 3
+        - goal: Correct material-contract closing conditions and debt-payoff workbench status.
+          weight: 2
+        - goal: Correct final readiness, blocker classification, and summary totals.
+          weight: 3
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/evaluate.py
+      rubric:
+        - goal: Correct transition issue identifier set for Project Nimbus.
+          weight: 2
+        - goal: Correct missing trademark license and domain redirect protections.
+          weight: 2
+        - goal: Correct TSA duration, service scope, fee model, and stranded-cost recovery.
+          weight: 3
+        - goal: Correct field operations employee continuity and PTO treatment.
+          weight: 2
+        - goal: Correct Section 1060 and transfer-tax allocation package.
+          weight: 2
+        - goal: Correct HSR-driven outside date and seller regulatory extension.
+          weight: 1
+        - goal: Correct Delaware governing law and forum fix.
+          weight: 1
+        - goal: Correct operational risk summary, priority order, quantified exposures, and redline package mapping.
+          weight: 3
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/evaluate.py
+      rubric:
+        - goal: Correct waiver term set.
+          weight: 3
+        - goal: Correct threshold, delta, and exposure calculations.
+          weight: 3
+        - goal: Correct recommendation choices.
+          weight: 2
+        - goal: Correct concession ranking.
+          weight: 2
+        - goal: Correct BATNA and deal-certainty flags.
+          weight: 2
+        - goal: Correct aggregate risk summary.
+          weight: 2
+        - goal: Correct required committee conditions.
+          weight: 2
+        - goal: Correct final posture and routing.
+          weight: 1

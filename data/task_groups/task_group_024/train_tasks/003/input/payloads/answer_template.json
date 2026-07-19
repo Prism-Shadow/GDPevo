@@ -1,0 +1,24 @@
+{
+  "release_id": "string; required; release id under review",
+  "ship_decision": "string enum; required; one of SHIP, SHIP_WITH_WATCH, NO_SHIP",
+  "milestone_completion": [
+    {
+      "milestone_id": "string; required; sort milestone_completion by milestone_id ascending",
+      "complete_primary": "integer; required; completed primary work item count for this milestone",
+      "primary_total": "integer; required; primary work item denominator for this milestone",
+      "completion_pct": "number; required; percent rounded to 1 decimal place"
+    }
+  ],
+  "gating_work_item_ids": [
+    "string; required; sorted unique non-complete release work item ids gating readiness"
+  ],
+  "blocker_cause_counts": {
+    "exact blocker cause string": "integer count; required; unresolved high-impact blockers only"
+  },
+  "critical_dependency_chains": [
+    [
+      "string work item id; ordered path from blocked release work item to non-complete dependency"
+    ]
+  ],
+  "readiness_score": "number; required; completed primary work divided by primary denominator, rounded to 3 decimal places"
+}

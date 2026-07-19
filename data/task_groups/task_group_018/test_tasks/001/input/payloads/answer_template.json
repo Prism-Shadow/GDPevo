@@ -1,0 +1,102 @@
+{
+  "description": "Return one JSON object matching this shape. Currency values are numbers rounded to two decimals. Dates use ISO YYYY-MM-DD. Lists marked as sorted must be sorted by case_number, then entry_type where applicable.",
+  "top_level_keys": {
+    "batch_id": "string",
+    "court": {
+      "jurisdiction_code": "string",
+      "court_name": "string",
+      "hearing_date": "YYYY-MM-DD",
+      "judge": "string",
+      "clerk": "string"
+    },
+    "included_case_numbers": {
+      "type": "list[string]",
+      "sorting": "ascending case_number",
+      "meaning": "Cases receiving final disposition and financial entries in this closeout."
+    },
+    "excluded_matters": [
+      {
+        "case_number": "string",
+        "status": "enum: pending | continued | deferred | disposed | closed",
+        "exclusion_reason": "enum: pending_no_signed_order | continued_no_final_order | duplicate_matter | unsupported_target",
+        "draft_disposition_entry": "enum: do_not_post | post_final_entry"
+      }
+    ],
+    "audit_findings": [
+      {
+        "case_number": "string",
+        "field_name": "enum: defendant_dob | criminal_history_score | counsel_type | source_system | disposition_status",
+        "local_value": "string",
+        "portal_value": "string",
+        "recommended_resolution": "enum: use_cms | use_hearing_notes | use_corrob_memo | exclude_pending | verify_before_entry",
+        "resolved_value": "string"
+      }
+    ],
+    "case_dispositions": [
+      {
+        "case_number": "string",
+        "defendant_name": "string",
+        "dob": "YYYY-MM-DD",
+        "counsel_type": "enum: public_defender | retained | appointed_private | unknown",
+        "criminal_history_score": "integer",
+        "case_status": "enum: disposed | pending | continued | deferred | closed",
+        "charge": {
+          "count_no": "integer",
+          "offense_code": "string",
+          "statute": "string",
+          "disposition": "enum: guilty | dismissed | nolle_prosequi | deferred | pending",
+          "plea": "enum: guilty | no contest | not guilty | none",
+          "departure_status": "enum: no_departure | durational_departure | dispositional_departure | not_applicable"
+        },
+        "sentence": {
+          "jail_days_imposed": "integer",
+          "jail_days_suspended": "integer",
+          "probation_months": "integer",
+          "fine_ordered": "number currency"
+        }
+      }
+    ],
+    "financial_entries": [
+      {
+        "case_number": "string",
+        "fine_total": "number currency",
+        "mandatory_court_cost": "number currency",
+        "unsupported_fee_total": "number currency",
+        "amount_due": "number currency"
+      }
+    ],
+    "fee_reconciliation": [
+      {
+        "case_number": "string",
+        "line_type": "enum: court_cost | fine | user_fee | assessment | draft_financial",
+        "worksheet_amount": "number currency",
+        "approved_amount": "number currency",
+        "status": "enum: accepted | corrected_current_schedule | excluded_unsupported | excluded_pending | waived_by_court"
+      }
+    ],
+    "docket_entries": [
+      {
+        "case_number": "string",
+        "entry_date": "YYYY-MM-DD",
+        "entry_type": "enum: disposition | financial",
+        "entry_code": "enum: sentencing_order_entered | deferred_order_entered | dismissal_order_entered | financial_obligation_entered",
+        "amount_due": "number currency"
+      }
+    ],
+    "register_totals": {
+      "included_case_count": "integer",
+      "excluded_pending_count": "integer",
+      "disposition_entry_count": "integer",
+      "financial_entry_count": "integer",
+      "fine_total": "number currency",
+      "mandatory_court_cost_total": "number currency",
+      "unsupported_fee_total": "number currency",
+      "grand_total_due": "number currency"
+    },
+    "source_summary": {
+      "case_record_basis": "enum: portal_plus_hearing_notes | local_notes_only | worksheet_only",
+      "fee_schedule_basis": "enum: current_portal_schedule | old_fee_worksheet | mixed_unverified",
+      "pending_matter_handling": "enum: exclude_from_final_entries | include_draft_entry"
+    }
+  }
+}

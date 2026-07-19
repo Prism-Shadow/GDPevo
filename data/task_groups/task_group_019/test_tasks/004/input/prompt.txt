@@ -1,0 +1,17 @@
+You are a senior licensing examiner reviewing a contractor application batch for the State Contractors Licensing Board.
+
+Review application ids C-TE4-001 through C-TE4-015.
+
+Use the shared licensing environment at <TASK_ENV_BASE_URL>. The relevant business endpoints are:
+
+- GET <TASK_ENV_BASE_URL>/api/policies
+- GET <TASK_ENV_BASE_URL>/api/contractor/applications
+- GET <TASK_ENV_BASE_URL>/api/contractor/bonds
+- GET <TASK_ENV_BASE_URL>/api/contractor/insurance
+- GET <TASK_ENV_BASE_URL>/api/contractor/license-history
+- GET <TASK_ENV_BASE_URL>/api/contractor/violations
+- GET <TASK_ENV_BASE_URL>/api/contractor/correspondence
+- GET <TASK_ENV_BASE_URL>/api/contractor/inspections
+- POST <TASK_ENV_BASE_URL>/api/sql
+
+Use 2025-07-18 as the review date for current-coverage and eligibility decisions. Produce one JSON answer matching input/payloads/answer_template.json. Include exactly the fifteen target applications, order application_decisions by application_id, keep summary rollups consistent with the application-level decisions, and return only the JSON object.

@@ -1,0 +1,305 @@
+{
+  "matter_id": "MTR-NORTHBAY-SEC",
+  "readiness_statuses": [
+    {
+      "category_code": "SEC-C",
+      "readiness_status": "not_ready_multiple_blockers",
+      "production_impact": "multiple_impacts",
+      "blocking_refs": [
+        "DOC-NORTH-TRIAL-RISK",
+        "PRIV-NORTH-CC-BIZ",
+        "PRIV-NORTH-CONSULTANT"
+      ],
+      "required_actions": [
+        "recode_and_produce",
+        "waiver_assessment_and_disclosure",
+        "qc_remediation"
+      ]
+    },
+    {
+      "category_code": "SEC-D",
+      "readiness_status": "not_ready_privilege_log_incomplete",
+      "production_impact": "withheld_unlogged",
+      "blocking_refs": [
+        "PRIV-NORTH-LOG-GAP",
+        "QC-NORTH-MISCODED-PRIV"
+      ],
+      "required_actions": [
+        "supplement_privilege_log",
+        "qc_remediation"
+      ]
+    }
+  ],
+  "issue_ledger": [
+    {
+      "issue_id": "DOC-NORTH-TRIAL-RISK",
+      "issue_type": "responsive_miscoding",
+      "severity": "high",
+      "issue_status": "confirmed",
+      "source_status": "not_applicable",
+      "category_impacts": [
+        "SEC-C"
+      ],
+      "record_refs": [
+        "DOC-NORTH-TRIAL-RISK"
+      ],
+      "document_count": 1,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "missing_component": null,
+      "current_coding": "nonresponsive",
+      "produced_status": "not_produced",
+      "corrected_disposition": "responsive_produce",
+      "recommended_action": "recode_and_produce",
+      "owner": "review_qc",
+      "priority": "P0"
+    },
+    {
+      "issue_id": "PRIV-NORTH-CC-BIZ",
+      "issue_type": "other",
+      "severity": "medium",
+      "issue_status": "open",
+      "source_status": "not_applicable",
+      "category_impacts": [
+        "SEC-C"
+      ],
+      "record_refs": [
+        "PRIV-NORTH-CC-BIZ"
+      ],
+      "document_count": 27,
+      "withheld_count": 27,
+      "logged_count": 27,
+      "unlogged_count": 0,
+      "third_party": null,
+      "missing_component": "business_only_counsel_copy_overdesignation",
+      "current_coding": "privileged",
+      "produced_status": "withheld",
+      "corrected_disposition": "no_change",
+      "recommended_action": "qc_remediation",
+      "owner": "privilege_team",
+      "priority": "P2"
+    },
+    {
+      "issue_id": "PRIV-NORTH-CONSULTANT",
+      "issue_type": "third_party_waiver",
+      "severity": "high",
+      "issue_status": "waived",
+      "source_status": "not_applicable",
+      "category_impacts": [
+        "SEC-C"
+      ],
+      "record_refs": [
+        "PRIV-NORTH-CONSULTANT"
+      ],
+      "document_count": 5,
+      "withheld_count": 5,
+      "logged_count": 5,
+      "unlogged_count": 0,
+      "third_party": "trial_consultant",
+      "missing_component": null,
+      "current_coding": "privileged",
+      "produced_status": "not_applicable",
+      "corrected_disposition": "waiver_assessment",
+      "recommended_action": "waiver_assessment_and_disclosure",
+      "owner": "privilege_counsel",
+      "priority": "P1"
+    },
+    {
+      "issue_id": "PRIV-NORTH-LOG-GAP",
+      "issue_type": "privilege_log_gap",
+      "severity": "high",
+      "issue_status": "incomplete_log",
+      "source_status": "not_applicable",
+      "category_impacts": [
+        "SEC-D"
+      ],
+      "record_refs": [
+        "PRIV-NORTH-LOG-GAP"
+      ],
+      "document_count": 840,
+      "withheld_count": 840,
+      "logged_count": 365,
+      "unlogged_count": 475,
+      "third_party": null,
+      "missing_component": null,
+      "current_coding": "not_applicable",
+      "produced_status": "not_applicable",
+      "corrected_disposition": "supplement_log",
+      "recommended_action": "supplement_privilege_log",
+      "owner": "privilege_team",
+      "priority": "P1"
+    },
+    {
+      "issue_id": "QC-NORTH-MISCODED-PRIV",
+      "issue_type": "other",
+      "severity": "high",
+      "issue_status": "confirmed",
+      "source_status": "not_applicable",
+      "category_impacts": [
+        "SEC-D"
+      ],
+      "record_refs": [
+        "PRIV-NORTH-LOG-GAP",
+        "QC-NORTH-MISCODED-PRIV"
+      ],
+      "document_count": 31,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "missing_component": "privileged_documents_coded_nonprivileged",
+      "current_coding": "nonprivileged",
+      "produced_status": "not_applicable",
+      "corrected_disposition": "not_applicable",
+      "recommended_action": "qc_remediation",
+      "owner": "review_qc",
+      "priority": "P1"
+    }
+  ],
+  "privilege_corrections": [
+    {
+      "correction_id": "PRIV-NORTH-CC-BIZ",
+      "correction_type": "downgrade",
+      "privilege_status": "over_designated",
+      "category_impacts": [
+        "SEC-C"
+      ],
+      "document_count": 27,
+      "withheld_count": 27,
+      "logged_count": 27,
+      "unlogged_count": 0,
+      "third_party": null,
+      "recommended_action": "qc_remediation",
+      "owner": "privilege_team",
+      "priority": "P2"
+    },
+    {
+      "correction_id": "PRIV-NORTH-CONSULTANT",
+      "correction_type": "waiver_assessment",
+      "privilege_status": "waived",
+      "category_impacts": [
+        "SEC-C"
+      ],
+      "document_count": 5,
+      "withheld_count": 5,
+      "logged_count": 5,
+      "unlogged_count": 0,
+      "third_party": "trial_consultant",
+      "recommended_action": "waiver_assessment_and_disclosure",
+      "owner": "privilege_counsel",
+      "priority": "P1"
+    },
+    {
+      "correction_id": "PRIV-NORTH-LOG-GAP",
+      "correction_type": "supplement_log",
+      "privilege_status": "incomplete_log",
+      "category_impacts": [
+        "SEC-D"
+      ],
+      "document_count": 840,
+      "withheld_count": 840,
+      "logged_count": 365,
+      "unlogged_count": 475,
+      "third_party": null,
+      "recommended_action": "supplement_privilege_log",
+      "owner": "privilege_team",
+      "priority": "P1"
+    },
+    {
+      "correction_id": "QC-NORTH-MISCODED-PRIV",
+      "correction_type": "privilege_recode",
+      "privilege_status": "unknown",
+      "category_impacts": [
+        "SEC-D"
+      ],
+      "document_count": 31,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "recommended_action": "qc_remediation",
+      "owner": "review_qc",
+      "priority": "P1"
+    }
+  ],
+  "metrics": {
+    "withheld_privilege_docs": 840,
+    "logged_privilege_docs": 365,
+    "unlogged_privilege_docs": 475,
+    "waived_privilege_doc_count": 5,
+    "miscoded_responsive_doc_count": 1,
+    "personal_email_gap_source_count": 0,
+    "personal_phone_partial_source_count": 0,
+    "nonready_category_count": 2,
+    "production_ready": false
+  },
+  "priority_actions": [
+    {
+      "action_id": "ACT-NORTH-001",
+      "priority_rank": 1,
+      "priority": "P0",
+      "action_type": "recode_and_produce",
+      "owner": "review_qc",
+      "target_refs": [
+        "DOC-NORTH-TRIAL-RISK"
+      ],
+      "category_impacts": [
+        "SEC-C"
+      ]
+    },
+    {
+      "action_id": "ACT-NORTH-002",
+      "priority_rank": 2,
+      "priority": "P1",
+      "action_type": "supplement_privilege_log",
+      "owner": "privilege_team",
+      "target_refs": [
+        "PRIV-NORTH-LOG-GAP"
+      ],
+      "category_impacts": [
+        "SEC-D"
+      ]
+    },
+    {
+      "action_id": "ACT-NORTH-003",
+      "priority_rank": 3,
+      "priority": "P1",
+      "action_type": "waiver_assessment_and_disclosure",
+      "owner": "privilege_counsel",
+      "target_refs": [
+        "PRIV-NORTH-CONSULTANT"
+      ],
+      "category_impacts": [
+        "SEC-C"
+      ]
+    },
+    {
+      "action_id": "ACT-NORTH-004",
+      "priority_rank": 4,
+      "priority": "P1",
+      "action_type": "qc_remediation",
+      "owner": "review_qc",
+      "target_refs": [
+        "QC-NORTH-MISCODED-PRIV"
+      ],
+      "category_impacts": [
+        "SEC-D"
+      ]
+    },
+    {
+      "action_id": "ACT-NORTH-005",
+      "priority_rank": 5,
+      "priority": "P2",
+      "action_type": "qc_remediation",
+      "owner": "privilege_team",
+      "target_refs": [
+        "PRIV-NORTH-CC-BIZ"
+      ],
+      "category_impacts": [
+        "SEC-C"
+      ]
+    }
+  ]
+}

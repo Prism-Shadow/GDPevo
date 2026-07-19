@@ -1,0 +1,68 @@
+{
+  "deal_id": "string",
+  "prepared_for": "string",
+  "currency": "USD",
+  "position_matrix": [
+    {
+      "issue_id": "one of: indemnity_cap_and_basket, survival_and_knowledge, materiality_scrape, escrow_holdback_release, consent_closing_condition, hsr_condition, material_contracts",
+      "source_term_ids": ["stable draft term ids, or empty when the issue is missing from current draft terms"],
+      "status": "one of: in_policy, out_of_policy, missing_required_term, draft_exceeds_playbook, draft_below_playbook",
+      "risk_rating": "one of: LOW, MEDIUM, HIGH",
+      "recommended_action": "one of: delete, revise, add, accept, escalate, approve, approve_with_conditions, reject",
+      "final_position": "one of: raise_cap_to_at_least_fallback, seek_18_months_or_condition_15_on_escrow, accept_breach_only_fallback, add_10_percent_escrow_with_unresolved_agent_and_release, require_all_material_consents, add_hsr_clearance_condition, require_specific_contract_consents",
+      "priority_rank": 0,
+      "draft_percent": null,
+      "preferred_percent": null,
+      "fallback_percent": null,
+      "draft_months": null,
+      "preferred_months": null,
+      "fallback_months": null,
+      "draft_contract_count": null,
+      "draft_amount_usd": null,
+      "preferred_amount_usd": null,
+      "fallback_amount_usd": null,
+      "shortfall_to_fallback_usd": null,
+      "shortfall_to_preferred_usd": null,
+      "special_indemnity_amount_usd": null,
+      "privacy_finding_amount_usd": null,
+      "basket_status": "one of: not_found_in_current_records, found, not_applicable",
+      "knowledge_qualifier_status": "one of: not_found_in_current_records, found, not_applicable",
+      "escrow_agent_status": "one of: not_found_in_current_records, found, not_applicable",
+      "release_status": "one of: not_found_in_current_records, found, not_applicable",
+      "hsr_required": null,
+      "hell_or_high_water_required": null,
+      "required_consent_ids": [],
+      "required_contract_ids": [],
+      "excluded_contract_ids": [],
+      "excluded_from_draft": []
+    }
+  ],
+  "closing_blockers": [
+    {
+      "blocker_id": "stable consent id, contract id, or synthetic regulatory id",
+      "blocker_type": "one of: required_consent, regulatory_clearance, material_contract_consent",
+      "related_contract_id": null,
+      "must_be_satisfied_before_closing": true,
+      "risk_rating": "one of: LOW, MEDIUM, HIGH",
+      "amount_at_risk_usd": null,
+      "annual_revenue_usd": null,
+      "required_action": "one of: obtain_consent, obtain_clearance, add_closing_condition"
+    }
+  ],
+  "risk_totals": {
+    "headline_purchase_price_usd": 0,
+    "position_issue_count": 0,
+    "out_of_policy_issue_count": 0,
+    "draft_below_playbook_count": 0,
+    "missing_required_term_count": 0,
+    "high_risk_issue_count": 0,
+    "closing_blocker_count": 0,
+    "required_consent_amount_at_risk_usd": 0,
+    "material_contract_revenue_requiring_consent_usd": 0,
+    "indemnity_cap_shortfall_to_fallback_usd": 0,
+    "indemnity_cap_shortfall_to_preferred_usd": 0,
+    "total_modeled_exposure_low_usd": 0,
+    "total_modeled_exposure_high_usd": 0,
+    "highest_modeled_exposure_category": "string"
+  }
+}

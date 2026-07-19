@@ -1,0 +1,48 @@
+{
+  "task_id": "test_005",
+  "scope": {
+    "team": "Edge Delivery",
+    "as_of": "YYYY-MM-DD",
+    "recent_closed_window_days": 14,
+    "categories": [
+      "Security",
+      "Reliability"
+    ]
+  },
+  "included_primary_ids": [
+    "string work item id; sorted lexicographically; primary records only"
+  ],
+  "escalation_queue_ids": [
+    "string work item id; overdue primary ids in triage priority order"
+  ],
+  "overdue_counts_by_severity": {
+    "S1": "integer count",
+    "S2": "integer count",
+    "S3": "integer count",
+    "S4": "integer count"
+  },
+  "overdue_open_primary_ids": [
+    "string work item id; sorted lexicographically; overdue primary records still open at the as-of date"
+  ],
+  "overdue_recently_closed_primary_ids": [
+    "string work item id; sorted lexicographically; overdue primary records closed inside the recent closed window"
+  ],
+  "sla_breach_rate": "number rounded to exactly 3 decimal places; overdue primary count divided by included primary count",
+  "duplicate_clusters": [
+    {
+      "primary_id": "string canonical work item id; clusters sorted by primary_id",
+      "duplicate_ids": [
+        "string duplicate work item id; sorted lexicographically"
+      ]
+    }
+  ],
+  "missing_owner_ids": [
+    "string work item id; sorted lexicographically; included primary records with no owner"
+  ],
+  "oldest_unowned_primary_id": "string work item id; included primary record with no owner and the largest age from created_at to closed_at for recently closed records, otherwise to as_of",
+  "top_hotspot": {
+    "team": "team name for the owner/team pair with the highest overdue primary count",
+    "owner": "owner name, or UNASSIGNED when owner is missing",
+    "overdue_count": "integer count of overdue primary records for this owner/team pair"
+  }
+}

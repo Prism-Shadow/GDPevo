@@ -1,0 +1,97 @@
+{
+  "schema_name": "renewal_manual_review_queue_v1",
+  "required_top_level_keys": [
+    "queue",
+    "summary"
+  ],
+  "queue": {
+    "type": "list",
+    "length": 8,
+    "ordering": "Entries must be ordered by ascending rank. Ranks must be integers 1 through 8 with no gaps.",
+    "item": {
+      "rank": {
+        "type": "integer",
+        "allowed_range": [
+          1,
+          8
+        ]
+      },
+      "license_no": {
+        "type": "string",
+        "stable_identifier": true
+      },
+      "facility_name": {
+        "type": "string"
+      },
+      "violation_count": {
+        "type": "integer",
+        "units": "pre-boundary matched violations"
+      },
+      "most_recent_violation_date": {
+        "type": "string",
+        "format": "YYYY-MM-DD",
+        "units": "latest matched violation date used for the queue decision"
+      },
+      "match_confidence": {
+        "type": "enum",
+        "allowed_values": [
+          "exact",
+          "close_address",
+          "uncertain"
+        ]
+      },
+      "risk_tier": {
+        "type": "enum",
+        "allowed_values": [
+          "low",
+          "medium",
+          "high"
+        ]
+      },
+      "next_step_label": {
+        "type": "enum",
+        "allowed_values": [
+          "manual_fine_check",
+          "manual_ALERT_check",
+          "board_review",
+          "additional_record_check"
+        ]
+      }
+    }
+  },
+  "summary": {
+    "type": "object",
+    "required_keys": [
+      "queue_size",
+      "boundary_date",
+      "post_boundary_violation_ids_excluded",
+      "close_or_uncertain_match_license_numbers",
+      "board_review_license_numbers"
+    ],
+    "fields": {
+      "queue_size": {
+        "type": "integer",
+        "units": "queue entries"
+      },
+      "boundary_date": {
+        "type": "string",
+        "format": "YYYY-MM-DD"
+      },
+      "post_boundary_violation_ids_excluded": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort by violation_id ascending."
+      },
+      "close_or_uncertain_match_license_numbers": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort license numbers ascending."
+      },
+      "board_review_license_numbers": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort license numbers ascending."
+      }
+    }
+  }
+}

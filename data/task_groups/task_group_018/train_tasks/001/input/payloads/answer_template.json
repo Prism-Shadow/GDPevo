@@ -1,0 +1,86 @@
+{
+  "type": "object",
+  "required_top_level_keys": [
+    "audit_findings",
+    "case_dispositions",
+    "fee_reconciliation",
+    "docket_entries",
+    "register_totals"
+  ],
+  "ordering_rules": {
+    "audit_findings": "Sort by case_number, then issue_type.",
+    "case_dispositions": "Sort by case_number.",
+    "fee_reconciliation": "Sort by case_number.",
+    "docket_entries": "Sort by case_number."
+  },
+  "currency_precision": "Numbers in dollars to two decimal places.",
+  "date_format": "ISO YYYY-MM-DD.",
+  "enums": {
+    "issue_type": ["identity", "counsel", "status", "fee_schedule", "departure"],
+    "resolution_source": ["use_cms", "use_hearing_notes", "use_corrob_memo", "use_fee_schedule", "hold_unsigned_order"],
+    "counsel_type": ["public_defender", "appointed_private", "retained", "unknown"],
+    "case_status": ["disposed", "deferred", "pending", "continued"],
+    "closeout_action": ["enter_disposition", "hold_unsigned_order", "no_closeout"],
+    "plea": ["guilty", "no contest", "not guilty", "none"],
+    "charge_disposition": ["guilty", "nolle_prosequi", "deferred", "pending", "dismissed"],
+    "departure_status": ["no_departure", "durational_departure", "dispositional_departure", "not_applicable"],
+    "fee_code": ["fine", "court_cost", "drug_assessment", "public_defender_user_fee"],
+    "fee_status": ["post", "exclude", "hold"],
+    "docket_entry_type": ["sentencing_order", "disposition_hold"],
+    "summary_code": ["conviction_no_pd_fee", "conviction_drug_assessment", "conviction_no_departure", "hold_unsigned_order"]
+  },
+  "audit_findings_item": {
+    "required_keys": ["case_number", "issue_type", "conflicted_value", "corrected_value", "resolution_source"],
+    "field_types": {
+      "case_number": "string",
+      "issue_type": "enum issue_type",
+      "conflicted_value": "string",
+      "corrected_value": "string",
+      "resolution_source": "enum resolution_source"
+    }
+  },
+  "case_dispositions_item": {
+    "required_keys": [
+      "case_number",
+      "defendant_name",
+      "dob",
+      "counsel_type",
+      "attorney_name",
+      "case_status",
+      "closeout_action",
+      "disposition_date",
+      "charge_summary"
+    ],
+    "charge_summary_required_keys": [
+      "count_no",
+      "offense_code",
+      "plea",
+      "charge_disposition",
+      "fine_amount",
+      "jail_days_imposed",
+      "jail_days_suspended",
+      "probation_months",
+      "departure_status"
+    ]
+  },
+  "fee_reconciliation_item": {
+    "required_keys": ["case_number", "fee_status", "fee_items", "case_total"],
+    "fee_items_item": {
+      "required_keys": ["fee_code", "amount"]
+    }
+  },
+  "docket_entries_item": {
+    "required_keys": ["case_number", "entry_date", "docket_entry_type", "summary_code", "financial_total"]
+  },
+  "register_totals": {
+    "required_keys": [
+      "assessed_case_count",
+      "held_case_count",
+      "fine_total",
+      "court_cost_total",
+      "assessment_total",
+      "user_fee_total",
+      "grand_total"
+    ]
+  }
+}

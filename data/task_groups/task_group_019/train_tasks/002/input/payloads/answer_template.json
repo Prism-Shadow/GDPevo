@@ -1,0 +1,165 @@
+{
+  "task_id": "train_002",
+  "response_file": "answer.json",
+  "description": "Restricted liquor license staff package for one application and location.",
+  "required_top_level_keys": [
+    "application_id",
+    "recommended_posture",
+    "same_premises_basis_applies",
+    "covered_risk_codes",
+    "verification_gap_codes",
+    "standard_obligation_codes",
+    "location_specific_control_codes",
+    "first_90_day_plan",
+    "escalation_trigger_codes"
+  ],
+  "schema": {
+    "application_id": {
+      "type": "string",
+      "required": true,
+      "value_source": "Target application id from the prompt."
+    },
+    "recommended_posture": {
+      "type": "enum",
+      "required": true,
+      "allowed_values": [
+        "issue_restricted",
+        "request_follow_up",
+        "deny"
+      ]
+    },
+    "same_premises_basis_applies": {
+      "type": "boolean",
+      "required": true
+    },
+    "covered_risk_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "AFTER_HOURS",
+          "ASSAULT",
+          "FOOD_SERVICE_GAP",
+          "MINOR_SALE",
+          "NOISE",
+          "PUBLIC_SAFETY",
+          "SALE_TO_MINOR",
+          "SAME_PREMISES",
+          "TAX_HOLD"
+        ]
+      },
+      "ordering": "Sort ascending by code and remove duplicates."
+    },
+    "verification_gap_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "CONTROL_SIGNAGE_CONFLICTING",
+          "CONTROL_SIGNAGE_CURRENT_MISSING",
+          "FLOOR_PLAN_CONFLICTING",
+          "FLOOR_PLAN_STALE",
+          "NEIGHBOR_NOTICE_MISSING",
+          "OPEN_INCIDENT_FOLLOW_UP",
+          "POLICE_MEMO_CONFLICTING",
+          "SITE_PHOTO_MISSING",
+          "TAX_CLEARANCE_MISSING"
+        ]
+      },
+      "ordering": "Sort ascending by code and remove duplicates."
+    },
+    "standard_obligation_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "CCTV",
+          "DELIVERY",
+          "FOOD_SERVICE",
+          "HOURS",
+          "ID_CHECK",
+          "NOISE",
+          "PATIO",
+          "SECURITY"
+        ]
+      },
+      "ordering": "Sort ascending by code and remove duplicates."
+    },
+    "location_specific_control_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "CCTV",
+          "DELIVERY",
+          "FOOD_SERVICE",
+          "HOURS",
+          "ID_CHECK",
+          "NOISE",
+          "PATIO",
+          "SECURITY"
+        ]
+      },
+      "ordering": "Sort ascending by code and remove duplicates."
+    },
+    "first_90_day_plan": {
+      "type": "array",
+      "required": true,
+      "ordering": "Sort ascending by check_code and remove duplicate check_code/timing pairs.",
+      "items": {
+        "type": "object",
+        "required_keys": [
+          "check_code",
+          "timing"
+        ],
+        "properties": {
+          "check_code": {
+            "type": "enum",
+            "allowed_values": [
+              "after_hours_visit",
+              "control_signage_recheck",
+              "food_service_check",
+              "id_check_observation",
+              "noise_log_review",
+              "patio_boundary_check",
+              "police_memo_follow_up",
+              "security_cctv_walkthrough",
+              "tax_clearance_check"
+            ]
+          },
+          "timing": {
+            "type": "enum",
+            "allowed_values": [
+              "first_30_days",
+              "days_31_60",
+              "days_61_90"
+            ]
+          }
+        }
+      }
+    },
+    "escalation_trigger_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "AFTER_HOURS_VIOLATION",
+          "BOARD_ORDER_CONFLICT",
+          "CONTROL_SIGNAGE_NOT_VERIFIED",
+          "MAJOR_INCIDENT_REPORTED",
+          "REFERRED_MINOR_SALE_UNRESOLVED",
+          "SECURITY_CCTV_CONTROL_FAILURE",
+          "TAX_HOLD_REOPENED"
+        ]
+      },
+      "ordering": "Sort ascending by code and remove duplicates."
+    }
+  },
+  "numeric_precision": "No numeric scored fields are required for this task.",
+  "date_format": "YYYY-MM-DD when dates are used inside any optional unscored fields."
+}

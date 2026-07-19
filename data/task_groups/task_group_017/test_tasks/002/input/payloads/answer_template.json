@@ -1,0 +1,395 @@
+{
+  "task_id": "test_002",
+  "description": "Required JSON output schema for the Portola Energy subpoena retention coverage matrix. This template defines field names, types, ordering, precision, and enum choices; it does not contain the answer.",
+  "top_level_required_keys": [
+    "matter_id",
+    "retention_events",
+    "communication_gaps",
+    "available_archives",
+    "metrics",
+    "recommended_actions"
+  ],
+  "ordering_rules": {
+    "retention_events": "Sort by event_id ascending.",
+    "communication_gaps": "Sort by event_id ascending.",
+    "available_archives": "Sort by source_id ascending.",
+    "recommended_actions": "Sort by priority_rank ascending, then target_id ascending.",
+    "category_sets": "Use uppercase category codes and sort ascending."
+  },
+  "enum_choices": {
+    "retention_status": [
+      "policy_destroyed_pre_hold",
+      "post_hold_loss",
+      "auto_purged",
+      "active_system_loss",
+      "should_exist_missing",
+      "available_archive",
+      "preserved_available",
+      "collection_pending",
+      "not_applicable"
+    ],
+    "risk_level": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "volume_unit": [
+      "monthly_blotters",
+      "exports",
+      "days",
+      "report",
+      "records",
+      "not_applicable"
+    ],
+    "gap_type": [
+      "post_hold_deleted_export",
+      "auto_purge",
+      "active_system_loss",
+      "uncollected_source",
+      "missing_required_record",
+      "not_applicable"
+    ],
+    "archive_status": [
+      "available_archive",
+      "unavailable",
+      "unknown"
+    ],
+    "archive_content": [
+      "chat_attachments",
+      "message_bodies",
+      "full_exports",
+      "metadata_only",
+      "unknown"
+    ],
+    "action_type": [
+      "no_action_policy_loss",
+      "document_system_gap",
+      "disclose_preservation_issue",
+      "collect_archive",
+      "restore_from_backup",
+      "locate_missing_record",
+      "custodian_followup",
+      "escalate_to_counsel"
+    ],
+    "owner": [
+      "litigation_counsel",
+      "records_management",
+      "ediscovery_vendor",
+      "it_messaging",
+      "compliance_audit",
+      "legal_operations"
+    ]
+  },
+  "fields": {
+    "matter_id": {
+      "type": "string",
+      "required": true,
+      "description": "The stable matter identifier reviewed in the Investigation Review Hub."
+    },
+    "retention_events": {
+      "type": "list",
+      "ordering": "Sort by event_id ascending.",
+      "item_required_keys": [
+        "event_id",
+        "status",
+        "risk_level",
+        "affected_categories",
+        "record_type",
+        "event_date",
+        "hold_date",
+        "policy_section",
+        "retention_period_months",
+        "volume_count",
+        "volume_unit",
+        "cutoff_date"
+      ],
+      "item_fields": {
+        "event_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "enum",
+          "allowed_values_ref": "retention_status"
+        },
+        "risk_level": {
+          "type": "enum",
+          "allowed_values_ref": "risk_level"
+        },
+        "affected_categories": {
+          "type": "list",
+          "items": {
+            "type": "enum",
+            "allowed_values": [
+              "PE-A",
+              "PE-B",
+              "PE-C",
+              "PE-D",
+              "PE-E",
+              "PE-F",
+              "PE-G",
+              "PE-H",
+              "PE-I"
+            ]
+          },
+          "ordering": "Sort category codes ascending."
+        },
+        "record_type": {
+          "type": "string"
+        },
+        "event_date": {
+          "type": "string",
+          "format": "YYYY-MM-DD or null"
+        },
+        "hold_date": {
+          "type": "string",
+          "format": "YYYY-MM-DD or null"
+        },
+        "policy_section": {
+          "type": "string or null"
+        },
+        "retention_period_months": {
+          "type": "integer or null",
+          "precision": "whole months"
+        },
+        "volume_count": {
+          "type": "integer or null",
+          "precision": "whole count"
+        },
+        "volume_unit": {
+          "type": "enum",
+          "allowed_values_ref": "volume_unit"
+        },
+        "cutoff_date": {
+          "type": "string",
+          "format": "YYYY-MM-DD or null"
+        }
+      }
+    },
+    "communication_gaps": {
+      "type": "list",
+      "ordering": "Sort by event_id ascending.",
+      "item_required_keys": [
+        "event_id",
+        "system",
+        "gap_type",
+        "status",
+        "risk_level",
+        "affected_categories",
+        "volume_count",
+        "volume_unit",
+        "purge_window_days",
+        "cutoff_date",
+        "archive_exception_source_id"
+      ],
+      "item_fields": {
+        "event_id": {
+          "type": "string"
+        },
+        "system": {
+          "type": "string"
+        },
+        "gap_type": {
+          "type": "enum",
+          "allowed_values_ref": "gap_type"
+        },
+        "status": {
+          "type": "enum",
+          "allowed_values_ref": "retention_status"
+        },
+        "risk_level": {
+          "type": "enum",
+          "allowed_values_ref": "risk_level"
+        },
+        "affected_categories": {
+          "type": "list",
+          "items": {
+            "type": "enum",
+            "allowed_values": [
+              "PE-A",
+              "PE-B",
+              "PE-C",
+              "PE-D",
+              "PE-E",
+              "PE-F",
+              "PE-G",
+              "PE-H",
+              "PE-I"
+            ]
+          },
+          "ordering": "Sort category codes ascending."
+        },
+        "volume_count": {
+          "type": "integer or null",
+          "precision": "whole count"
+        },
+        "volume_unit": {
+          "type": "enum",
+          "allowed_values_ref": "volume_unit"
+        },
+        "purge_window_days": {
+          "type": "integer or null",
+          "precision": "whole days"
+        },
+        "cutoff_date": {
+          "type": "string",
+          "format": "YYYY-MM-DD or null"
+        },
+        "archive_exception_source_id": {
+          "type": "string or null"
+        }
+      }
+    },
+    "available_archives": {
+      "type": "list",
+      "ordering": "Sort by source_id ascending.",
+      "item_required_keys": [
+        "source_id",
+        "archive_status",
+        "source_type",
+        "available_content",
+        "affected_categories",
+        "limits_irretrievable_loss_for_categories",
+        "action_type",
+        "owner"
+      ],
+      "item_fields": {
+        "source_id": {
+          "type": "string"
+        },
+        "archive_status": {
+          "type": "enum",
+          "allowed_values_ref": "archive_status"
+        },
+        "source_type": {
+          "type": "string"
+        },
+        "available_content": {
+          "type": "enum",
+          "allowed_values_ref": "archive_content"
+        },
+        "affected_categories": {
+          "type": "list",
+          "items": {
+            "type": "enum",
+            "allowed_values": [
+              "PE-A",
+              "PE-B",
+              "PE-C",
+              "PE-D",
+              "PE-E",
+              "PE-F",
+              "PE-G",
+              "PE-H",
+              "PE-I"
+            ]
+          },
+          "ordering": "Sort category codes ascending."
+        },
+        "limits_irretrievable_loss_for_categories": {
+          "type": "list",
+          "items": {
+            "type": "enum",
+            "allowed_values": [
+              "PE-A",
+              "PE-B",
+              "PE-C",
+              "PE-D",
+              "PE-E",
+              "PE-F",
+              "PE-G",
+              "PE-H",
+              "PE-I"
+            ]
+          },
+          "ordering": "Sort category codes ascending."
+        },
+        "action_type": {
+          "type": "enum",
+          "allowed_values_ref": "action_type"
+        },
+        "owner": {
+          "type": "enum",
+          "allowed_values_ref": "owner"
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required_keys": [
+        "retention_event_count",
+        "pre_hold_policy_destroyed_event_count",
+        "post_hold_loss_event_count",
+        "communication_gap_event_count",
+        "should_exist_missing_event_count",
+        "available_archive_count",
+        "pre_hold_destroyed_monthly_blotter_count",
+        "post_hold_deleted_export_count",
+        "auto_purge_window_days",
+        "missing_required_report_count",
+        "unique_affected_category_count",
+        "categories_with_any_gap_or_loss",
+        "categories_with_archive_exception"
+      ],
+      "numeric_precision": "All counts are whole integers.",
+      "category_set_ordering": "Sort category codes ascending."
+    },
+    "recommended_actions": {
+      "type": "list",
+      "ordering": "Sort by priority_rank ascending, then target_id ascending.",
+      "item_required_keys": [
+        "target_id",
+        "action_type",
+        "owner",
+        "priority_rank",
+        "risk_level",
+        "affected_categories"
+      ],
+      "item_fields": {
+        "target_id": {
+          "type": "string"
+        },
+        "action_type": {
+          "type": "enum",
+          "allowed_values_ref": "action_type"
+        },
+        "owner": {
+          "type": "enum",
+          "allowed_values_ref": "owner"
+        },
+        "priority_rank": {
+          "type": "integer",
+          "precision": "whole integer, 1 is highest priority"
+        },
+        "risk_level": {
+          "type": "enum",
+          "allowed_values_ref": "risk_level"
+        },
+        "affected_categories": {
+          "type": "list",
+          "items": {
+            "type": "enum",
+            "allowed_values": [
+              "PE-A",
+              "PE-B",
+              "PE-C",
+              "PE-D",
+              "PE-E",
+              "PE-F",
+              "PE-G",
+              "PE-H",
+              "PE-I"
+            ]
+          },
+          "ordering": "Sort category codes ascending."
+        }
+      }
+    }
+  },
+  "numeric_precision": {
+    "counts": "whole integers",
+    "retention_period_months": "whole months",
+    "purge_window_days": "whole days",
+    "priority_rank": "whole integers"
+  }
+}

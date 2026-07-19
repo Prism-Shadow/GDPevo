@@ -1,0 +1,176 @@
+{
+  "format": "Return a single JSON object with the required top-level keys. Do not include markdown or explanatory prose.",
+  "required_top_level_keys": [
+    "case_id",
+    "p2p_id",
+    "requested_cpt",
+    "p2p_outcome",
+    "final_status",
+    "criteria_results",
+    "resolved_criteria",
+    "new_information_changed_review",
+    "supporting_pet_factors",
+    "authorization",
+    "letter_type",
+    "recommended_alternative",
+    "internal_appeal_deadline",
+    "basis_audit"
+  ],
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "description": "Northstar authorization case identifier."
+    },
+    "p2p_id": {
+      "type": "string",
+      "description": "Completed peer-to-peer event identifier."
+    },
+    "requested_cpt": {
+      "type": "string",
+      "description": "Requested CPT code from the target authorization service line."
+    },
+    "p2p_outcome": {
+      "type": "enum",
+      "choices": [
+        "not_applicable",
+        "overturn_to_approval",
+        "uphold_intended_adverse_decision"
+      ]
+    },
+    "final_status": {
+      "type": "enum",
+      "choices": [
+        "approved",
+        "pended",
+        "md_review_required",
+        "denied",
+        "partially_approved",
+        "appeal_overturned",
+        "appeal_upheld"
+      ]
+    },
+    "criteria_results": {
+      "type": "object",
+      "key_type": "criterion_id",
+      "required_keys": [
+        "PET-IND",
+        "PET-FACTOR"
+      ],
+      "value_type": "enum",
+      "value_choices": [
+        "met",
+        "not_met",
+        "unclear",
+        "not_applicable"
+      ],
+      "coverage_rule": "Include PET-IND and PET-FACTOR exactly once with final results after the P2P."
+    },
+    "resolved_criteria": {
+      "type": "list",
+      "item_type": "string",
+      "description": "Applicable criterion IDs that were unresolved before the completed P2P and are now resolved by new patient-specific information.",
+      "ordering_rule": "Sort selected criterion IDs in ascending criterion ID order. Use an empty list only if no criteria were resolved."
+    },
+    "new_information_changed_review": {
+      "type": "boolean",
+      "description": "Whether new patient-specific information from the completed P2P materially changed the review."
+    },
+    "supporting_pet_factors": {
+      "type": "list",
+      "item_type": "enum",
+      "item_choices": [
+        "prior_equivocal_spect",
+        "bmi_limitation",
+        "attenuation_artifact"
+      ],
+      "description": "PET-over-SPECT factor codes supported by current evidence after the P2P.",
+      "ordering_rule": "Use the order shown in item_choices and include each supported factor once."
+    },
+    "authorization": {
+      "type": "object",
+      "required_keys": [
+        "auth_number",
+        "approved_units",
+        "approved_start",
+        "approved_end",
+        "approved_cpt"
+      ],
+      "fields": {
+        "auth_number": {
+          "type": "string"
+        },
+        "approved_units": {
+          "type": "integer",
+          "units": "service units",
+          "precision": "whole units"
+        },
+        "approved_start": {
+          "type": "string",
+          "format": "YYYY-MM-DD"
+        },
+        "approved_end": {
+          "type": "string",
+          "format": "YYYY-MM-DD"
+        },
+        "approved_cpt": {
+          "type": "string"
+        }
+      }
+    },
+    "letter_type": {
+      "type": "enum",
+      "choices": [
+        "approval",
+        "denial",
+        "partial_denial",
+        "no_letter"
+      ]
+    },
+    "recommended_alternative": {
+      "type": "enum",
+      "choices": [
+        "SPECT MPI",
+        "PET MPI",
+        "none"
+      ]
+    },
+    "internal_appeal_deadline": {
+      "type": "string_or_null",
+      "format": "YYYY-MM-DD",
+      "description": "Use null when no internal appeal deadline applies because the final determination is not adverse."
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Populate it using the source-precedence and record-grounding convention inferred from solved examples; use environment record IDs and business gap keys, not invented control codes.",
+      "fields": {
+        "source_precedence": {
+          "type": "string",
+          "description": "Use the concise source-precedence category convention inferred from solved examples."
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  },
+  "numeric_precision": "Service units are whole integers. No currency or ratio fields are required.",
+  "date_precision": "Dates must be ISO 8601 calendar dates in YYYY-MM-DD format."
+}

@@ -1,0 +1,364 @@
+task_group:
+  task_group_id: task_group_017
+  scenario_id: SCN_017_white_collar_investigation_production_review
+  source_examples:
+    - E001
+    - E002
+    - E003
+  domain: Legal
+  description: |
+    A train-predict benchmark for white-collar investigation production review.
+    Solvers use a shared Investigation Review Hub to analyze subpoena categories,
+    custodian collections, retention and preservation events, privilege/QC records,
+    and remediation actions. Train and test tasks are formal legal operations
+    tasks from the same investigation-response distribution.
+
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+    - env/Dockerfile
+    - env/setup.sh
+    - env/app.py
+    - env/generate_data.py
+    - env/judge_api.py
+    - env/requirements.txt
+    - env/endpoints.txt
+    - env/data/review_hub.db
+    - env/data/manifest.json
+    - env/data/judge_data.json
+
+train_tasks:
+  - task_id: train_001
+    input: train_tasks/001/input/
+    prompt_txt: train_tasks/001/input/prompt.txt
+    payloads:
+      - train_tasks/001/input/payloads/answer_template.json
+      - train_tasks/001/input/payloads/request_context.json
+    notes: train_tasks/001/notes/notes.md
+    output: train_tasks/001/output/
+    answer_json: train_tasks/001/output/answer.json
+    eval:
+      script: train_tasks/001/eval/eval.sh
+      files:
+        - train_tasks/001/eval/eval.sh
+        - train_tasks/001/eval/evaluator.py
+        - train_tasks/001/eval/rubric.json
+      rubric:
+        - goal: Identify the post-subpoena personal phone preservation failure, lost source status, affected categories, and required action.
+          weight: 3
+        - goal: Identify the responsive R09 dealer complaint email miscoded nonresponsive and not produced, including QC reference and recode-and-produce action.
+          weight: 3
+        - goal: Calculate the R11 privilege-log gap as 1770 unlogged withheld documents and classify protocol status as noncompliant.
+          weight: 3
+        - goal: Identify the uncollected board SharePoint site as a collection gap affecting R07, R08, and R09 with collection action.
+          weight: 2
+        - goal: Provide correct non-complete category statuses and source references for R07, R08, R09, R11, and R15.
+          weight: 2
+        - goal: Provide correct rollup metrics and mark the first rolling production as not ready.
+          weight: 1
+        - goal: Provide the required prioritized remediation action set with correct types, owners, targets, and category impacts.
+          weight: 3
+
+  - task_id: train_002
+    input: train_tasks/002/input/
+    prompt_txt: train_tasks/002/input/prompt.txt
+    payloads:
+      - train_tasks/002/input/payloads/answer_template.json
+      - train_tasks/002/input/payloads/review_scope.json
+    notes: train_tasks/002/notes/notes.md
+    output: train_tasks/002/output/
+    answer_json: train_tasks/002/output/answer.json
+    eval:
+      script: train_tasks/002/eval/eval.sh
+      files:
+        - train_tasks/002/eval/eval.sh
+        - train_tasks/002/eval/evaluator.py
+        - train_tasks/002/eval/rubric.json
+      rubric:
+        - goal: Identify the HarborStone matter and the complete target retention-event set.
+          weight: 1
+        - goal: Classify 2019 lab data boxes as pre-hold policy destruction under policy section 3.1.
+          weight: 2
+        - goal: Classify EHS correspondence destruction as a high-risk post-hold loss with correct timing, volume, and affected categories.
+          weight: 3
+        - goal: Identify voicemail auto-purge and Teams active-system loss as separate communication gaps.
+          weight: 2
+        - goal: Treat the October 2023 Calverley audit as a required record that should still exist under a 60-month retention period.
+          weight: 3
+        - goal: Identify IronVault as an available seven-year email archive affecting categories D and E.
+          weight: 2
+        - goal: Report required numeric counts and unique affected-category set.
+          weight: 2
+        - goal: Provide the correct prioritized action and owner set for preservation loss, missing audit, archive collection, system gaps, and policy-compliant loss.
+          weight: 2
+
+  - task_id: train_003
+    input: train_tasks/003/input/
+    prompt_txt: train_tasks/003/input/prompt.txt
+    payloads:
+      - train_tasks/003/input/payloads/answer_template.json
+      - train_tasks/003/input/payloads/review_scope.json
+    notes: train_tasks/003/notes/notes.md
+    output: train_tasks/003/output/
+    answer_json: train_tasks/003/output/answer.json
+    eval:
+      script: train_tasks/003/eval/eval.sh
+      files:
+        - train_tasks/003/eval/eval.sh
+        - train_tasks/003/eval/evaluator.py
+        - train_tasks/003/eval/rubric.json
+      rubric:
+        - goal: Identify the Graycliff matter and required dashboard scope.
+          weight: 1
+        - goal: Rank the shared-drive post-hold deletion as a critical preservation loss with unrecovered valuation document references.
+          weight: 3
+        - goal: Identify the Hale laptop wipe as a post-hold source loss affecting SEC-1 and SEC-4.
+          weight: 2
+        - goal: Identify the Winslow third-party waiver privilege entry with correct count, third-party name, and waiver action.
+          weight: 2
+        - goal: Identify the 45-document miscoded privilege QC finding and privilege-recode exposure.
+          weight: 2
+        - goal: Identify Hale's uncollected personal Gmail source gap with correct impacts and collection action.
+          weight: 2
+        - goal: Report the required category coverage rows and dashboard metrics, including zero incomplete-log counts and separate waiver/miscoded-privilege counts.
+          weight: 3
+        - goal: Provide the ranked action plan for preservation disclosure, waiver assessment, privilege recoding, and personal-source collection.
+          weight: 3
+
+  - task_id: train_004
+    input: train_tasks/004/input/
+    prompt_txt: train_tasks/004/input/prompt.txt
+    payloads:
+      - train_tasks/004/input/payloads/answer_template.json
+      - train_tasks/004/input/payloads/review_scope.json
+    notes: train_tasks/004/notes/notes.md
+    output: train_tasks/004/output/
+    answer_json: train_tasks/004/output/answer.json
+    eval:
+      script: train_tasks/004/eval/eval.sh
+      files:
+        - train_tasks/004/eval/eval.sh
+        - train_tasks/004/eval/evaluate.py
+        - train_tasks/004/eval/rubric.json
+      rubric:
+        - goal: Mark SEC-C and SEC-D as not production-ready with correct blocker references, impact classes, and overall production_ready false.
+          weight: 2
+        - goal: Identify the clinical-risk responsive miscoding defect in SEC-C and select recode-and-produce remediation.
+          weight: 3
+        - goal: Identify the incomplete privilege log and calculate 475 unlogged documents from 840 withheld and 365 logged.
+          weight: 3
+        - goal: Identify the five legal-advice emails forwarded to a trial consultant as third-party waiver with waiver assessment action.
+          weight: 2
+        - goal: Identify the privilege cleanup package for over-designated counsel-copy emails and privileged documents miscoded nonprivileged.
+          weight: 2
+        - goal: Report the required readiness metrics for privilege, waiver, miscoding, personal-source gaps, non-ready categories, and final readiness.
+          weight: 1
+        - goal: Provide the prioritized action set and rank order for recoding, privilege-log supplementation, waiver assessment, and QC remediation.
+          weight: 3
+
+  - task_id: train_005
+    input: train_tasks/005/input/
+    prompt_txt: train_tasks/005/input/prompt.txt
+    payloads:
+      - train_tasks/005/input/payloads/answer_template.json
+      - train_tasks/005/input/payloads/matter_context.json
+    notes: train_tasks/005/notes/notes.md
+    output: train_tasks/005/output/
+    answer_json: train_tasks/005/output/answer.json
+    eval:
+      script: train_tasks/005/eval/eval.sh
+      files:
+        - train_tasks/005/eval/eval.sh
+        - train_tasks/005/eval/evaluate.py
+        - train_tasks/005/eval/rubric.json
+      rubric:
+        - goal: Identify the AlloyWorks matter and required dashboard scope.
+          weight: 1
+        - goal: Rank the off-site bid-file destruction as critical post-hold loss with correct volume, categories, status, and disclosure action.
+          weight: 3
+        - goal: Identify both uncollected personal messaging sources as personal-source gaps with correct categories and collection action.
+          weight: 3
+        - goal: Identify the AlloyWorks third-party waiver privilege entry with correct category, count, status, third-party marker, and waiver action.
+          weight: 2
+        - goal: Identify the AlloyWorks privilege-log gap and calculate 72 unlogged documents from 106 withheld and 34 logged.
+          weight: 3
+        - goal: Identify the Teams archive as an available remediation source for the deleted pricing channel and map it to categories D and E.
+          weight: 2
+        - goal: Identify the category F zero-claim contradiction as a responsiveness miscoding risk tied to both bid-email documents and QC finding.
+          weight: 3
+        - goal: Report the required category coverage rows and integer metrics for the dashboard.
+          weight: 2
+        - goal: Provide the required ranked action plan for preservation disclosure, waiver assessment, recoding, privilege-log supplementation, personal-source collection, and archive search.
+          weight: 3
+
+test_tasks:
+  - task_id: test_001
+    input: test_tasks/001/input/
+    prompt_txt: test_tasks/001/input/prompt.txt
+    payloads:
+      - test_tasks/001/input/payloads/answer_template.json
+      - test_tasks/001/input/payloads/request_context.json
+    notes: test_tasks/001/notes/notes.md
+    output: test_tasks/001/output/
+    answer_json: test_tasks/001/output/answer.json
+    eval:
+      script: test_tasks/001/eval/eval.sh
+      files:
+        - test_tasks/001/eval/eval.sh
+        - test_tasks/001/eval/evaluator.py
+        - test_tasks/001/eval/rubric.json
+      rubric:
+        - goal: Identify Leo Carrow's post-subpoena phone remote-erasure as a preservation failure with lost source status, MD-09 and MD-15 impacts, and action.
+          weight: 3
+        - goal: Identify the responsive MD-09 dealer safety escalation miscoded nonresponsive and not produced, including QC reference and recode-and-produce action.
+          weight: 3
+        - goal: Calculate the MD-11 privilege-log gap as 1350 unlogged withheld documents and classify protocol status as noncompliant.
+          weight: 3
+        - goal: Identify the uncollected board portal as a collection gap affecting MD-07, MD-08, and MD-09 with collection action.
+          weight: 2
+        - goal: Provide correct non-complete category statuses and source references for MD-07, MD-08, MD-09, MD-11, and MD-15.
+          weight: 2
+        - goal: Provide correct rollup metrics and mark the rolling production as not ready.
+          weight: 1
+        - goal: Provide the required prioritized remediation action set with correct action types, owners, targets, category impacts, and unique priority ranks.
+          weight: 3
+
+  - task_id: test_002
+    input: test_tasks/002/input/
+    prompt_txt: test_tasks/002/input/prompt.txt
+    payloads:
+      - test_tasks/002/input/payloads/answer_template.json
+      - test_tasks/002/input/payloads/review_scope.json
+    notes: test_tasks/002/notes/notes.md
+    output: test_tasks/002/output/
+    answer_json: test_tasks/002/output/answer.json
+    eval:
+      script: test_tasks/002/eval/eval.sh
+      files:
+        - test_tasks/002/eval/eval.sh
+        - test_tasks/002/eval/evaluator.py
+        - test_tasks/002/eval/rubric.json
+      rubric:
+        - goal: Identify the Portola matter and the complete target retention-event set.
+          weight: 1
+        - goal: Classify 2018 trade blotter destruction as low-risk pre-hold policy destruction under the 72-month schedule.
+          weight: 2
+        - goal: Treat deleted deal-chat exports as a high-risk post-hold loss with correct volume, categories, communication-gap entry, and disclosure action.
+          weight: 3
+        - goal: Identify trader voicemail as a 120-day auto-purge communication gap affecting PE-D.
+          weight: 2
+        - goal: Identify the EnergyComms chat archive as available for chat attachments affecting PE-D and PE-E.
+          weight: 2
+        - goal: Treat the 2024 surveillance report as a required missing record with correct retention period, categories, and locate action.
+          weight: 3
+        - goal: Report required numeric counts and affected-category sets.
+          weight: 2
+        - goal: Rank preservation disclosure, missing-report search, archive collection, voicemail documentation, and pre-hold policy-loss disposition in correct operational order.
+          weight: 3
+
+  - task_id: test_003
+    input: test_tasks/003/input/
+    prompt_txt: test_tasks/003/input/prompt.txt
+    payloads:
+      - test_tasks/003/input/payloads/answer_template.json
+      - test_tasks/003/input/payloads/review_scope.json
+    notes: test_tasks/003/notes/notes.md
+    output: test_tasks/003/output/
+    answer_json: test_tasks/003/output/answer.json
+    eval:
+      script: test_tasks/003/eval/eval.sh
+      files:
+        - test_tasks/003/eval/eval.sh
+        - test_tasks/003/eval/evaluator.py
+        - test_tasks/003/eval/rubric.json
+      rubric:
+        - goal: Identify the Lin laptop as a post-hold preservation failure with correct source ID, status, wipe date, category impacts, priority, and action.
+          weight: 3
+        - goal: Report the synchronized-folder deletion event with correct event ID, deletion, recovery, unrecovered counts, and affected SEC categories.
+          weight: 3
+        - goal: Identify unrecovered investigation-relevant file IDs and link them to the synchronized-folder recovery gap.
+          weight: 2
+        - goal: Identify Lin's uncollected ProtonMail source gap with correct impacts and action.
+          weight: 2
+        - goal: Classify outside placement-adviser forwarding as third-party waiver with correct count, third party, priority, and action.
+          weight: 2
+        - goal: Classify the logistics-email privilege over-designation defect with correct count and cleanup action.
+          weight: 1
+        - goal: Classify the miscoded privileged document QC defect with correct finding ID, count, priority, and recode/clawback action.
+          weight: 2
+        - goal: Identify valuation red-flag document IDs and classify them as substantive valuation red flags.
+          weight: 2
+        - goal: Prioritize the remediation package across preservation, personal-account collection, privilege remediation, and valuation escalation targets.
+          weight: 2
+
+  - task_id: test_004
+    input: test_tasks/004/input/
+    prompt_txt: test_tasks/004/input/prompt.txt
+    payloads:
+      - test_tasks/004/input/payloads/answer_template.json
+      - test_tasks/004/input/payloads/review_scope.json
+    notes: test_tasks/004/notes/notes.md
+    output: test_tasks/004/output/
+    answer_json: test_tasks/004/output/answer.json
+    eval:
+      script: test_tasks/004/eval/eval.sh
+      files:
+        - test_tasks/004/eval/eval.sh
+        - test_tasks/004/eval/evaluate.py
+        - test_tasks/004/eval/rubric.json
+      rubric:
+        - goal: Mark non-ready categories CR-06, CR-11, and CR-15 with correct readiness statuses, impacts, blocker references, and overall not-ready decision.
+          weight: 2
+        - goal: Identify the CR-06 zero-claim contradiction from the side-channel banker email coded nonresponsive and select recode-and-produce remediation.
+          weight: 3
+        - goal: Identify Rina Park's uncollected personal Gmail as a source gap affecting CR-06 and CR-15 with personal-email collection remediation.
+          weight: 2
+        - goal: Identify Rina Park's partial personal phone collection missing Signal messages as a CR-15 source gap with Signal collection remediation.
+          weight: 2
+        - goal: Identify the incomplete privilege log, including 1290 withheld documents, 480 logged documents, and 810 unlogged documents.
+          weight: 3
+        - goal: Identify seller-side banker third-party waiver for six attorney-client emails and select waiver assessment/disclosure remediation.
+          weight: 2
+        - goal: Provide production-readiness rollup metrics for privilege, waiver, miscoding, personal-source gaps, non-ready categories, and final readiness.
+          weight: 1
+        - goal: Provide prioritized action set and order for CR-06 recoding, personal-source collection, privilege-log supplementation, and waiver assessment.
+          weight: 3
+
+  - task_id: test_005
+    input: test_tasks/005/input/
+    prompt_txt: test_tasks/005/input/prompt.txt
+    payloads:
+      - test_tasks/005/input/payloads/answer_template.json
+      - test_tasks/005/input/payloads/matter_context.json
+    notes: test_tasks/005/notes/notes.md
+    output: test_tasks/005/output/
+    answer_json: test_tasks/005/output/answer.json
+    eval:
+      script: test_tasks/005/eval/eval.sh
+      files:
+        - test_tasks/005/eval/eval.sh
+        - test_tasks/005/eval/evaluate.py
+        - test_tasks/005/eval/rubric.json
+      rubric:
+        - goal: Classify lab-results archive destruction as critical post-hold preservation loss with correct event ID, volume, categories, and disclosure action.
+          weight: 3
+        - goal: Identify the uncollected personal phone source, category impacts, collection status, and personal-device collection action.
+          weight: 2
+        - goal: Identify the cloud mail archive as an available remediation source for purged custodian mail and map it to correct categories and archive-search action.
+          weight: 2
+        - goal: Identify the investor-results complaint email responsive to VL-I but coded nonresponsive and not produced, with recode-and-produce action.
+          weight: 3
+        - goal: Calculate privilege-log gap as 1053 unlogged withheld documents from 1755 withheld and 702 logged, with correct category and action.
+          weight: 3
+        - goal: Classify three privileged emails forwarded to outside CRO as third-party waiver with correct category and waiver action.
+          weight: 2
+        - goal: Identify 29 privileged investigation documents coded non-privileged as a privilege miscoding QC defect requiring recoding and logging.
+          weight: 2
+        - goal: Identify the 2025 QA audit as a required missing record with correct event ID, status, retention period, category impacts, and locate action.
+          weight: 2
+        - goal: Provide correct category coverage rows and rollup metrics for affected Vireo categories and issue counts.
+          weight: 2
+        - goal: Sort top risks by priority and provide required ranked action plan across preservation, privilege, QC, source collection, audit, and archive remediation.
+          weight: 3

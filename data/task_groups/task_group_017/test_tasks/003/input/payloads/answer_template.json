@@ -1,0 +1,192 @@
+{
+  "schema_name": "briargate_sec_custodian_issue_packet",
+  "schema_version": "1.0",
+  "output_rule": "Return exactly one JSON object. Do not include markdown, comments, or prose outside the JSON.",
+  "top_level_required_keys": [
+    "matter_id",
+    "custodian_issues",
+    "unrecovered_files",
+    "privilege_defects",
+    "substantive_red_flags",
+    "metrics",
+    "recommended_actions"
+  ],
+  "field_definitions": {
+    "matter_id": {
+      "type": "string",
+      "description": "Matter identifier from the review scope."
+    },
+    "custodian_issues": {
+      "type": "list<object>",
+      "ordering": "Sort by priority severity, then source_id ascending.",
+      "object_required_keys": [
+        "source_id",
+        "custodian",
+        "source_type",
+        "status",
+        "risk_class",
+        "event_date",
+        "category_impacts",
+        "priority",
+        "recommended_action"
+      ]
+    },
+    "unrecovered_files": {
+      "type": "list<object>",
+      "ordering": "Sort by doc_id ascending.",
+      "object_required_keys": [
+        "event_id",
+        "doc_id",
+        "file_class",
+        "recovery_status",
+        "category_impacts",
+        "priority"
+      ]
+    },
+    "privilege_defects": {
+      "type": "list<object>",
+      "ordering": "Sort by priority severity, then defect_id ascending.",
+      "object_required_keys": [
+        "defect_id",
+        "defect_type",
+        "doc_count",
+        "third_party",
+        "priority",
+        "recommended_action"
+      ]
+    },
+    "substantive_red_flags": {
+      "type": "list<object>",
+      "ordering": "Sort by doc_id ascending.",
+      "object_required_keys": [
+        "doc_id",
+        "red_flag_type",
+        "category_impacts",
+        "priority",
+        "recommended_action"
+      ]
+    },
+    "metrics": {
+      "type": "object",
+      "required_keys": [
+        "sync_folder_event_id",
+        "sync_folder_deleted_count",
+        "sync_folder_recovered_count",
+        "sync_folder_unrecovered_count",
+        "sync_folder_affected_categories",
+        "unrecovered_investigation_relevant_file_count",
+        "personal_account_gap_count",
+        "privileged_forwarded_count",
+        "over_designated_count",
+        "miscoded_privileged_count"
+      ],
+      "numeric_precision": "All counts are integers."
+    },
+    "recommended_actions": {
+      "type": "list<object>",
+      "ordering": "Sort by rank ascending. Rank 1 is the most urgent action.",
+      "object_required_keys": [
+        "rank",
+        "target_id",
+        "action_type",
+        "owner",
+        "priority",
+        "due_days"
+      ],
+      "numeric_precision": "rank and due_days are integers."
+    }
+  },
+  "allowed_enums": {
+    "source_type": [
+      "laptop",
+      "desktop",
+      "network_share",
+      "personal_email",
+      "mobile_device",
+      "cloud_folder",
+      "other"
+    ],
+    "status": [
+      "collected",
+      "partial",
+      "pending",
+      "lost",
+      "uncollected",
+      "recovered",
+      "unrecovered",
+      "unknown"
+    ],
+    "risk_class": [
+      "post_hold_preservation_failure",
+      "collection_gap",
+      "recovery_gap",
+      "privilege_defect",
+      "qc_coding_defect",
+      "substantive_red_flag",
+      "informational"
+    ],
+    "file_class": [
+      "valuation_workpaper",
+      "investor_communication",
+      "custodian_export",
+      "business_record",
+      "other"
+    ],
+    "recovery_status": [
+      "recovered",
+      "unrecovered",
+      "partially_recovered"
+    ],
+    "defect_type": [
+      "third_party_waiver",
+      "over_designation",
+      "privileged_coded_nonprivileged",
+      "incomplete_log",
+      "other_privilege_defect"
+    ],
+    "red_flag_type": [
+      "valuation_back_into",
+      "unsupported_valuation_mark",
+      "valuation_workpaper_gap",
+      "other_valuation_red_flag"
+    ],
+    "priority": [
+      "critical",
+      "high",
+      "medium",
+      "low"
+    ],
+    "recommended_action": [
+      "disclose_preservation_issue_and_pursue_forensics",
+      "collect_or_certify_unavailable",
+      "document_unrecovered_files_and_notify_counsel",
+      "waiver_analysis_and_disclosure_position",
+      "downgrade_overdesignated_business_docs",
+      "privilege_recode_and_clawback_assessment",
+      "escalate_valuation_red_flags",
+      "monitor_only"
+    ],
+    "action_type": [
+      "forensic_recovery_and_sec_disclosure_review",
+      "personal_account_collection",
+      "privilege_waiver_review",
+      "privilege_recode",
+      "overdesignation_cleanup",
+      "valuation_red_flag_escalation",
+      "status_monitoring"
+    ],
+    "owner": [
+      "ediscovery_counsel",
+      "forensics_team",
+      "privilege_counsel",
+      "review_qc_lead",
+      "investigation_team"
+    ]
+  },
+  "normalization_notes": {
+    "ids": "Use stable IDs exactly as shown in the review hub.",
+    "dates": "Use ISO 8601 date strings as YYYY-MM-DD, or null when no event date is applicable.",
+    "category_impacts": "Use category code strings from the hub. Sort codes ascending within each list.",
+    "third_party": "Use a string for the third-party name or role when applicable; use null when not applicable."
+  }
+}

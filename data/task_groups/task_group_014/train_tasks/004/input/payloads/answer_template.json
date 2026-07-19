@@ -1,0 +1,148 @@
+{
+  "format": "single JSON object",
+  "required_top_level_keys": [
+    "case_id",
+    "p2p_id",
+    "requested_cpt",
+    "p2p_outcome",
+    "final_status",
+    "criteria_results",
+    "unresolved_criteria",
+    "new_information_changed_review",
+    "missing_pet_factors",
+    "letter_type",
+    "recommended_alternative",
+    "internal_appeal_deadline",
+    "basis_audit"
+  ],
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "description": "Northstar authorization case identifier."
+    },
+    "p2p_id": {
+      "type": "string",
+      "description": "Peer-to-peer event identifier for the completed discussion."
+    },
+    "requested_cpt": {
+      "type": "string",
+      "description": "Requested procedure CPT code from the authorization line."
+    },
+    "p2p_outcome": {
+      "type": "enum",
+      "choices": [
+        "not_applicable",
+        "overturn_to_approval",
+        "uphold_intended_adverse_decision"
+      ]
+    },
+    "final_status": {
+      "type": "enum",
+      "choices": [
+        "approved",
+        "pended",
+        "md_review_required",
+        "denied",
+        "partially_approved",
+        "appeal_overturned",
+        "appeal_upheld"
+      ]
+    },
+    "criteria_results": {
+      "type": "object",
+      "description": "Map the applicable PET MPI criterion IDs to their final review result.",
+      "required_keys": [
+        "PET-IND",
+        "PET-FACTOR"
+      ],
+      "value_type": "enum",
+      "value_choices": [
+        "met",
+        "not_met",
+        "unclear",
+        "not_applicable"
+      ]
+    },
+    "unresolved_criteria": {
+      "type": "list",
+      "item_type": "string",
+      "ordering": "List unresolved criterion IDs in ascending criterion ID order. Use an empty list only if no applicable criteria remain unresolved."
+    },
+    "new_information_changed_review": {
+      "type": "boolean",
+      "description": "Whether the P2P supplied new patient-specific information that materially changed the review."
+    },
+    "missing_pet_factors": {
+      "type": "list",
+      "item_type": "enum",
+      "choices": [
+        "prior_equivocal_spect",
+        "bmi_limitation",
+        "attenuation_artifact"
+      ],
+      "ordering": "Use the order shown in choices and include each PET-over-SPECT factor that remains unsupported."
+    },
+    "letter_type": {
+      "type": "enum",
+      "choices": [
+        "approval",
+        "denial",
+        "partial_denial",
+        "no_letter"
+      ]
+    },
+    "recommended_alternative": {
+      "type": "enum",
+      "choices": [
+        "SPECT MPI",
+        "PET MPI",
+        "none"
+      ]
+    },
+    "internal_appeal_deadline": {
+      "type": "string",
+      "format": "YYYY-MM-DD",
+      "description": "Use null only when no internal appeal deadline applies."
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Record the source-precedence rule, the ordered record precedence trail, the environment record IDs that directly control the result, and the exception/gap records that explain exclusions, denials, missing information, or route priority.",
+      "fields": {
+        "source_precedence": {
+          "type": "enum",
+          "choices": [
+            "current_clinical_records_over_stale_export",
+            "payer_appeal_before_manufacturer_assistance",
+            "effective_benchmark_by_plan_modifier_and_date",
+            "new_patient_specific_p2p_information",
+            "margin_threshold_then_charge_sensitivity",
+            "appeal_deadline_then_clinical_then_payment_integrity"
+          ]
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  },
+  "numeric_precision": "No numeric amount fields are required for this task.",
+  "date_precision": "Dates must be ISO 8601 calendar dates in YYYY-MM-DD format."
+}

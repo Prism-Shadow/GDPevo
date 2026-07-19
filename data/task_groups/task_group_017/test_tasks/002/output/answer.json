@@ -1,0 +1,201 @@
+{
+  "matter_id": "MTR-PORTOLA-GJ",
+  "retention_events": [
+    {
+      "event_id": "RET-PORT-AUDIT-MISSING",
+      "status": "should_exist_missing",
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-F",
+        "PE-I"
+      ],
+      "record_type": "surveillance_report",
+      "event_date": "2024-12-31",
+      "hold_date": "2025-01-09",
+      "policy_section": "5.8",
+      "retention_period_months": 60,
+      "volume_count": 1,
+      "volume_unit": "report",
+      "cutoff_date": null
+    },
+    {
+      "event_id": "RET-PORT-CHAT-POST",
+      "status": "post_hold_loss",
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
+      ],
+      "record_type": "deal_chat_exports",
+      "event_date": "2025-02-04",
+      "hold_date": "2025-01-09",
+      "policy_section": "6.2",
+      "retention_period_months": 60,
+      "volume_count": 18,
+      "volume_unit": "exports",
+      "cutoff_date": null
+    },
+    {
+      "event_id": "RET-PORT-TRADE-2018",
+      "status": "policy_destroyed_pre_hold",
+      "risk_level": "low",
+      "affected_categories": [
+        "PE-B"
+      ],
+      "record_type": "trade_blotters",
+      "event_date": "2024-11-30",
+      "hold_date": "2025-01-09",
+      "policy_section": "2.7",
+      "retention_period_months": 72,
+      "volume_count": 12,
+      "volume_unit": "monthly_blotters",
+      "cutoff_date": null
+    },
+    {
+      "event_id": "RET-PORT-VOICE",
+      "status": "auto_purged",
+      "risk_level": "medium",
+      "affected_categories": [
+        "PE-D"
+      ],
+      "record_type": "trader_voicemail",
+      "event_date": "2025-03-11",
+      "hold_date": "2025-01-09",
+      "policy_section": "7.4",
+      "retention_period_months": 4,
+      "volume_count": 120,
+      "volume_unit": "days",
+      "cutoff_date": null
+    }
+  ],
+  "communication_gaps": [
+    {
+      "event_id": "RET-PORT-CHAT-POST",
+      "system": "deal_chat_exports",
+      "gap_type": "post_hold_deleted_export",
+      "status": "post_hold_loss",
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
+      ],
+      "volume_count": 18,
+      "volume_unit": "exports",
+      "purge_window_days": null,
+      "cutoff_date": null,
+      "archive_exception_source_id": "SRC-PORT-ENERGYCOMMS"
+    },
+    {
+      "event_id": "RET-PORT-VOICE",
+      "system": "trader_voicemail",
+      "gap_type": "auto_purge",
+      "status": "auto_purged",
+      "risk_level": "medium",
+      "affected_categories": [
+        "PE-D"
+      ],
+      "volume_count": 120,
+      "volume_unit": "days",
+      "purge_window_days": 120,
+      "cutoff_date": null,
+      "archive_exception_source_id": null
+    }
+  ],
+  "available_archives": [
+    {
+      "source_id": "SRC-PORT-ENERGYCOMMS",
+      "archive_status": "available_archive",
+      "source_type": "chat_archive",
+      "available_content": "chat_attachments",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
+      ],
+      "limits_irretrievable_loss_for_categories": [
+        "PE-D",
+        "PE-E"
+      ],
+      "action_type": "collect_archive",
+      "owner": "ediscovery_vendor"
+    }
+  ],
+  "metrics": {
+    "retention_event_count": 4,
+    "pre_hold_policy_destroyed_event_count": 1,
+    "post_hold_loss_event_count": 1,
+    "communication_gap_event_count": 2,
+    "should_exist_missing_event_count": 1,
+    "available_archive_count": 1,
+    "pre_hold_destroyed_monthly_blotter_count": 12,
+    "post_hold_deleted_export_count": 18,
+    "auto_purge_window_days": 120,
+    "missing_required_report_count": 1,
+    "unique_affected_category_count": 5,
+    "categories_with_any_gap_or_loss": [
+      "PE-B",
+      "PE-D",
+      "PE-E",
+      "PE-F",
+      "PE-I"
+    ],
+    "categories_with_archive_exception": [
+      "PE-D",
+      "PE-E"
+    ]
+  },
+  "recommended_actions": [
+    {
+      "target_id": "RET-PORT-CHAT-POST",
+      "action_type": "disclose_preservation_issue",
+      "owner": "litigation_counsel",
+      "priority_rank": 1,
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
+      ]
+    },
+    {
+      "target_id": "RET-PORT-AUDIT-MISSING",
+      "action_type": "locate_missing_record",
+      "owner": "compliance_audit",
+      "priority_rank": 2,
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-F",
+        "PE-I"
+      ]
+    },
+    {
+      "target_id": "SRC-PORT-ENERGYCOMMS",
+      "action_type": "collect_archive",
+      "owner": "ediscovery_vendor",
+      "priority_rank": 3,
+      "risk_level": "medium",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
+      ]
+    },
+    {
+      "target_id": "RET-PORT-VOICE",
+      "action_type": "document_system_gap",
+      "owner": "it_messaging",
+      "priority_rank": 4,
+      "risk_level": "medium",
+      "affected_categories": [
+        "PE-D"
+      ]
+    },
+    {
+      "target_id": "RET-PORT-TRADE-2018",
+      "action_type": "no_action_policy_loss",
+      "owner": "records_management",
+      "priority_rank": 5,
+      "risk_level": "low",
+      "affected_categories": [
+        "PE-B"
+      ]
+    }
+  ]
+}

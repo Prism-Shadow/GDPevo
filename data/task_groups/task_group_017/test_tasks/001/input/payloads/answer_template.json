@@ -1,0 +1,199 @@
+{
+  "schema_name": "meridian_production_gap_coding_risk_answer",
+  "schema_version": "1.0",
+  "required_top_level_keys": [
+    "matter_id",
+    "critical_findings",
+    "category_statuses",
+    "metrics",
+    "priority_actions"
+  ],
+  "ordering_rules": {
+    "critical_findings": "Sort by finding_id ascending.",
+    "category_statuses": "Sort by category_code ascending.",
+    "priority_actions": "Sort by priority_rank ascending, with 1 as the highest priority."
+  },
+  "enums": {
+    "issue_type": [
+      "preservation_failure",
+      "collection_gap",
+      "responsiveness_miscode",
+      "privilege_log_gap",
+      "retention_loss",
+      "privilege_waiver",
+      "over_designation",
+      "miscoded_privilege",
+      "other"
+    ],
+    "severity": [
+      "critical",
+      "high",
+      "medium",
+      "low"
+    ],
+    "finding_status": [
+      "open",
+      "remediation_pending",
+      "protocol_noncompliant",
+      "ready",
+      "no_gap"
+    ],
+    "source_status": [
+      "lost",
+      "not_collected",
+      "partial",
+      "collected",
+      "pending",
+      "not_applicable"
+    ],
+    "category_status": [
+      "complete",
+      "incomplete",
+      "collection_gap",
+      "preservation_risk",
+      "responsiveness_gap",
+      "privilege_log_gap",
+      "withholding_gap",
+      "no_current_gap"
+    ],
+    "production_impact": [
+      "underproduced",
+      "not_produced",
+      "withheld_unlogged",
+      "source_missing",
+      "source_lost",
+      "recode_needed",
+      "no_production_impact"
+    ],
+    "action_type": [
+      "disclose_to_government",
+      "forensic_recovery",
+      "collect_source",
+      "recode_and_produce",
+      "supplement_privilege_log",
+      "quality_control_review",
+      "privilege_re_review",
+      "investigate",
+      "no_action"
+    ],
+    "owner": [
+      "outside_counsel",
+      "client_legal",
+      "client_it",
+      "ediscovery_vendor",
+      "review_vendor",
+      "privilege_team",
+      "records_vendor",
+      "investigation_team"
+    ],
+    "priority": [
+      "P0",
+      "P1",
+      "P2",
+      "P3"
+    ]
+  },
+  "fields": {
+    "matter_id": {
+      "type": "string",
+      "description": "Matter ID from the request and review hub."
+    },
+    "critical_findings": {
+      "type": "list",
+      "description": "One object per material gap or defect. Use a stable hub record ID as finding_id when one record anchors the finding.",
+      "item_required_keys": [
+        "finding_id",
+        "issue_type",
+        "severity",
+        "finding_status",
+        "source_status",
+        "production_impact",
+        "category_impacts",
+        "source_refs",
+        "document_count",
+        "withheld_count",
+        "logged_count",
+        "unlogged_count",
+        "recommended_action"
+      ],
+      "item_fields": {
+        "finding_id": "string stable key",
+        "issue_type": "enum issue_type",
+        "severity": "enum severity",
+        "finding_status": "enum finding_status",
+        "source_status": "enum source_status",
+        "production_impact": "enum production_impact",
+        "category_impacts": "list of request category codes sorted ascending",
+        "source_refs": "list of hub record IDs supporting the finding, sorted ascending",
+        "document_count": "integer count, use 0 when not applicable",
+        "withheld_count": "integer count, use 0 when not applicable",
+        "logged_count": "integer count, use 0 when not applicable",
+        "unlogged_count": "integer count, use 0 when not applicable",
+        "recommended_action": "enum action_type"
+      }
+    },
+    "category_statuses": {
+      "type": "list",
+      "description": "One object for each request category with a material non-complete status in the current report.",
+      "item_required_keys": [
+        "category_code",
+        "status",
+        "production_impact",
+        "source_refs",
+        "recommended_action"
+      ],
+      "item_fields": {
+        "category_code": "string request category code",
+        "status": "enum category_status",
+        "production_impact": "enum production_impact",
+        "source_refs": "list of hub record IDs supporting the status, sorted ascending",
+        "recommended_action": "enum action_type"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required_keys": [
+        "unlogged_privilege_docs",
+        "miscoded_responsive_doc_count",
+        "lost_personal_device_count",
+        "uncollected_board_source_count",
+        "categories_with_open_gaps",
+        "rolling_production_ready"
+      ],
+      "field_types": {
+        "unlogged_privilege_docs": "integer documents",
+        "miscoded_responsive_doc_count": "integer documents",
+        "lost_personal_device_count": "integer sources",
+        "uncollected_board_source_count": "integer sources",
+        "categories_with_open_gaps": "integer categories",
+        "rolling_production_ready": "boolean"
+      }
+    },
+    "priority_actions": {
+      "type": "list",
+      "description": "Action plan items keyed by action_id and sorted by priority_rank.",
+      "item_required_keys": [
+        "action_id",
+        "priority_rank",
+        "priority",
+        "action_type",
+        "owner",
+        "target_refs",
+        "category_impacts"
+      ],
+      "item_fields": {
+        "action_id": "string stable key",
+        "priority_rank": "integer rank, 1 is highest priority",
+        "priority": "enum priority",
+        "action_type": "enum action_type",
+        "owner": "enum owner",
+        "target_refs": "list of hub record IDs targeted by the action, sorted ascending",
+        "category_impacts": "list of request category codes sorted ascending"
+      }
+    }
+  },
+  "numeric_precision": {
+    "all_counts": "whole integers",
+    "score_fields": "none in candidate answer"
+  }
+}

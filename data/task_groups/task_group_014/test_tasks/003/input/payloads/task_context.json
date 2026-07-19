@@ -1,0 +1,23 @@
+{
+  "task_id": "test_003",
+  "business_request": "Outpatient knee arthroscopy claim correction",
+  "requester_role": "payment integrity analyst",
+  "reporting_date": "2026-06-10",
+  "target": {
+    "claim_id": "CLAIM-TE-003",
+    "case_id": "CLAIM-TE-003",
+    "service_domain": "outpatient_surgery"
+  },
+  "environment": {
+    "base_url": "<TASK_ENV_BASE_URL>",
+    "sql_endpoint": "POST /sql/query",
+    "sql_authorization_header": "Authorization: Bearer pa-review-token-014"
+  },
+  "local_memo": {
+    "memo_id": "PI-MEMO-TE-003",
+    "received_date": "2026-06-10",
+    "source": "Payment Integrity review queue",
+    "summary": "A paid outpatient knee arthroscopy claim is queued for benchmark validation and line-level correction review.",
+    "requested_deliverable": "Return correction details suitable for payment integrity correction routing."
+  }
+}

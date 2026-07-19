@@ -1,0 +1,106 @@
+{
+  "task_id": "train_005",
+  "schema_version": "1.0",
+  "field_rules": {
+    "currency": "number with two decimal places, in USD",
+    "dates": "ISO 8601 YYYY-MM-DD",
+    "datetimes": "ISO 8601 local datetime YYYY-MM-DDTHH:MM:SS",
+    "petition_sort": "petitions sorted by petition_id ascending",
+    "probation_sort": "probation_referrals sorted by case_number ascending",
+    "license_sort": "license_orders sorted by case_number ascending",
+    "placeholder_sort": "placeholder_cases sorted by case_number ascending; missing_fields sorted alphabetically"
+  },
+  "required_top_level_keys": [
+    "task_id",
+    "petitions",
+    "probation_referrals",
+    "license_orders",
+    "placeholder_cases"
+  ],
+  "enums": {
+    "petition_classification": [
+      "initial_installment",
+      "subsequent_review",
+      "deferred_payment",
+      "exempt_no_payment"
+    ],
+    "support_classification": [
+      "supportable",
+      "below_policy_minimum",
+      "above_policy_maximum",
+      "unsupported_by_budget"
+    ],
+    "payment_application_order": [
+      "fines_costs_only",
+      "restitution_before_fines_costs",
+      "fines_costs_before_restitution"
+    ],
+    "account_fee_treatment": [
+      "excluded_by_policy",
+      "included_by_policy",
+      "verify_before_entry"
+    ],
+    "schedule_interval": [
+      "monthly",
+      "deferred_single_due"
+    ],
+    "license_start_basis": [
+      "conviction_date",
+      "release_date",
+      "petition_date"
+    ],
+    "cc1375_status": [
+      "prepare_referral",
+      "not_ordered"
+    ],
+    "placeholder_value": [
+      "TBD from case file"
+    ]
+  },
+  "petitions_item": {
+    "petition_id": "string",
+    "case_number": "string",
+    "defendant_name": "string",
+    "petition_classification": "enum: petition_classification",
+    "support_classification": "enum: support_classification",
+    "approved_monthly_amount": "currency",
+    "down_payment_amount": "currency",
+    "total_due": "currency",
+    "restitution_balance": "currency",
+    "fines_costs_balance": "currency",
+    "account_fee_amount": "currency",
+    "account_fee_treatment": "enum: account_fee_treatment",
+    "payment_application_order": "enum: payment_application_order",
+    "payment_schedule": {
+      "interval": "enum: schedule_interval",
+      "first_due_date": "date",
+      "regular_installment_amount": "currency",
+      "total_installments": "integer",
+      "final_due_date": "date",
+      "final_payment_amount": "currency",
+      "return_to_court_date": "date"
+    }
+  },
+  "probation_referrals_item": {
+    "case_number": "string",
+    "form_id": "string",
+    "cc1375_status": "enum: cc1375_status",
+    "conviction_date": "date",
+    "probation_term_months": "integer",
+    "report_datetime": "datetime or null"
+  },
+  "license_orders_item": {
+    "case_number": "string",
+    "form_id": "string",
+    "license_start_basis": "enum: license_start_basis",
+    "suspension_start_date": "date",
+    "suspension_months": "integer",
+    "suspension_end_date": "date",
+    "driver_license_number": "enum: placeholder_value"
+  },
+  "placeholder_cases_item": {
+    "case_number": "string",
+    "placeholder_value": "enum: placeholder_value",
+    "missing_fields": "array of strings"
+  }
+}

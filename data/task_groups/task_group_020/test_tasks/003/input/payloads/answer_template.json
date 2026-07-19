@@ -1,0 +1,139 @@
+{
+  "task_id": "test_003",
+  "deal_id": "PRJ_HELIX",
+  "prepared_for": "buyer client name",
+  "economics": {
+    "currency": "USD",
+    "headline_value": null,
+    "upfront_cash": null,
+    "stock_value": null,
+    "milestone_value": null,
+    "holder_allocation": [
+      {
+        "holder": "stable holder name from cap table",
+        "security_class": "stable security class",
+        "fully_diluted_pct": null,
+        "as_converted_shares": null,
+        "cash_amount": null,
+        "stock_amount": null,
+        "total_consideration": null
+      }
+    ],
+    "indemnity_package": {
+      "source_term_id": "stable draft term ID or null",
+      "draft_cap_pct": null,
+      "draft_cap_amount": null,
+      "draft_special_indemnity_amount": null,
+      "identified_findings_amount": null,
+      "special_indemnity_shortfall": null,
+      "buyer_preferred_cap_pct": null,
+      "buyer_preferred_cap_amount": null,
+      "buyer_fallback_cap_pct": null,
+      "buyer_fallback_cap_amount": null,
+      "cap_shortfall_to_fallback": null,
+      "cap_shortfall_to_preferred": null,
+      "buyer_preferred_survival_months": null,
+      "fallback_survival_with_escrow_months": null,
+      "survival_status": "in_policy | missing_required_term | draft_below_playbook | open_item",
+      "materiality_scrape_required": "FULL_BREACH_AND_DAMAGES | BREACH_ONLY | NONE",
+      "materiality_scrape_status": "in_policy | missing_required_term | draft_below_playbook | open_item",
+      "risk_rating": "LOW | MEDIUM | HIGH"
+    },
+    "escrow": {
+      "basis": "purchase_price | upfront_cash | identified_findings",
+      "required_pct": null,
+      "amount": null,
+      "release_months": null,
+      "release_trigger": "general_rep_survival_expiration | consent_resolution | findings_resolution | other",
+      "status": "required_buyer_fallback | preferred_position | not_required | open_item"
+    },
+    "nwc_adjustment": {
+      "required": null,
+      "mechanic": "dollar_for_dollar_outside_collar | fixed_price_no_adjustment | open_item",
+      "collar_amount": null,
+      "source_finding_id": "stable finding ID or null",
+      "status": "add_closing_mechanic | accept | open_item"
+    }
+  },
+  "closing_conditions": {
+    "required_consents": [
+      {
+        "source_id": "stable consent ID",
+        "contract_name": "contract name",
+        "counterparty": "counterparty name",
+        "condition_type": "closing_condition | notice_only | post_closing_covenant",
+        "risk_rating": "LOW | MEDIUM | HIGH",
+        "amount_at_risk": null
+      }
+    ],
+    "material_contract_conditions": [
+      {
+        "contract_id": "stable material contract ID",
+        "contract_name": "contract name",
+        "condition_type": "closing_condition | notice_only | post_closing_covenant",
+        "annual_revenue": null
+      }
+    ],
+    "non_blocking_notices": [
+      "stable source ID"
+    ],
+    "debt_payoff": {
+      "required": null,
+      "status": "closing_condition | no_debt_payoff_record | open_item",
+      "blocker_id": "stable blocker ID or null",
+      "amount": null,
+      "required_action": "obtain_payoff_letter | none | open_item"
+    }
+  },
+  "covenants": {
+    "employment": {
+      "continuing_employee_count": null,
+      "service_credit_employee_ids": [
+        "stable employee ID"
+      ],
+      "pto_liability_total": null,
+      "warn_risk_employee_ids": [
+        "stable employee ID"
+      ],
+      "required_action": "revise_service_credit_and_pto | accept | open_item"
+    },
+    "restrictive_covenants": {
+      "required": null,
+      "covered_holder_groups": [
+        "stable holder or employee group name"
+      ],
+      "required_action": "add_founder_executive_non_compete_and_non_solicit | accept | open_item"
+    },
+    "do_tail_and_expenses": {
+      "do_tail_required": null,
+      "tail_period_years": null,
+      "tail_cost_allocation": "seller_expense_or_purchase_price_reduction | buyer_expense | split | open_item",
+      "seller_transaction_expenses": "seller_responsibility_or_purchase_price_reduction | buyer_responsibility | split | open_item",
+      "buyer_transaction_expenses": "buyer_responsibility | seller_responsibility | split | open_item",
+      "amount_status": "amount_not_in_workbench | amount_quantified"
+    }
+  },
+  "regulatory": {
+    "hsr_required": "yes | no",
+    "threshold_basis": "size-of-transaction | below threshold | other",
+    "regulatory_approval": "HSR only | HSR and industry review | none expected | other",
+    "hell_or_high_water_required": "yes | no | limited covenant",
+    "closing_condition_required": null
+  },
+  "closing_readiness": {
+    "overall_status": "READY | READY_WITH_CONDITIONS | NOT_READY",
+    "risk_rating": "LOW | MEDIUM | HIGH",
+    "blocker_ids": [
+      "stable blocker ID"
+    ],
+    "tradeable_issue_ids": [
+      "stable issue ID"
+    ],
+    "closing_consent_amount_at_risk": null,
+    "material_contract_revenue_conditioned": null,
+    "employee_pto_liability_total": null,
+    "total_modeled_exposure_low": null,
+    "total_modeled_exposure_high": null,
+    "highest_modeled_exposure_category": "closing_certainty | indemnity_leakage | transition_disruption | other"
+  }
+}

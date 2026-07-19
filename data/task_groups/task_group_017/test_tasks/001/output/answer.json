@@ -1,0 +1,215 @@
+{
+  "matter_id": "MTR-MERIDIAN-GJ",
+  "critical_findings": [
+    {
+      "finding_id": "DOC-MER-DEALER-SAFETY",
+      "issue_type": "responsiveness_miscode",
+      "severity": "high",
+      "finding_status": "open",
+      "source_status": "not_applicable",
+      "production_impact": "not_produced",
+      "category_impacts": [
+        "MD-09"
+      ],
+      "source_refs": [
+        "DOC-MER-DEALER-SAFETY",
+        "QC-MER-MD09-NR"
+      ],
+      "document_count": 1,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "recommended_action": "recode_and_produce"
+    },
+    {
+      "finding_id": "PRIV-MER-LOG-GAP",
+      "issue_type": "privilege_log_gap",
+      "severity": "high",
+      "finding_status": "protocol_noncompliant",
+      "source_status": "not_applicable",
+      "production_impact": "withheld_unlogged",
+      "category_impacts": [
+        "MD-11"
+      ],
+      "source_refs": [
+        "PRIV-MER-LOG-GAP"
+      ],
+      "document_count": 2260,
+      "withheld_count": 2260,
+      "logged_count": 910,
+      "unlogged_count": 1350,
+      "recommended_action": "supplement_privilege_log"
+    },
+    {
+      "finding_id": "SRC-MER-BOARD-ROOM",
+      "issue_type": "collection_gap",
+      "severity": "high",
+      "finding_status": "open",
+      "source_status": "not_collected",
+      "production_impact": "source_missing",
+      "category_impacts": [
+        "MD-07",
+        "MD-08",
+        "MD-09"
+      ],
+      "source_refs": [
+        "SRC-MER-BOARD-ROOM"
+      ],
+      "document_count": 0,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "recommended_action": "collect_source"
+    },
+    {
+      "finding_id": "SRC-MER-CARROW-PHONE",
+      "issue_type": "preservation_failure",
+      "severity": "critical",
+      "finding_status": "open",
+      "source_status": "lost",
+      "production_impact": "source_lost",
+      "category_impacts": [
+        "MD-09",
+        "MD-15"
+      ],
+      "source_refs": [
+        "SRC-MER-CARROW-PHONE"
+      ],
+      "document_count": 0,
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "recommended_action": "disclose_to_government"
+    }
+  ],
+  "category_statuses": [
+    {
+      "category_code": "MD-07",
+      "status": "collection_gap",
+      "production_impact": "source_missing",
+      "source_refs": [
+        "SRC-MER-BOARD-ROOM"
+      ],
+      "recommended_action": "collect_source"
+    },
+    {
+      "category_code": "MD-08",
+      "status": "collection_gap",
+      "production_impact": "source_missing",
+      "source_refs": [
+        "SRC-MER-BOARD-ROOM"
+      ],
+      "recommended_action": "collect_source"
+    },
+    {
+      "category_code": "MD-09",
+      "status": "incomplete",
+      "production_impact": "underproduced",
+      "source_refs": [
+        "DOC-MER-DEALER-SAFETY",
+        "QC-MER-MD09-NR",
+        "SRC-MER-BOARD-ROOM",
+        "SRC-MER-CARROW-PHONE"
+      ],
+      "recommended_action": "recode_and_produce"
+    },
+    {
+      "category_code": "MD-11",
+      "status": "privilege_log_gap",
+      "production_impact": "withheld_unlogged",
+      "source_refs": [
+        "PRIV-MER-LOG-GAP"
+      ],
+      "recommended_action": "supplement_privilege_log"
+    },
+    {
+      "category_code": "MD-15",
+      "status": "preservation_risk",
+      "production_impact": "source_lost",
+      "source_refs": [
+        "SRC-MER-CARROW-PHONE"
+      ],
+      "recommended_action": "disclose_to_government"
+    }
+  ],
+  "metrics": {
+    "unlogged_privilege_docs": 1350,
+    "miscoded_responsive_doc_count": 1,
+    "lost_personal_device_count": 1,
+    "uncollected_board_source_count": 1,
+    "categories_with_open_gaps": 5,
+    "rolling_production_ready": false
+  },
+  "priority_actions": [
+    {
+      "action_id": "ACT-MER-001",
+      "priority_rank": 1,
+      "priority": "P0",
+      "action_type": "disclose_to_government",
+      "owner": "outside_counsel",
+      "target_refs": [
+        "SRC-MER-CARROW-PHONE"
+      ],
+      "category_impacts": [
+        "MD-09",
+        "MD-15"
+      ]
+    },
+    {
+      "action_id": "ACT-MER-002",
+      "priority_rank": 2,
+      "priority": "P0",
+      "action_type": "forensic_recovery",
+      "owner": "ediscovery_vendor",
+      "target_refs": [
+        "SRC-MER-CARROW-PHONE"
+      ],
+      "category_impacts": [
+        "MD-09",
+        "MD-15"
+      ]
+    },
+    {
+      "action_id": "ACT-MER-003",
+      "priority_rank": 3,
+      "priority": "P1",
+      "action_type": "collect_source",
+      "owner": "client_it",
+      "target_refs": [
+        "SRC-MER-BOARD-ROOM"
+      ],
+      "category_impacts": [
+        "MD-07",
+        "MD-08",
+        "MD-09"
+      ]
+    },
+    {
+      "action_id": "ACT-MER-004",
+      "priority_rank": 4,
+      "priority": "P1",
+      "action_type": "recode_and_produce",
+      "owner": "review_vendor",
+      "target_refs": [
+        "DOC-MER-DEALER-SAFETY",
+        "QC-MER-MD09-NR"
+      ],
+      "category_impacts": [
+        "MD-09"
+      ]
+    },
+    {
+      "action_id": "ACT-MER-005",
+      "priority_rank": 5,
+      "priority": "P1",
+      "action_type": "supplement_privilege_log",
+      "owner": "privilege_team",
+      "target_refs": [
+        "PRIV-MER-LOG-GAP"
+      ],
+      "category_impacts": [
+        "MD-11"
+      ]
+    }
+  ]
+}

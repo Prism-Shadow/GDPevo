@@ -1,0 +1,5 @@
+Northstar Health Plan needs a payment integrity correction packet for outpatient knee arthroscopy claim `CLAIM-TE-003` as of the June 10, 2026 reporting queue. The requester is a payment integrity analyst who needs the claim repriced against the applicable benchmark and returned as structured JSON for correction routing.
+
+Use the Northstar payer operations environment at `<TASK_ENV_BASE_URL>` and the shared environment endpoints only. If you use SQL-style access, send `POST /sql/query` to the environment base URL with `Authorization: Bearer pa-review-token-014`. Do not inspect environment source files, generated data files, SQLite files, manifests, or setup scripts directly.
+
+Review the target claim, associated case and plan context, authorization information, claim lines, available documents, and payment benchmarks needed to decide the correct line dispositions. Return exactly one JSON object conforming to `input/payloads/answer_template.json`. Currency values are dollars rounded to cents. List claim lines in claim-line order, and use null for absent modifiers.

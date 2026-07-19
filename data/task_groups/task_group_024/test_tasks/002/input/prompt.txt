@@ -1,0 +1,19 @@
+You are reviewing reliability and security SLA aging for the engineering portfolio environment.
+
+Environment base URL: <TASK_ENV_BASE_URL>
+
+Use the shared environment to inspect work items and SLA-related data. The environment includes work item endpoints, SLA policy data, and a restricted SQL query endpoint. Runtime access details are supplied separately in environment_access.md.
+
+Scope:
+- Teams: Core Services and Platform Core
+- As-of date: 2026-01-18
+- Recent closed window: 10 days
+- SLA-relevant work: reliability and security work, using the portfolio category conventions for resolving conflicting type, label, and title signals
+
+Return a single JSON object that follows input/payloads/answer_template.json exactly. Your answer should identify the primary SLA population, overdue primary items, aging distribution, overdue team and owner hotspot, duplicate clusters that should be reported but not counted as primary work, missing-owner primary IDs, and the SLA breach rate.
+
+Use stable ordering:
+- Sort ID lists lexicographically.
+- List teams alphabetically.
+- Sort duplicate clusters by primary_id, with duplicate_ids sorted lexicographically.
+- Round breach_rate to three decimal places.

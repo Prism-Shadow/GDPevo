@@ -1,0 +1,371 @@
+task_group:
+  task_group_id: task_group_014
+  scenario_id: SCN_014_healthcare_payer_authorization_appeals
+  source_examples:
+  - E001
+  - E002
+  - E003
+  - E004
+  - E005
+  - E006
+  - E007
+  domain: Healthcare Revenue Cycle
+  description: 'Train-predict benchmark for payer authorization, appeals, peer-to-peer,
+
+    and reimbursement operations. A shared Northstar Health Plan environment
+
+    exposes generated utilization-management, appeal, claim, policy, and
+
+    benchmark data through a read-only SQLite-backed HTTP service.
+
+    '
+env:
+  dockerfile: env/Dockerfile
+  setup: env/setup.sh
+  state_mode: read_only
+  files:
+  - env/Dockerfile
+  - env/setup.sh
+  - env/app.py
+  - env/judge_api.py
+  - env/generate_data.py
+  - env/endpoints.txt
+  - env/manifest.json
+  - env/data/northstar_pa.sqlite
+train_tasks:
+- task_id: train_001
+  input: train_tasks/001/input/
+  prompt_txt: train_tasks/001/input/prompt.txt
+  payloads:
+  - train_tasks/001/input/payloads/answer_template.json
+  - train_tasks/001/input/payloads/task_context.json
+  notes: train_tasks/001/notes/notes.md
+  output: train_tasks/001/output/
+  answer_json: train_tasks/001/output/answer.json
+  eval:
+    script: train_tasks/001/eval/eval.sh
+    files:
+    - train_tasks/001/eval/eval.sh
+    - train_tasks/001/eval/evaluator.py
+    rubric:
+    - goal: Correct target case and route identity.
+      weight: 1
+    - goal: Correct approval recommendation and final status.
+      weight: 2
+    - goal: Correct approved units, date window, and authorization number.
+      weight: 2
+    - goal: Correct approved CPT and modifier line set.
+      weight: 1
+    - goal: Correct all-met therapy criteria result map.
+      weight: 2
+    - goal: Correct current evidence documents and stale-document exclusion.
+      weight: 2
+    - goal: Correct approval letter and next action without MD or P2P escalation.
+      weight: 1
+    - goal: Correct business basis-audit source, precedence order, controlling
+        records, and exception records.
+      weight: 1
+- task_id: train_002
+  input: train_tasks/002/input/
+  prompt_txt: train_tasks/002/input/prompt.txt
+  payloads:
+  - train_tasks/002/input/payloads/answer_template.json
+  - train_tasks/002/input/payloads/task_context.json
+  notes: train_tasks/002/notes/notes.md
+  output: train_tasks/002/output/
+  answer_json: train_tasks/002/output/answer.json
+  eval:
+    script: train_tasks/002/eval/eval.sh
+    files:
+    - train_tasks/002/eval/eval.sh
+    - train_tasks/002/eval/evaluator.py
+    rubric:
+    - goal: Correct target appeal, drug, and owner.
+      weight: 1
+    - goal: Correct standard internal non-expedited appeal path and deadline.
+      weight: 2
+    - goal: Correct documented versus insufficient drug-trial distinction.
+      weight: 2
+    - goal: Correct criteria result map including partial formulary failure evidence.
+      weight: 2
+    - goal: Correct required packet item set.
+      weight: 1
+    - goal: Correct missing packet items and assistance income-proof gap.
+      weight: 2
+    - goal: Correct next action and assistance status.
+      weight: 1
+    - goal: Correct business basis-audit source, precedence order, controlling
+        records, and exception records.
+      weight: 1
+- task_id: train_003
+  input: train_tasks/003/input/
+  prompt_txt: train_tasks/003/input/prompt.txt
+  payloads:
+  - train_tasks/003/input/payloads/answer_template.json
+  - train_tasks/003/input/payloads/task_context.json
+  notes: train_tasks/003/notes/notes.md
+  output: train_tasks/003/output/
+  answer_json: train_tasks/003/output/answer.json
+  eval:
+    script: train_tasks/003/eval/eval.sh
+    files:
+    - train_tasks/003/eval/eval.sh
+    - train_tasks/003/eval/evaluator.py
+    rubric:
+    - goal: Correct claim, case, and authorization identity.
+      weight: 1
+    - goal: Correct current benchmark source/version and stale source rejection.
+      weight: 2
+    - goal: Correct paid total, corrected allowed total, and recovery amount.
+      weight: 3
+    - goal: Correct line-level CPT, modifier, units, and stable ordering.
+      weight: 1
+    - goal: Correct line-level paid, corrected allowed, recovery, and dispositions.
+      weight: 3
+    - goal: Correct resubmission route and standard priority.
+      weight: 1
+    - goal: Correct business basis-audit source, precedence order, controlling
+        records, and exception records.
+      weight: 1
+- task_id: train_004
+  input: train_tasks/004/input/
+  prompt_txt: train_tasks/004/input/prompt.txt
+  payloads:
+  - train_tasks/004/input/payloads/answer_template.json
+  - train_tasks/004/input/payloads/task_context.json
+  notes: train_tasks/004/notes/notes.md
+  output: train_tasks/004/output/
+  answer_json: train_tasks/004/output/answer.json
+  eval:
+    script: train_tasks/004/eval/eval.sh
+    files:
+    - train_tasks/004/eval/eval.sh
+    - train_tasks/004/eval/evaluator.py
+    rubric:
+    - goal: Correct case identity, P2P identity, and requested CPT.
+      weight: 1
+    - goal: Correct P2P outcome and denied final status.
+      weight: 3
+    - goal: Correct criteria map with covered indication met and PET factor not met.
+      weight: 2
+    - goal: Correct unresolved criterion, missing PET-specific factors, and no-review-change
+        flag.
+      weight: 2
+    - goal: Correct denial letter type and recommended alternative modality.
+      weight: 1
+    - goal: Correct 180-day internal appeal deadline.
+      weight: 1
+    - goal: Correct business basis-audit source, precedence order, controlling
+        records, and exception records.
+      weight: 1
+- task_id: train_005
+  input: train_tasks/005/input/
+  prompt_txt: train_tasks/005/input/prompt.txt
+  payloads:
+  - train_tasks/005/input/payloads/answer_template.json
+  - train_tasks/005/input/payloads/task_context.json
+  notes: train_tasks/005/notes/notes.md
+  output: train_tasks/005/output/
+  answer_json: train_tasks/005/output/answer.json
+  eval:
+    script: train_tasks/005/eval/eval.sh
+    files:
+    - train_tasks/005/eval/eval.sh
+    - train_tasks/005/eval/evaluator.py
+    rubric:
+    - goal: Correct period, case ID, and revenue-to-cost threshold.
+      weight: 1
+    - goal: Correct row-level total costs and margins.
+      weight: 2
+    - goal: Correct revenue-to-cost ratios to four decimals.
+      weight: 2
+    - goal: Correct below-threshold segment and top issue.
+      weight: 3
+    - goal: Correct charge-sensitive segment set.
+      weight: 2
+    - goal: Correct recommended action by payer segment.
+      weight: 2
+    - goal: Correct gap to 120 percent for the Medicaid row.
+      weight: 1
+    - goal: Correct business basis-audit source, precedence order, controlling
+        records, and exception records.
+      weight: 1
+test_tasks:
+- task_id: test_001
+  input: test_tasks/001/input/
+  prompt_txt: test_tasks/001/input/prompt.txt
+  payloads:
+  - test_tasks/001/input/payloads/answer_template.json
+  - test_tasks/001/input/payloads/task_context.json
+  notes: test_tasks/001/notes/notes.md
+  output: test_tasks/001/output/
+  answer_json: test_tasks/001/output/answer.json
+  eval:
+    script: test_tasks/001/eval/eval.sh
+    files:
+    - test_tasks/001/eval/eval.sh
+    - test_tasks/001/eval/evaluator.py
+    rubric:
+    - goal: Correct target case and speech CPT, modifier, and requested units.
+      weight: 1
+    - goal: Correct pend-for-information recommendation, final status, and route.
+      weight: 3
+    - goal: Correct criteria result map for speech plan of care and current-note conflict.
+      weight: 2
+    - goal: Correct missing-information set.
+      weight: 2
+    - goal: Correct current evidence documents and stale-document exclusion.
+      weight: 2
+    - goal: Correct zero approved units and due date.
+      weight: 1
+    - goal: Correct business source-precedence basis.
+      weight: 3
+    - goal: Correct source-precedence record order.
+      weight: 3
+    - goal: Correct controlling business record IDs.
+      weight: 1
+    - goal: Correct exception, gap, or excluded-record IDs.
+      weight: 2
+- task_id: test_002
+  input: test_tasks/002/input/
+  prompt_txt: test_tasks/002/input/prompt.txt
+  payloads:
+  - test_tasks/002/input/payloads/answer_template.json
+  - test_tasks/002/input/payloads/task_context.json
+  notes: test_tasks/002/notes/notes.md
+  output: test_tasks/002/output/
+  answer_json: test_tasks/002/output/answer.json
+  eval:
+    script: test_tasks/002/eval/eval.sh
+    files:
+    - test_tasks/002/eval/eval.sh
+    - test_tasks/002/eval/evaluator.py
+    rubric:
+    - goal: Correct target appeal, drug, and owner.
+      weight: 1
+    - goal: Correct expedited internal path, expedited basis, and appeal deadline.
+      weight: 3
+    - goal: Correct documented prior therapy failure set.
+      weight: 2
+    - goal: Correct assistance program, status, and missing income proof.
+      weight: 2
+    - goal: Correct required packet set and missing packet set.
+      weight: 2
+    - goal: Correct next action preserving appeal versus assistance distinction.
+      weight: 1
+    - goal: Correct business source-precedence basis.
+      weight: 3
+    - goal: Correct source-precedence record order.
+      weight: 3
+    - goal: Correct controlling business record IDs.
+      weight: 1
+    - goal: Correct exception, gap, or excluded-record IDs.
+      weight: 2
+- task_id: test_003
+  input: test_tasks/003/input/
+  prompt_txt: test_tasks/003/input/prompt.txt
+  payloads:
+  - test_tasks/003/input/payloads/answer_template.json
+  - test_tasks/003/input/payloads/task_context.json
+  notes: test_tasks/003/notes/notes.md
+  output: test_tasks/003/output/
+  answer_json: test_tasks/003/output/answer.json
+  eval:
+    script: test_tasks/003/eval/eval.sh
+    files:
+    - test_tasks/003/eval/eval.sh
+    - test_tasks/003/eval/evaluator.py
+    rubric:
+    - goal: Correct claim, case, and authorization identity.
+      weight: 1
+    - goal: Correct benchmark source/version and workers-comp plan context.
+      weight: 2
+    - goal: Correct paid total, corrected allowed total, and net recovery.
+      weight: 3
+    - goal: Correct line 1 upward correction amount and disposition.
+      weight: 2
+    - goal: Correct line 2 unsupported-modifier denial and negative recovery.
+      weight: 2
+    - goal: Correct resubmission route and priority.
+      weight: 1
+    - goal: Correct business source-precedence basis.
+      weight: 3
+    - goal: Correct source-precedence record order.
+      weight: 3
+    - goal: Correct controlling business record IDs.
+      weight: 1
+    - goal: Correct exception, gap, or excluded-record IDs.
+      weight: 2
+- task_id: test_004
+  input: test_tasks/004/input/
+  prompt_txt: test_tasks/004/input/prompt.txt
+  payloads:
+  - test_tasks/004/input/payloads/answer_template.json
+  - test_tasks/004/input/payloads/task_context.json
+  notes: test_tasks/004/notes/notes.md
+  output: test_tasks/004/output/
+  answer_json: test_tasks/004/output/answer.json
+  eval:
+    script: test_tasks/004/eval/eval.sh
+    files:
+    - test_tasks/004/eval/eval.sh
+    - test_tasks/004/eval/evaluator.py
+    rubric:
+    - goal: Correct case identity, P2P identity, and requested CPT.
+      weight: 1
+    - goal: Correct overturn P2P outcome and approved final status.
+      weight: 3
+    - goal: Correct criteria map with PET factor now met.
+      weight: 2
+    - goal: Correct new-information flag, resolved criterion, and supporting PET-over-SPECT
+        factors.
+      weight: 2
+    - goal: Correct authorization number, approved unit count, approval date range,
+        and approved CPT.
+      weight: 2
+    - goal: Correct approval letter type with no alternative modality or internal
+        appeal deadline.
+      weight: 1
+    - goal: Correct business source-precedence basis.
+      weight: 3
+    - goal: Correct source-precedence record order.
+      weight: 3
+    - goal: Correct controlling business record IDs.
+      weight: 1
+    - goal: Correct exception, gap, or excluded-record IDs.
+      weight: 2
+- task_id: test_005
+  input: test_tasks/005/input/
+  prompt_txt: test_tasks/005/input/prompt.txt
+  payloads:
+  - test_tasks/005/input/payloads/answer_template.json
+  - test_tasks/005/input/payloads/task_context.json
+  notes: test_tasks/005/notes/notes.md
+  output: test_tasks/005/output/
+  answer_json: test_tasks/005/output/answer.json
+  eval:
+    script: test_tasks/005/eval/eval.sh
+    files:
+    - test_tasks/005/eval/eval.sh
+    - test_tasks/005/eval/evaluator.py
+    rubric:
+    - goal: Correct target queue and as-of date.
+      weight: 1
+    - goal: Correct appeal deadline route, deadline, and top priority.
+      weight: 3
+    - goal: Correct MD escalation route and PET-factor reason.
+      weight: 2
+    - goal: Correct claim correction route and recovery amount.
+      weight: 2
+    - goal: Correct aggregate route counts.
+      weight: 2
+    - goal: Correct queue ordering by priority.
+      weight: 1
+    - goal: Correct business source-precedence basis.
+      weight: 3
+    - goal: Correct source-precedence record order.
+      weight: 3
+    - goal: Correct controlling business record IDs.
+      weight: 1
+    - goal: Correct exception, gap, or excluded-record IDs.
+      weight: 2

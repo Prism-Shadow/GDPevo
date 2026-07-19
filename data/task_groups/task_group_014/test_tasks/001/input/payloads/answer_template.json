@@ -1,0 +1,154 @@
+{
+  "format": "Return a single JSON object with the required top-level keys. Do not include markdown or explanatory prose.",
+  "required_top_level_keys": [
+    "case_id",
+    "recommendation",
+    "final_status",
+    "route",
+    "requested_cpt",
+    "modifier",
+    "requested_units",
+    "approved_units",
+    "criteria_results",
+    "missing_information",
+    "evidence_documents",
+    "excluded_documents",
+    "due_date",
+    "basis_audit"
+  ],
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "description": "Target case identifier."
+    },
+    "recommendation": {
+      "type": "enum",
+      "choices": [
+        "approve",
+        "pend_for_information",
+        "escalate_to_md",
+        "deny",
+        "partial_approval"
+      ]
+    },
+    "final_status": {
+      "type": "enum",
+      "choices": [
+        "approved",
+        "pended",
+        "md_review_required",
+        "denied",
+        "partially_approved",
+        "appeal_overturned",
+        "appeal_upheld"
+      ]
+    },
+    "route": {
+      "type": "enum",
+      "choices": [
+        "submit_initial_request",
+        "request_more_information",
+        "route_md_review",
+        "schedule_p2p",
+        "issue_approval",
+        "issue_denial",
+        "file_appeal",
+        "resubmit_corrected_claim",
+        "monitor_no_action"
+      ]
+    },
+    "requested_cpt": {
+      "type": "string",
+      "description": "CPT or HCPCS code from the requested service line."
+    },
+    "modifier": {
+      "type": "string",
+      "description": "Requested service modifier. Use an empty string only if no modifier exists."
+    },
+    "requested_units": {
+      "type": "integer",
+      "units": "service units",
+      "precision": "whole units"
+    },
+    "approved_units": {
+      "type": "integer",
+      "units": "service units",
+      "precision": "whole units"
+    },
+    "criteria_results": {
+      "type": "object",
+      "key_type": "criterion_id",
+      "value_type": "enum",
+      "value_choices": [
+        "met",
+        "not_met",
+        "unclear",
+        "not_applicable"
+      ],
+      "coverage_rule": "Include each applicable policy criterion ID for the target case exactly once."
+    },
+    "missing_information": {
+      "type": "list",
+      "item_type": "enum",
+      "item_choices": [
+        "clarified_frequency",
+        "duration_weeks",
+        "reconcile_note_plan_conflict",
+        "recent_progress_note",
+        "provider_npi",
+        "diagnosis_code",
+        "member_eligibility",
+        "signed_order",
+        "caregiver_attestation"
+      ],
+      "ordering_rule": "Sort selected codes in ascending alphabetical order."
+    },
+    "evidence_documents": {
+      "type": "list",
+      "item_type": "string",
+      "description": "Document IDs used as current evidence for the decision.",
+      "ordering_rule": "Sort selected document IDs in ascending document_id order."
+    },
+    "excluded_documents": {
+      "type": "list",
+      "item_type": "string",
+      "description": "Document IDs reviewed but excluded from current evidence.",
+      "ordering_rule": "Sort selected document IDs in ascending document_id order."
+    },
+    "due_date": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Populate it using the source-precedence and record-grounding convention inferred from solved examples; use environment record IDs and business gap keys, not invented control codes.",
+      "fields": {
+        "source_precedence": {
+          "type": "string",
+          "description": "Use the concise source-precedence category convention inferred from solved examples."
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "schema_name": "northstar_surgery_claim_correction_packet",
+  "schema_version": "1.0",
+  "output_rule": "Return exactly one JSON object. Do not include markdown, comments, or prose outside the JSON.",
+  "top_level_required_keys": [
+    "claim_id",
+    "case_id",
+    "auth_number",
+    "plan_type",
+    "benchmark_source",
+    "benchmark_version",
+    "paid_total",
+    "correct_allowed_total",
+    "recovery_amount",
+    "lines",
+    "resubmission_route",
+    "priority",
+    "basis_audit"
+  ],
+  "field_definitions": {
+    "claim_id": {
+      "type": "string",
+      "description": "The target claim identifier."
+    },
+    "case_id": {
+      "type": "string",
+      "description": "The case identifier associated with the claim."
+    },
+    "auth_number": {
+      "type": "string",
+      "description": "The authorization number associated with the target claim."
+    },
+    "plan_type": {
+      "type": "enum<string>",
+      "description": "The member plan type used for benchmark selection."
+    },
+    "benchmark_source": {
+      "type": "enum<string>",
+      "description": "The rate schedule source used for repricing."
+    },
+    "benchmark_version": {
+      "type": "string",
+      "description": "The rate schedule version used for repricing."
+    },
+    "paid_total": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places."
+    },
+    "correct_allowed_total": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places."
+    },
+    "recovery_amount": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places. This is the net correction amount after summing all line-level recoveries."
+    },
+    "lines": {
+      "type": "list<object>",
+      "ordering": "Sort by the claim line order from the environment.",
+      "object_required_keys": [
+        "line_id",
+        "cpt_code",
+        "modifier",
+        "units",
+        "paid_amount",
+        "correct_allowed_amount",
+        "recovery_amount",
+        "disposition"
+      ]
+    },
+    "resubmission_route": {
+      "type": "enum<string>",
+      "description": "Operational route for the correction."
+    },
+    "priority": {
+      "type": "enum<string>",
+      "description": "Operational priority for the correction."
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Populate it using the source-precedence and record-grounding convention inferred from solved examples; use environment record IDs and business gap keys, not invented control codes.",
+      "fields": {
+        "source_precedence": {
+          "type": "string",
+          "description": "Use the concise source-precedence category convention inferred from solved examples."
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  },
+  "line_field_definitions": {
+    "line_id": {
+      "type": "string",
+      "description": "Stable claim line identifier."
+    },
+    "cpt_code": {
+      "type": "string",
+      "description": "CPT or HCPCS code for the claim line."
+    },
+    "modifier": {
+      "type": "string or null",
+      "description": "Use null when the claim line has no modifier."
+    },
+    "units": {
+      "type": "integer",
+      "description": "Claim line units."
+    },
+    "paid_amount": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places."
+    },
+    "correct_allowed_amount": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places after applying units."
+    },
+    "recovery_amount": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places. Negative values indicate a line-level overpayment or denial offset."
+    },
+    "disposition": {
+      "type": "enum<string>",
+      "description": "Line correction disposition."
+    }
+  },
+  "allowed_enums": {
+    "plan_type": [
+      "commercial",
+      "medicaid",
+      "medicare_advantage",
+      "workers_comp"
+    ],
+    "benchmark_source": [
+      "Northstar WC Surgery Schedule",
+      "Northstar Commercial Imaging Schedule",
+      "Northstar Distractor Schedule",
+      "Legacy Imaging Export"
+    ],
+    "disposition": [
+      "correct_upward",
+      "correct_downward",
+      "no_change",
+      "deny_unsupported_modifier",
+      "deny_line"
+    ],
+    "resubmission_route": [
+      "payment_integrity_correction",
+      "provider_adjustment",
+      "appeal_reopen",
+      "no_resubmission"
+    ],
+    "priority": [
+      "standard",
+      "expedited",
+      "urgent",
+      "monitor_only"
+    ]
+  },
+  "normalization_notes": {
+    "currency": "Use JSON numbers in dollars rounded to cents.",
+    "modifier": "Use null, not an empty string, when no modifier is present.",
+    "line_order": "The lines list must follow claim-line order from the source claim."
+  },
+  "fields": {
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Populate it using the source-precedence and record-grounding convention inferred from solved examples; use environment record IDs and business gap keys, not invented control codes.",
+      "fields": {
+        "source_precedence": {
+          "type": "string",
+          "description": "Use the concise source-precedence category convention inferred from solved examples."
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  }
+}

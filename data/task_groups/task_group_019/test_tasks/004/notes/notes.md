@@ -1,0 +1,45 @@
+# test_004 Notes
+
+## English
+
+Data and lineage: This task belongs to `SCN_019_regulatory_licensing_eligibility_and_compliance_review`, derived from source examples `E001`, `E002`, and `E003`, with direct workflow alignment to the contractor eligibility review in `E001`. It uses the shared generated environment `task_group/task_group_019/env/`, backed by `env/data/licensing.db` and generated from `env/generate_data.py` with seed `19019`.
+
+Task definition: The solver acts as a senior contractor licensing examiner. The target set is the distinct contractor application range `C-TE4-001` through `C-TE4-015`. Solver-visible material is limited to `input/prompt.txt`, `input/payloads/answer_template.json`, and the public business endpoints rooted at `<TASK_ENV_BASE_URL>`. The prompt gives only the target ids, review date, endpoints, and output requirement; it does not enumerate the expected issue families.
+
+Scenario fit: This is a formal contractor eligibility task in task_group_019. It preserves the source scenario's multi-source licensing review pattern: application records must be reconciled with current policy rows, bond and insurance evidence, license history, violations, correspondence, and inspection context. The rework avoids overlap with `test_001` by using only `C-TE4-*` application ids, expands the target set to fifteen applications, and scores source-precedence and policy-impact conclusions directly.
+
+Material map: `/api/policies` supplies current contractor thresholds and the prior contractor baseline. `/api/contractor/applications` supplies trade, requested class, experience, endorsement status, prior license id, and submitted date. `/api/contractor/bonds` and `/api/contractor/insurance` supply current financial-security facts as of 2025-07-18. `/api/contractor/license-history` supplies prior-license status. `/api/contractor/violations` supplies open serious blockers, open nonserious distractors, and closed serious distractors. `/api/contractor/correspondence` supplies stale, unverified, verified, and note-conflicting correspondence used for source-precedence rollups. `/api/contractor/inspections` supplies context, but this normalized template does not make inspection findings standalone deficiency codes.
+
+Solution basis: Current contractor policy rows define minimum bond, insurance, experience, and endorsement expectations by trade and class. Active, uncancelled bonds must meet the current minimum. Insurance must be active, unexpired on 2025-07-18, and meet the current amount threshold. Missing or pending endorsements are represented as `endorsement_not_verified`. Pending insurance is `insurance_not_current`; an active policy whose expiration date is before the review date is `insurance_expired`. Active prior-license suspension and unresolved serious violations are denial-level release blockers. Open nonserious issues, resolved serious issues, dismissed serious issues, stale correspondence, and unverified correspondence do not override current public records.
+
+Expected answer summary: `C-TE4-007` is approved. `C-TE4-001`, `C-TE4-002`, `C-TE4-004`, `C-TE4-006`, `C-TE4-008`, `C-TE4-009`, `C-TE4-011`, `C-TE4-012`, `C-TE4-014`, and `C-TE4-015` are held. `C-TE4-003`, `C-TE4-005`, `C-TE4-010`, and `C-TE4-013` are denied. Policy-impacted ids are `C-TE4-001`, `C-TE4-002`, `C-TE4-009`, and `C-TE4-012`. Stale or unverified correspondence ids are `COR-C-TE4-001-1`, `COR-C-TE4-004-1`, `COR-C-TE4-012-1`, and `COR-C-TE4-014-1`.
+
+Evaluation basis: The evaluator has nine whole scoring points with raw weights 1, 3, 3, 3, 3, 3, 3, 2, and 1. They score exact target coverage and ordering; the complete determination set; financial-security deficiencies and actions; endorsement and experience deficiencies and actions; active-suspension and unresolved-serious-enforcement release blockers; policy-impact flags, bases, and summary; source-precedence codes plus the stale/unverified correspondence rollup; risk tiers and high-risk summary; and approve/hold/deny counts. Every point is pass/fail with no within-point partial credit.
+
+Transfer design: This formal test task is anchored to `train_001` and `train_004`. A solver can transfer that current policy rows govern thresholds, current public records outrank stale or unverified correspondence, bond status and amount must be evaluated together, insurance status and expiration must be evaluated together, pending financial evidence is not current coverage, active suspension and unresolved serious enforcement records block release, and closed serious records are not automatic denials.
+
+Likely model pitfalls: Common errors include treating a cancelled bond as current, ignoring insurance expiration when status says active, using stale or unverified correspondence to cure an application record, treating closed serious violations as denial-level blockers, treating open nonserious history as a denial, marking every current deficiency as policy impacted, or returning the old six-application `test_004` scope.
+
+Construction record: Author `task-builder-test-004` / Codex main agent. Created 2026-07-18. Updated 2026-07-18 after independent review. Major changes: removed overlap with `test_001`, aligned generator metadata and manifest with the fifteen target applications, added deterministic supplemental target records, replaced the standard answer, and retained the tighter evaluator around transfer-dependent source precedence.
+
+## 中文
+
+数据与来源：本任务属于 `SCN_019_regulatory_licensing_eligibility_and_compliance_review`，来源示例为 `E001`、`E002`、`E003`，其中工作流最直接对应 `E001` 的承包商资格审查。任务使用共享生成环境 `task_group/task_group_019/env/`，数据由 `env/generate_data.py` 以种子 `19019` 生成并存储在 `env/data/licensing.db`。
+
+任务定义：求解者扮演高级承包商许可审查员。目标集合是互不重叠的 contractor application range：`C-TE4-001` 至 `C-TE4-015`。可见材料只包括 `input/prompt.txt`、`input/payloads/answer_template.json`，以及以 `<TASK_ENV_BASE_URL>` 为根的公开业务接口。prompt 只给出目标编号、审查日期、接口和输出要求，不列举预期的问题类型。
+
+场景匹配：本任务是 task_group_019 中的正式 contractor eligibility task。它保留了源场景中的多来源许可审查模式：需要综合 application records、current policy rows、bond、insurance、license history、violations、correspondence 和 inspection context。此次修正避免与 `test_001` 重叠，仅使用 `C-TE4-*` 申请编号，将目标集合扩展到十五个申请，并直接评分 source precedence 与 policy impact 结论。
+
+材料地图：`/api/policies` 提供当前承包商门槛和 prior contractor baseline。`/api/contractor/applications` 提供 trade、requested class、experience、endorsement status、prior license id 和 submitted date。`/api/contractor/bonds` 与 `/api/contractor/insurance` 提供以 2025-07-18 为审查日的财务保障事实。`/api/contractor/license-history` 提供 prior-license status。`/api/contractor/violations` 提供 open serious blockers、open nonserious distractors 和 closed serious distractors。`/api/contractor/correspondence` 提供 stale、unverified、verified 以及 note wording 冲突的 correspondence，用于 source-precedence rollups。`/api/contractor/inspections` 提供背景，但本模板不把 inspection findings 作为独立 deficiency codes。
+
+解答依据：当前 contractor policy rows 按 trade 和 class 定义 minimum bond、insurance、experience 和 endorsement 要求。有效且未取消的 bond 必须达到当前最低金额。insurance 必须 active、在 2025-07-18 未过期，并达到当前金额门槛。missing 或 pending endorsement 统一表示为 `endorsement_not_verified`。pending insurance 是 `insurance_not_current`；如果 status 为 active 但 expiration date 早于审查日，则是 `insurance_expired`。prior license active suspension 和 unresolved serious violation 是 DENY 级别的 release blockers。open nonserious issues、resolved serious issues、dismissed serious issues、stale correspondence 和 unverified correspondence 不覆盖当前公共记录。
+
+预期答案摘要：`C-TE4-007` 为 APPROVE。`C-TE4-001`、`C-TE4-002`、`C-TE4-004`、`C-TE4-006`、`C-TE4-008`、`C-TE4-009`、`C-TE4-011`、`C-TE4-012`、`C-TE4-014`、`C-TE4-015` 为 HOLD。`C-TE4-003`、`C-TE4-005`、`C-TE4-010`、`C-TE4-013` 为 DENY。Policy-impacted ids 是 `C-TE4-001`、`C-TE4-002`、`C-TE4-009`、`C-TE4-012`。Stale 或 unverified correspondence ids 是 `COR-C-TE4-001-1`、`COR-C-TE4-004-1`、`COR-C-TE4-012-1`、`COR-C-TE4-014-1`。
+
+评测依据：评测器包含九个整点评分项，原始权重为 1、3、3、3、3、3、3、2、1。评分项分别检查目标覆盖和顺序、完整 determination 集合、financial-security deficiencies 与 actions、endorsement 和 experience deficiencies 与 actions、active suspension 与 unresolved serious enforcement 的 release-blocker 处理、policy-impact flags/bases/summary、source-precedence codes 和 stale/unverified correspondence rollup、risk tiers 与 high-risk summary，以及 approve/hold/deny counts。每个评分项都是通过或不通过，项内没有部分分。
+
+迁移设计：这是正式测试任务，迁移锚点是 `train_001` 和 `train_004`。求解者可以迁移这些经验：当前 policy rows 决定门槛；当前公共记录优先于 stale 或 unverified correspondence；bond 要同时看 status 和 amount；insurance 要同时看 status 和 expiration；pending financial evidence 不是当前保障；active suspension 和 unresolved serious enforcement records 阻断放行；closed serious records 不是自动 DENY。
+
+常见错误：常见错误包括把 cancelled bond 当作 current，看到 insurance status 为 active 就忽略 expiration date，用 stale 或 unverified correspondence 修复 application record，把 closed serious violations 当成 DENY 级别阻断，把 open nonserious history 当成 DENY，把所有当前缺陷都标记为 policy impacted，或者仍然返回旧版六个申请的 `test_004` 范围。
+
+构造记录：作者 `task-builder-test-004` / Codex main agent。创建日期 2026-07-18。根据独立 review 于 2026-07-18 更新。主要变更：移除与 `test_001` 的重叠，使 generator metadata 与 manifest 对齐十五个目标申请，新增 deterministic supplemental target records，替换标准答案，并保留围绕依赖迁移的 source precedence 的严格 evaluator。

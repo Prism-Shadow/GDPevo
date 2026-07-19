@@ -1,0 +1,102 @@
+{
+  "schema_name": "test_004_nimbus_transition_tax_review",
+  "version": "1.0",
+  "instructions": {
+    "language": "English only",
+    "deal_id": "Use PRJ_NIMBUS",
+    "currency": "USD integer dollars",
+    "ordering": {
+      "transition_issues": "Sort by issue_id ascending unless priority_order is requested elsewhere.",
+      "required_redlines": "Sort by redline_id ascending.",
+      "operational_risk.priority_order": "Order from highest negotiation priority to lowest."
+    },
+    "possible_issue_ids": [
+      "CUSTOMER_CONSENT_TERMINATION_RIGHT",
+      "CUSTOMER_CONSENT_NOTICE_ONLY",
+      "DATA_PROCESSING_ADDENDUM",
+      "FIELD_EMPLOYEE_CONTINUITY_PTO",
+      "EXECUTIVE_RETENTION_COVENANT",
+      "GOVERNING_LAW_FORUM_FIX",
+      "IP_DOMAIN_TRANSITION_MISSING",
+      "OPEN_SOURCE_CODE_ESCROW",
+      "OUTSIDE_DATE_EXTENSION_MISSING",
+      "PRIVACY_REMEDIATION_COVENANT",
+      "QUALITY_SYSTEM_TRANSFER",
+      "SECTION_1060_ALLOCATION_MISSING",
+      "SUPPLIER_CONTINUITY_COVENANT",
+      "TRANSFER_TAX_SPLIT_MISSING",
+      "TSA_SCOPE_DURATION_FEES",
+      "WORKING_CAPITAL_TRUE_UP"
+    ],
+    "possible_redline_ids": [
+      "CUSTOMER_CONSENT_CONDITION",
+      "DATA_PROCESSING_ADDENDUM",
+      "EMPLOYEE_CONTINUITY",
+      "EXECUTIVE_RETENTION",
+      "GOVERNING_LAW_FORUM",
+      "IP_DOMAIN_TRANSITION",
+      "OPEN_SOURCE_CODE_ESCROW",
+      "OUTSIDE_DATE_EXTENSION",
+      "PRIVACY_REMEDIATION_COVENANT",
+      "QUALITY_SYSTEM_TRANSFER",
+      "SECTION_1060_ALLOCATION",
+      "SUPPLIER_CONTINUITY_COVENANT",
+      "TRANSFER_TAX_SPLIT",
+      "TSA_SCOPE_FEES",
+      "WORKING_CAPITAL_TRUE_UP"
+    ]
+  },
+  "allowed_enums": {
+    "risk_rating": ["LOW", "MEDIUM", "HIGH"],
+    "issue_status": ["in_policy", "out_of_policy", "missing_required_term", "draft_exceeds_playbook", "draft_below_playbook"],
+    "recommended_action": ["delete", "revise", "add", "accept", "escalate", "approve", "approve_with_conditions", "reject"],
+    "redline_action": ["delete", "revise", "add"],
+    "fee_model": ["at_cost", "cost_plus_stranded_overhead", "fixed_below_cost", "fixed_fee", "not_applicable"],
+    "tax_allocation_method": ["buyer_sole_discretion", "seller_sole_discretion", "mutually_agreed_section_1060"],
+    "redirect_type": ["301_OR_302", "301_ONLY", "302_ONLY", "not_applicable"],
+    "forum": ["Delaware Court of Chancery or Delaware federal court", "state court", "federal court", "other"],
+    "overall_posture": ["accept_as_drafted", "revise_before_signing", "escalate_to_business_lead", "reject"]
+  },
+  "required_output_shape": {
+    "deal_id": "string",
+    "client_side": "string",
+    "transition_issues": [
+      {
+        "issue_id": "one value from possible_issue_ids",
+        "category": "string",
+        "source_term_ids": ["string"],
+        "source_record_ids": ["string"],
+        "issue_status": "enum issue_status",
+        "risk_rating": "enum risk_rating",
+        "recommended_action": "enum recommended_action",
+        "draft_value_normalized": {},
+        "required_position_normalized": {},
+        "quantified_impact_dollars": "integer or null"
+      }
+    ],
+    "required_redlines": [
+      {
+        "redline_id": "one value from possible_redline_ids",
+        "related_issue_id": "one value from possible_issue_ids",
+        "redline_action": "enum redline_action",
+        "must_have_terms": {}
+      }
+    ],
+    "operational_risk": {
+      "overall_risk_rating": "enum risk_rating",
+      "overall_posture": "enum overall_posture",
+      "priority_order": ["issue_id values selected in transition_issues, ordered from highest negotiation priority to lowest"],
+      "quantified_exposures": {
+        "stranded_cost_gap_dollars": "integer",
+        "field_operations_pto_liability_dollars": "integer",
+        "required_closing_consent_amount_at_risk_dollars": "integer",
+        "top_customer_annual_revenue_at_risk_dollars": "integer",
+        "closing_certainty_high_dollars": "integer",
+        "transition_disruption_high_dollars": "integer"
+      },
+      "required_closing_consent_ids": ["string"],
+      "material_contract_consent_ids": ["string"],
+      "business_outcomes_protected": ["string"]
+    }
+  }
+}

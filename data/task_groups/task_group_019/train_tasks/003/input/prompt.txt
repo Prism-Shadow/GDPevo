@@ -1,0 +1,11 @@
+You are supporting the Alcohol Renewal Unit with a pre-release renewal screen.
+
+Build a ranked manual-review queue for the current target licenses AL-TR3-001 through AL-TR3-010. The release boundary is 2025-04-10, and the target queue size is 10.
+
+Use the licensing environment data service:
+- GET <TASK_ENV_BASE_URL>/api/alcohol/licensees
+- GET <TASK_ENV_BASE_URL>/api/alcohol/violations
+- GET <TASK_ENV_BASE_URL>/api/renewal/rules
+- POST <TASK_ENV_BASE_URL>/api/sql, if SQL access is available in your environment instructions
+
+Return only a JSON object matching input/payloads/answer_template.json. The queue should include the required rank, license identity, matched violation IDs, matched violation count and most recent date used, match confidence, risk tier, next-step label, and summary fields needed for release staff review.

@@ -1,0 +1,154 @@
+{
+  "description": "Restricted liquor-license staff package output schema for application L-TR5-001. Return one JSON object with exactly these business fields; extra explanatory prose is not required.",
+  "required_top_level_keys": [
+    "application_id",
+    "recommended_posture",
+    "same_premises_basis_applies",
+    "covered_risk_codes",
+    "verification_gap_codes",
+    "standard_obligation_codes",
+    "location_specific_control_codes",
+    "first_90_day_plan",
+    "escalation_trigger_codes"
+  ],
+  "field_definitions": {
+    "application_id": {
+      "type": "string",
+      "format": "stable application identifier"
+    },
+    "recommended_posture": {
+      "type": "enum",
+      "allowed_values": [
+        "issue_restricted",
+        "request_follow_up",
+        "deny"
+      ]
+    },
+    "same_premises_basis_applies": {
+      "type": "boolean"
+    },
+    "covered_risk_codes": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "NOISE",
+          "PATIO_BOUNDARY",
+          "AFTER_HOURS",
+          "ASSAULT",
+          "MINOR_SALE",
+          "TAX_HOLD",
+          "FOOD_SERVICE_GAP",
+          "CAMERA_COVERAGE",
+          "ID_CHECK"
+        ]
+      },
+      "ordering": "Any order is accepted; use each code at most once."
+    },
+    "verification_gap_codes": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "camera_evidence_missing",
+          "food_service_evidence_missing",
+          "floor_plan_conflicting",
+          "late_night_monitoring_needed",
+          "tax_hold_unresolved",
+          "control_signage_missing",
+          "police_memo_identity_note",
+          "neighbor_notice_missing",
+          "site_photo_missing"
+        ]
+      },
+      "ordering": "Any order is accepted; use each code at most once."
+    },
+    "standard_obligation_codes": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "ID_CHECK",
+          "HOURS",
+          "SECURITY",
+          "FOOD_SERVICE",
+          "CCTV",
+          "PATIO",
+          "NOISE",
+          "DELIVERY"
+        ]
+      },
+      "ordering": "Any order is accepted; include only obligations that are ordinary required obligations for this license class."
+    },
+    "location_specific_control_codes": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "ID_CHECK",
+          "HOURS",
+          "SECURITY",
+          "FOOD_SERVICE",
+          "CCTV",
+          "PATIO",
+          "NOISE",
+          "DELIVERY"
+        ]
+      },
+      "ordering": "Any order is accepted; include only current active controls tied to this location."
+    },
+    "first_90_day_plan": {
+      "type": "array",
+      "ordering": "Return objects in intended operational sequence.",
+      "items": {
+        "type": "object",
+        "required_keys": [
+          "check_code",
+          "timing"
+        ],
+        "fields": {
+          "check_code": {
+            "type": "enum",
+            "allowed_values": [
+              "camera_export_test",
+              "food_service_service_area_check",
+              "late_night_closing_visit",
+              "noise_patio_boundary_check",
+              "id_check_observation",
+              "control_signage_review",
+              "tax_clearance_review",
+              "incident_log_review"
+            ]
+          },
+          "timing": {
+            "type": "enum",
+            "allowed_values": [
+              "first_30_days",
+              "days_31_60",
+              "days_61_90"
+            ]
+          }
+        }
+      }
+    },
+    "escalation_trigger_codes": {
+      "type": "array",
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "after_hours_service",
+          "missing_camera_coverage",
+          "footage_not_produced",
+          "food_service_not_available",
+          "noise_or_patio_breach",
+          "open_tax_hold_uncleared",
+          "unreported_violent_incident",
+          "minor_sale",
+          "patio_boundary_failure",
+          "id_check_failure"
+        ]
+      },
+      "ordering": "Any order is accepted; use each code at most once."
+    }
+  }
+}
