@@ -1,105 +1,151 @@
-# test_003 Notes
+# BriarGate SEC Custodian Production Issue Packet Notes
 
 ## English
 
-### Data lineage and task source
+Task ID: `test_003`
 
-This hidden notes file supports `task_group_017/test_tasks/003`. The task is derived from scenario `SCN_017_white_collar_investigation_production_review`, especially source example `E003`, and from the `task_group_017` design brief for the custodian/QC/privilege review family. The formal test task targets matter `M-LYN-322` and custodian `C-MR-118` in the generated shared environment under `task_group/task_group_017/env/`.
+Author: Task-builder 08
 
-The solver-visible files are `input/prompt.txt` and `input/payloads/answer_template.json`. They are English-only and do not expose the SOP checklist or answer facts. The standard answer and evaluator use generated environment records from `matters.json`, `custodians.json`, `subpoena_categories.json`, `production_logs.json`, `collection_events.json`, `destruction_events.json`, `privilege_logs.json`, `qc_events.json`, and `documents.json`.
+Created: 2026-07-18
 
-### Task definition and expected work
+Updated: 2026-07-18
 
-The business request is a custodian-level production issue review for the Lynxion Consulting Payments Investigation. The solver must use the shared API to identify preservation, collection, privilege, QC, and processing issues for `C-MR-118`, then return normalized JSON rather than a memorandum. The expected output follows the same broad schema family as `train_tasks/003`: overall status, issue findings, privilege actions, attachment failures, and ranked escalations.
+Source scenario: `SCN_017_white_collar_investigation_production_review`
 
-The key constraints are exact integer counts, controlled enum values, sorted lists where the template says to sort, and no unstructured narrative answer. The target matter contains noisy same-matter categories and generated distractor records, so the intended work process is to reconcile the matter, custodian, category, collection, destruction, privilege, QC, production, and document-marker records rather than relying on a single table.
+Source examples: `E001`, `E002`, `E003`, with strongest lineage to `E003` because this task is an SEC custodian production, privilege, QC, and valuation-red-flag review.
 
-### Scenario fit
+This task asks a solver to prepare a structured production-issue packet for `MTR-BRIARGATE-SEC`. Solver-visible material is limited to `input/prompt.txt`, `input/payloads/review_scope.json`, `input/payloads/answer_template.json`, and the shared Investigation Review Hub at `<TASK_ENV_BASE_URL>`. The prompt is written as a realistic outside-counsel work request and intentionally avoids a workflow checklist, scoring criteria, transfer notes, and answer-like facts. The small `review_scope.json` identifies the matter, audience, allowed source class, and API key header for the read-only query endpoint without exposing the issue IDs.
 
-This task belongs to the white-collar investigation production-review scenario because it simulates a legal production team triaging a single custodian's preservation, collection, privilege, and processing issues before making supplemental production and notice decisions. It matches the `test_003` row in `scratch/task_group_design.md`: laptop wipe, shared-folder deletions, failed attachments, third-party forwarding, and first-pass privilege errors.
+The expected work process is cross-system review of custodian source status, retention/deletion records, document metadata, privilege entries, QC findings, and remediation action candidates. The solver should use shared environment endpoints only and should not read `env/` source files, SQLite files, hidden notes, or standard answers directly.
 
-### Material map
+Scenario fit:
 
-Matter `M-LYN-322` supplies the DOJ Fraud Section context, subpoena date `2024-08-20`, hold date `2024-08-22`, deadline `2025-01-24`, production protocol flag, and regulator notice flag. Custodian `C-MR-118` identifies M. Rivas as Consulting Payments Director and lists the relevant sources: laptop, shared folder, personal Outlook, and email.
+This task belongs to the white-collar investigation production-review scenario because it requires the same operational judgment as the source examples: reconstructing a production issue packet from scattered review-hub records, separating preservation and collection gaps from privilege defects, and escalating substantive investigation documents without turning the deliverable into a narrative memo. The task uses the fund-valuation SEC matter family and repeats the custodian-source, synchronized-folder loss, personal account, waiver, over-designation, miscoded-privilege, and valuation-red-flag patterns.
 
-Subpoena categories `L-02`, `L-03`, `L-04`, `L-05`, and `L-06` are the scored affected categories. `L-02` covers the laptop and local files, `L-03` covers shared-folder payment files, `L-04` covers personal Outlook, `L-05` covers consultant communications and forwards, and `L-06` covers privilege coding and attachments.
+Material map:
 
-Collection events `CE-0024`, `CE-0025`, and `CE-0026` provide the laptop wipe, shared-folder partial recovery, and uncollected personal Outlook evidence. Destruction events `DE-0006` and `DE-0007` corroborate the post-hold laptop wipe and shared-folder deletion. Production logs `PL-0028` through `PL-0032` summarize the affected category states. Privilege rows `PV-0010`, `PV-0011`, and `PV-0012` support waiver, over-designation, and miscoding findings. QC events `QC-0009`, `QC-0010`, and `QC-0011` provide the key counts for shared-folder recovery, privilege miscoding, and failed attachments. Document markers include `DOC-LYN-SHARED-001`, `DOC-LYN-SHARED-052`, `DOC-LYN-PRIV-001`, `DOC-LYN-PRIV-039`, `DOC-LYN-ATT-017`, and `DOC-LYN-ATT-031`.
+- `input/prompt.txt` is the solver-facing work request.
+- `input/payloads/review_scope.json` provides matter scope, the base URL placeholder, and the read-only query header.
+- `input/payloads/answer_template.json` defines the required JSON shape, allowed enums, list-ordering rules, and integer-count precision.
+- `GET /api/custodian-sources` and `POST /api/query` can expose `SRC-BRIAR-LIN-LAPTOP` and `SRC-BRIAR-LIN-PMAIL`.
+- `GET /api/retention-events` can expose `RET-BRIAR-CLOUD-DEL` and its deletion/recovery counts.
+- `GET /api/documents/search` can expose unrecovered files `DOC-BRIAR-SOLARIS-MODEL` and `DOC-BRIAR-NOVA-WATERFALL`, plus valuation red flags `DOC-BRIAR-NOVA-BACKSOLVE` and `DOC-BRIAR-SOLARIS-OVERRIDE`.
+- `GET /api/privilege-log` can expose `PRIV-BRIAR-ADVISER-WAIVER` and `PRIV-BRIAR-OVERDESIG`.
+- `GET /api/qc-findings` can expose `QC-BRIAR-MISCODED-PRIV`.
+- `GET /api/remediation-actions` may help confirm that issue records have remediation candidates, but the standard action package uses task-level normalized action enums.
 
-### Solution and evaluation basis
+Standard answer basis:
 
-The standard answer classifies the overall status as `needs_escalation` with `notice_recommended: true`. It contains seven present issue findings:
+- `SRC-BRIAR-LIN-LAPTOP`: Evelyn Lin's laptop was wiped after the hold on `2024-04-12`; status is `lost`; affected categories are `SEC-A` and `SEC-D`; this is a `post_hold_preservation_failure` requiring SEC disclosure assessment and forensic work.
+- `RET-BRIAR-CLOUD-DEL`: 24 synchronized folder files were deleted after the hold; 17 were recovered and 7 remain unrecovered; affected categories are `SEC-B` and `SEC-C`.
+- `DOC-BRIAR-SOLARIS-MODEL` and `DOC-BRIAR-NOVA-WATERFALL`: investigation-relevant unrecovered file IDs linked to the synchronized-folder deletion event.
+- `SRC-BRIAR-LIN-PMAIL`: Evelyn Lin's ProtonMail source is uncollected; affected categories are `SEC-A` and `SEC-C`; it is a personal account collection gap.
+- `PRIV-BRIAR-ADVISER-WAIVER`: four privileged emails were forwarded to an outside placement adviser; this is `third_party_waiver`.
+- `PRIV-BRIAR-OVERDESIG`: 15 logistics emails were over-designated as privileged.
+- `QC-BRIAR-MISCODED-PRIV`: 38 privileged documents were coded non-privileged.
+- `DOC-BRIAR-NOVA-BACKSOLVE` and `DOC-BRIAR-SOLARIS-OVERRIDE`: substantive valuation red flags. The former is classified as `valuation_back_into`; the latter is classified as `unsupported_valuation_mark`.
 
-- `laptop_wipe`: post-hold spoliation, critical, category `L-02`, one affected and unrecovered laptop source, primary action `forensic_recovery`, secondary actions `custodian_declaration` and `regulator_notice`.
-- `shared_drive_deletion`: post-hold spoliation, critical, category `L-03`, 52 deleted shared-folder files, 41 recovered, 11 unrecovered, primary action `regulator_notice`.
-- `personal_email_gap`: uncollected source, high, category `L-04`, one uncollected personal Outlook source, primary action `supplemental_collection`.
-- `privilege_waiver`: four legal-advice emails forwarded to outside consultant K. Sato, high, category `L-05`, primary action `waiver_assessment`.
-- `privilege_overdesignation`: 18 business-only scheduling/logistics emails over-designated as privileged, medium, category `L-06`, primary action `privilege_review`.
-- `privilege_miscoding`: 39 privileged investigation emails first-pass coded non-privileged and produced, high, category `L-06`, primary action `clawback_check`.
-- `attachment_failure`: 31 failed attachments, medium, category `L-06`, split into 17 password-protected and 14 corrupt, primary action `reprocess_qc`.
+The output schema uses normalized JSON fields and controlled enums for statuses, classifications, priorities, actions, and owners. Counts are integers. Lists are evaluated as stable ID sets unless the action-ranking point specifically checks rank placement.
 
-The evaluator has 9 exact-match scoring points with raw weights `1, 2, 3, 2, 2, 1, 3, 2, 3`. It normalizes `category_ids`, `secondary_actions`, and ranked rows but otherwise treats each scoring point as all-or-nothing. The points cover target identity and status, laptop wipe after hold, shared-folder deletion and recovery counts, uncollected personal Outlook, four forwarded privileged emails and waiver risk, 18 over-designations, 39 privilege miscoding records and clawback, 31 failed attachments split 17/14, and the ranked escalation/action order. The standard answer must score 1.0.
+Rubric, whole-point pass/fail:
 
-Likely model pitfalls include using noisy `LY-N...` categories instead of the core `L-..` categories, treating partial shared-folder recovery as cured, missing the personal Outlook source because produced email exists elsewhere, confusing waiver with over-designation, missing that miscoded privileged records were produced and require clawback review, and ranking attachment reprocessing above post-hold preservation loss.
+| Point | Weight | Business outcome |
+| --- | ---: | --- |
+| `SP001` | 3 | Correct Lin laptop preservation failure with source ID, status, wipe date, impacts, priority, and action. |
+| `SP002` | 3 | Correct synchronized-folder deletion event ID, deleted/recovered/unrecovered counts, and impacted categories. |
+| `SP003` | 2 | Correct unrecovered investigation-relevant file IDs linked to the recovery gap. |
+| `SP004` | 2 | Correct Lin ProtonMail collection gap, impacts, priority, and action. |
+| `SP005` | 2 | Correct outside-placement-adviser third-party waiver classification, count, third party, priority, and action. |
+| `SP006` | 1 | Correct over-designation defect, count, and cleanup action. |
+| `SP007` | 2 | Correct miscoded privileged document QC defect, count, priority, and recode/clawback action. |
+| `SP008` | 2 | Correct valuation red-flag document IDs and red-flag classifications. |
+| `SP009` | 2 | Correct prioritized remediation package across preservation, collection, privilege, and valuation escalation targets. |
 
-### Transfer design
+The nine scoring points cover at least four distinct outcomes: preservation/source risk, deletion recovery metrics, file-level unrecovered evidence, personal-account collection, privilege waiver, over-designation, QC miscoding, substantive valuation evidence, and action prioritization. The evaluator awards each point all-or-zero using deterministic normalized JSON checks and does not score prose quality.
 
-The main train anchors are `train_tasks/003` and `train_tasks/004`, with secondary support from `train_tasks/005`. `train_003` anchors the custodian issue schema, the post-hold device loss and shared-drive deletion pattern, personal email collection gaps, third-party waiver analysis, attachment failure handling, and escalation ranking. `train_004` anchors privilege review conventions for business-only over-designation, first-pass privileged/non-privileged miscoding, privilege-log correction, and clawback checks. `train_005` reinforces that uncollected personal sources and hold-related collection gaps must be escalated even when other sources were collected.
+Transfer design:
 
-The transfer-dependent difficulty is recognizing the recurring issue taxonomy and action order without a solver-visible checklist. The task-specific exploration difficulty is finding the `M-LYN-322` and `C-MR-118` records among noisy generated records and mapping the new category IDs and counts. High-value scoring goals that rely on transfer include the post-hold spoliation classification, waiver versus over-designation separation, clawback treatment for produced privileged records, and preservation-first escalation ranking.
+This is a test task anchored mainly to `train_003` and `train_004`. `train_003` anchors post-hold laptop loss, shared-drive or synchronized-folder deletion recovery, personal account collection gaps, separate unrecovered files and valuation red flags, and the shape of a custodian issue packet. `train_004` reinforces privilege/QC distinctions, especially the need to separate third-party waiver, over-designation, and privileged documents coded non-privileged. These anchors should help a fewshot solver recognize that the BriarGate laptop and cloud deletion are preservation/recovery issues, that ProtonMail is a source gap tied to request categories, that waiver and over-designation are not interchangeable, and that valuation red-flag document IDs must be surfaced separately from unrecovered file IDs.
 
-### Construction record
+Task-specific exploration remains necessary because all matter IDs, source IDs, document IDs, counts, dates, categories, and third-party descriptions differ from the train tasks. The prompt does not mention the transfer anchors or answer path, so the solver must infer the workflow from train examples and rediscover the BriarGate facts through the shared environment.
 
-Author: Codex task-builder subagent for `task_group_017 test_003`.
-Created: 2026-07-07.
-Updated: 2026-07-07.
-Major changes: Created prompt, answer template, hidden bilingual notes, standard answer, and exact-match evaluator under `test_tasks/003/`.
+Likely model pitfalls include treating the laptop wipe as ordinary IT replacement, missing the 24/17/7 synchronized-folder counts, listing only unrecovered file IDs without the recovery event, merging waiver and over-designation into a generic privilege issue, using the privilege entry ID instead of `QC-BRIAR-MISCODED-PRIV` for the miscoding defect, omitting ProtonMail because it is outside company systems, and confusing unrecovered files with produced valuation red flags.
+
+Construction record:
+
+- 2026-07-18: Created complete `test_003` task-local prompt, scope payload, answer template, standard answer, rubric, deterministic evaluator, and bilingual notes.
 
 ## 中文
 
-### 数据来源与任务来源
+任务 ID：`test_003`
 
-本隐藏说明文件用于 `task_group_017/test_tasks/003`。任务来自场景 `SCN_017_white_collar_investigation_production_review`，主要承接源示例 `E003` 的 custodian production set review，并依据 `task_group_017` 设计文档中的 custodian/QC/privilege review 测试任务。正式测试任务使用 `task_group/task_group_017/env/` 中的生成环境，目标 matter 是 `M-LYN-322`，目标 custodian 是 `C-MR-118`。
+作者：Task-builder 08
 
-求解器可见文件为 `input/prompt.txt` 和 `input/payloads/answer_template.json`，均为英文，不泄露 SOP checklist 或答案事实。标准答案与评测器基于共享环境中的 matters、custodians、subpoena categories、production logs、collection events、destruction events、privilege logs、QC events 和 documents 等 JSON 数据。
+创建日期：2026-07-18
 
-### 任务定义与预期工作
+更新日期：2026-07-18
 
-本任务要求对 Lynxion Consulting Payments Investigation 中 M. Rivas 的 custodian production 风险进行结构化审查。求解器需要通过共享 API 识别保全、收集、privilege、QC 和处理失败问题，并输出符合模板的 JSON，而不是写叙述性备忘录。输出结构延续 `train_tasks/003` 的同一任务族，包括 overall status、issue findings、privilege actions、attachment failures 和 ranked escalations。
+来源场景：`SCN_017_white_collar_investigation_production_review`
 
-关键约束包括使用整数精确计数、控制枚举值、按模板要求排序列表、不得输出非结构化 memo。目标 matter 中存在同一 matter 的噪声类别和干扰记录，因此正确解题需要交叉核对 matter、custodian、category、collection、destruction、privilege、QC、production 和 document marker 记录，而不是只看单一表格。
+来源示例：`E001`、`E002`、`E003`，其中与 `E003` 的关系最强，因为本任务同样是 SEC custodian production、privilege、QC 和 valuation red flag 审查。
 
-### 场景契合度
+本任务要求求解者为 `MTR-BRIARGATE-SEC` 准备结构化 production issue packet。求解者可见材料仅包括 `input/prompt.txt`、`input/payloads/review_scope.json`、`input/payloads/answer_template.json` 以及 `<TASK_ENV_BASE_URL>` 上的共享 Investigation Review Hub。提示词以真实外部律师工作请求的形式撰写，刻意不暴露操作清单、评分规则、迁移说明或答案事实。小型 `review_scope.json` 只提供 matter 范围、base URL 占位符和只读查询接口 header，不暴露问题 ID。
 
-该任务符合白领调查中的生产审查场景，模拟法律生产团队在补充生产和通知决策前，对单个 custodian 的保全、收集、privilege 和处理问题进行 triage。它对应 `scratch/task_group_design.md` 中的 `test_003`：laptop wipe、shared-folder deletions、failed attachments、third-party forwarding 和 first-pass privilege errors。
+预期工作流程是跨系统审查 custodian source status、retention/deletion records、document metadata、privilege entries、QC findings 和 remediation action candidates。求解者只能使用共享环境端点，不应直接读取 `env/` 源文件、SQLite 文件、隐藏 notes 或标准答案。
 
-### 材料映射
+场景契合度：
 
-`M-LYN-322` matter 记录提供 DOJ Fraud Section 背景、subpoena date `2024-08-20`、hold date `2024-08-22`、deadline `2025-01-24`、production protocol flag 和 regulator notice flag。`C-MR-118` custodian 记录表明 M. Rivas 是 Consulting Payments Director，相关来源包括 laptop、shared folder、personal Outlook 和 email。
+该任务属于 white-collar investigation production-review 场景，因为它要求与来源示例相同的运营判断：从分散的 review hub 记录重建 production issue packet，区分 preservation/collection gap 与 privilege defect，并将实质性调查文件升级处理，同时保持结构化 JSON 输出而非叙事备忘录。任务使用基金估值 SEC matter 家族，并复用 custodian source、synchronized-folder loss、personal account、waiver、over-designation、miscoded privilege 和 valuation red flag 等模式。
 
-评分相关类别为 `L-02`、`L-03`、`L-04`、`L-05` 和 `L-06`。`L-02` 对应 laptop and local files，`L-03` 对应 shared-folder payment files，`L-04` 对应 personal Outlook，`L-05` 对应 consultant communications and forwards，`L-06` 对应 privilege coding and attachments。
+材料地图：
 
-`CE-0024`、`CE-0025` 和 `CE-0026` 分别提供 laptop wipe、shared-folder 部分恢复和 personal Outlook 未收集的 collection evidence。`DE-0006` 和 `DE-0007` 佐证 hold 之后 laptop wipe 与 shared-folder deletion。`PL-0028` 至 `PL-0032` 提供各类别状态摘要。`PV-0010`、`PV-0011` 和 `PV-0012` 分别支撑 waiver、over-designation 和 miscoding 发现。`QC-0009`、`QC-0010` 和 `QC-0011` 给出 shared-folder recovery、privilege miscoding 和 failed attachments 的关键数量。
+- `input/prompt.txt` 是求解者可见的工作请求。
+- `input/payloads/review_scope.json` 提供 matter 范围、base URL 占位符和只读查询 header。
+- `input/payloads/answer_template.json` 定义 JSON 形状、允许枚举、列表排序规则和整数精度。
+- `GET /api/custodian-sources` 与 `POST /api/query` 可用于发现 `SRC-BRIAR-LIN-LAPTOP` 和 `SRC-BRIAR-LIN-PMAIL`。
+- `GET /api/retention-events` 可用于发现 `RET-BRIAR-CLOUD-DEL` 以及删除、恢复、未恢复数量。
+- `GET /api/documents/search` 可用于发现未恢复文件 `DOC-BRIAR-SOLARIS-MODEL`、`DOC-BRIAR-NOVA-WATERFALL`，以及估值红旗 `DOC-BRIAR-NOVA-BACKSOLVE`、`DOC-BRIAR-SOLARIS-OVERRIDE`。
+- `GET /api/privilege-log` 可用于发现 `PRIV-BRIAR-ADVISER-WAIVER` 和 `PRIV-BRIAR-OVERDESIG`。
+- `GET /api/qc-findings` 可用于发现 `QC-BRIAR-MISCODED-PRIV`。
+- `GET /api/remediation-actions` 可辅助确认问题记录存在 remediation candidates，但标准行动包使用任务层面的规范化 action enums。
 
-### 答案与评测依据
+标准答案依据：
 
-标准答案将 overall status 设为 `needs_escalation`，并设置 `notice_recommended: true`。七个 present issue findings 为：`laptop_wipe`、`shared_drive_deletion`、`personal_email_gap`、`privilege_waiver`、`privilege_overdesignation`、`privilege_miscoding` 和 `attachment_failure`。
+- `SRC-BRIAR-LIN-LAPTOP`：Evelyn Lin 的笔记本在 hold 之后于 `2024-04-12` 被擦除；状态为 `lost`；影响 `SEC-A` 和 `SEC-D`；这是 `post_hold_preservation_failure`，需要 SEC 披露评估和取证工作。
+- `RET-BRIAR-CLOUD-DEL`：hold 之后删除了 24 个同步文件夹文件，其中 17 个已恢复，7 个未恢复；影响 `SEC-B` 和 `SEC-C`。
+- `DOC-BRIAR-SOLARIS-MODEL` 与 `DOC-BRIAR-NOVA-WATERFALL`：与调查相关且未恢复的文件 ID，关联到同步文件夹删除事件。
+- `SRC-BRIAR-LIN-PMAIL`：Evelyn Lin 的 ProtonMail 来源未收集；影响 `SEC-A` 和 `SEC-C`；这是个人账户收集缺口。
+- `PRIV-BRIAR-ADVISER-WAIVER`：四封 privileged emails 被转发给 outside placement adviser；分类为 `third_party_waiver`。
+- `PRIV-BRIAR-OVERDESIG`：15 封 logistics emails 被过度标记为 privileged。
+- `QC-BRIAR-MISCODED-PRIV`：38 份 privileged documents 被编码为 non-privileged。
+- `DOC-BRIAR-NOVA-BACKSOLVE` 与 `DOC-BRIAR-SOLARIS-OVERRIDE`：实质性估值红旗文件。前者分类为 `valuation_back_into`，后者分类为 `unsupported_valuation_mark`。
 
-核心评分事实包括：laptop 在 hold 后的 `2024-09-18` 被 wipe；52 个 shared-folder 文件被删除，其中 41 个 recovered、11 个 unrecovered；personal Outlook 被 produced emails 引用但未收集；4 封 legal-advice emails 转发给 consultant K. Sato 并产生 waiver risk；18 封 business-only scheduling/logistics emails 被 over-designated；39 封 privileged investigation emails 被 first-pass coded non-privileged 且已经 produced，需要 clawback check；31 个 failed attachments 分为 17 个 password-protected 和 14 个 corrupt；以及 escalation/action 的优先级排序。
+输出 schema 使用结构化 JSON 和受控枚举来表示 status、classification、priority、action 与 owner。数量字段均为整数。除 action ranking 评分点外，列表按稳定 ID 集合进行归一化评估。
 
-评测器包含 9 个 exact-match 评分点，原始权重为 `1, 2, 3, 2, 2, 1, 3, 2, 3`。评测器会规范化 `category_ids`、`secondary_actions` 和 ranked rows，但每个评分点内部仍然是全有或全无。标准答案自检必须得到 1.0。
+评分规则为整点通过或失败：
 
-常见错误包括误用噪声 `LY-N...` 类别而不是核心 `L-..` 类别，将 shared-folder 部分恢复误认为完全修复，因为已有 produced email 而忽略 personal Outlook，混淆 waiver 与 over-designation，未识别已生产 privileged records 需要 clawback review，以及把 attachment reprocessing 排在 post-hold preservation loss 之前。
+| Point | Weight | 业务结果 |
+| --- | ---: | --- |
+| `SP001` | 3 | 正确识别 Lin laptop preservation failure，包括来源 ID、状态、擦除日期、影响类别、优先级和动作。 |
+| `SP002` | 3 | 正确报告 synchronized-folder 删除事件 ID、删除/恢复/未恢复数量和影响类别。 |
+| `SP003` | 2 | 正确识别未恢复且与调查相关的文件 ID，并关联到恢复缺口。 |
+| `SP004` | 2 | 正确识别 Lin ProtonMail 收集缺口、影响类别、优先级和动作。 |
+| `SP005` | 2 | 正确识别 outside-placement-adviser third-party waiver，包括数量、第三方、优先级和动作。 |
+| `SP006` | 1 | 正确识别 over-designation 缺陷、数量和清理动作。 |
+| `SP007` | 2 | 正确识别 privileged documents 被误编码的 QC 缺陷、数量、优先级和 recode/clawback 动作。 |
+| `SP008` | 2 | 正确识别估值红旗 document IDs 和红旗分类。 |
+| `SP009` | 2 | 正确给出覆盖 preservation、collection、privilege 和 valuation escalation 的优先 remediation package。 |
 
-### 迁移设计
+九个评分点覆盖至少四个不同业务结果：preservation/source risk、删除恢复指标、未恢复证据文件、个人账户收集、privilege waiver、over-designation、QC miscoding、估值实质证据和行动优先级。评估器使用确定性的 JSON 归一化检查，每个评分点整点通过或失败，不评价文字风格。
 
-主要 train anchors 是 `train_tasks/003` 和 `train_tasks/004`，次要锚点为 `train_tasks/005`。`train_003` 锚定 custodian issue schema、hold 后 device loss 与 shared-drive deletion 模式、personal email collection gap、third-party waiver、attachment failure 处理和 escalation ranking。`train_004` 锚定 business-only over-designation、first-pass privileged/non-privileged miscoding、privilege-log correction 和 clawback check 的 privilege review 约定。`train_005` 强化 personal source 未收集和 hold-related collection gap 即使存在其他 collected sources 也需要升级处理。
+迁移设计：
 
-迁移依赖的难点在于求解器需要从训练任务中归纳 issue taxonomy 和 action order，而 prompt 中不会给出 checklist。任务本地探索难点在于需要在噪声生成数据中找到 `M-LYN-322` 和 `C-MR-118` 的记录，并映射新的 category IDs 和 counts。高度依赖迁移的评分点包括 post-hold spoliation classification、waiver 与 over-designation 的区分、produced privileged records 的 clawback 处理，以及 preservation-first 的 escalation ranking。
+本任务是 test task，主要锚定 `train_003` 和 `train_004`。`train_003` 锚定 hold 后 laptop loss、shared-drive 或 synchronized-folder deletion recovery、personal account collection gap、未恢复文件与估值红旗分离，以及 custodian issue packet 的输出形状。`train_004` 强化 privilege/QC 区分，尤其是第三方 waiver、over-designation 和 privileged documents coded non-privileged 需要分开处理。通过这些锚点，fewshot 求解者应能识别 BriarGate 的 laptop 和 cloud deletion 是 preservation/recovery 问题，ProtonMail 是与请求类别相关的 source gap，waiver 与 over-designation 不能互换，valuation red-flag document IDs 必须与 unrecovered file IDs 分开呈现。
 
-### 构造记录
+任务仍需要特定探索，因为 matter IDs、source IDs、document IDs、数量、日期、类别和第三方描述都不同于训练任务。提示词不提及迁移锚点或答案路径，因此求解者必须从训练示例中推断工作方式，并通过共享环境重新发现 BriarGate 事实。
 
-作者：Codex task-builder subagent for `task_group_017 test_003`。
-创建日期：2026-07-07。
-更新日期：2026-07-07。
-主要变更：在 `test_tasks/003/` 下创建 prompt、answer template、隐藏双语 notes、standard answer 和 exact-match evaluator。
+常见错误包括：把 laptop wipe 当成普通 IT replacement；漏掉 24/17/7 的同步文件夹数量；只列文件 ID 而不关联恢复事件；把 waiver 和 over-designation 合并成泛化 privilege issue；用 privilege entry ID 代替 `QC-BRIAR-MISCODED-PRIV` 作为 miscoding defect；因为 ProtonMail 不属于公司系统而漏掉个人账户缺口；以及混淆未恢复文件与已生产的估值红旗文件。
+
+构建记录：
+
+- 2026-07-18：创建完整 `test_003` 任务目录，包括提示词、scope payload、answer template、标准答案、rubric、确定性评估器和双语 notes。

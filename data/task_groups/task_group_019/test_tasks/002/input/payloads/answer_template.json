@@ -1,114 +1,97 @@
 {
-  "description": "Required output schema for test_002 renewal manual-review queue.",
-  "top_level_keys": {
-    "queue": {
-      "type": "list",
-      "required": true,
-      "length": 12,
-      "ordering": "Rank ascending from 1 to 12. Rank is business-significant.",
-      "item_required_keys": {
-        "rank": {
-          "type": "integer",
-          "allowed_range": [
-            1,
-            12
-          ]
-        },
-        "license_id": {
-          "type": "string",
-          "format": "CLRP renewal license ID"
-        },
-        "facility_name": {
-          "type": "string",
-          "format": "Facility name from the current renewal roster"
-        },
-        "match_confidence": {
-          "type": "enum",
-          "allowed_values": [
-            "exact",
-            "close",
-            "shared_address_manual"
-          ]
-        },
-        "violation_count_used": {
-          "type": "integer",
-          "description": "Count of matched violation records used for pre-boundary ranking."
-        },
-        "most_recent_date_used": {
-          "type": "string",
-          "format": "YYYY-MM-DD",
-          "description": "Most recent matched violation date used for pre-boundary ranking."
-        },
-        "next_step_label": {
-          "type": "enum",
-          "allowed_values": [
-            "manual fine check",
-            "manual ALERT check",
-            "board review",
-            "additional record check"
-          ]
-        }
+  "schema_name": "renewal_manual_review_queue_v1",
+  "required_top_level_keys": [
+    "queue",
+    "summary"
+  ],
+  "queue": {
+    "type": "list",
+    "length": 12,
+    "ordering": "Entries must be ordered by ascending rank. Ranks must be integers 1 through 12 with no gaps.",
+    "item": {
+      "rank": {
+        "type": "integer",
+        "allowed_range": [
+          1,
+          12
+        ]
+      },
+      "license_no": {
+        "type": "string",
+        "stable_identifier": true
+      },
+      "facility_name": {
+        "type": "string"
+      },
+      "violation_count": {
+        "type": "integer",
+        "units": "pre-boundary matched violations"
+      },
+      "most_recent_violation_date": {
+        "type": "string",
+        "format": "YYYY-MM-DD",
+        "units": "latest matched violation date used for the queue decision"
+      },
+      "match_confidence": {
+        "type": "enum",
+        "allowed_values": [
+          "exact",
+          "close_address",
+          "uncertain"
+        ]
+      },
+      "risk_tier": {
+        "type": "enum",
+        "allowed_values": [
+          "low",
+          "medium",
+          "high"
+        ]
+      },
+      "next_step_label": {
+        "type": "enum",
+        "allowed_values": [
+          "manual_fine_check",
+          "manual_ALERT_check",
+          "board_review",
+          "additional_record_check"
+        ]
       }
-    },
-    "top_risk_summary": {
-      "type": "object",
-      "required": true,
-      "required_keys": {
-        "release_batch": {
-          "type": "string",
-          "expected_value": "RV-2026-SUMMER"
-        },
-        "release_boundary": {
-          "type": "string",
-          "format": "YYYY-MM-DD",
-          "expected_value": "2026-07-15"
-        },
-        "queue_size": {
-          "type": "integer",
-          "expected_value": 12
-        },
-        "top_rank_license_id": {
-          "type": "string",
-          "format": "CLRP renewal license ID"
-        },
-        "latest_pre_boundary_date": {
-          "type": "string",
-          "format": "YYYY-MM-DD"
-        },
-        "exact_match_count": {
-          "type": "integer"
-        },
-        "close_match_count": {
-          "type": "integer"
-        },
-        "shared_address_manual_count": {
-          "type": "integer"
-        },
-        "board_review_count": {
-          "type": "integer"
-        },
-        "manual_fine_check_count": {
-          "type": "integer"
-        },
-        "manual_ALERT_check_count": {
-          "type": "integer"
-        },
-        "additional_record_check_count": {
-          "type": "integer"
-        }
-      }
-    },
-    "excluded_post_boundary_count": {
-      "type": "integer",
-      "required": true,
-      "description": "Count of matched renewal violation records excluded because their violation_date is after the release boundary."
     }
   },
-  "notes": [
-    "Return JSON only.",
-    "Do not include evidence text or free-form explanations.",
-    "Dates must use YYYY-MM-DD.",
-    "String enum values are case-sensitive.",
-    "Use current renewal roster facility names in queue[].facility_name."
-  ]
+  "summary": {
+    "type": "object",
+    "required_keys": [
+      "queue_size",
+      "boundary_date",
+      "post_boundary_violation_ids_excluded",
+      "close_or_uncertain_match_license_numbers",
+      "board_review_license_numbers"
+    ],
+    "fields": {
+      "queue_size": {
+        "type": "integer",
+        "units": "queue entries"
+      },
+      "boundary_date": {
+        "type": "string",
+        "format": "YYYY-MM-DD"
+      },
+      "post_boundary_violation_ids_excluded": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort by violation_id ascending."
+      },
+      "close_or_uncertain_match_license_numbers": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort license numbers ascending."
+      },
+      "board_review_license_numbers": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort license numbers ascending."
+      }
+    }
+  }
 }

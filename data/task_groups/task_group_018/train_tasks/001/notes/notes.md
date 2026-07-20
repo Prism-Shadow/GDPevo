@@ -1,113 +1,41 @@
-# train_001 Notes - Benton Criminal Docket Audit
+# train_001 Notes
 
-## English
+## English Review Notes
 
-### Data and Source Lineage
+Data/source lineage: This task belongs to `SCN_018_court_clerk_disposition_orders_and_financial_entries`, using source examples `E001`, `E002`, and `E003` as the task-group background and `E001` as the closest operational ancestor. The shared generated Court Operations Portal contains the Redwood County target cases `RC-25-0412`, `RC-25-0418`, `RC-24-0987`, and `RC-25-0502`, their charge rows, docket rows, Redwood fee schedule, payment policy, and Arkansas sentencing-order form metadata. Task-local solver-visible payloads are `hearing_notes.md`, `clerk_audit_memo.md`, and `finance_queue_extract.json`.
 
-This task belongs to `SCN_018_court_clerk_disposition_orders_and_financial_entries` and is anchored primarily in source example `E001` with supporting conventions from `E002` and `E003`. It adapts the criminal sentencing docket audit pattern from the Arkansas example into a fictional Benton County clerk operations environment.
+Task definition: The solver acts as a criminal division clerk preparing a June 9, 2025 Redwood County Arkansas sentencing closeout. They must reconcile hearing notes and queue extracts against the portal, identify material conflicts, decide which cases are disposition-ready, calculate corrected financial entries, summarize docket entries, and total the register. The required answer shape is declared in `input/payloads/answer_template.json`.
 
-Shared environment data comes from `task_group/task_group_018/env/data/clerk_ops.json` through the HTTP service. The relevant live records are the Benton criminal cases `24-BEN-01005`, `25-BEN-00058`, `25-BEN-01002`, and `25-BEN-01007`, plus Benton criminal fee schedules, payment policy, financial obligations, docket records, attorneys, and stale exports. Task-local visible payloads are `benton_plea_minutes_2025-06-20.json`, `attorney_verification_memo_2025-06-21.json`, and `draft_finance_import_2025-06-21.csv`.
+Scenario fit: The work mirrors the source Arkansas sentencing closeout pattern: multiple criminal cases, noisy courtroom notes, stale fee entries, counsel-code ambiguity, signed-order status checks, and register balancing. It also reinforces broader task-group habits around using current schedules, not adding unsupported fees, and preserving audit findings separately from final closeout entries.
 
-### Task Definition and Expected Work
+Material map: `GET /api/cases` supplies official case identity, counsel, status, judge, and disposition-date records. `GET /api/charges` supplies target charge rows, but `RC-25-0418` must be reconciled with the courtroom conviction note and case note rather than blindly accepting a stale nolle field. `GET /api/docket-entries` gives system status and import context. `GET /api/fee-schedules` provides the current Redwood court cost, public defender user fee, and current-vs-stale drug assessment. `GET /api/payment-policies` confirms no account fee and tells the solver not to use stale or unsupported financial additions. `hearing_notes.md` records the actual hearing outcomes and includes deliberate shorthand errors. `clerk_audit_memo.md` identifies suspected conflicts without giving final totals. `finance_queue_extract.json` is a noisy queued worksheet with wrong DOB, counsel, status, and fee values.
 
-The solver acts as a Benton County Circuit Court clerk after a four-case criminal plea and sentencing docket on 2025-06-20. The expected answer is a single JSON object matching `input/payloads/answer_template.json`. The solver must identify the four target matters, reconcile judge minutes with live records and the attorney memo, apply current Benton criminal fee rows effective on the hearing date, carry forward live ledger payment credits, and mark docket actions required before entry.
+Solution and evaluation basis: The standard answer records five audit findings: `RC-25-0412` identity correction, `RC-25-0412` counsel correction, `RC-25-0418` current fee schedule correction, `RC-24-0987` no-departure correction, and `RC-25-0502` unsigned-order hold. Final identities/counsel are Evan Simmons DOB 1991-04-18 appointed-private Lena Ortiz; Marisol Vega DOB 1988-11-22 public defender C. Hill; Tanya Morales DOB 1979-07-03 retained James Pell; Nolan Reed DOB 2000-01-09 public defender C. Hill. `RC-25-0412`, `RC-25-0418`, and `RC-24-0987` are posted; `RC-25-0502` is held as deferred with no financial entry. Fees are $150 for `RC-25-0412`, $850 for `RC-25-0418`, $650 for `RC-24-0987`, and $0 for `RC-25-0502`, producing register totals of 3 assessed cases, 1 held case, $750 fines, $450 court costs, $250 assessments, $200 user fees, and $1,650 grand total.
 
-The task is intentionally not a form-fill exercise. It requires case-level source reconciliation, charge-level disposition mapping, current-fee selection, exclusion of unsupported draft import rows, and corrected balance calculations.
+The evaluator has eight whole-point scoring checks with raw weights `[2, 2, 3, 2, 3, 2, 2, 2]`: audit findings; identity/counsel values; status/action/date decisions; charge sentence and departure classifications; fee item inclusion; per-case totals; docket entry summary codes; and register aggregate totals. These cover distinct outcomes and award no partial credit inside a point.
 
-### Scenario Fit
+Likely model pitfalls: copying the finance queue totals; adding the public defender fee to appointed-private counsel; using the stale $125 drug assessment; treating `RC-25-0502` as disposed from the draft worksheet; accepting the legacy departure flag for `RC-24-0987`; or collapsing audit findings into prose that loses controlled codes.
 
-This task matches the group scenario because it asks for clerk-ready disposition, financial, and docket-entry outputs after a criminal hearing. It preserves the source examples' difficulty drivers: multiple records for the same matter, stale or preliminary financial data, attorney/status conflicts, effective-date fee rows, and structured clerk output.
+Transfer design: As a train task, this is a real full closeout rather than a tutorial. A fewshot skill can infer that criminal closeout tasks require explicit conflict logging, current effective-date fee schedules, conditional public-defender user-fee treatment, no unsupported add-on fees, signed-order status discipline, controlled docket summary codes, and separate per-case versus register totals.
 
-### Material Map
+Construction record: Created by Codex task-builder subagent for train_001 on 2026-07-18. Files added under `task_group/task_group_018/train_tasks/001/` only. Major changes: built solver-visible payloads, answer template, standard answer, deterministic evaluator, and bilingual notes for the Redwood County criminal sentencing closeout.
 
-- Shared `/api/cases` and `/api/cases/<case_number>`: live case captions, charges, status, attorney, DOB, and existing posture.
-- Shared `/api/fees?county=Benton&matter_type=criminal&effective_on=2025-06-20`: current fee schedule used for corrected fee components.
-- Shared `/api/financial-obligations?case_number=...`: live amount-paid credits that reduce corrected balances.
-- Shared `/api/payment-policies?county=Benton`: unsupported charge codes and county policy context.
-- Shared `/api/docket?case_number=...` and stale export endpoints: docket/status conflict context.
-- `benton_plea_minutes_2025-06-20.json`: authoritative hearing outcome facts for pleas, dismissals, sentences, warrant recalls, and restitution amounts.
-- `attorney_verification_memo_2025-06-21.json`: counsel and representation corrections after hearing.
-- `draft_finance_import_2025-06-21.csv`: preliminary finance data containing obsolete, unsupported, and missing rows; it is a trap source, not the final ledger.
+## 中文审查说明
 
-### Solution and Evaluation Basis
+数据和来源：本任务属于 `SCN_018_court_clerk_disposition_orders_and_financial_entries`，任务组背景来自 `E001`、`E002`、`E003`，其中 `E001` 是最接近的阿肯色刑事判决结案示例。共享的 Court Operations Portal 生成数据中包含 Redwood County 的四个目标案件 `RC-25-0412`、`RC-25-0418`、`RC-24-0987`、`RC-25-0502`，以及对应的案件、指控、案卷、费用表、支付政策和表格元数据。本任务本地可见材料包括 `hearing_notes.md`、`clerk_audit_memo.md` 和 `finance_queue_extract.json`。
 
-Final case order is ascending by case number: `24-BEN-01005`, `25-BEN-00058`, `25-BEN-01002`, `25-BEN-01007`. All four end as `probation_active` after conviction on one charge and sentencing.
+任务定义：解题者扮演刑事庭书记员，为 2025-06-09 Redwood County 阿肯色刑事判决庭次做结案包。需要把庭审记录、审计备忘和财务队列与门户数据核对，列出冲突，判断哪些案件可以结案入账，计算正确费用，形成案卷摘要，并汇总登记簿金额。
 
-The current Benton criminal fee rows are `CR-CONV` 165.00, `CR-FILING` 95.00, `CR-PROB` 82.50 when probation is ordered, and `CR-REST-ADM` 25.00 when restitution is ordered. Restitution principal is added to the fee total. Draft import rows such as obsolete 150.00 conviction assessments, 15.00 restitution administration, `CR-507`, `CR-LATE`, and `PD-USER` are excluded. Corrected balances are calculated as new principal minus live ledger amount paid credit.
+场景匹配：本任务保留了源场景中的多案件刑事结案、庭审记录与 CMS 冲突、旧费用表陷阱、律师身份含糊、签署命令状态判断、费用登记簿汇总等难点。它也强化了任务组共同规则：使用当前生效费用表，不增加无依据费用，将审计发现和最终结案结果分开记录。
 
-Scoring uses eight exact-match points, raw weights totaling 20:
+材料说明：`GET /api/cases` 用于核对身份、律师、状态、法官和处分日期；`GET /api/charges` 用于核对指控，但 `RC-25-0418` 需要结合庭审定罪记录和案件备注处理；`GET /api/docket-entries` 提供系统状态和导入线索；`GET /api/fee-schedules` 提供 Redwood 当前法院成本、公设辩护人使用费以及新旧毒品评估费；`GET /api/payment-policies` 说明不能加入账户费等无依据费用。本地三个 payload 则模拟真实办公室中带错误的庭审速记、审计提示和财务队列。
 
-1. Target metadata and case set/order, weight 2.
-2. Charge-level pleas, dispositions, and verdicts, weight 3.
-3. Final case status and sentence fields, weight 3.
-4. Defense attorney, defense type, and discrepancy code, weight 2.
-5. Fee component code/amount lists and new principal totals, weight 3.
-6. Live credit and corrected balance due per case, weight 3.
-7. Docket action booleans per case, weight 2.
-8. Register totals, weight 2.
+答案和评估依据：标准答案包含五个审计发现：`RC-25-0412` 身份更正、`RC-25-0412` 律师身份更正、`RC-25-0418` 当前费用表更正、`RC-24-0987` 无偏离判决更正、`RC-25-0502` 因未签署命令而暂缓。三个案件入账，一个案件暂缓。每案金额为 150、850、650、0 美元；总计为 3 个入账案件、1 个暂缓案件、罚金 750、法院成本 450、评估费 250、公设辩护人使用费 200、总额 1650 美元。
 
-Likely pitfalls include treating the draft finance import as final, using obsolete fee rows on the older case, forgetting the filing assessment, adding unsupported failure-to-appear or public-defender quick-pick charges, ignoring live ledger credits, or preserving live attorney/status fields after the hearing packet and memo supersede them.
+评估器有 8 个整点评分项，原始权重为 `[2, 2, 3, 2, 3, 2, 2, 2]`，分别检查审计发现、身份和律师、状态和处理动作、指控与量刑、费用项目、每案金额、案卷摘要、登记簿总计。每个评分项内部只给全对或零分，不做部分分。
 
-### Transfer Design
+常见错误：直接复制财务队列；给指定私人律师案件加公设辩护人使用费；使用过期的 125 美元毒品评估费；把 `RC-25-0502` 当成已处分案件；接受 `RC-24-0987` 的旧偏离判决标签；或用自由文本代替受控代码导致结果不可判定。
 
-As a train task, this real docket lets a skill-builder infer several reusable conventions: hearing outcomes update disposition facts, live records provide existing case and ledger context, supplemental memos can resolve attorney conflicts, current effective-date schedules control fees, unsupported draft charges should be excluded, and final outputs should use controlled enums and stable ordering. Those habits transfer directly to later criminal-disposition and financial-audit tasks in this group.
+迁移设计：作为训练任务，它提供真实完整业务样本。少样本技能可以从标准答案推断出刑事结案任务的做法：显式记录冲突，按生效日期使用费用表，区分公设辩护人与指定私人律师，不添加无依据费用，未签署命令不入账，使用受控案卷摘要代码，并区分每案金额和登记簿总额。
 
-### Construction Record
-
-Author: Codex task-builder subagent. Created: 2026-07-07. Updated: 2026-07-07. Major changes: created full `train_001` task folder, local payloads, standard answer, bilingual notes, and exact-match evaluator.
-
-## Chinese
-
-### 数据与来源
-
-本任务属于 `SCN_018_court_clerk_disposition_orders_and_financial_entries`，主要锚定源例 `E001` 的刑事 sentencing docket 审核流程，同时吸收 `E002` 的费用/付款纪律和 `E003` 的跨表一致性要求。任务把 Arkansas 刑事庭后处理迁移到虚构的 Benton County 书记员环境中。
-
-共享环境数据来自 `task_group/task_group_018/env/data/clerk_ops.json`，解题时通过 HTTP 服务访问。关键 live records 是 Benton County 的 `24-BEN-01005`、`25-BEN-00058`、`25-BEN-01002`、`25-BEN-01007`，以及相关 fee schedule、payment policy、financial obligations、docket entries、attorneys 和 stale exports。任务本地可见材料包括法官 minute cards、律师核验 memo 和 draft finance import。
-
-### 任务定义
-
-解题者扮演 2025-06-20 刑事 plea/sentencing docket 后的 Benton County Circuit Court clerk，需要输出符合 `answer_template.json` 的 JSON。核心工作是确定四个目标案件，核对 judge minutes、live case records 和 attorney memo，使用 2025-06-20 生效的 Benton criminal fee rows，沿用 live ledger 中已支付金额作为 credit，并标注进入正式 docket 前需要的操作。
-
-这不是简单填表任务。难点在于同一案件跨来源冲突、charge-level disposition 映射、effective-date fee 选择、排除 draft import 中的错误费用，以及计算 corrected balance。
-
-### 场景适配
-
-本任务符合当前法院书记员场景，因为它要求把庭审结果转化为 clerk-ready 的 disposition、financial entry 和 docket action。它保留了源例中的核心难点：多来源记录、陈旧或初稿财务数据、律师/状态冲突、生效日期费用表、以及结构化输出。
-
-### 材料地图
-
-- 共享 cases API：live caption、charges、status、attorney、DOB 和既有案件状态。
-- 共享 fees API：按 Benton、criminal、2025-06-20 选择当前 fee rows。
-- 共享 financial obligations API：读取 live amount-paid credits，用于 corrected balance。
-- 共享 payment policy API：识别 unsupported charge codes 和县级政策背景。
-- 共享 docket/stale export API：提供 status 和 stale-source 冲突背景。
-- `benton_plea_minutes_2025-06-20.json`：庭审中 plea、dismissal、sentence、warrant recall 和 restitution 的权威来源。
-- `attorney_verification_memo_2025-06-21.json`：庭后律师和 representation type 更正来源。
-- `draft_finance_import_2025-06-21.csv`：包含过期、未支持和遗漏项目的初稿财务导入，是干扰材料，不是最终账目。
-
-### 答案与评测依据
-
-最终案件顺序按 case number 升序：`24-BEN-01005`、`25-BEN-00058`、`25-BEN-01002`、`25-BEN-01007`。四案均因至少一个 charge 定罪并宣告 probation，最终状态为 `probation_active`。
-
-Benton criminal 当前费用为：`CR-CONV` 165.00，`CR-FILING` 95.00，probation ordered 时加入 `CR-PROB` 82.50，restitution ordered 时加入 `CR-REST-ADM` 25.00。restitution 本金加入 principal total。需要排除 draft import 里的过期 150.00 conviction assessment、15.00 restitution admin、`CR-507`、`CR-LATE` 和 `PD-USER`。corrected balance 等于 new principal total 减去 live ledger amount-paid credit。
-
-评测包含 8 个 exact-match 评分点，原始权重合计 20：
-
-1. 目标元数据和案件集合/顺序，权重 2。
-2. charge-level plea、disposition、verdict，权重 3。
-3. final case status 和 sentence fields，权重 3。
-4. defense attorney、defense type、discrepancy code，权重 2。
-5. fee component code/amount 列表和 new principal totals，权重 3。
-6. 每案 live credit 和 corrected balance due，权重 3。
-7. 每案 docket action booleans，权重 2。
-8. register totals，权重 2。
-
-常见错误包括把 draft finance import 当作最终账目、在旧案中沿用过期 fee row、漏掉 filing assessment、加入未支持的 failure-to-appear 或 public-defender quick-pick 费用、忽略 live ledger credits，或在 hearing packet 和 memo 已更新后仍保留旧的 live attorney/status 字段。
-
-### 迁移设计
-
-作为 train task，本任务让 skill-builder 通过真实解题和对照标准答案推断可迁移经验：庭审结果更新 disposition facts，live records 提供既有案卷和账目背景，补充 memo 可解决 attorney conflicts，按 effective date 选择当前 fee schedule，排除未支持的 draft charges，并按稳定顺序和受控枚举输出。这些经验可迁移到本组后续 criminal disposition、fee audit 和 docket-entry 任务。
-
-### 构造记录
-
-作者：Codex task-builder subagent。创建日期：2026-07-07。更新日期：2026-07-07。主要变更：创建 `train_001` 完整任务目录、本地 payload、标准答案、双语 notes 和 exact-match evaluator。
+构造记录：由 Codex train_001 任务构造子代理于 2026-07-18 创建。只在 `task_group/task_group_018/train_tasks/001/` 下新增文件。主要变更包括可见材料、答案模板、标准答案、确定性评估器和双语 notes。

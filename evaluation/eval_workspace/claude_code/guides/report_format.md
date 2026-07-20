@@ -117,9 +117,10 @@ conditions:
 - `skill_dirs` is only used for non-base conditions. Paths are relative to the
   directory containing the report YAML, and attempt numbers must match the solver
   attempt number that used that skill.
-- Token fields come from the deduped Claude Code session traces written under
-  `original_traces/.../claude_config/`. If a transcript is missing, write `null`
-  and preserve the issue in the corresponding run record.
+- Token fields come from the deduped primary Claude Code session JSONL copied
+  directly under the matching `original_traces/.../attempt_<nn>/` directory. If
+  a session trace is missing, write `null` and preserve the issue in the
+  corresponding run record.
 - `evolve` contains only skill-generation usage for the three non-base modes.
   Preserve all 3 attempt token and cost records. Keep metadata and raw trace
   paths in workspace audit files rather than the formal report. The summary

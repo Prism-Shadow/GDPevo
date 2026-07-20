@@ -1,145 +1,45 @@
-# Hidden Notes for test_005
+# test_005 Notes
 
-## English Notes
+## English Review Notes
 
-### Data and Source Lineage
+This task belongs to `SCN_018_court_clerk_disposition_orders_and_financial_entries`, using source examples `E002` and `E003` most directly. It implements the Hampton test-set Virginia payment/probation hybrid described in `scratch/task_group_design.md`. The target records are `VA-CR25-1172-00` / `VA-PET-1172B` for Owen Reeves and `VA-CR25-1186-00` / `VA-PET-1186A` for Camila Ortiz.
 
-This task belongs to `task_group_018`, derived from `SCN_018_court_clerk_disposition_orders_and_financial_entries` and source examples `E001`, `E002`, and `E003`. It is a multi-county June 2025 clerk finance exception register. The shared clerk operations environment exposes generated case, docket, fee, payment-policy, stale-export, and financial-obligation records. The solver-visible local packet is `input/payloads/monthly_financial_exception_packet.json`, and the solver-visible output contract is `input/payloads/answer_template.json`.
+Solver-visible materials are `prompt.txt`, `payloads/petition_summaries.json`, `payloads/sentencing_probation_notes.json`, and `payloads/answer_template.json`. The shared Court Operations Portal is referenced only through `<TASK_ENV_BASE_URL>`, especially `GET /api/cases`, `GET /api/charges`, `GET /api/docket-entries`, `GET /api/payment-policies`, `GET /api/forms`, `GET /api/financial-petitions`, and `GET /api/search`. Construction used the generated environment rows for the two Hampton cases, the two petitions, `POL-VA-HAM-FIRST`, and `VA_HAM_CC1379`.
 
-This is the third calibration fix for `test_005`. After the prior rework, two clean-context direct attempts scored `18/24 = 0.75` and `15/24 = 0.625`, average `0.6875`. Both missed only the plan/exposure point and aggregate point, and one also missed source precedence. They still earned high-weight scope, priority, broad row classification, correction-basis, no-plan/collateral handling, and live-ledger points. This fix keeps the same underlying clerk workflow but reduces weight on directly observable fields and adds controlled audit fields for June actionability, source basis, neutral reconciliation families, plan recalculation basis, exposure basis, and aggregate recomputation.
+The business task is to prepare a clerk-ready JSON packet for two Hampton post-disposition financial petitions plus related probation referral and license order entries. It extends the Virginia train tasks with Hampton-specific differences: Owen Reeves is a second/default-review petition that must be routed to judge or supervisor review and has no new account fee; Camila Ortiz is a first petition where the Hampton account fee applies; Owen has restitution that must be prioritized before fines and costs; payment schedules and return-to-court dates must be preserved from the Hampton petition record; probation referral fields must not be merged into payment rows; license order fields must remain separate; and unknown identifiers or contact/location fields must use `TBD from case file`.
 
-### Task Definition and Scenario Fit
+The standard answer uses Hampton Circuit Court, policy `POL-VA-HAM-FIRST`, and packet date `2025-06-10`. Owen Reeves is classified as `subsequent_review`, with `review_routing` set to `judge_or_supervisor_review` and `support_classification` set to `needs_judge_review`. His total due is `$1,130.00`, made of `$240.00` restitution and `$890.00` fines/costs, with `$0.00` account fee. The payment application order is `restitution_before_fines_costs`. His schedule is monthly, first due `2025-07-10`, regular installment `$75.00`, 15 installments, final due `2026-09-10`, final payment `$80.00`, and return-to-court date `2026-11-09`. The final payment amount reflects the Hampton default-review petition schedule; the task intentionally scores the review packet values rather than silently inventing a new unreviewed schedule.
 
-The solver must prepare the June 2025 central finance quality exception register. The work requires using the local intake packet together with live environment records to decide which candidate notices belong on the month-end register, rank included rows, resolve live/local/stale conflicts, correct balances, retain or revise payment-plan structures, identify collateral-only omissions, and recompute aggregate totals and case-number sets.
+Camila Ortiz is classified as `initial_installment`, with `review_routing` set to `clerk_can_enter` and `support_classification` set to `supportable`. Her total due is `$1,585.00`, made of `$1,560.00` fines/costs and a `$25.00` Hampton account fee, with no restitution. Her schedule is monthly, first due `2025-07-10`, regular installment `$125.00`, 13 installments, final due `2026-07-10`, final payment `$85.00`, and return-to-court date `2026-09-08`.
 
-This matches the source scenario because it is a court clerk post-disposition reconciliation task: financial and docket entries cannot be released until the clerk reconciles local desk notices, live ledgers, fee schedules, payment plans, docket history, stale queues, and collateral-program records.
+Probation and license outcomes are separate scored business results. Owen has a CC-1375 referral for 12 months, conviction date `2025-06-06`, and report datetime `2025-06-12T13:00:00`; Camila has a CC-1375 referral for 24 months, conviction date `2025-06-06`, and report datetime `2025-06-13T09:00:00`. License orders use Hampton form `VA_HAM_CC1379`, conviction-date starts, and `TBD from case file` for driver license numbers. Owen's suspension is 6 months from `2025-06-06` to `2025-12-06`; Camila's is 12 months from `2025-06-06` to `2026-06-06`.
 
-### Material Map
+Evaluation has nine whole-point checks with raw weights totaling 22: SP001 Hampton packet metadata and target petition/case identity (2), SP002 Owen second/default-review routing (3), SP003 Owen no account fee plus restitution priority (3), SP004 Camila first petition plus included Hampton account fee (3), SP005 support classifications, approved monthly amounts, and no down payments (2), SP006 payment schedule dates/counts/final payments/return dates (3), SP007 CC-1375 probation referral status and separation (2), SP008 Hampton CC-1379 license orders and no invented license numbers (2), and SP009 placeholder discipline (2). The checks span petition classification, review routing, fee policy, balance and priority handling, payment scheduling, probation forms, license orders, and missing-field handling. Each scoring point is deterministic and all-or-nothing.
 
-- `monthly_financial_exception_packet.json`: candidate notices from several desk channels. The third fix neutralizes final-sounding channel labels and status hints while retaining raw desk excerpts, local balance hints, fee-code candidates, trust/cash items, local terms, and collateral flags.
-- `/api/cases` and `/api/cases/<case_number>`: live case posture, defendant names, disposition dates, restitution facts, DUI/collateral facts, and matter status.
-- `/api/financial-obligations?case_number=<case_number>`: live balances, ledger status, fee components, paid credits, payment plans, missed payments, and current plan terms.
-- `/api/fees?county=<county>&matter_type=<type>&effective_on=<date>`: active fee components used to decide unsupported fee rows.
-- `/api/payment-policies?county=<county>`: first-due and installment conventions when a plan must be calculated.
-- `/api/docket?case_number=<case_number>`: docket and collateral-entry status by the register close date.
-- `/api/stale-exports`: stale context and distractor queues that should not override current packet and live records.
+Transfer design: this test task is anchored by `train_003` and `train_005`. `train_003` transfers Virginia post-sentencing form discipline: keep license, payment, and probation fields consistent but separate; use the portal form metadata; compute/record schedules and return-to-court settings; and use `TBD from case file` rather than inventing identifiers. `train_005` transfers the two-petition hybrid workflow, restitution-before-fines priority, local payment policy lookup, final partial payment handling, no down payment when policy allows it, and the habit of checking account-fee policy instead of copying a counter worksheet row. What changes here is the Hampton jurisdiction: account fees can apply for first/non-indigent petitions, a second/default-review petition is routed for review and has no account fee, and the Hampton CC-1379 form id is `VA_HAM_CC1379`.
 
-### Solution and Evaluation Basis
+Likely model pitfalls include treating Owen as another first petition, adding the Hampton `$25.00` fee to Owen despite the default-review waiver, omitting the `$25.00` fee from Camila, applying Owen payments to fines before restitution, recalculating Owen's default-review schedule without preserving the petition dates, putting probation or license fields inside petition rows, using the Gloucester form id for Hampton license orders, or inventing SSN, driver license number, address, phone, probation officer, or probation office location values.
 
-Included register rows are `25-COL-00112`, `24-LAN-01003`, `24-MID-01003`, `24-JEF-01005`, `25-BEN-01004`, and `24-MID-00077`. Excluded candidates are `24-COL-01003` (stale context only), `24-LAN-01005` (future/informational program calendar), and `24-BEN-01001` (similar-name receipt owner not confirmed).
+Construction record: created by Codex task-builder subagent for `test_005` on 2026-07-18. Files were created only under `task_group/task_group_018/test_tasks/005/`.
 
-Key row results:
+## 中文审核说明
 
-- `25-COL-00112`: deferred Columbia matter. Remove unsupported `CR-CONV` from the live ledger, reducing `284.92` by `177.50` to `107.42`. Use packet-approved new terms of `50.00` monthly, first due `2025-08-14`, with two full payments and a `7.42` final payment due `2025-10-14`.
-- `24-LAN-01003`: Lane matter with unsupported restitution administration component. Remove `CR-REST-ADM` `30.00`, retain the live `45.00` monthly plan, and recalculate the corrected `93.05` balance as two full payments plus `3.05` final due `2025-09-09`.
-- `24-MID-01003`: Middlesex trust credit closeout. Apply packet trust credit `46.52` against the live pending-adjustment balance, leaving `0.00`, no plan, and no exposure.
-- `24-JEF-01005`: Jefferson payment default. Keep the live ledger balance and live `40.00` plan terms, route to return-to-court, and compute `80.00` default exposure from two missed installments.
-- `25-BEN-01004`: Benton DUI license abstract omission. No balance correction or plan exposure; the collateral trigger date is `2025-05-03`.
-- `24-MID-00077`: Middlesex treatment referral omission. No balance correction or plan exposure; the collateral trigger date is `2024-06-14`.
+本任务属于 `SCN_018_court_clerk_disposition_orders_and_financial_entries`，主要承接来源示例 `E002` 与 `E003`。它实现 `scratch/task_group_design.md` 中的 Hampton 测试任务：Virginia 判后付款、缓刑和驾照命令的混合处理。目标记录是 Owen Reeves 的 `VA-CR25-1172-00` / `VA-PET-1172B`，以及 Camila Ortiz 的 `VA-CR25-1186-00` / `VA-PET-1186A`。
 
-The third-fix evaluator has eight exact-match scoring points, raw weights totaling 17:
+求解者可见材料包括 `prompt.txt`、`payloads/petition_summaries.json`、`payloads/sentencing_probation_notes.json` 和 `payloads/answer_template.json`。共享 Court Operations Portal 只通过 `<TASK_ENV_BASE_URL>` 暴露，关键端点包括 `GET /api/cases`、`GET /api/charges`、`GET /api/docket-entries`、`GET /api/payment-policies`、`GET /api/forms`、`GET /api/financial-petitions` 和 `GET /api/search`。构造时使用了环境中两件 Hampton 案件、两份 petition、`POL-VA-HAM-FIRST` 和 `VA_HAM_CC1379` 的记录。
 
-| ID | Weight | Goal |
-| --- | ---: | --- |
-| `SP001` | 1 | Register identifiers, included/excluded case sets, and final rank order. |
-| `SP002` | 1 | Basic row priority buckets, row classifications, and action codes. |
-| `SP003` | 2 | Candidate-level June actionability, scope reason, exclusion basis, and source family audit. |
-| `SP004` | 3 | Source precedence, live/local/stale source audit, and neutral reconciliation family codes. |
-| `SP005` | 2 | Live ledger facts, amount basis, correction components, correction amounts, and corrected balances. |
-| `SP006` | 3 | New-plan, existing-schedule, and return-to-court plan bases with installment math and exposure audit. |
-| `SP007` | 2 | No-plan credit closeout and collateral-only zero-exposure handling. |
-| `SP008` | 3 | Aggregate counts, monetary totals, row-audit counts, and recomputed case-number sets. |
+业务任务是为两份 Hampton 判后财务申请，以及相关缓刑转介和驾照命令，生成书记员可录入的结构化 JSON。本任务在 Virginia 训练任务基础上加入 Hampton 差异：Owen Reeves 是第二次/default-review petition，需要法官或主管复核，且不能新增账户费；Camila Ortiz 是首次申请，Hampton 账户费适用；Owen 有 restitution，必须优先于 fines and costs；付款计划和返庭日期要采用 Hampton petition 记录；缓刑转介字段不能合并进付款行；驾照命令也要单独输出；缺失的身份、联系方式和办公室字段使用 `TBD from case file`。
 
-Likely model pitfalls are including every packet item, following packet order rather than register priority, letting stale queue snippets override live records, treating the trust closeout as a payment plan, using a new plan amount where the live plan must be retained, failing to distinguish fee correction from credit closeout, assigning exposure to collateral-only rows, and not recomputing aggregates from the final row audit fields.
+标准答案使用 Hampton Circuit Court、政策 `POL-VA-HAM-FIRST` 和 packet 日期 `2025-06-10`。Owen Reeves 归类为 `subsequent_review`，`review_routing` 为 `judge_or_supervisor_review`，`support_classification` 为 `needs_judge_review`。他的总欠款为 `$1,130.00`，包括 `$240.00` restitution 和 `$890.00` fines/costs，账户费为 `$0.00`，付款冲抵顺序为 `restitution_before_fines_costs`。付款计划为按月，首期 `2025-07-10`，常规 `$75.00`，共 15 期，最终到期 `2026-09-10`，最后一期 `$80.00`，返庭日 `2026-11-09`。最后一期金额体现 Hampton default-review petition 的复核排期，本任务评测该复核包中的日期和金额，而不是让求解者自行改写未复核计划。
 
-### Transfer Design
+Camila Ortiz 归类为 `initial_installment`，`review_routing` 为 `clerk_can_enter`，`support_classification` 为 `supportable`。她的总欠款为 `$1,585.00`，包括 `$1,560.00` fines/costs 和 `$25.00` Hampton 账户费，无 restitution。付款计划为按月，首期 `2025-07-10`，常规 `$125.00`，共 13 期，最终到期 `2026-07-10`，最后一期 `$85.00`，返庭日 `2026-09-08`。
 
-Train anchors:
+缓刑和驾照是独立的评分业务结果。Owen 需要 CC-1375 转介，期限 12 个月，定罪日 `2025-06-06`，报到时间 `2025-06-12T13:00:00`；Camila 需要 CC-1375 转介，期限 24 个月，定罪日 `2025-06-06`，报到时间 `2025-06-13T09:00:00`。驾照命令使用 Hampton 表格 `VA_HAM_CC1379`，从定罪日开始，驾照号为 `TBD from case file`。Owen 暂停 6 个月，从 `2025-06-06` 到 `2025-12-06`；Camila 暂停 12 个月，从 `2025-06-06` 到 `2026-06-06`。
 
-- `train_002` anchors installment plan math, final smaller payments, first/final due dates, and use of live or approved monthly amounts.
-- `train_004` anchors stale/live source discipline, fee-component cleanup, current-ledger comparison, and unsupported financial row removal.
-- `train_005` anchors monthly review scoping, unposted receipt closeouts, payment-plan action routing, return-to-court handling, compliance/collateral follow-up, and aggregate case sets.
+评测包含 9 个全得或零分的评分项，原始权重合计 22：SP001 Hampton packet 元数据和目标 petition/case 身份（2），SP002 Owen 第二次/default-review 路由（3），SP003 Owen 无账户费及 restitution 优先（3），SP004 Camila 首次申请及 Hampton 账户费计入（3），SP005 支持性分类、批准月付款和无首付款（2），SP006 付款计划日期、期数、最后一期和返庭日（3），SP007 CC-1375 缓刑转介状态和结构分离（2），SP008 Hampton CC-1379 驾照命令及不编造驾照号（2），SP009 缺失字段占位符纪律（2）。评分覆盖 petition 分类、复核路由、费用政策、欠款和优先级、付款排期、缓刑表格、驾照命令和缺失字段处理等不同业务结果；每项都是确定性的整点评分。
 
-Transfer-dependent scoring is now concentrated in `SP003`, `SP004`, `SP006`, `SP007`, and `SP008`. These points require conventions inferable from train attempts and answer comparison: current source precedence over copied/stale desk snippets, June actionability rather than packet membership, plan basis after correction versus live schedule retention versus return-to-court default, exposure basis, and aggregate recomputation from audited rows. Task-specific exploration remains necessary because the counties, case numbers, live balances, docket gaps, fee components, trust item, payment status, missed-payment counts, and distractor notices are unique to this test.
+迁移设计方面，本测试任务锚定 `train_003` 和 `train_005`。`train_003` 提供 Virginia 判后表格习惯：驾照、付款和缓刑字段要一致但分开；使用门户表格元数据；记录付款计划和返庭设置；缺失标识符使用 `TBD from case file`，不能编造。`train_005` 提供两份 petition 的混合工作流、restitution 优先、本地付款政策查询、最后一期部分付款、政策允许时无首付款，以及不要照抄柜台账户费行的经验。本任务变化在于 Hampton：首次且非贫困申请可收账户费，第二次/default-review petition 需要复核且无账户费，Hampton 驾照/付款表格 id 是 `VA_HAM_CC1379`。
 
-### Construction Record
+常见错误包括把 Owen 当成首次申请、虽然 default-review 已豁免仍给 Owen 加 `$25.00` 账户费、漏掉 Camila 的 `$25.00` 账户费、把 Owen 的付款先冲抵 fines 而不是 restitution、擅自重算 Owen 的 default-review 计划并丢掉 petition 日期、把缓刑或驾照字段塞进 petition 行、Hampton 驾照命令仍使用 Gloucester 表格 id，或编造 SSN、驾照号、地址、电话、缓刑官和缓刑办公室。
 
-Author: task-builder rework for `task_group_018/test_005`.
-
-Created: 2026-07-07.
-
-Updated: 2026-07-07.
-
-Major changes: Reworked only `test_tasks/005` for the third calibration fix; reduced prompt/payload/template leakage; neutralized packet channel/status hints; expanded the answer template and standard answer with controlled audit fields; changed the evaluator to 8 exact-match scoring points with raw weights `1`, `2`, and `3`; verified the evaluator scores `output/answer.json` as full credit.
-
-## 中文说明
-
-### 数据和来源
-
-本任务属于 `task_group_018`，来源场景为 `SCN_018_court_clerk_disposition_orders_and_financial_entries`，对应源示例 `E001`、`E002`、`E003`。任务是 2025 年 6 月多县书记员财务异常登记表。共享 clerk operations 环境提供案件、案卷、费用表、付款政策、陈旧导出和财务义务记录。求解器可见的本地材料是 `input/payloads/monthly_financial_exception_packet.json`，输出格式由 `input/payloads/answer_template.json` 定义。
-
-这是 `test_005` 的第三次校准修正。上一次重做后，两次 clean-context 直接尝试得分为 `18/24 = 0.75` 和 `15/24 = 0.625`，平均 `0.6875`。两次都只漏掉计划/风险点和汇总点，其中一次还漏掉来源优先级；但它们仍拿到了高权重的范围、优先级、宽泛行分类、修正依据、无计划/附带事项处理和实时账务点。本次修正保留同一书记员工作流，但降低直接可观察字段的权重，并增加受控 audit 字段，覆盖 June actionability、来源依据、中性 reconciliation family、计划重算依据、风险依据和汇总重算。
-
-### 任务定义与场景契合性
-
-求解器需要制作 2025 年 6 月中央财务质量异常登记表。工作包括把本地 intake packet 与实时环境记录结合，判断哪些候选通知应进入月末登记表、给纳入行排序、处理实时/本地/陈旧来源冲突、修正余额、保留或调整付款计划、识别纯附带事项遗漏，并重新计算汇总金额和案件集合。
-
-这符合源场景，因为它是法院书记员的判后记录核对任务：财务和案卷条目释放前，必须核对本地 desk notice、实时 ledger、费用表、付款计划、docket history、陈旧队列和 collateral/program 记录。
-
-### 材料地图
-
-- `monthly_financial_exception_packet.json`：来自多个 desk channel 的候选通知。本次第三修正把最终判断味道较强的 channel label 和 status hint 中性化，同时保留 desk excerpt、本地余额提示、候选费用代码、信托/现金项目、本地计划条件和附带事项标记。
-- `/api/cases` 与 `/api/cases/<case_number>`：实时案件姿态、被告姓名、处分日期、赔偿事实、DUI/附带事项事实和案件状态。
-- `/api/financial-obligations?case_number=<case_number>`：实时余额、账务状态、费用组件、已付贷记、付款计划、漏付款次数和当前计划条件。
-- `/api/fees?county=<county>&matter_type=<type>&effective_on=<date>`：有效费用组件，用于判断未支持费用行。
-- `/api/payment-policies?county=<county>`：需要计算计划时的首期日期和分期惯例。
-- `/api/docket?case_number=<case_number>`：截至登记关闭日的案卷和附带事项录入状态。
-- `/api/stale-exports`：陈旧背景和干扰队列，不能覆盖当前 packet 和实时记录。
-
-### 解答和评估依据
-
-应纳入登记表的案件是 `25-COL-00112`、`24-LAN-01003`、`24-MID-01003`、`24-JEF-01005`、`25-BEN-01004`、`24-MID-00077`。排除的候选为 `24-COL-01003`（仅陈旧背景）、`24-LAN-01005`（未来/仅供参考的 program calendar）和 `24-BEN-01001`（相似姓名收据未确认属于列示案件）。
-
-关键行结果如下：
-
-- `25-COL-00112`：Columbia deferred 案件。实时账务中 `CR-CONV` 不受支持，去除 `177.50`，余额从 `284.92` 降至 `107.42`。使用 packet 批准的新计划：每月 `50.00`，首期 `2025-08-14`，两期足额付款加末期 `7.42`，末期到期日 `2025-10-14`。
-- `24-LAN-01003`：Lane 案件中 restitution administration 组件不受支持。去除 `CR-REST-ADM` `30.00`，保留实时 `45.00` 月付计划，并把修正后 `93.05` 计算为两期足额付款加 `3.05` 末期，末期到期日 `2025-09-09`。
-- `24-MID-01003`：Middlesex 信托贷记结清。将 packet 中 `46.52` 的 trust credit 计入实时 pending-adjustment 余额，余额为 `0.00`，无计划也无风险金额。
-- `24-JEF-01005`：Jefferson 付款违约。保留实时 ledger 余额和实时 `40.00` 计划条件，路由为返庭，并按两次漏付计算 `80.00` 违约风险。
-- `25-BEN-01004`：Benton DUI 驾照摘要遗漏。无余额修正、无计划风险，附带事项触发日期为 `2025-05-03`。
-- `24-MID-00077`：Middlesex treatment referral 遗漏。无余额修正、无计划风险，附带事项触发日期为 `2024-06-14`。
-
-第三修正版 evaluator 包含八个 exact-match 评分点，原始权重合计 17：
-
-| ID | 权重 | 目标 |
-| --- | ---: | --- |
-| `SP001` | 1 | 登记表标识、纳入/排除案件集合和最终排序。 |
-| `SP002` | 1 | 基本行优先级、行分类和行动代码。 |
-| `SP003` | 2 | 候选层面的 June actionability、范围原因、排除依据和来源族 audit。 |
-| `SP004` | 3 | 来源优先级、实时/本地/陈旧来源 audit 和中性 reconciliation family 代码。 |
-| `SP005` | 2 | 实时账务事实、金额依据、修正组件、修正金额和修正后余额。 |
-| `SP006` | 3 | 新计划、现有计划和返庭计划依据，以及分期计算和风险 audit。 |
-| `SP007` | 2 | 贷记结清无计划处理，以及纯附带事项零风险处理。 |
-| `SP008` | 3 | 汇总计数、金额合计、行 audit 计数和重新计算的案件集合。 |
-
-常见错误包括纳入所有 packet 项、按 packet 顺序而不是登记优先级排序、让陈旧队列片段覆盖实时记录、把信托结清当成付款计划、应保留实时计划时改用新月付、混淆费用更正和贷记结清、给纯附带事项行分配风险金额，以及没有从最终行 audit 字段重新计算汇总。
-
-### 迁移设计
-
-训练锚点如下：
-
-- `train_002` 锚定分期付款计算、较小末期付款、首期/末期日期，以及实时或已批准月付金额的使用。
-- `train_004` 锚定陈旧/实时来源纪律、费用组件清理、当前 ledger 对比和未支持财务行移除。
-- `train_005` 锚定月度 review 范围、未入账收据结清、付款计划行动路由、返庭处理、合规/附带事项跟进和汇总案件集合。
-
-依赖迁移的评分现在集中在 `SP003`、`SP004`、`SP006`、`SP007` 和 `SP008`。这些评分点需要从训练任务尝试和对照答案中归纳出来的惯例：当前来源优先于复制/陈旧 desk snippet、以 June actionability 而不是 packet membership 定范围、修正后新计划与保留实时计划与返庭默认之间的计划依据、风险金额依据，以及从审计后的行重新计算汇总。任务内探索仍然必要，因为县份、案件号、实时余额、案卷缺口、费用组件、信托项目、付款状态、漏付款次数和干扰通知都是本测试独有的。
-
-### 构造记录
-
-作者：`task_group_018/test_005` rework builder。
-
-创建日期：2026-07-07。
-
-更新日期：2026-07-07。
-
-主要变更：仅针对 `test_tasks/005` 做第三次校准修正；减少 prompt/payload/template 泄漏；中性化 packet channel/status hints；扩展 answer template 和标准答案，加入受控 audit 字段；将 evaluator 改为 8 个 exact-match 评分点，原始权重只使用 `1`、`2`、`3`；验证 evaluator 对 `output/answer.json` 给满分。
+构造记录：由 Codex task-builder subagent 于 2026-07-18 为 `test_005` 创建。所有文件仅写入 `task_group/task_group_018/test_tasks/005/`。

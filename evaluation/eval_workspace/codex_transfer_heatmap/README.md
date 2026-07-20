@@ -88,7 +88,7 @@ Do not reduce the attempt count, merge multiple test tasks into one solver run,
 or solve test tasks directly as the main agent.
 
 Use the command shape in `CODEX_ORCHESTRATOR.md`, including the per-attempt
-runtime-only `CODEX_HOME=/codex_home`. `CODEX_HOME` is set only when launching
+runtime-only `CODEX_HOME=/tmp/gdpevo-codex-home`. `CODEX_HOME` is set only when launching
 the solver process and is not a task `.env` setting. Do not use `codex exec
 --ephemeral` for formal attempts. Use the exact prompt in
 `guides/agent_prompts.md`; replace only its declared placeholders.

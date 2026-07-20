@@ -15,13 +15,20 @@ Read `CODEX_ORCHESTRATOR.md` before launching solver runs. The formal command
 shape is:
 
 ```bash
-CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
+CODEX_HOME=/tmp/gdpevo-codex-home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
 ```
 
 `CODEX_HOME` is a runtime-only temporary environment variable for that solver
 process, not a task `.env` setting. Do not use `codex exec --ephemeral` for
 formal attempts. Use exactly the prompt in `guides/agent_prompts.md`; replace
 only its declared placeholders.
+
+Resolve the active Codex home before overriding `CODEX_HOME`. If authentication
+is needed, mount only its `auth.json` read-only at
+`/run/gdpevo-bootstrap/auth.json`, copy it with mode `0600` into the
+container-local home, and verify the login inside the same named container with
+`codex login status`. Missing authentication blocks the run; never mount or copy
+the complete active Codex home.
 
 Use the model configuration in `heatmap_scope.json` unless the user explicitly
 overrides it:
@@ -146,17 +153,23 @@ Each attempt must have a unique `eval_attempt_id`:
 transfer__<mode>__<source>__to__<target>__<test_id>__attempt_<nn>__<timestamp>
 ```
 
-After scoring, read the solver's raw Codex session trace from the attempt-mounted
-`CODEX_HOME`:
+After scoring, keep the named solver container stopped and read the solver's raw
+Codex session trace from its container-local `CODEX_HOME`. Use `docker cp` to
+extract only the exact file, or a temporary `sessions/` subtree under
+`scratch/trace_extract/<run_id>/` when discovery is necessary. Verify it matches
+the run, and copy only that file to:
 
 ```text
-original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<mode>/<source>__to__<target>/<test_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
 Confirm the trace uses the expected attempt directory and contains the matching
 `eval_attempt_id`. This raw session file is the primary trace. Record the raw
-session trace path in `run_metadata.yaml`. If the raw session trace is missing,
-set the trace path to `null` and report the issue.
+session trace path and any trace-derived token fields in `run_metadata.yaml`,
+verify them, then delete the temporary extraction directory and stopped
+container. Do not preserve the full home or stdout. If the raw session trace is
+missing or ambiguous, set the trace path to `null`, record the reason, clean up,
+and rerun with a new run ID.
 
 Token usage may be recorded in `run_metadata.yaml`, but the heatmap uses scores
 by default.

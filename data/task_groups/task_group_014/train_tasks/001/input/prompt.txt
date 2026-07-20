@@ -1,15 +1,5 @@
-You are the UM intake lead auditing a daily authorization exception batch.
+Northstar Health Plan needs a UM nurse determination summary for the current prior authorization case `CASE-TR-001`.
 
-Use the SQLite query service at <TASK_ENV_BASE_URL>/query. Submit read-only SQL with POST JSON shaped like:
+Use the shared payer operations environment at `<TASK_ENV_BASE_URL>`. The SQL endpoint is `POST /sql/query` and requires bearer token `pa-review-token-014`. Business endpoints listed in the environment may also be used.
 
-```json
-{"sql": "SELECT ...", "params": []}
-```
-
-Authenticate every request with HTTP Basic Auth using username `payer_ops_solver` and password `revcycle_sql_014`.
-
-Do not assume a local database file is available or hard-code a runtime host or port. The worklist label and target scope are in `input/payloads/worklist_memo.json`.
-
-Prepare the intake audit result for the target authorization cases. The operations director needs the first intake outcome for each case, duplicate handling where relevant, gold-card or review disposition, SLA timing, provider follow-up item, notice flag, and a compact queue summary.
-
-Use the payer operations tables available through the SQL service, including authorization requests, line items, members, plans, providers, facilities, service-code rules, existing authorizations, and state SLA rules. Return only a JSON object that conforms to `input/payloads/answer_template.json`, sorted by case ID where the template calls for case-level rows.
+Review the case, active member and plan context, requested therapy lines, applicable policy criteria, clinical documents, and any authorization record available in the environment. Return JSON only, matching `input/payloads/answer_template.json`. Include the current evidence documents relied on and any case documents excluded from the determination.

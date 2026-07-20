@@ -1,176 +1,152 @@
 {
-  "schema_name": "train_002_nvk_retention_hold_remediation",
-  "schema_version": "1.0",
-  "description": "Return one JSON object matching this contract. Do not include this schema metadata in the response.",
+  "task_id": "train_002",
+  "matter_id": {
+    "type": "string",
+    "required": true,
+    "description": "The stable matter identifier reviewed in the Investigation Review Hub."
+  },
   "required_top_level_keys": [
     "matter_id",
-    "hold_date",
-    "record_class_findings",
-    "hold_defects",
-    "recoverable_sources",
-    "remediation_plan",
-    "overall"
-  ],
-  "top_level_order": [
-    "matter_id",
-    "hold_date",
-    "record_class_findings",
-    "hold_defects",
-    "recoverable_sources",
-    "remediation_plan",
-    "overall"
+    "retention_events",
+    "communication_gaps",
+    "available_archives",
+    "metrics",
+    "recommended_actions"
   ],
   "ordering_rules": {
-    "record_class_findings": "Sort by issue_id ascending.",
-    "hold_defects": "Sort by defect_id ascending.",
-    "recoverable_sources": "Sort by source_id ascending.",
-    "remediation_plan": "Sort by rank ascending.",
-    "category_ids": "Sort category IDs ascending.",
-    "source_event_ids": "Sort IDs ascending by prefix group and numeric suffix.",
-    "issue_ids": "Sort IDs ascending unless remediation_plan rank defines the row order."
+    "retention_events": "Sort by event_id ascending.",
+    "communication_gaps": "Sort by event_id ascending.",
+    "available_archives": "Sort by source_id ascending.",
+    "recommended_actions": "Sort by priority_rank ascending, then target_id ascending.",
+    "category_sets": "Use uppercase category codes and sort ascending."
   },
-  "enums": {
-    "severity": [
-      "critical",
-      "high",
+  "enum_choices": {
+    "retention_status": [
+      "policy_destroyed_pre_hold",
+      "post_hold_loss",
+      "auto_purged",
+      "active_system_loss",
+      "should_exist_missing",
+      "available_archive",
+      "preserved_available",
+      "collection_pending",
+      "not_applicable"
+    ],
+    "risk_level": [
+      "low",
       "medium",
-      "low"
+      "high",
+      "critical"
     ],
-    "timing_class": [
-      "pre_hold_policy",
-      "post_hold_spoliation",
-      "recoverable_archive",
+    "volume_unit": [
+      "boxes",
+      "days",
+      "months",
+      "records",
+      "not_applicable"
+    ],
+    "gap_type": [
+      "auto_purge",
+      "active_system_loss",
       "uncollected_source",
-      "retained_missing"
+      "missing_required_record",
+      "not_applicable"
     ],
-    "primary_action": [
-      "regulator_notice",
-      "supplemental_collection",
-      "vendor_retrieval",
-      "hold_refresh",
-      "no_action_policy_gap"
+    "archive_status": [
+      "available_archive",
+      "unavailable",
+      "unknown"
     ],
-    "defect_type": [
-      "offsite_vendor_not_on_hold",
-      "personal_device_notice_omission"
+    "action_type": [
+      "no_action_policy_loss",
+      "document_system_gap",
+      "disclose_preservation_issue",
+      "collect_archive",
+      "restore_from_backup",
+      "locate_missing_record",
+      "custodian_followup",
+      "escalate_to_counsel"
     ],
-    "recovery_status": [
-      "available",
-      "partial",
-      "retained_missing"
+    "owner": [
+      "litigation_counsel",
+      "records_management",
+      "ediscovery_vendor",
+      "it_messaging",
+      "compliance_audit",
+      "legal_operations"
     ]
   },
-  "fields": {
-    "matter_id": {
-      "type": "string",
-      "required_value": "M-NVK-219"
-    },
-    "hold_date": {
-      "type": "string",
-      "format": "YYYY-MM-DD"
-    },
-    "record_class_findings": {
-      "type": "list",
-      "required_item_keys": [
-        "issue_id",
-        "record_classes",
-        "category_ids",
-        "timing_class",
-        "severity",
-        "quantity",
-        "source_event_ids",
-        "primary_action",
-        "notice_required"
-      ],
-      "item_fields": {
-        "issue_id": "string stable issue ID",
-        "record_classes": "list[string]",
-        "category_ids": "list[string]",
-        "timing_class": "enum",
-        "severity": "enum",
-        "quantity": "integer count; use 0 only when no count is available",
-        "source_event_ids": "list[string] from API records or task memo",
-        "primary_action": "enum",
-        "notice_required": "boolean"
+  "schema": {
+    "matter_id": "string",
+    "retention_events": [
+      {
+        "event_id": "string",
+        "status": "enum:retention_status",
+        "risk_level": "enum:risk_level",
+        "affected_categories": "array<string category_code>",
+        "record_type": "string",
+        "event_date": "string YYYY-MM-DD or null",
+        "hold_date": "string YYYY-MM-DD or null",
+        "policy_section": "string or null",
+        "retention_period_months": "integer or null",
+        "volume_count": "integer or null",
+        "volume_unit": "enum:volume_unit",
+        "cutoff_date": "string YYYY-MM-DD or null"
       }
-    },
-    "hold_defects": {
-      "type": "list",
-      "required_item_keys": [
-        "defect_id",
-        "defect_type",
-        "category_ids",
-        "affected_sources",
-        "severity",
-        "primary_action",
-        "notice_required"
-      ],
-      "item_fields": {
-        "defect_id": "string stable hold defect ID",
-        "defect_type": "enum",
-        "category_ids": "list[string]",
-        "affected_sources": "list[string]",
-        "severity": "enum",
-        "primary_action": "enum",
-        "notice_required": "boolean"
+    ],
+    "communication_gaps": [
+      {
+        "event_id": "string",
+        "system": "string",
+        "gap_type": "enum:gap_type",
+        "status": "enum:retention_status",
+        "risk_level": "enum:risk_level",
+        "affected_categories": "array<string category_code>",
+        "purge_window_days": "integer or null",
+        "cutoff_date": "string YYYY-MM-DD or null",
+        "archive_exception_source_id": "string or null"
       }
-    },
-    "recoverable_sources": {
-      "type": "list",
-      "required_item_keys": [
-        "source_id",
-        "source_name",
-        "record_class",
-        "category_ids",
-        "recovery_status",
-        "count",
-        "source_event_ids",
-        "primary_action"
-      ],
-      "item_fields": {
-        "source_id": "string stable source ID",
-        "source_name": "string",
-        "record_class": "string",
-        "category_ids": "list[string]",
-        "recovery_status": "enum",
-        "count": "integer count; use 0 when unknown",
-        "source_event_ids": "list[string]",
-        "primary_action": "enum"
+    ],
+    "available_archives": [
+      {
+        "source_id": "string",
+        "archive_status": "enum:archive_status",
+        "source_type": "string",
+        "retention_years": "integer",
+        "affected_categories": "array<string category_code>",
+        "limits_irretrievable_loss_for_categories": "array<string category_code>",
+        "action_type": "enum:action_type",
+        "owner": "enum:owner"
       }
+    ],
+    "metrics": {
+      "retention_event_count": "integer",
+      "pre_hold_policy_destroyed_event_count": "integer",
+      "post_hold_loss_event_count": "integer",
+      "communication_gap_event_count": "integer",
+      "should_exist_missing_event_count": "integer",
+      "available_archive_count": "integer",
+      "destroyed_box_count": "integer",
+      "pre_hold_destroyed_box_count": "integer",
+      "post_hold_destroyed_box_count": "integer",
+      "unique_affected_category_count": "integer",
+      "categories_with_any_gap_or_loss": "array<string category_code>"
     },
-    "remediation_plan": {
-      "type": "list",
-      "required_item_keys": [
-        "rank",
-        "action_id",
-        "action",
-        "issue_ids",
-        "owner_queue",
-        "due_basis"
-      ],
-      "item_fields": {
-        "rank": "integer starting at 1",
-        "action_id": "string stable action ID",
-        "action": "enum primary_action",
-        "issue_ids": "list[string]",
-        "owner_queue": "enum string: legal | litigation_support | records | e_discovery",
-        "due_basis": "short string"
+    "recommended_actions": [
+      {
+        "target_id": "string",
+        "action_type": "enum:action_type",
+        "owner": "enum:owner",
+        "priority_rank": "integer, 1 is highest priority",
+        "risk_level": "enum:risk_level",
+        "affected_categories": "array<string category_code>"
       }
-    },
-    "overall": {
-      "type": "object",
-      "required_keys": [
-        "disclosure_required",
-        "blocked_category_ids",
-        "policy_gap_category_ids",
-        "post_hold_spoliation_issue_ids"
-      ],
-      "fields": {
-        "disclosure_required": "boolean",
-        "blocked_category_ids": "list[string]",
-        "policy_gap_category_ids": "list[string]",
-        "post_hold_spoliation_issue_ids": "list[string]"
-      }
-    }
+    ]
+  },
+  "numeric_precision": {
+    "counts": "whole integers",
+    "retention_years": "whole years",
+    "retention_period_months": "whole months",
+    "priority_rank": "whole integers"
   }
 }

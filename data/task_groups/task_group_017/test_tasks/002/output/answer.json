@@ -1,236 +1,201 @@
 {
-  "matter_id": "M-BAY-144",
-  "hold_date": "2024-12-06",
-  "record_class_findings": [
+  "matter_id": "MTR-PORTOLA-GJ",
+  "retention_events": [
     {
-      "issue_id": "RC-2020-LAB",
-      "record_classes": [
-        "2020 emissions lab data"
+      "event_id": "RET-PORT-AUDIT-MISSING",
+      "status": "should_exist_missing",
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-F",
+        "PE-I"
       ],
-      "category_ids": [
-        "B-01"
-      ],
-      "timing_class": "pre_hold_policy",
-      "severity": "medium",
-      "quantity": 6,
-      "event_date": "2023-01-27",
-      "source_event_ids": [
-        "CE-0019",
-        "DE-0008",
-        "RR-0011"
-      ],
-      "primary_action": "no_action_policy_gap",
-      "notice_required": false
+      "record_type": "surveillance_report",
+      "event_date": "2024-12-31",
+      "hold_date": "2025-01-09",
+      "policy_section": "5.8",
+      "retention_period_months": 60,
+      "volume_count": 1,
+      "volume_unit": "report",
+      "cutoff_date": null
     },
     {
-      "issue_id": "RC-EMAIL-VAULTSEVEN",
-      "record_classes": [
-        "executive email"
+      "event_id": "RET-PORT-CHAT-POST",
+      "status": "post_hold_loss",
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
       ],
-      "category_ids": [
-        "B-03"
-      ],
-      "timing_class": "recoverable_archive",
-      "severity": "low",
-      "quantity": 9220,
-      "event_date": "2025-01-14",
-      "source_event_ids": [
-        "CE-0021",
-        "RR-0013"
-      ],
-      "primary_action": "supplemental_collection",
-      "notice_required": false
+      "record_type": "deal_chat_exports",
+      "event_date": "2025-02-04",
+      "hold_date": "2025-01-09",
+      "policy_section": "6.2",
+      "retention_period_months": 60,
+      "volume_count": 18,
+      "volume_unit": "exports",
+      "cutoff_date": null
     },
     {
-      "issue_id": "RC-TEAMS-PURGE",
-      "record_classes": [
-        "Teams channels"
+      "event_id": "RET-PORT-TRADE-2018",
+      "status": "policy_destroyed_pre_hold",
+      "risk_level": "low",
+      "affected_categories": [
+        "PE-B"
       ],
-      "category_ids": [
-        "B-02"
-      ],
-      "timing_class": "post_hold_spoliation",
-      "severity": "critical",
-      "quantity": 11,
-      "event_date": "2025-02-05",
-      "source_event_ids": [
-        "CE-0020",
-        "DE-0009",
-        "RR-0012"
-      ],
-      "primary_action": "regulator_notice",
-      "notice_required": true
+      "record_type": "trade_blotters",
+      "event_date": "2024-11-30",
+      "hold_date": "2025-01-09",
+      "policy_section": "2.7",
+      "retention_period_months": 72,
+      "volume_count": 12,
+      "volume_unit": "monthly_blotters",
+      "cutoff_date": null
     },
     {
-      "issue_id": "RC-TIDEWATER-AUDIT",
-      "record_classes": [
-        "2024 Tidewater audit report"
+      "event_id": "RET-PORT-VOICE",
+      "status": "auto_purged",
+      "risk_level": "medium",
+      "affected_categories": [
+        "PE-D"
       ],
-      "category_ids": [
-        "B-04"
-      ],
-      "timing_class": "retained_missing",
-      "severity": "high",
-      "quantity": 1,
-      "event_date": "2025-01-22",
-      "source_event_ids": [
-        "CE-0022",
-        "PL-0026",
-        "RR-0014"
-      ],
-      "primary_action": "vendor_retrieval",
-      "notice_required": false
+      "record_type": "trader_voicemail",
+      "event_date": "2025-03-11",
+      "hold_date": "2025-01-09",
+      "policy_section": "7.4",
+      "retention_period_months": 4,
+      "volume_count": 120,
+      "volume_unit": "days",
+      "cutoff_date": null
     }
   ],
-  "hold_defects": [
+  "communication_gaps": [
     {
-      "defect_id": "HD-OFFSITE-VENDOR",
-      "defect_type": "offsite_vendor_not_on_hold",
-      "category_ids": [
-        "B-05"
+      "event_id": "RET-PORT-CHAT-POST",
+      "system": "deal_chat_exports",
+      "gap_type": "post_hold_deleted_export",
+      "status": "post_hold_loss",
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
       ],
-      "affected_sources": [
-        "off-site vendor boxes"
-      ],
-      "severity": "high",
-      "source_event_ids": [
-        "CE-0023",
-        "PL-0027"
-      ],
-      "primary_action": "hold_refresh",
-      "notice_required": false
+      "volume_count": 18,
+      "volume_unit": "exports",
+      "purge_window_days": null,
+      "cutoff_date": null,
+      "archive_exception_source_id": "SRC-PORT-ENERGYCOMMS"
     },
     {
-      "defect_id": "HD-PERSONAL-DEVICE",
-      "defect_type": "personal_device_notice_omission",
-      "category_ids": [
-        "B-05"
+      "event_id": "RET-PORT-VOICE",
+      "system": "trader_voicemail",
+      "gap_type": "auto_purge",
+      "status": "auto_purged",
+      "risk_level": "medium",
+      "affected_categories": [
+        "PE-D"
       ],
-      "affected_sources": [
-        "personal phone"
-      ],
-      "severity": "high",
-      "source_event_ids": [
-        "CE-0023",
-        "PL-0027"
-      ],
-      "primary_action": "supplemental_collection",
-      "notice_required": false
+      "volume_count": 120,
+      "volume_unit": "days",
+      "purge_window_days": 120,
+      "cutoff_date": null,
+      "archive_exception_source_id": null
     }
   ],
-  "recoverable_sources": [
+  "available_archives": [
     {
-      "source_id": "RS-AUDIT-TIDEWATER",
-      "source_name": "Tidewater audit vendor copy",
-      "record_class": "2024 Tidewater audit report",
-      "category_ids": [
-        "B-04"
+      "source_id": "SRC-PORT-ENERGYCOMMS",
+      "archive_status": "available_archive",
+      "source_type": "chat_archive",
+      "available_content": "chat_attachments",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
       ],
-      "recovery_status": "retained_missing",
-      "count": 1,
-      "source_event_ids": [
-        "CE-0022",
-        "RR-0014"
+      "limits_irretrievable_loss_for_categories": [
+        "PE-D",
+        "PE-E"
       ],
-      "primary_action": "vendor_retrieval"
-    },
-    {
-      "source_id": "RS-EMAIL-VAULTSEVEN",
-      "source_name": "VaultSeven executive archive",
-      "record_class": "executive email",
-      "category_ids": [
-        "B-03"
-      ],
-      "recovery_status": "available",
-      "count": 9220,
-      "source_event_ids": [
-        "CE-0021",
-        "RR-0013"
-      ],
-      "primary_action": "supplemental_collection"
-    },
-    {
-      "source_id": "RS-LAB-SUMMARY-EXPORTS",
-      "source_name": "summary exports",
-      "record_class": "2020 emissions lab data",
-      "category_ids": [
-        "B-01"
-      ],
-      "recovery_status": "partial",
-      "count": 0,
-      "source_event_ids": [
-        "DE-0008"
-      ],
-      "primary_action": "supplemental_collection"
+      "action_type": "collect_archive",
+      "owner": "ediscovery_vendor"
     }
   ],
-  "remediation_plan": [
-    {
-      "rank": 1,
-      "action_id": "RA-REGULATOR-NOTICE",
-      "action": "regulator_notice",
-      "issue_ids": [
-        "RC-TEAMS-PURGE"
-      ],
-      "owner_queue": "legal",
-      "due_basis": "immediate post-hold Teams purge disclosure"
-    },
-    {
-      "rank": 2,
-      "action_id": "RA-AUDIT-RETRIEVAL",
-      "action": "vendor_retrieval",
-      "issue_ids": [
-        "RC-TIDEWATER-AUDIT"
-      ],
-      "owner_queue": "records",
-      "due_basis": "before production deadline"
-    },
-    {
-      "rank": 3,
-      "action_id": "RA-HOLD-REFRESH",
-      "action": "hold_refresh",
-      "issue_ids": [
-        "HD-OFFSITE-VENDOR",
-        "HD-PERSONAL-DEVICE"
-      ],
-      "owner_queue": "litigation_support",
-      "due_basis": "same day as remediation approval"
-    },
-    {
-      "rank": 4,
-      "action_id": "RA-SUPPLEMENTAL-COLLECTION",
-      "action": "supplemental_collection",
-      "issue_ids": [
-        "HD-OFFSITE-VENDOR",
-        "HD-PERSONAL-DEVICE",
-        "RC-EMAIL-VAULTSEVEN"
-      ],
-      "owner_queue": "e_discovery",
-      "due_basis": "before supplemental production"
-    },
-    {
-      "rank": 5,
-      "action_id": "RA-POLICY-GAP-LOG",
-      "action": "no_action_policy_gap",
-      "issue_ids": [
-        "RC-2020-LAB"
-      ],
-      "owner_queue": "records",
-      "due_basis": "document in production deficiency log"
-    }
-  ],
-  "overall": {
-    "disclosure_required": true,
-    "blocked_category_ids": [
-      "B-02",
-      "B-04",
-      "B-05"
+  "metrics": {
+    "retention_event_count": 4,
+    "pre_hold_policy_destroyed_event_count": 1,
+    "post_hold_loss_event_count": 1,
+    "communication_gap_event_count": 2,
+    "should_exist_missing_event_count": 1,
+    "available_archive_count": 1,
+    "pre_hold_destroyed_monthly_blotter_count": 12,
+    "post_hold_deleted_export_count": 18,
+    "auto_purge_window_days": 120,
+    "missing_required_report_count": 1,
+    "unique_affected_category_count": 5,
+    "categories_with_any_gap_or_loss": [
+      "PE-B",
+      "PE-D",
+      "PE-E",
+      "PE-F",
+      "PE-I"
     ],
-    "policy_gap_category_ids": [
-      "B-01"
-    ],
-    "post_hold_spoliation_issue_ids": [
-      "RC-TEAMS-PURGE"
+    "categories_with_archive_exception": [
+      "PE-D",
+      "PE-E"
     ]
-  }
+  },
+  "recommended_actions": [
+    {
+      "target_id": "RET-PORT-CHAT-POST",
+      "action_type": "disclose_preservation_issue",
+      "owner": "litigation_counsel",
+      "priority_rank": 1,
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
+      ]
+    },
+    {
+      "target_id": "RET-PORT-AUDIT-MISSING",
+      "action_type": "locate_missing_record",
+      "owner": "compliance_audit",
+      "priority_rank": 2,
+      "risk_level": "high",
+      "affected_categories": [
+        "PE-F",
+        "PE-I"
+      ]
+    },
+    {
+      "target_id": "SRC-PORT-ENERGYCOMMS",
+      "action_type": "collect_archive",
+      "owner": "ediscovery_vendor",
+      "priority_rank": 3,
+      "risk_level": "medium",
+      "affected_categories": [
+        "PE-D",
+        "PE-E"
+      ]
+    },
+    {
+      "target_id": "RET-PORT-VOICE",
+      "action_type": "document_system_gap",
+      "owner": "it_messaging",
+      "priority_rank": 4,
+      "risk_level": "medium",
+      "affected_categories": [
+        "PE-D"
+      ]
+    },
+    {
+      "target_id": "RET-PORT-TRADE-2018",
+      "action_type": "no_action_policy_loss",
+      "owner": "records_management",
+      "priority_rank": 5,
+      "risk_level": "low",
+      "affected_categories": [
+        "PE-B"
+      ]
+    }
+  ]
 }

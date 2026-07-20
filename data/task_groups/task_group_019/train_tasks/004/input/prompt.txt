@@ -1,15 +1,17 @@
-You are reviewing Harbor State contractor registration batch HS-2026-Q1B for a final eligibility screen.
+You are a senior licensing examiner reviewing a contractor application batch for the State Contractors Licensing Board.
 
-The Cascadia Licensing Review Portal is available at:
+Review application ids C-TR4-001 through C-TR4-007. The batch has been escalated because the files include specialty endorsement questions, active-suspension history, experience documentation issues, bond or insurance conflicts, and unresolved complaint or violation conflicts.
 
-<TASK_ENV_BASE_URL>
+Use the shared licensing environment at <TASK_ENV_BASE_URL>. The relevant business endpoints are:
 
-Use the CLRP public API and exports for the batch, related contractor records, active bulletins, bond records, insurance records, correspondence, field notes, complaints, and violations. Prepare the reviewer-ready JSON output described in `input/payloads/answer_template.json`.
+- GET /api/policies
+- GET /api/contractor/applications
+- GET /api/contractor/bonds
+- GET /api/contractor/insurance
+- GET /api/contractor/license-history
+- GET /api/contractor/violations
+- GET /api/contractor/correspondence
+- GET /api/contractor/inspections
+- POST /api/sql
 
-Your output must include:
-
-- `application_decisions` for every application in batch HS-2026-Q1B.
-- `manual_followup` entries for applications that should not be cleared without staff action.
-- `rule_change_summary` for the batch.
-
-Return only the JSON object. Do not include narrative text outside the JSON.
+Use 2025-07-18 as the review date for deciding whether financial coverage is current. Produce one JSON answer matching input/payloads/answer_template.json. Order application_decisions by application_id and return only the JSON object.

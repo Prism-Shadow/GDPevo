@@ -2,6 +2,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PREDICTION_JSON="${1:-${PREDICTION:-"$SCRIPT_DIR/../output/answer.json"}}"
 
-python3 "$SCRIPT_DIR/eval.py" "$PREDICTION_JSON"
+if [[ $# -gt 0 ]]; then
+  python3 "$SCRIPT_DIR/evaluate.py" "$1"
+else
+  python3 "$SCRIPT_DIR/evaluate.py"
+fi

@@ -1,566 +1,120 @@
 {
-  "template_name": "test_005_multi_county_monthly_financial_exception_register",
-  "version": "4.0",
-  "output_format": "JSON object only",
-  "description": "Return the June 2025 multi-county exception register using the local intake packet and shared clerk operations environment.",
+  "task_id": "test_005",
+  "schema_version": "1.0",
+  "field_rules": {
+    "currency": "number with two decimal places, in USD",
+    "dates": "ISO 8601 YYYY-MM-DD",
+    "datetimes": "ISO 8601 local datetime YYYY-MM-DDTHH:MM:SS",
+    "petition_sort": "petitions sorted by petition_id ascending",
+    "probation_sort": "probation_referrals sorted by case_number ascending",
+    "license_sort": "license_orders sorted by case_number ascending",
+    "placeholder_sort": "placeholder_cases sorted by case_number ascending; missing_fields sorted alphabetically"
+  },
   "required_top_level_keys": [
     "task_id",
-    "register_month",
-    "register_close_date",
-    "currency",
-    "candidate_audit",
-    "exceptions",
-    "aggregate"
+    "court_packet",
+    "petitions",
+    "probation_referrals",
+    "license_orders",
+    "placeholder_cases"
   ],
-  "top_level_fields": {
-    "task_id": {
-      "type": "string",
-      "required_value": "test_005"
-    },
-    "register_month": {
-      "type": "string",
-      "format": "YYYY-MM"
-    },
-    "register_close_date": {
-      "type": "date",
-      "format": "YYYY-MM-DD"
-    },
-    "currency": {
-      "type": "enum",
-      "allowed_values": [
-        "USD"
-      ]
+  "enums": {
+    "petition_classification": [
+      "initial_installment",
+      "subsequent_review",
+      "deferred_payment",
+      "exempt_no_payment"
+    ],
+    "review_routing": [
+      "clerk_can_enter",
+      "judge_or_supervisor_review",
+      "not_ready"
+    ],
+    "support_classification": [
+      "supportable",
+      "below_policy_minimum",
+      "above_policy_maximum",
+      "unsupported_by_budget",
+      "needs_judge_review"
+    ],
+    "payment_application_order": [
+      "fines_costs_only",
+      "restitution_before_fines_costs",
+      "fines_costs_before_restitution"
+    ],
+    "account_fee_treatment": [
+      "excluded_by_policy",
+      "included_by_policy",
+      "verify_before_entry"
+    ],
+    "schedule_interval": [
+      "monthly",
+      "deferred_single_due"
+    ],
+    "license_start_basis": [
+      "conviction_date",
+      "release_date",
+      "petition_date"
+    ],
+    "cc1375_status": [
+      "prepare_referral",
+      "not_ordered"
+    ],
+    "placeholder_value": [
+      "TBD from case file"
+    ]
+  },
+  "court_packet": {
+    "jurisdiction_code": "string",
+    "court_name": "string",
+    "policy_id": "string",
+    "packet_date": "date"
+  },
+  "petitions_item": {
+    "petition_id": "string",
+    "case_number": "string",
+    "defendant_name": "string",
+    "petition_classification": "enum: petition_classification",
+    "review_routing": "enum: review_routing",
+    "support_classification": "enum: support_classification",
+    "approved_monthly_amount": "currency",
+    "down_payment_amount": "currency",
+    "total_due": "currency",
+    "restitution_balance": "currency",
+    "fines_costs_balance": "currency",
+    "account_fee_amount": "currency",
+    "account_fee_treatment": "enum: account_fee_treatment",
+    "payment_application_order": "enum: payment_application_order",
+    "payment_schedule": {
+      "interval": "enum: schedule_interval",
+      "first_due_date": "date",
+      "regular_installment_amount": "currency",
+      "total_installments": "integer",
+      "final_due_date": "date",
+      "final_payment_amount": "currency",
+      "return_to_court_date": "date"
     }
   },
-  "candidate_audit": {
-    "type": "array",
-    "ordering": "ascending by notice_id",
-    "row_identity": "notice_id",
-    "required_object_keys": [
-      "notice_id",
-      "case_number",
-      "scope_decision",
-      "scope_reason_code",
-      "june_actionability_code",
-      "exclusion_basis_code",
-      "scope_source_code"
-    ],
-    "field_definitions": {
-      "notice_id": {
-        "type": "string"
-      },
-      "case_number": {
-        "type": "string"
-      },
-      "scope_decision": {
-        "type": "enum",
-        "allowed_values": [
-          "included",
-          "excluded"
-        ]
-      },
-      "scope_reason_code": {
-        "type": "enum",
-        "allowed_values": [
-          "current_month_amount_review",
-          "current_month_credit_review",
-          "current_month_plan_default",
-          "current_month_collateral_gap",
-          "no_current_month_action"
-        ]
-      },
-      "june_actionability_code": {
-        "type": "enum",
-        "allowed_values": [
-          "actionable_june_register_item",
-          "not_actionable_for_june_register"
-        ]
-      },
-      "exclusion_basis_code": {
-        "type": "enum",
-        "allowed_values": [
-          "not_excluded",
-          "stale_context_only",
-          "future_or_informational_only",
-          "identity_not_confirmed"
-        ]
-      },
-      "scope_source_code": {
-        "type": "enum",
-        "allowed_values": [
-          "local_finance_notice_with_live_case",
-          "local_credit_item_with_live_case",
-          "local_default_notice_with_live_plan",
-          "local_collateral_notice_with_docket_gap",
-          "context_notice_without_current_trigger",
-          "local_item_without_confirmed_case_identity"
-        ]
-      }
-    }
+  "probation_referrals_item": {
+    "case_number": "string",
+    "form_id": "string",
+    "cc1375_status": "enum: cc1375_status",
+    "conviction_date": "date",
+    "probation_term_months": "integer",
+    "report_datetime": "datetime or null"
   },
-  "exceptions": {
-    "type": "array",
-    "ordering": "ascending by rank",
-    "row_identity": "case_number",
-    "required_object_keys": [
-      "rank",
-      "notice_id",
-      "case_number",
-      "county",
-      "defendant_name",
-      "inclusion_basis_code",
-      "priority_bucket",
-      "priority_reason_code",
-      "exception_type",
-      "main_exception_code",
-      "source_conflict_code",
-      "source_precedence_code",
-      "stale_live_resolution",
-      "source_basis_tags",
-      "reconciliation_code",
-      "action_code",
-      "live_balance_due",
-      "live_payment_status",
-      "missed_payments",
-      "amount_basis_code",
-      "correction_component_codes",
-      "correction_amount",
-      "corrected_balance_due",
-      "payment_plan_action",
-      "plan_basis_code",
-      "plan_recalculation_code",
-      "monthly_payment_amount",
-      "full_payment_count",
-      "final_payment_amount",
-      "total_payment_count",
-      "first_due_date",
-      "final_due_date",
-      "plan_exposure_amount",
-      "default_exposure_amount",
-      "exposure_basis_code",
-      "exposure_audit_code",
-      "collateral_issue_code",
-      "collateral_trigger_date"
-    ],
-    "field_definitions": {
-      "rank": {
-        "type": "integer",
-        "ordering": "1 is highest priority"
-      },
-      "notice_id": {
-        "type": "string"
-      },
-      "case_number": {
-        "type": "string"
-      },
-      "county": {
-        "type": "string"
-      },
-      "defendant_name": {
-        "type": "string",
-        "format": "live clerk record display name"
-      },
-      "inclusion_basis_code": {
-        "type": "enum",
-        "allowed_values": [
-          "fee_component_review",
-          "external_credit_closeout",
-          "confirmed_plan_default",
-          "collateral_queue_gap"
-        ]
-      },
-      "priority_bucket": {
-        "type": "enum",
-        "allowed_values": [
-          "statutory_correction",
-          "payment_default",
-          "collateral_omission"
-        ]
-      },
-      "priority_reason_code": {
-        "type": "enum",
-        "allowed_values": [
-          "unsupported_fee_component",
-          "external_credit_clears_balance",
-          "confirmed_default",
-          "missing_collateral_entry"
-        ]
-      },
-      "exception_type": {
-        "type": "enum",
-        "allowed_values": [
-          "fee_misapplication",
-          "receipt_credit",
-          "payment_plan_defect",
-          "collateral_omission"
-        ]
-      },
-      "main_exception_code": {
-        "type": "enum",
-        "allowed_values": [
-          "deferred_conviction_fee",
-          "unsupported_restitution_admin",
-          "trust_credit_not_posted",
-          "missed_payment_return",
-          "license_abstract_missing",
-          "treatment_referral_missing"
-        ]
-      },
-      "source_conflict_code": {
-        "type": "enum",
-        "allowed_values": [
-          "live_ledger_vs_packet_notice",
-          "live_status_vs_packet_default",
-          "live_docket_collateral_gap",
-          "no_source_conflict"
-        ]
-      },
-      "source_precedence_code": {
-        "type": "enum",
-        "allowed_values": [
-          "case_posture_over_live_component",
-          "packet_credit_over_live_balance",
-          "live_plan_with_packet_default",
-          "live_docket_gap_with_packet_notice"
-        ]
-      },
-      "stale_live_resolution": {
-        "type": "enum",
-        "allowed_values": [
-          "remove_unsupported_live_charge",
-          "post_external_credit",
-          "keep_live_plan_recalculate",
-          "keep_live_ledger_route_default",
-          "docket_gap_requires_collateral"
-        ]
-      },
-      "source_basis_tags": {
-        "type": "array of strings sorted ascending",
-        "allowed_values": [
-          "active_fee_schedule",
-          "current_case_posture",
-          "live_docket_status",
-          "live_financial_obligation",
-          "live_payment_plan",
-          "local_amount_notice",
-          "local_collateral_notice",
-          "local_credit_item",
-          "local_default_notice"
-        ]
-      },
-      "reconciliation_code": {
-        "type": "enum",
-        "assignment_rule": "Use one neutral code per distinct reconciliation family in the order the family first appears in the ranked exceptions; rows sharing a family reuse the same code.",
-        "allowed_values": [
-          "rec_a",
-          "rec_b",
-          "rec_c",
-          "rec_d",
-          "rec_e"
-        ]
-      },
-      "action_code": {
-        "type": "enum",
-        "allowed_values": [
-          "post_fee_correction",
-          "post_credit_and_close",
-          "issue_return_to_court_notice",
-          "enter_collateral_abstract",
-          "send_program_referral_notice"
-        ]
-      },
-      "live_balance_due": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals",
-        "unit": "USD"
-      },
-      "live_payment_status": {
-        "type": "enum",
-        "allowed_values": [
-          "paid",
-          "current",
-          "delinquent",
-          "pending_adjustment"
-        ]
-      },
-      "missed_payments": {
-        "type": "integer"
-      },
-      "amount_basis_code": {
-        "type": "enum",
-        "allowed_values": [
-          "fee_component_removal",
-          "external_credit",
-          "no_balance_change"
-        ]
-      },
-      "correction_component_codes": {
-        "type": "array of strings sorted ascending",
-        "allowed_values": [
-          "CR-CONV",
-          "CR-REST-ADM",
-          "TRUST_CREDIT"
-        ]
-      },
-      "correction_amount": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals; positive values reduce the live balance",
-        "unit": "USD"
-      },
-      "corrected_balance_due": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals",
-        "unit": "USD"
-      },
-      "payment_plan_action": {
-        "type": "enum",
-        "allowed_values": [
-          "none",
-          "approve_revised_plan",
-          "keep_existing",
-          "send_return_to_court",
-          "post_credit_close"
-        ]
-      },
-      "plan_basis_code": {
-        "type": "enum",
-        "allowed_values": [
-          "corrected_balance_new_terms",
-          "corrected_balance_live_terms",
-          "corrected_balance_return_to_court_live_terms",
-          "no_plan_basis"
-        ]
-      },
-      "plan_recalculation_code": {
-        "type": "enum",
-        "allowed_values": [
-          "calc_corrected_balance_new_terms",
-          "calc_corrected_balance_existing_schedule",
-          "calc_return_using_live_schedule",
-          "calc_no_plan_credit_closeout",
-          "calc_no_plan_collateral_only"
-        ]
-      },
-      "monthly_payment_amount": {
-        "type": "number or null",
-        "precision": "currency rounded to 2 decimals when present",
-        "unit": "USD"
-      },
-      "full_payment_count": {
-        "type": "integer"
-      },
-      "final_payment_amount": {
-        "type": "number or null",
-        "precision": "currency rounded to 2 decimals when present",
-        "unit": "USD"
-      },
-      "total_payment_count": {
-        "type": "integer"
-      },
-      "first_due_date": {
-        "type": "date or null",
-        "format": "YYYY-MM-DD"
-      },
-      "final_due_date": {
-        "type": "date or null",
-        "format": "YYYY-MM-DD"
-      },
-      "plan_exposure_amount": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals",
-        "unit": "USD"
-      },
-      "default_exposure_amount": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals",
-        "unit": "USD"
-      },
-      "exposure_basis_code": {
-        "type": "enum",
-        "allowed_values": [
-          "corrected_balance_schedule",
-          "missed_installments",
-          "no_exposure"
-        ]
-      },
-      "exposure_audit_code": {
-        "type": "enum",
-        "allowed_values": [
-          "exposure_corrected_balance_schedule",
-          "exposure_missed_installments",
-          "exposure_none_credit_closeout",
-          "exposure_none_collateral_only"
-        ]
-      },
-      "collateral_issue_code": {
-        "type": "enum",
-        "allowed_values": [
-          "none",
-          "license_abstract_missing",
-          "treatment_referral_missing"
-        ]
-      },
-      "collateral_trigger_date": {
-        "type": "date or null",
-        "format": "YYYY-MM-DD"
-      }
-    }
+  "license_orders_item": {
+    "case_number": "string",
+    "form_id": "string",
+    "license_start_basis": "enum: license_start_basis",
+    "suspension_start_date": "date",
+    "suspension_months": "integer",
+    "suspension_end_date": "date",
+    "driver_license_number": "enum: placeholder_value"
   },
-  "aggregate": {
-    "type": "object",
-    "required_object_keys": [
-      "exception_count",
-      "included_candidate_case_numbers",
-      "excluded_candidate_case_numbers",
-      "counties_represented",
-      "scope_reason_counts",
-      "actionability_counts",
-      "exclusion_basis_counts",
-      "source_precedence_counts",
-      "reconciliation_code_counts",
-      "source_basis_tag_counts",
-      "statutory_correction_count",
-      "payment_default_count",
-      "collateral_omission_count",
-      "stale_live_conflict_count",
-      "fee_correction_count",
-      "credit_closeout_count",
-      "payment_plan_action_count",
-      "return_to_court_count",
-      "collateral_action_count",
-      "total_live_balance_due",
-      "total_correction_amount",
-      "total_corrected_balance_due",
-      "total_plan_exposure_amount",
-      "total_default_exposure_amount",
-      "statutory_correction_case_numbers",
-      "fee_correction_case_numbers",
-      "credit_closeout_case_numbers",
-      "payment_default_case_numbers",
-      "return_to_court_case_numbers",
-      "existing_plan_retained_case_numbers",
-      "default_exposure_case_numbers",
-      "collateral_followup_case_numbers",
-      "plan_basis_case_numbers",
-      "plan_recalculation_case_numbers",
-      "exposure_audit_case_numbers"
-    ],
-    "field_definitions": {
-      "exception_count": {
-        "type": "integer"
-      },
-      "included_candidate_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "excluded_candidate_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "counties_represented": {
-        "type": "array of strings sorted ascending"
-      },
-      "scope_reason_counts": {
-        "type": "object with scope_reason_code keys and integer values"
-      },
-      "actionability_counts": {
-        "type": "object with june_actionability_code keys and integer values"
-      },
-      "exclusion_basis_counts": {
-        "type": "object with exclusion_basis_code keys and integer values"
-      },
-      "source_precedence_counts": {
-        "type": "object with source_precedence_code keys and integer values"
-      },
-      "reconciliation_code_counts": {
-        "type": "object with reconciliation_code keys and integer values"
-      },
-      "source_basis_tag_counts": {
-        "type": "object with source_basis_tags keys and integer values"
-      },
-      "statutory_correction_count": {
-        "type": "integer"
-      },
-      "payment_default_count": {
-        "type": "integer"
-      },
-      "collateral_omission_count": {
-        "type": "integer"
-      },
-      "stale_live_conflict_count": {
-        "type": "integer"
-      },
-      "fee_correction_count": {
-        "type": "integer"
-      },
-      "credit_closeout_count": {
-        "type": "integer"
-      },
-      "payment_plan_action_count": {
-        "type": "integer"
-      },
-      "return_to_court_count": {
-        "type": "integer"
-      },
-      "collateral_action_count": {
-        "type": "integer"
-      },
-      "total_live_balance_due": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals",
-        "unit": "USD"
-      },
-      "total_correction_amount": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals",
-        "unit": "USD"
-      },
-      "total_corrected_balance_due": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals",
-        "unit": "USD"
-      },
-      "total_plan_exposure_amount": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals",
-        "unit": "USD"
-      },
-      "total_default_exposure_amount": {
-        "type": "number",
-        "precision": "currency rounded to 2 decimals",
-        "unit": "USD"
-      },
-      "statutory_correction_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "fee_correction_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "credit_closeout_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "payment_default_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "return_to_court_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "existing_plan_retained_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "default_exposure_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "collateral_followup_case_numbers": {
-        "type": "array of strings sorted ascending"
-      },
-      "plan_basis_case_numbers": {
-        "type": "object with plan_basis_code keys and arrays of case numbers sorted ascending"
-      },
-      "plan_recalculation_case_numbers": {
-        "type": "object with plan_recalculation_code keys and arrays of case numbers sorted ascending"
-      },
-      "exposure_audit_case_numbers": {
-        "type": "object with exposure_audit_code keys and arrays of case numbers sorted ascending"
-      }
-    }
+  "placeholder_cases_item": {
+    "case_number": "string",
+    "placeholder_value": "enum: placeholder_value",
+    "missing_fields": "array of strings"
   }
 }

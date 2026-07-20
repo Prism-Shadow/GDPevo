@@ -1,128 +1,119 @@
 {
-  "schema_name": "contractor_eligibility_review_v2",
+  "schema_name": "contractor_batch_eligibility_v1",
+  "description": "Contractor application batch eligibility output schema for application ids C-TE1-001 through C-TE1-009. Return one JSON object with exactly these business fields; extra explanatory prose is not required.",
   "required_top_level_keys": [
-    "batch_id",
-    "review_cutoff_date",
     "application_decisions",
-    "deficiency_counts",
-    "bulletin_impacts"
+    "summary"
   ],
-  "top_level_fields": {
-    "batch_id": {
-      "type": "string",
-      "required_value": "HS-2026-Q2A"
-    },
-    "review_cutoff_date": {
-      "type": "string",
-      "format": "YYYY-MM-DD",
-      "required_value": "2026-06-20"
-    },
-    "application_decisions": {
-      "type": "list",
-      "ordering": "ascending by application_id",
-      "coverage": "include every application returned for batch HS-2026-Q2A and no other applications",
-      "item_fields": {
-        "application_id": {
-          "type": "string"
-        },
-        "determination": {
+  "application_decisions": {
+    "type": "list",
+    "length": 9,
+    "ordering": "Order entries by application_id ascending. Include exactly one entry for each target application id C-TE1-001 through C-TE1-009.",
+    "item": {
+      "application_id": {
+        "type": "string",
+        "stable_identifier": true
+      },
+      "determination": {
+        "type": "enum",
+        "allowed_values": [
+          "APPROVE",
+          "HOLD",
+          "DENY"
+        ]
+      },
+      "deficiency_codes": {
+        "type": "list",
+        "item": {
           "type": "enum",
           "allowed_values": [
-            "APPROVE",
-            "HOLD",
-            "DENY"
+            "active_suspension",
+            "bond_not_current",
+            "bond_shortfall",
+            "endorsement_missing",
+            "endorsement_pending",
+            "experience_shortfall",
+            "insurance_expired",
+            "insurance_pending",
+            "insurance_shortfall",
+            "open_nonserious_violation",
+            "open_serious_violation",
+            "site_recheck_required"
           ]
         },
-        "reason_codes": {
-          "type": "list[enum]",
-          "ordering": "use the enum order listed here",
-          "allowed_values": [
-            "NO_DEFICIENCY",
-            "BOND_SHORTFALL",
-            "BOND_CANCELLED",
-            "INSURANCE_VERIFY",
-            "UNRESOLVED_PENALTY",
-            "FIELD_NOTE_HOLD",
-            "DISQUALIFYING_CONDUCT",
-            "EXPERIENCE_VERIFY",
-            "CORRESPONDENCE_HOLD",
-            "ADVERSE_PRIOR_REGISTRATION",
-            "EXAM_SCORE_SHORTFALL",
-            "FINANCIAL_STATEMENT_MISSING"
-          ]
-        },
-        "primary_bulletin_ids": {
-          "type": "list[string]",
-          "ordering": "ascending bulletin_id; use an empty list when no bulletin drives the decision"
-        },
-        "next_action": {
+        "ordering": "Sort codes ascending and remove duplicates. Use an empty list when no deficiency applies."
+      },
+      "required_actions": {
+        "type": "list",
+        "item": {
           "type": "enum",
           "allowed_values": [
-            "NO_ACTION",
-            "REQUEST_BOND_RIDER",
-            "REQUEST_REPLACEMENT_BOND",
-            "REQUEST_INSURANCE_VERIFICATION",
-            "REFER_UNRESOLVED_PENALTY",
-            "REQUEST_FIELD_CLEARANCE",
-            "REQUEST_EXPERIENCE_DOCUMENTATION",
-            "REQUEST_CORRESPONDENCE_REVIEW",
-            "REQUEST_PRIOR_REGISTRATION_REVIEW",
-            "DENY_APPLICATION",
-            "COMBINED_HOLD_REVIEW"
+            "complete_site_recheck",
+            "increase_bond",
+            "obtain_current_bond",
+            "obtain_required_endorsement",
+            "provide_current_insurance",
+            "refer_board_discipline",
+            "resolve_open_complaints",
+            "submit_experience_affidavit",
+            "verify_current_insurance"
           ]
-        }
-      }
-    },
-    "deficiency_counts": {
-      "type": "object",
-      "required_fields": {
-        "applications_reviewed": "integer",
-        "determinations": {
-          "APPROVE": "integer",
-          "HOLD": "integer",
-          "DENY": "integer"
         },
-        "reason_codes": {
-          "NO_DEFICIENCY": "integer",
-          "BOND_SHORTFALL": "integer",
-          "BOND_CANCELLED": "integer",
-          "INSURANCE_VERIFY": "integer",
-          "UNRESOLVED_PENALTY": "integer",
-          "FIELD_NOTE_HOLD": "integer",
-          "DISQUALIFYING_CONDUCT": "integer",
-          "EXPERIENCE_VERIFY": "integer",
-          "CORRESPONDENCE_HOLD": "integer",
-          "ADVERSE_PRIOR_REGISTRATION": "integer",
-          "EXAM_SCORE_SHORTFALL": "integer",
-          "FINANCIAL_STATEMENT_MISSING": "integer"
-        }
-      }
-    },
-    "bulletin_impacts": {
-      "type": "object",
-      "required_fields": {
-        "applicable_bulletin_ids": {
-          "type": "list[string]",
-          "ordering": "ascending bulletin_id"
-        },
-        "applications_changed_by_2026_bulletins": {
-          "type": "list[string]",
-          "ordering": "ascending application_id"
-        },
-        "deficiency_count_by_rule_type": {
-          "EXAM_MINIMUM": "integer",
-          "BOND_MINIMUM": "integer",
-          "INSURANCE_MINIMUM": "integer",
-          "EXPERIENCE_MINIMUM": "integer",
-          "BACKGROUND_SCREENING": "integer",
-          "CORRESPONDENCE_REVIEW": "integer",
-          "FIELD_NOTE_REVIEW": "integer"
-        },
-        "unchanged_by_bulletins_count": "integer"
+        "ordering": "Sort codes ascending and remove duplicates. Use an empty list when no staff action applies."
+      },
+      "risk_tier": {
+        "type": "enum",
+        "allowed_values": [
+          "low",
+          "medium",
+          "high"
+        ]
+      },
+      "policy_impacted": {
+        "type": "boolean"
       }
     }
   },
-  "numeric_precision": {
-    "all_counts": "integer"
-  }
+  "summary": {
+    "type": "object",
+    "required_keys": [
+      "approve_count",
+      "hold_count",
+      "deny_count",
+      "high_risk_application_ids",
+      "policy_impacted_application_ids",
+      "stale_or_unverified_correspondence_ids"
+    ],
+    "fields": {
+      "approve_count": {
+        "type": "integer",
+        "units": "applications"
+      },
+      "hold_count": {
+        "type": "integer",
+        "units": "applications"
+      },
+      "deny_count": {
+        "type": "integer",
+        "units": "applications"
+      },
+      "high_risk_application_ids": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort application ids ascending."
+      },
+      "policy_impacted_application_ids": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort application ids ascending."
+      },
+      "stale_or_unverified_correspondence_ids": {
+        "type": "list",
+        "item_type": "string",
+        "ordering": "Sort correspondence ids ascending."
+      }
+    }
+  },
+  "numeric_precision": "All counts are integers. No decimal numeric fields are required.",
+  "date_format": "YYYY-MM-DD when dates are used inside optional unscored fields."
 }

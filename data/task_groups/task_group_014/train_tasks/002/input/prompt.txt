@@ -1,17 +1,5 @@
-You are a payer-side utilization management nurse reviewer preparing a clinical review slate.
+Northstar Health Plan needs a pharmacy appeals coordinator disposition for case APPEAL-TR-002.
 
-Use the SQLite query service at <TASK_ENV_BASE_URL>/query. Submit read-only SQL with POST JSON shaped like:
+Prepare the structured appeal and manufacturer assistance intake summary as of 2026-05-08. Use the shared payer operations environment at <TASK_ENV_BASE_URL>. The SQL service is POST /sql/query and requires bearer token pa-review-token-014. You may also use the available case, appeal, document, policy, and portal endpoints exposed by the environment.
 
-```json
-{"sql": "SELECT ...", "params": []}
-```
-
-Authenticate every request with HTTP Basic Auth using username `payer_ops_solver` and password `revcycle_sql_014`.
-
-Do not assume a local database path or hard-code a runtime hostname or port. Inspect the schema through the SQL service as needed.
-
-Review date: `2025-02-13`
-
-The target worklist is in `input/payloads/worklist.json`. Use the payer operations tables available through the SQL service to review the target authorization cases, applicable criteria sources, current clinical evidence, requested service lines, and prior review events.
-
-Produce a board-ready preliminary review slate covering the nurse recommendation, MD escalation posture, criteria source, missing evidence keys, P2P suitability, approved units where appropriate, and queue counts. Return exactly one JSON object matching `input/payloads/answer_template.json`, with case rows sorted by case ID.
+Return only a JSON object that conforms to input/payloads/answer_template.json. Include the appeal routing, deadline, prior medication evidence classification, criteria results, packet requirements and gaps, assistance screen status, and the next operational action.

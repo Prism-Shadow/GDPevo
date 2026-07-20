@@ -5,532 +5,367 @@ from pathlib import Path
 
 
 EXPECTED = {
-    "board_date": "2025-02-27",
-    "target_bucket": "test_p2p_batch",
-    "p2p_cases": [
-        {
-            "case_id": "AUTH00019",
-            "service_categories": ["Durable Medical Equipment", "Home Health"],
-            "p2p_session_status": "completed_with_new_information",
-            "criteria_source_ids": ["SRC003"],
-            "criteria_source_selection_trace": {
-                "selected_source_id": "SRC003",
-                "selected_source_name": "Ticonderoga Medical Policy",
-                "selected_precedence_rank": 2,
-                "excluded_lower_precedence_source_ids": ["SRC004"],
-            },
-            "final_determination": "partial_approval",
-            "overturn_classification": "partial_overturn",
-            "letter_queue_category": "partial_approval_with_appeal_rights",
-            "adverse_authority_status": "md_only_adverse_final",
-            "final_rationale_code": "SRC003_partial_clinical_support_after_p2p",
-            "letter_authority_reason_code": "partial_approval_with_appeal_rights__md_only_adverse_final__SRC003_partial_clinical_support_after_p2p",
-            "criteria_gap_keys": [
-                "diagnosis_confirmed",
-                "equipment_trial_needed",
-                "face_to_face_documented",
-                "physician_plan",
-                "skilled_need",
-            ],
-            "p2p_source_trace": {
-                "p2p_id": "P2P00019",
-                "requesting_provider_joined": True,
-                "new_information": True,
-                "source_outcome": "no_show",
-                "duration_minutes": 20,
-            },
-            "review_event_trace": {
-                "medical_director_event_ids": ["EVT00019_2"],
-                "medical_director_outcomes": ["adverse_pending"],
-            },
-            "admin_source_trace": {
-                "facility_in_service_area": True,
-                "oon_exception": False,
-                "mandatory_md_review": False,
-            },
-            "additional_info_needed": False,
-            "appeal_rights_notice": True,
-        },
-        {
-            "case_id": "AUTH00020",
-            "service_categories": ["Physical Therapy"],
-            "p2p_session_status": "completed_no_new_information",
-            "criteria_source_ids": ["SRC003"],
-            "criteria_source_selection_trace": {
-                "selected_source_id": "SRC003",
-                "selected_source_name": "Ticonderoga Medical Policy",
-                "selected_precedence_rank": 2,
-                "excluded_lower_precedence_source_ids": ["SRC004"],
-            },
-            "final_determination": "denied_upheld",
-            "overturn_classification": "upheld",
-            "letter_queue_category": "denial_upheld_with_appeal_rights",
-            "adverse_authority_status": "md_only_adverse_final",
-            "final_rationale_code": "SRC003_criteria_not_clearly_met_no_new_info",
-            "letter_authority_reason_code": "denial_upheld_with_appeal_rights__md_only_adverse_final__SRC003_criteria_not_clearly_met_no_new_info",
-            "criteria_gap_keys": ["functional_limitation", "measurable_progress"],
-            "p2p_source_trace": {
-                "p2p_id": "P2P00020",
-                "requesting_provider_joined": True,
-                "new_information": False,
-                "source_outcome": "no_show",
-                "duration_minutes": 16,
-            },
-            "review_event_trace": {
-                "medical_director_event_ids": [],
-                "medical_director_outcomes": [],
-            },
-            "admin_source_trace": {
-                "facility_in_service_area": True,
-                "oon_exception": False,
-                "mandatory_md_review": False,
-            },
-            "additional_info_needed": False,
-            "appeal_rights_notice": True,
-        },
-        {
-            "case_id": "AUTH00021",
-            "service_categories": ["Physical Therapy"],
-            "p2p_session_status": "not_completed_additional_information_requested",
-            "criteria_source_ids": ["SRC003"],
-            "criteria_source_selection_trace": {
-                "selected_source_id": "SRC003",
-                "selected_source_name": "Ticonderoga Medical Policy",
-                "selected_precedence_rank": 2,
-                "excluded_lower_precedence_source_ids": ["SRC004"],
-            },
-            "final_determination": "pending_additional_information",
-            "overturn_classification": "not_finalized",
-            "letter_queue_category": "additional_information_request",
-            "adverse_authority_status": "no_adverse_final_pending_info",
-            "final_rationale_code": "SRC003_criteria_not_clearly_met_more_information_needed",
-            "letter_authority_reason_code": "additional_information_request__no_adverse_final_pending_info__SRC003_criteria_not_clearly_met_more_information_needed",
-            "criteria_gap_keys": ["functional_limitation", "measurable_progress", "plan_of_care"],
-            "p2p_source_trace": {
-                "p2p_id": "P2P00021",
-                "requesting_provider_joined": True,
-                "new_information": False,
-                "source_outcome": "additional_info_requested",
-                "duration_minutes": 22,
-            },
-            "review_event_trace": {
-                "medical_director_event_ids": ["EVT00021_2"],
-                "medical_director_outcomes": ["approve"],
-            },
-            "admin_source_trace": {
-                "facility_in_service_area": True,
-                "oon_exception": False,
-                "mandatory_md_review": False,
-            },
-            "additional_info_needed": True,
-            "appeal_rights_notice": False,
-        },
-        {
-            "case_id": "AUTH00022",
-            "service_categories": ["Physical Therapy"],
-            "p2p_session_status": "completed_provider_no_show",
-            "criteria_source_ids": ["SRC003"],
-            "criteria_source_selection_trace": {
-                "selected_source_id": "SRC003",
-                "selected_source_name": "Ticonderoga Medical Policy",
-                "selected_precedence_rank": 2,
-                "excluded_lower_precedence_source_ids": ["SRC004"],
-            },
-            "final_determination": "denied_upheld",
-            "overturn_classification": "upheld",
-            "letter_queue_category": "denial_upheld_with_appeal_rights",
-            "adverse_authority_status": "md_only_adverse_final",
-            "final_rationale_code": "SRC003_provider_no_show_criteria_not_clearly_met",
-            "letter_authority_reason_code": "denial_upheld_with_appeal_rights__md_only_adverse_final__SRC003_provider_no_show_criteria_not_clearly_met",
-            "criteria_gap_keys": ["measurable_progress", "plan_of_care"],
-            "p2p_source_trace": {
-                "p2p_id": "P2P00022",
-                "requesting_provider_joined": False,
-                "new_information": True,
-                "source_outcome": "upheld",
-                "duration_minutes": 8,
-            },
-            "review_event_trace": {
-                "medical_director_event_ids": [],
-                "medical_director_outcomes": [],
-            },
-            "admin_source_trace": {
-                "facility_in_service_area": True,
-                "oon_exception": False,
-                "mandatory_md_review": False,
-            },
-            "additional_info_needed": False,
-            "appeal_rights_notice": True,
-        },
-        {
-            "case_id": "AUTH00023",
-            "service_categories": ["Advanced Imaging"],
-            "p2p_session_status": "completed_no_new_information",
-            "criteria_source_ids": ["SRC003"],
-            "criteria_source_selection_trace": {
-                "selected_source_id": "SRC003",
-                "selected_source_name": "Ticonderoga Medical Policy",
-                "selected_precedence_rank": 2,
-                "excluded_lower_precedence_source_ids": ["SRC004"],
-            },
-            "final_determination": "pending_additional_information",
-            "overturn_classification": "not_finalized",
-            "letter_queue_category": "additional_information_request",
-            "adverse_authority_status": "mandatory_md_review_pending_info",
-            "final_rationale_code": "SRC003_mandatory_md_more_information_needed",
-            "letter_authority_reason_code": "additional_information_request__mandatory_md_review_pending_info__SRC003_mandatory_md_more_information_needed",
-            "criteria_gap_keys": ["prior_imaging_reviewed", "red_flag_symptoms"],
-            "p2p_source_trace": {
-                "p2p_id": "P2P00023",
-                "requesting_provider_joined": True,
-                "new_information": False,
-                "source_outcome": "no_show",
-                "duration_minutes": 15,
-            },
-            "review_event_trace": {
-                "medical_director_event_ids": ["EVT00023_2"],
-                "medical_director_outcomes": ["request_more_info"],
-            },
-            "admin_source_trace": {
-                "facility_in_service_area": True,
-                "oon_exception": True,
-                "mandatory_md_review": True,
-            },
-            "additional_info_needed": True,
-            "appeal_rights_notice": False,
-        },
-        {
-            "case_id": "AUTH00024",
-            "service_categories": ["Cardiology Imaging"],
-            "p2p_session_status": "completed_no_new_information",
-            "criteria_source_ids": ["SRC003"],
-            "criteria_source_selection_trace": {
-                "selected_source_id": "SRC003",
-                "selected_source_name": "Ticonderoga Medical Policy",
-                "selected_precedence_rank": 2,
-                "excluded_lower_precedence_source_ids": ["SRC004"],
-            },
-            "final_determination": "direct_administrative_denial",
-            "overturn_classification": "direct_denial_exempt",
-            "letter_queue_category": "administrative_denial_with_appeal_rights",
-            "adverse_authority_status": "direct_admin_final",
-            "final_rationale_code": "SRC003_direct_admin_out_of_service_area",
-            "letter_authority_reason_code": "administrative_denial_with_appeal_rights__direct_admin_final__SRC003_direct_admin_out_of_service_area",
-            "criteria_gap_keys": [
-                "known_cad_or_high_risk",
-                "management_change_expected",
-                "stress_test_inconclusive",
-            ],
-            "p2p_source_trace": {
-                "p2p_id": "P2P00024",
-                "requesting_provider_joined": True,
-                "new_information": False,
-                "source_outcome": "no_show",
-                "duration_minutes": 15,
-            },
-            "review_event_trace": {
-                "medical_director_event_ids": [],
-                "medical_director_outcomes": [],
-            },
-            "admin_source_trace": {
-                "facility_in_service_area": False,
-                "oon_exception": True,
-                "mandatory_md_review": True,
-            },
-            "additional_info_needed": False,
-            "appeal_rights_notice": True,
-        },
-    ],
-    "finalization_counts": {
-        "approved_count": 0,
-        "partial_approval_count": 1,
-        "denied_or_upheld_count": 2,
-        "direct_admin_denial_count": 1,
-        "additional_info_needed_count": 2,
-        "appeal_rights_notice_count": 4,
+    "case_id": "APPEAL-TE-002",
+    "appeal_id": "APL-TE-002",
+    "drug": "Dupixent",
+    "appeal_path": "expedited_internal",
+    "expedited": True,
+    "expedited_basis": "provider_attested_serious_health_risk",
+    "appeal_deadline": "2026-06-09",
+    "owner": "appeals-rx",
+    "documented_failures": {
+        "topical tacrolimus",
+        "phototherapy",
     },
-    "letter_queue": {
-        "approval": [],
-        "partial_approval_with_appeal_rights": ["AUTH00019"],
-        "denial_upheld_with_appeal_rights": ["AUTH00020", "AUTH00022"],
-        "administrative_denial_with_appeal_rights": ["AUTH00024"],
-        "additional_information_request": ["AUTH00021", "AUTH00023"],
+    "assistance": {
+        "program_name": "Dupixent MyWay",
+        "status": "eligible_missing_information",
+        "missing_fields": {
+            "household_income_proof",
+        },
+    },
+    "required_packet_items": {
+        "denial_notice",
+        "member_authorization",
+        "prescriber_rationale",
+        "formulary_failure_evidence",
+        "household_income_proof",
+    },
+    "missing_packet_items": {
+        "household_income_proof",
+    },
+    "next_action": "complete_expedited_appeal_and_request_income_proof",
+    "basis_audit": {
+        "source_precedence": "payer_appeal_before_manufacturer_assistance",
+        "precedence_record_order": [
+            "apl-te-002",
+            "trial-te-002-1",
+            "trial-te-002-2",
+            "household_income_proof",
+        ],
+        "controlling_record_ids": [
+            "apl-te-002",
+            "trial-te-002-1",
+            "trial-te-002-2",
+        ],
+        "exception_record_ids": [
+            "household_income_proof",
+        ],
     },
 }
 
 
-def load_json(path):
-    with Path(path).open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+RUBRIC = [
+    (
+        "target_appeal_drug_owner",
+        1,
+        "Correct target appeal, drug, and owner.",
+    ),
+    (
+        "expedited_internal_path_basis_deadline",
+        3,
+        "Correct expedited internal path, expedited basis, and appeal deadline.",
+    ),
+    (
+        "documented_failure_set",
+        2,
+        "Correct documented prior therapy failure set.",
+    ),
+    (
+        "assistance_program_status_and_gap",
+        2,
+        "Correct assistance program, normalized status, and missing income proof.",
+    ),
+    (
+        "required_and_missing_packet_sets",
+        2,
+        "Correct required packet set and missing packet set.",
+    ),
+    (
+        "next_action",
+        1,
+        "Correct next action preserving the appeal versus assistance distinction.",
+    ),
+    (
+        "basis_source_precedence",
+        3,
+        "Correct business source-precedence basis.",
+    ),
+    (
+        "basis_precedence_record_order",
+        3,
+        "Correct source-precedence record order.",
+    ),
+    (
+        "basis_controlling_records",
+        1,
+        "Correct controlling appeal and trial record IDs.",
+    ),
+    (
+        "basis_exception_records",
+        2,
+        "Correct assistance exception and gap IDs.",
+    ),
+]
 
 
-def normalize_list(value):
-    if not isinstance(value, list):
+def load_answer(path):
+    try:
+        with Path(path).open("r", encoding="utf-8") as handle:
+            answer = json.load(handle)
+    except Exception as exc:
+        return None, f"{type(exc).__name__}: {exc}"
+    if not isinstance(answer, dict):
+        return None, "Submitted answer must be a JSON object."
+    return answer, None
+
+
+def clean_str(value, lower=False, upper=False):
+    if not isinstance(value, str):
+        return None
+    text = " ".join(value.strip().split())
+    if lower:
+        return text.lower()
+    if upper:
+        return text.upper()
+    return text
+
+
+def clean_bool(value):
+    if isinstance(value, bool):
         return value
-    return sorted(str(item) for item in value)
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized == "true":
+            return True
+        if normalized == "false":
+            return False
+    return None
 
 
-def normalize_queue(value):
-    if not isinstance(value, dict):
-        return {}
-    return {str(key): normalize_list(items) for key, items in value.items()}
+def get_value(answer, *path):
+    value = answer
+    for key in path:
+        if not isinstance(value, dict) or key not in value:
+            return None
+        value = value[key]
+    return value
 
 
-def case_map(doc):
-    rows = doc.get("p2p_cases", [])
-    if not isinstance(rows, list):
-        return {}
-    return {str(row.get("case_id")): row for row in rows if isinstance(row, dict)}
-
-
-def field_map(doc, fields):
-    result = {}
-    for case_id, row in case_map(doc).items():
-        result[case_id] = {}
-        for field in fields:
-            value = row.get(field)
-            if field in {"service_categories", "criteria_source_ids", "criteria_gap_keys"}:
-                value = normalize_list(value)
-            result[case_id][field] = value
+def normalized_set(value, lower=False, upper=False):
+    if not isinstance(value, list):
+        return None
+    result = set()
+    for item in value:
+        text = clean_str(item, lower=lower, upper=upper)
+        if text is None:
+            return None
+        result.add(text)
     return result
 
 
-def expected_field_map(fields):
-    return field_map(EXPECTED, fields)
+def normalized_list(value, lower=False, upper=False):
+    if not isinstance(value, list):
+        return None
+    result = []
+    for item in value:
+        text = clean_str(item, lower=lower, upper=upper)
+        if text is None:
+            return None
+        result.append(text)
+    return result
 
 
-def add_point(points, name, weight, passed, expected=None, actual=None):
-    points.append(
-        {
-            "name": name,
-            "weight": weight,
-            "earned": weight if passed else 0,
-            "passed": bool(passed),
-            "expected": expected,
-            "actual": actual,
-        }
+def audit_value(answer, key):
+    audit = answer.get("basis_audit")
+    if not isinstance(audit, dict):
+        return None
+    return audit.get(key)
+
+
+def check_identity(answer):
+    return (
+        clean_str(answer.get("case_id"), upper=True) == EXPECTED["case_id"]
+        and clean_str(answer.get("appeal_id"), upper=True) == EXPECTED["appeal_id"]
+        and clean_str(answer.get("drug")) == EXPECTED["drug"]
+        and clean_str(answer.get("owner"), lower=True) == EXPECTED["owner"]
     )
+
+
+def check_expedited_path(answer):
+    return (
+        clean_str(answer.get("appeal_path"), lower=True) == EXPECTED["appeal_path"]
+        and clean_bool(answer.get("expedited")) is EXPECTED["expedited"]
+        and clean_str(answer.get("expedited_basis"), lower=True) == EXPECTED["expedited_basis"]
+        and clean_str(answer.get("appeal_deadline")) == EXPECTED["appeal_deadline"]
+    )
+
+
+def check_documented_failures(answer):
+    return normalized_set(answer.get("documented_failures"), lower=True) == EXPECTED["documented_failures"]
+
+
+def check_assistance(answer):
+    return (
+        clean_str(get_value(answer, "assistance", "program_name")) == EXPECTED["assistance"]["program_name"]
+        and clean_str(get_value(answer, "assistance", "status"), lower=True) == EXPECTED["assistance"]["status"]
+        and normalized_set(get_value(answer, "assistance", "missing_fields"), lower=True)
+        == EXPECTED["assistance"]["missing_fields"]
+    )
+
+
+def check_packet(answer):
+    return (
+        normalized_set(answer.get("required_packet_items"), lower=True) == EXPECTED["required_packet_items"]
+        and normalized_set(answer.get("missing_packet_items"), lower=True) == EXPECTED["missing_packet_items"]
+    )
+
+
+def check_next_action(answer):
+    return clean_str(answer.get("next_action"), lower=True) == EXPECTED["next_action"]
+
+
+def check_basis_source_precedence(answer):
+    return (
+        clean_str(audit_value(answer, "source_precedence"), lower=True) == EXPECTED["basis_audit"]["source_precedence"]
+    )
+
+
+def check_basis_controlling_records(answer):
+    return (
+        normalized_list(audit_value(answer, "controlling_record_ids"), lower=True)
+        == EXPECTED["basis_audit"]["controlling_record_ids"]
+    )
+
+
+def check_basis_precedence_record_order(answer):
+    return (
+        normalized_list(audit_value(answer, "precedence_record_order"), lower=True)
+        == EXPECTED["basis_audit"]["precedence_record_order"]
+    )
+
+
+def check_basis_exception_records(answer):
+    return (
+        normalized_list(audit_value(answer, "exception_record_ids"), lower=True)
+        == EXPECTED["basis_audit"]["exception_record_ids"]
+    )
+
+
+CHECKS = {
+    "target_appeal_drug_owner": check_identity,
+    "expedited_internal_path_basis_deadline": check_expedited_path,
+    "documented_failure_set": check_documented_failures,
+    "assistance_program_status_and_gap": check_assistance,
+    "required_and_missing_packet_sets": check_packet,
+    "next_action": check_next_action,
+    "basis_source_precedence": check_basis_source_precedence,
+    "basis_precedence_record_order": check_basis_precedence_record_order,
+    "basis_controlling_records": check_basis_controlling_records,
+    "basis_exception_records": check_basis_exception_records,
+}
+
+
+DETAILS = {
+    "target_appeal_drug_owner": {
+        "expected_case_id": EXPECTED["case_id"],
+        "expected_appeal_id": EXPECTED["appeal_id"],
+        "expected_drug": EXPECTED["drug"],
+        "expected_owner": EXPECTED["owner"],
+    },
+    "expedited_internal_path_basis_deadline": {
+        "expected_appeal_path": EXPECTED["appeal_path"],
+        "expected_expedited": EXPECTED["expedited"],
+        "expected_expedited_basis": EXPECTED["expedited_basis"],
+        "expected_appeal_deadline": EXPECTED["appeal_deadline"],
+    },
+    "documented_failure_set": {
+        "expected_documented_failures": sorted(EXPECTED["documented_failures"]),
+    },
+    "assistance_program_status_and_gap": {
+        "expected_program_name": EXPECTED["assistance"]["program_name"],
+        "expected_status": EXPECTED["assistance"]["status"],
+        "expected_missing_fields": sorted(EXPECTED["assistance"]["missing_fields"]),
+    },
+    "required_and_missing_packet_sets": {
+        "expected_required_packet_items": sorted(EXPECTED["required_packet_items"]),
+        "expected_missing_packet_items": sorted(EXPECTED["missing_packet_items"]),
+    },
+    "next_action": {
+        "expected_next_action": EXPECTED["next_action"],
+    },
+    "basis_source_precedence": {
+        "expected_source_precedence": EXPECTED["basis_audit"]["source_precedence"],
+    },
+    "basis_precedence_record_order": {
+        "expected_precedence_record_order": EXPECTED["basis_audit"]["precedence_record_order"],
+    },
+    "basis_controlling_records": {
+        "expected_controlling_record_ids": EXPECTED["basis_audit"]["controlling_record_ids"],
+    },
+    "basis_exception_records": {
+        "expected_exception_record_ids": EXPECTED["basis_audit"]["exception_record_ids"],
+    },
+}
+
+
+def empty_result(error):
+    total_weight = sum(weight for _, weight, _ in RUBRIC)
+    return {
+        "score": 0.0,
+        "points": [
+            {
+                "name": name,
+                "goal": goal,
+                "weight": weight,
+                "assigned_score": weight / total_weight,
+                "passed": False,
+                "earned_score": 0.0,
+                "details": {"error": error},
+            }
+            for name, weight, goal in RUBRIC
+        ],
+        "total_weight": total_weight,
+    }
+
+
+def evaluate(answer):
+    total_weight = sum(weight for _, weight, _ in RUBRIC)
+    points = []
+    earned_weight = 0
+    for name, weight, goal in RUBRIC:
+        passed = bool(CHECKS[name](answer))
+        if passed:
+            earned_weight += weight
+        assigned_score = weight / total_weight
+        points.append(
+            {
+                "name": name,
+                "goal": goal,
+                "weight": weight,
+                "assigned_score": assigned_score,
+                "passed": passed,
+                "earned_score": assigned_score if passed else 0.0,
+                "details": DETAILS[name],
+            }
+        )
+    return {
+        "score": earned_weight / total_weight,
+        "points": points,
+        "total_weight": total_weight,
+    }
 
 
 def main():
-    if len(sys.argv) != 2:
-        print(
-            json.dumps(
-                {
-                    "score": 0,
-                    "max_score": 1,
-                    "raw_score": 0,
-                    "max_raw_score": 20,
-                    "error": "usage: evaluator.py <candidate.json>",
-                    "points": [],
-                }
-            )
-        )
-        return 2
-
-    try:
-        candidate = load_json(sys.argv[1])
-    except Exception as exc:
-        print(
-            json.dumps(
-                {
-                    "score": 0,
-                    "max_score": 1,
-                    "raw_score": 0,
-                    "max_raw_score": 20,
-                    "error": f"invalid JSON: {exc}",
-                    "points": [],
-                }
-            )
-        )
-        return 1
-
-    if not isinstance(candidate, dict):
-        print(
-            json.dumps(
-                {
-                    "score": 0,
-                    "max_score": 1,
-                    "raw_score": 0,
-                    "max_raw_score": 20,
-                    "error": "candidate root must be an object",
-                    "points": [],
-                }
-            )
-        )
-        return 1
-
-    points = []
-    expected_cases = sorted(case_map(EXPECTED))
-    actual_cases = sorted(case_map(candidate))
-    case_set_ok = actual_cases == expected_cases
-
-    add_point(
-        points,
-        "SP001_board_classifications_by_case",
-        1,
-        case_set_ok
-        and field_map(candidate, ["final_determination", "p2p_session_status"])
-        == expected_field_map(["final_determination", "p2p_session_status"])
-        and field_map(candidate, ["overturn_classification"]) == expected_field_map(["overturn_classification"])
-        and field_map(candidate, ["letter_queue_category"]) == expected_field_map(["letter_queue_category"])
-        and field_map(candidate, ["adverse_authority_status"]) == expected_field_map(["adverse_authority_status"]),
-        {
-            "final_determination": expected_field_map(["final_determination", "p2p_session_status"]),
-            "overturn_classification": expected_field_map(["overturn_classification"]),
-            "letter_queue_category": expected_field_map(["letter_queue_category"]),
-            "adverse_authority_status": expected_field_map(["adverse_authority_status"]),
-        },
-        {
-            "final_determination": field_map(candidate, ["final_determination", "p2p_session_status"]),
-            "overturn_classification": field_map(candidate, ["overturn_classification"]),
-            "letter_queue_category": field_map(candidate, ["letter_queue_category"]),
-            "adverse_authority_status": field_map(candidate, ["adverse_authority_status"]),
-        },
+    answer_path = (
+        sys.argv[1] if len(sys.argv) > 1 else str(Path(__file__).resolve().parents[1] / "output" / "answer.json")
     )
-    add_point(
-        points,
-        "SP005_criteria_source_and_gap_keys",
-        2,
-        case_set_ok
-        and field_map(candidate, ["criteria_source_ids", "criteria_gap_keys"])
-        == expected_field_map(["criteria_source_ids", "criteria_gap_keys"]),
-        expected_field_map(["criteria_source_ids", "criteria_gap_keys"]),
-        field_map(candidate, ["criteria_source_ids", "criteria_gap_keys"]),
-    )
-    add_point(
-        points,
-        "SP006_p2p_and_review_event_trace",
-        3,
-        case_set_ok
-        and field_map(candidate, ["p2p_source_trace"]) == expected_field_map(["p2p_source_trace"])
-        and field_map(candidate, ["review_event_trace"]) == expected_field_map(["review_event_trace"]),
-        {
-            "p2p_source_trace": expected_field_map(["p2p_source_trace"]),
-            "review_event_trace": expected_field_map(["review_event_trace"]),
-        },
-        {
-            "p2p_source_trace": field_map(candidate, ["p2p_source_trace"]),
-            "review_event_trace": field_map(candidate, ["review_event_trace"]),
-        },
-    )
-    add_point(
-        points,
-        "SP007_additional_information_and_appeal_notice_cases",
-        1,
-        case_set_ok
-        and field_map(candidate, ["additional_info_needed"]) == expected_field_map(["additional_info_needed"])
-        and field_map(candidate, ["appeal_rights_notice"]) == expected_field_map(["appeal_rights_notice"])
-        and candidate.get("finalization_counts", {}).get("additional_info_needed_count")
-        == EXPECTED["finalization_counts"]["additional_info_needed_count"]
-        and candidate.get("finalization_counts", {}).get("appeal_rights_notice_count")
-        == EXPECTED["finalization_counts"]["appeal_rights_notice_count"],
-        {
-            "additional_info": expected_field_map(["additional_info_needed"]),
-            "appeal_notice": expected_field_map(["appeal_rights_notice"]),
-            "additional_info_count": EXPECTED["finalization_counts"]["additional_info_needed_count"],
-            "appeal_notice_count": EXPECTED["finalization_counts"]["appeal_rights_notice_count"],
-        },
-        {
-            "additional_info": field_map(candidate, ["additional_info_needed"]),
-            "appeal_notice": field_map(candidate, ["appeal_rights_notice"]),
-            "additional_info_count": candidate.get("finalization_counts", {}).get("additional_info_needed_count")
-            if isinstance(candidate.get("finalization_counts"), dict)
-            else None,
-            "appeal_notice_count": candidate.get("finalization_counts", {}).get("appeal_rights_notice_count")
-            if isinstance(candidate.get("finalization_counts"), dict)
-            else None,
-        },
-    )
-    add_point(
-        points,
-        "SP008_finalization_counts_and_letter_queue",
-        1,
-        candidate.get("board_date") == EXPECTED["board_date"]
-        and candidate.get("target_bucket") == EXPECTED["target_bucket"]
-        and candidate.get("finalization_counts") == EXPECTED["finalization_counts"]
-        and normalize_queue(candidate.get("letter_queue")) == normalize_queue(EXPECTED["letter_queue"]),
-        {
-            "board_date": EXPECTED["board_date"],
-            "target_bucket": EXPECTED["target_bucket"],
-            "finalization_counts": EXPECTED["finalization_counts"],
-            "letter_queue": EXPECTED["letter_queue"],
-        },
-        {
-            "board_date": candidate.get("board_date"),
-            "target_bucket": candidate.get("target_bucket"),
-            "finalization_counts": candidate.get("finalization_counts"),
-            "letter_queue": candidate.get("letter_queue"),
-        },
-    )
-    add_point(
-        points,
-        "SP009_admin_source_trace",
-        1,
-        case_set_ok and field_map(candidate, ["admin_source_trace"]) == expected_field_map(["admin_source_trace"]),
-        expected_field_map(["admin_source_trace"]),
-        field_map(candidate, ["admin_source_trace"]),
-    )
-    add_point(
-        points,
-        "SP010_criteria_source_selection_trace",
-        2,
-        case_set_ok
-        and field_map(candidate, ["criteria_source_selection_trace"])
-        == expected_field_map(["criteria_source_selection_trace"]),
-        expected_field_map(["criteria_source_selection_trace"]),
-        field_map(candidate, ["criteria_source_selection_trace"]),
-    )
-    add_point(
-        points,
-        "SP011_final_rationale_code",
-        3,
-        case_set_ok and field_map(candidate, ["final_rationale_code"]) == expected_field_map(["final_rationale_code"]),
-        expected_field_map(["final_rationale_code"]),
-        field_map(candidate, ["final_rationale_code"]),
-    )
-    add_point(
-        points,
-        "SP012_finalization_reason_bundle",
-        3,
-        case_set_ok
-        and field_map(candidate, ["final_rationale_code"]) == expected_field_map(["final_rationale_code"])
-        and field_map(candidate, ["adverse_authority_status"]) == expected_field_map(["adverse_authority_status"])
-        and field_map(candidate, ["letter_queue_category"]) == expected_field_map(["letter_queue_category"]),
-        {
-            "final_rationale_code": expected_field_map(["final_rationale_code"]),
-            "adverse_authority_status": expected_field_map(["adverse_authority_status"]),
-            "letter_queue_category": expected_field_map(["letter_queue_category"]),
-        },
-        {
-            "final_rationale_code": field_map(candidate, ["final_rationale_code"]),
-            "adverse_authority_status": field_map(candidate, ["adverse_authority_status"]),
-            "letter_queue_category": field_map(candidate, ["letter_queue_category"]),
-        },
-    )
-    add_point(
-        points,
-        "SP013_letter_authority_reason_codes",
-        3,
-        case_set_ok
-        and field_map(candidate, ["letter_authority_reason_code"])
-        == expected_field_map(["letter_authority_reason_code"]),
-        expected_field_map(["letter_authority_reason_code"]),
-        field_map(candidate, ["letter_authority_reason_code"]),
-    )
-
-    raw_score = sum(point["earned"] for point in points)
-    max_raw_score = sum(point["weight"] for point in points)
-    result = {
-        "score": raw_score / max_raw_score,
-        "max_score": 1,
-        "raw_score": raw_score,
-        "max_raw_score": max_raw_score,
-        "points": points,
-    }
-    print(json.dumps(result, indent=2, sort_keys=True))
-    return 0
+    answer, error = load_answer(answer_path)
+    if error is not None:
+        print(json.dumps(empty_result(error), indent=2, sort_keys=True))
+        return
+    print(json.dumps(evaluate(answer), indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

@@ -1,138 +1,231 @@
 {
-  "deal_id": "D-CYPRESS-735",
+  "task_id": "train_003",
+  "deal_id": "PRJ_LYRA",
+  "memo": {
+    "prepared_for": "M&A Committee",
+    "client_name": "Verdantis Therapeutics plc",
+    "project_name": "Project Lyra",
+    "target_name": "Lyra Oncology Platform",
+    "counterparty_name": "Calyx Biologics Inc.",
+    "policy_id": "POL_MA_2025_A",
+    "signing_date": "2025-07-02",
+    "meeting_date": "2025-07-14",
+    "currency": "USD",
+    "value_basis": "equity value",
+    "headline_value": 1120000000
+  },
   "escalation_terms": [
     {
-      "term_id": "FIDUCIARY_OUT",
-      "source_clause_id": "CL-CYPRESS-735-002",
-      "policy_rule_id": "PUB-FIDUCIARY",
-      "escalation_required": true,
-      "committee_route": "BOARD_TRANSACTION_COMMITTEE",
-      "deviation_code": "TERMINATION_RIGHT_BLOCKED",
-      "severity": "HIGH",
-      "approval_recommendation": "DO_NOT_APPROVE_AS_DRAFTED",
-      "recommendation": "RESTORE_SUPERIOR_PROPOSAL_TERMINATION_RIGHT",
-      "quantification": {
-        "draft_percent": null,
-        "policy_threshold_percent": null,
-        "deviation_percent": null,
-        "draft_amount_dollars": null,
-        "excess_amount_dollars": null,
-        "exposure_amount_dollars": null,
-        "exposure_basis": "NON_QUANTIFIED_LEGAL_RISK",
-        "survival_months": null,
-        "benchmark_id": "BM-FIDUCIARY-PUBLIC-2026",
-        "benchmark_sample_size": 42,
-        "benchmark_count_above_threshold": 4,
-        "mae_omitted_carveouts": []
-      }
+      "term_id": "TERM_PRJ_LYRA_01",
+      "category": "reverse_termination_fee",
+      "clause_ref": "Article VIII",
+      "issue_status": "out_of_policy",
+      "risk_rating": "HIGH",
+      "draft_metric": {
+        "value": 5.5,
+        "unit": "percent_points",
+        "basis": "equity value",
+        "amount": 61600000
+      },
+      "policy_metric": {
+        "threshold_value": 4.0,
+        "unit": "percent_points",
+        "basis": "equity value",
+        "threshold_amount": 44800000
+      },
+      "delta": {
+        "percent_points": 1.5,
+        "amount": 16800000
+      },
+      "benchmark": {
+        "metric": "fee percent of equity value",
+        "sample_size": 42,
+        "median": 3.2,
+        "upper_quartile": 4.1,
+        "position": "above_upper_quartile"
+      },
+      "exposure": {
+        "type": "closing_certainty",
+        "low": 16800000,
+        "high": 50400000,
+        "source_estimate_id": "RSK_PRJ_LYRA_01"
+      },
+      "recommendation": "approve_with_conditions",
+      "required_conditions": [
+        "align_regulatory_remedy_covenant",
+        "cap_reverse_termination_fee_at_44800000",
+        "reduce_reverse_termination_fee_to_policy_cap"
+      ]
     },
     {
-      "term_id": "MAE_CARVEOUTS",
-      "source_clause_id": "CL-CYPRESS-735-004",
-      "policy_rule_id": "PUB-MAE",
-      "escalation_required": true,
-      "committee_route": "BOARD_TRANSACTION_COMMITTEE",
-      "deviation_code": "RESTRICTED_MAE_CARVEOUTS",
-      "severity": "HIGH",
-      "approval_recommendation": "DO_NOT_APPROVE_AS_DRAFTED",
-      "recommendation": "RESTORE_FULL_PUBLIC_COMPANY_MAE_CARVEOUTS",
-      "quantification": {
-        "draft_percent": null,
-        "policy_threshold_percent": null,
-        "deviation_percent": null,
-        "draft_amount_dollars": null,
-        "excess_amount_dollars": null,
-        "exposure_amount_dollars": null,
-        "exposure_basis": "NON_QUANTIFIED_LEGAL_RISK",
-        "survival_months": null,
-        "benchmark_id": "BM-MAE-HEALTHCARE-2026",
-        "benchmark_sample_size": 36,
-        "benchmark_count_above_threshold": 31,
-        "mae_omitted_carveouts": [
-          "CYBER_INCIDENT",
-          "CUSTOMER_LOSS",
-          "INDUSTRY",
-          "LAW_CHANGE",
-          "MARKET"
+      "term_id": "TERM_PRJ_LYRA_02",
+      "category": "fiduciary_out",
+      "clause_ref": "Section 5.4",
+      "issue_status": "out_of_policy",
+      "risk_rating": "HIGH",
+      "draft_metric": {
+        "value": 1,
+        "unit": "restricted_change",
+        "basis": "public-company merger covenant",
+        "missing_intervening_event_trigger": true,
+        "match_right_business_days": 5
+      },
+      "policy_metric": {
+        "threshold_value": 0,
+        "unit": "restricted_change",
+        "basis": "public-company merger covenant",
+        "required_triggers": [
+          "intervening_event",
+          "superior_proposal"
         ]
-      }
+      },
+      "delta": {
+        "removed_triggers": [
+          "intervening_event"
+        ]
+      },
+      "benchmark": {
+        "metric": "not_applicable",
+        "sample_size": 0,
+        "median": 0,
+        "upper_quartile": 0,
+        "position": "not_applicable"
+      },
+      "exposure": {
+        "type": "not_quantified",
+        "low": 0,
+        "high": 0,
+        "source_estimate_id": "not_applicable"
+      },
+      "recommendation": "reject",
+      "required_conditions": [
+        "keep_5_business_day_match_right",
+        "preserve_board_fiduciary_compliance",
+        "restore_intervening_event_trigger"
+      ]
     },
     {
-      "term_id": "RTF",
-      "source_clause_id": "CL-CYPRESS-735-001",
-      "policy_rule_id": "PUB-RTF",
-      "escalation_required": true,
-      "committee_route": "BOARD_TRANSACTION_COMMITTEE",
-      "deviation_code": "ABOVE_RTF_THRESHOLD",
-      "severity": "HIGH",
-      "approval_recommendation": "DO_NOT_APPROVE_AS_DRAFTED",
-      "recommendation": "RTF_POLICY_POSITION",
-      "quantification": {
-        "draft_percent": 7.5,
-        "policy_threshold_percent": 5.5,
-        "deviation_percent": 2.0,
-        "draft_amount_dollars": 88500000,
-        "excess_amount_dollars": 23600000,
-        "exposure_amount_dollars": 88500000,
-        "exposure_basis": "EQUITY_VALUE",
-        "survival_months": null,
-        "benchmark_id": "BM-RTF-HEALTHTECH-2026",
-        "benchmark_sample_size": 28,
-        "benchmark_count_above_threshold": 3,
-        "mae_omitted_carveouts": []
-      }
+      "term_id": "TERM_PRJ_LYRA_03",
+      "category": "rw_survival",
+      "clause_ref": "Article IX",
+      "issue_status": "out_of_policy",
+      "risk_rating": "MEDIUM",
+      "draft_metric": {
+        "value": 24,
+        "unit": "months",
+        "basis": "all representations",
+        "fundamental_months": 24,
+        "general_months": 18,
+        "max_survival_months": 24
+      },
+      "policy_metric": {
+        "threshold_value": 15,
+        "unit": "months",
+        "basis": "all representations"
+      },
+      "delta": {
+        "fundamental_months": 9,
+        "general_months": 3
+      },
+      "benchmark": {
+        "metric": "general representation survival months",
+        "sample_size": 39,
+        "median": 15,
+        "upper_quartile": 18,
+        "position": "at_upper_quartile"
+      },
+      "exposure": {
+        "type": "indemnity_leakage",
+        "low": 8960000,
+        "high": 31360000,
+        "source_estimate_id": "RSK_PRJ_LYRA_02"
+      },
+      "recommendation": "approve_with_conditions",
+      "required_conditions": [
+        "reduce_all_rep_survival_to_15_months",
+        "tie_survival_to_exclusive_remedy_structure"
+      ]
     },
     {
-      "term_id": "RW_SURVIVAL",
-      "source_clause_id": "CL-CYPRESS-735-003",
-      "policy_rule_id": "PUB-RW-SURVIVAL",
-      "escalation_required": true,
-      "committee_route": "BOARD_TRANSACTION_COMMITTEE",
-      "deviation_code": "POST_CLOSING_R_AND_W_SURVIVAL",
-      "severity": "HIGH",
-      "approval_recommendation": "DO_NOT_APPROVE_AS_DRAFTED",
-      "recommendation": "DELETE_POST_CLOSING_R_AND_W_SURVIVAL",
-      "quantification": {
-        "draft_percent": null,
-        "policy_threshold_percent": null,
-        "deviation_percent": null,
-        "draft_amount_dollars": null,
-        "excess_amount_dollars": null,
-        "exposure_amount_dollars": 1180000000,
-        "exposure_basis": "FULL_EQUITY_VALUE_UNCAPPED",
-        "survival_months": 24,
-        "benchmark_id": null,
-        "benchmark_sample_size": null,
-        "benchmark_count_above_threshold": null,
-        "mae_omitted_carveouts": []
-      }
+      "term_id": "TERM_PRJ_LYRA_04",
+      "category": "mae_carveouts",
+      "clause_ref": "Definition of MAE",
+      "issue_status": "out_of_policy",
+      "risk_rating": "HIGH",
+      "draft_metric": {
+        "value": 3,
+        "unit": "additional_carveouts",
+        "basis": "approved list",
+        "added_count": 3,
+        "restricted_carveouts": [
+          "industry_wide_biotech_changes",
+          "law_or_gaap_changes",
+          "pandemic_public_health_emergency"
+        ]
+      },
+      "policy_metric": {
+        "threshold_value": 2,
+        "unit": "carveouts",
+        "basis": "approved list",
+        "approved_carveout_groups": [
+          "general_economic_or_financial_market_conditions",
+          "natural_disasters_or_acts_of_terrorism"
+        ]
+      },
+      "delta": {
+        "excess_count": 1
+      },
+      "benchmark": {
+        "metric": "not_applicable",
+        "sample_size": 0,
+        "median": 0,
+        "upper_quartile": 0,
+        "position": "not_applicable"
+      },
+      "exposure": {
+        "type": "not_quantified",
+        "low": 0,
+        "high": 0,
+        "source_estimate_id": "not_applicable"
+      },
+      "recommendation": "approve_with_conditions",
+      "required_conditions": [
+        "add_disproportionate_effects_exception",
+        "remove_or_narrow_law_or_gaap_carveout",
+        "remove_or_narrow_pandemic_public_health_carveout"
+      ]
     }
   ],
-  "aggregate_risk": {
-    "committee_route": "BOARD_TRANSACTION_COMMITTEE",
-    "approval_required": true,
-    "committee_members": [
-      "Dr. Elaine Park",
-      "Sanjay Mehta",
-      "Carla Winthrop"
+  "aggregate_summary": {
+    "escalated_term_count": 4,
+    "excluded_in_policy_terms": [
+      "TERM_PRJ_LYRA_05"
     ],
-    "risk_tier": "HIGH",
-    "final_action": "ESCALATE_AND_RENEGOTIATE_BEFORE_SIGNING",
-    "primary_driver_term_ids": [
-      "FIDUCIARY_OUT",
-      "MAE_CARVEOUTS",
-      "RTF",
-      "RW_SURVIVAL"
+    "excluded_in_policy_categories": [
+      "termination_fee"
     ],
-    "escalation_term_count": 4,
-    "total_quantified_exposure_dollars": 1268500000,
-    "total_policy_excess_dollars": 1203600000,
-    "strategic_context": {
-      "batna_code": "LOWER_RISK_PRIVATE_PLATFORM",
-      "batna_leverage": "MODERATE",
-      "ownership_context": "ACTIVIST_PRESSURE_INDEX_FUNDS",
-      "strategic_rationale": "NEED_PLATFORM_BUT_MARKET_STANDARD_RISK",
-      "benchmark_memo_required": true
-    }
+    "risk_counts": {
+      "HIGH": 3,
+      "MEDIUM": 1,
+      "LOW": 0
+    },
+    "aggregate_quantified_exposure_low": 25760000,
+    "aggregate_quantified_exposure_high": 81760000,
+    "included_exposure_components": [
+      "closing_certainty",
+      "indemnity_leakage"
+    ],
+    "excluded_exposure_components": [
+      "transition_disruption"
+    ],
+    "rtf_excess_amount": 16800000,
+    "overall_recommendation": "approve_with_conditions",
+    "committee_action": "approve economic terms only with stated caps, reject fiduciary-out removal, and require MAE and survival revisions before signing",
+    "negotiation_priority": [
+      "fiduciary_out",
+      "reverse_termination_fee",
+      "mae_carveouts",
+      "rw_survival"
+    ]
   }
 }

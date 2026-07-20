@@ -1,7 +1,17 @@
-You are assisting the central clerk finance quality desk with the June 2025 multi-county exception register.
+You are the deputy clerk preparing a Hampton Circuit Court financial and supervision packet for two post-disposition matters:
 
-Use the shared clerk operations environment at <TASK_ENV_BASE_URL>.
+- Commonwealth v. Owen Reeves, case `VA-CR25-1172-00`, petition `VA-PET-1172B`
+- Commonwealth v. Camila Ortiz, case `VA-CR25-1186-00`, petition `VA-PET-1186A`
 
-The local intake packet is in `input/payloads/monthly_financial_exception_packet.json`. It combines month-end notices, copied desk snippets, and queue references from several county desks.
+Use the local materials in `input/payloads/` and the Court Operations Portal at `<TASK_ENV_BASE_URL>` to prepare the structured answer described by `answer_template.json`. Useful portal endpoints include:
 
-Prepare the clerk-ready JSON response described in `input/payloads/answer_template.json`. Use ISO dates, currency rounded to two decimals, and only the controlled enum values from the template.
+- `GET /api/jurisdictions`
+- `GET /api/cases`
+- `GET /api/charges`
+- `GET /api/docket-entries`
+- `GET /api/payment-policies`
+- `GET /api/forms`
+- `GET /api/financial-petitions`
+- `GET /api/search`
+
+Return JSON only. Reconcile the petition summaries, sentencing/probation notes, case records, Hampton payment policy, and form metadata into the structured packet.

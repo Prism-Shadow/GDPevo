@@ -4,413 +4,345 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_CASES = {
-    "AUTH00013": {
-        "first_failure": "none",
-        "final_disposition": "ready_for_clinical_review",
-        "sla_due_at": "2025-02-17T11:24",
-        "sla_rule_used": "TX Medicaid calendar 4 days",
-        "sla_source_trace": {
-            "state_used": "TX",
-            "plan_type_used": "Medicaid",
-            "duration_value": 4,
-            "duration_unit": "calendar_days",
-            "day_type": "calendar",
-        },
-        "sla_candidate_trace": [
-            {
-                "state": "TX",
-                "plan_type": "Medicaid",
-                "duration_value": 4,
-                "duration_unit": "calendar_days",
-                "computed_due_at": "2025-02-17T11:24",
-            }
-        ],
-        "sla_selection_reason": "single_applicable_rule",
-        "gold_card_decision": "not_eligible_plan_or_provider_or_service",
-        "queue_destination": "MedImage Review mandatory MD",
-        "duplicate_treatment": "no_matching_prior",
-        "notice_template": "none_clinical_review",
-        "intake_reason_code": "vendor_mandatory_md_review",
-        "duplicate_reason_code": "no_prior_match",
-        "sla_basis_code": "TX_Medicaid_calendar_4d",
-        "intake_source_trace": {
-            "service_covered": True,
-            "servicing_provider_network_status": "in_network",
-            "facility_in_service_area": True,
-            "blocking_duplicate_auth_ids": [],
-            "ignored_existing_auth_ids": [],
-        },
+EXPECTED = {
+    "case_id": "CASE-TE-001",
+    "recommendation": "pend_for_information",
+    "final_status": "pended",
+    "route": "request_more_information",
+    "requested_cpt": "92507",
+    "modifier": "GN",
+    "requested_units": 16,
+    "approved_units": 0,
+    "criteria_results": {
+        "ST-POC": "not_met",
+        "ST-CONFLICT": "not_met",
     },
-    "AUTH00014": {
-        "first_failure": "out_of_network_no_exception",
-        "final_disposition": "halted_in_intake",
-        "sla_due_at": "2025-02-19T12:31",
-        "sla_rule_used": "IL Exchange calendar 5 days",
-        "sla_source_trace": {
-            "state_used": "IL",
-            "plan_type_used": "Exchange",
-            "duration_value": 5,
-            "duration_unit": "calendar_days",
-            "day_type": "calendar",
-        },
-        "sla_candidate_trace": [
-            {
-                "state": "IL",
-                "plan_type": "Exchange",
-                "duration_value": 5,
-                "duration_unit": "calendar_days",
-                "computed_due_at": "2025-02-19T12:31",
-            }
-        ],
-        "sla_selection_reason": "single_applicable_rule",
-        "gold_card_decision": "not_evaluated_due_to_intake_halt",
-        "queue_destination": "network_exception_outreach",
-        "duplicate_treatment": "not_checked_due_to_earlier_failure",
-        "notice_template": "out_of_network_no_exception",
-        "intake_reason_code": "servicing_provider_out_of_network_no_exception",
-        "duplicate_reason_code": "out_of_network_halt",
-        "sla_basis_code": "IL_Exchange_calendar_5d",
-        "intake_source_trace": {
-            "service_covered": True,
-            "servicing_provider_network_status": "out_of_network",
-            "facility_in_service_area": True,
-            "blocking_duplicate_auth_ids": [],
-            "ignored_existing_auth_ids": ["EXA00014"],
-        },
+    "missing_information": {
+        "clarified_frequency",
+        "duration_weeks",
+        "reconcile_note_plan_conflict",
     },
-    "AUTH00015": {
-        "first_failure": "none",
-        "final_disposition": "ready_for_clinical_review",
-        "sla_due_at": "2025-02-20T13:38",
-        "sla_rule_used": "CA Commercial calendar 5 days",
-        "sla_source_trace": {
-            "state_used": "CA",
-            "plan_type_used": "Commercial",
-            "duration_value": 5,
-            "duration_unit": "calendar_days",
-            "day_type": "calendar",
-        },
-        "sla_candidate_trace": [
-            {
-                "state": "CA",
-                "plan_type": "Commercial",
-                "duration_value": 5,
-                "duration_unit": "calendar_days",
-                "computed_due_at": "2025-02-20T13:38",
-            }
+    "evidence_documents": [
+        "DOC-TE-001-NOTE",
+        "DOC-TE-001-POC",
+    ],
+    "excluded_documents": [
+        "DOC-TE-001-STALE",
+    ],
+    "due_date": "2026-06-09",
+    "basis_audit": {
+        "source_precedence": "current_clinical_records_over_stale_export",
+        "precedence_record_order": [
+            "doc-te-001-note",
+            "doc-te-001-poc",
+            "doc-te-001-stale",
         ],
-        "sla_selection_reason": "single_applicable_rule",
-        "gold_card_decision": "not_eligible_plan_or_provider_or_service",
-        "queue_destination": "medical_director_review",
-        "duplicate_treatment": "no_matching_prior",
-        "notice_template": "none_clinical_review",
-        "intake_reason_code": "mandatory_md_review",
-        "duplicate_reason_code": "no_prior_match",
-        "sla_basis_code": "CA_Commercial_calendar_5d",
-        "intake_source_trace": {
-            "service_covered": True,
-            "servicing_provider_network_status": "in_network",
-            "facility_in_service_area": True,
-            "blocking_duplicate_auth_ids": [],
-            "ignored_existing_auth_ids": [],
-        },
-    },
-    "AUTH00016": {
-        "first_failure": "duplicate_authorization",
-        "final_disposition": "halted_in_intake",
-        "sla_due_at": "2025-02-19T14:45",
-        "sla_rule_used": "NY Dual Eligible business 3 days",
-        "sla_source_trace": {
-            "state_used": "NY",
-            "plan_type_used": "Dual Eligible",
-            "duration_value": 3,
-            "duration_unit": "business_days",
-            "day_type": "business",
-        },
-        "sla_candidate_trace": [
-            {
-                "state": "NY",
-                "plan_type": "Dual Eligible",
-                "duration_value": 3,
-                "duration_unit": "business_days",
-                "computed_due_at": "2025-02-19T14:45",
-            }
+        "controlling_record_ids": [
+            "doc-te-001-note",
+            "doc-te-001-poc",
         ],
-        "sla_selection_reason": "single_applicable_rule",
-        "gold_card_decision": "not_evaluated_due_to_intake_halt",
-        "queue_destination": "duplicate_resolution_queue",
-        "duplicate_treatment": "open_overlap_duplicate",
-        "notice_template": "duplicate_admin_closure",
-        "intake_reason_code": "open_overlap_duplicate",
-        "duplicate_reason_code": "open_overlap_duplicate",
-        "sla_basis_code": "NY_DualEligible_business_3d",
-        "intake_source_trace": {
-            "service_covered": True,
-            "servicing_provider_network_status": "in_network",
-            "facility_in_service_area": True,
-            "blocking_duplicate_auth_ids": ["EXA00051"],
-            "ignored_existing_auth_ids": ["EXA00016"],
-        },
-    },
-    "AUTH00017": {
-        "first_failure": "noncovered_service",
-        "final_disposition": "halted_in_intake",
-        "sla_due_at": "2025-02-22T15:52",
-        "sla_rule_used": "CA Commercial calendar 5 days",
-        "sla_source_trace": {
-            "state_used": "CA",
-            "plan_type_used": "Commercial",
-            "duration_value": 5,
-            "duration_unit": "calendar_days",
-            "day_type": "calendar",
-        },
-        "sla_candidate_trace": [
-            {
-                "state": "CA",
-                "plan_type": "Commercial",
-                "duration_value": 5,
-                "duration_unit": "calendar_days",
-                "computed_due_at": "2025-02-22T15:52",
-            }
+        "exception_record_ids": [
+            "st-poc",
+            "st-conflict",
+            "doc-te-001-stale",
         ],
-        "sla_selection_reason": "single_applicable_rule",
-        "gold_card_decision": "not_evaluated_due_to_intake_halt",
-        "queue_destination": "benefit_denial_queue",
-        "duplicate_treatment": "not_checked_due_to_earlier_failure",
-        "notice_template": "noncovered_benefit",
-        "intake_reason_code": "noncovered_benefit",
-        "duplicate_reason_code": "benefit_halt",
-        "sla_basis_code": "CA_Commercial_calendar_5d",
-        "intake_source_trace": {
-            "service_covered": False,
-            "servicing_provider_network_status": "in_network",
-            "facility_in_service_area": True,
-            "blocking_duplicate_auth_ids": [],
-            "ignored_existing_auth_ids": [],
-        },
-    },
-    "AUTH00018": {
-        "first_failure": "noncovered_service",
-        "final_disposition": "halted_in_intake",
-        "sla_due_at": "2025-02-20T16:59",
-        "sla_rule_used": "AZ Commercial calendar 2 days",
-        "sla_source_trace": {
-            "state_used": "AZ",
-            "plan_type_used": "Commercial",
-            "duration_value": 2,
-            "duration_unit": "calendar_days",
-            "day_type": "calendar",
-        },
-        "sla_candidate_trace": [
-            {
-                "state": "AZ",
-                "plan_type": "Commercial",
-                "duration_value": 2,
-                "duration_unit": "calendar_days",
-                "computed_due_at": "2025-02-20T16:59",
-            },
-            {
-                "state": "NY",
-                "plan_type": "Commercial",
-                "duration_value": 3,
-                "duration_unit": "business_days",
-                "computed_due_at": "2025-02-21T16:59",
-            },
-        ],
-        "sla_selection_reason": "earliest_due_at_from_multiple_rules",
-        "gold_card_decision": "not_evaluated_due_to_intake_halt",
-        "queue_destination": "benefit_denial_queue",
-        "duplicate_treatment": "not_checked_due_to_earlier_failure",
-        "notice_template": "noncovered_benefit",
-        "intake_reason_code": "noncovered_benefit",
-        "duplicate_reason_code": "benefit_halt",
-        "sla_basis_code": "AZ_Commercial_calendar_2d",
-        "intake_source_trace": {
-            "service_covered": False,
-            "servicing_provider_network_status": "out_of_network",
-            "facility_in_service_area": False,
-            "blocking_duplicate_auth_ids": [],
-            "ignored_existing_auth_ids": [],
-        },
     },
 }
 
-EXPECTED_METRICS = {
-    "ready_for_clinical_review_count": 2,
-    "auto_approved_count": 0,
-    "duplicate_halt_count": 1,
-    "member_or_provider_notice_count": 4,
-}
+
+RUBRIC = [
+    (
+        "target_case_and_requested_speech_service",
+        1,
+        "Correct target case and speech CPT, modifier, and requested units.",
+    ),
+    (
+        "pend_disposition_and_route",
+        3,
+        "Correct pend-for-information recommendation, final status, and route.",
+    ),
+    (
+        "speech_therapy_criteria_results",
+        2,
+        "Correct criteria result map for ST-POC and ST-CONFLICT.",
+    ),
+    (
+        "missing_information_set",
+        2,
+        "Correct missing-information set.",
+    ),
+    (
+        "current_evidence_and_stale_exclusion",
+        2,
+        "Correct current evidence documents and stale exclusion.",
+    ),
+    (
+        "approved_units_and_due_date",
+        1,
+        "Correct zero approved units and due date.",
+    ),
+    (
+        "basis_source_precedence",
+        3,
+        "Correct business source-precedence basis.",
+    ),
+    (
+        "basis_precedence_record_order",
+        3,
+        "Correct source-precedence record order.",
+    ),
+    (
+        "basis_controlling_records",
+        1,
+        "Correct controlling business record IDs.",
+    ),
+    (
+        "basis_exception_records",
+        2,
+        "Correct exception, gap, and excluded-record IDs.",
+    ),
+]
 
 
-def load_json(path):
-    try:
-        with Path(path).open("r", encoding="utf-8") as handle:
-            return json.load(handle), None
-    except Exception as exc:
-        return None, str(exc)
+def clean_str(value, upper=False, lower=False):
+    if not isinstance(value, str):
+        return None
+    text = value.strip()
+    if upper:
+        return text.upper()
+    if lower:
+        return text.lower()
+    return text
 
 
-def normalize_cases(candidate):
-    rows = candidate.get("case_outcomes", [])
-    if not isinstance(rows, list):
-        return {}
-    by_id = {}
-    for row in rows:
-        if isinstance(row, dict) and isinstance(row.get("case_id"), str):
-            by_id[row["case_id"]] = row
-    return by_id
+def as_int(value):
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    if isinstance(value, str):
+        stripped = value.strip()
+        if stripped.isdigit() or (stripped.startswith("-") and stripped[1:].isdigit()):
+            return int(stripped)
+    return None
 
 
-def exact_case_fields(candidate_cases, fields):
-    return all(
-        case_id in candidate_cases and all(candidate_cases[case_id].get(field) == expected[field] for field in fields)
-        for case_id, expected in EXPECTED_CASES.items()
-    )
-
-
-def value_at(node, path):
-    current = node
-    for part in path:
-        if not isinstance(current, dict):
+def normalized_set(value, upper=False, lower=False):
+    if not isinstance(value, list):
+        return None
+    result = set()
+    for item in value:
+        text = clean_str(item, upper=upper, lower=lower)
+        if text is None:
             return None
-        current = current.get(part)
-    if isinstance(current, list):
-        if all(isinstance(item, dict) for item in current):
-            return sorted(current, key=lambda item: tuple(str(item.get(key)) for key in sorted(item)))
-        return sorted(str(item) for item in current)
-    return current
+        result.add(text)
+    return result
 
 
-def exact_case_paths(candidate_cases, selectors):
-    return all(
-        case_id in candidate_cases
-        and all(value_at(candidate_cases[case_id], path) == value_at(expected, path) for path in selectors.values())
-        for case_id, expected in EXPECTED_CASES.items()
-    )
+def normalized_list(value, upper=False, lower=False):
+    if not isinstance(value, list):
+        return None
+    result = []
+    for item in value:
+        text = clean_str(item, upper=upper, lower=lower)
+        if text is None:
+            return None
+        result.append(text)
+    return result
+
+
+def normalized_criteria(value):
+    if isinstance(value, dict):
+        pairs = value.items()
+    elif isinstance(value, list):
+        pairs = []
+        for item in value:
+            if not isinstance(item, dict):
+                return None
+            criterion_id = (
+                item.get("criterion_id") or item.get("criterion") or item.get("id") or item.get("criterion_key")
+            )
+            pairs.append((criterion_id, item.get("result")))
+    else:
+        return None
+
+    result = {}
+    for key, item_value in pairs:
+        norm_key = clean_str(key, upper=True)
+        norm_value = clean_str(item_value, lower=True)
+        if norm_key is None or norm_value is None:
+            return None
+        result[norm_key] = norm_value
+    return result
+
+
+def audit_value(answer, key):
+    audit = answer.get("basis_audit")
+    if not isinstance(audit, dict):
+        return None
+    return audit.get(key)
+
+
+def evaluate(answer):
+    expected_criteria = EXPECTED["criteria_results"]
+    criteria = normalized_criteria(answer.get("criteria_results"))
+    missing = normalized_set(answer.get("missing_information"), lower=True)
+    evidence = normalized_list(answer.get("evidence_documents"), upper=True)
+    excluded = normalized_list(answer.get("excluded_documents"), upper=True)
+
+    checks = {
+        "target_case_and_requested_speech_service": {
+            "pass": (
+                clean_str(answer.get("case_id"), upper=True) == EXPECTED["case_id"]
+                and clean_str(answer.get("requested_cpt")) == EXPECTED["requested_cpt"]
+                and clean_str(answer.get("modifier"), upper=True) == EXPECTED["modifier"]
+                and as_int(answer.get("requested_units")) == EXPECTED["requested_units"]
+            ),
+            "details": {
+                "expected_case_id": EXPECTED["case_id"],
+                "expected_requested_cpt": EXPECTED["requested_cpt"],
+                "expected_modifier": EXPECTED["modifier"],
+                "expected_requested_units": EXPECTED["requested_units"],
+            },
+        },
+        "pend_disposition_and_route": {
+            "pass": (
+                clean_str(answer.get("recommendation"), lower=True) == EXPECTED["recommendation"]
+                and clean_str(answer.get("final_status"), lower=True) == EXPECTED["final_status"]
+                and clean_str(answer.get("route"), lower=True) == EXPECTED["route"]
+            ),
+            "details": {
+                "expected_recommendation": EXPECTED["recommendation"],
+                "expected_final_status": EXPECTED["final_status"],
+                "expected_route": EXPECTED["route"],
+            },
+        },
+        "speech_therapy_criteria_results": {
+            "pass": criteria == expected_criteria,
+            "details": {
+                "expected_criteria_results": expected_criteria,
+            },
+        },
+        "missing_information_set": {
+            "pass": missing == EXPECTED["missing_information"],
+            "details": {
+                "expected_missing_information": sorted(EXPECTED["missing_information"]),
+            },
+        },
+        "current_evidence_and_stale_exclusion": {
+            "pass": (evidence == EXPECTED["evidence_documents"] and excluded == EXPECTED["excluded_documents"]),
+            "details": {
+                "expected_evidence_documents": EXPECTED["evidence_documents"],
+                "expected_excluded_documents": EXPECTED["excluded_documents"],
+            },
+        },
+        "approved_units_and_due_date": {
+            "pass": (
+                as_int(answer.get("approved_units")) == EXPECTED["approved_units"]
+                and clean_str(answer.get("due_date")) == EXPECTED["due_date"]
+            ),
+            "details": {
+                "expected_approved_units": EXPECTED["approved_units"],
+                "expected_due_date": EXPECTED["due_date"],
+            },
+        },
+        "basis_source_precedence": {
+            "pass": (
+                clean_str(audit_value(answer, "source_precedence"), lower=True)
+                == EXPECTED["basis_audit"]["source_precedence"]
+            ),
+            "details": {
+                "expected_source_precedence": EXPECTED["basis_audit"]["source_precedence"],
+            },
+        },
+        "basis_controlling_records": {
+            "pass": (
+                normalized_list(audit_value(answer, "controlling_record_ids"), lower=True)
+                == EXPECTED["basis_audit"]["controlling_record_ids"]
+            ),
+            "details": {
+                "expected_controlling_record_ids": EXPECTED["basis_audit"]["controlling_record_ids"],
+            },
+        },
+        "basis_precedence_record_order": {
+            "pass": (
+                normalized_list(audit_value(answer, "precedence_record_order"), lower=True)
+                == EXPECTED["basis_audit"]["precedence_record_order"]
+            ),
+            "details": {
+                "expected_precedence_record_order": EXPECTED["basis_audit"]["precedence_record_order"],
+            },
+        },
+        "basis_exception_records": {
+            "pass": (
+                normalized_list(audit_value(answer, "exception_record_ids"), lower=True)
+                == EXPECTED["basis_audit"]["exception_record_ids"]
+            ),
+            "details": {
+                "expected_exception_record_ids": EXPECTED["basis_audit"]["exception_record_ids"],
+            },
+        },
+    }
+
+    total_weight = sum(weight for _, weight, _ in RUBRIC)
+    points = []
+    earned_weight = 0
+    for name, weight, goal in RUBRIC:
+        passed = bool(checks[name]["pass"])
+        if passed:
+            earned_weight += weight
+        assigned_score = weight / total_weight
+        points.append(
+            {
+                "name": name,
+                "goal": goal,
+                "weight": weight,
+                "assigned_score": assigned_score,
+                "passed": passed,
+                "earned_score": assigned_score if passed else 0,
+                "details": checks[name]["details"],
+            }
+        )
+
+    return {
+        "score": earned_weight / total_weight,
+        "points": points,
+        "total_weight": total_weight,
+    }
 
 
 def main():
-    if len(sys.argv) != 2:
-        print(
-            json.dumps({"score": 0.0, "max_score": 1.0, "error": "Usage: evaluator.py <candidate.json>", "points": []})
-        )
-        return 2
-
-    candidate, error = load_json(sys.argv[1])
-    if error:
-        print(json.dumps({"score": 0.0, "max_score": 1.0, "error": error, "points": []}))
-        return 1
-
-    if not isinstance(candidate, dict):
-        print(
-            json.dumps(
-                {"score": 0.0, "max_score": 1.0, "error": "Candidate root must be a JSON object.", "points": []}
-            )
-        )
-        return 1
-
-    candidate_cases = normalize_cases(candidate)
-    metrics = candidate.get("supervisor_metrics", {})
-    if not isinstance(metrics, dict):
-        metrics = {}
-
-    point_defs = [
-        ("SP001_intake_disposition", 2, exact_case_fields(candidate_cases, ["first_failure", "final_disposition"])),
-        ("SP002_sla_due_values", 1, exact_case_fields(candidate_cases, ["sla_due_at", "sla_rule_used"])),
-        (
-            "SP003_gold_card_and_queue",
-            1,
-            exact_case_fields(candidate_cases, ["gold_card_decision"])
-            and exact_case_fields(candidate_cases, ["queue_destination"])
-            and metrics.get("auto_approved_count") == EXPECTED_METRICS["auto_approved_count"],
-        ),
-        (
-            "SP004_duplicate_treatment_and_trace",
-            3,
-            exact_case_fields(candidate_cases, ["duplicate_treatment"])
-            and exact_case_paths(
-                candidate_cases,
+    answer_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("answer.json")
+    try:
+        with answer_path.open("r", encoding="utf-8") as f:
+            answer = json.load(f)
+    except Exception as exc:
+        total_weight = sum(weight for _, weight, _ in RUBRIC)
+        result = {
+            "score": 0,
+            "points": [
                 {
-                    "blocking_duplicate_auth_ids": ["intake_source_trace", "blocking_duplicate_auth_ids"],
-                    "ignored_existing_auth_ids": ["intake_source_trace", "ignored_existing_auth_ids"],
-                },
-            )
-            and metrics.get("duplicate_halt_count") == EXPECTED_METRICS["duplicate_halt_count"],
-        ),
-        (
-            "SP005_notice_and_ready_summary_metrics",
-            1,
-            exact_case_fields(candidate_cases, ["notice_template"])
-            and metrics.get("member_or_provider_notice_count") == EXPECTED_METRICS["member_or_provider_notice_count"]
-            and metrics.get("ready_for_clinical_review_count") == EXPECTED_METRICS["ready_for_clinical_review_count"],
-        ),
-        (
-            "SP006_sla_source_and_candidate_trace",
-            3,
-            exact_case_paths(
-                candidate_cases,
-                {
-                    "state_used": ["sla_source_trace", "state_used"],
-                    "plan_type_used": ["sla_source_trace", "plan_type_used"],
-                    "duration_value": ["sla_source_trace", "duration_value"],
-                    "duration_unit": ["sla_source_trace", "duration_unit"],
-                    "day_type": ["sla_source_trace", "day_type"],
-                },
-            )
-            and exact_case_paths(candidate_cases, {"sla_candidate_trace": ["sla_candidate_trace"]})
-            and exact_case_paths(candidate_cases, {"sla_selection_reason": ["sla_selection_reason"]}),
-        ),
-        (
-            "SP007_intake_source_barrier_trace",
-            1,
-            exact_case_paths(
-                candidate_cases,
-                {
-                    "service_covered": ["intake_source_trace", "service_covered"],
-                    "servicing_provider_network_status": ["intake_source_trace", "servicing_provider_network_status"],
-                    "facility_in_service_area": ["intake_source_trace", "facility_in_service_area"],
-                },
-            ),
-        ),
-        (
-            "SP008_intake_reason_codes",
-            3,
-            exact_case_fields(candidate_cases, ["intake_reason_code"]),
-        ),
-        (
-            "SP009_duplicate_reason_codes",
-            3,
-            exact_case_fields(candidate_cases, ["duplicate_reason_code"]),
-        ),
-        (
-            "SP010_sla_basis_codes",
-            3,
-            exact_case_fields(candidate_cases, ["sla_basis_code"]),
-        ),
-    ]
+                    "name": name,
+                    "goal": goal,
+                    "weight": weight,
+                    "assigned_score": weight / total_weight,
+                    "passed": False,
+                    "earned_score": 0,
+                    "details": {"error": f"Could not load submitted JSON: {exc}"},
+                }
+                for name, weight, goal in RUBRIC
+            ],
+            "total_weight": total_weight,
+        }
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return
 
-    raw_score = sum(weight for _name, weight, passed in point_defs if passed)
-    raw_max = sum(weight for _name, weight, _passed in point_defs)
-    result = {
-        "score": raw_score / raw_max,
-        "max_score": 1.0,
-        "raw_score": raw_score,
-        "raw_max_score": raw_max,
-        "points": [
-            {
-                "name": name,
-                "weight": weight,
-                "earned": weight if passed else 0,
-                "passed": bool(passed),
-            }
-            for name, weight, passed in point_defs
-        ],
-    }
-    print(json.dumps(result, sort_keys=True))
-    return 0
+    if not isinstance(answer, dict):
+        answer = {}
+    print(json.dumps(evaluate(answer), indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

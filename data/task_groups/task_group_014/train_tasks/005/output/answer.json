@@ -1,322 +1,68 @@
 {
-  "analysis_period": {
-    "start_date": "2025-01-01",
-    "end_date": "2025-12-31",
-    "fiscal_year": 2025
-  },
-  "ranked_loss_drivers": [
+  "case_id": "QUEUE-TR-005",
+  "period": "2026-05",
+  "threshold_revenue_to_cost_ratio": 1.2,
+  "rows": [
     {
-      "rank": 1,
-      "clinic_id": "CLN003",
-      "plan_type": "Commercial",
-      "service_category": "Evaluation Management",
-      "net_margin": -18528.28,
-      "margin_pct": -4.6205
+      "month_id": "SM-TR-005-MCD",
+      "payer_segment": "medicaid",
+      "service_domain": "physical_therapy",
+      "cpt_code": "97110",
+      "total_cost": 26240.0,
+      "margin": -2550.0,
+      "revenue_to_cost_ratio": 0.9028,
+      "below_threshold": true,
+      "charge_sensitive": false,
+      "recommended_action": "payer_contract_review"
     },
     {
-      "rank": 2,
-      "clinic_id": "CLN001",
-      "plan_type": "Commercial",
-      "service_category": "Evaluation Management",
-      "net_margin": -14797.93,
-      "margin_pct": -2.5307
+      "month_id": "SM-TR-005-COM",
+      "payer_segment": "commercial",
+      "service_domain": "physical_therapy",
+      "cpt_code": "97530",
+      "total_cost": 31700.0,
+      "margin": 13570.0,
+      "revenue_to_cost_ratio": 1.4281,
+      "below_threshold": false,
+      "charge_sensitive": true,
+      "recommended_action": "monitor_charge_sensitive"
     },
     {
-      "rank": 3,
-      "clinic_id": "CLN001",
-      "plan_type": "Commercial",
-      "service_category": "Physical Therapy",
-      "net_margin": -11682.49,
-      "margin_pct": -1.8652
+      "month_id": "SM-TR-005-WC",
+      "payer_segment": "workers_comp",
+      "service_domain": "physical_therapy",
+      "cpt_code": "97112",
+      "total_cost": 13520.0,
+      "margin": 12240.0,
+      "revenue_to_cost_ratio": 1.9053,
+      "below_threshold": false,
+      "charge_sensitive": true,
+      "recommended_action": "monitor_charge_sensitive"
     }
   ],
-  "payer_actions": [
-    {
-      "clinic_id": "CLN001",
-      "plan_type": "Commercial",
-      "service_category": "Evaluation Management",
-      "budget_variance_class": "major_shortfall",
-      "persistence_class": "persistent",
-      "recommended_action": "rate_floor_review",
-      "projected_improvement_amount": 23230.52
-    },
-    {
-      "clinic_id": "CLN001",
-      "plan_type": "Commercial",
-      "service_category": "Physical Therapy",
-      "budget_variance_class": "major_shortfall",
-      "persistence_class": "persistent",
-      "recommended_action": "rate_floor_review",
-      "projected_improvement_amount": 16510.62
-    },
-    {
-      "clinic_id": "CLN001",
-      "plan_type": "Medicaid",
-      "service_category": "Evaluation Management",
-      "budget_variance_class": "major_shortfall",
-      "persistence_class": "noise",
-      "recommended_action": "rate_floor_review",
-      "projected_improvement_amount": 7280.36
-    },
-    {
-      "clinic_id": "CLN001",
-      "plan_type": "Medicaid",
-      "service_category": "Physical Therapy",
-      "budget_variance_class": "major_shortfall",
-      "persistence_class": "persistent",
-      "recommended_action": "rate_floor_review",
-      "projected_improvement_amount": 11456.66
-    },
-    {
-      "clinic_id": "CLN003",
-      "plan_type": "Commercial",
-      "service_category": "Evaluation Management",
-      "budget_variance_class": "major_shortfall",
-      "persistence_class": "persistent",
-      "recommended_action": "recover_and_rate_floor_review",
-      "projected_improvement_amount": 29429.57
-    },
-    {
-      "clinic_id": "CLN003",
-      "plan_type": "Commercial",
-      "service_category": "Physical Therapy",
-      "budget_variance_class": "major_shortfall",
-      "persistence_class": "persistent",
-      "recommended_action": "recover_and_rate_floor_review",
-      "projected_improvement_amount": 16135.26
-    },
-    {
-      "clinic_id": "CLN003",
-      "plan_type": "Medicaid",
-      "service_category": "Evaluation Management",
-      "budget_variance_class": "major_shortfall",
-      "persistence_class": "noise",
-      "recommended_action": "rate_floor_review",
-      "projected_improvement_amount": 8654.51
-    },
-    {
-      "clinic_id": "CLN003",
-      "plan_type": "Medicaid",
-      "service_category": "Physical Therapy",
-      "budget_variance_class": "major_shortfall",
-      "persistence_class": "persistent",
-      "recommended_action": "rate_floor_review",
-      "projected_improvement_amount": 17823.34
-    }
+  "below_threshold_segments": [
+    "medicaid"
   ],
-  "portfolio_summary": {
-    "cells_analyzed": 12,
-    "flagged_pair_count": 8,
-    "total_net_revenue": 114458.71,
-    "total_cost": 144336.02,
-    "total_net_margin": -29877.31,
-    "total_open_recovery_included": 1529.18,
-    "total_projected_improvement": 130520.84,
-    "payer_service_results": [
-      {
-        "clinic_id": "CLN001",
-        "plan_type": "Commercial",
-        "service_category": "Evaluation Management",
-        "encounter_count": 10,
-        "units": 51,
-        "paid_amount": 5847.38,
-        "open_recovery": 0.0,
-        "cost_per_unit": 404.81,
-        "total_cost": 20645.31,
-        "net_revenue": 5847.38,
-        "net_margin": -14797.93,
-        "margin_pct": -2.5307,
-        "budget_margin_pct": 0.29,
-        "budget_variance_class": "major_shortfall",
-        "persistence_class": "persistent"
-      },
-      {
-        "clinic_id": "CLN001",
-        "plan_type": "Commercial",
-        "service_category": "Pain Management",
-        "encounter_count": 7,
-        "units": 33,
-        "paid_amount": 31554.52,
-        "open_recovery": 0.0,
-        "cost_per_unit": 331.47,
-        "total_cost": 10938.51,
-        "net_revenue": 31554.52,
-        "net_margin": 20616.01,
-        "margin_pct": 0.6533,
-        "budget_margin_pct": 0.326,
-        "budget_variance_class": "on_or_above_budget",
-        "persistence_class": "acceptable"
-      },
-      {
-        "clinic_id": "CLN001",
-        "plan_type": "Commercial",
-        "service_category": "Physical Therapy",
-        "encounter_count": 16,
-        "units": 85,
-        "paid_amount": 6263.56,
-        "open_recovery": 0.0,
-        "cost_per_unit": 211.13,
-        "total_cost": 17946.05,
-        "net_revenue": 6263.56,
-        "net_margin": -11682.49,
-        "margin_pct": -1.8652,
-        "budget_margin_pct": 0.212,
-        "budget_variance_class": "major_shortfall",
-        "persistence_class": "persistent"
-      },
-      {
-        "clinic_id": "CLN001",
-        "plan_type": "Medicaid",
-        "service_category": "Evaluation Management",
-        "encounter_count": 3,
-        "units": 16,
-        "paid_amount": 1842.12,
-        "open_recovery": 0.0,
-        "cost_per_unit": 404.81,
-        "total_cost": 6476.96,
-        "net_revenue": 1842.12,
-        "net_margin": -4634.84,
-        "margin_pct": -2.516,
-        "budget_margin_pct": 0.29,
-        "budget_variance_class": "major_shortfall",
-        "persistence_class": "noise"
-      },
-      {
-        "clinic_id": "CLN001",
-        "plan_type": "Medicaid",
-        "service_category": "Pain Management",
-        "encounter_count": 2,
-        "units": 13,
-        "paid_amount": 13867.35,
-        "open_recovery": 0.0,
-        "cost_per_unit": 331.47,
-        "total_cost": 4309.11,
-        "net_revenue": 13867.35,
-        "net_margin": 9558.24,
-        "margin_pct": 0.6893,
-        "budget_margin_pct": 0.326,
-        "budget_variance_class": "on_or_above_budget",
-        "persistence_class": "acceptable"
-      },
-      {
-        "clinic_id": "CLN001",
-        "plan_type": "Medicaid",
-        "service_category": "Physical Therapy",
-        "encounter_count": 14,
-        "units": 59,
-        "paid_amount": 4351.3,
-        "open_recovery": 0.0,
-        "cost_per_unit": 211.13,
-        "total_cost": 12456.67,
-        "net_revenue": 4351.3,
-        "net_margin": -8105.37,
-        "margin_pct": -1.8627,
-        "budget_margin_pct": 0.212,
-        "budget_variance_class": "major_shortfall",
-        "persistence_class": "persistent"
-      },
-      {
-        "clinic_id": "CLN003",
-        "plan_type": "Commercial",
-        "service_category": "Evaluation Management",
-        "encounter_count": 6,
-        "units": 34,
-        "paid_amount": 3452.95,
-        "open_recovery": 557.03,
-        "cost_per_unit": 662.89,
-        "total_cost": 22538.26,
-        "net_revenue": 4009.98,
-        "net_margin": -18528.28,
-        "margin_pct": -4.6205,
-        "budget_margin_pct": 0.326,
-        "budget_variance_class": "major_shortfall",
-        "persistence_class": "persistent"
-      },
-      {
-        "clinic_id": "CLN003",
-        "plan_type": "Commercial",
-        "service_category": "Pain Management",
-        "encounter_count": 7,
-        "units": 21,
-        "paid_amount": 17259.23,
-        "open_recovery": 738.88,
-        "cost_per_unit": 383.29,
-        "total_cost": 8049.09,
-        "net_revenue": 17998.11,
-        "net_margin": 9949.02,
-        "margin_pct": 0.5528,
-        "budget_margin_pct": 0.293,
-        "budget_variance_class": "on_or_above_budget",
-        "persistence_class": "acceptable"
-      },
-      {
-        "clinic_id": "CLN003",
-        "plan_type": "Commercial",
-        "service_category": "Physical Therapy",
-        "encounter_count": 12,
-        "units": 57,
-        "paid_amount": 3931.84,
-        "open_recovery": 233.27,
-        "cost_per_unit": 237.55,
-        "total_cost": 13540.35,
-        "net_revenue": 4165.11,
-        "net_margin": -9375.24,
-        "margin_pct": -2.2509,
-        "budget_margin_pct": 0.333,
-        "budget_variance_class": "major_shortfall",
-        "persistence_class": "persistent"
-      },
-      {
-        "clinic_id": "CLN003",
-        "plan_type": "Medicaid",
-        "service_category": "Evaluation Management",
-        "encounter_count": 2,
-        "units": 10,
-        "paid_amount": 1180.65,
-        "open_recovery": 0.0,
-        "cost_per_unit": 662.89,
-        "total_cost": 6628.9,
-        "net_revenue": 1180.65,
-        "net_margin": -5448.25,
-        "margin_pct": -4.6146,
-        "budget_margin_pct": 0.326,
-        "budget_variance_class": "major_shortfall",
-        "persistence_class": "noise"
-      },
-      {
-        "clinic_id": "CLN003",
-        "plan_type": "Medicaid",
-        "service_category": "Pain Management",
-        "encounter_count": 2,
-        "units": 14,
-        "paid_amount": 18052.42,
-        "open_recovery": 0.0,
-        "cost_per_unit": 383.29,
-        "total_cost": 5366.06,
-        "net_revenue": 18052.42,
-        "net_margin": 12686.36,
-        "margin_pct": 0.7028,
-        "budget_margin_pct": 0.293,
-        "budget_variance_class": "on_or_above_budget",
-        "persistence_class": "acceptable"
-      },
-      {
-        "clinic_id": "CLN003",
-        "plan_type": "Medicaid",
-        "service_category": "Physical Therapy",
-        "encounter_count": 16,
-        "units": 65,
-        "paid_amount": 5326.21,
-        "open_recovery": 0.0,
-        "cost_per_unit": 237.55,
-        "total_cost": 15440.75,
-        "net_revenue": 5326.21,
-        "net_margin": -10114.54,
-        "margin_pct": -1.899,
-        "budget_margin_pct": 0.333,
-        "budget_variance_class": "major_shortfall",
-        "persistence_class": "persistent"
-      }
+  "charge_sensitive_segments": [
+    "commercial",
+    "workers_comp"
+  ],
+  "top_issue": "medicaid_97110",
+  "gap_to_120pct": 7798.0,
+  "basis_audit": {
+    "source_precedence": "margin_threshold_then_charge_sensitivity",
+    "controlling_record_ids": [
+      "SM-TR-005-MCD",
+      "SM-TR-005-COM",
+      "SM-TR-005-WC"
+    ],
+    "exception_record_ids": [
+      "SM-TR-005-MCD"
+    ],
+    "precedence_record_order": [
+      "SM-TR-005-MCD",
+      "SM-TR-005-COM",
+      "SM-TR-005-WC"
     ]
   }
 }

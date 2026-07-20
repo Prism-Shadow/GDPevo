@@ -1,7 +1,5 @@
-You are preparing a cross-matter remediation board for counsel.
+Vireo Labs' outside counsel team needs a cross-system remediation dashboard for SEC matter `MTR-VIREO-SEC` before the next production status call. The dashboard should bring together production category coverage, custodian-source status, retention events, document coding/QC, privilege-log data, and available remediation sources.
 
-Use the shared investigation workspace API at <TASK_ENV_BASE_URL>. The target matters are `M-ALD-507`, `M-BAY-144`, and `M-LYN-322`. Treat the API as the source of record for matter metadata, subpoena categories, production logs, retention rules, destruction events, custodian records, collection events, privilege logs, QC events, and document summaries.
+Use only the shared Investigation Review Hub at `<TASK_ENV_BASE_URL>` and the task-local payloads in this input directory. If you use the read-only SQL query endpoint, send the header `X-API-Key: review-key-017`. Do not inspect environment source files, database files, generated manifests, hidden notes, standard answers, or evaluation files.
 
-Return JSON only, conforming to `input/payloads/answer_template.json`.
-
-Build the board by ranking remediation priorities across the three matters, mapping material issues to the allowed action enums, identifying cross-cutting failure patterns, and marking deadline and notice-risk booleans. Do not include narrative explanations or unstructured memo text.
+Return only a JSON object conforming to `input/payloads/answer_template.json`. Use stable matter, source, event, document, privilege, QC, and category IDs from the hub. The response should give the top risks in priority order, category coverage, retained or available sources for remediation, rollup metrics, and a normalized action plan.

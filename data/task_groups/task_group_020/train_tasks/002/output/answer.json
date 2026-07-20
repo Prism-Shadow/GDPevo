@@ -1,148 +1,173 @@
 {
-  "deal_id": "D-BRASS-219",
-  "review_type": "SELLER_APA_COUNTERPARTY_PAPER_REVIEW",
-  "currency": "USD",
-  "issues": [
-    {
-      "issue_id": "ASSUMED_LIABILITIES_AND_NWC",
-      "severity": "HIGH",
-      "recommended_action": "REVISE",
-      "corrected_value": {
-        "buyer_assumed_liability_covenant": "SURVIVE_UNTIL_FULLY_PERFORMED",
-        "working_capital_reset_allowed": false,
-        "working_capital_target_usd": 32100000,
-        "working_capital_collar_usd": 1200000
+  "task_id": "train_002",
+  "deal_id": "PRJ_MERIDIAN",
+  "economics": {
+    "currency": "USD",
+    "headline_value": 420000000,
+    "upfront_cash": 330000000,
+    "stock_value": 90000000,
+    "milestone_value": 0,
+    "holder_allocation": [
+      {
+        "holder": "Founders and executives",
+        "security_class": "common stock",
+        "fully_diluted_pct": 0.185,
+        "as_converted_shares": 8400000,
+        "cash_amount": 61050000,
+        "stock_amount": 16650000,
+        "total_consideration": 77700000
       },
-      "source_ids": [
-        "DOC-BRASS219-TERM-01",
-        "DOC-BRASS219-FIN-04",
-        "CL-BRASS-219-003"
-      ]
+      {
+        "holder": "Lead investor group",
+        "security_class": "preferred stock",
+        "fully_diluted_pct": 0.341,
+        "as_converted_shares": 15500000,
+        "cash_amount": 112530000,
+        "stock_amount": 30690000,
+        "total_consideration": 143220000
+      },
+      {
+        "holder": "Employee option pool",
+        "security_class": "options",
+        "fully_diluted_pct": 0.092,
+        "as_converted_shares": 4200000,
+        "cash_amount": 30360000,
+        "stock_amount": 8280000,
+        "total_consideration": 38640000
+      },
+      {
+        "holder": "Public or minority holders",
+        "security_class": "common stock",
+        "fully_diluted_pct": 0.382,
+        "as_converted_shares": 17300000,
+        "cash_amount": 126060000,
+        "stock_amount": 34380000,
+        "total_consideration": 160440000
+      }
+    ],
+    "indemnity_package": {
+      "draft_cap_pct": 6.0,
+      "buyer_preferred_cap_pct": 12.0,
+      "buyer_preferred_cap_amount": 50400000,
+      "buyer_fallback_cap_pct": 10.0,
+      "buyer_fallback_cap_amount": 42000000,
+      "draft_survival_months": 12,
+      "buyer_preferred_survival_months": 18,
+      "fallback_survival_with_escrow_months": 15,
+      "materiality_scrape_required": "FULL_BREACH_AND_DAMAGES",
+      "risk_rating": "HIGH"
     },
-    {
-      "issue_id": "EMPLOYEE_TSA_IP_TRANSITION",
-      "severity": "CRITICAL",
-      "recommended_action": "ADD",
-      "corrected_value": {
-        "buyer_comparable_offer_required": true,
-        "warn_and_severance_liability": "BUYER_FOR_TRANSFERRED_EMPLOYEES",
-        "tsa_required": true,
-        "tsa_services": [
-          "ERP",
-          "IT_HELPDESK",
-          "PAYROLL",
-          "QUALITY_CERTIFICATIONS"
-        ],
-        "ip_transition_license_required": true,
-        "retained_ip_boundaries_required": true,
-        "trademark_phaseout_months": 9
-      },
-      "source_ids": [
-        "DOC-BRASS219-DISC-06",
-        "DOC-BRASS219-MATCON-05",
-        "CL-BRASS-219-007",
-        "CL-BRASS-219-008",
-        "CL-BRASS-219-009",
-        "P-SELLER-APA-2026"
-      ]
+    "escrow": {
+      "basis": "purchase_price",
+      "required_pct": 10.0,
+      "amount": 42000000,
+      "release_months": 15,
+      "release_trigger": "general_rep_survival_expiration",
+      "status": "required_buyer_fallback"
     },
-    {
-      "issue_id": "ESCROW",
-      "severity": "HIGH",
-      "recommended_action": "REVISE",
-      "corrected_value": {
-        "escrow_percent": 7.5,
-        "escrow_amount_usd": 17700000,
-        "fallback_escrow_percent": 10.0,
-        "fallback_escrow_amount_usd": 23600000,
-        "release_months": 12,
-        "investment_benefit": "FOR_SELLER",
-        "escrow_longer_than_survival_allowed": false
-      },
-      "source_ids": [
-        "DOC-BRASS219-DRAFT-02",
-        "DOC-BRASS219-EMAIL-03",
-        "DOC-BRASS219-FIN-04",
-        "CL-BRASS-219-002",
-        "P-SELLER-APA-2026"
-      ]
-    },
-    {
-      "issue_id": "FINANCING_CONDITION",
-      "severity": "CRITICAL",
-      "recommended_action": "DELETE",
-      "corrected_value": {
-        "financing_condition_allowed": false,
-        "lender_diligence_condition_allowed": false,
-        "approval_required": "EXECUTIVE_COMMITTEE",
-        "replacement": "CLOSING_CERTAINTY_COVENANT"
-      },
-      "source_ids": [
-        "DOC-BRASS219-DRAFT-02",
-        "DOC-BRASS219-EMAIL-03",
-        "CL-BRASS-219-001",
-        "P-SELLER-APA-2026"
-      ]
-    },
-    {
-      "issue_id": "RESTRICTIVE_COVENANT",
-      "severity": "MEDIUM",
-      "recommended_action": "REVISE",
-      "corrected_value": {
-        "non_compete_years": 3,
-        "customer_non_solicit_years": 4,
-        "worldwide_scope_allowed": false,
-        "affiliate_wide_scope_allowed": false,
-        "business_scope": "TRANSFERRED_BUSINESS_ONLY"
-      },
-      "source_ids": [
-        "DOC-BRASS219-DRAFT-02",
-        "DOC-BRASS219-DISC-06",
-        "CL-BRASS-219-006",
-        "P-SELLER-APA-2026"
-      ]
-    },
-    {
-      "issue_id": "REVERSE_TERMINATION_FEE",
-      "severity": "HIGH",
-      "recommended_action": "ADD_FALLBACK_ONLY",
-      "corrected_value": {
-        "fallback_only": true,
-        "fee_base": "HEADLINE_VALUE",
-        "reverse_fee_percent": 7.26,
-        "reverse_fee_amount_usd": 17133600,
-        "parent_guarantee_required": true,
-        "financing_condition_must_still_be_deleted": true
-      },
-      "source_ids": [
-        "DOC-BRASS219-DRAFT-02",
-        "CL-BRASS-219-001",
-        "P-SELLER-APA-2026",
-        "BM-REVERSE-TERMINATION-FEE-AEROSPACE-COMPONENTS-2026-014"
-      ]
-    },
-    {
-      "issue_id": "SURVIVAL_CAP_BASKET",
-      "severity": "HIGH",
-      "recommended_action": "REVISE",
-      "corrected_value": {
-        "seller_rep_survival_months": 12,
-        "general_cap_percent": 7.5,
-        "general_cap_amount_usd": 17700000,
-        "basket_percent": 1.0,
-        "basket_type": "DEDUCTIBLE",
-        "de_minimis_required": true,
-        "tipping_allowed": false
-      },
-      "source_ids": [
-        "DOC-BRASS219-DRAFT-02",
-        "DOC-BRASS219-EMAIL-03",
-        "DOC-BRASS219-FIN-04",
-        "CL-BRASS-219-003",
-        "CL-BRASS-219-004",
-        "CL-BRASS-219-005",
-        "P-SELLER-APA-2026"
-      ]
+    "nwc_adjustment": {
+      "required": true,
+      "mechanic": "dollar_for_dollar_outside_collar",
+      "collar_amount": 2520000,
+      "source_finding_id": "FND_PRJ_MERIDIAN_03",
+      "status": "add_closing_mechanic"
     }
-  ]
+  },
+  "closing_conditions": {
+    "required_consents": [
+      {
+        "source_id": "CNS_PRJ_MERIDIAN_01",
+        "contract_name": "Master Commercial Agreement",
+        "counterparty": "Apex Customer Group",
+        "condition_type": "closing_condition",
+        "risk_rating": "HIGH",
+        "amount_at_risk": 23100000
+      },
+      {
+        "source_id": "CNS_PRJ_MERIDIAN_03",
+        "contract_name": "Facility Lease",
+        "counterparty": "North Pier Properties",
+        "condition_type": "closing_condition",
+        "risk_rating": "LOW",
+        "amount_at_risk": 850000
+      }
+    ],
+    "material_contract_conditions": [
+      {
+        "contract_id": "MAT_PRJ_MERIDIAN_01",
+        "contract_name": "Apex Customer Master Agreement",
+        "condition_type": "closing_condition",
+        "annual_revenue": 35700000
+      },
+      {
+        "contract_id": "MAT_PRJ_MERIDIAN_03",
+        "contract_name": "Strategic Supply Agreement",
+        "condition_type": "closing_condition",
+        "annual_revenue": 10920000
+      }
+    ],
+    "non_blocking_notices": [
+      "CNS_PRJ_MERIDIAN_02",
+      "MAT_PRJ_MERIDIAN_02"
+    ]
+  },
+  "covenants": {
+    "employment": {
+      "continuing_employee_count": 87,
+      "service_credit_employee_ids": [
+        "EMP_PRJ_MERIDIAN_01",
+        "EMP_PRJ_MERIDIAN_02",
+        "EMP_PRJ_MERIDIAN_03"
+      ],
+      "pto_liability_total": 3520000,
+      "warn_risk_employee_ids": [
+        "EMP_PRJ_MERIDIAN_02",
+        "EMP_PRJ_MERIDIAN_03"
+      ],
+      "required_action": "revise_service_credit_and_pto"
+    },
+    "restrictive_covenants": {
+      "required": true,
+      "covered_holder_groups": [
+        "Founders and executives"
+      ],
+      "required_action": "add_founder_executive_non_compete_and_non_solicit"
+    },
+    "do_tail_and_expenses": {
+      "do_tail_required": true,
+      "tail_period_years": 6,
+      "tail_cost_allocation": "seller_expense_or_purchase_price_reduction",
+      "seller_transaction_expenses": "seller_responsibility_or_purchase_price_reduction",
+      "buyer_transaction_expenses": "buyer_responsibility",
+      "amount_status": "amount_not_in_workbench"
+    }
+  },
+  "regulatory": {
+    "hsr_required": "yes",
+    "threshold_basis": "size-of-transaction",
+    "regulatory_approval": "HSR only",
+    "hell_or_high_water_required": "no",
+    "closing_condition_required": true
+  },
+  "closing_readiness": {
+    "overall_status": "NOT_READY",
+    "risk_rating": "HIGH",
+    "blocker_ids": [
+      "CNS_PRJ_MERIDIAN_01",
+      "CNS_PRJ_MERIDIAN_03",
+      "MAT_PRJ_MERIDIAN_03",
+      "REG_HSR",
+      "INDEMNITY_PACKAGE",
+      "NWC_COLLAR",
+      "EMP_SERVICE_CREDIT"
+    ],
+    "tradeable_issue_ids": [
+      "CNS_PRJ_MERIDIAN_02",
+      "MAT_PRJ_MERIDIAN_02",
+      "DO_TAIL_AMOUNT"
+    ],
+    "closing_consent_amount_at_risk": 23950000,
+    "material_contract_revenue_conditioned": 46620000,
+    "employee_pto_liability_total": 3520000
+  }
 }

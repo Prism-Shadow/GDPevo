@@ -2,158 +2,130 @@
 
 ## English
 
-### Data and Source Lineage
+### Data lineage and task definition
 
-This task belongs to `task_group_018`, derived from scenario `SCN_018_court_clerk_disposition_orders_and_financial_entries` and source examples `E001`, `E002`, and `E003`. It implements the assigned train task `train_003`: a Gloucester-style misdemeanor DUI/probation packet for two defendants.
+This task belongs to `task_group_018`, derived from source scenario `SCN_018_court_clerk_disposition_orders_and_financial_entries`, especially source example `E003`. It is a Virginia Gloucester County post-sentencing paperwork task for case `VA-CR24-0716-00` and payment petition `VA-PET-716A`.
 
-The shared environment data is `task_group/task_group_018/env/data/clerk_ops.json`, especially the Gloucester case records, fee schedules, payment policy, financial obligations, docket entries, and attorney records. The task-local solver-visible payloads are:
+The solver-visible inputs are:
 
-- `input/payloads/hearing_packet.json`: sentencing packet and probation/license worksheets for Darla Nguyen (`23-GLO-00218`) and Hannah Foster (`24-GLO-01001`).
-- `input/payloads/stale_order_extract.csv`: stale forms-queue extract with older or copied values and one distractor DUI record.
-- `input/payloads/answer_template.json`: required output schema, enums, ordering, date formats, and currency precision.
+- `input/prompt.txt`, which names the case and petition and points to the Court Operations Portal through `<TASK_ENV_BASE_URL>`.
+- `input/payloads/sentencing_intake_facts.json`, which supplies the courtroom sentence, probation reporting instruction, release date, and missing identifier/contact facts.
+- `input/payloads/payment_petition_budget.json`, which supplies the first payment petition, balance, budget, requested monthly amount, and unsupported-item warnings.
+- `input/payloads/form_field_excerpt.json`, which describes the CC-1375 and CC-1379-style field groups and the exact placeholder text.
+- `input/payloads/answer_template.json`, which defines the required JSON output shape, date and currency precision, enum choices, and list ordering.
 
-### Task Definition
+The shared environment provides corroborating records through `GET /api/cases`, `GET /api/financial-petitions`, `GET /api/payment-policies`, `GET /api/forms`, and related search endpoints. The relevant generated records are the Gloucester jurisdiction, `VA-CR24-0716-00`, `VA-PET-716A`, policy `POL-VA-GLO-FIRST`, and forms `VA_CC1375` and `VA_CC1379`.
 
-The solver acts as a clerk preparing a collateral order packet after DUI-related misdemeanor dispositions. The output must reconcile the two local sentencing packets with live environment records and produce structured JSON for conviction posture, charge outcomes, probation fields, license-suspension fields, missing identifier placeholders, financial assessment, installment schedule, and packet totals.
+### Scenario fit and material map
 
-The required environment entry point is the placeholder `{ENV_BASE_URL}` in `prompt.txt`. Solvers should use the environment for live case records, financial ledgers, fee schedule rows, payment policy, and docket confirmation. They should use the local hearing packet for the sentencing packet contents and avoid copying stale extract values into final form fields when they conflict with stronger sources.
+The task models a deputy clerk carrying a single DUI sentence into a case-management memo, a CC-1375-style probation referral, and a CC-1379-style license/payment order. It fits the group because it combines disposition facts, form mapping, payment-policy lookup, installment math, and disciplined handling of missing official identifiers. These are the same business objects and data flow as the source Virginia example, but expressed as structured benchmark output and environment-backed records.
 
-### Scenario Fit
+Important material use:
 
-This is a direct fit for the scenario because it combines criminal disposition reconciliation, collateral form preparation, fee schedule selection, and installment-order calculation. It mirrors the difficulty of the source examples: multiple sources disagree, fee rows have effective dates, a stale extract contains plausible but wrong values, and the final answer must keep the same conviction posture across probation, license, and payment fields.
+- The sentencing intake controls the conviction posture: conviction date `2024-09-18`, DUI first offense, 12 months jail with 11 months suspended, $1,100 fine, $160 costs, 12 months supervised probation, 12-month license suspension, and release on `2024-10-07`.
+- The payment petition controls the financial agreement facts: first petition, $1,260 fines/costs balance, $0 restitution, no account fee, $75 monthly request, and current non-default posture.
+- The payment policy confirms that Gloucester first-petition installment orders have no down payment, a $50-$100 monthly band, 30 days to first due date, and a 60-day return-to-court offset.
+- The form catalog confirms form IDs and placeholder instructions for `VA_CC1375` and `VA_CC1379`.
 
-### Material Map
+### Solution and evaluation basis
 
-- Live case records identify matter type, case number, defendant name and date of birth, charge IDs/statutes, disposition dates, status, sentence facts, probation months, license-suspension months, and similar/distractor records.
-- Live financial obligations provide principal, amount paid, current balance, payment-plan status, monthly amount, next due date, and fee components.
-- Gloucester fee schedules determine the correct fee code set and effective-date amounts. Darla Nguyen uses the 2023-2024 DUI fee amounts; Hannah Foster uses the 2025 DUI fee amounts plus the DUI probation monitoring fee because the local packet orders probation.
-- Gloucester payment policy supplies the `TBD from case file` placeholder, 45-day first-due convention, and permission for a final smaller payment.
-- `hearing_packet.json` supplies hearing-specific outcomes, report appointments, local probation addendum information, requested monthly amounts, and missing identity/contact fields.
-- `stale_order_extract.csv` supplies noise: Darla's license start was copied from the probation appointment, Hannah's probation and license values are pre-disposition, and Renee Jones is not part of this packet.
+The standard answer keeps the conviction posture consistent across all deliverables. The CC-1375 referral reports supervised probation for 12 months and a report date-time of `2024-10-10T09:00:00`. The CC-1379 license consequence is a 12-month suspension effective from the conviction date `2024-09-18`, not the release date. The payment order is an initial installment under `POL-VA-GLO-FIRST`: $1,260 total, no restitution, no account fee, no down payment, $75 monthly, first due `2024-11-09`, 16 full installments, a final partial payment of $60, 17 payments total, final due `2026-03-09`, and return to court on `2026-05-08` at `09:00` for nonpayment.
 
-### Solution and Evaluation Basis
+Budget math uses $1,920 monthly income minus $1,340 obligations for $580 disposable income. The selected $75 monthly installment is inside the $50-$100 policy band and is classified as `supported_by_budget`.
 
-The standard answer includes two defendants ordered by case number: `23-GLO-00218` Darla Nguyen and `24-GLO-01001` Hannah Foster.
+Unknown SSN, mailing address, residence address, phone, driver license number, probation officer, and probation office location use exactly `TBD from case file`. The evaluator also checks that answerable fields such as case number, defendant name, total due, report date, and suspension date are not replaced by the placeholder.
 
-Key answer facts:
+The evaluator has 9 whole-point scoring checks:
 
-- Darla Nguyen has posture `dui_conviction`. `DUI-101` is `convicted`; `DUI-104` is `convicted_no_separate_fee`. She has 24 months probation, report date `2024-04-16` at `09:00`, 12 months license suspension starting `2024-04-09`, treatment required, and missing driver license, phone, and probation officer placeholders.
-- Hannah Foster has posture `amended_dui_reckless`. `DUI-210` is `amended`; `DUI-225` is `dismissed`. She has 12 months probation from the local addendum, report date `2025-01-08` at `10:30`, 6 months license suspension starting `2025-01-04`, treatment required, and the same three placeholder fields.
-- Darla's financial order uses `DUI-CONV`, `DUI-LIC`, and `DUI-TREAT`; excludes `DUI-104`; principal is `602.50`; amount paid is `592.33`; current balance is `10.17`.
-- Hannah's financial order uses `DUI-CONV`, `DUI-LIC`, `DUI-PROB`, and `DUI-TREAT`; principal is `737.50`; amount paid is `295.46`; current balance is `442.04`.
-- Installment schedules use `plan_basis` `original_principal`, the packet's approved monthly amounts, first due dates 45 days after order date, and a final smaller payment. Darla: monthly `35.00`, first due `2024-05-24`, 17 regular payments, final `7.50`, 18 installments total, final due `2025-10-24`. Hannah: monthly `90.00`, first due `2025-02-18`, 8 regular payments, final `17.50`, 9 installments total, final due `2025-10-18`.
-- Packet totals are principal `1340.00`, current balance `452.21`, payment plans `2`, and placeholder fields `6`.
+- `SP001` weight 2: case memo identity, sentence posture, and required work flags.
+- `SP002` weight 2: CC-1375 probation referral and report instruction.
+- `SP003` weight 2: CC-1379 license suspension tied to conviction date.
+- `SP004` weight 3: initial installment classification and balance components.
+- `SP005` weight 3: installment schedule math, final partial payment, and final due date.
+- `SP006` weight 2: budget review, policy band, and support classification.
+- `SP007` weight 2: placeholder discipline.
+- `SP008` weight 1: unsupported financial item and restitution exclusions.
+- `SP009` weight 1: return-to-court setting.
 
-The evaluator has 9 exact-match scoring points with raw weights:
+These points cover at least four distinct outcomes: memo/disposition mapping, probation referral, license consequence, installment policy and math, budget support, placeholder handling, financial exclusions, and return-to-court handling. Each point is deterministic and all-or-nothing.
 
-- `SP001`, weight 2: target defendant set, ordering, names, and conviction posture.
-- `SP002`, weight 2: charge-level outcomes and `DUI-104` exclusion treatment.
-- `SP003`, weight 3: Darla collateral order fields.
-- `SP004`, weight 3: Hannah collateral order fields.
-- `SP005`, weight 2: required placeholder use.
-- `SP006`, weight 2: Darla fee codes and ledger amounts.
-- `SP007`, weight 3: Hannah fee codes and ledger amounts.
-- `SP008`, weight 3: installment plan basis, dates, counts, monthly amounts, and final payments for both defendants.
-- `SP009`, weight 1: packet totals and follow-up action codes.
+Likely model pitfalls include copying a stale or noisy charge disposition instead of the sentencing intake, using the release date as the suspension date, treating the first petition as a subsequent/default review, adding unsupported restitution or account-management fees, choosing an installment outside the policy band, omitting the final partial payment, or inventing SSN/address/driver-license/probation-office details.
 
-Likely model pitfalls include using the stale extract's license start date, copying Hannah's pre-disposition zero-month probation hint, adding a separate `DUI-104` fee for Darla, using 2025 fee rows for Darla, omitting Hannah's DUI probation monitoring fee, using remaining balance rather than original principal as the schedule basis, inventing missing driver-license numbers or officer names, and ordering defendants by packet order instead of case number.
+### Transfer design
 
-### Transfer Design
+As a train task, this provides real solved experience for the Virginia probation/license/payment family. A fewshot skill can infer that court forms must keep sentence posture consistent across separate deliverables, that Gloucester first-petition installment agreements use the local policy rather than invented fees, that payment schedules require exact final partial-payment math, and that unknown form identifiers must use `TBD from case file` rather than fabricated values. This anchors later Virginia test tasks that change the case facts, petition posture, missing fields, and schedule amounts while preserving the same clerk-work conventions.
 
-As a train task, this task lets a skill-builder infer several transferable conventions after comparing a blind attempt to the answer:
+### Construction record
 
-- Hearing packet facts control the post-sentencing form fields, while stale extracts are only warning/distractor material.
-- Live financial ledgers and fee schedules should be used for account amounts and fee-code selection.
-- Fee schedules depend on jurisdiction, matter type, code applicability, and effective date.
-- Unsupported or no-separate-sentence codes should not create independent financial lines.
-- Missing required identifiers and contact/order assignments use exactly `TBD from case file`.
-- Collateral dates should remain consistent with the conviction/disposition date unless the packet supplies a different trigger.
-- Installment schedules use full payments plus one final smaller payment, with first and final due dates calculated from the order date and county payment policy.
+Author: Codex task-builder subagent for `train_003`.
 
-These are not presented as solver-visible step-by-step instructions. They are recorded here for review and later train-skill construction.
+Created: 2026-07-18.
 
-### Construction Record
+Updated: 2026-07-18.
 
-Author: task-builder subagent for `train_003`.
-Created: 2026-07-07.
-Updated: 2026-07-07.
-Major changes: created all task-local inputs, hidden notes, standard answer, and exact-match evaluator for the Gloucester DUI/probation packet.
+Major changes: Created the full `train_tasks/003` task folder with solver prompt, three local payloads, answer template, standard answer, deterministic evaluator, and bilingual notes.
 
-## Chinese
+## 中文
 
-### 数据与来源
+### 数据来源与任务定义
 
-本任务属于 `task_group_018`，来源场景为 `SCN_018_court_clerk_disposition_orders_and_financial_entries`，参考示例为 `E001`、`E002` 和 `E003`。任务实现的是已分配的训练任务 `train_003`：Gloucester 风格的轻罪 DUI/缓刑文书包，涉及两名被告。
+本任务属于 `task_group_018`，来源于 `SCN_018_court_clerk_disposition_orders_and_financial_entries`，主要锚定源示例 `E003`。任务是 Virginia Gloucester County 的判后文书字段整理，目标案件为 `VA-CR24-0716-00`，付款申请为 `VA-PET-716A`。
 
-共享环境数据位于 `task_group/task_group_018/env/data/clerk_ops.json`，主要使用 Gloucester 的案件记录、费用表、付款政策、财务义务、案卷记录和律师记录。任务本地、求解器可见的材料包括：
+求解者可见材料包括：
 
-- `input/payloads/hearing_packet.json`：Darla Nguyen (`23-GLO-00218`) 和 Hannah Foster (`24-GLO-01001`) 的量刑、缓刑和驾照停权工作表。
-- `input/payloads/stale_order_extract.csv`：旧文书队列导出的过期数据，包含可能错误的旧值和一个干扰 DUI 记录。
-- `input/payloads/answer_template.json`：规定输出结构、枚举、排序、日期格式和金额精度。
+- `input/prompt.txt`：说明目标案件和申请，并通过 `<TASK_ENV_BASE_URL>` 指向 Court Operations Portal。
+- `input/payloads/sentencing_intake_facts.json`：提供庭审判决、缓刑报到、释放日期以及缺失身份和联系方式信息。
+- `input/payloads/payment_petition_budget.json`：提供首次付款申请、余额、预算、请求月付款额和不得添加的费用项目。
+- `input/payloads/form_field_excerpt.json`：给出 CC-1375 与 CC-1379 风格字段组和精确占位文本。
+- `input/payloads/answer_template.json`：定义 JSON 输出结构、日期和金额精度、枚举值以及列表排序要求。
 
-### 任务定义
+共享环境提供可核对的数据，包括 Gloucester 管辖区、案件 `VA-CR24-0716-00`、申请 `VA-PET-716A`、政策 `POL-VA-GLO-FIRST`、表格 `VA_CC1375` 和 `VA_CC1379`。
 
-求解器扮演书记员，在 DUI 相关轻罪裁判后准备附带命令文书。输出需要把本地量刑包与共享环境中的实时记录相互核对，形成结构化 JSON，包括定罪姿态、指控结果、缓刑字段、驾照停权字段、缺失标识符占位符、财务评估、分期付款安排以及包级合计。
+### 场景适配与材料用途
 
-`prompt.txt` 中使用 `{ENV_BASE_URL}` 作为环境入口占位符。求解器应使用环境查询实时案件、财务账、费用表、付款政策和案卷确认信息；本地听审材料用于听审时形成的文书字段；过期导出如果与更可靠来源冲突，不应直接复制。
+该任务模拟法院书记员把一个 DUI 判决整理进案件管理备忘录、CC-1375 风格缓刑转介和 CC-1379 风格驾照暂停及分期付款命令。它符合本任务组，因为它同时涉及处分事实、表格映射、付款政策查询、分期计算和缺失官方身份字段的规范占位处理。
 
-### 场景适配
+关键材料用途如下：
 
-本任务符合该场景，因为它同时包含刑事裁判核对、附带文书准备、费用表选择和分期付款计算。它保留了源示例中的难点：多来源冲突、费用生效日期、过期导出中的合理但错误的值，以及在缓刑、驾照和付款字段中保持同一裁判姿态。
+- sentencing intake 决定判决姿态：定罪日期 `2024-09-18`，DUI first offense，12 个月监禁且 11 个月缓刑，$1,100 罚金，$160 诉讼成本，12 个月监督缓刑，12 个月驾照暂停，`2024-10-07` 释放。
+- payment petition 决定财务协议事实：首次申请，罚金和成本余额 $1,260，restitution 为 $0，无 account fee，请求每月 $75，且当前没有 default。
+- payment policy 确认 Gloucester 首次分期付款命令无首付款、月付款范围 $50-$100、30 天后首次到期、最终到期后 60 天返庭。
+- form catalog 确认 `VA_CC1375` 和 `VA_CC1379` 的表格 ID 与占位要求。
 
-### 材料地图
+### 解答与评测依据
 
-- 实时案件记录用于确认案件类型、案号、被告姓名和生日、指控编号和法规、裁判日期、状态、量刑事实、缓刑月数、驾照停权月数以及相似干扰记录。
-- 实时财务义务用于确认本金、已付款、当前余额、付款计划状态、月付款、下次到期日和费用组成。
-- Gloucester 费用表用于确定正确费用代码和按生效日期选择金额。Darla Nguyen 使用 2023-2024 DUI 费用；Hannah Foster 使用 2025 DUI 费用，并因本地文书命令缓刑而包含 DUI 缓刑监督费。
-- Gloucester 付款政策提供 `TBD from case file` 占位符、45 天首期到期规则，以及允许最后一期为较小金额。
-- `hearing_packet.json` 提供听审形成的结果、报到预约、本地缓刑补充信息、批准的月付款和缺失字段。
-- `stale_order_extract.csv` 提供噪声：Darla 的驾照开始日期被旧表复制为缓刑报到日期，Hannah 的缓刑和驾照字段是裁判前快照，Renee Jones 不属于本任务文书包。
+标准答案在所有交付物中保持一致的定罪姿态。CC-1375 转介记录 12 个月 supervised probation，并要求 `2024-10-10T09:00:00` 报到。CC-1379 的驾照暂停为 12 个月，生效日期使用定罪日期 `2024-09-18`，而不是释放日期。付款命令为 `POL-VA-GLO-FIRST` 下的首次分期：总额 $1,260，无 restitution，无 account fee，无首付款，每月 $75，首次到期 `2024-11-09`，16 次完整付款，最终部分付款 $60，共 17 次，最终到期 `2026-03-09`，如未付款则 `2026-05-08` `09:00` 返庭。
 
-### 解答与评估依据
+预算计算为 $1,920 月收入减 $1,340 月义务，剩余 $580；选择的 $75 月付款在 $50-$100 政策范围内，因此分类为 `supported_by_budget`。
 
-标准答案包含两名被告，并按案号排序：`23-GLO-00218` Darla Nguyen 和 `24-GLO-01001` Hannah Foster。
+缺失的 SSN、邮寄地址、居住地址、电话、驾照号、缓刑官和缓刑办公室地点均使用精确文本 `TBD from case file`。评测器还会检查可确定字段没有被错误替换成占位符。
 
-关键答案事实如下：
+评测包含 9 个整点评分项：
 
-- Darla Nguyen 的姿态为 `dui_conviction`。`DUI-101` 为 `convicted`；`DUI-104` 为 `convicted_no_separate_fee`。她有 24 个月缓刑，`2024-04-16` `09:00` 报到，驾照停权 12 个月，开始日期为 `2024-04-09`，需要治疗转介，驾照号、电话和缓刑官均使用占位符。
-- Hannah Foster 的姿态为 `amended_dui_reckless`。`DUI-210` 为 `amended`；`DUI-225` 为 `dismissed`。她根据本地补充材料有 12 个月缓刑，`2025-01-08` `10:30` 报到，驾照停权 6 个月，开始日期为 `2025-01-04`，需要治疗转介，同样有三个占位符字段。
-- Darla 的财务命令使用 `DUI-CONV`、`DUI-LIC` 和 `DUI-TREAT`，排除 `DUI-104`；本金为 `602.50`，已付 `592.33`，当前余额 `10.17`。
-- Hannah 的财务命令使用 `DUI-CONV`、`DUI-LIC`、`DUI-PROB` 和 `DUI-TREAT`；本金为 `737.50`，已付 `295.46`，当前余额 `442.04`。
-- 分期付款安排使用 `original_principal`，采用文书中批准的月付款金额，首期为命令日后 45 天，并允许最后一期较小。Darla：月付 `35.00`，首期 `2024-05-24`，17 个常规付款，最后一期 `7.50`，共 18 期，最后到期日 `2025-10-24`。Hannah：月付 `90.00`，首期 `2025-02-18`，8 个常规付款，最后一期 `17.50`，共 9 期，最后到期日 `2025-10-18`。
-- 包级合计为本金 `1340.00`、当前余额 `452.21`、付款计划 `2` 个、占位符字段 `6` 个。
+- `SP001` 权重 2：案件备忘录身份、判决姿态和所需后续工作标志。
+- `SP002` 权重 2：CC-1375 缓刑转介和报到指令。
+- `SP003` 权重 2：CC-1379 驾照暂停，并绑定定罪日期。
+- `SP004` 权重 3：首次分期分类和余额组成。
+- `SP005` 权重 3：分期次数、最终部分付款和最终到期日期。
+- `SP006` 权重 2：预算、政策范围和可支持性分类。
+- `SP007` 权重 2：占位字段规范。
+- `SP008` 权重 1：排除无依据的费用和 restitution。
+- `SP009` 权重 1：返庭日期、时间和触发原因。
 
-评估器包含 9 个精确匹配评分点，原始权重如下：
+这些评分点覆盖备忘录/处分映射、缓刑转介、驾照后果、分期政策和计算、预算支持、占位处理、财务排除和返庭处理等多个不同业务结果。每个评分点都是确定性的整点通过或失败。
 
-- `SP001`，权重 2：目标被告集合、排序、姓名和定罪姿态。
-- `SP002`，权重 2：指控层级结果和 `DUI-104` 排除处理。
-- `SP003`，权重 3：Darla 的附带命令字段。
-- `SP004`，权重 3：Hannah 的附带命令字段。
-- `SP005`，权重 2：占位符使用。
-- `SP006`，权重 2：Darla 的费用代码和账务金额。
-- `SP007`，权重 3：Hannah 的费用代码和账务金额。
-- `SP008`，权重 3：两名被告的分期依据、日期、期数、月付款和最后一期金额。
-- `SP009`，权重 1：包级合计和后续操作代码。
-
-常见错误包括使用过期导出的驾照开始日期、复制 Hannah 裁判前的零个月缓刑提示、为 Darla 增加单独的 `DUI-104` 费用、给 Darla 使用 2025 费用、遗漏 Hannah 的 DUI 缓刑监督费、用剩余余额而不是原始本金计算分期、编造缺失的驾照号或缓刑官姓名，以及按文书顺序而不是案号排序。
+常见错误包括：复制噪声 charge disposition 而不是 sentencing intake；把释放日期当作暂停生效日期；把首次申请误判为 subsequent/default review；添加无依据的 restitution 或 account-management fee；选择不符合政策范围的月付款；遗漏最终部分付款；编造 SSN、地址、驾照号或缓刑办公室信息。
 
 ### 迁移设计
 
-作为训练任务，本任务在盲做并对照答案后，可以让 skill-builder 推断以下可迁移规则：
+作为训练任务，本任务为 Virginia probation/license/payment 任务族提供真实解答经验。fewshot skill 可以从中推断：不同文书必须保持同一判决姿态；Gloucester 首次分期应使用本地政策而不是发明费用；付款计划需要精确计算最终部分付款；缺失表格身份信息应使用 `TBD from case file`，不得编造。后续 Virginia 测试任务会改变案件事实、申请状态、缺失字段和付款数额，但保留这些书记员工作惯例。
 
-- 听审包中的事实控制裁判后文书字段，过期导出主要是警示或干扰材料。
-- 账户金额和费用代码选择应使用实时财务账和费用表。
-- 费用表取决于辖区、案件类型、代码适用条件和生效日期。
-- 不支持或没有单独刑罚的代码不应创建独立财务项目。
-- 缺失的必要身份、联系方式或分配字段使用精确字符串 `TBD from case file`。
-- 附带命令日期应与定罪或裁判日期保持一致，除非文书给出不同触发条件。
-- 分期付款采用若干完整付款加最后一个较小付款，并根据命令日期和县付款政策计算首期和末期日期。
+### 构造记录
 
-这些内容不在求解器可见提示中作为步骤说明出现，而是用于评审和后续训练技能构建。
+作者：Codex task-builder subagent for `train_003`。
 
-### 构建记录
+创建日期：2026-07-18。
 
-作者：`train_003` 任务构建子代理。
-创建日期：2026-07-07。
-更新日期：2026-07-07。
-主要变更：创建 Gloucester DUI/缓刑文书包的全部本地输入、隐藏说明、标准答案和精确匹配评估器。
+更新日期：2026-07-18。
+
+主要变更：创建完整的 `train_tasks/003` 文件夹，包括求解者 prompt、三个本地 payload、answer template、标准答案、确定性 evaluator 和双语 notes。

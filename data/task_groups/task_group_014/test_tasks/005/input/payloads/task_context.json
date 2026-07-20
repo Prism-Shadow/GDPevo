@@ -1,0 +1,36 @@
+{
+  "task_id": "test_005",
+  "business_id": "QUEUE-TE-005",
+  "requester_role": "operations huddle analyst",
+  "as_of_date": "2026-06-11",
+  "environment_access": {
+    "base_url": "<TASK_ENV_BASE_URL>",
+    "sql_endpoint": "POST /sql/query",
+    "authorization_header": "Bearer pa-review-token-014"
+  },
+  "queue_memo": {
+    "subject": "Daily mixed UM-finance queue triage",
+    "case_id": "QUEUE-TE-005",
+    "source_tables": [
+      "cases",
+      "documents",
+      "document_facts",
+      "appeals",
+      "case_criteria",
+      "claims",
+      "claim_lines",
+      "payment_benchmarks"
+    ],
+    "queue_item_ids": [
+      "appeal_deadline",
+      "md_escalation",
+      "claim_correction"
+    ],
+    "queue_item_source_documents": {
+      "appeal_deadline": "DOC-TE-005-APPEAL",
+      "md_escalation": "DOC-TE-005-MD",
+      "claim_correction": "DOC-TE-005-CLAIM"
+    },
+    "review_scope": "Use current environment records for the target case and the three listed source documents. Order returned queue items by the route priority you determine for huddle actioning."
+  }
+}

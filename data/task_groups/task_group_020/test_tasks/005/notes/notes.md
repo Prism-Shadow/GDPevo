@@ -1,188 +1,37 @@
-# test_005 Notes - Solstice Minority Rollover SPA Risk Allocation
+# test_005 Notes / 说明
 
 ## English
 
-### Data and Source Lineage
+Data and source lineage: This task belongs to `SCN_020_ma_transaction_contract_review_and_negotiation` and uses the task-group design for `test_005`, a committee negotiation-priority matrix for `PRJ_ROOK`. The source-example pattern comes from `E001`, `E002`, and especially `E003` for committee escalation of non-standard merger terms. Construction evidence comes from the shared generated deal-workbench environment under `task_group/task_group_020/env/`, including `deals`, `draft_terms`, `policy_thresholds`, `benchmarks`, `risk_estimates`, `cap_table`, `regulatory`, `consents`, `material_contracts`, `documents`, and `deal_notes` as exposed through the app and API. The only task-local payload is `input/payloads/answer_template.json`; no environment database, manifest, generator, seed, or source file is copied into solver payloads.
 
-This task belongs to `task_group_020`, scenario `SCN_020_ma_transaction_contract_review_and_negotiation`, derived from source examples `E001`, `E002`, and `E003`. It implements the `test_005` assignment from `scratch/task_group_design.md`: a buyer-side minority rollover stock purchase for deal `D-SOLSTICE-820`, combining allocation math with risk-allocation overrides.
+Task definition: The solver acts as counsel for Rook Mobility plc preparing an M&A Committee negotiation-priority matrix for Project Rook, a public-company merger with AnchorGate Partners involving Rook Autonomous Fleet. The visible prompt points to `<TASK_ENV_BASE_URL>` and asks for valid JSON matching the template. The expected work process is to locate `PRJ_ROOK`, identify policy `POL_MA_2025_A`, compare current draft terms with M&A Committee thresholds, exclude non-committee distractors, calculate threshold deltas from the stated bases, use benchmarks and risk estimates where applicable, rank concessions, and produce a final negotiation posture.
 
-The shared environment is `Aster Legal Deal Desk`, implemented under `task_group/task_group_020/env/`. The generated data comes from `env/data/dealdesk.json` and `env/data/manifest.json`. Public environment objects used by this task include deal `D-SOLSTICE-820`, policy `P-ROLLOVER-SPA-2026`, active documents `DOC-SOLSTICE820-TERM-01`, `DOC-SOLSTICE820-DRAFT-02`, `DOC-SOLSTICE820-EMAIL-03`, `DOC-SOLSTICE820-CAP-ACTIVE`, `DOC-SOLSTICE820-FIN-04`, `DOC-SOLSTICE820-MATCON-05`, `DOC-SOLSTICE820-DISC-06`, and `DOC-SOLSTICE820-COMMITTEE-07`. Stale or template distractors are `DOC-SOLSTICE820-CAP-STALE`, `DOC-SOLSTICE820-TEMPLATE-99`, `CL-SOLSTICE-820-S01`, and `CL-SOLSTICE-820-S02`.
+Scenario fit: This is a transaction-counsel review and negotiation task in the escalation-plus-negotiation family. It requires joining draft merger terms, board policy thresholds, market benchmark rows, risk estimates, cap-table math, regulatory status, consents, material-contract exposure, and deal-team notes. The business workflow mirrors counsel advising an M&A Committee on which points can be conditionally traded and which legal blockers must be fixed before signing.
 
-Task-local solver-visible files are `input/prompt.txt` and `input/payloads/answer_template.json`. The prompt is a realistic deal-desk request and does not include scoring hints, SOP steps, or answers.
+Material map: `GET /api/deals/PRJ_ROOK` supplies party names, value, dates, strategic context, and policy ID. `GET /api/deals/PRJ_ROOK/terms` supplies the four current draft terms: reverse termination fee, company termination fee, voting agreements, and MAE carve-outs. `GET /api/policies/POL_MA_2025_A/thresholds` supplies committee thresholds and identifies the company termination fee as a General Counsel item rather than an M&A Committee waiver. `GET /api/deals/PRJ_ROOK/benchmarks` supplies the fee benchmark used for reverse termination fee support. `GET /api/deals/PRJ_ROOK/risk-estimates` supplies closing-certainty, indemnity-leakage, and transition-disruption estimates, of which only closing certainty is included in the committee-waiver aggregate. `GET /api/deals/PRJ_ROOK/cap-table` supplies 45,400,000 fully diluted shares for lock-up share calculations. `GET /api/deals/PRJ_ROOK/regulatory`, `/consents`, `/material-contracts`, and `/notes` supply deal-certainty and negotiation-context flags.
 
-### Task Definition and Scenario Fit
+Solution and evaluation basis: The standard answer escalates exactly three M&A Committee waiver terms: `TERM_PRJ_ROOK_03` voting agreements, `TERM_PRJ_ROOK_01` reverse termination fee, and `TERM_PRJ_ROOK_04` MAE carve-outs. It excludes `TERM_PRJ_ROOK_02` company termination fee from the waiver matrix because its policy route is General Counsel, although the aggregate records its 3.4% draft, 3.0% threshold, and $3,040,000 excess as a non-committee distractor. Reverse termination fee math uses the $760,000,000 equity value: 4.2% equals $31,920,000, the 4.0% cap equals $30,400,000, and the excess is $1,520,000 or 0.20 percentage points. Its benchmark is sample size 42, median 3.2%, upper quartile 4.1%, so the draft is above the upper quartile. Voting agreement math uses the cap table total of 45,400,000 fully diluted shares: 41.0% locks 18,614,000 shares, the 35.0% cap permits 15,890,000 shares, and the excess is 2,724,000 shares. MAE scoring recognizes that two added carve-outs match the numeric count threshold but are not in the approved groups, so the issue is two unapproved carve-outs rather than a count excess.
 
-The solver acts as buyer-side transaction counsel for Solstice Strategic Capital. The requested deliverable is a normalized JSON drafting and risk-allocation package with two top-level business objects: `deal_terms` and `risk_overrides`. The solver must reconcile active deal records, current draft clauses, policy thresholds, latest client instructions, approval records, cap table data, financial schedules, and consent/customer-risk schedules.
+The evaluator has eight whole-point scoring goals with raw weights `[3, 3, 2, 2, 2, 2, 2, 1]`: correct waiver term set; correct threshold, delta, benchmark, and exposure calculations; correct recommendation choices; correct concession ranking; correct BATNA/deal-certainty flags; correct aggregate risk summary; correct required committee conditions; and correct final posture plus routing fields. These cover distinct business outcomes: inclusion/exclusion, financial and share calculations, market support, legal/deal-protection posture, negotiation sequencing, closing certainty, committee conditions, and routing metadata. Each point is all-or-nothing and deterministic using stable IDs, controlled enums, exact booleans, integer dollars and shares, percent points rounded to two decimals, and set/list comparisons. Likely model pitfalls include escalating the company termination fee as an M&A Committee item, using upfront cash rather than equity value, failing to calculate lock-up shares from the cap table, treating MAE as in policy because the count equals two, double-counting indemnity or transition risk, or ranking a tradeable economic concession ahead of the legal lock-up blocker.
 
-This fits the M&A contract review scenario because it mirrors the original examples' long-horizon legal workflow: select controlling deal-room sources, reject stale or generic materials, calculate consideration and indemnity amounts, identify out-of-policy draft clauses, and convert legal judgment into a structured drafting posture. The task is not a single lookup because the answer requires calculations and source-precedence decisions across several public environment surfaces.
+Transfer design: This test task is anchored by `train_003` and `train_005`. `train_003` teaches the committee-escalation convention: apply committee policy first, use the correct value basis, include only restricted or committee-threshold breaches, and separate quantified risk estimates from legal-only risk. `train_005` reinforces cross-system extraction, consent/regulatory context, and controlled final-position fields. Transfer-dependent difficulty appears in the term set, RTF math, exclusion of the non-committee fee, recommendation enums, and aggregate exposure treatment. Task-specific exploration difficulty appears in discovering the Rook cap table, voting-agreement threshold, current deal-certainty facts, MAE unapproved-carveout logic, and the negotiation sequence.
 
-### Material Map
-
-- `GET /api/deals/D-SOLSTICE-820` and `/deals/D-SOLSTICE-820`: deal profile, parties, economics, client positions, active/stale documents, schedules, and policy id.
-- `DOC-SOLSTICE820-TERM-01`: signed commercial term sheet with headline value, equity value, signing date, closing deadline, consideration mix, escrow, cap, basket, survival, and NWC terms.
-- `DOC-SOLSTICE820-DRAFT-02`: current draft agreement terms, including the unilateral note offset, 3.5% tax escrow, 14.5% headline-value cap, stale NWC baseline, and active negotiation posture.
-- `DOC-SOLSTICE820-EMAIL-03`: latest client instruction email, confirming the active allocation schedule, rejection of unilateral note offset, tax escrow reduction to 3%, NWC baseline update, and general-rep cap at escrow.
-- `DOC-SOLSTICE820-CAP-ACTIVE`: active July 25, 2026 ownership schedule for seller allocation math.
-- `DOC-SOLSTICE820-CAP-STALE`: stale May 31 cap table retained only as a distractor.
-- `DOC-SOLSTICE820-FIN-04`: financial schedule for working capital, escrows, cap, basket, and consideration mix.
-- `DOC-SOLSTICE820-MATCON-05`: material customer consent matrix and regulatory status.
-- `DOC-SOLSTICE820-DISC-06`: transition services, IP transition, employment, and restrictive covenant schedules.
-- `DOC-SOLSTICE820-COMMITTEE-07`: committee members and current approval-trigger record.
-- `P-ROLLOVER-SPA-2026`: rollover stock purchase risk-allocation standard.
-- `/api/clauses?deal_id=D-SOLSTICE-820`: active clause records `CL-SOLSTICE-820-001` through `CL-SOLSTICE-820-006` and stale template distractors.
-
-### Solution and Evaluation Basis
-
-The standard answer in `output/answer.json` uses the active July 25 cap table and active/latest written instructions. Headline value and equity value are both USD 224,000,000. The consideration mix is USD 154,000,000 cash at close, USD 12,000,000 seller note, USD 58,000,000 rollover equity, and no earnout. Following the task-group convention from term-population train tasks, the active ownership schedule controls allocation. The components are prorated by active ownership:
-
-- Prairie Energy Fund: 33.0%, USD 50,820,000 cash, USD 3,960,000 note, USD 19,140,000 rollover, USD 73,920,000 total.
-- Solstice Founder Group: 42.0%, USD 64,680,000 cash, USD 5,040,000 note, USD 24,360,000 rollover, USD 94,080,000 total.
-- Solstice Management Rollover: 25.0%, USD 38,500,000 cash, USD 3,000,000 note, USD 14,500,000 rollover, USD 56,000,000 total.
-
-Escrow and cap math uses the USD 224,000,000 headline value unless the policy specifies a different base. General escrow stays at 10.0%, or USD 22,400,000. The draft tax escrow is 3.5%, or USD 7,840,000, but the latest risk-allocation instruction caps the tax reserve at 3.0%, or USD 6,720,000. The target aggregate escrow is therefore 13.0%, or USD 29,120,000, rather than the draft 13.5%, or USD 30,240,000. The draft general cap is 14.5% of headline value, or USD 32,480,000. The required drafting position is to cap general reps at the general escrow amount, USD 22,400,000; the fallback cap is 12.0% of cash consideration, or USD 18,480,000, only with committee approval. The deductible basket is 0.75%, or USD 1,680,000, with a USD 50,000 de minimis and 18-month general rep survival.
-
-The seller note offset must be rejected unless written lender consent is obtained. The draft would reduce closing cash by USD 12,000,000 to USD 142,000,000 if accepted, but the target cash-at-close amount remains USD 154,000,000. Working capital uses the USD 26,300,000 target but rejects the stale May baseline. The draft USD 2,250,000 collar is 1.00% of headline value and exceeds the 0.75% maximum of USD 1,680,000 by USD 570,000. The answer uses a true-up against the current active balance sheet.
-
-The material customer consents are BasinOps Master Services and SunWell Safety Services, both closing conditions. Fleet Telematics License is only a notice/post-closing notice item. Customer revenue at risk is USD 65,200,000. HSR is not required after debt and excluded-asset adjustments, so no HSR filing condition should be included. Other approvals list BasinOps consent. Transition services for dispatch, safety reporting, and fleet telematics, plus IP transition, are required.
-
-The risk-overridden clause set is exactly `CAP`, `ESCROW`, `NOTE_OFFSET`, and `NWC`. `CASH_ROLLOVER` and `BASKET` are reviewed active clauses but not overridden clauses because the active draft already matches the controlling schedule or stays within policy. The controlling risk source IDs are `DOC-SOLSTICE820-COMMITTEE-07`, `DOC-SOLSTICE820-DRAFT-02`, `DOC-SOLSTICE820-EMAIL-03`, and `P-ROLLOVER-SPA-2026`; the clause IDs that actually drive override rows are `CL-SOLSTICE-820-002`, `CL-SOLSTICE-820-003`, `CL-SOLSTICE-820-004`, and `CL-SOLSTICE-820-005`. The answer rejects stale/template authority from `DOC-SOLSTICE820-CAP-STALE`, `DOC-SOLSTICE820-TEMPLATE-99`, `CL-SOLSTICE-820-S01`, and `CL-SOLSTICE-820-S02`.
-
-The active rollover policy would route the NWC topic to finance in isolation, but the Solstice draft/email/committee record states that the unrevised Solstice triggers route through credit committee. The standard answer therefore uses `DEAL_SPECIFIC_COMMITTEE_NOTE_CONTROLS`, `CREDIT_COMMITTEE`, and `DOC-SOLSTICE820-COMMITTEE-07` for all four unrevised triggers. The source-precedence enum is generic in the solver-visible template, but the hidden answer maps it to the active Solstice-specific instructions. The final drafting posture is `REVISE_BEFORE_SIGNING` with readiness `READY_AFTER_REVISIONS`.
-
-The evaluator has eight exact-match scoring points, raw total weight 10, synchronized with `task_group.yaml`:
-
-- `SP001_DEAL_TERMS_AND_CLOSING_FACTS`, weight 1: all generic deal-term work, including allocation math, indemnity values, note/NWC treatment, consents, HSR, transition services, and IP transition.
-- `SP002_EXACT_CONTROLLING_RISK_SOURCE_IDS`, weight 3: policy id/version, source precedence code, exact `controlling_risk_source_ids`, exact `source_ids`, rejected document source IDs, and superseded source IDs.
-- `SP003_EXACT_CONTROLLING_CLAUSE_SOURCE_IDS`, weight 1: exact `controlling_clause_source_ids`, exact `non_overridden_active_clause_ids`, and exact `rejected_template_clause_ids`, with accepted active clauses excluded from the controlling override-clause set.
-- `SP004_EXACT_OVERRIDE_CODES_NO_TEMPLATE_SUPERSEDED`, weight 1: exact `override_codes` and `overridden_clause_codes`; `TEMPLATE_SOURCE_POSITION` must not be included merely because template records were rejected.
-- `SP005_EXACT_NON_OVERRIDDEN_CLAUSE_HANDLING`, weight 1: exact `non_overridden_clause_codes` and `non_overridden_clause_handling` for active clauses reviewed but accepted.
-- `SP006_OVERRIDE_SUBSTANTIVE_POSITIONS`, weight 1: clause-level source clause IDs, source document IDs, policy rule IDs, override actions, draft position codes, and required position codes.
-- `SP007_APPROVAL_ROUTING_AND_SUMMARY`, weight 1: routing precedence, per-clause approval routing fields, and approval summary.
-- `SP008_FINAL_SOURCE_PRUNED_DRAFTING_POSTURE`, weight 1: final drafting posture, signing readiness, and drafting-position enums tied to the exact source-pruned risk sources, controlling clause IDs, override codes, and non-overridden active-clause handling.
-
-The evaluator accepts a prediction path as its first argument and defaults to `output/answer.json`. It prints JSON with normalized score, earned weight, total weight, point-level pass/fail, and mismatches. Lists are normalized by stable sort keys or sorted scalar values; floats are rounded to two decimal places.
-
-Likely model pitfalls include using the stale May cap table, allocating only total proceeds rather than cash/note/rollover components, accepting the note offset as an economic neutral, keeping the 3.5% tax escrow, computing the cap from the wrong base, omitting SunWell as a closing consent, treating Fleet Telematics as a consent, adding an HSR filing condition, treating generic template clauses as controlling, over-including every consulted diligence source as a controlling risk source, listing all active clauses as controlling clause sources, adding `TEMPLATE_SOURCE_POSITION` to the active override code set, listing `BASKET` or `CASH_ROLLOVER` as overridden clauses, and routing NWC to finance by reading the generic policy without applying the Solstice-specific committee source.
-
-### Transfer Design
-
-This is a test task. Its transfer anchors are `train_001`, `train_002`, and `train_005`.
-
-From `train_001`, solvers should transfer active-source precedence, cap table over stale exports, integer-dollar and two-decimal percentage conventions, and the habit of using material-contract schedules rather than template assumptions for consent and HSR flags. Those conventions support `SP001_DEAL_TERMS_AND_CLOSING_FACTS` and help avoid stale/template source mistakes in `SP002_EXACT_CONTROLLING_RISK_SOURCE_IDS`.
-
-From `train_002`, solvers should transfer the counterparty-paper review habit: compare active draft clauses against the controlling playbook or client instruction, identify deviations as structured issue codes, avoid adding non-deviating clauses as issues, quantify economic corrections, and treat transition/customer operational terms as material even when they are not pure price terms. Those conventions support `SP003_EXACT_CONTROLLING_CLAUSE_SOURCE_IDS`, `SP004_EXACT_OVERRIDE_CODES_NO_TEMPLATE_SUPERSEDED`, `SP005_EXACT_NON_OVERRIDDEN_CLAUSE_HANDLING`, `SP006_OVERRIDE_SUBSTANTIVE_POSITIONS`, and `SP008_FINAL_SOURCE_PRUNED_DRAFTING_POSTURE`.
-
-From `train_005`, solvers should transfer buyer-side term population plus policy-check methods: prorate consideration components by the active ownership schedule when no contrary component schedule controls, distinguish current approval requirements from conditional fallback authority, let deal-specific risk memos override generic templates, route approval bodies from the controlling current authority, and compute escrow/cap/basket amounts from the stated base. Those conventions support `SP001_DEAL_TERMS_AND_CLOSING_FACTS`, `SP002_EXACT_CONTROLLING_RISK_SOURCE_IDS`, `SP006_OVERRIDE_SUBSTANTIVE_POSITIONS`, `SP007_APPROVAL_ROUTING_AND_SUMMARY`, and `SP008_FINAL_SOURCE_PRUNED_DRAFTING_POSTURE`.
-
-Task-specific exploration remains necessary because Solstice uses a minority rollover structure, a seller-side note offset, a 3.5% tax escrow draft deviation, a headline-value cap problem, a stale NWC baseline, and customer consent facts that do not appear in the train answers.
-
-### Construction Record
-
-Author: task-builder subagent for `task_group_020/test_005`.
-
-Created: 2026-07-07.
-
-Updated: 2026-07-07.
-
-Major changes: created solver prompt, answer template, standard answer, exact-match evaluator, and bilingual notes for deal `D-SOLSTICE-820`; reworked after direct calibration scored too high by shifting emphasis from broad allocation/math checks to controlled source precedence, overridden-clause discipline, approval routing, source IDs, and final drafting posture. Later rework synchronized the evaluator and `task_group.yaml` to the current 10-point rubric: generic deal economics are one low-weight point, routing is separate from substantive override checks, and the largest point is exact risk-source pruning.
+Construction record: Author `task-builder-test-005`; created `2026-07-18`; updated `2026-07-18`. Major changes: created prompt, answer template, standard answer, deterministic evaluator, shell entry point, and bilingual notes for `test_005`.
 
 ## 中文
 
-### 数据和来源脉络
+数据与来源脉络：本任务属于 `SCN_020_ma_transaction_contract_review_and_negotiation`，采用任务组设计中针对 `PRJ_ROOK` 的 `test_005`，即委员会谈判优先级矩阵。源示例模式来自 `E001`、`E002`，尤其是 `E003` 中对非标准合并条款的委员会升级审查。构造证据来自共享生成的 deal-workbench 环境 `task_group/task_group_020/env/`，包括通过应用和 API 暴露的 `deals`、`draft_terms`、`policy_thresholds`、`benchmarks`、`risk_estimates`、`cap_table`、`regulatory`、`consents`、`material_contracts`、`documents` 和 `deal_notes`。任务本地唯一可见 payload 是 `input/payloads/answer_template.json`；没有将环境数据库、manifest、生成器、seed 或源码复制到 solver payload。
 
-本任务属于 `task_group_020`，场景为 `SCN_020_ma_transaction_contract_review_and_negotiation`，来源示例为 `E001`、`E002` 和 `E003`。它实现 `scratch/task_group_design.md` 中的 `test_005`：针对交易 `D-SOLSTICE-820` 的买方少数股权 rollover 股票购买交易，结合分配计算和风险分配覆盖判断。
+任务定义：解题者扮演 Rook Mobility plc 的交易律师，为 Project Rook 准备并购委员会谈判优先级矩阵。该项目是与 AnchorGate Partners 就 Rook Autonomous Fleet 进行的公众公司合并。可见 prompt 指向 `<TASK_ENV_BASE_URL>`，要求输出符合模板的有效 JSON。预期流程是定位 `PRJ_ROOK`，识别政策 `POL_MA_2025_A`，将当前草案条款与并购委员会阈值比对，排除非委员会干扰项，按指定基数计算阈值差额，在适用处使用 benchmark 和风险估算，排序谈判让步，并给出最终谈判姿态。
 
-共享环境是 `Aster Legal Deal Desk`，实现位置在 `task_group/task_group_020/env/`。生成数据来自 `env/data/dealdesk.json` 和 `env/data/manifest.json`。本任务使用的公开环境对象包括交易 `D-SOLSTICE-820`、政策 `P-ROLLOVER-SPA-2026`，有效文件 `DOC-SOLSTICE820-TERM-01`、`DOC-SOLSTICE820-DRAFT-02`、`DOC-SOLSTICE820-EMAIL-03`、`DOC-SOLSTICE820-CAP-ACTIVE`、`DOC-SOLSTICE820-FIN-04`、`DOC-SOLSTICE820-MATCON-05`、`DOC-SOLSTICE820-DISC-06` 和 `DOC-SOLSTICE820-COMMITTEE-07`。过期或模板干扰项为 `DOC-SOLSTICE820-CAP-STALE`、`DOC-SOLSTICE820-TEMPLATE-99`、`CL-SOLSTICE-820-S01` 和 `CL-SOLSTICE-820-S02`。
+场景适配：这是交易律师在并购谈判中执行的升级审查加谈判排序任务。它要求联结合并协议草案条款、董事会政策阈值、市场 benchmark、风险估算、股本结构计算、监管状态、同意事项、重大合同风险以及交易团队 notes。业务流程对应律师向并购委员会说明哪些条款可以附条件让步，哪些法律阻断项必须在签约前修复。
 
-任务本地、求解器可见的文件是 `input/prompt.txt` 和 `input/payloads/answer_template.json`。提示是现实交易台请求，不包含评分提示、SOP 步骤或答案。
+材料地图：`GET /api/deals/PRJ_ROOK` 提供交易方、金额、日期、战略背景和政策 ID。`GET /api/deals/PRJ_ROOK/terms` 提供四个当前草案条款：反向终止费、公司终止费、投票协议和 MAE carve-outs。`GET /api/policies/POL_MA_2025_A/thresholds` 提供委员会阈值，并显示公司终止费属于 General Counsel 路由，而不是并购委员会 waiver。`GET /api/deals/PRJ_ROOK/benchmarks` 提供反向终止费的市场 benchmark。`GET /api/deals/PRJ_ROOK/risk-estimates` 提供 closing certainty、indemnity leakage 和 transition disruption 估算，其中只有 closing certainty 计入委员会 waiver 汇总。`GET /api/deals/PRJ_ROOK/cap-table` 提供 45,400,000 股完全摊薄股份，用于 lock-up 股数计算。`GET /api/deals/PRJ_ROOK/regulatory`、`/consents`、`/material-contracts` 和 `/notes` 提供 deal-certainty 和谈判背景标记。
 
-### 任务定义与场景匹配
+答案与评估依据：标准答案只升级三个并购委员会 waiver 条款：`TERM_PRJ_ROOK_03` 投票协议、`TERM_PRJ_ROOK_01` 反向终止费、`TERM_PRJ_ROOK_04` MAE carve-outs。`TERM_PRJ_ROOK_02` 公司终止费被排除在 waiver matrix 之外，因为其政策路由是 General Counsel；但汇总中记录其 3.4% 草案、3.0% 阈值和 3,040,000 美元超额，作为非委员会干扰项。反向终止费以 760,000,000 美元 equity value 为基数：4.2% 为 31,920,000 美元，4.0% 上限为 30,400,000 美元，超额为 1,520,000 美元或 0.20 个百分点。其 benchmark 为样本量 42、中位数 3.2%、上四分位 4.1%，所以草案高于上四分位。投票协议计算使用 cap table 的 45,400,000 股完全摊薄股份：41.0% 锁定 18,614,000 股，35.0% 上限允许 15,890,000 股，超额为 2,724,000 股。MAE 评分识别两个新增 carve-out 虽然数量等于阈值二，但不属于批准组，因此问题是两个未批准 carve-out，而不是数量超额。
 
-求解器扮演 Solstice Strategic Capital 的买方交易律师。交付物是规范化的 JSON 起草和风险分配包，包含两个顶层业务对象：`deal_terms` 和 `risk_overrides`。求解器必须核对有效交易记录、当前草案条款、政策阈值、最新客户指示、审批记录、股权表、财务附表以及同意/客户风险附表。
+评估器有八个整点评分目标，原始权重为 `[3, 3, 2, 2, 2, 2, 2, 1]`：正确的 waiver 条款集合；正确的阈值、差额、benchmark 和风险计算；正确的建议选择；正确的让步排序；正确的 BATNA 与 deal-certainty 标记；正确的汇总风险；正确的委员会条件；正确的最终姿态和路由字段。这些覆盖不同业务结果：纳入与排除、财务和股数计算、市场支持、法律与交易保护姿态、谈判排序、closing certainty、委员会条件和路由元数据。每个评分点都是全有或全无，使用稳定 ID、受控枚举、精确布尔值、整数美元和股数、两位小数百分点以及集合/列表比较。常见错误包括把公司终止费当作并购委员会项目升级、使用 upfront cash 而不是 equity value、没有从 cap table 计算 lock-up 股数、因为 MAE 数量等于二而误判为合规、重复计入 indemnity 或 transition 风险，或把可交易经济让步排在法律 lock-up 阻断项之前。
 
-本任务符合并购合同审查场景，因为它复现了来源示例中的长流程法律工作：选择控制性交易室来源，排除过期或通用材料，计算对价和赔偿金额，识别不符合政策的草案条款，并把法律判断转成结构化起草立场。该任务不是单点查询，因为答案需要跨多个公开环境入口完成计算和资料优先级判断。
+迁移设计：本测试任务以 `train_003` 和 `train_005` 为迁移锚点。`train_003` 传递委员会升级规范：先适用委员会政策、使用正确价值基数、只纳入受限或触发委员会阈值的条款，并区分可量化风险估算与纯法律风险。`train_005` 强化跨系统提取、同意事项和监管背景、以及受控 final-position 字段。依赖迁移的难点包括条款集合、RTF 计算、排除非委员会终止费、建议枚举和汇总风险处理。任务特定探索难点包括发现 Rook 的 cap table、投票协议阈值、当前 deal-certainty 事实、MAE 未批准 carve-out 逻辑以及谈判顺序。
 
-### 材料地图
-
-- `GET /api/deals/D-SOLSTICE-820` 和 `/deals/D-SOLSTICE-820`：交易档案、交易方、经济条款、客户立场、有效/过期文件、附表和政策编号。
-- `DOC-SOLSTICE820-TERM-01`：已签署商业条款书，包含 headline value、equity value、签署日、交割期限、对价组合、托管、cap、basket、存续期和营运资金条款。
-- `DOC-SOLSTICE820-DRAFT-02`：当前草案协议条款，包括单方 note offset、3.5% 税务托管、14.5% headline-value cap、过期 NWC 基线和当前谈判立场。
-- `DOC-SOLSTICE820-EMAIL-03`：最新客户指示邮件，确认有效分配附表、拒绝单方 note offset、税务托管降至 3%、更新 NWC 基线、一般陈述保证 cap 等于托管。
-- `DOC-SOLSTICE820-CAP-ACTIVE`：2026-07-25 有效所有权附表，用于卖方分配计算。
-- `DOC-SOLSTICE820-CAP-STALE`：2026-05-31 过期股权表，仅作为干扰项。
-- `DOC-SOLSTICE820-FIN-04`：营运资金、托管、cap、basket 和对价组合财务附表。
-- `DOC-SOLSTICE820-MATCON-05`：重大客户同意矩阵和监管状态。
-- `DOC-SOLSTICE820-DISC-06`：过渡服务、IP 过渡、雇佣和限制性契约附表。
-- `DOC-SOLSTICE820-COMMITTEE-07`：委员会成员和当前审批触发记录。
-- `P-ROLLOVER-SPA-2026`：rollover 股票购买风险分配标准。
-- `/api/clauses?deal_id=D-SOLSTICE-820`：有效条款记录 `CL-SOLSTICE-820-001` 至 `CL-SOLSTICE-820-006` 以及过期模板干扰条款。
-
-### 答案和评估依据
-
-标准答案 `output/answer.json` 使用 2026-07-25 有效股权表以及有效/最新书面指示。Headline value 和 equity value 均为 224,000,000 美元。对价组合为交割现金 154,000,000 美元、卖方票据 12,000,000 美元、rollover equity 58,000,000 美元，没有 earnout。根据条款填充训练任务中的任务组惯例，有效所有权附表控制分配。各对价组成部分按有效持股比例分摊：
-
-- Prairie Energy Fund：33.0%，现金 50,820,000 美元，票据 3,960,000 美元，rollover 19,140,000 美元，总计 73,920,000 美元。
-- Solstice Founder Group：42.0%，现金 64,680,000 美元，票据 5,040,000 美元，rollover 24,360,000 美元，总计 94,080,000 美元。
-- Solstice Management Rollover：25.0%，现金 38,500,000 美元，票据 3,000,000 美元，rollover 14,500,000 美元，总计 56,000,000 美元。
-
-除非政策指定其他基数，托管和 cap 计算使用 224,000,000 美元 headline value。一般托管保持 10.0%，即 22,400,000 美元。草案税务托管为 3.5%，即 7,840,000 美元，但最新风险分配指示将税务 reserve 上限设为 3.0%，即 6,720,000 美元。因此目标总托管为 13.0%，即 29,120,000 美元，而不是草案的 13.5%，即 30,240,000 美元。草案一般 cap 为 headline value 的 14.5%，即 32,480,000 美元。正确起草立场是一般陈述保证 cap 等于一般托管金额 22,400,000 美元；备用 cap 为现金对价的 12.0%，即 18,480,000 美元，但仅在委员会批准时可用。Deductible basket 为 0.75%，即 1,680,000 美元，de minimis 为 50,000 美元，一般陈述保证存续期为 18 个月。
-
-除非取得书面贷款人同意，卖方票据抵销必须被拒绝。如果接受草案抵销，交割现金会减少 12,000,000 美元至 142,000,000 美元；目标交割现金仍为 154,000,000 美元。营运资本使用 26,300,000 美元目标，但拒绝 5 月过期基线。草案 2,250,000 美元 collar 占 headline value 的 1.00%，超过 0.75% 上限 1,680,000 美元，超出 570,000 美元。答案采用基于当前有效资产负债表的 closing true-up。
-
-重大客户同意为 BasinOps Master Services 和 SunWell Safety Services，二者均为交割条件。Fleet Telematics License 只是通知/交割后通知事项。客户收入风险为 65,200,000 美元。经债务和排除资产调整后不需要 HSR，因此不应加入 HSR filing condition。其他审批列明 BasinOps consent。Dispatch、safety reporting 和 fleet telematics 过渡服务以及 IP 过渡均为必需。
-
-风险覆盖条款集合精确为 `CAP`、`ESCROW`、`NOTE_OFFSET` 和 `NWC`。`CASH_ROLLOVER` 和 `BASKET` 是已审阅的有效条款，但不属于被覆盖条款，因为有效草案已经符合控制性附表或在政策内。控制风险分配的来源 ID 为 `DOC-SOLSTICE820-COMMITTEE-07`、`DOC-SOLSTICE820-DRAFT-02`、`DOC-SOLSTICE820-EMAIL-03` 和 `P-ROLLOVER-SPA-2026`；真正进入覆盖条款行的条款 ID 为 `CL-SOLSTICE-820-002`、`CL-SOLSTICE-820-003`、`CL-SOLSTICE-820-004` 和 `CL-SOLSTICE-820-005`。答案排除 `DOC-SOLSTICE820-CAP-STALE`、`DOC-SOLSTICE820-TEMPLATE-99`、`CL-SOLSTICE-820-S01` 和 `CL-SOLSTICE-820-S02` 等过期/模板来源。
-
-单独阅读 rollover 政策时，NWC 主题会指向 finance committee；但 Solstice 的有效草案、邮件和委员会记录写明未修改的 Solstice 触发项由 credit committee 审批。因此标准答案对四项未修改触发都使用 `DEAL_SPECIFIC_COMMITTEE_NOTE_CONTROLS`、`CREDIT_COMMITTEE` 和 `DOC-SOLSTICE820-COMMITTEE-07`。求解器可见模板中的来源优先级枚举保持通用表述，隐藏答案再将其映射到 Solstice 特定的有效指示。最终起草立场为 `REVISE_BEFORE_SIGNING`，签约准备状态为 `READY_AFTER_REVISIONS`。
-
-评估器包含 8 个精确匹配评分点，原始总权重为 10，并已与 `task_group.yaml` 同步：
-
-- `SP001_DEAL_TERMS_AND_CLOSING_FACTS`，权重 1：所有通用交易条款工作，包括分配计算、赔偿数值、note/NWC 处理、consent、HSR、过渡服务和 IP 过渡。
-- `SP002_EXACT_CONTROLLING_RISK_SOURCE_IDS`，权重 3：政策编号/版本、来源优先级代码、精确 `controlling_risk_source_ids`、精确 `source_ids`、被拒绝文件来源 ID 和 superseded source ID。
-- `SP003_EXACT_CONTROLLING_CLAUSE_SOURCE_IDS`，权重 1：精确 `controlling_clause_source_ids`、精确 `non_overridden_active_clause_ids` 和精确 `rejected_template_clause_ids`，已接受的有效条款不得进入控制性 override clause 集合。
-- `SP004_EXACT_OVERRIDE_CODES_NO_TEMPLATE_SUPERSEDED`，权重 1：精确 `override_codes` 和 `overridden_clause_codes`；不能仅因拒绝模板记录就加入 `TEMPLATE_SOURCE_POSITION`。
-- `SP005_EXACT_NON_OVERRIDDEN_CLAUSE_HANDLING`，权重 1：针对已审阅但接受的有效条款，精确填写 `non_overridden_clause_codes` 和 `non_overridden_clause_handling`。
-- `SP006_OVERRIDE_SUBSTANTIVE_POSITIONS`，权重 1：条款级 source clause ID、source document ID、policy rule ID、override action、草案立场代码和目标立场代码。
-- `SP007_APPROVAL_ROUTING_AND_SUMMARY`，权重 1：路由优先级、逐条款审批路由字段和审批摘要。
-- `SP008_FINAL_SOURCE_PRUNED_DRAFTING_POSTURE`，权重 1：最终起草姿态、签署准备状态和起草立场枚举，且必须绑定到精确裁剪后的风险来源、控制条款 ID、override code 和未覆盖有效条款处理。
-
-评估器接受预测文件路径作为第一个参数，默认使用 `output/answer.json`。输出 JSON 包括标准化得分、获得权重、总权重、各点评分通过情况和 mismatch。列表按稳定排序键或标量值排序，浮点数四舍五入到两位小数。
-
-常见模型错误包括使用 5 月过期股权表、只分配总收益而不分配现金/票据/rollover 组成部分、把 note offset 当作经济中性条款、保留 3.5% 税务托管、用错误基数计算 cap、漏掉 SunWell 作为交割同意、把 Fleet Telematics 当作 consent、加入 HSR filing condition、把通用模板条款当作控制条款、把所有查阅过的 diligence 来源都列成控制风险来源、把所有有效条款都列为控制性 clause source、在有效 override code 集合中加入 `TEMPLATE_SOURCE_POSITION`、把 `BASKET` 或 `CASH_ROLLOVER` 列为覆盖条款，以及只读通用政策而未应用 Solstice 特定委员会来源导致把 NWC 路由到 finance committee。
-
-### 迁移设计
-
-这是一个测试任务。迁移锚点是 `train_001`、`train_002` 和 `train_005`。
-
-从 `train_001`，求解器应迁移有效来源优先、有效股权表优先于过期导出、整数美元和两位小数百分比惯例，以及用重大合同附表而非模板假设判断 consent 和 HSR flags 的习惯。这些经验支撑 `SP001_DEAL_TERMS_AND_CLOSING_FACTS`，并帮助避免 `SP002_EXACT_CONTROLLING_RISK_SOURCE_IDS` 中的过期/模板来源错误。
-
-从 `train_002`，求解器应迁移对方稿审阅习惯：用控制性 playbook 或客户指示比对有效草案条款，将偏差识别为结构化问题代码，避免把没有偏差的条款加入 issue/override 列表，量化经济修正，并把过渡/客户运营条款视为重要事项，而不仅关注价格条款。这些经验支撑 `SP003_EXACT_CONTROLLING_CLAUSE_SOURCE_IDS`、`SP004_EXACT_OVERRIDE_CODES_NO_TEMPLATE_SUPERSEDED`、`SP005_EXACT_NON_OVERRIDDEN_CLAUSE_HANDLING`、`SP006_OVERRIDE_SUBSTANTIVE_POSITIONS` 和 `SP008_FINAL_SOURCE_PRUNED_DRAFTING_POSTURE`。
-
-从 `train_005`，求解器应迁移买方条款填充和政策检查方法：在没有相反组成部分分配附表时，按有效所有权附表分摊各对价组成部分；区分当前审批要求和条件性 fallback 授权；让交易特定风险备忘录覆盖通用模板；根据当前控制性来源路由审批机构；按指定基数计算托管、cap 和 basket 金额。这些经验支撑 `SP001_DEAL_TERMS_AND_CLOSING_FACTS`、`SP002_EXACT_CONTROLLING_RISK_SOURCE_IDS`、`SP006_OVERRIDE_SUBSTANTIVE_POSITIONS`、`SP007_APPROVAL_ROUTING_AND_SUMMARY` 和 `SP008_FINAL_SOURCE_PRUNED_DRAFTING_POSTURE`。
-
-任务特定探索仍然必要，因为 Solstice 交易具有少数 rollover 结构、卖方票据抵销、3.5% 税务托管草案偏差、headline-value cap 问题、过期 NWC 基线，以及训练答案中没有出现的客户同意事实。
-
-### 构建记录
-
-作者：`task_group_020/test_005` task-builder subagent。
-
-创建日期：2026-07-07。
-
-更新日期：2026-07-07。
-
-主要变更：为交易 `D-SOLSTICE-820` 创建求解器提示、答案模板、标准答案、精确匹配评估器和双语 notes；在直接校准得分过高后进行重构，将评分重点从宽泛分配/计算检查转向受控来源优先级、覆盖条款纪律、审批路由、来源 ID 和最终起草立场。后续返工将评估器和 `task_group.yaml` 同步为当前 10 分 rubric：通用交易经济条款合并为低权重点，路由与实质 override 检查分离，最高权重点为精确风险来源裁剪。
-
-## Evaluation Synchronization Update
-
-The evaluator has eight exact-match scoring points, raw total weight 10, synchronized with `task_group.yaml`:
-
-- `SP001_DEAL_TERMS_AND_CLOSING_FACTS`, weight 1: all generic deal-term work, including allocation math, indemnity values, note/NWC treatment, consents, HSR, transition services, and IP transition.
-- `SP002_EXACT_CONTROLLING_RISK_SOURCE_IDS`, weight 3: policy id/version, source precedence code, exact `controlling_risk_source_ids`, exact `source_ids`, rejected document source IDs, and superseded source IDs.
-- `SP003_EXACT_CONTROLLING_CLAUSE_SOURCE_IDS`, weight 1: exact `controlling_clause_source_ids`, exact `non_overridden_active_clause_ids`, and exact `rejected_template_clause_ids`, with accepted active clauses excluded from the controlling override-clause set.
-- `SP004_EXACT_OVERRIDE_CODES_NO_TEMPLATE_SUPERSEDED`, weight 1: exact `override_codes` and `overridden_clause_codes`; `TEMPLATE_SOURCE_POSITION` must not be included merely because template records were rejected.
-- `SP005_EXACT_NON_OVERRIDDEN_CLAUSE_HANDLING`, weight 1: exact `non_overridden_clause_codes` and `non_overridden_clause_handling` for active clauses reviewed but accepted.
-- `SP006_OVERRIDE_SUBSTANTIVE_POSITIONS`, weight 1: clause-level source clause IDs, source document IDs, policy rule IDs, override actions, draft position codes, and required position codes.
-- `SP007_APPROVAL_ROUTING_AND_SUMMARY`, weight 1: routing precedence, per-clause approval routing fields, and approval summary.
-- `SP008_FINAL_SOURCE_PRUNED_DRAFTING_POSTURE`, weight 1: final drafting posture, signing readiness, and drafting-position enums tied to the exact source-pruned risk sources, controlling clause IDs, override codes, and non-overridden active-clause handling.
-
-This section is authoritative for evaluator weight documentation after the latest rework. It matches `eval/eval.py` and `task_group.yaml`.
+构造记录：作者 `task-builder-test-005`；创建日期 `2026-07-18`；更新日期 `2026-07-18`。主要变更：为 `test_005` 创建 prompt、答案模板、标准答案、确定性 evaluator、shell 入口和双语 notes。

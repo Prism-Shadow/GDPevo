@@ -1,43 +1,37 @@
-# English
+# test_004 hidden construction notes
 
-Task `test_004` is a combined portfolio mix plus SLA aging test for Core Services. The solver-visible prompt uses `<TASK_ENV_BASE_URL>`, points to `request_context.json`, and asks for exact JSON matching `answer_template.json` without exposing the rubric or hidden answer.
+## English
 
-The hidden answer was computed from the shared environment using the common portfolio and SLA rules: quarter-end effective status from status history, category precedence, target-gap rounding, 21-day inclusive recent-closed SLA inclusion, owner/team hotspot tie-breaks, duplicate cluster representatives, and the combined action enum.
+Data/source lineage: This task belongs to `SCN_024_engineering_portfolio_work_item_analytics`, derived from source examples `E001`, `E002`, and `E003`, with the portfolio-mix behavior mainly aligned to `E001`. The task follows `scratch/task_group_design.md` and `scratch/task_builder_assignments.md` for `test_004`. The construction data is the generated SQLite environment at `task_group/task_group_024/env/portfolio.db`, especially `work_items` and the `mix_targets` row where `scope_id = test_004`. Task-local solver-visible files are `input/prompt.txt` and `input/payloads/answer_template.json`; the gold answer is `output/answer.json`; deterministic scoring is in `eval/eval.py` and `eval/eval.sh`.
 
-Train anchors:
-- `train_001`: portfolio closed-work eligibility, category precedence, target gaps, and allocation follow-up actions.
-- `train_002`: SLA inclusion, overdue detection, owner/team hotspots, duplicate clusters, and missing-owner triage.
-- `train_004`: portfolio target comparison and gap rounding for a later-quarter product review.
-- `train_005`: SLA duplicate handling, status-history precedence, and missing-owner reliability/security triage.
+Task definition: The solver is asked to prepare a Q4 2025 investment mix review for teams `Integrations`, `Billing`, `API Foundations`, and `Revenue Platform` across product areas `API Connectivity` and `Revenue Systems`. The expected answer reports the included work item ids, category counts, a sorted gap table, under-invested categories, owner teams for follow-up, and evidence ids grouped by final category. The important objects are work items, their team/product/status/closed date/duplicate fields, title/type/label classification signals, and the `test_004` target mix row.
 
-Assumption: the SLA scope is all Core Services reliability/security work items visible as of 2026-06-30, not only items whose `quarter` is 2026-Q2. The portfolio scope remains restricted to Core Services 2026-Q2 closed work.
+Scenario fit: This is an engineering portfolio analytics workflow. It represents a portfolio operations review where raw delivery records must be filtered, normalized, classified, compared against investment targets, and converted into follow-up ownership. It fits the group because it exercises the same object relationships and data flow as other portfolio tasks: work item facts feed category rollups, target rows provide benchmark percentages, and the final JSON captures business decisions rather than raw query output.
 
-# 中文
+Material map: `work_items` provides the candidate population, inclusion/exclusion fields, classification signals, and team ownership. `mix_targets` provides target fractions for `NewFeature`, `TechDebt`, `Reliability`, and `Security`; the answer converts them to percentage-point units. `input/payloads/answer_template.json` declares exact fields, enum values, numeric precision, and ordering. The evaluator checks normalized structured business outcomes, not prose.
 
-`test_004` 是 Core Services 的组合测试，覆盖组合投资结构和 SLA 老化。面向求解器的提示使用 `<TASK_ENV_BASE_URL>`，引用 `request_context.json`，并要求输出与 `answer_template.json` 完全一致的 JSON；提示中没有暴露评分细则或隐藏答案。
+Solution/evaluation basis: The qualifying included ids are `WI-24024-123`, `WI-24024-150`, `WI-24024-P061`, `WI-24024-P062`, `WI-24024-P063`, `WI-24024-P064`, `WI-24024-P065`, `WI-24024-P066`, `WI-24024-P067`, and `WI-24024-P068`. Excluded same-scope Q4 distractors include cancelled, duplicate-status, or `duplicate_of` records: `WI-24024-053`, `WI-24024-122`, `WI-24024-P069`, `WI-24024-P070`, and `WI-24024-P071`; they are intentionally not a scored output for this test but should be understood during construction. `WI-24024-P061` is classified as NewFeature because its authoritative type and rollout intent dominate a latency-only supporting label; stronger reliability signals such as outage, incident, flaky, or explicit reliability still classify as Reliability. Final category counts are NewFeature 2, TechDebt 1, Reliability 3, Security 4. Actual percentages are 20.0, 10.0, 30.0, and 40.0. The `test_004` target row gives targets 36.0, 22.0, 20.0, and 22.0 percentage points, so gaps are -16.0, -12.0, 10.0, and 18.0. The sorted gap table is ordered by gap ascending, then category name, producing NewFeature, TechDebt, Reliability, Security. Under-invested categories are NewFeature and TechDebt. Owner teams are API Foundations and Revenue Platform for NewFeature, based on `WI-24024-P061` and `WI-24024-P064`, and Integrations for TechDebt, based on `WI-24024-P067`.
 
-隐藏答案基于共享环境并按通用组合投资和 SLA 规则计算：使用状态历史确定季度末有效状态，按类别优先级分类，按目标差距规则取整，SLA 最近关闭窗口为向前 21 天且包含边界日期，按规则排序 owner/team 热点，生成重复集群代表，并选择组合动作枚举。
+Scoring goals and weights: SP001 P-series included set (3), SP002 legacy included set (1), SP003 excluded distractors absent (3), SP004 category counts (1), SP005 sorted gap table (1), SP006 under-invested categories (1), SP007 action owner teams (1), and SP008 evidence ids by category (1), for 12 raw points total. These cover distinct outcomes: population eligibility across deterministic and generated records, exclusion hygiene, classification aggregation, target-gap math and ranking, deficit decision, operational ownership, and evidence traceability. Each point is all-or-zero with deterministic normalization. Likely pitfalls include trusting `legacy_category` or `mirror_status`, counting duplicates, using story points instead of item counts, overgeneralizing latency-only feature rollout work as Reliability, failing classification precedence on mixed signals such as encryption plus migration, and sorting the gap table by category instead of by gap.
 
-训练锚点：
-- `train_001`：已完成工单的组合投资口径、类别优先级、目标差距和分配跟进行动。
-- `train_002`：SLA 纳入范围、逾期判断、owner/team 热点、重复集群和缺 owner 分诊。
-- `train_004`：后续季度产品评审中的组合目标对比和差距取整。
-- `train_005`：SLA 重复集群处理、状态历史优先级，以及可靠性/安全性缺 owner 分诊。
+Transfer design: This test names `train_001` and `train_004` as transfer anchors. From `train_001`, solvers should infer the quarter/date filter, closed portfolio inclusion conventions, count-based percentage math, target-gap convention, and category precedence. From `train_004`, solvers should transfer handling of stale mirror fields, noisy legacy categories, excluded duplicate records, and owner-team selection from under-invested category evidence. Transfer-dependent scoring points are especially SP001, SP002, SP003, SP004, SP005, SP006, and SP007. Task-specific exploration is still required to discover the new teams, product areas, `test_004` target values, scoped work item ids, and exact category evidence in the environment.
 
-假设：SLA 范围为截至 2026-06-30 可见的全部 Core Services 可靠性/安全性工单，不仅限于 `quarter` 为 2026-Q2 的工单。组合投资范围仍只限 Core Services 2026-Q2 的已完成工单。
+Construction record: Author: Codex task-builder. Created: 2026-07-18. Updated: 2026-07-18. Major changes: created `test_004` prompt, answer template, gold answer, evaluator, and bilingual construction notes from the assigned database-backed scope.
 
-## Integration Audit Addendum
+## 中文
 
-Lineage and materials: this combined test draws from both `E001` and `E002`. It uses Core Services portfolio targets and Q2 work items for the mix section, plus all visible Core Services reliability/security work as of 2026-06-30 for the SLA section. Required evidence is distributed across work items, status history, targets, SLA policies, owners, teams, duplicate clusters, and policy docs.
+数据和来源：本任务属于 `SCN_024_engineering_portfolio_work_item_analytics`，来源示例为 `E001`、`E002`、`E003`，其中投资组合分类和目标差距部分主要承接 `E001`。任务定义来自 `scratch/task_group_design.md` 和 `scratch/task_builder_assignments.md` 中的 `test_004`。构造数据使用生成的 SQLite 环境 `task_group/task_group_024/env/portfolio.db`，重点是 `work_items` 表以及 `scope_id = test_004` 的 `mix_targets` 行。本地可见输入是 `input/prompt.txt` 和 `input/payloads/answer_template.json`，标准答案是 `output/answer.json`，确定性评分逻辑在 `eval/eval.py` 和 `eval/eval.sh`。
 
-Solution and evaluation basis: eight exact-match points score portfolio eligible set, category counts, under-investment/follow-up, SLA included population, overdue set, hotspot ranking, duplicate/missing-owner triage, and the combined action enum. The expected action is `PortfolioOnlyFollowUp` because the under-invested categories are not reliability/security even though SLA overdue work exists.
+任务定义：求解者需要为 2025 年第四季度的 `Integrations`、`Billing`、`API Foundations`、`Revenue Platform` 团队，在 `API Connectivity` 和 `Revenue Systems` 产品区域内准备投资组合 mix 复盘。期望输出包括纳入的 work item id、类别计数、排序后的目标差距表、投入不足类别、后续行动负责团队，以及按最终类别分组的证据 id。关键对象包括 work item 的团队、产品区域、状态、关闭日期、重复关系、标题、类型、标签和目标 mix 数据。
 
-Transfer design: this task intentionally combines recurring operation families. It rewards transfer from both work-mix train tasks and both SLA train tasks, while requiring fresh Core Services exploration and synthesis.
+场景契合度：这是工程投资组合分析流程。业务上需要从交付记录中过滤合格工作项，统一分类，与投资目标比较，再形成后续负责人建议。它符合本任务组的核心关系：work item 事实进入类别汇总，目标表提供基准比例，最终 JSON 输出业务结论而不是简单查询结果。
 
-## 集成审核补充
+材料地图：`work_items` 提供候选范围、纳入排除字段、分类信号和团队归属。`mix_targets` 提供 `NewFeature`、`TechDebt`、`Reliability`、`Security` 的目标比例，答案中转换为百分点。`input/payloads/answer_template.json` 定义字段、枚举、数值精度和排序要求。评估器只检查结构化业务结果，不评价自由文本。
 
-数据来源与材料：该组合测试同时来自 `E001` 和 `E002`。mix 部分使用 Core Services 的组合目标和 Q2 工单，SLA 部分使用截至 2026-06-30 可见的全部 Core Services reliability/security 工单。证据分布在 work_items、status_history、targets、SLA policies、owners、teams、duplicate clusters 和政策文档中。
+答案和评估依据：合格纳入 id 为 `WI-24024-123`、`WI-24024-150`、`WI-24024-P061`、`WI-24024-P062`、`WI-24024-P063`、`WI-24024-P064`、`WI-24024-P065`、`WI-24024-P066`、`WI-24024-P067`、`WI-24024-P068`。同范围 Q4 中被排除的干扰项包括取消、重复状态或 `duplicate_of` 非空的记录：`WI-24024-053`、`WI-24024-122`、`WI-24024-P069`、`WI-24024-P070`、`WI-24024-P071`；本测试不单独评分这些 id，但构造时需要确认。`WI-24024-P061` 归为 NewFeature，因为其权威类型和 rollout 业务意图强于单独的 latency 辅助标签；outage、incident、flaky 或明确 reliability 等更强信号仍归为 Reliability。最终类别计数为 NewFeature 2、TechDebt 1、Reliability 3、Security 4。实际比例为 20.0、10.0、30.0、40.0。`test_004` 目标为 36.0、22.0、20.0、22.0 个百分点，因此差距为 -16.0、-12.0、10.0、18.0。差距表按 gap 升序再按类别名排序，顺序为 NewFeature、TechDebt、Reliability、Security。投入不足类别是 NewFeature 和 TechDebt。负责团队分别为 API Foundations 与 Revenue Platform，以及 Integrations，对应证据 `WI-24024-P061`、`WI-24024-P064` 与 `WI-24024-P067`。
 
-解法与评测依据：八个精确匹配点评分 portfolio eligible 集、类别计数、低配/跟进、SLA 纳入总体、逾期集、热点排序、重复/缺 owner 分诊和 combined action 枚举。预期动作是 `PortfolioOnlyFollowUp`，因为低配类别不是 reliability/security，即使存在 SLA 逾期项。
+评分目标和权重：SP001 P-series 纳入集合 3 分，SP002 legacy 纳入集合 1 分，SP003 已排除干扰项不出现在纳入集合中 3 分，SP004 类别计数 1 分，SP005 排序后的差距表 1 分，SP006 投入不足类别 1 分，SP007 行动负责团队 1 分，SP008 按类别分组的证据 id 1 分，总计 12 个原始分。这些覆盖不同业务结果：确定性和生成记录共同组成的资格过滤、排除项卫生、分类汇总、目标差距计算和排序、缺口判断、运营负责人、证据可追溯性。每个评分点都是整点通过或失败。常见错误包括相信 `legacy_category` 或 `mirror_status`、计入重复项、用 story points 而不是条目数计算、在 encryption 与 migration 等混合信号下忽略分类优先级、以及按类别顺序而不是 gap 顺序排列差距表。
 
-迁移设计：该任务有意组合两个重复操作族。它奖励从两个 work-mix 训练任务和两个 SLA 训练任务迁移经验，同时仍要求对 Core Services 做新的探索和综合判断。
+迁移设计：本测试明确以 `train_001` 和 `train_004` 为迁移锚点。通过 `train_001`，求解者应迁移季度日期过滤、关闭态组合纳入规则、按数量计算百分比、目标差距定义和类别优先级。通过 `train_004`，求解者应迁移对陈旧镜像字段、噪声 legacy 类别、重复记录排除和从投入不足类别证据选择负责团队的处理方式。高度依赖迁移的评分点包括 SP001、SP002、SP003、SP004、SP005、SP006 和 SP007。任务本身仍要求探索新的团队、产品区域、`test_004` 目标值、范围内 work item id 和精确类别证据。
+
+构造记录：作者：Codex task-builder。创建日期：2026-07-18。更新日期：2026-07-18。主要变更：基于指定数据库范围创建了 `test_004` 的提示、答案模板、标准答案、评估器和双语构造说明。

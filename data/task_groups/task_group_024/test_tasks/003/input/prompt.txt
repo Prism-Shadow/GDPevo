@@ -1,7 +1,28 @@
-You are preparing the Vega 2.0 release readiness and gating risk rollup.
+You are preparing a release-readiness assessment for release REL-ZEPHYR-2026-03.
 
-Use <TASK_ENV_BASE_URL> as the root URL for the engineering operations workspace. Read the task context from input/payloads/request_context.json and return one JSON object that exactly matches input/payloads/answer_template.json.
+Use the shared environment at <TASK_ENV_BASE_URL>. The environment provides release, milestone, work item, blocker, dependency, SLA, mix-target, and restricted SQL query endpoints. The runtime access details are supplied separately in environment_access.md.
 
-Analyze release REL-VEGA-20 as of 2026-06-30 using the relevant workspace records. Percentages must be rounded to one decimal place. Lists of IDs must be sorted unless the template field is an ordered dependency chain.
+Build the answer from authoritative release data, milestone data, work item status fields, blocker records, and dependency records. Do not use stale mirror fields as release truth.
 
-Return JSON only. Do not include prose, markdown, comments, citations, or extra keys.
+Return a single JSON object matching input/payloads/answer_template.json. Include:
+
+- the ship decision for the release using one of SHIP, SHIP_WITH_WATCH, or NO_SHIP;
+- milestone completion metrics for every milestone in this release;
+- the sorted set of non-complete release work item ids that gate readiness;
+- unresolved high-impact blocker cause counts keyed by exact cause text;
+- critical dependency chains as ordered work item id paths from blocked release work to the non-complete dependency;
+- the sorted set of non-complete primary release work item ids that remain watch items but are not hard readiness gates;
+- unresolved low- or medium-impact blocker cause counts keyed by exact cause text;
+- a milestone watch summary with milestone owner team and count of non-gating watch items in each milestone;
+- the readiness score for the release.
+
+Ordering and precision requirements:
+
+- milestone_completion must be sorted by milestone_id ascending;
+- gating_work_item_ids must be sorted ascending with no duplicates;
+- blocker_cause_counts keys must be exact cause strings;
+- watch_blocker_cause_counts keys must be exact cause strings;
+- watch_milestone_summary must be sorted by milestone_id ascending;
+- critical_dependency_chains must be sorted lexicographically by the full path;
+- completion_pct values are percentages rounded to 1 decimal place;
+- readiness_score is rounded to 3 decimal places.

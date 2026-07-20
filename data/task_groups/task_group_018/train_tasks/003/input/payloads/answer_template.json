@@ -1,167 +1,102 @@
 {
-  "task_id": "train_003",
-  "output_type": "gloucester_dui_probation_packet",
-  "required_top_level_keys": [
-    "task_id",
-    "packet_id",
-    "county",
-    "defendants",
-    "packet_totals"
+  "schema_name": "va_gloucester_post_sentencing_packet",
+  "version": "1.0",
+  "instructions": {
+    "format": "Return one JSON object matching this structure. Do not include markdown.",
+    "currency_precision": "Numbers representing money must be numeric values rounded to cents.",
+    "date_format": "Dates must use ISO YYYY-MM-DD. Date-times must use ISO local format YYYY-MM-DDTHH:MM:SS.",
+    "list_ordering": "Sort placeholder_fields and excluded_financial_items by field/item name ascending."
+  },
+  "case_memo": {
+    "case_number": "string",
+    "court": "string",
+    "defendant_name": "string",
+    "conviction_date": "YYYY-MM-DD",
+    "offense": "string",
+    "statute": "string",
+    "sentence_summary": {
+      "jail_months_imposed": "integer",
+      "jail_months_suspended": "integer",
+      "fine_imposed": "currency number",
+      "court_costs": "currency number",
+      "fines_and_costs_total": "currency number",
+      "supervised_probation_months": "integer",
+      "license_suspension_months": "integer",
+      "release_from_active_confinement": "YYYY-MM-DD"
+    },
+    "memo_status": {
+      "probation_referral_required": "boolean",
+      "license_order_required": "boolean",
+      "payment_agreement_required": "boolean"
+    }
+  },
+  "cc1375": {
+    "form_id": "enum: VA_CC1375",
+    "form_label": "string",
+    "case_number": "string",
+    "defendant_name": "string",
+    "conviction_date": "YYYY-MM-DD",
+    "probation_type": "enum: supervised, unsupervised, none",
+    "probation_term_months": "integer",
+    "report_datetime": "YYYY-MM-DDTHH:MM:SS",
+    "probation_officer": "string",
+    "probation_office_location": "string"
+  },
+  "cc1379": {
+    "form_id": "enum: VA_CC1379",
+    "form_label": "string",
+    "case_number": "string",
+    "defendant_name": "string",
+    "driver_license_number": "string",
+    "license_suspension": {
+      "status": "enum: suspended, not_suspended",
+      "effective_date": "YYYY-MM-DD",
+      "months": "integer",
+      "basis": "enum: dui_conviction, other"
+    },
+    "payment_order": {
+      "agreement_type": "enum: initial_installment, deferred_payment, subsequent_review, no_agreement",
+      "policy_id": "string",
+      "total_due": "currency number",
+      "fines_and_costs_balance": "currency number",
+      "restitution_balance": "currency number",
+      "account_fee": "currency number",
+      "down_payment": "currency number",
+      "installment_amount": "currency number",
+      "payment_interval": "enum: monthly, biweekly, weekly",
+      "first_due_date": "YYYY-MM-DD",
+      "payment_count": "integer",
+      "full_installment_count": "integer",
+      "final_payment_amount": "currency number",
+      "final_due_date": "YYYY-MM-DD",
+      "return_to_court_date": "YYYY-MM-DD",
+      "return_to_court_time": "HH:MM",
+      "return_to_court_trigger": "enum: nonpayment, default_review, none"
+    }
+  },
+  "budget_review": {
+    "monthly_income": "currency number",
+    "monthly_obligations": "currency number",
+    "monthly_disposable_income": "currency number",
+    "selected_installment_amount": "currency number",
+    "support_classification": "enum: supported_by_budget, unsupported_by_budget, needs_judge_review",
+    "policy_band": {
+      "minimum_monthly": "currency number",
+      "maximum_monthly": "currency number"
+    }
+  },
+  "placeholder_fields": [
+    {
+      "field": "string",
+      "value": "enum: TBD from case file",
+      "reason_code": "enum: missing_identifier, missing_contact, missing_office_detail, missing_party_detail"
+    }
   ],
-  "field_definitions": {
-    "task_id": {
-      "type": "string",
-      "required_value": "train_003"
-    },
-    "packet_id": {
-      "type": "string"
-    },
-    "county": {
-      "type": "string"
-    },
-    "defendants": {
-      "type": "list",
-      "order": "ascending by case_number",
-      "required_item_keys": [
-        "case_number",
-        "defendant_name",
-        "conviction_posture",
-        "charge_outcomes",
-        "identity_fields",
-        "collateral_orders",
-        "financial_order",
-        "follow_up_action"
-      ]
-    },
-    "packet_totals": {
-      "type": "object",
-      "required_keys": [
-        "principal_amount_total",
-        "current_balance_due_total",
-        "payment_plan_count",
-        "placeholder_field_count"
-      ]
+  "excluded_financial_items": [
+    {
+      "item": "enum: restitution, account_management_fee, late_fee, dmv_reinstatement_fee, court_appointed_attorney_fee, court_reporter_fee",
+      "amount": "currency number",
+      "reason_code": "enum: no_order_or_policy_support, not_part_of_balance"
     }
-  },
-  "defendant_item_schema": {
-    "case_number": {
-      "type": "string"
-    },
-    "defendant_name": {
-      "type": "string"
-    },
-    "conviction_posture": {
-      "type": "enum",
-      "allowed_values": [
-        "dui_conviction",
-        "amended_dui_reckless",
-        "dismissed_or_no_packet",
-        "not_ready"
-      ]
-    },
-    "charge_outcomes": {
-      "type": "list",
-      "order": "ascending by charge_id",
-      "item_schema": {
-        "charge_id": "string",
-        "statute": "string",
-        "disposition": {
-          "type": "enum",
-          "allowed_values": [
-            "convicted",
-            "convicted_no_separate_fee",
-            "amended",
-            "dismissed",
-            "deferred",
-            "pending"
-          ]
-        }
-      }
-    },
-    "identity_fields": {
-      "type": "object",
-      "required_keys": [
-        "driver_license_number",
-        "defendant_phone",
-        "probation_officer"
-      ],
-      "unknown_value": "TBD from case file"
-    },
-    "collateral_orders": {
-      "type": "object",
-      "required_keys": [
-        "probation_required",
-        "probation_term_months",
-        "probation_report_date",
-        "probation_report_time",
-        "probation_report_location",
-        "license_suspension_required",
-        "license_suspension_months",
-        "license_suspension_start_date",
-        "treatment_referral_required"
-      ],
-      "date_format": "YYYY-MM-DD",
-      "time_format": "HH:MM"
-    },
-    "financial_order": {
-      "type": "object",
-      "required_keys": [
-        "assessed_fee_codes",
-        "excluded_fee_or_charge_codes",
-        "principal_amount",
-        "amount_paid_as_of_packet",
-        "current_balance_due",
-        "plan_basis",
-        "monthly_amount",
-        "first_due_date",
-        "regular_payment_count",
-        "final_payment_amount",
-        "total_installments",
-        "final_due_date"
-      ],
-      "currency_precision": 2,
-      "date_format": "YYYY-MM-DD",
-      "assessed_fee_codes_order": "ascending by code",
-      "excluded_fee_or_charge_codes_order": "ascending by code",
-      "plan_basis_allowed_values": [
-        "original_principal",
-        "current_balance",
-        "no_plan"
-      ]
-    },
-    "follow_up_action": {
-      "type": "enum",
-      "allowed_values": [
-        "enter_probation_license_payment_order",
-        "financial_review_only",
-        "hold_for_judge_review",
-        "no_action"
-      ]
-    }
-  },
-  "numeric_precision": {
-    "currency": "round to 2 decimal places",
-    "counts_and_months": "integers"
-  },
-  "boolean_fields": [
-    "collateral_orders.probation_required",
-    "collateral_orders.license_suspension_required",
-    "collateral_orders.treatment_referral_required"
-  ],
-  "packet_totals_schema": {
-    "principal_amount_total": {
-      "type": "number",
-      "currency_precision": 2
-    },
-    "current_balance_due_total": {
-      "type": "number",
-      "currency_precision": 2
-    },
-    "payment_plan_count": {
-      "type": "integer"
-    },
-    "placeholder_field_count": {
-      "type": "integer"
-    }
-  }
+  ]
 }

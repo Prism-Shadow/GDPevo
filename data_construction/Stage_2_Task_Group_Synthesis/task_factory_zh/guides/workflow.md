@@ -38,8 +38,8 @@ Dockerized Codex 进程负责难度校准：
 - 3 个相互隔离的 fewshot skill-generation 进程分别读取全部 5 个 train inputs 和对应标准答案，生成 3 个独立 skill package。
 - base：每个 test task 运行 3 个隔离进程，5 个 test tasks 共 15 个进程。
 - fewshot：每个 test task 运行 3 个隔离进程，attempt 01/02/03 分别使用对应的 skill package，5 个 test tasks 共 15 个进程。
-- 每个进程都有新建的 staged `/work`、专属 `CODEX_HOME`、固定 prompt，且只能看到该运行允许的文件。
-- 保留完整 Codex session trace；不能访问 notes、evaluator、环境源码、构造草稿或其他 runs。
+- 每个进程都有新建的 staged `/work`、只继承当前 `auth.json` 并通过 `codex login status` 预检的专属临时 `CODEX_HOME`、固定 prompt，且只能看到该运行允许的文件。
+- 只把匹配的主 `sessions/.../rollout-*.jsonl` 复制到该 run 的 `trace/` 目录。从该副本回填并核验 token、费用、轮次、工具调用和校准记录后，才能删除临时 `CODEX_HOME`；不要归档整个 Codex home，也不要把 stdout 当作 trace。校准 agent 不能访问 notes、evaluator、环境源码、构造草稿或其他 runs。
 
 reviewer subagent 负责独立审查：
 
@@ -111,7 +111,7 @@ reviewer subagent 负责独立审查：
 - env-builder coding subagent 拥有 `env/` 实现和程序化造数代码。
 - task-builder subagents 拥有 task 文件生成权。主 agent 不应直接用一个总 builder 脚本生成所有 task prompts、标准答案、notes 和 evaluators。
 - 一个同时生成 env、全部任务文件、答案、notes、evaluators、scratch docs 和 skill 的总脚本不能替代 subagent 构造流程。
-- 难度校准必须使用 Dockerized `codex exec`、专属 staged work 和 `CODEX_HOME` 目录、`calibration_runtime.md` 中的固定 prompts，并保留原始 traces。主控系统的 subagent runs 不能作为难度证据。
+- 难度校准必须使用 Dockerized `codex exec`、专属 staged work 和临时 `CODEX_HOME` 目录，以及 `calibration_runtime.md` 中的固定 prompts；只保存复制出的主 `rollout-*.jsonl`，并在 trace 派生数据完整回填和核验后删除临时 Codex home。主控系统的 subagent runs 不能作为难度证据。
 - subagents 的写入范围应清晰，避免互相覆盖。
 - subagents 不应获得 notes、标准答案或 eval 以外泄到 solver-facing input 的形式。
 - 所有临时设计、solver runs、skill 和 review 记录都放在 `scratch/`。

@@ -23,7 +23,7 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 每个 solver run 有自己独立的 transcript：
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
 **一条 API 响应会被拆成多条 content-block 记录。** 这些记录里 `input_tokens` / `cache_creation_input_tokens` / `cache_read_input_tokens` **完全相同**,但 `output_tokens` 是**流式累计**的——后面的记录值更大。所以按 `message.id` 去重时:input/cache 三桶取任一条,`output_tokens` 取该 `message.id` 的**最大值(最后一条)**。逐行求和会把 input/cache 放大约 2-3 倍;只取第一条又会低估 output。去重后,四个桶分别在响应间求和:
@@ -44,7 +44,7 @@ model: <model_name_or_config>
 
 transcript:
   claude_session_id: <uuid>
-  session_file: <path under original_traces/.../claude_config/projects/... or null>
+  session_file: <original_traces 下复制后的主 session JSONL 路径或 null>
   match_status: matched
 
 token_usage:                          # 按 message.id 去重、跨响应求和
@@ -71,7 +71,7 @@ turn_count:
 
 ```text
 scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
 推荐的 `evolve_metadata.yaml` 格式：

@@ -1,7 +1,7 @@
-You are supporting Aster Legal Deal Desk on a buyer-side first-draft stock purchase agreement.
+You are buyer-side counsel for Project Aster (deal_id PRJ_ASTER). Prepare a structured SPA deviation matrix for Aster Health Group using the running M&A deal workbench at <TASK_ENV_BASE_URL>.
 
-Use the shared Aster Legal Deal Desk environment at <TASK_ENV_BASE_URL>. Work on deal `D-HARBOR-562` only. The deal room contains the current deal profile, active and stale documents, clause records, policies, and search pages for the transaction.
+Use the web UI and the available API records for PRJ_ASTER, including deal details, draft terms, the applicable buyer playbook, regulatory records, consents, material contracts, diligence findings, benchmarks, risk estimates, documents, and notes. If you use read-only SQL, send POST requests to /api/query with token deal-workbench-readonly.
 
-Please prepare the first-draft term population and policy-check JSON for this deal. Return a single JSON object that matches `input/payloads/answer_template.json`.
+Return only JSON that conforms to input/payloads/answer_template.json. Do not include narrative outside the JSON.
 
-The output should be drafting-ready and normalized: use integer U.S. dollars, decimal percentages, controlled enum values from the template, and the required list ordering. Do not include narrative memo text outside the JSON.
+Your matrix should cover the buyer's positions on indemnity cap and basket treatment, representation survival and knowledge-related qualifiers, materiality scrape, escrow or holdback support, consent closing conditions, HSR, and material-contract closing blockers. Calculate dollar amounts from the correct purchase-price base, classify final positions with the template enums, and summarize closing blockers and risk totals.

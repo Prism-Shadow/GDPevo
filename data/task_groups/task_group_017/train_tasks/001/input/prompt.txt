@@ -1,7 +1,5 @@
-You are assisting the production team on matter M-CRN-041, Crownpoint Neurodevices Market Integrity Inquiry.
+Sentinel Medical's outside counsel team needs a first rolling production gap analysis for the grand jury matter `MTR-SENTINEL-GJ`. The legal operations team is preparing a short escalation packet before deciding what must be remediated or disclosed to the government.
 
-The client has asked for a first rolling production gap review before the next SEC status call. Use the shared investigation API at <TASK_ENV_BASE_URL>. Inspect the matter record plus subpoena categories, production logs, collection events, privilege logs, QC events, custodian records, and document summaries as needed. Also use the task-local partner request at input/payloads/partner_request.json.
+Use the Investigation Review Hub at `<TASK_ENV_BASE_URL>` as the source of record for matter metadata, subpoena categories, production status, custodian sources, review documents, privilege-log data, QC findings, and remediation candidates. If you use the SQL query endpoint, use the task-provided API access rather than local environment files or database files.
 
-Prepare a structured JSON review of the materially blocked or deficient subpoena categories. Focus on first-production completeness, missing sources, miscoded responsive material, privilege-log defects, overbroad withholding, whether disclosure is required, and the next remediation actions.
-
-Return only JSON. The required output contract is described in input/payloads/answer_template.json. Do not include markdown, comments, or explanatory text.
+Return only a JSON object that conforms to `input/payloads/answer_template.json`. The answer should identify the material production gaps and defects, the affected request categories, the relevant hub record IDs, the numeric privilege and QC metrics, and the prioritized actions with responsible owners.

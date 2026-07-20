@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PREDICTION_PATH="${1:-"$SCRIPT_DIR/../output/answer.json"}"
+if [[ $# -ne 1 ]]; then
+  echo '{"score":0,"max_score":12,"points":[],"error":"usage: eval.sh <candidate_answer_json>"}'
+  exit 2
+fi
 
-python3 "$SCRIPT_DIR/evaluate.py" "$PREDICTION_PATH"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+python3 "$SCRIPT_DIR/eval.py" "$1"

@@ -22,7 +22,7 @@ Read `CODEX_ORCHESTRATOR.md` before launching isolated agent runs. The formal
 Claude Code command shape is:
 
 ```bash
-CLAUDE_CONFIG_DIR=/claude_config claude -p --permission-mode bypassPermissions --session-id "$CLAUDE_SESSION_ID" "$PROMPT"
+CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config claude -p --permission-mode bypassPermissions --session-id "$CLAUDE_SESSION_ID" "$PROMPT"
 ```
 
 `CLAUDE_CONFIG_DIR` is a runtime-only temporary environment variable for that
@@ -115,12 +115,24 @@ Stage only the materials allowed by `skill_modes.md`.
 - `reflect-3`: train inputs, container-visible environment entrypoint, and judge API
   instructions; no train answers.
 
-For every skill-generation run, create a dedicated mounted Claude config
-directory and unique session ID. Preserve the complete session trace under:
+For every skill-generation run, create a named agent container without `--rm`
+and keep `CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` inside it, together with
+a unique session ID. If authentication is needed, mount only the minimum
+bootstrap file read-only; do not mount the host `.claude` directory or a full
+Claude config tree. After the run, keep the stopped container until the skill,
+primary trace, and metadata are complete. Use `docker cp` to extract only the
+matching native session JSONL from
+`projects/<sanitized-cwd>/<claude_session_id>.jsonl` (or a temporary
+`projects/` subtree under `scratch/trace_extract/<run_id>/` for discovery) to:
 
 ```text
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
 ```
+
+Backfill and verify token, cost, turn, tool-call and metadata fields from the
+copied file, then remove the temporary extraction directory and stopped
+container. Do not retain the complete container-local config, credentials,
+plugins, caches, logs, databases, or stdout/stderr as trace artifacts.
 
 Write the matching usage record under:
 
@@ -174,9 +186,11 @@ contaminated attempt.
 The solver writes `answer.json` in its own attempt directory.
 
 Each solver attempt is launched by the Codex orchestrator as a Dockerized
-Claude Code process from that attempt directory. Mount only the attempt
-directory and the per-attempt Claude config directory used for
-`CLAUDE_CONFIG_DIR`; do not mount the full workspace or task group.
+Claude Code process from that attempt directory. Create a named container
+without `--rm`, mount only the attempt directory, and keep
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` inside the container. If needed,
+mount only the minimum read-only authentication bootstrap file; do not mount the
+full workspace, task group, host `.claude` directory, or host config tree.
 
 ## 5. Score And Aggregate
 
@@ -192,20 +206,29 @@ Every solver attempt must have a unique `eval_attempt_id`:
 The ID must appear in the solver prompt, attempt directory, and
 `run_metadata.yaml`.
 
-Backfill token usage, solver turn count, and tool-call count from the raw Claude
-Code session trace written into the attempt-mounted `CLAUDE_CONFIG_DIR`.
+After the run, keep the stopped container and use `docker cp` to identify the
+exact native Claude Code session JSONL named by the run's unique session ID in
+the container-local `CLAUDE_CONFIG_DIR`. Copy only that file into
+`original_traces/`; if discovery is necessary, first extract only the
+`projects/` subtree into `scratch/trace_extract/<run_id>/`. Verify the working
+directory, then backfill token usage, solver turn count, and tool-call count from
+the copied file.
 Deduplicate by `message.id`: keep input/cache buckets from any record and the
 max `output_tokens` per message id, then sum across responses.
 
 Claude Code session traces should be under:
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
-Record the raw session trace path in `run_metadata.yaml`. If the raw session
-trace is missing, set the trace path to `null`, keep the token, turn, and
-tool-call fields `null`, and report the trace issue.
+Record the copied primary session trace path and verify all trace-derived fields
+in `run_metadata.yaml`, then delete the temporary extraction directory and
+stopped container. Do not preserve the full container-local
+`CLAUDE_CONFIG_DIR` or stdout. If the session trace is missing or ambiguous,
+set the trace path to `null`, keep the token, turn, and tool-call fields `null`,
+record the reason, clean up the temporary directory, and rerun with a new
+session ID.
 
 After all runs complete, aggregate `acc@3`, population `std@3`, per-bucket tokens, and solver turn count and tool-call counts for all four
 conditions. Efficiency metrics count only test solver answer writing: average

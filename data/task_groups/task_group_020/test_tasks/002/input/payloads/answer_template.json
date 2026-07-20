@@ -1,350 +1,165 @@
 {
-  "schema_name": "seller_apa_counterparty_paper_review_v2",
-  "response_rule": "Return a single JSON object only. Do not include markdown or explanatory prose.",
-  "top_level_required_keys": {
-    "deal_id": {
-      "type": "string",
-      "required_value": "D-QUARTZ-311"
+  "schema_name": "committee_escalation_package",
+  "schema_version": "1.0",
+  "instructions": {
+    "language": "English only",
+    "ordering": {
+      "escalation_terms": "Sort by priority_rank ascending.",
+      "condition_codes": "Sort alphabetically within each term.",
+      "carveout_classifications": "Sort by carveout_code ascending.",
+      "exposure_components": "Sort by component ascending.",
+      "out_of_policy_categories": "Sort alphabetically."
     },
-    "review_type": {
-      "type": "enum",
-      "allowed_values": [
-        "SELLER_APA_COUNTERPARTY_PAPER_REVIEW"
-      ]
-    },
-    "policy_id": {
-      "type": "string",
-      "description": "Controlling playbook or policy identifier used for the review."
-    },
-    "currency": {
-      "type": "enum",
-      "allowed_values": [
-        "USD"
-      ]
-    },
-    "issues": {
-      "type": "list<object>",
-      "ordering": "Sort by rank ascending. Include each material issue once. Omit non-material distractors."
-    },
-    "summary": {
-      "type": "object",
-      "description": "Compact structured summary of the issue register."
+    "numeric_precision": {
+      "currency": "Integer USD.",
+      "percent_points": "Number with up to two decimal places, expressed as percent points such as 4.8.",
+      "share_pct": "Decimal share percentage rounded to four places, such as 0.3410.",
+      "months": "Integer months."
     }
   },
-  "issue_object_required_keys": {
-    "issue_id": {
-      "type": "enum",
-      "allowed_values": [
-        "CLOSING_DEADLINE",
-        "EMPLOYEE_TSA_WARN",
-        "ESCROW_TERMS",
-        "FINANCING_FEE",
-        "IP_TRANSITION",
-        "MAE_CARVE_OUTS",
-        "MATERIAL_CONSENTS",
-        "RESTRICTIVE_COVENANT",
-        "SURVIVAL_CAP_BASKET_DE_MINIMIS",
-        "WORKING_CAPITAL"
-      ]
-    },
-    "rank": {
-      "type": "integer",
-      "description": "Risk priority rank, starting at 1 for the highest-priority issue."
-    },
-    "severity": {
-      "type": "enum",
-      "allowed_values": [
-        "CRITICAL",
-        "HIGH",
-        "MEDIUM",
-        "LOW"
-      ]
-    },
-    "recommended_action": {
-      "type": "enum",
-      "allowed_values": [
-        "ACCEPT",
-        "ADD",
-        "ADD_AND_ESCALATE",
-        "DELETE",
-        "DELETE_AND_ADD_FALLBACK_FEE",
-        "NARROW_AND_ESCALATE",
-        "NO_ISSUE",
-        "REDUCE_OR_ESCALATE",
-        "REVISE",
-        "REVISE_AND_ESCALATE"
-      ]
-    },
-    "approval_owners": {
-      "type": "list<enum>",
-      "allowed_values": [
-        "DEAL_LEAD",
-        "EXECUTIVE_COMMITTEE",
-        "HR_COMMITTEE",
-        "IP_COUNSEL",
-        "OPERATIONS_COMMITTEE",
-        "SELLER_STEERING_COMMITTEE"
-      ],
-      "ordering": "Sort alphabetically."
-    },
-    "corrected_terms": {
-      "type": "object",
-      "description": "Use only the normalized fields relevant to the issue. Currency amounts are integer dollars. Percentages are decimal percentage points rounded to two decimals, not fractions."
-    },
-    "source_ids": {
-      "type": "list<string>",
-      "description": "Document, policy, clause, or benchmark IDs supporting the conclusion. This field is for auditability, not prose."
-    }
+  "allowed_enums": {
+    "policy_status": [
+      "out_of_policy",
+      "restricted_escalation",
+      "in_policy_watch_item"
+    ],
+    "risk_rating": [
+      "LOW",
+      "MEDIUM",
+      "HIGH"
+    ],
+    "recommendation": [
+      "approve",
+      "approve_with_conditions",
+      "reject"
+    ],
+    "category": [
+      "reverse_termination_fee",
+      "fiduciary_out",
+      "rw_survival",
+      "mae_carveouts",
+      "termination_fee",
+      "voting_agreements"
+    ],
+    "fiduciary_change_code": [
+      "board_change_process_limited_to_superior_proposal",
+      "intervening_event_trigger_removed",
+      "match_right_shortened_or_missing"
+    ],
+    "condition_code": [
+      "add_disproportionate_effect_carveback",
+      "cap_rtf_at_or_below_policy",
+      "delete_clinical_trial_hold_carveout",
+      "preserve_remedy_cap",
+      "reduce_all_rep_survival_to_policy",
+      "restore_full_board_change_process",
+      "restore_intervening_event_trigger",
+      "restore_required_match_right"
+    ],
+    "carveout_classification": [
+      "restricted_general_event",
+      "restricted_industry_event",
+      "target_specific_regulatory_risk"
+    ],
+    "carveout_disposition": [
+      "delete",
+      "narrow_with_disproportionate_effect_carveback"
+    ],
+    "strategic_pressure_reason_code": [
+      "rival_bidder_active",
+      "none"
+    ]
   },
-  "corrected_terms_allowed_fields": {
-    "financing_condition_allowed": {
-      "type": "boolean"
+  "required_output_shape": {
+    "deal_id": "string",
+    "routing": {
+      "package_type": "string enum: committee_escalation",
+      "prepared_for": "string",
+      "approval_required": "string",
+      "policy_id": "string",
+      "project_name": "string",
+      "client_name": "string",
+      "counterparty_name": "string",
+      "signing_date": "YYYY-MM-DD",
+      "meeting_date": "YYYY-MM-DD"
     },
-    "reverse_fee_fallback_only": {
-      "type": "boolean"
-    },
-    "fee_base": {
-      "type": "enum",
-      "allowed_values": [
-        "HEADLINE_VALUE",
-        "EQUITY_VALUE",
-        "NONE"
-      ]
-    },
-    "reverse_fee_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "reverse_fee_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "parent_guarantee_required": {
-      "type": "boolean"
-    },
-    "financing_condition_must_still_be_deleted": {
-      "type": "boolean"
-    },
-    "draft_escrow_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "draft_escrow_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "target_escrow_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "target_escrow_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "fallback_escrow_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "fallback_escrow_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "draft_release_months": {
-      "type": "integer"
-    },
-    "target_release_months": {
-      "type": "integer"
-    },
-    "escrow_above_fallback_requires_escalation": {
-      "type": "boolean"
-    },
-    "escrow_longer_than_survival_allowed": {
-      "type": "boolean"
-    },
-    "draft_seller_rep_survival_months": {
-      "type": "integer"
-    },
-    "target_seller_rep_survival_months": {
-      "type": "integer"
-    },
-    "draft_general_cap_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "draft_general_cap_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "target_general_cap_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "target_general_cap_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "fallback_general_cap_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "fallback_general_cap_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "basket_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "basket_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "basket_type": {
-      "type": "enum",
-      "allowed_values": [
-        "DEDUCTIBLE",
-        "TIPPING",
-        "NONE"
-      ]
-    },
-    "de_minimis_required": {
-      "type": "boolean"
-    },
-    "tipping_allowed": {
-      "type": "boolean"
-    },
-    "buyer_comparable_offer_required": {
-      "type": "boolean"
-    },
-    "warn_liability": {
-      "type": "enum",
-      "allowed_values": [
-        "BUYER_FOR_TRANSFERRED_EMPLOYEES",
-        "SELLER",
-        "ALLOCATED_BY_STATUTE",
-        "NOT_APPLICABLE"
-      ]
-    },
-    "seller_warn_retention_allowed": {
-      "type": "boolean"
-    },
-    "tsa_required": {
-      "type": "boolean"
-    },
-    "tsa_status_required": {
-      "type": "enum",
-      "allowed_values": [
-        "DETAILED_EXHIBIT",
-        "SHORT_FORM_PLACEHOLDER",
-        "NONE"
-      ]
-    },
-    "tsa_service_codes": {
-      "type": "list<enum>",
-      "allowed_values": [
-        "CHARGEBACK_SUPPORT",
-        "COMPLIANCE_REPORTING",
-        "KYC_OPERATIONS",
-        "PROCESSOR_MIGRATION"
+    "escalation_terms": [
+      {
+        "priority_rank": "integer",
+        "term_id": "string",
+        "category": "category enum",
+        "policy_status": "policy_status enum",
+        "risk_rating": "risk_rating enum",
+        "recommendation": "recommendation enum",
+        "approval_required": "string",
+        "condition_codes": [
+          "condition_code enum"
+        ],
+        "rtf_analysis": {
+          "draft_percent_points": "number or null",
+          "policy_threshold_percent_points": "number or null",
+          "deviation_percent_points": "number or null",
+          "equity_value_usd": "integer or null",
+          "draft_amount_usd": "integer or null",
+          "policy_max_amount_usd": "integer or null",
+          "policy_excess_amount_usd": "integer or null",
+          "benchmark_median_percent_points": "number or null",
+          "benchmark_upper_quartile_percent_points": "number or null",
+          "draft_vs_upper_quartile_percent_points": "number or null"
+        },
+        "fiduciary_out_analysis": {
+          "change_codes": [
+            "fiduciary_change_code enum"
+          ],
+          "required_match_right_business_days": "integer or null"
+        },
+        "survival_analysis": {
+          "fundamental_survival_months": "integer or null",
+          "general_survival_months": "integer or null",
+          "policy_threshold_months": "integer or null",
+          "fundamental_deviation_months": "integer or null",
+          "general_deviation_months": "integer or null",
+          "benchmark_median_months": "number or null",
+          "benchmark_upper_quartile_months": "number or null",
+          "exposure_low_usd": "integer or null",
+          "exposure_high_usd": "integer or null"
+        },
+        "mae_analysis": {
+          "additional_carveout_count": "integer or null",
+          "policy_threshold_count": "integer or null",
+          "count_delta": "integer or null",
+          "carveout_classifications": [
+            {
+              "carveout_code": "string",
+              "classification": "carveout_classification enum",
+              "recommended_disposition": "carveout_disposition enum"
+            }
+          ]
+        }
+      }
+    ],
+    "aggregate_summary": {
+      "out_of_policy_categories": [
+        "category enum"
       ],
-      "ordering": "Sort alphabetically."
-    },
-    "unqualified_bank_sponsor_loss_trigger_allowed": {
-      "type": "boolean"
-    },
-    "materiality_qualifier_required": {
-      "type": "boolean"
-    },
-    "buyer_control_exception_required": {
-      "type": "boolean"
-    },
-    "standard_market_carveouts_required": {
-      "type": "boolean"
-    },
-    "mae_position": {
-      "type": "enum",
-      "allowed_values": [
-        "MATERIALITY_AND_BUYER_CONTROL_EXCEPTIONS",
-        "ACCEPT_COUNTERPARTY_TRIGGER",
-        "DELETE_MAE_CONDITION"
-      ]
-    },
-    "perpetual_mark_use_allowed": {
-      "type": "boolean"
-    },
-    "broad_source_repository_access_allowed": {
-      "type": "boolean"
-    },
-    "transition_license_required": {
-      "type": "boolean"
-    },
-    "retained_ip_boundaries_required": {
-      "type": "boolean"
-    },
-    "trademark_phaseout_months": {
-      "type": "integer"
-    },
-    "source_repository_access_scope": {
-      "type": "enum",
-      "allowed_values": [
-        "LIMITED_TRANSITION_ACCESS",
-        "BROAD_REPOSITORY_ACCESS",
-        "NO_ACCESS"
-      ]
-    }
-  },
-  "summary_required_keys": {
-    "material_issue_count": {
-      "type": "integer"
-    },
-    "critical_issue_count": {
-      "type": "integer"
-    },
-    "highest_priority_issue_id": {
-      "type": "enum",
-      "allowed_values": [
-        "CLOSING_DEADLINE",
-        "EMPLOYEE_TSA_WARN",
-        "ESCROW_TERMS",
-        "FINANCING_FEE",
-        "IP_TRANSITION",
-        "MAE_CARVE_OUTS",
-        "MATERIAL_CONSENTS",
-        "RESTRICTIVE_COVENANT",
-        "SURVIVAL_CAP_BASKET_DE_MINIMIS",
-        "WORKING_CAPITAL"
-      ]
-    },
-    "issue_priority_order": {
-      "type": "list<enum>",
-      "allowed_values": [
-        "CLOSING_DEADLINE",
-        "EMPLOYEE_TSA_WARN",
-        "ESCROW_TERMS",
-        "FINANCING_FEE",
-        "IP_TRANSITION",
-        "MAE_CARVE_OUTS",
-        "MATERIAL_CONSENTS",
-        "RESTRICTIVE_COVENANT",
-        "SURVIVAL_CAP_BASKET_DE_MINIMIS",
-        "WORKING_CAPITAL"
+      "escalation_count": "integer",
+      "restricted_term_count": "integer",
+      "approve_with_conditions_count": "integer",
+      "reject_count": "integer",
+      "legal_blocker_count": "integer",
+      "highest_priority_category": "category enum",
+      "aggregate_quantified_exposure_usd": "integer",
+      "exposure_components": [
+        {
+          "component": "string",
+          "amount_usd": "integer"
+        }
       ],
-      "ordering": "Highest risk to lowest risk."
-    },
-    "committee_escalation_required": {
-      "type": "boolean"
-    },
-    "committee_escalation_owners": {
-      "type": "list<enum>",
-      "allowed_values": [
-        "DEAL_LEAD",
-        "EXECUTIVE_COMMITTEE",
-        "HR_COMMITTEE",
-        "IP_COUNSEL",
-        "OPERATIONS_COMMITTEE",
-        "SELLER_STEERING_COMMITTEE"
-      ],
-      "ordering": "Sort alphabetically."
+      "largest_support_holder_pct": "share_pct number",
+      "voting_agreement_policy_threshold_pct": "share_pct number",
+      "voting_agreement_policy_breach": "boolean",
+      "strategic_pressure_flag": "boolean",
+      "strategic_pressure_reason_code": "strategic_pressure_reason_code enum"
     }
   }
 }

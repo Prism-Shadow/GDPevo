@@ -1,9 +1,13 @@
-Prepare the March 2026 restricted-license monitoring plan for application AA-2026-0018 at premises PM-2026-018.
+You are preparing an internal staff package for the restricted liquor-license review of the hotel-lounge application `L-TR5-001` at location `LOC-TR5`.
 
-The Cascadia Licensing Review Portal base URL will be:
+Use the licensing environment at `<TASK_ENV_BASE_URL>`. Relevant records are available from:
 
-<TASK_ENV_BASE_URL>
+- `GET /api/policies`
+- `GET /api/liquor/applications`
+- `GET /api/liquor/settlements`
+- `GET /api/liquor/privileges`
+- `GET /api/liquor/incidents`
+- `GET /api/liquor/site-evidence`
+- `POST /api/sql`
 
-Use the CLRP public records for the target application, premises, incidents, settlements, restrictions, standard obligations, and address history as needed. The plan should account for same-premises successor risk, control overlap, license-type standard obligations, first-90-day monitoring needs, records requests, and escalation triggers.
-
-Return only one JSON object conforming to input/payloads/answer_template.json. Do not include prose outside the JSON.
+Prepare the structured staff package as JSON matching `input/payloads/answer_template.json`. The package should state the issuance posture, whether the same-premises basis remains applicable, which risks are covered by current controls, which verification gaps remain, the separation between ordinary license obligations and location-specific controls, the first-90-day monitoring plan, and the escalation triggers for field staff. Focus especially on hotel lounge controls, camera and food-service evidence, and late-night monitoring.

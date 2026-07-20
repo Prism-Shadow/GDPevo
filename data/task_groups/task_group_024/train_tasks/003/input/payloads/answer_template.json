@@ -1,32 +1,24 @@
 {
-  "release_id": "string",
-  "as_of_date": "YYYY-MM-DD",
-  "ship_decision": "enum: Ship | Hold | NoShip",
-  "risk_tier": "enum: Low | Medium | High",
-  "milestones": [
+  "release_id": "string; required; release id under review",
+  "ship_decision": "string enum; required; one of SHIP, SHIP_WITH_WATCH, NO_SHIP",
+  "milestone_completion": [
     {
-      "milestone_id": "string; sort milestone objects by milestone_id ascending",
-      "critical": "boolean",
-      "completion_percentage": "number; percentage rounded to one decimal place"
+      "milestone_id": "string; required; sort milestone_completion by milestone_id ascending",
+      "complete_primary": "integer; required; completed primary work item count for this milestone",
+      "primary_total": "integer; required; primary work item denominator for this milestone",
+      "completion_pct": "number; required; percent rounded to 1 decimal place"
     }
   ],
   "gating_work_item_ids": [
-    "string work item IDs; sort ascending"
+    "string; required; sorted unique non-complete release work item ids gating readiness"
   ],
   "blocker_cause_counts": {
-    "ExternalDependency": "integer",
-    "Environment": "integer",
-    "SecurityReview": "integer",
-    "Capacity": "integer",
-    "DesignDecision": "integer",
-    "DataMigration": "integer",
-    "Vendor": "integer",
-    "OwnershipGap": "integer"
+    "exact blocker cause string": "integer count; required; unresolved high-impact blockers only"
   },
-  "critical_dependency_chain": [
-    "string work item IDs in dependency order from upstream to downstream; do not sort this list"
+  "critical_dependency_chains": [
+    [
+      "string work item id; ordered path from blocked release work item to non-complete dependency"
+    ]
   ],
-  "owner_escalation_ids": [
-    "string owner IDs sorted ascending; include UNASSIGNED only when a gated item has no owner"
-  ]
+  "readiness_score": "number; required; completed primary work divided by primary denominator, rounded to 3 decimal places"
 }

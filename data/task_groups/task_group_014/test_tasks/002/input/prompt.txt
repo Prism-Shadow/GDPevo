@@ -1,19 +1,5 @@
-You are the peer-to-peer coordinator preparing the finalization board for the payer operations worklist in `input/payloads/worklist.json`.
+Northstar Health Plan needs a pharmacy appeals coordinator disposition for case APPEAL-TE-002.
 
-Use the shared SQL query service at:
+Prepare the structured appeal and manufacturer assistance intake summary as of 2026-06-06. Use the shared payer operations environment at <TASK_ENV_BASE_URL>. The SQL service is POST /sql/query and requires bearer token pa-review-token-014. You may also use the available case, appeal, policy, and portal endpoints exposed by the environment.
 
-`<TASK_ENV_BASE_URL>/query`
-
-Submit SQL as JSON, for example:
-
-```json
-{"sql": "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name", "params": []}
-```
-
-Authenticate every request with HTTP Basic Auth using username `payer_ops_solver` and password `revcycle_sql_014`.
-
-Do not assume a local database path or hard-code a runtime host or port. Use only `<TASK_ENV_BASE_URL>` for environment access.
-
-Use the SQL service to reconcile the target authorization cases, their P2P sessions, review events, clinical facts, coverage criteria, and related reference rows. Return the board-ready finalization result as one valid JSON object matching `input/payloads/answer_template.json`.
-
-Return only JSON. Do not include narrative text outside the JSON.
+Return only a JSON object that conforms to input/payloads/answer_template.json. Include the target appeal identity, drug, appeal routing and expedited basis, deadline, owner, documented prior therapy failures, packet requirements and gaps, assistance screen status and missing fields, and the next operational action.

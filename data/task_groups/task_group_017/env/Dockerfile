@@ -1,14 +1,16 @@
 FROM python:3.11-slim
 
-WORKDIR /env
-COPY . /env/
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-RUN chmod +x setup.sh && \
-    find train_tasks -path '*/eval/*.sh' -exec chmod +x {} \;
+WORKDIR /app
 
-ENV TASK_ENV_BIND=0.0.0.0
-ENV TASK_ENV_PORT=9017
-ENV TASK_ENV_ENABLE_JUDGE=0
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+RUN chmod +x /app/setup.sh && python /app/generate_data.py
 
 EXPOSE 9017
-CMD ["bash", "setup.sh"]
+
+CMD ["/app/setup.sh"]

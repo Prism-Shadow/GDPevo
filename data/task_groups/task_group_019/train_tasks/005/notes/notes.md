@@ -2,109 +2,40 @@
 
 ## English
 
-### Data and Source Lineage
+Data/source lineage: This task belongs to `SCN_019_regulatory_licensing_eligibility_and_compliance_review`, using source examples `E001`, `E002`, and `E003`. The direct design anchor is the restricted liquor-license workflow from `E002`, translated into the generated shared environment for `task_group_019`. The target records are generated public environment rows for application `L-TR5-001` and location `LOC-TR5`; task-local files are `input/prompt.txt`, `input/payloads/answer_template.json`, `output/answer.json`, and `eval/`.
 
-This is `train_005` for `task_group_019`, built from scenario `SCN_019_regulatory_licensing_eligibility_and_compliance_review` and source examples `E001`, `E002`, and `E003`. The task implements the restricted on-premises alcohol license review family described in `scratch/task_group_design.md`, with a renewal-style successor-risk habit: same address history must be treated as premises evidence, but not confused with unrelated roster matches.
+Task definition: The solver acts as licensing staff preparing a structured restricted-license package for a hotel-lounge liquor application. The visible prompt names application `L-TR5-001`, location `LOC-TR5`, and the allowed environment endpoints. The expected output is a single JSON object with controlled fields for recommended posture, same-premises applicability, covered risks, verification gaps, standard obligations, location-specific controls, first-90-day checks, and escalation triggers.
 
-The shared environment is the Cascadia Licensing Review Portal (CLRP) under `task_group/task_group_019/env/`. The target records are generated in `env/data/clrp.db` and exposed through the HTTP API documented in `env/data/public_manifest.json`. The construction anchor for March 2026 lists application `AA-2026-0018`, premises `PM-2026-018`, and issue tags `SAME_PREMISES_OVERLAP`, `CONTROL_OVERLAP`, and `FIRST_90_DAY_CHECK`.
+Scenario fit: The task matches the restricted liquor-license family in the group design. It requires reconciling an application row, current and historical settlement rows, standard privilege obligations, incident records, and site-evidence records. The business judgment is not just a lookup: the solver must separate ordinary license obligations from active site controls, recognize unresolved verification evidence, and convert the file into an operational monitoring package.
 
-Solver-visible files are limited to `input/prompt.txt` and `input/payloads/answer_template.json`. The prompt gives the base URL placeholder `http://localhost:<PORT>` and target IDs without exposing answer logic.
+Material map: `GET /api/liquor/applications` identifies `L-TR5-001` as Eastgate Social House dba Copper Kitchen 02, BeerWine class, at `LOC-TR5`, submitted 2025-05-09. `GET /api/liquor/settlements` shows the active 2025-04-03 settlement with `NOISE` and `PATIO` controls and older inactive settlements, including a same-premises basis row. `GET /api/liquor/privileges` supplies the BeerWine standard required obligations: `ID_CHECK`, `HOURS`, and `FOOD_SERVICE`. `GET /api/liquor/incidents` supplies an after-hours incident, open tax-hold record, assault history, and a dismissed high-severity assault row. `GET /api/liquor/site-evidence` shows no current camera or food-service evidence, a conflicting floor plan, and a verified police memo with an old-location-name note. `GET /api/policies` supplies the liquor rules that same-premises history matters, current site evidence is required, and standard privileges must be kept separate from controls.
 
-### Task Definition and Material Map
+Solution and evaluation basis: The standard answer recommends `request_follow_up`, not immediate restricted issuance or denial. Same-premises basis applies because historical same-premises facts remain relevant under the liquor policy even though the active settlement basis is `NOISE`. The active location-specific controls cover `NOISE` and `PATIO_BOUNDARY`. Verification gaps are `camera_evidence_missing`, `food_service_evidence_missing`, `floor_plan_conflicting`, `late_night_monitoring_needed`, and `tax_hold_unresolved`. Standard obligations are `ID_CHECK`, `HOURS`, and `FOOD_SERVICE`; current location-specific controls are `NOISE` and `PATIO`. The first-90-day plan checks camera export and food-service service areas in the first 30 days, a late-night closing visit in days 31-60, and noise/patio boundaries in days 61-90. Escalation triggers are after-hours service, missing camera coverage, footage not produced, food service unavailable, noise or patio breach, and uncleared open tax hold.
 
-The business task is to prepare a restricted-license monitoring plan for application `AA-2026-0018` at premises `PM-2026-018` for review month `2026-03`. Important CLRP records:
+Evaluation uses eight whole scoring points with raw weights `[3,2,2,3,2,2,2,2]`: `SP001` posture and target application, `SP002` same-premises applicability, `SP003` covered risks, `SP004` verification gaps, `SP005` standard obligations, `SP006` location-specific controls, `SP007` ordered first-90-day plan, and `SP008` escalation triggers. Each point is pass/fail and earns either its full normalized score or zero. Arrays except the ordered plan are evaluated as exact sets with no duplicates. The evaluator defaults to `output/answer.json` when no candidate path is supplied.
 
-- `GET /api/alcohol/applications?review_month=2026-03` identifies the target application as a `BREWPUB` application requesting restricted issuance.
-- `GET /api/alcohol/premises?premises_id=PM-2026-018` shows same address and overlapping service area as prior licensee `Juniper Hospitality LLC`, plus a risk summary that prior incidents overlap proposed controls.
-- `GET /api/alcohol/incidents?premises_id=PM-2026-018` shows pending incidents `AI-2026-0008` and `AI-2026-0009`, high-severity late-night disorder citation `AI-2026-0145`, and security-plan lapse citation `AI-2026-0086`.
-- `GET /api/alcohol/settlements?premises_id=PM-2026-018` shows settlement `AS-2026-0007` with final terms for noise abatement and quarterly inspection.
-- `GET /api/alcohol/restrictions?premises_id=PM-2026-018` shows `AR-2026-0013` as a standard-obligation style training control and `AR-2026-0014` as the premises-specific `AGE_CHECK` control.
-- `GET /api/alcohol/standard-obligations?license_type=BREWPUB` and `license_type=ALL` provide the standard obligations `BREW_PRODUCTION`, `BREW_SAMPLES`, `BREW_TRAINING`, `PUBLIC_RECORDS`, and `INCIDENT_REPORT`.
-- `GET /api/search/address?address=226%20Orchard%20St` has no renewal rows, so the successor risk is based on the alcohol premises history rather than an unrelated renewal match.
+Likely model pitfalls: A solver may over-credit the active settlement and recommend immediate issuance; include inactive controls such as `CCTV`, `HOURS`, or `FOOD_SERVICE` as current site controls; treat standard BeerWine obligations as location-specific restrictions; miss that the same-premises row still matters; count the verified police memo as camera evidence; ignore the conflicting floor plan; or omit late-night monitoring because the after-hours incident is closed.
 
-The required output is a controlled JSON object with recommendation, successor risk, verification gaps, standard obligations, premises-specific controls, records requests, and escalation triggers.
+Transfer design: As a train task, this solved example lets a future skill infer the restricted-license convention shared with `train_002` and `test_003`: distinguish standard obligations from location-specific controls, treat old and current settlements differently, do not treat promised restrictions as implementation proof, require current site evidence for camera and food-service concerns, and convert unresolved risks into first-90-day checks and escalation triggers. It is a formal task, not a tutorial; the transferable method is inferred from comparing the prompt, data exploration, answer, and evaluator behavior.
 
-### Solution and Evaluation Basis
-
-The standard answer recommends `ISSUE_RESTRICTED_WITH_MONITORING`, not standard issuance or denial. The reason is that the application already requests restricted issuance, but the same-premises history and incidents require monitoring. The successor risk is `HIGH` because the premises record has same address and service-area overlap, a high-severity late-night disorder citation, recent pending late-night disorder, pending noise complaint, and prior controls that overlap the risk.
-
-Verification gaps are:
-
-- `SUCCESSOR_CONTROL_SEPARATION` from `PM-2026-018`.
-- `PENDING_INCIDENT_DISPOSITIONS` from `AI-2026-0008` and `AI-2026-0009`.
-- `STANDARD_CONTROL_OVERLAP` from `AR-2026-0013`, which should not be treated as a site-specific restriction.
-- `POST_REVIEW_SETTLEMENT_TIMING` from `AS-2026-0007`, because its date is after the March review month and should be verified before it is relied on as final.
-
-Standard obligations are exactly the `BREWPUB` obligations plus `ALL` obligations: `BREW_PRODUCTION`, `BREW_SAMPLES`, `BREW_TRAINING`, `PUBLIC_RECORDS`, and `INCIDENT_REPORT`.
-
-Premises-specific controls are `AGE_CHECK`, `LATE_NIGHT_DISORDER_MONITORING`, `QUARTERLY_INSPECTION_CONDITION`, and `SECURITY_PLAN_LAPSE_REVIEW`, all marked for first-90-day checking. The answer intentionally excludes `TRAINING_STANDARD` from `premises_specific_controls` because the CLRP restriction category marks it as `standard-obligation`.
-
-The evaluator has seven exact-match scoring points with raw weights:
-
-- Recommendation and target identity: weight 2.
-- Successor risk classification: weight 2.
-- Verification gap map with source IDs and statuses: weight 2.
-- Standard obligation code set: weight 2.
-- Premises-specific control map with source IDs, check codes, and first-90-day flags: weight 3.
-- Records request code set: weight 2.
-- Escalation trigger code set: weight 2.
-
-Common pitfalls are using `F-COM` obligations instead of `BREWPUB`; treating `TRAINING_STANDARD` as premises-specific; ignoring the pending disposition records; missing the high-severity late-night disorder evidence; over-denying despite the requested restricted posture; or searching renewal rows and inventing a match where the address search returns none.
-
-### Transfer Design
-
-This train task reinforces the restricted-license SOP shared with `train_002` and later restricted-license test tasks. It is still a real formal task, not a tutorial: the solver must infer the separation between standard obligations and premises-specific controls from the records and answer comparison. Transferable lessons include checking the current application's license type before selecting standard obligations, treating same-premises history as successor risk evidence, not accepting proposed controls at face value when they overlap prior failed risks, and converting first-90-day concerns into controlled monitoring and escalation outputs.
-
-### Construction Record
-
-Author: task-builder subagent for `train_005`.
-Created: 2026-07-07.
-Updated: 2026-07-07.
-Major changes: initial task construction with prompt, answer template, standard answer, exact-match evaluator, and bilingual notes.
+Construction record: Author `task-builder-train-005` / Codex. Created 2026-07-18. Updated 2026-07-18. Major changes: created the formal `train_005` prompt, template, gold answer, bilingual notes, and deterministic evaluator for the hotel-lounge restricted liquor-license package.
 
 ## 中文
 
-### 数据与来源
+数据来源与谱系：本任务属于 `SCN_019_regulatory_licensing_eligibility_and_compliance_review`，使用源示例 `E001`、`E002`、`E003`。直接设计锚点是 `E002` 的限制性酒类许可审查工作流，并被转换到 `task_group_019` 的共享生成环境中。目标记录来自应用 `L-TR5-001` 和地点 `LOC-TR5` 的公开环境数据；任务本地文件包括 `input/prompt.txt`、`input/payloads/answer_template.json`、`output/answer.json` 和 `eval/`。
 
-本任务是 `task_group_019` 的 `train_005`，来源场景为 `SCN_019_regulatory_licensing_eligibility_and_compliance_review`，参考示例为 `E001`、`E002`、`E003`。任务属于受限制酒类牌照审查工作流，并加入类似续期审查中的继任经营风险判断：同地址历史应作为场所风险证据，但不能和无关的续期名单匹配混淆。
+任务定义：求解者扮演许可审查人员，为酒店酒廊类型的酒类申请准备结构化限制性许可 staff package。可见 prompt 给出申请号 `L-TR5-001`、地点 `LOC-TR5` 和允许使用的环境端点。期望输出是单个 JSON 对象，字段使用受控代码表示建议 posture、same-premises 是否适用、已覆盖风险、仍缺验证、标准义务、地点专属控制、首 90 天检查计划和升级触发条件。
 
-共享环境是 `task_group/task_group_019/env/` 下的 Cascadia Licensing Review Portal。目标记录由 `env/data/clrp.db` 生成，并通过 `env/data/public_manifest.json` 中记录的 HTTP API 暴露。构造清单中，2026 年 3 月锚点包括申请 `AA-2026-0018`、场所 `PM-2026-018`，问题标签为 `SAME_PREMISES_OVERLAP`、`CONTROL_OVERLAP`、`FIRST_90_DAY_CHECK`。
+场景契合：本任务符合任务组中的限制性酒类许可家族。它需要把申请记录、当前与历史 settlement、标准 privilege 义务、incident 记录和 site-evidence 记录进行交叉核对。业务判断不是简单查表；求解者必须区分普通许可义务与有效的地点控制，识别尚未闭合的验证证据，并把文件转化为可执行的监管计划。
 
-求解器可见文件只有 `input/prompt.txt` 和 `input/payloads/answer_template.json`。提示中只给出 `http://localhost:<PORT>` 和目标 ID，不暴露求解流程或标准答案。
+材料地图：`GET /api/liquor/applications` 表明 `L-TR5-001` 是 Eastgate Social House 以 Copper Kitchen 02 名义提交的 BeerWine 申请，地点为 `LOC-TR5`，提交日期为 2025-05-09。`GET /api/liquor/settlements` 显示 2025-04-03 的有效 settlement 包含 `NOISE` 和 `PATIO` 控制，也显示较早已失效的 settlement，其中包括 same-premises basis。`GET /api/liquor/privileges` 给出 BeerWine 的标准必需义务：`ID_CHECK`、`HOURS`、`FOOD_SERVICE`。`GET /api/liquor/incidents` 给出 after-hours、未结 tax-hold、assault 历史以及一个 dismissed 的高严重度 assault 记录。`GET /api/liquor/site-evidence` 显示没有当前 camera 或 food-service 证据，有一个 conflicting 的 floor plan，以及一个带旧地点名称备注的 verified police memo。`GET /api/policies` 给出酒类规则：same-premises 历史仍重要、需要当前现场证据、标准 privilege 必须与控制措施分开。
 
-### 任务定义与材料地图
+解答与评测依据：标准答案建议 `request_follow_up`，而不是立即发放限制性许可或拒绝。same-premises basis 适用，因为政策要求历史 same-premises 事实仍被考虑，即使当前有效 settlement 的 basis 是 `NOISE`。有效地点专属控制覆盖 `NOISE` 和 `PATIO_BOUNDARY`。验证缺口为 `camera_evidence_missing`、`food_service_evidence_missing`、`floor_plan_conflicting`、`late_night_monitoring_needed`、`tax_hold_unresolved`。标准义务为 `ID_CHECK`、`HOURS`、`FOOD_SERVICE`；当前地点专属控制为 `NOISE`、`PATIO`。首 90 天计划是在前 30 天检查 camera export 和 food-service 服务区域，在第 31-60 天进行 late-night closing visit，在第 61-90 天检查 noise/patio boundary。升级触发包括 after-hours service、missing camera coverage、footage not produced、food service unavailable、noise or patio breach，以及 open tax hold 未清。
 
-业务任务是为 2026 年 3 月的申请 `AA-2026-0018`、场所 `PM-2026-018` 准备受限制牌照监控计划。关键 CLRP 记录如下：
+评测使用八个整点评分项，原始权重为 `[3,2,2,3,2,2,2,2]`：`SP001` posture 与目标申请，`SP002` same-premises 适用性，`SP003` 覆盖风险，`SP004` 验证缺口，`SP005` 标准义务，`SP006` 地点专属控制，`SP007` 有序首 90 天计划，`SP008` 升级触发。每个评分项都是通过或不通过，只能获得完整归一化分数或零分。除有序计划外，数组按无重复精确集合评测。没有传入候选答案路径时，评测器默认评测 `output/answer.json`。
 
-- `GET /api/alcohol/applications?review_month=2026-03` 显示目标申请是 `BREWPUB`，并请求受限制发照。
-- `GET /api/alcohol/premises?premises_id=PM-2026-018` 显示该场所与前任持牌人 `Juniper Hospitality LLC` 同地址且服务区域重叠。
-- `GET /api/alcohol/incidents?premises_id=PM-2026-018` 显示待处理事件 `AI-2026-0008`、`AI-2026-0009`，高严重度深夜秩序事件 `AI-2026-0145`，以及安全计划缺失事件 `AI-2026-0086`。
-- `GET /api/alcohol/settlements?premises_id=PM-2026-018` 显示和噪音消减、季度检查有关的和解 `AS-2026-0007`。
-- `GET /api/alcohol/restrictions?premises_id=PM-2026-018` 显示 `AR-2026-0013` 是标准义务类培训控制，`AR-2026-0014` 是场所特定的 `AGE_CHECK` 控制。
-- `GET /api/alcohol/standard-obligations?license_type=BREWPUB` 和 `license_type=ALL` 给出标准义务。
-- `GET /api/search/address?address=226%20Orchard%20St` 没有续期记录，因此继任风险来自酒类场所历史，而非续期名单。
+常见模型陷阱：模型可能过度相信有效 settlement 并建议立即发放；把已失效控制如 `CCTV`、`HOURS` 或 `FOOD_SERVICE` 当成当前地点控制；把 BeerWine 标准义务误认为地点专属限制；遗漏 same-premises 历史仍然相关；把 verified police memo 当成 camera 证据；忽略 conflicting floor plan；或因为 after-hours incident 已关闭而遗漏 late-night 监控。
 
-输出必须是受控 JSON，字段包括建议、继任风险等级、核验缺口、标准义务、场所特定控制、记录请求和升级触发条件。
+迁移设计：作为训练任务，该已解样本可让未来 skill 推断与 `train_002` 和 `test_003` 共享的限制性许可惯例：区分标准义务与地点专属控制，区分历史和当前 settlement，不把接受限制视为实施证据，要求 camera 与 food-service 问题有当前现场证据，并把未解决风险转化为首 90 天检查和升级触发。本任务是正式任务，不是教程；可迁移方法需要从 prompt、数据探索、答案与评测行为的对照中推断。
 
-### 解答与评估依据
-
-标准答案建议 `ISSUE_RESTRICTED_WITH_MONITORING`。原因是申请本身请求受限制发照，但同场所历史、近期待处理事件和既往高严重度事件要求配套监控，而不是普通发照或直接拒绝。继任风险为 `HIGH`。
-
-核验缺口包括：来自 `PM-2026-018` 的继任控制分离，来自 `AI-2026-0008` 和 `AI-2026-0009` 的待处理事件结果，来自 `AR-2026-0013` 的标准控制重叠，以及来自 `AS-2026-0007` 的审查月份后和解日期核验。
-
-标准义务必须取 `BREWPUB` 和 `ALL` 的义务：`BREW_PRODUCTION`、`BREW_SAMPLES`、`BREW_TRAINING`、`PUBLIC_RECORDS`、`INCIDENT_REPORT`。场所特定控制为 `AGE_CHECK`、`LATE_NIGHT_DISORDER_MONITORING`、`QUARTERLY_INSPECTION_CONDITION`、`SECURITY_PLAN_LAPSE_REVIEW`，并都要求首 90 天检查。`TRAINING_STANDARD` 不应放入场所特定控制，因为数据库中其类别是 `standard-obligation`。
-
-评估器有 7 个精确匹配评分点，原始权重分别为 2、2、2、2、3、2、2，覆盖建议、风险等级、核验缺口、标准义务、场所控制、记录请求和升级触发条件。
-
-常见错误包括误用 `F-COM` 标准义务、把 `TRAINING_STANDARD` 当作场所控制、忽略待处理事件、遗漏高严重度深夜事件、在应受限制监控时直接拒绝，以及把没有地址匹配的续期记录强行纳入。
-
-### 迁移设计
-
-本训练任务强化与 `train_002` 和后续受限制酒类牌照测试任务共享的操作经验。它不是教程，而是正式业务任务；求解器需要通过实际尝试和对照答案来归纳：必须按当前申请的牌照类型选择标准义务，必须把同场所历史作为继任风险证据，不能把与既往风险重叠的控制措施直接视为充分，首 90 天问题要转换为结构化监控和升级条件。
-
-### 构造记录
-
-作者：`train_005` task-builder subagent。
-创建日期：2026-07-07。
-更新日期：2026-07-07。
-主要变更：首次创建提示、答案模板、标准答案、精确匹配评估器和双语说明。
+构造记录：作者 `task-builder-train-005` / Codex。创建日期 2026-07-18。更新日期 2026-07-18。主要变更：创建了酒店酒廊限制性酒类许可包的正式 `train_005` prompt、模板、标准答案、双语 notes 和确定性 evaluator。

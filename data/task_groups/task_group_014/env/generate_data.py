@@ -1,658 +1,1861 @@
 #!/usr/bin/env python3
+"""Generate deterministic Northstar payer-operations SQLite data."""
+
+from __future__ import annotations
+
 import json
 import random
 import sqlite3
-from datetime import date, datetime, timedelta
 from pathlib import Path
 
 
-SEED = 140014
-BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR / "payer_ops.db"
-MANIFEST_PATH = BASE_DIR / "data_manifest.json"
+SEED = 140417
+ROOT = Path(__file__).resolve().parent
+DATA_DIR = ROOT / "data"
+DB_PATH = DATA_DIR / "northstar_pa.sqlite"
+MANIFEST_PATH = ROOT / "manifest.json"
 
 
-def iso(value):
-    if isinstance(value, (date, datetime)):
-        return value.isoformat()
-    return value
+SCHEMA = [
+    """
+    CREATE TABLE members(
+        member_id TEXT PRIMARY KEY,
+        patient_name TEXT NOT NULL,
+        dob TEXT NOT NULL,
+        plan_id TEXT NOT NULL,
+        plan_type TEXT NOT NULL,
+        product TEXT NOT NULL,
+        employer_group TEXT,
+        member_status TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE plans(
+        plan_id TEXT PRIMARY KEY,
+        payer_name TEXT NOT NULL,
+        plan_type TEXT NOT NULL,
+        state TEXT NOT NULL,
+        network TEXT NOT NULL,
+        effective_start TEXT NOT NULL,
+        effective_end TEXT NOT NULL,
+        notes TEXT
+    )
+    """,
+    """
+    CREATE TABLE providers(
+        provider_id TEXT PRIMARY KEY,
+        provider_name TEXT NOT NULL,
+        specialty TEXT NOT NULL,
+        npi TEXT NOT NULL,
+        phone TEXT,
+        fax TEXT,
+        organization TEXT
+    )
+    """,
+    """
+    CREATE TABLE cases(
+        case_id TEXT PRIMARY KEY,
+        member_id TEXT NOT NULL,
+        provider_id TEXT NOT NULL,
+        request_type TEXT NOT NULL,
+        service_domain TEXT NOT NULL,
+        policy_id TEXT NOT NULL,
+        request_date TEXT NOT NULL,
+        due_date TEXT NOT NULL,
+        current_stage TEXT NOT NULL,
+        current_status TEXT NOT NULL,
+        urgency TEXT NOT NULL,
+        summary TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE request_lines(
+        line_id TEXT PRIMARY KEY,
+        case_id TEXT NOT NULL,
+        cpt_code TEXT NOT NULL,
+        modifier TEXT,
+        service_name TEXT NOT NULL,
+        requested_units INTEGER NOT NULL,
+        requested_start TEXT,
+        requested_end TEXT,
+        diagnosis_codes TEXT,
+        billed_charge REAL NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE documents(
+        document_id TEXT PRIMARY KEY,
+        case_id TEXT NOT NULL,
+        document_type TEXT NOT NULL,
+        document_date TEXT NOT NULL,
+        received_date TEXT NOT NULL,
+        source_system TEXT NOT NULL,
+        is_current INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        summary TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE document_facts(
+        fact_id TEXT PRIMARY KEY,
+        document_id TEXT NOT NULL,
+        case_id TEXT NOT NULL,
+        fact_key TEXT NOT NULL,
+        fact_value TEXT NOT NULL,
+        numeric_value REAL,
+        unit TEXT,
+        supports_criteria TEXT
+    )
+    """,
+    """
+    CREATE TABLE policies(
+        policy_id TEXT PRIMARY KEY,
+        policy_name TEXT NOT NULL,
+        version TEXT NOT NULL,
+        effective_start TEXT NOT NULL,
+        effective_end TEXT NOT NULL,
+        precedence INTEGER NOT NULL,
+        summary TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE policy_criteria(
+        criterion_id TEXT PRIMARY KEY,
+        policy_id TEXT NOT NULL,
+        criterion_key TEXT NOT NULL,
+        criterion_text TEXT NOT NULL,
+        approval_required INTEGER NOT NULL,
+        result_if_missing TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE case_criteria(
+        case_id TEXT NOT NULL,
+        criterion_id TEXT NOT NULL,
+        result TEXT NOT NULL,
+        evidence_fact_ids TEXT,
+        gap_description TEXT,
+        reviewer_scope TEXT,
+        PRIMARY KEY(case_id, criterion_id)
+    )
+    """,
+    """
+    CREATE TABLE p2p_events(
+        p2p_id TEXT PRIMARY KEY,
+        case_id TEXT NOT NULL,
+        scheduled_at TEXT NOT NULL,
+        duration_minutes INTEGER NOT NULL,
+        provider_argument TEXT,
+        new_information TEXT,
+        outcome TEXT,
+        final_status TEXT,
+        reviewer TEXT,
+        notes TEXT
+    )
+    """,
+    """
+    CREATE TABLE appeals(
+        appeal_id TEXT PRIMARY KEY,
+        case_id TEXT NOT NULL,
+        denial_date TEXT NOT NULL,
+        received_date TEXT NOT NULL,
+        appeal_type_requested TEXT NOT NULL,
+        appeal_path TEXT NOT NULL,
+        expedited_attestation TEXT NOT NULL,
+        appeal_deadline TEXT NOT NULL,
+        outcome TEXT,
+        owner TEXT,
+        notes TEXT
+    )
+    """,
+    """
+    CREATE TABLE drug_trials(
+        trial_id TEXT PRIMARY KEY,
+        case_id TEXT NOT NULL,
+        medication TEXT NOT NULL,
+        outcome TEXT NOT NULL,
+        documented INTEGER NOT NULL,
+        start_date TEXT,
+        end_date TEXT,
+        notes TEXT
+    )
+    """,
+    """
+    CREATE TABLE assistance_screen(
+        case_id TEXT PRIMARY KEY,
+        program_name TEXT NOT NULL,
+        income_percent_fpl REAL,
+        insurance_type TEXT NOT NULL,
+        denial_required INTEGER NOT NULL,
+        denial_on_file INTEGER NOT NULL,
+        missing_fields TEXT,
+        assistance_status TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE claims(
+        claim_id TEXT PRIMARY KEY,
+        member_id TEXT NOT NULL,
+        case_id TEXT,
+        payer TEXT NOT NULL,
+        received_date TEXT NOT NULL,
+        claim_status TEXT NOT NULL,
+        auth_number TEXT,
+        billed_total REAL NOT NULL,
+        paid_total REAL NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE claim_lines(
+        claim_line_id TEXT PRIMARY KEY,
+        claim_id TEXT NOT NULL,
+        line_number INTEGER NOT NULL,
+        cpt_code TEXT NOT NULL,
+        modifier TEXT,
+        units INTEGER NOT NULL,
+        billed_amount REAL NOT NULL,
+        paid_amount REAL NOT NULL,
+        denial_code TEXT,
+        service_date TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE authorizations(
+        auth_id TEXT PRIMARY KEY,
+        case_id TEXT NOT NULL,
+        auth_number TEXT,
+        status TEXT NOT NULL,
+        approved_units INTEGER,
+        approved_start TEXT,
+        approved_end TEXT,
+        approved_cpt TEXT,
+        approved_modifier TEXT,
+        denial_reason TEXT
+    )
+    """,
+    """
+    CREATE TABLE payment_benchmarks(
+        benchmark_id TEXT PRIMARY KEY,
+        payer TEXT NOT NULL,
+        plan_type TEXT NOT NULL,
+        service_domain TEXT NOT NULL,
+        cpt_code TEXT NOT NULL,
+        modifier TEXT,
+        effective_start TEXT NOT NULL,
+        effective_end TEXT NOT NULL,
+        allowed_amount REAL NOT NULL,
+        source_name TEXT NOT NULL,
+        source_version TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE service_margin(
+        month_id TEXT PRIMARY KEY,
+        period TEXT NOT NULL,
+        payer TEXT NOT NULL,
+        payer_segment TEXT NOT NULL,
+        service_domain TEXT NOT NULL,
+        cpt_code TEXT NOT NULL,
+        visits INTEGER NOT NULL,
+        net_revenue REAL NOT NULL,
+        variable_cost REAL NOT NULL,
+        fixed_cost_allocated REAL NOT NULL,
+        charge_sensitive INTEGER NOT NULL
+    )
+    """,
+]
 
 
-def pick(rng, values):
-    return values[rng.randrange(len(values))]
-
-
-def add_days(value, days):
-    return value + timedelta(days=days)
-
-
-def create_schema(conn):
-    conn.executescript(
-        """
-        DROP TABLE IF EXISTS plans;
-        DROP TABLE IF EXISTS members;
-        DROP TABLE IF EXISTS providers;
-        DROP TABLE IF EXISTS facilities;
-        DROP TABLE IF EXISTS service_codes;
-        DROP TABLE IF EXISTS state_sla_rules;
-        DROP TABLE IF EXISTS criteria_sources;
-        DROP TABLE IF EXISTS authorization_requests;
-        DROP TABLE IF EXISTS auth_lines;
-        DROP TABLE IF EXISTS existing_authorizations;
-        DROP TABLE IF EXISTS evidence_documents;
-        DROP TABLE IF EXISTS clinical_facts;
-        DROP TABLE IF EXISTS coverage_criteria;
-        DROP TABLE IF EXISTS case_review_events;
-        DROP TABLE IF EXISTS p2p_sessions;
-        DROP TABLE IF EXISTS medication_cases;
-        DROP TABLE IF EXISTS medication_trials;
-        DROP TABLE IF EXISTS drug_policy_requirements;
-        DROP TABLE IF EXISTS assistance_programs;
-        DROP TABLE IF EXISTS household_financials;
-        DROP TABLE IF EXISTS appeals;
-        DROP TABLE IF EXISTS rate_schedules;
-        DROP TABLE IF EXISTS encounters;
-        DROP TABLE IF EXISTS clinic_costs;
-        DROP TABLE IF EXISTS clinic_budgets;
-        DROP TABLE IF EXISTS claim_corrections;
-
-        CREATE TABLE plans(
-            plan_id TEXT PRIMARY KEY,
-            plan_name TEXT,
-            plan_type TEXT,
-            plan_tier TEXT,
-            network_type TEXT,
-            state TEXT,
-            routine_sla_days INTEGER,
-            urgent_sla_hours INTEGER,
-            stat_sla_hours INTEGER,
-            formulary_type TEXT,
-            gold_card_allowed INTEGER
-        );
-        CREATE TABLE members(
-            member_id TEXT PRIMARY KEY,
-            member_name TEXT,
-            dob TEXT,
-            plan_id TEXT,
-            residence_state TEXT,
-            coverage_start TEXT,
-            coverage_end TEXT,
-            retro_reinstated_date TEXT,
-            cob_primary_status TEXT
-        );
-        CREATE TABLE providers(
-            npi TEXT PRIMARY KEY,
-            provider_name TEXT,
-            specialty TEXT,
-            state TEXT,
-            network_status TEXT,
-            approval_rate_12m REAL,
-            completed_pa_12m INTEGER,
-            quarterly_volume INTEGER,
-            sanctions_active INTEGER,
-            credentials_active INTEGER,
-            gold_card_active INTEGER
-        );
-        CREATE TABLE facilities(
-            facility_id TEXT PRIMARY KEY,
-            facility_name TEXT,
-            state TEXT,
-            in_service_area INTEGER
-        );
-        CREATE TABLE service_codes(
-            code TEXT PRIMARY KEY,
-            description TEXT,
-            service_category TEXT,
-            pa_required INTEGER,
-            covered INTEGER,
-            notification_only INTEGER,
-            gold_card_exclusion INTEGER,
-            delegated_program TEXT,
-            external_vendor TEXT,
-            specialty_program TEXT,
-            mandatory_md_review INTEGER,
-            estimated_allowed_amount REAL
-        );
-        CREATE TABLE state_sla_rules(
-            state TEXT,
-            plan_type_filter TEXT,
-            routine_days INTEGER,
-            urgent_hours INTEGER,
-            stat_hours INTEGER,
-            day_type TEXT,
-            notes TEXT
-        );
-        CREATE TABLE criteria_sources(
-            source_id TEXT PRIMARY KEY,
-            source_name TEXT,
-            precedence_rank INTEGER,
-            plan_type_filter TEXT,
-            service_category_filter TEXT,
-            effective_date TEXT
-        );
-        CREATE TABLE authorization_requests(
-            case_id TEXT PRIMARY KEY,
-            member_id TEXT,
-            request_date TEXT,
-            receipt_timestamp TEXT,
-            submission_channel TEXT,
-            urgency_attested TEXT,
-            place_of_service TEXT,
-            service_start TEXT,
-            service_end TEXT,
-            requesting_npi TEXT,
-            servicing_npi TEXT,
-            facility_id TEXT,
-            primary_icd10 TEXT,
-            clinical_indication TEXT,
-            status TEXT,
-            current_stage TEXT,
-            rendered_before_submission INTEGER,
-            oon_exception INTEGER,
-            cob_primary_processed INTEGER,
-            requested_total_units INTEGER,
-            estimated_total_allowed REAL,
-            target_bucket TEXT
-        );
-        CREATE TABLE auth_lines(
-            case_id TEXT,
-            line_no INTEGER,
-            cpt_code TEXT,
-            modifier TEXT,
-            units INTEGER,
-            service_category TEXT
-        );
-        CREATE TABLE existing_authorizations(
-            existing_auth_id TEXT PRIMARY KEY,
-            member_id TEXT,
-            cpt_code TEXT,
-            service_start TEXT,
-            service_end TEXT,
-            status TEXT,
-            decision_date TEXT,
-            original_case_id TEXT
-        );
-        CREATE TABLE evidence_documents(
-            doc_id TEXT PRIMARY KEY,
-            case_id TEXT,
-            doc_type TEXT,
-            doc_date TEXT,
-            source_system TEXT,
-            source_rank INTEGER,
-            is_current INTEGER,
-            title TEXT,
-            summary TEXT
-        );
-        CREATE TABLE clinical_facts(
-            case_id TEXT,
-            criterion_key TEXT,
-            fact_value TEXT,
-            fact_date TEXT,
-            source_doc_id TEXT,
-            source_rank INTEGER,
-            confidence_flag TEXT
-        );
-        CREATE TABLE coverage_criteria(
-            service_category TEXT,
-            criterion_key TEXT,
-            criterion_label TEXT,
-            required_value TEXT,
-            criteria_source_id TEXT,
-            plan_type_filter TEXT,
-            is_required_for_approval INTEGER
-        );
-        CREATE TABLE case_review_events(
-            event_id TEXT PRIMARY KEY,
-            case_id TEXT,
-            event_timestamp TEXT,
-            stage TEXT,
-            reviewer_role TEXT,
-            event_type TEXT,
-            outcome TEXT,
-            notes TEXT
-        );
-        CREATE TABLE p2p_sessions(
-            p2p_id TEXT PRIMARY KEY,
-            case_id TEXT,
-            scheduled_at TEXT,
-            completed_at TEXT,
-            requesting_provider_joined INTEGER,
-            new_information INTEGER,
-            outcome TEXT,
-            duration_minutes INTEGER
-        );
-        CREATE TABLE medication_cases(
-            med_case_id TEXT PRIMARY KEY,
-            member_id TEXT,
-            drug_name TEXT,
-            diagnosis_code TEXT,
-            requested_dose TEXT,
-            request_date TEXT,
-            payer_formulary_status TEXT,
-            prescriber_npi TEXT,
-            target_bucket TEXT
-        );
-        CREATE TABLE medication_trials(
-            trial_id TEXT PRIMARY KEY,
-            med_case_id TEXT,
-            medication_name TEXT,
-            drug_class TEXT,
-            start_date TEXT,
-            end_date TEXT,
-            outcome TEXT,
-            adverse_effect TEXT,
-            documented INTEGER
-        );
-        CREATE TABLE drug_policy_requirements(
-            drug_name TEXT,
-            plan_type_filter TEXT,
-            requirement_key TEXT,
-            requirement_label TEXT,
-            required_value TEXT,
-            source_rank INTEGER
-        );
-        CREATE TABLE assistance_programs(
-            program_id TEXT PRIMARY KEY,
-            drug_name TEXT,
-            max_income_fpl INTEGER,
-            requires_commercial_insurance INTEGER,
-            excludes_government_plan INTEGER,
-            requires_denial INTEGER,
-            form_name TEXT
-        );
-        CREATE TABLE household_financials(
-            member_id TEXT PRIMARY KEY,
-            household_size INTEGER,
-            annual_income REAL,
-            insurance_type TEXT,
-            has_denial_letter INTEGER,
-            assistance_consent_on_file INTEGER
-        );
-        CREATE TABLE appeals(
-            appeal_id TEXT PRIMARY KEY,
-            case_or_med_case_id TEXT,
-            appeal_subject_type TEXT,
-            adverse_notice_date TEXT,
-            appeal_received_date TEXT,
-            expedited_attestation INTEGER,
-            new_evidence_received INTEGER,
-            authorized_representative_on_file INTEGER,
-            original_decision_type TEXT,
-            plan_type TEXT,
-            target_bucket TEXT
-        );
-        CREATE TABLE rate_schedules(
-            rate_id TEXT PRIMARY KEY,
-            payer TEXT,
-            plan_type TEXT,
-            service_category TEXT,
-            cpt_code TEXT,
-            state TEXT,
-            effective_start TEXT,
-            effective_end TEXT,
-            benchmark_rate REAL,
-            benchmark_source TEXT
-        );
-        CREATE TABLE encounters(
-            encounter_id TEXT PRIMARY KEY,
-            clinic_id TEXT,
-            service_date TEXT,
-            payer TEXT,
-            plan_type TEXT,
-            member_id TEXT,
-            cpt_code TEXT,
-            service_category TEXT,
-            units INTEGER,
-            billed_amount REAL,
-            paid_amount REAL,
-            denial_code TEXT,
-            authorization_case_id TEXT
-        );
-        CREATE TABLE clinic_costs(
-            cost_id TEXT PRIMARY KEY,
-            clinic_id TEXT,
-            fiscal_year INTEGER,
-            service_category TEXT,
-            direct_cost_per_unit REAL,
-            allocated_overhead_per_unit REAL
-        );
-        CREATE TABLE clinic_budgets(
-            budget_id TEXT PRIMARY KEY,
-            clinic_id TEXT,
-            fiscal_year INTEGER,
-            payer TEXT,
-            service_category TEXT,
-            expected_units INTEGER,
-            expected_net_revenue REAL,
-            expected_margin_pct REAL
-        );
-        CREATE TABLE claim_corrections(
-            correction_id TEXT PRIMARY KEY,
-            encounter_id TEXT,
-            correction_type TEXT,
-            expected_recovery_amount REAL,
-            correction_deadline TEXT,
-            status TEXT
-        );
-        """
+def insert_many(cur: sqlite3.Cursor, table: str, rows: list[dict]) -> None:
+    if not rows:
+        return
+    keys = list(rows[0].keys())
+    placeholders = ", ".join("?" for _ in keys)
+    columns = ", ".join(keys)
+    cur.executemany(
+        f"INSERT INTO {table} ({columns}) VALUES ({placeholders})",
+        [[row.get(key) for key in keys] for row in rows],
     )
 
 
-def insert_static_data(conn):
+def base_rows() -> dict[str, list[dict]]:
     plans = [
-        ("PLN001", "Ticonderoga Select Gold", "Commercial", "Gold", "HMO", "CA", 5, 72, 24, "closed", 1),
-        ("PLN002", "Ticonderoga Choice Silver", "Commercial", "Silver", "PPO", "NY", 3, 72, 24, "open", 1),
-        (
-            "PLN003",
-            "Ticonderoga Medicare Advantage Plus",
-            "Medicare Advantage",
-            "Plus",
-            "HMO",
-            "FL",
-            7,
-            72,
-            24,
-            "closed",
-            0,
-        ),
-        (
-            "PLN004",
-            "Ticonderoga Medicare Advantage Value",
-            "Medicare Advantage",
-            "Value",
-            "PPO",
-            "PA",
-            7,
-            72,
-            24,
-            "closed",
-            0,
-        ),
-        (
-            "PLN005",
-            "Ticonderoga Medicaid Managed Care",
-            "Medicaid",
-            "Standard",
-            "HMO",
-            "TX",
-            4,
-            48,
-            12,
-            "state preferred",
-            0,
-        ),
-        ("PLN006", "Ticonderoga Exchange Bronze", "Exchange", "Bronze", "EPO", "IL", 5, 72, 24, "closed", 1),
-        ("PLN007", "Ticonderoga Employer Premier", "Commercial", "Premier", "PPO", "CA", 5, 72, 24, "open", 1),
-        ("PLN008", "Ticonderoga Dual Eligible Care", "Dual Eligible", "Standard", "HMO", "NY", 3, 48, 12, "closed", 0),
+        {
+            "plan_id": "NHP-COM-NY",
+            "payer_name": "Northstar Health Plan",
+            "plan_type": "commercial",
+            "state": "NY",
+            "network": "PrimePlus",
+            "effective_start": "2026-01-01",
+            "effective_end": "2026-12-31",
+            "notes": "Commercial plan with standard prior authorization and internal appeal rules.",
+        },
+        {
+            "plan_id": "NHP-MCD-NY",
+            "payer_name": "Northstar Health Plan",
+            "plan_type": "medicaid",
+            "state": "NY",
+            "network": "CommunityCare",
+            "effective_start": "2026-01-01",
+            "effective_end": "2026-12-31",
+            "notes": "Medicaid managed care plan with tighter therapy margin thresholds.",
+        },
+        {
+            "plan_id": "NHP-MCR-NJ",
+            "payer_name": "Northstar Health Plan",
+            "plan_type": "medicare_advantage",
+            "state": "NJ",
+            "network": "SeniorChoice",
+            "effective_start": "2026-01-01",
+            "effective_end": "2026-12-31",
+            "notes": "Medicare Advantage plan; expedited appeals require attestation.",
+        },
+        {
+            "plan_id": "NHP-WC-PA",
+            "payer_name": "Northstar Health Plan",
+            "plan_type": "workers_comp",
+            "state": "PA",
+            "network": "OccupationalDirect",
+            "effective_start": "2026-01-01",
+            "effective_end": "2026-12-31",
+            "notes": "Workers compensation product with charge-sensitive outlier review.",
+        },
+        {
+            "plan_id": "NHP-COM-OLD",
+            "payer_name": "Northstar Health Plan",
+            "plan_type": "commercial",
+            "state": "NY",
+            "network": "PrimePlus",
+            "effective_start": "2025-01-01",
+            "effective_end": "2025-12-31",
+            "notes": "Expired plan left in exports as a stale distractor.",
+        },
     ]
-    conn.executemany("INSERT INTO plans VALUES (?,?,?,?,?,?,?,?,?,?,?)", plans)
-
-    facilities = [
-        ("FAC001", "Riverside Community Clinic", "CA", 1),
-        ("FAC002", "North Harbor Imaging Center", "NY", 1),
-        ("FAC003", "Lakeside Rehabilitation Institute", "IL", 1),
-        ("FAC004", "Gulf Coast Specialty Hospital", "FL", 1),
-        ("FAC005", "Hill Country Ambulatory Center", "TX", 1),
-        ("FAC006", "Summit Out-of-Area Hospital", "AZ", 0),
+    providers = [
+        {
+            "provider_id": "PRV-PT-001",
+            "provider_name": "Summit Spine Physical Therapy",
+            "specialty": "physical_therapy",
+            "npi": "1487629011",
+            "phone": "212-555-0114",
+            "fax": "212-555-0199",
+            "organization": "Summit Rehab Network",
+        },
+        {
+            "provider_id": "PRV-CARD-001",
+            "provider_name": "Hudson Cardiology Associates",
+            "specialty": "cardiology",
+            "npi": "1770542219",
+            "phone": "212-555-0140",
+            "fax": "212-555-0141",
+            "organization": "Hudson Heart Group",
+        },
+        {
+            "provider_id": "PRV-RAD-001",
+            "provider_name": "Metro Nuclear Imaging",
+            "specialty": "nuclear_medicine",
+            "npi": "1215987042",
+            "phone": "646-555-0123",
+            "fax": "646-555-0160",
+            "organization": "Metro Diagnostics",
+        },
+        {
+            "provider_id": "PRV-PEDS-001",
+            "provider_name": "Bright Steps Pediatric Therapy",
+            "specialty": "speech_therapy",
+            "npi": "1306208876",
+            "phone": "718-555-0155",
+            "fax": "718-555-0156",
+            "organization": "Bright Steps Care",
+        },
+        {
+            "provider_id": "PRV-DERM-001",
+            "provider_name": "North Ridge Dermatology",
+            "specialty": "dermatology",
+            "npi": "1982014652",
+            "phone": "973-555-0177",
+            "fax": "973-555-0188",
+            "organization": "North Ridge Medical",
+        },
+        {
+            "provider_id": "PRV-ORTHO-001",
+            "provider_name": "Keystone Orthopedic Center",
+            "specialty": "orthopedics",
+            "npi": "1548396629",
+            "phone": "215-555-0135",
+            "fax": "215-555-0136",
+            "organization": "Keystone Surgical Partners",
+        },
     ]
-    conn.executemany("INSERT INTO facilities VALUES (?,?,?,?)", facilities)
-
-    services = [
-        ("97110", "Therapeutic exercise", "Physical Therapy", 1, 1, 0, 0, "none", "none", "rehab", 0, 92.00),
-        ("97530", "Therapeutic activities", "Physical Therapy", 1, 1, 0, 0, "none", "none", "rehab", 0, 104.00),
-        (
-            "70553",
-            "MRI brain with contrast",
-            "Advanced Imaging",
-            1,
-            1,
-            0,
-            0,
-            "radiology vendor",
-            "MedImage Review",
-            "radiology",
-            1,
-            890.00,
-        ),
-        (
-            "78431",
-            "PET myocardial perfusion imaging",
-            "Cardiology Imaging",
-            1,
-            1,
-            0,
-            1,
-            "radiology vendor",
-            "MedImage Review",
-            "cardiology",
-            1,
-            2350.00,
-        ),
-        (
-            "29881",
-            "Knee arthroscopy meniscectomy",
-            "Orthopedic Surgery",
-            1,
-            1,
-            0,
-            1,
-            "none",
-            "none",
-            "surgery",
-            1,
-            6400.00,
-        ),
-        (
-            "64483",
-            "Transforaminal epidural injection",
-            "Pain Management",
-            1,
-            1,
-            0,
-            0,
-            "none",
-            "none",
-            "pain",
-            1,
-            1260.00,
-        ),
-        (
-            "E0601",
-            "Continuous airway pressure device",
-            "Durable Medical Equipment",
-            1,
-            1,
-            0,
-            0,
-            "DME vendor",
-            "CareEquip Review",
-            "sleep",
-            0,
-            780.00,
-        ),
-        ("J3301", "Triamcinolone injection", "Office Drug", 0, 1, 1, 0, "none", "none", "medical drug", 0, 38.00),
-        (
-            "S9999",
-            "Experimental cellular therapy",
-            "Experimental Therapy",
-            1,
-            0,
-            0,
-            1,
-            "none",
-            "none",
-            "experimental",
-            1,
-            18500.00,
-        ),
-        (
-            "G0299",
-            "Home health skilled nursing",
-            "Home Health",
-            1,
-            1,
-            0,
-            0,
-            "home health vendor",
-            "HomeCare Review",
-            "home health",
-            0,
-            210.00,
-        ),
-        (
-            "99214",
-            "Established patient office visit",
-            "Evaluation Management",
-            0,
-            1,
-            1,
-            0,
-            "none",
-            "none",
-            "office visit",
-            0,
-            155.00,
-        ),
-        ("97140", "Manual therapy techniques", "Physical Therapy", 1, 1, 0, 0, "none", "none", "rehab", 0, 88.00),
+    policies = [
+        {
+            "policy_id": "POL-PT-LUMBAR-2026",
+            "policy_name": "Lumbar Physical Therapy Medical Necessity",
+            "version": "2026.2",
+            "effective_start": "2026-01-01",
+            "effective_end": "2026-12-31",
+            "precedence": 10,
+            "summary": "Approve therapy when a current plan of care documents lumbar diagnosis, functional deficit, skilled intervention, and requested units within policy limits.",
+        },
+        {
+            "policy_id": "POL-ST-PEDS-2026",
+            "policy_name": "Pediatric Speech Therapy Prior Authorization",
+            "version": "2026.1",
+            "effective_start": "2026-01-01",
+            "effective_end": "2026-12-31",
+            "precedence": 11,
+            "summary": "A current plan of care must state frequency and duration without conflict with current clinical notes.",
+        },
+        {
+            "policy_id": "POL-DRUG-EXC-2026",
+            "policy_name": "Specialty Drug Coverage Exception Appeal",
+            "version": "2026.3",
+            "effective_start": "2026-01-01",
+            "effective_end": "2026-12-31",
+            "precedence": 20,
+            "summary": "Internal drug appeals require denial notice, member authorization, prescriber rationale, formulary failure evidence, and relevant assistance packet materials.",
+        },
+        {
+            "policy_id": "POL-PET-MPI-2026",
+            "policy_name": "PET Myocardial Perfusion Imaging Medical Necessity",
+            "version": "2026.4",
+            "effective_start": "2026-01-01",
+            "effective_end": "2026-12-31",
+            "precedence": 30,
+            "summary": "PET MPI needs a covered cardiac indication and at least one PET-over-SPECT factor such as prior equivocal SPECT, BMI limitation, or attenuation artifact.",
+        },
+        {
+            "policy_id": "POL-CLAIM-RATE-2026",
+            "policy_name": "Outpatient Imaging and Surgery Payment Benchmark",
+            "version": "2026.2",
+            "effective_start": "2026-01-01",
+            "effective_end": "2026-12-31",
+            "precedence": 40,
+            "summary": "Payment corrections compare claim lines against current benchmark schedules by payer, plan type, CPT, and modifier.",
+        },
     ]
-    conn.executemany("INSERT INTO service_codes VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", services)
-
-    sla_rules = [
-        ("CA", "Commercial", 5, 72, 24, "calendar", "California commercial default"),
-        ("CA", "Exchange", 5, 72, 24, "calendar", "California exchange default"),
-        ("NY", "Commercial", 3, 72, 24, "business", "New York routine cases use business days"),
-        ("NY", "Dual Eligible", 3, 48, 12, "business", "Dual eligible expedited handling"),
-        ("FL", "Medicare Advantage", 7, 72, 24, "calendar", "Medicare Advantage plan rule"),
-        ("PA", "Medicare Advantage", 7, 72, 24, "calendar", "Pennsylvania Medicare Advantage rule"),
-        ("TX", "Medicaid", 4, 48, 12, "calendar", "Texas Medicaid managed care rule"),
-        ("IL", "Exchange", 5, 72, 24, "calendar", "Illinois exchange rule"),
-        ("AZ", "Commercial", 2, 48, 12, "calendar", "Facility state conflict for out-of-area services"),
+    criteria = [
+        (
+            "PT-ACTIVE",
+            "POL-PT-LUMBAR-2026",
+            "active_coverage",
+            "Member has active plan coverage on requested service dates.",
+            1,
+            "pend",
+        ),
+        (
+            "PT-DX",
+            "POL-PT-LUMBAR-2026",
+            "lumbar_diagnosis",
+            "Documentation supports lumbar spine diagnosis related to requested therapy.",
+            1,
+            "deny",
+        ),
+        (
+            "PT-DEFICIT",
+            "POL-PT-LUMBAR-2026",
+            "functional_deficit",
+            "Objective functional deficit or baseline limitation is documented.",
+            1,
+            "pend",
+        ),
+        (
+            "PT-POC",
+            "POL-PT-LUMBAR-2026",
+            "current_plan_of_care",
+            "Current plan of care includes frequency, duration, and skilled goals.",
+            1,
+            "pend",
+        ),
+        (
+            "PT-UNITS",
+            "POL-PT-LUMBAR-2026",
+            "unit_limit",
+            "Requested units do not exceed 24 units for initial nurse review.",
+            1,
+            "deny",
+        ),
+        (
+            "ST-POC",
+            "POL-ST-PEDS-2026",
+            "current_plan_of_care",
+            "Current plan of care states speech therapy frequency and duration.",
+            1,
+            "pend",
+        ),
+        (
+            "ST-CONFLICT",
+            "POL-ST-PEDS-2026",
+            "no_current_conflict",
+            "Current clinical note and plan of care agree on frequency.",
+            1,
+            "pend",
+        ),
+        (
+            "DRUG-DENIAL",
+            "POL-DRUG-EXC-2026",
+            "denial_notice",
+            "Denial notice or adverse determination is included.",
+            1,
+            "pend",
+        ),
+        (
+            "DRUG-AUTH",
+            "POL-DRUG-EXC-2026",
+            "member_authorization",
+            "Member authorization or representative form is included.",
+            1,
+            "pend",
+        ),
+        (
+            "DRUG-RATIONALE",
+            "POL-DRUG-EXC-2026",
+            "prescriber_rationale",
+            "Prescriber rationale connects requested drug to diagnosis and history.",
+            1,
+            "pend",
+        ),
+        (
+            "DRUG-FAILURES",
+            "POL-DRUG-EXC-2026",
+            "formulary_failures",
+            "Required formulary failures or contraindications are documented.",
+            1,
+            "deny",
+        ),
+        (
+            "PET-IND",
+            "POL-PET-MPI-2026",
+            "covered_cad_indication",
+            "Covered coronary artery disease indication is present.",
+            1,
+            "deny",
+        ),
+        (
+            "PET-FACTOR",
+            "POL-PET-MPI-2026",
+            "pet_over_spect_factor",
+            "At least one PET-over-SPECT factor is documented.",
+            1,
+            "deny",
+        ),
+        (
+            "PET-NEWINFO",
+            "POL-PET-MPI-2026",
+            "new_p2p_information",
+            "P2P information materially changes the original review.",
+            0,
+            "uphold",
+        ),
+        (
+            "CLAIM-SCHED",
+            "POL-CLAIM-RATE-2026",
+            "current_schedule",
+            "Use current benchmark schedule rather than stale export.",
+            1,
+            "correct",
+        ),
     ]
-    conn.executemany("INSERT INTO state_sla_rules VALUES (?,?,?,?,?,?,?)", sla_rules)
-
-    sources = [
-        ("SRC001", "CMS NCD or LCD", 1, "Medicare Advantage", "ALL", "2025-01-01"),
-        ("SRC002", "State Medicaid UM Manual", 1, "Medicaid", "ALL", "2025-01-01"),
-        ("SRC003", "Ticonderoga Medical Policy", 2, "ALL", "ALL", "2025-01-01"),
-        ("SRC004", "InterQual Criteria", 3, "ALL", "ALL", "2025-01-01"),
-        ("SRC005", "MCG Care Guidelines", 4, "ALL", "ALL", "2025-01-01"),
+    policy_criteria = [
+        {
+            "criterion_id": criterion_id,
+            "policy_id": policy_id,
+            "criterion_key": key,
+            "criterion_text": text,
+            "approval_required": required,
+            "result_if_missing": missing,
+        }
+        for criterion_id, policy_id, key, text, required, missing in criteria
     ]
-    conn.executemany("INSERT INTO criteria_sources VALUES (?,?,?,?,?,?)", sources)
-
-    criteria = []
-    criteria_specs = {
-        "Physical Therapy": [
-            ("functional_limitation", "Documented functional limitation", "met"),
-            ("plan_of_care", "Signed plan of care", "met"),
-            ("measurable_progress", "Measurable progress or restorative potential", "met"),
-        ],
-        "Advanced Imaging": [
-            ("conservative_treatment", "Recent conservative treatment trial", "met"),
-            ("red_flag_symptoms", "Red flag or neurologic symptoms", "met"),
-            ("prior_imaging_reviewed", "Prior imaging reviewed", "met"),
-        ],
-        "Cardiology Imaging": [
-            ("known_cad_or_high_risk", "Known coronary disease or high risk symptoms", "met"),
-            ("stress_test_inconclusive", "Prior stress test inconclusive", "met"),
-            ("management_change_expected", "Result expected to change management", "met"),
-        ],
-        "Orthopedic Surgery": [
-            ("failed_conservative_care", "Failed conservative care", "met"),
-            ("imaging_confirms_pathology", "Imaging confirms pathology", "met"),
-            ("mechanical_symptoms", "Mechanical symptoms documented", "met"),
-        ],
-        "Pain Management": [
-            ("radicular_pain", "Radicular pain pattern", "met"),
-            ("failed_conservative_care", "Failed conservative care", "met"),
-            ("imaging_correlates", "Imaging correlates with symptoms", "met"),
-        ],
-        "Durable Medical Equipment": [
-            ("diagnosis_confirmed", "Diagnosis confirmed by testing", "met"),
-            ("face_to_face_documented", "Face-to-face evaluation documented", "met"),
-            ("equipment_trial_needed", "Equipment medically necessary", "met"),
-        ],
-        "Home Health": [
-            ("homebound_status", "Homebound status documented", "met"),
-            ("skilled_need", "Intermittent skilled need documented", "met"),
-            ("physician_plan", "Physician ordered plan of care", "met"),
-        ],
-        "Experimental Therapy": [
-            ("not_experimental", "Service is not investigational or experimental", "met"),
-            ("standard_options_failed", "Standard covered options attempted", "met"),
-        ],
+    return {
+        "plans": plans,
+        "providers": providers,
+        "policies": policies,
+        "policy_criteria": policy_criteria,
     }
-    for category, rows in criteria_specs.items():
-        for key, label, required in rows:
-            criteria.append((category, key, label, required, "SRC003", "ALL", 1))
-            criteria.append((category, key, label, required, "SRC004", "ALL", 1))
-        if category in ("Advanced Imaging", "Cardiology Imaging", "Orthopedic Surgery"):
-            criteria.append(
-                (
-                    category,
-                    "cms_specific_indication",
-                    "CMS indication satisfied when applicable",
-                    "met",
-                    "SRC001",
-                    "Medicare Advantage",
-                    1,
-                )
-            )
-    conn.executemany("INSERT INTO coverage_criteria VALUES (?,?,?,?,?,?,?)", criteria)
 
-    drug_requirements = [
-        ("Remicade", "ALL", "diagnosis", "Covered inflammatory diagnosis", "met", 1),
-        ("Remicade", "ALL", "step_therapy", "Trial of preferred biosimilar or exception", "met", 1),
-        ("Remicade", "ALL", "tb_screen", "Tuberculosis screening documented", "met", 2),
-        ("Dupixent", "ALL", "diagnosis", "Covered dermatitis or asthma diagnosis", "met", 1),
-        ("Dupixent", "ALL", "topical_failure", "Failure of topical therapy", "met", 1),
-        ("Eliquis", "ALL", "diagnosis", "Covered anticoagulation indication", "met", 1),
-        ("Ozempic", "ALL", "diagnosis", "Type 2 diabetes diagnosis", "met", 1),
-        ("Ozempic", "ALL", "step_therapy", "Metformin trial or contraindication", "met", 1),
-        ("Humira", "ALL", "diagnosis", "Covered autoimmune diagnosis", "met", 1),
-        ("Humira", "ALL", "step_therapy", "Preferred biosimilar trial or exception", "met", 1),
+
+def add_doc(
+    rows: dict[str, list[dict]],
+    document_id: str,
+    case_id: str,
+    doc_type: str,
+    doc_date: str,
+    received: str,
+    source: str,
+    current: int,
+    title: str,
+    summary: str,
+    facts: list[tuple[str, str, float | None, str | None, str | None]],
+) -> None:
+    rows["documents"].append(
+        {
+            "document_id": document_id,
+            "case_id": case_id,
+            "document_type": doc_type,
+            "document_date": doc_date,
+            "received_date": received,
+            "source_system": source,
+            "is_current": current,
+            "title": title,
+            "summary": summary,
+        }
+    )
+    for idx, (key, value, numeric, unit, supports) in enumerate(facts, start=1):
+        rows["document_facts"].append(
+            {
+                "fact_id": f"FACT-{document_id}-{idx:02d}",
+                "document_id": document_id,
+                "case_id": case_id,
+                "fact_key": key,
+                "fact_value": value,
+                "numeric_value": numeric,
+                "unit": unit,
+                "supports_criteria": supports,
+            }
+        )
+
+
+def target_rows() -> dict[str, list[dict]]:
+    rows: dict[str, list[dict]] = {
+        "members": [],
+        "cases": [],
+        "request_lines": [],
+        "documents": [],
+        "document_facts": [],
+        "case_criteria": [],
+        "p2p_events": [],
+        "appeals": [],
+        "drug_trials": [],
+        "assistance_screen": [],
+        "claims": [],
+        "claim_lines": [],
+        "authorizations": [],
+        "payment_benchmarks": [],
+        "service_margin": [],
+    }
+    members = [
+        (
+            "M-TR-001",
+            "Amelia Ramos",
+            "1981-04-18",
+            "NHP-COM-NY",
+            "commercial",
+            "PrimePlus PPO",
+            "BriarWorks",
+            "active",
+        ),
+        (
+            "M-TR-002",
+            "Jonah Patel",
+            "1979-09-03",
+            "NHP-COM-NY",
+            "commercial",
+            "PrimePlus PPO",
+            "Mercer Foods",
+            "active",
+        ),
+        ("M-TR-003", "Victor Nguyen", "1966-11-27", "NHP-COM-NY", "commercial", "PrimePlus PPO", "Portline", "active"),
+        (
+            "M-TR-004",
+            "Marta De Leon",
+            "1958-02-14",
+            "NHP-MCR-NJ",
+            "medicare_advantage",
+            "SeniorChoice HMO",
+            None,
+            "active",
+        ),
+        (
+            "M-TR-005",
+            "Northstar Finance Queue",
+            "1970-01-01",
+            "NHP-MCD-NY",
+            "medicaid",
+            "CommunityCare",
+            None,
+            "active",
+        ),
+        (
+            "M-TE-001",
+            "Leo Bouchard",
+            "2018-08-09",
+            "NHP-COM-NY",
+            "commercial",
+            "PrimePlus PPO",
+            "North Pier",
+            "active",
+        ),
+        (
+            "M-TE-002",
+            "Elena Torres",
+            "1992-06-22",
+            "NHP-MCR-NJ",
+            "medicare_advantage",
+            "SeniorChoice HMO",
+            None,
+            "active",
+        ),
+        (
+            "M-TE-003",
+            "Keisha Bryant",
+            "1971-10-10",
+            "NHP-WC-PA",
+            "workers_comp",
+            "OccupationalDirect",
+            "Keystone Transit",
+            "active",
+        ),
+        (
+            "M-TE-004",
+            "Robert Chan",
+            "1963-03-19",
+            "NHP-COM-NY",
+            "commercial",
+            "PrimePlus PPO",
+            "Eastline Labs",
+            "active",
+        ),
+        (
+            "M-TE-005",
+            "Northstar Mixed Queue",
+            "1970-01-01",
+            "NHP-COM-NY",
+            "commercial",
+            "PrimePlus PPO",
+            None,
+            "active",
+        ),
     ]
-    conn.executemany("INSERT INTO drug_policy_requirements VALUES (?,?,?,?,?,?)", drug_requirements)
+    rows["members"].extend(
+        {
+            "member_id": mid,
+            "patient_name": name,
+            "dob": dob,
+            "plan_id": plan_id,
+            "plan_type": plan_type,
+            "product": product,
+            "employer_group": group,
+            "member_status": status,
+        }
+        for mid, name, dob, plan_id, plan_type, product, group, status in members
+    )
 
-    assistance = [
-        ("AP001", "Remicade", 500, 1, 1, 1, "Remicade Access Enrollment"),
-        ("AP002", "Dupixent", 400, 1, 1, 1, "Dupixent MyWay Enrollment"),
-        ("AP003", "Eliquis", 300, 1, 1, 1, "Anticoagulant Support Form"),
-        ("AP004", "Ozempic", 400, 1, 1, 1, "Diabetes Savings Support Form"),
-        ("AP005", "Humira", 500, 1, 1, 1, "Immunology Complete Enrollment"),
-    ]
-    conn.executemany("INSERT INTO assistance_programs VALUES (?,?,?,?,?,?,?)", assistance)
+    def case(case_id, member_id, provider_id, request_type, domain, policy, req, due, stage, status, urgency, summary):
+        rows["cases"].append(
+            {
+                "case_id": case_id,
+                "member_id": member_id,
+                "provider_id": provider_id,
+                "request_type": request_type,
+                "service_domain": domain,
+                "policy_id": policy,
+                "request_date": req,
+                "due_date": due,
+                "current_stage": stage,
+                "current_status": status,
+                "urgency": urgency,
+                "summary": summary,
+            }
+        )
 
-    return plans, facilities, services, criteria_specs
+    case(
+        "CASE-TR-001",
+        "M-TR-001",
+        "PRV-PT-001",
+        "prior_authorization",
+        "physical_therapy",
+        "POL-PT-LUMBAR-2026",
+        "2026-05-02",
+        "2026-05-07",
+        "nurse_review",
+        "ready_for_determination",
+        "routine",
+        "Initial lumbar PT request queued for nurse determination.",
+    )
+    rows["request_lines"].extend(
+        [
+            {
+                "line_id": "RL-TR-001-1",
+                "case_id": "CASE-TR-001",
+                "cpt_code": "97110",
+                "modifier": "GP",
+                "service_name": "Therapeutic exercise",
+                "requested_units": 12,
+                "requested_start": "2026-05-06",
+                "requested_end": "2026-07-05",
+                "diagnosis_codes": "M54.50,M62.81",
+                "billed_charge": 1680.0,
+            },
+            {
+                "line_id": "RL-TR-001-2",
+                "case_id": "CASE-TR-001",
+                "cpt_code": "97112",
+                "modifier": "GP",
+                "service_name": "Neuromuscular re-education",
+                "requested_units": 8,
+                "requested_start": "2026-05-06",
+                "requested_end": "2026-07-05",
+                "diagnosis_codes": "M54.50,M62.81",
+                "billed_charge": 1240.0,
+            },
+            {
+                "line_id": "RL-TR-001-3",
+                "case_id": "CASE-TR-001",
+                "cpt_code": "97530",
+                "modifier": "GP",
+                "service_name": "Therapeutic activities",
+                "requested_units": 4,
+                "requested_start": "2026-05-06",
+                "requested_end": "2026-07-05",
+                "diagnosis_codes": "M54.50,M62.81",
+                "billed_charge": 700.0,
+            },
+        ]
+    )
+    add_doc(
+        rows,
+        "DOC-TR-001-POC",
+        "CASE-TR-001",
+        "plan_of_care",
+        "2026-05-01",
+        "2026-05-02",
+        "CarePort",
+        1,
+        "Lumbar PT plan of care",
+        "Frequency twice weekly for six weeks with measurable lumbar mobility and lifting goals.",
+        [
+            ("frequency_per_week", "2", 2, "visits", "PT-POC"),
+            ("duration_weeks", "6", 6, "weeks", "PT-POC"),
+            ("requested_units_total", "24", 24, "units", "PT-UNITS"),
+        ],
+    )
+    add_doc(
+        rows,
+        "DOC-TR-001-EVAL",
+        "CASE-TR-001",
+        "clinical_eval",
+        "2026-04-30",
+        "2026-05-02",
+        "ProviderFax",
+        1,
+        "Initial PT evaluation",
+        "Documents low back pain, reduced flexion, Oswestry 42 percent, and skilled therapy goals.",
+        [
+            ("diagnosis", "lumbar pain with weakness", None, None, "PT-DX"),
+            ("oswestry_score", "42", 42, "percent", "PT-DEFICIT"),
+            ("coverage_verified", "active on 2026-05-06", None, None, "PT-ACTIVE"),
+        ],
+    )
+    add_doc(
+        rows,
+        "DOC-TR-001-STALE",
+        "CASE-TR-001",
+        "stale_export",
+        "2026-03-12",
+        "2026-05-02",
+        "LegacyUM",
+        0,
+        "Prior therapy export",
+        "Older export shows a closed knee therapy episode; not current for lumbar request.",
+        [("stale_episode", "closed knee PT episode from March", None, None, None)],
+    )
+    for cid in ["PT-ACTIVE", "PT-DX", "PT-DEFICIT", "PT-POC", "PT-UNITS"]:
+        rows["case_criteria"].append(
+            {
+                "case_id": "CASE-TR-001",
+                "criterion_id": cid,
+                "result": "met",
+                "evidence_fact_ids": "current clinical and POC facts",
+                "gap_description": "",
+                "reviewer_scope": "nurse",
+            }
+        )
+    rows["authorizations"].append(
+        {
+            "auth_id": "AUTH-TR-001",
+            "case_id": "CASE-TR-001",
+            "auth_number": "NPA-2405014",
+            "status": "recommended_approval",
+            "approved_units": 24,
+            "approved_start": "2026-05-06",
+            "approved_end": "2026-07-05",
+            "approved_cpt": "97110,97112,97530",
+            "approved_modifier": "GP",
+            "denial_reason": "",
+        }
+    )
+
+    case(
+        "APPEAL-TR-002",
+        "M-TR-002",
+        "PRV-DERM-001",
+        "coverage_exception",
+        "specialty_drug",
+        "POL-DRUG-EXC-2026",
+        "2026-05-08",
+        "2026-06-07",
+        "appeals",
+        "packet_incomplete",
+        "standard",
+        "Vraylar coverage exception appeal packet queued for pharmacy appeals review.",
+    )
+    rows["appeals"].append(
+        {
+            "appeal_id": "APL-TR-002",
+            "case_id": "APPEAL-TR-002",
+            "denial_date": "2026-05-01",
+            "received_date": "2026-05-08",
+            "appeal_type_requested": "coverage_exception",
+            "appeal_path": "standard_internal",
+            "expedited_attestation": "not_requested",
+            "appeal_deadline": "2026-06-07",
+            "outcome": "open",
+            "owner": "appeals-rx",
+            "notes": "Required packet: denial notice, member authorization, prescriber rationale, formulary failure evidence, household income proof.",
+        }
+    )
+    add_doc(
+        rows,
+        "DOC-TR-002-DENIAL",
+        "APPEAL-TR-002",
+        "denial_notice",
+        "2026-05-01",
+        "2026-05-08",
+        "RxPortal",
+        1,
+        "Vraylar denial",
+        "Initial denial for non-formulary Vraylar.",
+        [("packet_item", "denial notice present", None, None, "DRUG-DENIAL")],
+    )
+    add_doc(
+        rows,
+        "DOC-TR-002-LETTER",
+        "APPEAL-TR-002",
+        "prescriber_letter",
+        "2026-05-07",
+        "2026-05-08",
+        "ProviderFax",
+        1,
+        "Prescriber appeal letter",
+        "Prescriber documents bipolar depression history and intolerance to quetiapine.",
+        [
+            ("packet_item", "prescriber rationale present", None, None, "DRUG-RATIONALE"),
+            ("formulary_failure", "quetiapine intolerance", None, None, "DRUG-FAILURES"),
+        ],
+    )
+    add_doc(
+        rows,
+        "DOC-TR-002-AUTH",
+        "APPEAL-TR-002",
+        "member_authorization",
+        "2026-05-06",
+        "2026-05-08",
+        "MemberUpload",
+        1,
+        "Member authorization",
+        "Signed appeal authorization received.",
+        [("packet_item", "member authorization present", None, None, "DRUG-AUTH")],
+    )
+    rows["drug_trials"].extend(
+        [
+            {
+                "trial_id": "TRIAL-TR-002-1",
+                "case_id": "APPEAL-TR-002",
+                "medication": "quetiapine",
+                "outcome": "intolerable sedation",
+                "documented": 1,
+                "start_date": "2026-01-02",
+                "end_date": "2026-02-10",
+                "notes": "Prescriber letter.",
+            },
+            {
+                "trial_id": "TRIAL-TR-002-2",
+                "case_id": "APPEAL-TR-002",
+                "medication": "lurasidone",
+                "outcome": "partial response",
+                "documented": 0,
+                "start_date": "2026-02-20",
+                "end_date": "2026-04-05",
+                "notes": "Mentioned but pharmacy fill missing.",
+            },
+        ]
+    )
+    rows["assistance_screen"].append(
+        {
+            "case_id": "APPEAL-TR-002",
+            "program_name": "Vraylar Connect",
+            "income_percent_fpl": None,
+            "insurance_type": "commercial",
+            "denial_required": 1,
+            "denial_on_file": 1,
+            "missing_fields": "household_income_proof",
+            "assistance_status": "pending_missing_income_proof",
+        }
+    )
+    for cid, result, gap in [
+        ("DRUG-DENIAL", "met", ""),
+        ("DRUG-AUTH", "met", ""),
+        ("DRUG-RATIONALE", "met", ""),
+        ("DRUG-FAILURES", "partial", "One failure documented; second referenced without fill record."),
+    ]:
+        rows["case_criteria"].append(
+            {
+                "case_id": "APPEAL-TR-002",
+                "criterion_id": cid,
+                "result": result,
+                "evidence_fact_ids": "appeal packet documents",
+                "gap_description": gap,
+                "reviewer_scope": "appeals",
+            }
+        )
+
+    case(
+        "CLAIM-TR-003",
+        "M-TR-003",
+        "PRV-CARD-001",
+        "claim_payment_review",
+        "cardiac_imaging",
+        "POL-CLAIM-RATE-2026",
+        "2026-05-12",
+        "2026-05-17",
+        "payment_integrity",
+        "needs_repricing",
+        "routine",
+        "Cardiac SPECT claim queued for payment integrity schedule review.",
+    )
+    rows["claims"].append(
+        {
+            "claim_id": "CLAIM-TR-003",
+            "member_id": "M-TR-003",
+            "case_id": "CLAIM-TR-003",
+            "payer": "Northstar Health Plan",
+            "received_date": "2026-05-12",
+            "claim_status": "paid_stale_schedule",
+            "auth_number": "NPA-2404980",
+            "billed_total": 2850.0,
+            "paid_total": 940.0,
+        }
+    )
+    rows["claim_lines"].extend(
+        [
+            {
+                "claim_line_id": "CL-TR-003-1",
+                "claim_id": "CLAIM-TR-003",
+                "line_number": 1,
+                "cpt_code": "78452",
+                "modifier": "TC",
+                "units": 1,
+                "billed_amount": 1900.0,
+                "paid_amount": 608.0,
+                "denial_code": None,
+                "service_date": "2026-05-03",
+            },
+            {
+                "claim_line_id": "CL-TR-003-2",
+                "claim_id": "CLAIM-TR-003",
+                "line_number": 2,
+                "cpt_code": "A9500",
+                "modifier": None,
+                "units": 2,
+                "billed_amount": 720.0,
+                "paid_amount": 288.0,
+                "denial_code": None,
+                "service_date": "2026-05-03",
+            },
+            {
+                "claim_line_id": "CL-TR-003-3",
+                "claim_id": "CLAIM-TR-003",
+                "line_number": 3,
+                "cpt_code": "93016",
+                "modifier": None,
+                "units": 1,
+                "billed_amount": 230.0,
+                "paid_amount": 44.0,
+                "denial_code": None,
+                "service_date": "2026-05-03",
+            },
+        ]
+    )
+    rows["payment_benchmarks"].extend(
+        [
+            {
+                "benchmark_id": "BM-TR-003-78452",
+                "payer": "Northstar Health Plan",
+                "plan_type": "commercial",
+                "service_domain": "cardiac_imaging",
+                "cpt_code": "78452",
+                "modifier": "TC",
+                "effective_start": "2026-04-01",
+                "effective_end": "2026-12-31",
+                "allowed_amount": 760.0,
+                "source_name": "Northstar Commercial Imaging Schedule",
+                "source_version": "2026Q2",
+            },
+            {
+                "benchmark_id": "BM-TR-003-A9500",
+                "payer": "Northstar Health Plan",
+                "plan_type": "commercial",
+                "service_domain": "cardiac_imaging",
+                "cpt_code": "A9500",
+                "modifier": None,
+                "effective_start": "2026-04-01",
+                "effective_end": "2026-12-31",
+                "allowed_amount": 180.0,
+                "source_name": "Northstar Commercial Imaging Schedule",
+                "source_version": "2026Q2",
+            },
+            {
+                "benchmark_id": "BM-TR-003-93016",
+                "payer": "Northstar Health Plan",
+                "plan_type": "commercial",
+                "service_domain": "cardiac_imaging",
+                "cpt_code": "93016",
+                "modifier": None,
+                "effective_start": "2026-04-01",
+                "effective_end": "2026-12-31",
+                "allowed_amount": 55.0,
+                "source_name": "Northstar Commercial Imaging Schedule",
+                "source_version": "2026Q2",
+            },
+            {
+                "benchmark_id": "BM-OLD-78452",
+                "payer": "Northstar Health Plan",
+                "plan_type": "commercial",
+                "service_domain": "cardiac_imaging",
+                "cpt_code": "78452",
+                "modifier": "TC",
+                "effective_start": "2025-01-01",
+                "effective_end": "2026-03-31",
+                "allowed_amount": 608.0,
+                "source_name": "Legacy Imaging Export",
+                "source_version": "2025Q4",
+            },
+        ]
+    )
+    add_doc(
+        rows,
+        "DOC-TR-003-EOB",
+        "CLAIM-TR-003",
+        "remittance",
+        "2026-05-13",
+        "2026-05-13",
+        "ClaimsCore",
+        1,
+        "SPECT remittance",
+        "Remittance lists paid line amounts from an older imaging schedule; compare with the effective benchmark schedule.",
+        [
+            ("paid_total", "940.00", 940, "USD", "CLAIM-SCHED"),
+            ("schedule_used", "legacy imaging export", None, None, "CLAIM-SCHED"),
+        ],
+    )
+    rows["case_criteria"].append(
+        {
+            "case_id": "CLAIM-TR-003",
+            "criterion_id": "CLAIM-SCHED",
+            "result": "stale_schedule_used",
+            "evidence_fact_ids": "DOC-TR-003-EOB",
+            "gap_description": "Reprice to current 2026Q2 commercial imaging benchmark.",
+            "reviewer_scope": "payment_integrity",
+        }
+    )
+
+    case(
+        "P2P-TR-004",
+        "M-TR-004",
+        "PRV-RAD-001",
+        "peer_to_peer",
+        "cardiac_imaging",
+        "POL-PET-MPI-2026",
+        "2026-05-09",
+        "2026-05-14",
+        "medical_director",
+        "p2p_complete",
+        "routine",
+        "PET MPI peer-to-peer record queued for final authorization-file closure.",
+    )
+    rows["request_lines"].append(
+        {
+            "line_id": "RL-TR-004-1",
+            "case_id": "P2P-TR-004",
+            "cpt_code": "78431",
+            "modifier": None,
+            "service_name": "PET myocardial perfusion imaging",
+            "requested_units": 1,
+            "requested_start": "2026-05-20",
+            "requested_end": "2026-05-20",
+            "diagnosis_codes": "I25.10,R07.9",
+            "billed_charge": 4200.0,
+        }
+    )
+    add_doc(
+        rows,
+        "DOC-TR-004-CARD",
+        "P2P-TR-004",
+        "cardiology_note",
+        "2026-05-03",
+        "2026-05-09",
+        "ProviderFax",
+        1,
+        "CAD cardiology note",
+        "Known CAD and chest pain; no prior equivocal SPECT, BMI limitation, or attenuation artifact.",
+        [
+            ("covered_cad_indication", "known CAD with chest pain", None, None, "PET-IND"),
+            ("pet_over_spect_factor", "not documented", None, None, "PET-FACTOR"),
+        ],
+    )
+    rows["case_criteria"].extend(
+        [
+            {
+                "case_id": "P2P-TR-004",
+                "criterion_id": "PET-IND",
+                "result": "met",
+                "evidence_fact_ids": "FACT-DOC-TR-004-CARD-01",
+                "gap_description": "",
+                "reviewer_scope": "medical_director",
+            },
+            {
+                "case_id": "P2P-TR-004",
+                "criterion_id": "PET-FACTOR",
+                "result": "not_met",
+                "evidence_fact_ids": "FACT-DOC-TR-004-CARD-02",
+                "gap_description": "No PET-over-SPECT factor documented.",
+                "reviewer_scope": "medical_director",
+            },
+        ]
+    )
+    rows["p2p_events"].append(
+        {
+            "p2p_id": "P2P-TR-004-E1",
+            "case_id": "P2P-TR-004",
+            "scheduled_at": "2026-05-13T15:00:00Z",
+            "duration_minutes": 18,
+            "provider_argument": "PET has better image quality for CAD.",
+            "new_information": "No prior equivocal SPECT, BMI limitation, or attenuation artifact supplied.",
+            "outcome": "uphold_intended_adverse_decision",
+            "final_status": "denied",
+            "reviewer": "Dr. Imani Wells",
+            "notes": "Covered indication met; PET-specific factor absent.",
+        }
+    )
+    rows["authorizations"].append(
+        {
+            "auth_id": "AUTH-TR-004",
+            "case_id": "P2P-TR-004",
+            "auth_number": None,
+            "status": "denied",
+            "approved_units": 0,
+            "approved_start": None,
+            "approved_end": None,
+            "approved_cpt": "78431",
+            "approved_modifier": None,
+            "denial_reason": "PET-over-SPECT factor not met",
+        }
+    )
+
+    case(
+        "QUEUE-TR-005",
+        "M-TR-005",
+        "PRV-PT-001",
+        "queue_analysis",
+        "therapy_margin",
+        "POL-CLAIM-RATE-2026",
+        "2026-05-31",
+        "2026-06-05",
+        "finance_queue",
+        "monthly_review",
+        "routine",
+        "May therapy margin rows queued for payer-service review.",
+    )
+    rows["service_margin"].extend(
+        [
+            {
+                "month_id": "SM-TR-005-MCD",
+                "period": "2026-05",
+                "payer": "Northstar Health Plan",
+                "payer_segment": "medicaid",
+                "service_domain": "physical_therapy",
+                "cpt_code": "97110",
+                "visits": 412,
+                "net_revenue": 23690.0,
+                "variable_cost": 21140.0,
+                "fixed_cost_allocated": 5100.0,
+                "charge_sensitive": 0,
+            },
+            {
+                "month_id": "SM-TR-005-COM",
+                "period": "2026-05",
+                "payer": "Northstar Health Plan",
+                "payer_segment": "commercial",
+                "service_domain": "physical_therapy",
+                "cpt_code": "97530",
+                "visits": 288,
+                "net_revenue": 45270.0,
+                "variable_cost": 24100.0,
+                "fixed_cost_allocated": 7600.0,
+                "charge_sensitive": 1,
+            },
+            {
+                "month_id": "SM-TR-005-WC",
+                "period": "2026-05",
+                "payer": "Northstar Health Plan",
+                "payer_segment": "workers_comp",
+                "service_domain": "physical_therapy",
+                "cpt_code": "97112",
+                "visits": 96,
+                "net_revenue": 25760.0,
+                "variable_cost": 10420.0,
+                "fixed_cost_allocated": 3100.0,
+                "charge_sensitive": 1,
+            },
+        ]
+    )
+
+    case(
+        "CASE-TE-001",
+        "M-TE-001",
+        "PRV-PEDS-001",
+        "prior_authorization",
+        "speech_therapy",
+        "POL-ST-PEDS-2026",
+        "2026-06-04",
+        "2026-06-09",
+        "nurse_review",
+        "needs_information",
+        "routine",
+        "Pediatric speech therapy request queued for nurse documentation review.",
+    )
+    rows["request_lines"].append(
+        {
+            "line_id": "RL-TE-001-1",
+            "case_id": "CASE-TE-001",
+            "cpt_code": "92507",
+            "modifier": "GN",
+            "service_name": "Speech therapy treatment",
+            "requested_units": 16,
+            "requested_start": "2026-06-10",
+            "requested_end": "2026-08-09",
+            "diagnosis_codes": "F80.2",
+            "billed_charge": 2400.0,
+        }
+    )
+    add_doc(
+        rows,
+        "DOC-TE-001-POC",
+        "CASE-TE-001",
+        "plan_of_care",
+        "2026-06-01",
+        "2026-06-04",
+        "CarePort",
+        1,
+        "Speech plan of care",
+        "Plan says 1-2 visits weekly; duration is not explicit.",
+        [
+            ("frequency_per_week", "1-2 ambiguous", None, "visits", "ST-POC"),
+            ("duration_weeks", "not stated", None, "weeks", "ST-POC"),
+        ],
+    )
+    add_doc(
+        rows,
+        "DOC-TE-001-NOTE",
+        "CASE-TE-001",
+        "clinical_note",
+        "2026-06-03",
+        "2026-06-04",
+        "ProviderFax",
+        1,
+        "Current speech note",
+        "Current note requests three visits weekly, conflicting with plan of care.",
+        [("frequency_per_week", "3", 3, "visits", "ST-CONFLICT")],
+    )
+    add_doc(
+        rows,
+        "DOC-TE-001-STALE",
+        "CASE-TE-001",
+        "stale_export",
+        "2026-04-20",
+        "2026-06-04",
+        "LegacyUM",
+        0,
+        "Old speech export",
+        "Old export shows once weekly therapy approved in April.",
+        [("stale_frequency", "1 weekly", 1, "visits", None)],
+    )
+    rows["case_criteria"].extend(
+        [
+            {
+                "case_id": "CASE-TE-001",
+                "criterion_id": "ST-POC",
+                "result": "not_met",
+                "evidence_fact_ids": "DOC-TE-001-POC",
+                "gap_description": "Plan-of-care frequency and duration are ambiguous.",
+                "reviewer_scope": "nurse",
+            },
+            {
+                "case_id": "CASE-TE-001",
+                "criterion_id": "ST-CONFLICT",
+                "result": "not_met",
+                "evidence_fact_ids": "DOC-TE-001-NOTE",
+                "gap_description": "Current note conflicts with plan-of-care frequency.",
+                "reviewer_scope": "nurse",
+            },
+        ]
+    )
+    rows["authorizations"].append(
+        {
+            "auth_id": "AUTH-TE-001",
+            "case_id": "CASE-TE-001",
+            "auth_number": None,
+            "status": "pended",
+            "approved_units": 0,
+            "approved_start": None,
+            "approved_end": None,
+            "approved_cpt": "92507",
+            "approved_modifier": "GN",
+            "denial_reason": "Need clarified frequency and duration",
+        }
+    )
+
+    case(
+        "APPEAL-TE-002",
+        "M-TE-002",
+        "PRV-DERM-001",
+        "coverage_exception",
+        "specialty_drug",
+        "POL-DRUG-EXC-2026",
+        "2026-06-06",
+        "2026-06-09",
+        "appeals",
+        "packet_incomplete",
+        "expedited",
+        "Dupixent coverage exception appeal packet queued for pharmacy appeals review.",
+    )
+    rows["appeals"].append(
+        {
+            "appeal_id": "APL-TE-002",
+            "case_id": "APPEAL-TE-002",
+            "denial_date": "2026-06-02",
+            "received_date": "2026-06-06",
+            "appeal_type_requested": "coverage_exception",
+            "appeal_path": "expedited_internal",
+            "expedited_attestation": "provider_attested_serious_health_risk",
+            "appeal_deadline": "2026-06-09",
+            "outcome": "open",
+            "owner": "appeals-rx",
+            "notes": "Dupixent appeal packet otherwise complete; household income proof absent for manufacturer assistance.",
+        }
+    )
+    rows["drug_trials"].extend(
+        [
+            {
+                "trial_id": "TRIAL-TE-002-1",
+                "case_id": "APPEAL-TE-002",
+                "medication": "topical tacrolimus",
+                "outcome": "failed",
+                "documented": 1,
+                "start_date": "2026-02-01",
+                "end_date": "2026-03-01",
+                "notes": "Dermatology note.",
+            },
+            {
+                "trial_id": "TRIAL-TE-002-2",
+                "case_id": "APPEAL-TE-002",
+                "medication": "phototherapy",
+                "outcome": "failed",
+                "documented": 1,
+                "start_date": "2026-03-15",
+                "end_date": "2026-05-15",
+                "notes": "Treatment log.",
+            },
+        ]
+    )
+    rows["assistance_screen"].append(
+        {
+            "case_id": "APPEAL-TE-002",
+            "program_name": "Dupixent MyWay",
+            "income_percent_fpl": None,
+            "insurance_type": "medicare_advantage",
+            "denial_required": 1,
+            "denial_on_file": 1,
+            "missing_fields": "household_income_proof",
+            "assistance_status": "pending_missing_income_proof",
+        }
+    )
+
+    case(
+        "CLAIM-TE-003",
+        "M-TE-003",
+        "PRV-ORTHO-001",
+        "claim_payment_review",
+        "outpatient_surgery",
+        "POL-CLAIM-RATE-2026",
+        "2026-06-08",
+        "2026-06-13",
+        "payment_integrity",
+        "needs_repricing",
+        "routine",
+        "Knee arthroscopy claim queued for payment integrity schedule and modifier review.",
+    )
+    rows["claims"].append(
+        {
+            "claim_id": "CLAIM-TE-003",
+            "member_id": "M-TE-003",
+            "case_id": "CLAIM-TE-003",
+            "payer": "Northstar Health Plan",
+            "received_date": "2026-06-08",
+            "claim_status": "paid_review",
+            "auth_number": "NPA-2406121",
+            "billed_total": 3950.0,
+            "paid_total": 2010.0,
+        }
+    )
+    rows["claim_lines"].extend(
+        [
+            {
+                "claim_line_id": "CL-TE-003-1",
+                "claim_id": "CLAIM-TE-003",
+                "line_number": 1,
+                "cpt_code": "29881",
+                "modifier": "RT",
+                "units": 1,
+                "billed_amount": 3200.0,
+                "paid_amount": 1660.0,
+                "denial_code": None,
+                "service_date": "2026-06-02",
+            },
+            {
+                "claim_line_id": "CL-TE-003-2",
+                "claim_id": "CLAIM-TE-003",
+                "line_number": 2,
+                "cpt_code": "29881",
+                "modifier": "59",
+                "units": 1,
+                "billed_amount": 750.0,
+                "paid_amount": 350.0,
+                "denial_code": None,
+                "service_date": "2026-06-02",
+            },
+        ]
+    )
+    rows["payment_benchmarks"].extend(
+        [
+            {
+                "benchmark_id": "BM-TE-003-29881RT",
+                "payer": "Northstar Health Plan",
+                "plan_type": "workers_comp",
+                "service_domain": "outpatient_surgery",
+                "cpt_code": "29881",
+                "modifier": "RT",
+                "effective_start": "2026-01-01",
+                "effective_end": "2026-12-31",
+                "allowed_amount": 2420.0,
+                "source_name": "Northstar WC Surgery Schedule",
+                "source_version": "2026",
+            },
+            {
+                "benchmark_id": "BM-TE-003-2988159",
+                "payer": "Northstar Health Plan",
+                "plan_type": "workers_comp",
+                "service_domain": "outpatient_surgery",
+                "cpt_code": "29881",
+                "modifier": "59",
+                "effective_start": "2026-01-01",
+                "effective_end": "2026-12-31",
+                "allowed_amount": 0.0,
+                "source_name": "Northstar WC Surgery Schedule",
+                "source_version": "2026",
+            },
+        ]
+    )
+    add_doc(
+        rows,
+        "DOC-TE-003-EOB",
+        "CLAIM-TE-003",
+        "remittance",
+        "2026-06-09",
+        "2026-06-09",
+        "ClaimsCore",
+        1,
+        "Knee arthroscopy remittance",
+        "Remittance lists two arthroscopy lines for comparison against the current workers-comp surgery schedule and modifier policy.",
+        [
+            ("paid_total", "2010.00", 2010, "USD", "CLAIM-SCHED"),
+            ("schedule_used", "workers comp surgery schedule review needed", None, None, "CLAIM-SCHED"),
+        ],
+    )
+
+    case(
+        "P2P-TE-004",
+        "M-TE-004",
+        "PRV-RAD-001",
+        "peer_to_peer",
+        "cardiac_imaging",
+        "POL-PET-MPI-2026",
+        "2026-06-07",
+        "2026-06-12",
+        "medical_director",
+        "p2p_complete",
+        "routine",
+        "PET MPI peer-to-peer record queued for final authorization-file closure.",
+    )
+    rows["request_lines"].append(
+        {
+            "line_id": "RL-TE-004-1",
+            "case_id": "P2P-TE-004",
+            "cpt_code": "78431",
+            "modifier": None,
+            "service_name": "PET myocardial perfusion imaging",
+            "requested_units": 1,
+            "requested_start": "2026-06-18",
+            "requested_end": "2026-06-18",
+            "diagnosis_codes": "I25.118,R94.39,Z68.41",
+            "billed_charge": 4200.0,
+        }
+    )
+    add_doc(
+        rows,
+        "DOC-TE-004-P2P",
+        "P2P-TE-004",
+        "p2p_addendum",
+        "2026-06-10",
+        "2026-06-10",
+        "P2PDesk",
+        1,
+        "PET MPI P2P addendum",
+        "New documentation: prior SPECT was equivocal due attenuation and BMI 42 limits SPECT quality.",
+        [
+            ("covered_cad_indication", "known CAD with angina", None, None, "PET-IND"),
+            ("prior_equivocal_spect", "yes", 1, None, "PET-FACTOR"),
+            ("bmi", "42", 42, "kg/m2", "PET-FACTOR"),
+        ],
+    )
+    rows["p2p_events"].append(
+        {
+            "p2p_id": "P2P-TE-004-E1",
+            "case_id": "P2P-TE-004",
+            "scheduled_at": "2026-06-10T16:30:00Z",
+            "duration_minutes": 22,
+            "provider_argument": "Prior SPECT was equivocal and BMI limits SPECT accuracy.",
+            "new_information": "Equivocal SPECT report and BMI 42 supplied during P2P.",
+            "outcome": "overturn_to_approval",
+            "final_status": "approved",
+            "reviewer": "Dr. Imani Wells",
+            "notes": "Covered indication and PET-over-SPECT factors met.",
+        }
+    )
+    rows["authorizations"].append(
+        {
+            "auth_id": "AUTH-TE-004",
+            "case_id": "P2P-TE-004",
+            "auth_number": "NPA-2406199",
+            "status": "approved",
+            "approved_units": 1,
+            "approved_start": "2026-06-18",
+            "approved_end": "2026-06-18",
+            "approved_cpt": "78431",
+            "approved_modifier": None,
+            "denial_reason": "",
+        }
+    )
+
+    case(
+        "QUEUE-TE-005",
+        "M-TE-005",
+        "PRV-CARD-001",
+        "queue_analysis",
+        "mixed_um_finance",
+        "POL-CLAIM-RATE-2026",
+        "2026-06-11",
+        "2026-06-12",
+        "operations_queue",
+        "needs_triage",
+        "mixed",
+        "Mixed UM-finance queue containing appeal, clinical-review, and payment-integrity work items.",
+    )
+    rows["appeals"].append(
+        {
+            "appeal_id": "APL-TE-005-DEADLINE",
+            "case_id": "QUEUE-TE-005",
+            "denial_date": "2026-05-13",
+            "received_date": "2026-05-16",
+            "appeal_type_requested": "standard",
+            "appeal_path": "standard_internal",
+            "expedited_attestation": "not_requested",
+            "appeal_deadline": "2026-06-12",
+            "outcome": "open",
+            "owner": "appeals-um",
+            "notes": "Deadline item for mixed queue triage.",
+        }
+    )
+    rows["request_lines"].extend(
+        [
+            {
+                "line_id": "RL-TE-005-MD",
+                "case_id": "QUEUE-TE-005",
+                "cpt_code": "78431",
+                "modifier": None,
+                "service_name": "PET myocardial perfusion imaging escalation",
+                "requested_units": 1,
+                "requested_start": "2026-06-20",
+                "requested_end": "2026-06-20",
+                "diagnosis_codes": "I25.118,R07.9",
+                "billed_charge": 4200.0,
+            },
+            {
+                "line_id": "RL-TE-005-CLAIM",
+                "case_id": "QUEUE-TE-005",
+                "cpt_code": "78452",
+                "modifier": "TC",
+                "service_name": "Claim correction review line",
+                "requested_units": 1,
+                "requested_start": "2026-06-03",
+                "requested_end": "2026-06-03",
+                "diagnosis_codes": "I25.10",
+                "billed_charge": 1900.0,
+            },
+        ]
+    )
+    add_doc(
+        rows,
+        "DOC-TE-005-APPEAL",
+        "QUEUE-TE-005",
+        "queue_note",
+        "2026-06-11",
+        "2026-06-11",
+        "OpsQueue",
+        1,
+        "Appeal deadline queue item",
+        "Standard internal appeal has an open deadline on 2026-06-12.",
+        [("work_item_type", "appeal", None, None, None), ("appeal_deadline", "2026-06-12", None, "date", None)],
+    )
+    add_doc(
+        rows,
+        "DOC-TE-005-MD",
+        "QUEUE-TE-005",
+        "clinical_escalation",
+        "2026-06-11",
+        "2026-06-11",
+        "UMWorkbench",
+        1,
+        "Clinical review queue item",
+        "PET MPI request has covered CAD symptoms; PET-over-SPECT factor evidence is not documented in the current clinical item.",
+        [
+            ("work_item_type", "clinical_review", None, None, None),
+            ("covered_cad_indication", "known CAD with angina symptoms", None, None, "PET-IND"),
+            ("pet_over_spect_factor", "not documented", None, None, "PET-FACTOR"),
+        ],
+    )
+    add_doc(
+        rows,
+        "DOC-TE-005-CLAIM",
+        "QUEUE-TE-005",
+        "claim_correction",
+        "2026-06-11",
+        "2026-06-11",
+        "ClaimsCore",
+        1,
+        "Claim payment queue item",
+        "Commercial imaging claim line paid from a legacy schedule and requires comparison with the current benchmark schedule.",
+        [
+            ("work_item_type", "claim_payment_review", None, None, None),
+            ("paid_total", "608.00", 608, "USD", "CLAIM-SCHED"),
+            ("schedule_used", "legacy imaging export", None, None, "CLAIM-SCHED"),
+        ],
+    )
+    rows["case_criteria"].extend(
+        [
+            {
+                "case_id": "QUEUE-TE-005",
+                "criterion_id": "PET-IND",
+                "result": "met",
+                "evidence_fact_ids": "FACT-DOC-TE-005-MD-02",
+                "gap_description": "",
+                "reviewer_scope": "medical_director",
+            },
+            {
+                "case_id": "QUEUE-TE-005",
+                "criterion_id": "PET-FACTOR",
+                "result": "not_met",
+                "evidence_fact_ids": "FACT-DOC-TE-005-MD-03",
+                "gap_description": "PET-over-SPECT factor is absent from the current clinical item.",
+                "reviewer_scope": "medical_director",
+            },
+            {
+                "case_id": "QUEUE-TE-005",
+                "criterion_id": "CLAIM-SCHED",
+                "result": "stale_schedule_used",
+                "evidence_fact_ids": "DOC-TE-005-CLAIM",
+                "gap_description": "Current benchmark schedule comparison is required for this queue item.",
+                "reviewer_scope": "payment_integrity",
+            },
+        ]
+    )
+    rows["claims"].append(
+        {
+            "claim_id": "CLAIM-TE-005-CORR",
+            "member_id": "M-TE-005",
+            "case_id": "QUEUE-TE-005",
+            "payer": "Northstar Health Plan",
+            "received_date": "2026-06-11",
+            "claim_status": "needs_correction",
+            "auth_number": "NPA-2406344",
+            "billed_total": 1900.0,
+            "paid_total": 608.0,
+        }
+    )
+    rows["claim_lines"].append(
+        {
+            "claim_line_id": "CL-TE-005-CORR-1",
+            "claim_id": "CLAIM-TE-005-CORR",
+            "line_number": 1,
+            "cpt_code": "78452",
+            "modifier": "TC",
+            "units": 1,
+            "billed_amount": 1900.0,
+            "paid_amount": 608.0,
+            "denial_code": None,
+            "service_date": "2026-06-03",
+        }
+    )
+    rows["payment_benchmarks"].append(
+        {
+            "benchmark_id": "BM-TE-005-78452TC",
+            "payer": "Northstar Health Plan",
+            "plan_type": "commercial",
+            "service_domain": "cardiac_imaging",
+            "cpt_code": "78452",
+            "modifier": "TC",
+            "effective_start": "2026-04-01",
+            "effective_end": "2026-12-31",
+            "allowed_amount": 760.0,
+            "source_name": "Northstar Commercial Imaging Schedule",
+            "source_version": "2026Q2",
+        }
+    )
+    return rows
 
 
-def generate_people(conn, rng, plans):
-    first_names = [
+def distractor_rows(rng: random.Random) -> dict[str, list[dict]]:
+    first = [
         "Avery",
-        "Jordan",
-        "Taylor",
-        "Morgan",
-        "Riley",
-        "Casey",
-        "Quinn",
-        "Reese",
-        "Parker",
-        "Jamie",
-        "Drew",
-        "Alex",
-        "Cameron",
-        "Rowan",
         "Blake",
+        "Casey",
+        "Dana",
+        "Elliot",
+        "Finley",
         "Harper",
-        "Emerson",
-        "Hayden",
-        "Skyler",
-        "Kendall",
-        "Robin",
+        "Jordan",
+        "Kai",
         "Logan",
-        "Sydney",
-        "Bailey",
+        "Morgan",
+        "Noel",
+        "Parker",
+        "Quinn",
+        "Riley",
+        "Sawyer",
+        "Taylor",
     ]
-    last_names = [
+    last = [
         "Bennett",
         "Carter",
         "Diaz",
@@ -660,701 +1863,356 @@ def generate_people(conn, rng, plans):
         "Foster",
         "Garcia",
         "Hayes",
-        "Irving",
-        "Johnson",
+        "Irwin",
+        "Jensen",
         "Kim",
-        "Lopez",
+        "Lewis",
         "Miller",
-        "Nguyen",
         "Owens",
-        "Patel",
-        "Quinn",
-        "Roberts",
-        "Sanchez",
-        "Turner",
-        "Underwood",
-        "Valdez",
-        "Walker",
+        "Price",
+        "Reed",
+        "Singh",
         "Young",
-        "Zimmer",
     ]
-    plan_by_id = {row[0]: row for row in plans}
-    members = []
-    for idx in range(60):
-        plan = plans[idx % len(plans)] if idx < 24 else pick(rng, plans)
-        start = date(2023, 1, 1) + timedelta(days=rng.randint(0, 500))
-        if idx in {7, 19, 31, 44}:
-            end = date(2025, 1, 31) + timedelta(days=rng.randint(0, 90))
-        elif idx in {12, 38}:
-            end = date(2025, 5, 15)
-        else:
-            end = date(2026, 12, 31)
-        retro = "2025-06-01" if idx in {12, 38} else None
-        member = (
-            f"MBR{idx + 1:04d}",
-            f"{first_names[idx % len(first_names)]} {last_names[(idx * 3) % len(last_names)]}",
-            iso(date(1950, 1, 1) + timedelta(days=rng.randint(6000, 25000))),
-            plan[0],
-            plan[5] if rng.random() < 0.75 else pick(rng, ["CA", "NY", "FL", "TX", "IL", "PA"]),
-            iso(start),
-            iso(end),
-            retro,
-            pick(rng, ["processed", "not_applicable", "pending", "primary_other_payer"]),
-        )
-        members.append(member)
-    conn.executemany("INSERT INTO members VALUES (?,?,?,?,?,?,?,?,?)", members)
-
-    specialties = [
-        "Orthopedics",
-        "Cardiology",
-        "Physical Medicine",
-        "Neurology",
-        "Pain Medicine",
-        "Primary Care",
-        "Pulmonology",
-        "Rheumatology",
-        "Dermatology",
-        "Endocrinology",
+    plan_ids = ["NHP-COM-NY", "NHP-MCD-NY", "NHP-MCR-NJ", "NHP-WC-PA", "NHP-COM-OLD"]
+    provider_ids = ["PRV-PT-001", "PRV-CARD-001", "PRV-RAD-001", "PRV-PEDS-001", "PRV-DERM-001", "PRV-ORTHO-001"]
+    policies = [
+        "POL-PT-LUMBAR-2026",
+        "POL-ST-PEDS-2026",
+        "POL-DRUG-EXC-2026",
+        "POL-PET-MPI-2026",
+        "POL-CLAIM-RATE-2026",
     ]
-    providers = []
-    for idx in range(64):
-        approval_rate = round(rng.uniform(0.55, 0.96), 3)
-        completed = rng.randint(12, 180)
-        volume = rng.randint(5, 70)
-        sanctions = 1 if idx in {9, 37} else 0
-        credentials = 0 if idx in {14, 42} else 1
-        network = "in_network" if rng.random() < 0.78 else pick(rng, ["out_of_network", "delegated_only"])
-        gold = (
-            1
-            if approval_rate >= 0.86
-            and completed >= 50
-            and volume >= 12
-            and network == "in_network"
-            and not sanctions
-            and credentials
-            else 0
-        )
-        providers.append(
-            (
-                f"{1450000000 + idx}",
-                f"{first_names[(idx + 5) % len(first_names)]} {last_names[(idx * 5) % len(last_names)]}, MD",
-                specialties[idx % len(specialties)],
-                pick(rng, ["CA", "NY", "FL", "TX", "IL", "PA", "AZ"]),
-                network,
-                approval_rate,
-                completed,
-                volume,
-                sanctions,
-                credentials,
-                gold,
-            )
-        )
-    conn.executemany("INSERT INTO providers VALUES (?,?,?,?,?,?,?,?,?,?,?)", providers)
-
-    financials = []
-    for idx, member in enumerate(members):
-        plan_type = plan_by_id[member[3]][2]
-        household_size = rng.randint(1, 5)
-        income = float(rng.randint(28000, 145000))
-        insurance_type = (
-            "government" if plan_type in ("Medicare Advantage", "Medicaid", "Dual Eligible") else "commercial"
-        )
-        financials.append((member[0], household_size, income, insurance_type, rng.randint(0, 1), rng.randint(0, 1)))
-    conn.executemany("INSERT INTO household_financials VALUES (?,?,?,?,?,?)", financials)
-
-    return members, providers
-
-
-def generate_authorizations(conn, rng, members, providers, facilities, services, criteria_specs):
-    service_by_code = {row[0]: row for row in services}
-    criteria_by_category = criteria_specs
-    auth_targets = {
-        "train_intake_batch": range(0, 6),
-        "train_clinical_batch": range(6, 12),
-        "test_intake_batch": range(12, 18),
-        "test_p2p_batch": range(18, 24),
+    domains = {
+        "POL-PT-LUMBAR-2026": "physical_therapy",
+        "POL-ST-PEDS-2026": "speech_therapy",
+        "POL-DRUG-EXC-2026": "specialty_drug",
+        "POL-PET-MPI-2026": "cardiac_imaging",
+        "POL-CLAIM-RATE-2026": "payment_review",
     }
-    bucket_by_index = {}
-    for bucket, indexes in auth_targets.items():
-        for idx in indexes:
-            bucket_by_index[idx] = bucket
-
-    cases = []
-    lines = []
-    existing = []
-    docs = []
-    facts = []
-    events = []
-    p2ps = []
-    appeals = []
-    service_choices = [row for row in services if row[3] == 1]
-    start_date = date(2025, 2, 1)
-
-    for idx in range(156):
-        case_id = f"AUTH{idx + 1:05d}"
-        member = members[idx % len(members)] if idx < 40 else pick(rng, members)
-        service = service_choices[idx % len(service_choices)] if idx < 36 else pick(rng, service_choices)
-        if idx in {4, 16, 28, 52, 84}:
-            service = service_by_code["S9999"]
-        requesting = providers[(idx * 3) % len(providers)]
-        servicing = providers[(idx * 5 + 7) % len(providers)]
-        facility = facilities[idx % len(facilities)] if idx < 30 else pick(rng, facilities)
-        req_date = start_date + timedelta(days=idx % 170)
-        receipt_time = datetime.combine(req_date, datetime.min.time()) + timedelta(
-            hours=8 + (idx % 9), minutes=(idx * 7) % 60
+    rows: dict[str, list[dict]] = {
+        "members": [],
+        "cases": [],
+        "request_lines": [],
+        "documents": [],
+        "document_facts": [],
+        "case_criteria": [],
+        "p2p_events": [],
+        "appeals": [],
+        "drug_trials": [],
+        "assistance_screen": [],
+        "claims": [],
+        "claim_lines": [],
+        "authorizations": [],
+        "payment_benchmarks": [],
+        "service_margin": [],
+    }
+    for idx in range(1, 151):
+        member_id = f"M-D-{idx:04d}"
+        plan_id = rng.choice(plan_ids)
+        plan_type = {
+            "NHP-COM-NY": "commercial",
+            "NHP-MCD-NY": "medicaid",
+            "NHP-MCR-NJ": "medicare_advantage",
+            "NHP-WC-PA": "workers_comp",
+            "NHP-COM-OLD": "commercial",
+        }[plan_id]
+        status = "active" if plan_id != "NHP-COM-OLD" and rng.random() > 0.08 else "inactive"
+        rows["members"].append(
+            {
+                "member_id": member_id,
+                "patient_name": f"{rng.choice(first)} {rng.choice(last)}",
+                "dob": f"{rng.randint(1950, 2018):04d}-{rng.randint(1, 12):02d}-{rng.randint(1, 28):02d}",
+                "plan_id": plan_id,
+                "plan_type": plan_type,
+                "product": rng.choice(["PrimePlus PPO", "CommunityCare", "SeniorChoice HMO", "OccupationalDirect"]),
+                "employer_group": rng.choice(
+                    ["BriarWorks", "Mercer Foods", "Eastline Labs", "Keystone Transit", None]
+                ),
+                "member_status": status,
+            }
         )
-        service_start = req_date + timedelta(days=rng.randint(1, 21))
-        service_end = service_start + timedelta(days=rng.randint(0, 28))
-        urgency = pick(rng, ["routine", "urgent", "stat"])
-        if idx % 11:
-            urgency = "routine"
-        rendered = 1 if idx in {3, 15, 40, 61, 103} else 0
-        oon_exception = 1 if idx in {5, 22, 77, 111} else rng.randint(0, 1) if servicing[4] != "in_network" else 0
-        cob_processed = 0 if idx in {2, 14, 55, 90} else 1
-        total_units = rng.randint(1, 16)
-        status = pick(rng, ["open", "pending clinical review", "approved", "denied", "withdrawn"])
-        if idx < 30:
-            status = pick(rng, ["open", "pending clinical review", "pending intake", "denied"])
-        stage = pick(rng, ["intake", "nurse_review", "md_review", "p2p_pending", "appeal_window", "closed"])
-        if "intake" in (bucket_by_index.get(idx) or ""):
-            stage = "intake"
-        elif bucket_by_index.get(idx) == "test_p2p_batch":
-            stage = pick(rng, ["md_review", "p2p_pending"])
-        elif bucket_by_index.get(idx) == "train_clinical_batch":
-            stage = pick(rng, ["nurse_review", "md_review"])
-        case_row = (
-            case_id,
-            member[0],
-            iso(req_date),
-            receipt_time.isoformat(timespec="minutes"),
-            pick(rng, ["portal", "fax", "edi", "phone"]),
-            urgency,
-            pick(rng, ["office", "outpatient hospital", "ambulatory surgical center", "home"]),
-            iso(service_start),
-            iso(service_end),
-            requesting[0],
-            servicing[0],
-            facility[0],
-            pick(rng, ["M25.561", "M54.16", "I25.10", "R07.9", "G47.33", "L20.9", "M06.9"]),
-            pick(
-                rng,
-                [
-                    "Persistent symptoms despite conservative care",
-                    "Specialist requests review after inconclusive response",
-                    "Documentation includes conflicting source notes",
-                    "Prior service history is incomplete",
-                    "Request includes a close-call clinical indication",
-                ],
-            ),
-            status,
-            stage,
-            rendered,
-            oon_exception,
-            cob_processed,
-            total_units,
-            round(total_units * service[11], 2),
-            bucket_by_index.get(
-                idx, pick(rng, ["routine_ops_queue", "seasonal_volume_review", "provider_outreach_sample", None])
-            ),
+        policy_id = rng.choice(policies)
+        case_id = f"CASE-D-{idx:04d}"
+        stage = rng.choice(
+            ["intake", "nurse_review", "medical_director", "appeals", "payment_integrity", "finance_queue"]
         )
-        cases.append(case_row)
-
-        line_count = 2 if idx % 9 == 0 else 1
+        current_status = rng.choice(
+            ["open", "ready_for_determination", "needs_information", "denied", "approved", "paid_review", "closed"]
+        )
+        rows["cases"].append(
+            {
+                "case_id": case_id,
+                "member_id": member_id,
+                "provider_id": rng.choice(provider_ids),
+                "request_type": rng.choice(
+                    [
+                        "prior_authorization",
+                        "claim_payment_review",
+                        "coverage_exception",
+                        "peer_to_peer",
+                        "queue_analysis",
+                    ]
+                ),
+                "service_domain": domains[policy_id],
+                "policy_id": policy_id,
+                "request_date": f"2026-{rng.randint(1, 6):02d}-{rng.randint(1, 28):02d}",
+                "due_date": f"2026-{rng.randint(6, 7):02d}-{rng.randint(1, 28):02d}",
+                "current_stage": stage,
+                "current_status": current_status,
+                "urgency": rng.choice(["routine", "standard", "expedited"]),
+                "summary": rng.choice(
+                    [
+                        "Distractor record with similar but non-target therapy documentation.",
+                        "Older export conflicts with current document and requires source-date review.",
+                        "Payment review item with unrelated CPT mix.",
+                        "Appeal packet has partial documentation for an unrelated queue item.",
+                    ]
+                ),
+            }
+        )
+        line_count = rng.randint(1, 3)
+        cpts = ["97110", "97112", "97530", "92507", "78431", "78452", "A9500", "93016", "29881"]
         for line_no in range(1, line_count + 1):
-            line_service = service
-            if line_no == 2:
-                line_service = pick(rng, service_choices)
-            lines.append(
-                (
-                    case_id,
-                    line_no,
-                    line_service[0],
-                    pick(rng, ["", "GP", "LT", "RT", "KX"]),
-                    rng.randint(1, 8),
-                    line_service[2],
-                )
-            )
-
-        if idx % 5 == 0 or idx in {1, 13, 21, 35}:
-            existing.append(
-                (
-                    f"EXA{idx + 1:05d}",
-                    member[0],
-                    service[0],
-                    iso(service_start - timedelta(days=rng.randint(3, 18))),
-                    iso(service_end + timedelta(days=rng.randint(1, 20))),
-                    pick(rng, ["open", "approved", "denied", "expired"]),
-                    iso(req_date - timedelta(days=rng.randint(2, 35))),
-                    case_id if idx % 10 == 0 else None,
-                )
-            )
-
-        doc_count = 2 + (idx % 3 == 0)
-        for doc_no in range(doc_count):
-            current = 1 if doc_no == 0 else 0
-            doc_date = req_date - timedelta(days=(doc_no * 90) + rng.randint(0, 18))
-            doc_id = f"DOC{idx + 1:05d}_{doc_no + 1}"
-            docs.append(
-                (
-                    doc_id,
-                    case_id,
-                    pick(
-                        rng,
-                        [
-                            "clinical note",
-                            "imaging report",
-                            "therapy plan",
-                            "lab result",
-                            "letter of medical necessity",
-                        ],
+            cpt = rng.choice(cpts)
+            rows["request_lines"].append(
+                {
+                    "line_id": f"RL-D-{idx:04d}-{line_no}",
+                    "case_id": case_id,
+                    "cpt_code": cpt,
+                    "modifier": rng.choice(["GP", "GN", "TC", "RT", "59", None]),
+                    "service_name": rng.choice(
+                        ["Therapy service", "Imaging service", "Surgical service", "Drug review"]
                     ),
-                    iso(doc_date),
-                    pick(rng, ["provider_portal", "fax_index", "ehr_feed", "vendor_extract"]),
-                    doc_no + 1,
-                    current,
-                    f"{service[2]} supporting document {doc_no + 1}",
-                    pick(
-                        rng,
-                        [
-                            "Current findings are partly documented",
-                            "Older note conflicts with current severity",
-                            "Objective measurements are present",
-                            "Source rank requires reconciliation",
-                        ],
+                    "requested_units": rng.randint(1, 24),
+                    "requested_start": f"2026-{rng.randint(4, 7):02d}-{rng.randint(1, 28):02d}",
+                    "requested_end": f"2026-{rng.randint(7, 9):02d}-{rng.randint(1, 28):02d}",
+                    "diagnosis_codes": rng.choice(["M54.50", "F80.2", "I25.10", "L20.9", "S83.241A"]),
+                    "billed_charge": round(rng.uniform(120.0, 4200.0), 2),
+                }
+            )
+        for doc_no in range(1, rng.randint(2, 4)):
+            is_current = 0 if doc_no == 2 and rng.random() < 0.22 else 1
+            doc_id = f"DOC-D-{idx:04d}-{doc_no}"
+            rows["documents"].append(
+                {
+                    "document_id": doc_id,
+                    "case_id": case_id,
+                    "document_type": rng.choice(
+                        ["clinical_note", "plan_of_care", "stale_export", "remittance", "appeal_letter"]
                     ),
-                )
-            )
-
-        category = service[2]
-        applicable_criteria = criteria_by_category.get(
-            category, [("medical_necessity", "Medical necessity documented", "met")]
-        )
-        for cidx, (key, _label, _required) in enumerate(applicable_criteria):
-            if idx % 17 == 0 and cidx == 0:
-                value = "not_met"
-            elif idx % 13 == 0 and cidx == 1:
-                value = "unclear"
-            elif service[0] == "S9999" and key == "not_experimental":
-                value = "not_met"
-            else:
-                value = pick(rng, ["met", "met", "met", "unclear"])
-            source_rank = 1 if (idx + cidx) % 4 == 0 else 2 + (cidx % 3)
-            facts.append(
-                (
-                    case_id,
-                    key,
-                    value,
-                    iso(req_date - timedelta(days=rng.randint(0, 20))),
-                    f"DOC{idx + 1:05d}_1",
-                    source_rank,
-                    pick(rng, ["clear", "conflicting", "stale", "partial"]),
-                )
-            )
-            if idx % 19 == 0 and cidx == 0:
-                facts.append(
-                    (
-                        case_id,
-                        key,
-                        "met" if value != "met" else "unclear",
-                        iso(req_date - timedelta(days=120)),
-                        f"DOC{idx + 1:05d}_2",
-                        source_rank + 2,
-                        "stale",
-                    )
-                )
-
-        events.append(
-            (
-                f"EVT{idx + 1:05d}_1",
-                case_id,
-                receipt_time.isoformat(timespec="minutes"),
-                "intake",
-                "intake_coordinator",
-                "received",
-                "queued",
-                "Case received for verification",
-            )
-        )
-        if idx % 2 == 0:
-            events.append(
-                (
-                    f"EVT{idx + 1:05d}_2",
-                    case_id,
-                    (receipt_time + timedelta(hours=6)).isoformat(timespec="minutes"),
-                    "clinical_review",
-                    pick(rng, ["nurse", "medical_director"]),
-                    "clinical_screen",
-                    pick(rng, ["approve", "escalate_to_md", "request_more_info", "adverse_pending"]),
-                    "Review note references evidence hierarchy",
-                )
-            )
-        if idx in set(range(18, 24)) or idx % 23 == 0:
-            completed = receipt_time + timedelta(days=2, hours=2)
-            p2ps.append(
-                (
-                    f"P2P{idx + 1:05d}",
-                    case_id,
-                    (receipt_time + timedelta(days=1)).isoformat(timespec="minutes"),
-                    completed.isoformat(timespec="minutes") if idx % 4 != 0 else None,
-                    0 if idx % 7 == 0 else 1,
-                    1 if idx % 3 == 0 else 0,
-                    pick(rng, ["upheld", "overturned", "additional_info_requested", "no_show"]),
-                    rng.randint(8, 25),
-                )
-            )
-        if idx % 12 == 0:
-            appeals.append(
-                (
-                    f"APL_AUTH{idx + 1:05d}",
-                    case_id,
-                    "authorization",
-                    iso(req_date + timedelta(days=2)),
-                    iso(req_date + timedelta(days=10)),
-                    1 if urgency != "routine" else 0,
-                    rng.randint(0, 1),
-                    rng.randint(0, 1),
-                    pick(rng, ["medical necessity denial", "administrative denial", "benefit exclusion"]),
-                    pick(rng, ["Commercial", "Medicare Advantage", "Medicaid", "Exchange"]),
-                    pick(rng, ["routine_appeals_review", "seasonal_volume_review"]),
-                )
-            )
-
-    conn.executemany("INSERT INTO authorization_requests VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", cases)
-    conn.executemany("INSERT INTO auth_lines VALUES (?,?,?,?,?,?)", lines)
-    conn.executemany("INSERT INTO existing_authorizations VALUES (?,?,?,?,?,?,?,?)", existing)
-    conn.executemany("INSERT INTO evidence_documents VALUES (?,?,?,?,?,?,?,?,?)", docs)
-    conn.executemany("INSERT INTO clinical_facts VALUES (?,?,?,?,?,?,?)", facts)
-    conn.executemany("INSERT INTO case_review_events VALUES (?,?,?,?,?,?,?,?)", events)
-    conn.executemany("INSERT INTO p2p_sessions VALUES (?,?,?,?,?,?,?,?)", p2ps)
-    conn.executemany("INSERT INTO appeals VALUES (?,?,?,?,?,?,?,?,?,?,?)", appeals)
-
-    target_cases = {bucket: [f"AUTH{i + 1:05d}" for i in indexes] for bucket, indexes in auth_targets.items()}
-    return cases, target_cases
-
-
-def generate_medications(conn, rng, members, providers):
-    drugs = ["Remicade", "Dupixent", "Eliquis", "Ozempic", "Humira"]
-    diagnoses = {
-        "Remicade": ["K50.90", "M06.9"],
-        "Dupixent": ["L20.9", "J45.50"],
-        "Eliquis": ["I48.91", "I82.409"],
-        "Ozempic": ["E11.9", "E66.9"],
-        "Humira": ["M06.9", "L40.50"],
-    }
-    target_map = {
-        "train_drug_batch": range(0, 4),
-        "test_drug_batch": range(4, 8),
-    }
-    bucket_by_index = {}
-    for bucket, indexes in target_map.items():
-        for idx in indexes:
-            bucket_by_index[idx] = bucket
-
-    med_cases = []
-    trials = []
-    appeals = []
-    for idx in range(40):
-        drug = drugs[idx % len(drugs)] if idx < 12 else pick(rng, drugs)
-        request_date = date(2025, 4, 1) + timedelta(days=idx * 5)
-        med_case_id = f"MED{idx + 1:05d}"
-        med_cases.append(
-            (
-                med_case_id,
-                members[(idx * 2) % len(members)][0],
-                drug,
-                pick(rng, diagnoses[drug]),
-                pick(rng, ["standard starting dose", "dose escalation", "maintenance dose", "weight-based dose"]),
-                iso(request_date),
-                pick(rng, ["preferred", "non_preferred", "step_required", "excluded_pending_exception"]),
-                providers[(idx * 4 + 3) % len(providers)][0],
-                bucket_by_index.get(idx, pick(rng, ["pharmacy_ops_queue", "specialty_drug_review", None])),
-            )
-        )
-        for trial_no in range(1, 1 + rng.randint(1, 3)):
-            documented = 0 if idx % 9 == 0 and trial_no == 1 else 1
-            trials.append(
-                (
-                    f"TRIAL{idx + 1:05d}_{trial_no}",
-                    med_case_id,
-                    pick(
-                        rng,
+                    "document_date": f"2026-{rng.randint(1, 6):02d}-{rng.randint(1, 28):02d}",
+                    "received_date": f"2026-{rng.randint(4, 6):02d}-{rng.randint(1, 28):02d}",
+                    "source_system": rng.choice(["CarePort", "ProviderFax", "LegacyUM", "ClaimsCore", "RxPortal"]),
+                    "is_current": is_current,
+                    "title": f"Distractor document {doc_no} for {case_id}",
+                    "summary": rng.choice(
                         [
-                            "metformin",
-                            "adalimumab biosimilar",
-                            "topical steroid",
-                            "warfarin",
-                            "methotrexate",
-                            "inhaled corticosteroid",
-                        ],
+                            "Current note has limited details.",
+                            "Stale export should not control the decision.",
+                            "Partial packet item.",
+                            "Payment detail references old schedule.",
+                        ]
                     ),
-                    pick(rng, ["preferred agent", "conventional therapy", "biosimilar", "supportive therapy"]),
-                    iso(request_date - timedelta(days=120 + trial_no * 40)),
-                    iso(request_date - timedelta(days=30 + trial_no * 10)),
-                    pick(rng, ["failed", "partial response", "contraindicated", "not tolerated", "successful"]),
-                    pick(rng, ["none", "rash", "nausea", "bleeding risk", "lab abnormality"]),
-                    documented,
-                )
+                }
             )
-        if idx % 3 == 0 or idx < 8:
-            appeals.append(
-                (
-                    f"APL_MED{idx + 1:05d}",
-                    med_case_id,
-                    "medication",
-                    iso(request_date + timedelta(days=2)),
-                    iso(request_date + timedelta(days=9)),
-                    rng.randint(0, 1),
-                    rng.randint(0, 1),
-                    rng.randint(0, 1),
-                    pick(rng, ["formulary denial", "step therapy denial", "medical necessity denial"]),
-                    pick(rng, ["Commercial", "Medicare Advantage", "Medicaid", "Exchange"]),
-                    bucket_by_index.get(idx, pick(rng, ["pharmacy_appeals_review", "routine_appeals_review"])),
-                )
-            )
-
-    conn.executemany("INSERT INTO medication_cases VALUES (?,?,?,?,?,?,?,?,?)", med_cases)
-    conn.executemany("INSERT INTO medication_trials VALUES (?,?,?,?,?,?,?,?,?)", trials)
-    conn.executemany("INSERT INTO appeals VALUES (?,?,?,?,?,?,?,?,?,?,?)", appeals)
-    target_meds = {bucket: [f"MED{i + 1:05d}" for i in indexes] for bucket, indexes in target_map.items()}
-    return med_cases, target_meds
-
-
-def generate_reimbursement(conn, rng, members, services, auth_cases):
-    clinics = [
-        ("CLN001", "Riverside Community Clinic", "CA"),
-        ("CLN002", "North Harbor Health", "NY"),
-        ("CLN003", "Lakeside Rehab Center", "IL"),
-        ("CLN004", "Gulf Coast Specialty Group", "FL"),
-    ]
-    payers = [
-        ("Ticonderoga Health", "Commercial"),
-        ("Ticonderoga Health", "Medicare Advantage"),
-        ("Ticonderoga Health", "Medicaid"),
-        ("Ticonderoga Health", "Exchange"),
-        ("Ticonderoga Health", "Dual Eligible"),
-    ]
-    categories = sorted({row[2] for row in services if row[4] == 1})
-    service_by_category = {}
-    for service in services:
-        service_by_category.setdefault(service[2], []).append(service)
-
-    rates = []
-    rate_idx = 1
-    for payer, plan_type in payers:
-        for category in categories:
-            for service in service_by_category[category][:2]:
-                for state in ["CA", "NY", "FL", "TX", "IL", "PA"]:
-                    base = service[11] * rng.uniform(0.62, 1.18)
-                    rates.append(
-                        (
-                            f"RATE{rate_idx:05d}",
-                            payer,
-                            plan_type,
-                            category,
-                            service[0],
-                            state,
-                            "2024-01-01",
-                            "2024-12-31",
-                            round(base * 0.93, 2),
-                            "legacy contract",
-                        )
-                    )
-                    rate_idx += 1
-                    rates.append(
-                        (
-                            f"RATE{rate_idx:05d}",
-                            payer,
-                            plan_type,
-                            category,
-                            service[0],
-                            state,
-                            "2025-01-01",
-                            "2025-12-31",
-                            round(base, 2),
-                            "current contract",
-                        )
-                    )
-                    rate_idx += 1
-                    if rng.random() < 0.25:
-                        rates.append(
-                            (
-                                f"RATE{rate_idx:05d}",
-                                payer,
-                                plan_type,
-                                category,
-                                service[0],
-                                state,
-                                "2026-01-01",
-                                "2026-12-31",
-                                round(base * 1.05, 2),
-                                "future draft",
-                            )
-                        )
-                        rate_idx += 1
-    conn.executemany("INSERT INTO rate_schedules VALUES (?,?,?,?,?,?,?,?,?,?)", rates)
-
-    costs = []
-    cost_idx = 1
-    for clinic_id, _name, _state in clinics:
-        for fiscal_year in [2024, 2025]:
-            for category in categories:
-                costs.append(
-                    (
-                        f"COST{cost_idx:05d}",
-                        clinic_id,
-                        fiscal_year,
-                        category,
-                        round(rng.uniform(35, 480), 2),
-                        round(rng.uniform(18, 210), 2),
-                    )
-                )
-                cost_idx += 1
-    conn.executemany("INSERT INTO clinic_costs VALUES (?,?,?,?,?,?)", costs)
-
-    budgets = []
-    budget_idx = 1
-    for clinic_id, _name, _state in clinics:
-        for payer, _plan_type in payers:
-            for category in categories:
-                expected_units = rng.randint(80, 550)
-                expected_revenue = expected_units * rng.uniform(75, 580)
-                budgets.append(
-                    (
-                        f"BUD{budget_idx:05d}",
-                        clinic_id,
-                        2025,
-                        payer,
-                        category,
-                        expected_units,
-                        round(expected_revenue, 2),
-                        round(rng.uniform(0.08, 0.34), 3),
-                    )
-                )
-                budget_idx += 1
-    conn.executemany("INSERT INTO clinic_budgets VALUES (?,?,?,?,?,?,?,?)", budgets)
-
-    encounters = []
-    corrections = []
-    active_auth_ids = [row[0] for row in auth_cases if row[14] in ("approved", "open", "pending clinical review")]
-    service_lookup = {row[0]: row for row in services}
-    payable_services = [row for row in services if row[4] == 1]
-    for idx in range(1200):
-        service = pick(rng, payable_services)
-        clinic = clinics[idx % len(clinics)] if idx < 80 else pick(rng, clinics)
-        payer, plan_type = pick(rng, payers)
-        units = rng.randint(1, 8)
-        service_date = date(2025, 1, 1) + timedelta(days=rng.randint(0, 364))
-        allowed = service[11] * rng.uniform(0.55, 1.1)
-        denial = None
-        if idx % 17 == 0:
-            denial = pick(rng, ["CO-197", "CO-16", "PR-204", "CO-50"])
-            paid = 0.0 if denial in ("CO-197", "PR-204") else allowed * units * rng.uniform(0.2, 0.5)
-        else:
-            paid = allowed * units * rng.uniform(0.82, 1.03)
-        auth_case = pick(rng, active_auth_ids) if service[3] == 1 and rng.random() < 0.55 else None
-        encounter_id = f"ENC{idx + 1:06d}"
-        encounters.append(
-            (
-                encounter_id,
-                clinic[0],
-                iso(service_date),
-                payer,
-                plan_type,
-                pick(rng, members)[0],
-                service[0],
-                service[2],
-                units,
-                round(service[11] * units * rng.uniform(1.25, 2.4), 2),
-                round(paid, 2),
-                denial,
-                auth_case,
-            )
-        )
-        if denial or idx % 29 == 0:
-            corrections.append(
-                (
-                    f"CORR{idx + 1:06d}",
-                    encounter_id,
-                    pick(
-                        rng,
-                        [
-                            "authorization addendum",
-                            "modifier correction",
-                            "timely filing packet",
-                            "medical record attachment",
-                            "rate variance appeal",
-                        ],
+            rows["document_facts"].append(
+                {
+                    "fact_id": f"FACT-{doc_id}-01",
+                    "document_id": doc_id,
+                    "case_id": case_id,
+                    "fact_key": rng.choice(
+                        ["frequency_per_week", "requested_units_total", "paid_total", "packet_item", "clinical_status"]
                     ),
-                    round(service_lookup[service[0]][11] * units * rng.uniform(0.25, 0.95), 2),
-                    iso(service_date + timedelta(days=rng.randint(30, 120))),
-                    pick(rng, ["open", "pending documents", "submitted", "closed unrecovered"]),
-                )
+                    "fact_value": rng.choice(["not stated", "current", "partial", "closed", "requires review"]),
+                    "numeric_value": rng.choice([None, 1.0, 2.0, 12.0, 24.0, round(rng.uniform(100, 1500), 2)]),
+                    "unit": rng.choice([None, "units", "USD", "visits"]),
+                    "supports_criteria": rng.choice([None, "PT-POC", "ST-POC", "CLAIM-SCHED", "DRUG-RATIONALE"]),
+                }
             )
-    conn.executemany("INSERT INTO encounters VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", encounters)
-    conn.executemany("INSERT INTO claim_corrections VALUES (?,?,?,?,?,?)", corrections)
-
-    return {
-        "train_reimbursement_batch": ["CLN001", "CLN002", "2025Q1", "2025Q2"],
-        "test_reimbursement_batch": ["CLN003", "CLN004", "2025Q3", "2025Q4"],
-        "train_profitability_batch": ["CLN001", "CLN003", "Commercial", "Medicaid"],
-        "test_profitability_batch": ["CLN002", "CLN004", "Medicare Advantage", "Exchange"],
-    }
-
-
-def build_manifest(conn, target_cases, target_meds, reimbursement_targets):
-    tables = [
-        row[0]
-        for row in conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
-        )
-    ]
-    counts = {}
-    for table in tables:
-        counts[table] = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-    manifest = {
-        "environment": "task_group_014",
-        "scenario": "SCN_014_healthcare_payer_authorization_appeals",
-        "primary_seed": SEED,
-        "additional_seeds": [SEED + 17, SEED + 29],
-        "database": "payer_ops.db",
-        "tables": tables,
-        "counts": counts,
-        "target_business_object_identifiers": {
-            "authorization_case_ids_by_bucket": target_cases,
-            "medication_case_ids_by_bucket": target_meds,
-            "reimbursement_and_profitability_focus": reimbursement_targets,
-        },
-        "notes": [
-            "Target bucket labels are neutral worklist labels and are mixed with distractor rows.",
-            "Manifest is construction-visible and is not intended for solver prompts.",
-            "No final task answers are stored in this manifest.",
+        if policy_id == "POL-PET-MPI-2026" and rng.random() < 0.35:
+            rows["p2p_events"].append(
+                {
+                    "p2p_id": f"P2P-D-{idx:04d}",
+                    "case_id": case_id,
+                    "scheduled_at": f"2026-06-{rng.randint(1, 28):02d}T{rng.randint(13, 18):02d}:00:00Z",
+                    "duration_minutes": rng.randint(10, 25),
+                    "provider_argument": "Provider requested reconsideration.",
+                    "new_information": rng.choice(
+                        ["No new information.", "BMI limitation supplied.", "Prior SPECT report supplied."]
+                    ),
+                    "outcome": rng.choice(["uphold_intended_adverse_decision", "overturn_to_approval", "reschedule"]),
+                    "final_status": rng.choice(["denied", "approved", "pending"]),
+                    "reviewer": rng.choice(["Dr. Imani Wells", "Dr. Samuel Ortiz"]),
+                    "notes": "Distractor P2P record.",
+                }
+            )
+        if policy_id == "POL-DRUG-EXC-2026" and rng.random() < 0.45:
+            rows["appeals"].append(
+                {
+                    "appeal_id": f"APL-D-{idx:04d}",
+                    "case_id": case_id,
+                    "denial_date": f"2026-05-{rng.randint(1, 28):02d}",
+                    "received_date": f"2026-06-{rng.randint(1, 12):02d}",
+                    "appeal_type_requested": rng.choice(["coverage_exception", "standard", "expedited"]),
+                    "appeal_path": rng.choice(["standard_internal", "expedited_internal", "external_review"]),
+                    "expedited_attestation": rng.choice(
+                        ["not_requested", "provider_attested_serious_health_risk", "missing"]
+                    ),
+                    "appeal_deadline": f"2026-06-{rng.randint(10, 28):02d}",
+                    "outcome": rng.choice(["open", "upheld", "overturned", "withdrawn"]),
+                    "owner": rng.choice(["appeals-rx", "appeals-um"]),
+                    "notes": "Distractor appeal.",
+                }
+            )
+        if rng.random() < 0.55:
+            claim_id = f"CLAIM-D-{idx:04d}"
+            paid = round(rng.uniform(120.0, 2600.0), 2)
+            rows["claims"].append(
+                {
+                    "claim_id": claim_id,
+                    "member_id": member_id,
+                    "case_id": case_id,
+                    "payer": "Northstar Health Plan",
+                    "received_date": f"2026-{rng.randint(1, 6):02d}-{rng.randint(1, 28):02d}",
+                    "claim_status": rng.choice(["paid", "denied", "paid_stale_schedule", "adjusted"]),
+                    "auth_number": rng.choice([None, f"NPA-{rng.randint(2400000, 2409999)}"]),
+                    "billed_total": round(paid * rng.uniform(1.2, 2.6), 2),
+                    "paid_total": paid,
+                }
+            )
+            for line_no in range(1, rng.randint(2, 4)):
+                rows["claim_lines"].append(
+                    {
+                        "claim_line_id": f"CL-D-{idx:04d}-{line_no}",
+                        "claim_id": claim_id,
+                        "line_number": line_no,
+                        "cpt_code": rng.choice(cpts),
+                        "modifier": rng.choice(["GP", "GN", "TC", "RT", "59", None]),
+                        "units": rng.randint(1, 4),
+                        "billed_amount": round(rng.uniform(100.0, 1800.0), 2),
+                        "paid_amount": round(rng.uniform(0.0, 900.0), 2),
+                        "denial_code": rng.choice([None, None, "CO-45", "PI-204", "N30"]),
+                        "service_date": f"2026-{rng.randint(1, 6):02d}-{rng.randint(1, 28):02d}",
+                    }
+                )
+    for idx, (payer, domain, cpt) in enumerate(
+        [
+            ("Northstar Health Plan", "physical_therapy", "97110"),
+            ("Northstar Health Plan", "speech_therapy", "92507"),
+            ("Northstar Health Plan", "cardiac_imaging", "78431"),
+            ("Northstar Health Plan", "outpatient_surgery", "29881"),
         ],
+        start=1,
+    ):
+        for plan_type in ["commercial", "medicaid", "medicare_advantage", "workers_comp"]:
+            rows["payment_benchmarks"].append(
+                {
+                    "benchmark_id": f"BM-D-{idx}-{plan_type}",
+                    "payer": payer,
+                    "plan_type": plan_type,
+                    "service_domain": domain,
+                    "cpt_code": cpt,
+                    "modifier": rng.choice([None, "GP", "GN", "TC", "RT"]),
+                    "effective_start": "2026-01-01",
+                    "effective_end": "2026-12-31",
+                    "allowed_amount": round(rng.uniform(65.0, 2400.0), 2),
+                    "source_name": "Northstar Distractor Schedule",
+                    "source_version": "2026",
+                }
+            )
+    for idx in range(1, 25):
+        rows["service_margin"].append(
+            {
+                "month_id": f"SM-D-{idx:03d}",
+                "period": rng.choice(["2026-04", "2026-05", "2026-06"]),
+                "payer": "Northstar Health Plan",
+                "payer_segment": rng.choice(["commercial", "medicaid", "medicare_advantage", "workers_comp"]),
+                "service_domain": rng.choice(["physical_therapy", "speech_therapy", "cardiac_imaging"]),
+                "cpt_code": rng.choice(["97110", "97112", "97530", "92507", "78431"]),
+                "visits": rng.randint(25, 600),
+                "net_revenue": round(rng.uniform(4000.0, 65000.0), 2),
+                "variable_cost": round(rng.uniform(2500.0, 42000.0), 2),
+                "fixed_cost_allocated": round(rng.uniform(1000.0, 13000.0), 2),
+                "charge_sensitive": rng.choice([0, 1]),
+            }
+        )
+    return rows
+
+
+def generate_database(db_path: Path = DB_PATH, overwrite: bool = True) -> dict:
+    rng = random.Random(SEED)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    if overwrite and db_path.exists():
+        db_path.unlink()
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+    cur.execute("PRAGMA journal_mode=DELETE")
+    cur.execute("PRAGMA foreign_keys=OFF")
+    for statement in SCHEMA:
+        cur.execute(statement)
+    base = base_rows()
+    for table in ["plans", "providers", "policies", "policy_criteria"]:
+        insert_many(cur, table, base[table])
+    targets = target_rows()
+    distractors = distractor_rows(rng)
+    ordered_tables = [
+        "members",
+        "cases",
+        "request_lines",
+        "documents",
+        "document_facts",
+        "case_criteria",
+        "p2p_events",
+        "appeals",
+        "drug_trials",
+        "assistance_screen",
+        "claims",
+        "claim_lines",
+        "authorizations",
+        "payment_benchmarks",
+        "service_margin",
+    ]
+    for table in ordered_tables:
+        insert_many(cur, table, targets.get(table, []))
+        insert_many(cur, table, distractors.get(table, []))
+    conn.commit()
+    cur.execute("VACUUM")
+    conn.close()
+    manifest = {
+        "service": "northstar-payer-operations",
+        "task_group": "task_group_014",
+        "seed": SEED,
+        "database": "data/northstar_pa.sqlite",
+        "generated_at": "2026-07-18T00:00:00Z",
+        "state_mode": "read_only",
+        "target_record_count": 10,
+        "distractors": {
+            "cases": 150,
+            "notes": "Generated distractors include expired plans, stale exports, duplicate-like documents, unrelated claims, multiple plan types, and overlapping service lines.",
+        },
+        "tables": {},
     }
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+    table_names = [
+        row[0]
+        for row in cur.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
+        ).fetchall()
+    ]
+    for table_name in table_names:
+        count = cur.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
+        manifest["tables"][table_name] = count
+    conn.close()
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return manifest
 
 
-def main():
-    rng = random.Random(SEED)
-    if DB_PATH.exists():
-        DB_PATH.unlink()
-    conn = sqlite3.connect(DB_PATH)
-    try:
-        create_schema(conn)
-        plans, facilities, services, criteria_specs = insert_static_data(conn)
-        members, providers = generate_people(conn, rng, plans)
-        auth_cases, target_cases = generate_authorizations(
-            conn, rng, members, providers, facilities, services, criteria_specs
-        )
-        _med_cases, target_meds = generate_medications(conn, rng, members, providers)
-        reimbursement_targets = generate_reimbursement(conn, rng, members, services, auth_cases)
-        conn.commit()
-        manifest = build_manifest(conn, target_cases, target_meds, reimbursement_targets)
-    finally:
-        conn.close()
-    print(f"Generated {DB_PATH}")
-    print(json.dumps(manifest["counts"], indent=2, sort_keys=True))
-
-
 if __name__ == "__main__":
-    main()
+    result = generate_database()
+    print(
+        json.dumps(
+            {"ok": True, "database": str(DB_PATH), "seed": SEED, "tables": result["tables"]}, indent=2, sort_keys=True
+        )
+    )

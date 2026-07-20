@@ -1,119 +1,68 @@
 {
-  "deal_id": "string; requested deal id",
-  "draft_terms": {
-    "structure": "enum: STOCK_PURCHASE, ASSET_PURCHASE, MERGER, ROLLOVER_STOCK_PURCHASE",
-    "buyer": "string",
-    "seller": "string",
-    "target": "string",
-    "client_side": "enum: BUYER, SELLER",
-    "headline_value_usd": "integer dollars",
-    "equity_value_usd": "integer dollars",
-    "signing_date": "YYYY-MM-DD",
-    "closing_deadline": "YYYY-MM-DD",
-    "allocation_source_doc_id": "string document id for the controlling cap table or allocation schedule",
-    "consideration_mix_usd": {
-      "cash_at_close": "integer dollars",
-      "seller_note": "integer dollars",
-      "rollover_equity": "integer dollars",
-      "earnout": "integer dollars",
-      "total_consideration": "integer dollars"
-    },
-    "seller_allocations": [
-      {
-        "seller_id": "stable uppercase snake-case id; list sorted by seller_id",
-        "seller_name": "string",
-        "seller_role": "string",
-        "ownership_percent": "number percentage to two decimals",
-        "cash_at_close_usd": "integer dollars",
-        "seller_note_usd": "integer dollars",
-        "rollover_equity_usd": "integer dollars",
-        "earnout_usd": "integer dollars",
-        "total_proceeds_usd": "integer dollars"
-      }
-    ],
-    "indemnity": {
-      "general_escrow_percent": "number percentage to two decimals",
-      "general_escrow_amount_usd": "integer dollars",
-      "tax_escrow_percent": "number percentage to two decimals",
-      "tax_escrow_amount_usd": "integer dollars",
-      "aggregate_escrow_percent": "number percentage to two decimals",
-      "aggregate_escrow_amount_usd": "integer dollars",
-      "indemnity_cap_percent": "number percentage to two decimals",
-      "indemnity_cap_amount_usd": "integer dollars",
-      "basket_type": "enum: DEDUCTIBLE, TIPPING, NONE",
-      "basket_percent": "number percentage to two decimals",
-      "basket_amount_usd": "integer dollars",
-      "de_minimis_usd": "integer dollars",
-      "general_reps_survival_months": "integer months",
-      "fundamental_reps_survival_months": "integer months",
-      "tax_reps_survival_months": "integer months"
-    },
-    "working_capital": {
-      "target_usd": "integer dollars",
-      "collar_usd": "integer dollars",
-      "mechanic": "enum: DOLLAR_FOR_DOLLAR_OUTSIDE_COLLAR, TRUE_UP_AGAINST_ACTIVE_BALANCE_SHEET, SELLER_BUDGET_BASELINE, NONE"
-    },
-    "closing_conditions": {
-      "material_consents_as_closing_conditions": [
-        "contract names sorted alphabetically"
-      ],
-      "post_closing_notice_items": [
-        "contract names sorted alphabetically"
-      ],
-      "hsr_status": "enum: REQUIRED, NOT_REQUIRED, UNCLEAR",
-      "hsr_filing_condition": "boolean",
-      "hsr_clause_position": "enum: FILING_CONDITION, COOPERATION_COVENANT_ONLY, OMIT_HSR_LANGUAGE",
-      "other_approvals": [
-        "approval or consent names sorted alphabetically"
-      ]
-    },
-    "drafting_positions": {
-      "form_position": "enum: BUYER_FORM, SELLER_FORM, COMMITTEE_FORM, STANDARD_FORM",
-      "consideration_schedule_position": "enum: ACTIVE_CAP_TABLE_PRORATA_ALLOCATION, ACTIVE_ALLOCATION_SCHEDULE, STALE_CAP_TABLE, COUNTERPARTY_DRAFT",
-      "escrow_cap_position": "enum: CAP_EQUALS_GENERAL_ESCROW, CAP_ABOVE_ESCROW, CAP_BELOW_ESCROW, NO_CAP",
-      "basket_position": "enum: DEDUCTIBLE_BASKET, TIPPING_BASKET, NO_BASKET",
-      "consent_position": "enum: SPECIFIED_MATERIAL_CONSENTS_AS_CLOSING_CONDITIONS, POST_CLOSING_COVENANT_ONLY, OMIT_CONSENTS",
-      "hsr_position": "enum: NO_HSR_CONDITION_COOPERATION_ONLY, HSR_FILING_CONDITION, HSR_UNCLEAR_ESCALATE",
-      "earnout_position": "enum: OBJECTIVE_REVENUE_BASED_FALLBACK, OPERATING_COVENANT_REQUIRED, NO_EARNOUT",
-      "non_compete_position": "enum: TARGETED_PRODUCT_SCOPE_RESTRICTIVE_COVENANT, BROAD_GLOBAL_RESTRICTIVE_COVENANT, TARGETED_TERRITORY_RESTRICTIVE_COVENANT, OMIT_RESTRICTIVE_COVENANT",
-      "transition_services_position": "enum: NO_GENERAL_TSA_LIMITED_CUSTOMER_NOTICE_SUPPORT, FULL_TSA_REQUIRED, TSA_STATUS_UNCLEAR",
-      "ip_transition_position": "enum: REQUIRE_OPEN_SOURCE_AUDIT_AND_FEDRAMP_ASSIGNMENT, NO_IP_TRANSITION, TRADEMARK_PHASE_OUT_ONLY"
+  "deal_id": "string",
+  "prepared_for": "string",
+  "currency": "USD",
+  "position_matrix": [
+    {
+      "issue_id": "one of: indemnity_cap_and_basket, survival_and_knowledge, materiality_scrape, escrow_holdback_release, consent_closing_condition, hsr_condition, material_contracts",
+      "source_term_ids": ["stable draft term ids, or empty when the issue is missing from current draft terms"],
+      "status": "one of: in_policy, out_of_policy, missing_required_term, draft_exceeds_playbook, draft_below_playbook",
+      "risk_rating": "one of: LOW, MEDIUM, HIGH",
+      "recommended_action": "one of: delete, revise, add, accept, escalate, approve, approve_with_conditions, reject",
+      "final_position": "one of: raise_cap_to_at_least_fallback, seek_18_months_or_condition_15_on_escrow, accept_breach_only_fallback, add_10_percent_escrow_with_unresolved_agent_and_release, require_all_material_consents, add_hsr_clearance_condition, require_specific_contract_consents",
+      "priority_rank": 0,
+      "draft_percent": null,
+      "preferred_percent": null,
+      "fallback_percent": null,
+      "draft_months": null,
+      "preferred_months": null,
+      "fallback_months": null,
+      "draft_contract_count": null,
+      "draft_amount_usd": null,
+      "preferred_amount_usd": null,
+      "fallback_amount_usd": null,
+      "shortfall_to_fallback_usd": null,
+      "shortfall_to_preferred_usd": null,
+      "special_indemnity_amount_usd": null,
+      "privacy_finding_amount_usd": null,
+      "basket_status": "one of: not_found_in_current_records, found, not_applicable",
+      "knowledge_qualifier_status": "one of: not_found_in_current_records, found, not_applicable",
+      "escrow_agent_status": "one of: not_found_in_current_records, found, not_applicable",
+      "release_status": "one of: not_found_in_current_records, found, not_applicable",
+      "hsr_required": null,
+      "hell_or_high_water_required": null,
+      "required_consent_ids": [],
+      "required_contract_ids": [],
+      "excluded_contract_ids": [],
+      "excluded_from_draft": []
     }
-  },
-  "policy_checks": {
-    "policy_id": "string",
-    "policy_version": "string",
-    "checks": [
-      {
-        "check_id": "enum; list sorted by check_id: BASKET_POLICY, CAP_POLICY, CONSENTS_POLICY, ESCROW_POLICY, HSR_POLICY, NONCOMPETE_POLICY, NWC_POLICY",
-        "rule_id": "string",
-        "status": "enum: WITHIN_POLICY, APPROVAL_REQUIRED, OVERRIDE_APPLIED, ESCALATE_IF_CHANGED",
-        "approval_required": "boolean",
-        "approval_category": "enum: DEAL_LEAD, EMPLOYMENT_COUNSEL, FINANCE_COMMITTEE, LEGAL_RISK_COMMITTEE, REGULATORY_COUNSEL",
-        "measured_value": "string using normalized units such as percent, dollars, or controlled status"
-      }
-    ],
-    "policy_summary": {
-      "approval_required_now": "boolean",
-      "current_policy_exception_count": "integer",
-      "required_approval_bodies": [
-        "approval category enums sorted alphabetically"
-      ],
-      "conditional_escalation_triggers": [
-        "enum sorted alphabetically: ADD_FINANCING_CONDITION, REMOVE_FEDERAL_SOC_CONSENT, TAX_ESCROW_THRESHOLD_TRIGGER, GENERAL_ESCROW_THRESHOLD_TRIGGER, CAP_THRESHOLD_TRIGGER, BASKET_THRESHOLD_TRIGGER, TOP_CUSTOMER_CONSENT_OMITTED, UNCLEAR_HSR_ANALYSIS"
-      ]
-    },
-    "risk_memo_overrides": {
-      "source_doc_ids": [
-        "document ids sorted alphabetically"
-      ],
-      "override_codes": [
-        "enum sorted alphabetically: ACTIVE_CLIENT_INSTRUCTIONS_SUPERSEDE_TEMPLATE, NO_HSR_CONDITION_DESPITE_CYBER_ASSETS, USE_ACTIVE_CAP_TABLE_OVER_STALE_EXPORT"
-      ],
-      "superseded_doc_ids": [
-        "document ids sorted alphabetically"
-      ],
-      "hsr_override_basis": "enum: THRESHOLDS_NOT_MET_AFTER_DEBT_ADJUSTMENTS, SIZE_OF_PERSON_NOT_MET, COUNSEL_MEMO_MISSING, UNKNOWN"
+  ],
+  "closing_blockers": [
+    {
+      "blocker_id": "stable consent id, contract id, or synthetic regulatory id",
+      "blocker_type": "one of: required_consent, regulatory_clearance, material_contract_consent",
+      "related_contract_id": null,
+      "must_be_satisfied_before_closing": true,
+      "risk_rating": "one of: LOW, MEDIUM, HIGH",
+      "amount_at_risk_usd": null,
+      "annual_revenue_usd": null,
+      "required_action": "one of: obtain_consent, obtain_clearance, add_closing_condition"
     }
+  ],
+  "risk_totals": {
+    "headline_purchase_price_usd": 0,
+    "position_issue_count": 0,
+    "out_of_policy_issue_count": 0,
+    "draft_below_playbook_count": 0,
+    "missing_required_term_count": 0,
+    "high_risk_issue_count": 0,
+    "closing_blocker_count": 0,
+    "required_consent_amount_at_risk_usd": 0,
+    "material_contract_revenue_requiring_consent_usd": 0,
+    "indemnity_cap_shortfall_to_fallback_usd": 0,
+    "indemnity_cap_shortfall_to_preferred_usd": 0,
+    "total_modeled_exposure_low_usd": 0,
+    "total_modeled_exposure_high_usd": 0,
+    "highest_modeled_exposure_category": "string"
   }
 }

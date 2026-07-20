@@ -1,119 +1,135 @@
-# test_002 Notes
+# English Notes
 
-## English
+## Data and Source Lineage
 
-### Data and Source Lineage
+This is `test_002` for `task_group_018`, derived from scenario `SCN_018_court_clerk_disposition_orders_and_financial_entries`, with primary source-example affinity to `E002` (Oregon traffic payment-plan closeout). It uses shared environment target citations `OR27-TR-2201`, `OR27-TR-2208`, and `OR27-TR-2219`; jurisdiction `OR27-CLAT`; fee rows `F-OR27-100-2025`, `F-OR27-21-2025`, and `F-OR27-SUR-2025`; payment policy `POL-OR27-EPP`; and form catalog entry `OR_27JD_PLAN`.
 
-This task belongs to `task_group_018`, derived from scenario `SCN_018_court_clerk_disposition_orders_and_financial_entries`. It remains in the Jefferson traffic and payment-plan distribution, with direct transfer anchors in `train_002` and `train_005`.
+Task-local solver-visible materials are:
 
-The shared generated environment is `task_group/task_group_018/env/data/clerk_ops.json`, exposed through the clerk operations HTTP service. This rework edits only `task_group/task_group_018/test_tasks/002/`. Solver-visible materials are `input/prompt.txt`, `input/payloads/answer_template.json`, and `input/payloads/jefferson_afternoon_traffic_packet.json`. The environment supplies live citation identity and posture, Jefferson traffic fee schedules with 2023-2024 and 2025 effective rows, Jefferson payment policy, hearing records, and stale export records.
+- `input/payloads/clatsop_hearing_closeout_memo.md`: hearing dispositions, approved payment amounts, a dismissed high-speed matter, and unsupported fee/enhancement distractions.
+- `input/payloads/clatsop_payment_form_excerpt.md`: 27th Judicial District form labels, citation-number account-reference rule, old setup-charge distraction, and duplicate-like citation sample references.
+- `input/payloads/answer_template.json`: required JSON structure, enum values, currency/date precision, ordering rules, and nullable no-plan fields.
 
-### Task Definition and Scenario Fit
+## Task Definition and Scenario Fit
 
-The solver acts as a Jefferson County Municipal Court traffic clerk preparing batch `JEF-TV-2025-07-16-PM-CONTROL` for financial-entry review. The target citations are `CIT-JEF-2023-00701`, `CIT-JEF-2024-00701`, `CIT-JEF-2024-00702`, `CIT-JEF-2024-00703`, `CIT-JEF-2025-00127`, `CIT-JEF-2025-00138`, and `CIT-JEF-2025-00701`.
+The solver acts as a court clerk closing a March 24, 2027 Oregon traffic hearing batch for Clatsop County. The expected work is to reconcile local hearing notes with the Court Operations Portal, apply current standard fine tiers and the Clatsop surcharge only to payable violation-found matters, leave the dismissed matter with zero financial entry and no payment plan, calculate installment schedules, use the 27th Judicial District payment form conventions, and summarize batch totals.
 
-This version is a more substantial rework after direct v2 calibration. It adds a prior-order fee schedule row, current-order fee schedule rows, a satisfied no-assessment row, a deferred-completion no-new-assessment row, a dismissed identity-conflict row, a return-to-court plan defect, below-minimum/default plan corrections, and controlled `source_resolution`, `assessment_status`, `fee_schedule_bucket`, `decision_flags`, and `plan_defect_code` fields. These changes reduce points obtainable from simple API lookup plus arithmetic because the high-value fields require choosing which source controls before calculating amounts.
+This task fits the scenario because it is the same legal-office closeout workflow as the source examples: courtroom notes determine disposition posture, public CMS/environment records determine active schedules and policy/form metadata, and the final clerk output must avoid unsupported financial entries while preserving citation/account references.
 
-### Material Map
+## Material Map
 
-The local packet gives target citation numbers, current bench or review notes, one signed correction slip, raw speed facts, candidate import codes, installment request snippets, and an older history pull. It intentionally does not include fee amounts, payment policy minimums, default first-due intervals, live identity values, or the final source-precedence decisions.
+The prompt directs solvers to `<TASK_ENV_BASE_URL>` and allowed endpoints: `/api/citations`, `/api/fee-schedules`, `/api/payment-policies`, `/api/forms`, and `/api/search`. The target citation rows confirm defendant names, speed facts, hearing dates, plea/disposition status, amount-due components, and stored plan facts. The fee schedule endpoint supplies the current Clatsop 100+ mph fine of $1,200, the current 21-to-30-over fine of $265, and the $10 Clatsop County surcharge. The payment policy confirms no down payment, no automatic account fee, and citation-number account reference handling. The form endpoint confirms `OR_27JD_PLAN`, while the local form excerpt supplies the visible labels used in the expected output.
 
-The shared environment provides:
+The duplicate-like citation references in the local materials are deliberate distractions. `OR27-TR-2201A`, `OR27-TR-2208B`, `OR27-TR-2219-VOID`, `OR27-TR-2210`, and `OR27-TR-2291` are not target matters.
 
-- `GET /api/citations/<citation_number>` for live defendant names, original violation codes, live plea and disposition values, and older due-date facts.
-- `GET /api/fees?county=Jefferson&matter_type=traffic&effective_on=<date>` for active fee rows. Jefferson has `TR-BASE` `115.00`, `TR-SPEED` `50.00`, and `TR-SCHOOL` `45.00` for 2023-2024, and `TR-BASE` `130.00`, `TR-SPEED` `60.00`, `TR-SCHOOL` `50.00`, and `TR-LATE` `25.00` for 2025.
-- `GET /api/payment-policies?county=Jefferson` for `40.00` minimum monthly payment, 30-day default first due date, final-smaller-payment permission, and unsupported codes `CR-507`, `DUI-104`, and `TR-231`.
-- `GET /api/stale-exports?county=Jefferson&name=financial_ledger_snapshot` and hearing records for stale status and history conflicts.
+## Solution and Evaluation Basis
 
-### Solution and Evaluation Basis
+For `OR27-TR-2201`, Mina Patel entered a no-contest plea and was found in violation on 2027-03-24 for ORS 811.109(5), 104 mph in a 65 mph zone. Current fee row `F-OR27-100-2025` sets the standard fine at $1,200. Add the $10 Clatsop surcharge for an amount due of $1,210. The approved post-disposition plan is $110 monthly, no down payment, first due 2027-04-23. This produces 11 full payments, no partial remainder, 11 total installments, and final due date 2028-02-23.
 
-All entries use the citation number as `account_reference`.
+For `OR27-TR-2208`, Victor Lane entered a guilty plea and was found in violation on 2027-03-24 for ORS 811.109, 81 mph in a 55 mph zone, the 21-to-30-over tier. Current fee row `F-OR27-21-2025` sets the standard fine at $265. Add the $10 Clatsop surcharge for an amount due of $275. The approved post-disposition plan is $55 monthly, no down payment, first due 2027-04-23. This produces 5 full payments, no partial remainder, 5 total installments, and final due date 2027-08-23.
 
-`CIT-JEF-2023-00701` uses live identity `Owen Ibarra` but the signed correction slip controls over the live old violation and stale history. The final plea is `no_contest`, disposition `convicted`, order date `2024-11-20`, assessment status `assessed_prior_order`, and violation code `TR-201` because 58 in a 45 zone is 13 mph over. The prior Jefferson traffic schedule applies: `TR-BASE` `115.00` plus `TR-SPEED` `50.00`, total `165.00`. Excluded candidates are `CR-507`, `TR-260`, and `TR-LATE`. No new installment plan is entered because the July item is a return-to-court review defect.
+For `OR27-TR-2219`, Leah Crane entered a not-guilty plea and the matter was dismissed by court. Even though the citation was high-speed and appears in the batch scratchpad, the final closeout has standard fine $0, surcharge $0, amount due $0, no agreement, no installments, and no payment form. The account reference remains the citation number for identification.
 
-`CIT-JEF-2024-00701` uses the current bench row over live pending/deferred values. The final plea is `no_contest`, disposition `convicted`, date `2025-07-16`, code `TR-202` because 61 in a 35 zone is 26 mph over, and the current fee schedule applies. Components are `TR-BASE` `130.00` and `TR-SPEED` `60.00`, total `190.00`. Excluded candidates are `DUI-104`, `TR-231`, and `TR-LATE`. The requested `30.00` monthly amount is below policy, so the entered plan uses `40.00`, first due `2025-08-15`, four full payments, final `30.00`, five payments total, final due `2025-12-15`.
+Batch totals are 3 matters, 2 payable matters, 1 dismissed matter, $1,465 combined standard fines, $20 combined surcharge, $1,485 combined amount due, 16 total installments scheduled, and $0 unsupported charges included.
 
-`CIT-JEF-2024-00702` uses live identity `Felix Abbott` and live `satisfied` posture over the stale return-to-court history pull. It is a no-assessment satisfied row. No violation or fee schedule is used; all candidates `TR-231`, `TR-BASE`, and `TR-LATE` are excluded, and no plan is entered.
+The evaluator has 9 whole-point checks with raw weights:
 
-`CIT-JEF-2024-00703` uses the current bench deferred-completion dismissal. The final plea remains `deferred_entry`, disposition is `dismissed`, date `2025-07-16`, and the entry is `no_new_assessment_deferred_completion`. All candidates `TR-BASE`, `TR-LATE`, and `TR-SCHOOL` are excluded, and no plan is entered. The older first-due date is not carried forward.
+- `SP001` weight 1: target citation set, identities, pleas/findings, disposition date, and agreement sequence.
+- `SP002` weight 1: current standard fine tier/source/amount for `OR27-TR-2201`.
+- `SP003` weight 1: current standard fine tier/source/amount for `OR27-TR-2208`.
+- `SP004` weight 1: dismissed `OR27-TR-2219` has zero financial entry and no payment plan.
+- `SP005` weight 1: Clatsop surcharge, payable matter balances, and financial batch totals.
+- `SP006` weight 1: payment status/type, monthly amount, no down payment, and first due dates for payable matters.
+- `SP007` weight 2: installment counts, final partial-remainder values, final due dates, and batch scheduled-installment count.
+- `SP008` weight 3: 27th Judicial District form id/label, required labels, and citation-number account references.
+- `SP009` weight 3: excludes unsupported work-zone, traffic-school, late, collection, DMV, returned-check, account-management, and copied-dismissal fine charges with zero unsupported charge total.
 
-`CIT-JEF-2025-00127` uses the current bench result over the stale plan date while retaining the live violation `TR-231` as the violation posture. `TR-231` is not a supported fee component, so only `TR-BASE` `130.00` is assessed. Excluded candidates are `DUI-104`, `TR-231`, and `TR-LATE`. The requested `35.00` monthly amount and old `2025-05-05` due date are corrected to the Jefferson minimum/default plan: `40.00`, first due `2025-08-15`, three full payments, final `10.00`, four payments total, final due `2025-11-15`.
+These checks span more than four distinct business outcomes: matter identification/disposition, fine-tier selection, dismissed-matter treatment, surcharge and balance calculation, payment-plan terms, date/installment arithmetic, form/account-reference handling, unsupported-charge exclusion, and batch aggregation. Each point is deterministic and all-or-nothing. The heavier checks focus on account-reference/form discipline and unsupported-charge exclusion, because those were the non-obvious transfer decisions not directly solved by the public citation rows.
 
-`CIT-JEF-2025-00138` uses live identity `Kara Lopaz` and live dismissal over the stale adjacent-row Kara Lopez plan. It is `no_assessment_dismissed`, with code `none`, no components, excluded candidates `TR-244`, `TR-BASE`, `TR-LATE`, and `TR-SCHOOL`, and no plan.
+Likely model pitfalls include treating the dismissed high-speed citation as payable, adding a work-zone multiplier, using the duplicate-like citation strings as account references, adding the old setup/account fee, omitting the Clatsop surcharge, using a 31-to-40 tier for `OR27-TR-2208`, or computing final due dates as if the first due date were month zero.
 
-`CIT-JEF-2025-00701` uses the current bench plea over live `not_guilty` and stale `not_imported` status. The live violation `TR-244` remains the citation violation, but only current `TR-BASE` `130.00` is assessed. Excluded candidates are `TR-244`, `TR-LATE`, and `TR-SCHOOL`. The approved `55.00` plan uses the policy default first due `2025-08-15`, two full payments, final `20.00`, three payments total, final due `2025-10-15`.
+## Transfer Design
 
-Batch totals are `assessed_total` `615.00`, `prior_schedule_assessed_total` `165.00`, `current_schedule_assessed_total` `450.00`, `base_fine_total` `505.00`, `speed_surcharge_total` `110.00`, `traffic_school_total` `0.00`, `assessed_entry_count` `4`, `no_assessment_entry_count` `3`, `dismissed_no_assessment_count` `2`, `satisfied_no_assessment_count` `1`, `excluded_candidate_fee_count` `22`, `unsupported_policy_code_count` `6`, `entered_plan_principal_total` `450.00`, `total_full_payments` `9`, `total_final_payment_amount` `60.00`, `total_payment_count` `12`, `default_first_due_count` `3`, `below_minimum_plan_count` `2`, `return_to_court_review_count` `1`, `entries_using_prior_fee_schedule` `1`, `entries_using_current_fee_schedule` `3`, `entries_with_source_override_flags` `7`, and `all_entered_plans_use_post_disposition_start` `true`.
+Transfer anchors:
 
-The evaluator has nine exact-match scoring points with raw weights: SP001 identity/order/header fields (2), SP002 source resolution, posture, dates, assessment status, and flags (3), SP003 violation code/source/speed tier (3), SP004 fee schedule buckets, components, effective starts, and entry totals (3), SP005 excluded candidate codes and unsupported-code aggregate (2), SP006 plan action, defect, monthly amount, first due date, and first-due basis (3), SP007 installment counts, final amounts, and final due dates (2), SP008 monetary batch aggregates (2), and SP009 operational batch aggregates (2).
+- `train_002` is the direct Oregon traffic closeout anchor. It demonstrates use of current standard fine tiers, county surcharge, exclusion of unsupported traffic fees, post-disposition agreement sequencing, citation-number account references, and full-installment plus final-remainder arithmetic.
+- `train_005` is a secondary payment-schedule anchor for installment count and final due date discipline across a different court-payment workflow.
 
-Likely model pitfalls are using the July 2025 review date for every fee schedule, charging no-assessment rows, using stale names or return-to-court rows as current authority, carrying forward old due dates, adding unsupported candidate codes as fee components, accepting below-minimum monthly requests, entering a plan for the return-to-court defect, or calculating equal installments instead of final smaller payments.
+Transfer-dependent scoring goals are `SP002`, `SP003`, `SP005`, `SP006`, `SP007`, `SP008`, and `SP009`. The solver benefits from inferring from `train_002` that current schedule rows control over scratchpad values, county surcharges are added only when a payable disposition exists, unsupported late/collection/DMV/account/traffic-school fees are excluded, payment plans are post-disposition, and citation numbers are used as account references when no separate account exists. The task-specific work is new: a different Oregon district and county, three target citations rather than two, a dismissed high-speed matter, 2025 Clatsop form labels, duplicate-like citation distractions, and batch totals.
 
-### Transfer Design
+The solver-visible prompt does not state the hidden SOP. It gives a realistic closeout assignment, materials, endpoints, and output requirements; the transfer knowledge must be inferred from solved train tasks and applied to the new facts.
 
-This is a test task. `train_002` anchors the traffic workflow: reconcile live citations with hearing packets, select fees by county, matter type, code, and effective date, exclude unsupported candidate codes, and calculate installment schedules as full payments plus a final smaller payment. `train_005` anchors the review and precedence behavior: include only matters requiring action, reject stale queue or packet values when current/live evidence supersedes them, reset plan schedules only for approved current orders, preserve existing/defect treatment when no new plan is authorized, and route return-to-court defects differently from entered plans.
+## Construction Record
 
-The strongest transfer-dependent points are SP002, SP004, SP006, SP007, SP008, and SP009. SP002 requires train-learned source precedence across live records, signed corrections, current bench rows, and stale history. SP004 requires the `train_002` effective-date fee habit. SP006 and SP007 require the policy minimum, default due date, return-to-court/no-plan distinctions, and final-remainder convention from both anchors. SP008 and SP009 require carrying those row decisions into rollups.
+Author: Codex task-builder subagent for `test_002`.
+Created: 2026-07-18.
+Updated: 2026-07-18.
+Major changes: created the complete task folder for an Oregon 27th Judicial District / Clatsop County traffic hearing batch, including local payloads, answer template, standard answer, deterministic evaluator, and bilingual notes; later calibration rework adjusted rubric weights while preserving the same scoring points and standard answer.
 
-### Construction Record
+# 中文说明
 
-Author: Codex task-builder subagent. Created: 2026-07-07. Updated: 2026-07-07. Major changes in this second rework: changed the batch id and output schema, expanded to seven Jefferson citation rows, added prior/current effective fee schedule selection, added signed-history precedence, added satisfied/dismissed/deferred-completion no-assessment rows, added return-to-court and default-plan defects, moved major decisions into controlled fields, rewrote the answer and evaluator, and kept the solver-visible prompt free of SOP steps.
+## 数据和来源
 
-## 中文
+本任务是 `task_group_018` 的 `test_002`，来自场景 `SCN_018_court_clerk_disposition_orders_and_financial_entries`，主要对应源示例 `E002` 的 Oregon traffic payment-plan closeout。任务使用共享环境中的目标 citation：`OR27-TR-2201`、`OR27-TR-2208` 和 `OR27-TR-2219`；辖区 `OR27-CLAT`；fee rows `F-OR27-100-2025`、`F-OR27-21-2025`、`F-OR27-SUR-2025`；payment policy `POL-OR27-EPP`；以及 form catalog 条目 `OR_27JD_PLAN`。
 
-### 数据与来源
+本地可见材料包括：
 
-本任务属于 `task_group_018`，来源场景为 `SCN_018_court_clerk_disposition_orders_and_financial_entries`。任务仍保持在 Jefferson traffic 和 payment-plan 分布内，主要迁移锚点为 `train_002` 与 `train_005`。
+- `input/payloads/clatsop_hearing_closeout_memo.md`：庭审 disposition、批准的付款金额、一个 dismissed high-speed matter，以及无依据费用和 enhancement 干扰项。
+- `input/payloads/clatsop_payment_form_excerpt.md`：27th Judicial District 表格标签、citation-number account-reference 规则、旧 setup charge 干扰项，以及类似重复 citation 的样例编号。
+- `input/payloads/answer_template.json`：输出 JSON 结构、枚举、金额和日期精度、排序规则，以及 dismissed/no-plan 字段的 null 规则。
 
-共享生成环境是 `task_group/task_group_018/env/data/clerk_ops.json`，通过 clerk operations HTTP 服务暴露。本次重做只修改 `task_group/task_group_018/test_tasks/002/`。求解者可见材料包括 `input/prompt.txt`、`input/payloads/answer_template.json` 和 `input/payloads/jefferson_afternoon_traffic_packet.json`。环境提供 live citation 身份和状态、Jefferson traffic fee schedule 的 2023-2024 与 2025 生效行、Jefferson payment policy、hearing 记录和 stale export 记录。
+## 任务定义和场景匹配
 
-### 任务定义与场景适配
+解题者扮演 court clerk，处理 2027-03-24 Clatsop County traffic hearing batch。需要把本地庭审记录与 Court Operations Portal 对齐，选择当前有效的 standard fine tier，只对 payable violation-found matters 加 Clatsop surcharge，让 dismissed matter 保持零金额且无 payment plan，计算 installment schedule，使用 27th Judicial District 的 payment form 规则，并汇总 batch totals。
 
-求解者扮演 Jefferson County Municipal Court 的 traffic clerk，准备批次 `JEF-TV-2025-07-16-PM-CONTROL` 的 financial-entry review。目标 citations 为 `CIT-JEF-2023-00701`、`CIT-JEF-2024-00701`、`CIT-JEF-2024-00702`、`CIT-JEF-2024-00703`、`CIT-JEF-2025-00127`、`CIT-JEF-2025-00138` 和 `CIT-JEF-2025-00701`。
+该任务符合本场景，因为它复用了法院书记员 closeout 工作流：庭审记录决定 disposition posture，CMS/environment 记录提供有效的 schedule、policy 和 form metadata，最终输出必须避免无依据的 financial entries，并保留正确的 citation/account references。
 
-这是在 direct v2 calibration 后的第二次更大幅度重做。它加入 prior-order fee schedule、current-order fee schedule、satisfied no-assessment、deferred-completion no-new-assessment、dismissed identity conflict、return-to-court plan defect、低于政策下限的 default plan correction，以及受控字段 `source_resolution`、`assessment_status`、`fee_schedule_bucket`、`decision_flags` 和 `plan_defect_code`。这些变化降低了仅靠直接 API lookup 和算术即可得分的比例，因为高权重点必须先判断哪个来源控制最终录入。
+## 材料用途
 
-### 材料地图
+prompt 指向 `<TASK_ENV_BASE_URL>` 和允许的端点：`/api/citations`、`/api/fee-schedules`、`/api/payment-policies`、`/api/forms`、`/api/search`。目标 citation rows 用于确认被告姓名、速度事实、庭审日期、plea/disposition、amount due 组成和付款计划事实。fee schedule 端点给出 Clatsop 当前 100+ mph fine 为 $1,200，21-to-30-over fine 为 $265，以及 $10 Clatsop County surcharge。payment policy 确认无 down payment、无自动 account fee，并使用 citation number 作为 account reference。form endpoint 确认 `OR_27JD_PLAN`，本地 form excerpt 给出期望输出中的可见标签。
 
-本地 packet 提供目标 citation、当前 bench/review note、一份 signed correction slip、原始速度事实、候选 import codes、installment request 片段和 older history pull。它故意不提供 fee amount、payment policy minimum、default first-due interval、live identity 或最终 source-precedence 判断。
+本地材料中的类似重复 citation 是有意干扰。`OR27-TR-2201A`、`OR27-TR-2208B`、`OR27-TR-2219-VOID`、`OR27-TR-2210` 和 `OR27-TR-2291` 都不是目标事项。
 
-共享环境提供：
+## 答案和评估依据
 
-- `GET /api/citations/<citation_number>`：live defendant name、原始 violation code、live plea/disposition 和旧 due-date 信息。
-- `GET /api/fees?county=Jefferson&matter_type=traffic&effective_on=<date>`：生效 fee rows。Jefferson 在 2023-2024 年的 `TR-BASE` 为 `115.00`、`TR-SPEED` 为 `50.00`、`TR-SCHOOL` 为 `45.00`；2025 年的 `TR-BASE` 为 `130.00`、`TR-SPEED` 为 `60.00`、`TR-SCHOOL` 为 `50.00`、`TR-LATE` 为 `25.00`。
-- `GET /api/payment-policies?county=Jefferson`：最低月付 `40.00`、首期默认为 order 后 30 天、允许 final smaller payment，以及 unsupported codes `CR-507`、`DUI-104`、`TR-231`。
-- `GET /api/stale-exports?county=Jefferson&name=financial_ledger_snapshot` 和 hearing records：提供 stale status 与 history conflict。
+`OR27-TR-2201` 的 Mina Patel 于 2027-03-24 no contest，violation found，违反 ORS 811.109(5)，104/65。当前 fee row `F-OR27-100-2025` 的 standard fine 是 $1,200；加 $10 Clatsop surcharge 后 amount due 为 $1,210。post-disposition 付款计划为每月 $110，无 down payment，首期 2027-04-23，共 11 个完整付款，无 partial remainder，最后到期日 2028-02-23。
 
-### 标准答案与评测依据
+`OR27-TR-2208` 的 Victor Lane 于 2027-03-24 guilty，violation found，违反 ORS 811.109，81/55，属于 21-to-30-over tier。当前 fee row `F-OR27-21-2025` 的 standard fine 是 $265；加 $10 Clatsop surcharge 后 amount due 为 $275。post-disposition 付款计划为每月 $55，无 down payment，首期 2027-04-23，共 5 个完整付款，无 partial remainder，最后到期日 2027-08-23。
 
-所有记录都使用 citation number 作为 `account_reference`。
+`OR27-TR-2219` 的 Leah Crane 为 not guilty，因 officer nonappearance 被 court dismissed。即使它是 high-speed citation 并出现在 batch scratchpad 中，最终 closeout 应为 standard fine $0、surcharge $0、amount due $0、无 agreement、无 installments、无 payment form。account reference 仍用 citation number 作为识别信息。
 
-`CIT-JEF-2023-00701` 使用 live identity `Owen Ibarra`，但 signed correction slip 优先于 live 旧 violation 和 stale history。最终 plea 为 `no_contest`，disposition 为 `convicted`，order date 为 `2024-11-20`，assessment status 为 `assessed_prior_order`。58 mph/45 mph 是超速 13 mph，对应 `TR-201`。适用 prior Jefferson traffic schedule：`TR-BASE` `115.00` 加 `TR-SPEED` `50.00`，总额 `165.00`。排除 `CR-507`、`TR-260` 和 `TR-LATE`。7 月事项是 return-to-court review defect，不录入新 plan。
+Batch totals 为 3 个 matters，2 个 payable matters，1 个 dismissed matter，combined standard fines $1,465，combined surcharge $20，combined amount due $1,485，scheduled installments 总数 16，unsupported charges included 为 $0。
 
-`CIT-JEF-2024-00701` 使用当前 bench row 覆盖 live pending/deferred 值。最终 plea 为 `no_contest`，disposition 为 `convicted`，日期 `2025-07-16`。61 mph/35 mph 是超速 26 mph，对应 `TR-202`，适用 current fee schedule。Components 为 `TR-BASE` `130.00` 和 `TR-SPEED` `60.00`，总额 `190.00`。排除 `DUI-104`、`TR-231` 和 `TR-LATE`。请求月付 `30.00` 低于政策下限，所以使用 `40.00`，首期 `2025-08-15`，四期完整付款，最后 `30.00`，共五期，最后到期 `2025-12-15`。
+评估器包含 9 个 whole-point checks，原始权重如下：
 
-`CIT-JEF-2024-00702` 使用 live identity `Felix Abbott` 和 live `satisfied` 状态，覆盖 stale return-to-court history pull。该行是 no-assessment satisfied row，不使用 violation 或 fee schedule；候选 `TR-231`、`TR-BASE`、`TR-LATE` 全部排除，不录入 plan。
+- `SP001` 权重 1：目标 citation 集合、身份、plea/finding、disposition date 和 agreement sequence。
+- `SP002` 权重 1：`OR27-TR-2201` 的当前 standard fine tier/source/amount。
+- `SP003` 权重 1：`OR27-TR-2208` 的当前 standard fine tier/source/amount。
+- `SP004` 权重 1：dismissed `OR27-TR-2219` 为零 financial entry 且无 payment plan。
+- `SP005` 权重 1：Clatsop surcharge、payable matter balances 和 financial batch totals。
+- `SP006` 权重 1：payable matters 的 payment status/type、monthly amount、no down payment 和 first due dates。
+- `SP007` 权重 2：installment counts、final partial-remainder values、final due dates 和 batch scheduled-installment count。
+- `SP008` 权重 3：27th Judicial District form id/label、required labels 和 citation-number account references。
+- `SP009` 权重 3：排除 work-zone、traffic-school、late、collection、DMV、returned-check、account-management 和 copied-dismissal fine charges，且 unsupported charge total 为零。
 
-`CIT-JEF-2024-00703` 使用当前 bench 的 deferred-completion dismissal。plea 仍为 `deferred_entry`，disposition 为 `dismissed`，日期 `2025-07-16`，状态为 `no_new_assessment_deferred_completion`。排除候选 `TR-BASE`、`TR-LATE`、`TR-SCHOOL`，不录入 plan，旧 first-due date 不沿用。
+这些检查覆盖超过四类不同业务结果：matter identification/disposition、fine-tier selection、dismissed-matter treatment、surcharge and balance calculation、payment-plan terms、date/installment arithmetic、form/account-reference handling、unsupported-charge exclusion 和 batch aggregation。每个检查都是确定性的全得或不得分。较高权重集中在 account-reference/form discipline 和 unsupported-charge exclusion，因为这些是 public citation rows 不能直接给出的非显然迁移决策。
 
-`CIT-JEF-2025-00127` 使用当前 bench result 覆盖 stale plan date，同时保留 live violation `TR-231` 作为 violation posture。`TR-231` 不是支持的 fee component，所以只评估 `TR-BASE` `130.00`。排除 `DUI-104`、`TR-231` 和 `TR-LATE`。请求月付 `35.00` 和旧 `2025-05-05` due date 被修正为 Jefferson policy 的最低额和默认首期：`40.00`，首期 `2025-08-15`，三期完整付款，最后 `10.00`，共四期，最后到期 `2025-11-15`。
+常见错误包括把 dismissed high-speed citation 当作 payable，加入 work-zone multiplier，使用类似重复 citation 字符串作为 account references，加入旧 setup/account fee，漏掉 Clatsop surcharge，把 `OR27-TR-2208` 当作 31-to-40 tier，或把首期日期当作第零个月来计算 final due dates。
 
-`CIT-JEF-2025-00138` 使用 live identity `Kara Lopaz` 和 live dismissal，覆盖 stale adjacent-row Kara Lopez plan。它是 `no_assessment_dismissed`，code 为 `none`，无 components，排除 `TR-244`、`TR-BASE`、`TR-LATE`、`TR-SCHOOL`，不录入 plan。
+## 迁移设计
 
-`CIT-JEF-2025-00701` 使用当前 bench plea 覆盖 live `not_guilty` 和 stale `not_imported` status。live violation `TR-244` 保留为 citation violation，但只评估 current `TR-BASE` `130.00`。排除 `TR-244`、`TR-LATE` 和 `TR-SCHOOL`。批准的 `55.00` plan 使用政策默认首期 `2025-08-15`，两期完整付款，最后 `20.00`，共三期，最后到期 `2025-10-15`。
+迁移锚点：
 
-Batch totals 为：`assessed_total` `615.00`，`prior_schedule_assessed_total` `165.00`，`current_schedule_assessed_total` `450.00`，`base_fine_total` `505.00`，`speed_surcharge_total` `110.00`，`traffic_school_total` `0.00`，`assessed_entry_count` `4`，`no_assessment_entry_count` `3`，`dismissed_no_assessment_count` `2`，`satisfied_no_assessment_count` `1`，`excluded_candidate_fee_count` `22`，`unsupported_policy_code_count` `6`，`entered_plan_principal_total` `450.00`，`total_full_payments` `9`，`total_final_payment_amount` `60.00`，`total_payment_count` `12`，`default_first_due_count` `3`，`below_minimum_plan_count` `2`，`return_to_court_review_count` `1`，`entries_using_prior_fee_schedule` `1`，`entries_using_current_fee_schedule` `3`，`entries_with_source_override_flags` `7`，`all_entered_plans_use_post_disposition_start` 为 `true`。
+- `train_002` 是直接的 Oregon traffic closeout 锚点。它展示了当前 standard fine tier、county surcharge、排除 unsupported traffic fees、post-disposition agreement sequencing、citation-number account references，以及完整期数加 final remainder 的计算习惯。
+- `train_005` 是次要的 payment-schedule 锚点，用于跨不同法院付款工作流迁移 installment count 和 final due date 纪律。
 
-评测器包含 9 个 exact-match scoring points：SP001 身份、顺序和 header 字段（2）；SP002 source resolution、posture、日期、assessment status 和 flags（3）；SP003 violation code/source/speed tier（3）；SP004 fee schedule bucket、components、effective start 与 entry total（3）；SP005 excluded candidate codes 和 unsupported-code aggregate（2）；SP006 plan action、defect、monthly amount、first due date 和 first-due basis（3）；SP007 installment counts、final amounts 和 final due dates（2）；SP008 monetary batch aggregates（2）；SP009 operational batch aggregates（2）。
+依赖迁移的评分点是 `SP002`、`SP003`、`SP005`、`SP006`、`SP007`、`SP008` 和 `SP009`。解题者需要从 `train_002` 推断：当前有效 schedule rows 优先于 scratchpad 数字；只有 payable disposition 才加 county surcharge；late/collection/DMV/account/traffic-school 等没有触发条件的费用要排除；payment plans 是 post-disposition；没有单独 account 时使用 citation number。任务自身的新难点包括：新的 Oregon district 和 county、三个目标 citations、一个 dismissed high-speed matter、2025 Clatsop form labels、类似重复 citation 干扰项，以及 batch totals。
 
-常见错误包括把 2025 年 7 月 review date 用到所有 fee schedule、对 no-assessment rows 收费、把 stale name 或 return-to-court row 当作当前权威、沿用旧 due date、把 unsupported candidate code 当作 fee component、接受低于政策下限的月付、对 return-to-court defect 录入 plan，或把分期都算成等额而不保留 final smaller payment。
+solver-visible prompt 没有写出隐藏 SOP。它只提供真实 closeout 请求、材料、端点和输出要求；迁移知识需要从已解 train tasks 中推断并应用到新事实。
 
-### 迁移设计
+## 构建记录
 
-这是测试任务。`train_002` 锚定 traffic 工作流：协调 live citation 与 hearing packet；按 county、matter type、code 和 effective date 选择 fee；排除 unsupported candidate codes；把 installment schedule 算为完整付款加最后较小尾款。`train_005` 锚定 review 与 precedence 行为：只纳入需要处理的 matter；当 current/live evidence 覆盖 stale queue 或 packet 值时拒绝 stale 值；只有经当前 order 批准的 plan 才重置 schedule；没有新 plan 授权时保留 defect/no-plan 处理；return-to-court defect 与 entered plan 要区别处理。
-
-最强迁移依赖评分点是 SP002、SP004、SP006、SP007、SP008 和 SP009。SP002 需要从训练中学到的 source precedence，在 live record、signed correction、current bench row 和 stale history 之间选择。SP004 需要 `train_002` 的 effective-date fee 经验。SP006 和 SP007 需要从两个锚点迁移 policy minimum、default due date、return-to-court/no-plan 区分和 final-remainder convention。SP008 与 SP009 要把逐行判断正确汇总到 batch totals。
-
-### 构造记录
-
-作者：Codex task-builder subagent。创建日期：2026-07-07。更新日期：2026-07-07。第二次重做的主要变化：更改 batch id 和 output schema，扩展为七条 Jefferson citation，加入 prior/current effective fee schedule selection、signed-history precedence、satisfied/dismissed/deferred-completion no-assessment rows、return-to-court 和 default-plan defects，将主要判断移入 controlled fields，重写标准答案和 evaluator，并保持 solver-visible prompt 不泄露 SOP 步骤。
+作者：Codex task-builder subagent for `test_002`。
+创建日期：2026-07-18。
+更新日期：2026-07-18。
+主要变更：创建了 Oregon 27th Judicial District / Clatsop County traffic hearing batch 的完整任务目录，包括本地 payload、answer template、standard answer、确定性 evaluator 和 bilingual notes；后续 calibration rework 调整了 rubric weights，但保留相同 scoring points 和 standard answer。

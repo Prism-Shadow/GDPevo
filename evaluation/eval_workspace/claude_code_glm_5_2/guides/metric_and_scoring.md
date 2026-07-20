@@ -23,7 +23,7 @@ runs/<condition>/<task_id>/attempt_<nn>/run_metadata.yaml
 Each solver run has its own transcript at:
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
 A single API response is logged across **multiple content-block records**. Across those records `input_tokens`, `cache_creation_input_tokens`, and `cache_read_input_tokens` are **identical**, but `output_tokens` is **streamed (cumulative)** — later records show a larger value. So deduplicate by `message.id`: keep the input/cache buckets from any record, and take the **max `output_tokens`** (the final record) per `message.id`. Naively summing every record over-counts input/cache ~2-3x; keeping the first record under-counts output. After deduping, sum the four buckets across responses:
@@ -44,7 +44,7 @@ model: glm-5.2, max
 
 transcript:
   claude_session_id: <uuid>
-  session_file: <path under original_traces/.../claude_config/projects/... or null>
+  session_file: <path to copied primary session JSONL under original_traces/... or null>
   match_status: matched
 
 token_usage:                          # deduped by message.id, summed across responses
@@ -72,7 +72,7 @@ Each `fewshot`, `self`, and `reflect-3` skill-generation run must preserve:
 
 ```text
 scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
 Recommended `evolve_metadata.yaml` format:

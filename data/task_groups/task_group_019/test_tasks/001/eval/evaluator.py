@@ -1,216 +1,321 @@
 #!/usr/bin/env python3
-"""Evaluator for task_group_019 test_001."""
-
-from __future__ import annotations
-
 import json
 import sys
 from pathlib import Path
-from typing import Any
 
 
-POINTS = [
-    {
-        "id": "SP001",
-        "weight": 1,
-        "goal": "Batch metadata and application coverage exactly include the 14 HS-2026-Q2A applications in required order.",
+TARGET_IDS = [f"C-TE1-{idx:03d}" for idx in range(1, 10)]
+
+EXPECTED_DECISIONS = {
+    "C-TE1-001": {
+        "determination": "HOLD",
+        "deficiency_codes": ["bond_not_current", "endorsement_missing", "experience_shortfall"],
+        "required_actions": ["obtain_current_bond", "obtain_required_endorsement", "submit_experience_affidavit"],
+        "risk_tier": "medium",
+        "policy_impacted": False,
     },
-    {
-        "id": "SP002",
-        "weight": 3,
-        "goal": "Eligibility determination map is exact for all 14 applications.",
+    "C-TE1-002": {
+        "determination": "DENY",
+        "deficiency_codes": ["endorsement_pending", "insurance_shortfall", "open_serious_violation"],
+        "required_actions": ["obtain_required_endorsement", "provide_current_insurance", "refer_board_discipline"],
+        "risk_tier": "high",
+        "policy_impacted": False,
     },
-    {
-        "id": "SP003",
-        "weight": 2,
-        "goal": "Clean approval cases are correctly identified with no deficiency action.",
+    "C-TE1-003": {
+        "determination": "APPROVE",
+        "deficiency_codes": [],
+        "required_actions": [],
+        "risk_tier": "medium",
+        "policy_impacted": False,
     },
-    {
-        "id": "SP004",
-        "weight": 3,
-        "goal": "Scoped bond and insurance hold results, bulletin IDs, and actions are exact.",
+    "C-TE1-004": {
+        "determination": "HOLD",
+        "deficiency_codes": [
+            "bond_shortfall",
+            "endorsement_missing",
+            "open_nonserious_violation",
+            "site_recheck_required",
+        ],
+        "required_actions": [
+            "complete_site_recheck",
+            "increase_bond",
+            "obtain_required_endorsement",
+            "resolve_open_complaints",
+        ],
+        "risk_tier": "high",
+        "policy_impacted": True,
     },
-    {
-        "id": "SP005",
-        "weight": 2,
-        "goal": "Correspondence and field-note override holds are exact.",
+    "C-TE1-005": {
+        "determination": "HOLD",
+        "deficiency_codes": ["experience_shortfall", "insurance_expired"],
+        "required_actions": ["provide_current_insurance", "submit_experience_affidavit"],
+        "risk_tier": "medium",
+        "policy_impacted": False,
     },
-    {
-        "id": "SP006",
-        "weight": 3,
-        "goal": "Unresolved-penalty, adverse-registration, and disqualifying-conduct results are exact.",
+    "C-TE1-006": {
+        "determination": "HOLD",
+        "deficiency_codes": ["experience_shortfall", "insurance_pending", "site_recheck_required"],
+        "required_actions": [
+            "complete_site_recheck",
+            "submit_experience_affidavit",
+            "verify_current_insurance",
+        ],
+        "risk_tier": "medium",
+        "policy_impacted": False,
     },
-    {
-        "id": "SP007",
-        "weight": 2,
-        "goal": "Deficiency counts match the standard answer exactly.",
+    "C-TE1-007": {
+        "determination": "HOLD",
+        "deficiency_codes": ["bond_not_current", "endorsement_missing"],
+        "required_actions": ["obtain_current_bond", "obtain_required_endorsement"],
+        "risk_tier": "medium",
+        "policy_impacted": False,
     },
-    {
-        "id": "SP008",
-        "weight": 3,
-        "goal": "Bulletin-impact summary matches the standard answer exactly.",
+    "C-TE1-008": {
+        "determination": "DENY",
+        "deficiency_codes": [
+            "endorsement_pending",
+            "insurance_shortfall",
+            "open_serious_violation",
+            "site_recheck_required",
+        ],
+        "required_actions": [
+            "complete_site_recheck",
+            "obtain_required_endorsement",
+            "provide_current_insurance",
+            "refer_board_discipline",
+        ],
+        "risk_tier": "high",
+        "policy_impacted": False,
     },
-]
+    "C-TE1-009": {
+        "determination": "APPROVE",
+        "deficiency_codes": [],
+        "required_actions": [],
+        "risk_tier": "medium",
+        "policy_impacted": False,
+    },
+}
+
+EXPECTED_SUMMARY = {
+    "approve_count": 2,
+    "hold_count": 5,
+    "deny_count": 2,
+    "high_risk_application_ids": ["C-TE1-002", "C-TE1-004", "C-TE1-008"],
+    "policy_impacted_application_ids": ["C-TE1-004"],
+    "stale_or_unverified_correspondence_ids": [
+        "COR-C-TE1-001-1",
+        "COR-C-TE1-002-1",
+        "COR-C-TE1-004-1",
+        "COR-C-TE1-007-1",
+        "COR-C-TE1-008-1",
+        "COR-DIS-0112",
+    ],
+}
 
 
-def load_json(path: Path) -> Any:
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+def load_json(path):
+    try:
+        with Path(path).open("r", encoding="utf-8") as handle:
+            return json.load(handle), None
+    except Exception as exc:
+        return None, f"{type(exc).__name__}: {exc}"
 
 
-def app_list(doc: dict[str, Any]) -> list[dict[str, Any]]:
-    value = doc.get("application_decisions")
+def as_dict(value):
+    return value if isinstance(value, dict) else {}
+
+
+def as_list(value):
     return value if isinstance(value, list) else []
 
 
-def app_ids(doc: dict[str, Any]) -> list[str]:
-    ids: list[str] = []
-    for item in app_list(doc):
-        if isinstance(item, dict):
-            ids.append(str(item.get("application_id", "")))
-    return ids
+def normalize_string(value):
+    if value is None:
+        return ""
+    return str(value).strip()
 
 
-def app_map(doc: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    result: dict[str, dict[str, Any]] = {}
-    for item in app_list(doc):
-        if isinstance(item, dict) and isinstance(item.get("application_id"), str):
-            result[item["application_id"]] = item
+def normalize_bool(value):
+    if isinstance(value, bool):
+        return value
+    return None
+
+
+def normalize_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def normalize_set(value):
+    if not isinstance(value, list):
+        return None
+    result = []
+    for item in value:
+        if not isinstance(item, str):
+            return None
+        result.append(item.strip())
+    return sorted(set(result))
+
+
+def decisions_by_id(candidate):
+    result = {}
+    for entry in as_list(as_dict(candidate).get("application_decisions")):
+        entry = as_dict(entry)
+        application_id = normalize_string(entry.get("application_id"))
+        if application_id:
+            result[application_id] = entry
     return result
 
 
-def canonical_app(item: dict[str, Any]) -> dict[str, Any]:
-    reason_codes = item.get("reason_codes")
-    bulletin_ids = item.get("primary_bulletin_ids")
-    return {
-        "application_id": item.get("application_id"),
-        "determination": item.get("determination"),
-        "reason_codes": sorted(reason_codes) if isinstance(reason_codes, list) else reason_codes,
-        "primary_bulletin_ids": sorted(bulletin_ids) if isinstance(bulletin_ids, list) else bulletin_ids,
-        "next_action": item.get("next_action"),
+def check_application_coverage(candidate):
+    entries = as_list(as_dict(candidate).get("application_decisions"))
+    ids_in_order = [normalize_string(as_dict(entry).get("application_id")) for entry in entries]
+    ids_sorted = sorted(ids_in_order)
+    passed = ids_in_order == TARGET_IDS and ids_sorted == TARGET_IDS and len(ids_in_order) == len(set(ids_in_order))
+    detail = f"expected ordered ids {TARGET_IDS}; got {ids_in_order}"
+    return passed, detail
+
+
+def check_determinations(candidate):
+    by_id = decisions_by_id(candidate)
+    mismatches = []
+    for app_id in TARGET_IDS:
+        actual = normalize_string(as_dict(by_id.get(app_id)).get("determination"))
+        expected = EXPECTED_DECISIONS[app_id]["determination"]
+        if actual != expected:
+            mismatches.append({"application_id": app_id, "expected": expected, "got": actual})
+    return not mismatches, "All determinations matched." if not mismatches else f"Mismatches: {mismatches}"
+
+
+def check_code_sets(candidate, field):
+    by_id = decisions_by_id(candidate)
+    mismatches = []
+    for app_id in TARGET_IDS:
+        actual = normalize_set(as_dict(by_id.get(app_id)).get(field))
+        expected = sorted(EXPECTED_DECISIONS[app_id][field])
+        if actual != expected:
+            mismatches.append({"application_id": app_id, "expected": expected, "got": actual})
+    return not mismatches, f"All {field} sets matched." if not mismatches else f"Mismatches: {mismatches}"
+
+
+def check_risk_tiers(candidate):
+    by_id = decisions_by_id(candidate)
+    summary = as_dict(as_dict(candidate).get("summary"))
+    mismatches = []
+    for app_id in TARGET_IDS:
+        actual = normalize_string(as_dict(by_id.get(app_id)).get("risk_tier"))
+        expected = EXPECTED_DECISIONS[app_id]["risk_tier"]
+        if actual != expected:
+            mismatches.append({"application_id": app_id, "expected": expected, "got": actual})
+    actual_high = normalize_set(summary.get("high_risk_application_ids"))
+    expected_high = EXPECTED_SUMMARY["high_risk_application_ids"]
+    passed = not mismatches and actual_high == expected_high
+    details = "Risk tiers and high-risk summary matched."
+    if not passed:
+        details = f"Risk tier mismatches: {mismatches}; expected high-risk ids {expected_high}, got {actual_high}."
+    return passed, details
+
+
+def check_policy_impacts(candidate):
+    by_id = decisions_by_id(candidate)
+    summary = as_dict(as_dict(candidate).get("summary"))
+    mismatches = []
+    for app_id in TARGET_IDS:
+        actual = normalize_bool(as_dict(by_id.get(app_id)).get("policy_impacted"))
+        expected = EXPECTED_DECISIONS[app_id]["policy_impacted"]
+        if actual is not expected:
+            mismatches.append({"application_id": app_id, "expected": expected, "got": actual})
+    actual_ids = normalize_set(summary.get("policy_impacted_application_ids"))
+    expected_ids = EXPECTED_SUMMARY["policy_impacted_application_ids"]
+    passed = not mismatches and actual_ids == expected_ids
+    details = "Policy impact flags and summary matched."
+    if not passed:
+        details = f"Policy flag mismatches: {mismatches}; expected policy ids {expected_ids}, got {actual_ids}."
+    return passed, details
+
+
+def check_summary_counts(candidate):
+    summary = as_dict(as_dict(candidate).get("summary"))
+    expected = {
+        "approve_count": EXPECTED_SUMMARY["approve_count"],
+        "hold_count": EXPECTED_SUMMARY["hold_count"],
+        "deny_count": EXPECTED_SUMMARY["deny_count"],
     }
+    actual = {field: normalize_int(summary.get(field)) for field in expected}
+    passed = actual == expected
+    return passed, f"expected counts {expected}; got {actual}"
 
 
-def selected_apps_equal(pred: dict[str, Any], ans: dict[str, Any], ids: list[str]) -> bool:
-    pred_map = app_map(pred)
-    ans_map = app_map(ans)
-    for app_id in ids:
-        if app_id not in pred_map or app_id not in ans_map:
-            return False
-        if canonical_app(pred_map[app_id]) != canonical_app(ans_map[app_id]):
-            return False
-    return True
+def check_correspondence(candidate):
+    summary = as_dict(as_dict(candidate).get("summary"))
+    actual = normalize_set(summary.get("stale_or_unverified_correspondence_ids"))
+    expected = EXPECTED_SUMMARY["stale_or_unverified_correspondence_ids"]
+    passed = actual == expected
+    return passed, f"expected stale/unverified correspondence ids {expected}; got {actual}"
 
 
-def determination_map(doc: dict[str, Any]) -> dict[str, Any]:
-    return {app_id: item.get("determination") for app_id, item in app_map(doc).items()}
+POINTS = [
+    ("SP001", "Correct application coverage and required decision ordering.", 1, check_application_coverage),
+    ("SP002", "Correct approve, hold, or deny determination for every target application.", 3, check_determinations),
+    (
+        "SP003",
+        "Correct complete deficiency-code sets for every target application.",
+        3,
+        lambda candidate: check_code_sets(candidate, "deficiency_codes"),
+    ),
+    (
+        "SP004",
+        "Correct required staff action-code sets for every target application.",
+        2,
+        lambda candidate: check_code_sets(candidate, "required_actions"),
+    ),
+    ("SP005", "Correct risk tiers and high-risk application summary.", 2, check_risk_tiers),
+    ("SP006", "Correct current-policy impact flags and summary set.", 2, check_policy_impacts),
+    ("SP007", "Correct approve, hold, and deny batch counts.", 2, check_summary_counts),
+    ("SP008", "Correct stale or unverified correspondence exclusion summary.", 1, check_correspondence),
+]
 
 
-def check_point(point_id: str, pred: dict[str, Any], ans: dict[str, Any]) -> tuple[bool, str]:
-    if point_id == "SP001":
-        passed = (
-            pred.get("batch_id") == ans.get("batch_id")
-            and pred.get("review_cutoff_date") == ans.get("review_cutoff_date")
-            and app_ids(pred) == app_ids(ans)
-            and len(app_ids(pred)) == len(set(app_ids(pred)))
-        )
-        return (
-            passed,
-            "metadata and application order match" if passed else "metadata, application IDs, or order differ",
-        )
+def main():
+    script_dir = Path(__file__).resolve().parent
+    default_candidate = script_dir.parent / "output" / "answer.json"
+    candidate_path = Path(sys.argv[1]) if len(sys.argv) > 1 else default_candidate
+    candidate, load_error = load_json(candidate_path)
+    if load_error:
+        candidate = {}
 
-    if point_id == "SP002":
-        passed = determination_map(pred) == determination_map(ans)
-        return passed, "all determinations match" if passed else "one or more determinations differ"
-
-    if point_id == "SP003":
-        ids = ["CA-2026-0024", "CA-2026-0034", "CA-2026-0036"]
-        approve_set = sorted(app_id for app_id, row in app_map(pred).items() if row.get("determination") == "APPROVE")
-        passed = selected_apps_equal(pred, ans, ids) and approve_set == ids
-        return passed, "clean approvals match" if passed else "clean approval set or fields differ"
-
-    if point_id == "SP004":
-        ids = ["CA-2026-0025", "CA-2026-0026", "CA-2026-0029", "CA-2026-0035"]
-        passed = selected_apps_equal(pred, ans, ids)
-        return passed, "bond and insurance cases match" if passed else "bond or insurance case fields differ"
-
-    if point_id == "SP005":
-        ids = ["CA-2026-0027", "CA-2026-0028"]
-        passed = selected_apps_equal(pred, ans, ids)
-        return (
-            passed,
-            "correspondence and field-note cases match" if passed else "correspondence or field-note fields differ",
-        )
-
-    if point_id == "SP006":
-        ids = ["CA-2026-0028", "CA-2026-0030", "CA-2026-0031", "CA-2026-0032", "CA-2026-0037"]
-        passed = selected_apps_equal(pred, ans, ids)
-        return (
-            passed,
-            "penalty, adverse, and denial cases match" if passed else "penalty, adverse, or denial fields differ",
-        )
-
-    if point_id == "SP007":
-        passed = pred.get("deficiency_counts") == ans.get("deficiency_counts")
-        return passed, "deficiency counts match" if passed else "deficiency counts differ"
-
-    if point_id == "SP008":
-        passed = pred.get("bulletin_impacts") == ans.get("bulletin_impacts")
-        return passed, "bulletin impacts match" if passed else "bulletin impacts differ"
-
-    return False, "unknown scoring point"
-
-
-def evaluate(pred: dict[str, Any], ans: dict[str, Any]) -> dict[str, Any]:
-    total_weight = sum(point["weight"] for point in POINTS)
-    earned = 0
+    total_weight = sum(point[2] for point in POINTS)
     results = []
-    for point in POINTS:
-        passed, message = check_point(point["id"], pred, ans)
-        point_weight = point["weight"]
-        if passed:
-            earned += point_weight
+    total_score = 0.0
+
+    for point_id, goal, weight, checker in POINTS:
+        assigned_score = weight / total_weight
+        if load_error:
+            passed = False
+            details = f"candidate JSON could not be read: {load_error}"
+        elif not isinstance(candidate, dict):
+            passed = False
+            details = "candidate root is not a JSON object"
+        else:
+            passed, details = checker(candidate)
+        earned_score = assigned_score if passed else 0.0
+        total_score += earned_score
         results.append(
             {
-                "id": point["id"],
-                "goal": point["goal"],
-                "weight": point_weight,
-                "passed": passed,
-                "earned_weight": point_weight if passed else 0,
-                "message": message,
+                "id": point_id,
+                "goal": goal,
+                "weight": weight,
+                "assigned_score": round(assigned_score, 6),
+                "passed": bool(passed),
+                "earned_score": round(earned_score, 6),
+                "details": details,
             }
         )
-    return {
-        "score": earned / total_weight,
-        "earned_weight": earned,
-        "total_weight": total_weight,
-        "points": results,
-    }
 
-
-def main() -> int:
-    if len(sys.argv) != 3:
-        print(json.dumps({"score": 0, "error": "usage: evaluator.py <prediction.json> <answer.json>", "points": []}))
-        return 2
-    pred_path = Path(sys.argv[1])
-    ans_path = Path(sys.argv[2])
-    try:
-        pred = load_json(pred_path)
-        ans = load_json(ans_path)
-    except Exception as exc:  # noqa: BLE001
-        print(json.dumps({"score": 0, "error": f"json_load_failed: {exc}", "points": []}, indent=2, sort_keys=True))
-        return 1
-    if not isinstance(pred, dict):
-        print(
-            json.dumps(
-                {"score": 0, "error": "prediction must be a JSON object", "points": []}, indent=2, sort_keys=True
-            )
-        )
-        return 1
-    result = evaluate(pred, ans)
-    print(json.dumps(result, indent=2, sort_keys=True))
-    return 0
+    print(json.dumps({"score": round(total_score, 6), "points": results}, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

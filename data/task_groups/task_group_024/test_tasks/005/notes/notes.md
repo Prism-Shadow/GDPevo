@@ -1,33 +1,37 @@
-# English Notes
+# test_005 Hidden Notes
 
-Task `test_005` combines release readiness with a release-scoped portfolio allocation review for Atlas Admin.
+## English
 
-- Release scope: `REL-ATLAS-Q3`, as of `2026-07-15`.
-- Portfolio scope: Atlas Admin, `2026-Q2`, as of `2026-06-30`, restricted to closed eligible work linked to `REL-ATLAS-Q3`.
-- The solver-facing prompt intentionally points to environment APIs and policy documents without listing the full SOP, scoring rubric, or computed answers.
-- Train anchors: `train_001` and `train_004` cover portfolio mix/category gap transfer; `train_003` covers release readiness transfer; `train_005` reinforces security/reliability recognition and blocker-style operational reasoning.
+Data/source lineage: This task belongs to `SCN_024_engineering_portfolio_work_item_analytics`, drawing from source examples `E001`, `E002`, and `E003`, with SLA-aging behavior primarily inherited from `E002`. The construction brief is `test_005` in `scratch/task_builder_assignments.md` and `scratch/task_group_design.md`. The task uses the generated SQLite environment at `task_group/task_group_024/env/portfolio.db`, especially the `work_items` and `sla_policy` tables. The task-local artifacts are `input/prompt.txt`, `input/payloads/answer_template.json`, `output/answer.json`, and `eval/`.
 
-# 中文说明
+Task definition: The solver is asked to triage Edge Delivery reliability/security SLA exposure as of `2026-01-25` with a 14-day recent-closed window. The visible prompt names the team, as-of date, categories, and required JSON shape, but does not reveal the hidden filtering sequence. The expected work process is to inspect authoritative work-item fields, classify portfolio category with the shared precedence, reconstruct open plus recent-closed SLA scope, separate primary rows from duplicates, compute overdue items, order the escalation queue, and roll up owners.
 
-`test_005` 将发布就绪度检查与发布范围内的组合投入分析结合起来，目标产品为 Atlas Admin。
+Scenario fit: This is an engineering operations analytics task. It exercises the same operational object relationships as the scenario: work items have teams, statuses, owners, severities, dates, labels, duplicate links, and stale export fields. The business workflow is a reliability/security triage review where the team needs an exact escalation queue, breach metric, ownership risk, and duplicate reporting before weekly incident/security review.
 
-- 发布范围：`REL-ATLAS-Q3`，截至日期为 `2026-07-15`。
-- 组合范围：Atlas Admin，`2026-Q2`，截至日期为 `2026-06-30`，并且只包含链接到 `REL-ATLAS-Q3` 的已关闭合格工作项。
-- 面向求解器的提示只指向环境 API 和政策文档，不暴露完整流程、评分细则或计算答案。
-- 训练锚点：`train_001` 和 `train_004` 对应组合分类与差距计算迁移；`train_003` 对应发布就绪度迁移；`train_005` 强化安全/可靠性识别以及阻塞类运营推理。
+Material map: `work_items` is the authoritative source for IDs, team, status, owner, due date, closed date, created date, severity, labels, work type, title, and duplicate linkage. `sla_policy` is part of the public environment but the gold answer is driven by each work item's `due_at` field. `mirror_status` and `legacy_category` are distractors and should not override authoritative status or the shared portfolio category conventions. `input/payloads/answer_template.json` defines the solver-visible schema and stable ordering requirements. `eval/eval.py` encodes the gold values and normalized whole-point checks.
 
-## Integration Audit Addendum
+Solution and evaluation basis: The primary included set is Edge Delivery work that is Security or Reliability, created no later than the as-of date, and either open in `Backlog`, `In Progress`, `Review`, or `Reopened` with no `closed_at`, or recently closed in `Done`, `Verified`, `Deployed`, or `Closed` between `2026-01-11` and `2026-01-25` inclusive. Primary metrics exclude `Cancelled`, `Duplicate`, and rows with `duplicate_of` set. Duplicate rows that otherwise match team, category, and recent timing are reported as clusters. Open overdue work has `due_at < 2026-01-25`; recent closed overdue work has `due_at < closed_at`; same-day due dates are not overdue. The escalation queue orders overdue primary IDs by severity `S1`, `S2`, `S3`, `S4`, then overdue days descending, then ID. Missing owners are represented by `UNASSIGNED` for hotspot calculations and exposed as missing-owner IDs.
 
-Lineage and materials: this combined test draws from `E001` and `E003`. It analyzes `REL-ATLAS-Q3` release readiness as of 2026-07-15 and release-linked Atlas Admin Q2 closed work for allocation. Evidence comes from releases, milestones, milestone items, dependencies, blockers, work items, status history, portfolio targets, owner/team records, and policy documents.
+The gold answer has 12 included primary IDs, 6 overdue primary IDs represented through the escalation queue, severity counts `S1=3`, `S2=2`, `S3=0`, `S4=1`, open overdue IDs `WI-24024-099`, `WI-24024-147`, `WI-24024-S061`, `WI-24024-S062`, and `WI-24024-S066`, recently closed overdue ID `WI-24024-S064`, breach rate `6/12 = 0.500`, duplicate clusters for `WI-24024-S061` and `WI-24024-S062`, missing-owner IDs `WI-24024-010`, `WI-24024-S066`, and `WI-24024-S067`, oldest unowned primary ID `WI-24024-010`, and top hotspot `Edge Delivery / Elena Park / 2`. The scoring goals are: escalation queue weight 1, included primary set weight 1, overdue severity counts weight 1, open overdue split weight 3, recently closed overdue split weight 3, breach rate weight 1, duplicate clusters weight 3, missing-owner IDs weight 3, oldest unowned primary ID weight 3, and hotspot weight 3. Each evaluator point is all-or-zero and reports expected/actual details. The business outcomes are population selection, priority ordering, open/closed SLA breach analysis, duplicate hygiene, owner-data quality, and hotspot ownership. Likely pitfalls include trusting `mirror_status`, counting duplicates as primary work, including future-created rows such as `WI-24024-128`, treating `WI-24024-S068` as overdue even though it is due on the as-of date, missing recent closed late item `WI-24024-S064`, and using product area or `legacy_category` as category authority.
 
-Solution and evaluation basis: eight exact-match points score release ship decision, gating items, milestone completion, blocker cause counts, dependency chain, release-scoped eligible portfolio set, portfolio mix/gaps/follow-up mapping, and combined action. The correct combined action is `ReleaseGateEscalation` because active release gates exist.
+Transfer design: The transfer anchors are `train_002` and `train_005`. `train_002` teaches the open plus recent-closed SLA window, duplicate exclusion/reporting, due-date boundary, breach-rate denominator, missing-owner handling, and owner/team hotspot concept. `train_005` reinforces security-heavy SLA triage, severity counts, escalation ordering, duplicate clusters, and breach-rate precision. Transfer-dependent scoring points are the included primary set, escalation queue, severity counts, breach rate, duplicate clusters, missing-owner IDs, and hotspot. Task-specific exploration remains necessary because Edge Delivery has a larger noisy queue, stale mirror statuses, future-created distractors, product-area/category conflicts, same-day due work, and duplicate rows with `Duplicate` status.
 
-Transfer design: work-mix conventions transfer from `train_001` and `train_004`; release-readiness conventions transfer from `train_003`; operational security/reliability recognition and escalation habits are reinforced by `train_005`. Atlas changes the release train, scope restriction, and gating graph, so high-value points remain data-specific.
+Construction record: Author: Codex task-builder. Created: 2026-07-18. Updated: 2026-07-18. Major changes: created all six required artifacts for `task_group/task_group_024/test_tasks/005/`, derived gold values from `portfolio.db`, and implemented a whole-point weighted evaluator.
 
-## 集成审核补充
+## 中文
 
-数据来源与材料：该组合测试来自 `E001` 和 `E003`。它分析 `REL-ATLAS-Q3` 在 2026-07-15 的发布就绪度，并分析与该 release 关联的 Atlas Admin 2026-Q2 已关闭工单投入结构。证据来自 releases、milestones、milestone_items、dependencies、blockers、work_items、status_history、portfolio targets、owner/team 记录和政策文档。
+数据和来源：本任务属于 `SCN_024_engineering_portfolio_work_item_analytics`，来源示例为 `E001`、`E002`、`E003`，其中 SLA 老化逻辑主要来自 `E002`。构造说明对应 `scratch/task_builder_assignments.md` 和 `scratch/task_group_design.md` 中的 `test_005`。任务使用生成的 SQLite 环境 `task_group/task_group_024/env/portfolio.db`，重点表是 `work_items` 和 `sla_policy`。任务本地文件包括 `input/prompt.txt`、`input/payloads/answer_template.json`、`output/answer.json` 和 `eval/`。
 
-解法与评测依据：八个精确匹配点评分发版决策、gating items、里程碑完成率、blocker cause 计数、依赖链、release-scoped portfolio eligible 集、portfolio mix/gap/follow-up 映射和 combined action。正确 combined action 是 `ReleaseGateEscalation`，因为存在 active release gate。
+任务定义：求解者需要在 `2026-01-25` 这个时点，对 Edge Delivery 团队最近 14 天窗口内的可靠性和安全性 SLA 风险进行分诊。可见提示只给出团队、日期、类别和 JSON 结构，不暴露隐藏筛选步骤。预期流程是读取权威工作项字段，按共享组合规则判定类别，重建打开项加近期关闭项的 SLA 范围，区分主记录和重复记录，计算逾期项，排序升级队列，并汇总负责人风险。
 
-迁移设计：work-mix 约定从 `train_001` 和 `train_004` 迁移；release-readiness 约定从 `train_003` 迁移；安全/可靠性识别和升级习惯由 `train_005` 强化。Atlas 改变 release train、范围限制和 gating 图，因此高价值评分点仍依赖新数据探索。
+场景适配：这是工程运营分析任务。它覆盖场景中的核心对象关系：工作项包含团队、状态、负责人、严重级别、日期、标签、重复链接和陈旧导出字段。业务流程是可靠性/安全性例会前的分诊复核，需要精确的升级队列、违约指标、负责人热点和重复记录报告。
+
+材料地图：`work_items` 是 ID、团队、状态、负责人、到期日、关闭日、创建日、严重级别、标签、工作类型、标题和重复关系的权威来源。`sla_policy` 存在于公开环境中，但标准答案按每条工作项的 `due_at` 判定。`mirror_status` 和 `legacy_category` 是干扰字段，不能覆盖权威状态或共享组合类别规则。`input/payloads/answer_template.json` 定义求解者可见的结构和稳定排序要求。`eval/eval.py` 写入标准值并执行归一化的整点评分。
+
+解答和评估依据：主集合包含 Edge Delivery 中安全或可靠性类别、创建日不晚于 as-of 日期，并且要么是 `Backlog`、`In Progress`、`Review`、`Reopened` 且 `closed_at` 为空的打开项，要么是 `Done`、`Verified`、`Deployed`、`Closed` 且关闭日在 `2026-01-11` 到 `2026-01-25` 闭区间内的近期关闭项。主指标排除 `Cancelled`、`Duplicate` 和 `duplicate_of` 非空行。重复行如果在团队、类别和近期时间上匹配，则作为重复簇报告。打开项逾期条件是 `due_at < 2026-01-25`；近期关闭项逾期条件是 `due_at < closed_at`；同日到期不算逾期。升级队列按严重级别 `S1`、`S2`、`S3`、`S4`，再按逾期天数降序，再按 ID 排序。缺失负责人在热点计算中表示为 `UNASSIGNED`，并单独输出缺失负责人 ID。
+
+标准答案包含 12 个主记录，6 个逾期主记录通过升级队列体现，严重级别计数为 `S1=3`、`S2=2`、`S3=0`、`S4=1`，打开且逾期的 ID 为 `WI-24024-099`、`WI-24024-147`、`WI-24024-S061`、`WI-24024-S062`、`WI-24024-S066`，近期关闭且逾期的 ID 为 `WI-24024-S064`，违约率为 `6/12 = 0.500`，重复簇对应 `WI-24024-S061` 和 `WI-24024-S062`，缺失负责人 ID 为 `WI-24024-010`、`WI-24024-S066`、`WI-24024-S067`，最老的无负责人主记录为 `WI-24024-010`，最高热点为 `Edge Delivery / Elena Park / 2`。评分目标为：升级队列 1 分，主集合 1 分，按严重级别逾期计数 1 分，打开逾期拆分 3 分，近期关闭逾期拆分 3 分，违约率 1 分，重复簇 3 分，缺失负责人 ID 3 分，最老无负责人主记录 3 分，热点 3 分。每个评分点都是全有或全无，并输出 expected/actual 明细。容易出错之处包括相信 `mirror_status`、把重复项计入主指标、包含未来创建的 `WI-24024-128`、把 as-of 当天到期的 `WI-24024-S068` 算作逾期、漏掉近期关闭且逾期的 `WI-24024-S064`，以及把产品领域或 `legacy_category` 当作类别权威。
+
+迁移设计：迁移锚点是 `train_002` 和 `train_005`。`train_002` 提供打开项加近期关闭窗口、重复项排除和报告、到期日边界、违约率分母、缺失负责人处理、负责人/团队热点等经验。`train_005` 强化安全性较重的 SLA 分诊、严重级别计数、升级排序、重复簇和三位小数违约率。依赖迁移的高价值评分点包括主集合、升级队列、严重级别计数、违约率、重复簇、缺失负责人 ID 和热点。本任务仍需要本地探索，因为 Edge Delivery 有更多噪声队列、陈旧镜像状态、未来创建干扰项、产品领域和类别冲突、同日到期项，以及状态为 `Duplicate` 的重复行。
+
+构造记录：作者：Codex task-builder。创建日期：2026-07-18。更新日期：2026-07-18。主要变更：为 `task_group/task_group_024/test_tasks/005/` 创建六个必需文件，从 `portfolio.db` 推导标准答案，并实现整点评分的加权评估器。

@@ -1,305 +1,246 @@
 {
-  "schema_name": "test_002_jefferson_afternoon_control_answer",
+  "schema_name": "traffic_violation_closeout_payment_plan_batch",
+  "schema_version": "1.0",
+  "instructions": {
+    "currency": "Numbers are dollar amounts rounded to two decimals.",
+    "dates": "Use ISO YYYY-MM-DD dates; use null only where the field is not applicable to a dismissed/no-plan matter.",
+    "matter_order": "Sort matters by citation_number ascending.",
+    "excluded_charge_order": "Sort excluded_charges by charge_code ascending.",
+    "scored_text": "Use enum values where provided; do not replace enum values with prose."
+  },
   "required_top_level_keys": [
-    "batch_id",
-    "county",
-    "entries",
+    "matters",
+    "excluded_charges",
     "batch_totals"
   ],
-  "ordering_rules": {
-    "entries": "Order by citation_number ascending.",
-    "assessed_components": "Order in the sequence the components are applied.",
-    "excluded_candidate_fee_codes": "Sort ascending by code.",
-    "decision_flags": "Sort ascending by flag."
-  },
-  "field_definitions": {
-    "batch_id": {
-      "type": "string"
-    },
-    "county": {
-      "type": "string"
-    },
-    "entries": {
-      "type": "list",
-      "item_type": "object",
-      "required_item_keys": [
-        "citation_number",
-        "account_reference",
-        "defendant_name",
-        "source_resolution",
-        "final_plea",
-        "final_disposition",
-        "assessment_order_date",
-        "assessment_status",
-        "fee_schedule_bucket",
-        "violation_code_for_assessment",
-        "violation_source",
-        "speed_tier",
-        "decision_flags",
-        "assessed_components",
-        "assessed_total",
-        "excluded_candidate_fee_codes",
-        "payment_plan"
+  "matters_item": {
+    "citation_number": {
+      "type": "enum",
+      "allowed": [
+        "OR27-TR-2201",
+        "OR27-TR-2208",
+        "OR27-TR-2219"
       ]
     },
-    "citation_number": {
+    "jurisdiction_code": {
       "type": "string"
-    },
-    "account_reference": {
-      "type": "string",
-      "description": "Use the citation number when no separate case or account number is available."
     },
     "defendant_name": {
       "type": "string"
     },
-    "source_resolution": {
-      "type": "enum",
-      "allowed_values": [
-        "current_bench_over_live",
-        "current_bench_over_live_plea_and_stale_export",
-        "current_bench_over_prior_deferred",
-        "current_bench_over_stale_plan",
-        "live_dismissal_over_stale_identity",
-        "live_satisfied_over_stale_history",
-        "signed_amended_order_over_live_and_stale"
-      ]
+    "disposition": {
+      "plea": {
+        "type": "enum",
+        "allowed": [
+          "no_contest",
+          "guilty",
+          "not_guilty",
+          "no_plea_recorded"
+        ]
+      },
+      "finding": {
+        "type": "enum",
+        "allowed": [
+          "violation_found",
+          "dismissed",
+          "continued",
+          "verify_before_entry"
+        ]
+      },
+      "disposition_date": {
+        "type": "date"
+      },
+      "agreement_sequence": {
+        "type": "enum",
+        "allowed": [
+          "post_disposition",
+          "pre_disposition",
+          "same_entry_unknown",
+          "no_agreement"
+        ]
+      }
     },
-    "final_plea": {
-      "type": "enum",
-      "allowed_values": [
-        "not_entered",
-        "not_guilty",
-        "guilty",
-        "no_contest",
-        "deferred_entry"
-      ]
-    },
-    "final_disposition": {
-      "type": "enum",
-      "allowed_values": [
-        "convicted",
-        "dismissed",
-        "deferred",
-        "pending",
-        "satisfied"
-      ]
-    },
-    "assessment_order_date": {
-      "type": "date",
-      "format": "YYYY-MM-DD"
-    },
-    "assessment_status": {
-      "type": "enum",
-      "allowed_values": [
-        "assessed_current_order",
-        "assessed_prior_order",
-        "no_assessment_dismissed",
-        "no_assessment_satisfied",
-        "no_new_assessment_deferred_completion"
-      ]
-    },
-    "fee_schedule_bucket": {
-      "type": "enum",
-      "allowed_values": [
-        "current_schedule",
-        "no_fee_schedule",
-        "prior_schedule"
-      ]
-    },
-    "violation_code_for_assessment": {
-      "type": "enum",
-      "allowed_values": [
-        "TR-201",
-        "TR-202",
-        "TR-215",
-        "TR-231",
-        "TR-244",
-        "TR-260",
-        "none"
-      ]
-    },
-    "violation_source": {
-      "type": "enum",
-      "allowed_values": [
-        "bench_amendment",
-        "live_violation_remaining",
-        "no_assessment_exception",
-        "signed_amended_order"
-      ]
-    },
-    "speed_tier": {
-      "type": "enum",
-      "allowed_values": [
-        "none",
-        "speed_11_to_20_over",
-        "speed_21_to_30_over"
-      ]
-    },
-    "decision_flags": {
-      "type": "list",
-      "item_type": "enum",
-      "allowed_values": [
-        "below_policy_monthly_request",
-        "current_fee_schedule_controls",
-        "deferred_completion_no_assessment",
-        "dismissed_no_assessment",
-        "live_disposition_superseded_by_bench",
-        "live_plea_superseded_by_bench",
-        "live_plea_superseded_by_history",
-        "live_violation_superseded_by_bench",
-        "live_violation_superseded_by_history",
-        "prior_fee_schedule_controls",
-        "return_to_court_plan_defect",
-        "satisfied_no_assessment",
-        "stale_due_date_superseded",
-        "stale_identity_conflict",
-        "stale_plan_rejected",
-        "stale_return_to_court_rejected",
-        "stale_status_conflict",
-        "unsupported_candidate_code"
-      ]
-    },
-    "assessed_components": {
-      "type": "list",
-      "item_type": "object",
-      "required_item_keys": [
-        "fee_code",
-        "amount",
-        "schedule_effective_start"
-      ],
-      "fee_code_type": "string",
-      "amount_precision": "currency, 2 decimals",
-      "schedule_effective_start_type": "date"
-    },
-    "assessed_total": {
-      "type": "number",
-      "precision": "currency, 2 decimals"
-    },
-    "excluded_candidate_fee_codes": {
-      "type": "list",
-      "item_type": "string"
+    "financial_entry": {
+      "violation_code": {
+        "type": "enum",
+        "allowed": [
+          "ORS_811_109_100PLUS",
+          "ORS_811_109_31_40",
+          "ORS_811_109_21_30",
+          "other"
+        ]
+      },
+      "fine_tier": {
+        "type": "enum",
+        "allowed": [
+          "speed_100_or_greater",
+          "speed_31_to_40_over",
+          "speed_21_to_30_over",
+          "dismissed_no_fine",
+          "statutory_maximum",
+          "verify_before_entry"
+        ]
+      },
+      "fee_schedule_source": {
+        "type": "enum",
+        "allowed": [
+          "F-OR27-100-2025",
+          "F-OR27-21-2025",
+          "F-OR27-SUR-2025",
+          "not_applicable_dismissed",
+          "statutory_maximum_note",
+          "local_memo_only",
+          "verify_before_entry"
+        ]
+      },
+      "standard_fine": {
+        "type": "number"
+      },
+      "county_surcharge": {
+        "type": "number"
+      },
+      "amount_due": {
+        "type": "number"
+      },
+      "unsupported_charge_total_included": {
+        "type": "number"
+      }
     },
     "payment_plan": {
-      "type": "object",
-      "required_keys": [
-        "plan_action",
-        "plan_defect_code",
-        "monthly_amount",
-        "first_due_date",
-        "first_due_basis",
-        "full_payment_count",
-        "final_payment_amount",
-        "total_payment_count",
-        "final_due_date"
-      ]
+      "plan_status": {
+        "type": "enum",
+        "allowed": [
+          "approved",
+          "not_approved",
+          "not_applicable",
+          "verify_before_entry"
+        ]
+      },
+      "agreement_type": {
+        "type": "enum",
+        "allowed": [
+          "extended_payment_plan",
+          "standard_due_date_only",
+          "none",
+          "verify_before_entry"
+        ]
+      },
+      "monthly_payment": {
+        "type": "number_or_null"
+      },
+      "down_payment": {
+        "type": "number"
+      },
+      "first_due_date": {
+        "type": "date_or_null"
+      },
+      "full_payment_count": {
+        "type": "integer"
+      },
+      "final_payment_amount": {
+        "type": "number_or_null",
+        "meaning": "Final partial remainder amount; use 0.00 when all installments are equal full payments."
+      },
+      "total_installments": {
+        "type": "integer"
+      },
+      "final_due_date": {
+        "type": "date_or_null"
+      }
     },
-    "plan_action": {
+    "form_entry": {
+      "form_id": {
+        "type": "enum",
+        "allowed": [
+          "OR_27JD_PLAN",
+          "not_applicable",
+          "other",
+          "verify_before_entry"
+        ]
+      },
+      "form_label": {
+        "type": "enum",
+        "allowed": [
+          "payment_plan_agreement",
+          "extended_payment_plan_agreement",
+          "not_applicable",
+          "other",
+          "verify_before_entry"
+        ]
+      },
+      "account_reference": {
+        "type": "string"
+      },
+      "required_labels_used": {
+        "type": "list",
+        "allowed_values": [
+          "Citation #",
+          "Account Reference",
+          "Total Balance Due",
+          "Payment Schedule",
+          "Clerk Notes"
+        ]
+      }
+    }
+  },
+  "excluded_charges_item": {
+    "charge_code": {
       "type": "enum",
-      "allowed_values": [
-        "entered_new_plan",
-        "no_plan_no_assessment",
-        "return_to_court_review"
+      "allowed": [
+        "account_management_fee",
+        "collection_fee",
+        "dmv_fee",
+        "late_payment_fee",
+        "returned_check_fee",
+        "traffic_school_fee",
+        "work_zone_multiplier",
+        "copied_high_speed_fine_on_dismissal"
       ]
     },
-    "plan_defect_code": {
+    "applies_to": {
       "type": "enum",
-      "allowed_values": [
-        "below_minimum_and_stale_due_date",
-        "below_minimum_request",
-        "deferred_completion_no_assessment",
-        "dismissed_no_assessment",
-        "none",
-        "return_to_court_defect",
-        "satisfied_no_assessment",
-        "stale_return_to_court_rejected"
+      "allowed": [
+        "all",
+        "OR27-TR-2201",
+        "OR27-TR-2208",
+        "OR27-TR-2219"
       ]
     },
-    "monthly_amount": {
-      "type": "number",
-      "precision": "currency, 2 decimals"
-    },
-    "first_due_date": {
-      "type": "date_or_null",
-      "format": "YYYY-MM-DD or null"
-    },
-    "first_due_basis": {
+    "reason_code": {
       "type": "enum",
-      "allowed_values": [
-        "not_applicable",
-        "policy_default_after_order"
+      "allowed": [
+        "dismissed_no_financial_entry",
+        "unsupported_enhancement",
+        "not_in_hearing_order",
+        "not_current_policy",
+        "no_triggering_event"
       ]
-    },
-    "full_payment_count": {
+    }
+  },
+  "batch_totals": {
+    "matter_count": {
       "type": "integer"
     },
-    "final_payment_amount": {
-      "type": "number",
-      "precision": "currency, 2 decimals"
-    },
-    "total_payment_count": {
+    "payable_matter_count": {
       "type": "integer"
     },
-    "final_due_date": {
-      "type": "date_or_null",
-      "format": "YYYY-MM-DD or null"
-    },
-    "batch_totals": {
-      "type": "object",
-      "required_keys": [
-        "assessed_total",
-        "prior_schedule_assessed_total",
-        "current_schedule_assessed_total",
-        "base_fine_total",
-        "speed_surcharge_total",
-        "traffic_school_total",
-        "assessed_entry_count",
-        "no_assessment_entry_count",
-        "dismissed_no_assessment_count",
-        "satisfied_no_assessment_count",
-        "excluded_candidate_fee_count",
-        "unsupported_policy_code_count",
-        "entered_plan_principal_total",
-        "total_full_payments",
-        "total_final_payment_amount",
-        "total_payment_count",
-        "default_first_due_count",
-        "below_minimum_plan_count",
-        "return_to_court_review_count",
-        "entries_using_prior_fee_schedule",
-        "entries_using_current_fee_schedule",
-        "entries_with_source_override_flags",
-        "all_entered_plans_use_post_disposition_start"
-      ]
-    },
-    "assessed_entry_count": {
+    "dismissed_matter_count": {
       "type": "integer"
     },
-    "no_assessment_entry_count": {
+    "combined_standard_fine": {
+      "type": "number"
+    },
+    "combined_county_surcharge": {
+      "type": "number"
+    },
+    "combined_amount_due": {
+      "type": "number"
+    },
+    "total_installments_scheduled": {
       "type": "integer"
     },
-    "dismissed_no_assessment_count": {
-      "type": "integer"
-    },
-    "satisfied_no_assessment_count": {
-      "type": "integer"
-    },
-    "excluded_candidate_fee_count": {
-      "type": "integer"
-    },
-    "unsupported_policy_code_count": {
-      "type": "integer"
-    },
-    "entries_using_prior_fee_schedule": {
-      "type": "integer"
-    },
-    "entries_using_current_fee_schedule": {
-      "type": "integer"
-    },
-    "entries_with_source_override_flags": {
-      "type": "integer"
-    },
-    "all_entered_plans_use_post_disposition_start": {
-      "type": "boolean"
+    "unsupported_charge_total_included": {
+      "type": "number"
     }
   }
 }

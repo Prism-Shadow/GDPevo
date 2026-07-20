@@ -19,12 +19,20 @@ run 都必须放在干净、专属的 staged 目录中，并将该目录作为 D
 启动隔离 agent run 前先读 `CODEX_ORCHESTRATOR.md`。正式 Codex 命令形态为：
 
 ```bash
-CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
+CODEX_HOME=/tmp/gdpevo-codex-home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
 ```
 
 `CODEX_HOME` 是该 agent 进程运行时临时设置的环境变量，不是任务 `.env` 配置。
 正式 attempt 不要使用 `codex exec --ephemeral`。每个进程必须使用
 `agent_prompts.md` 中对应模式的固定 prompt，只替换声明的占位符，不追加提示或路径。
+
+先把主控当前可用的 Codex home 解析为
+`HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"`。需要认证时，只把
+`$HOST_CODEX_HOME/auth.json` 只读挂载到
+`/run/gdpevo-bootstrap/auth.json`，再以 `0600` 权限复制到容器内部的
+`CODEX_HOME`，并在同一个具名容器内执行 `codex login status`。登录文件缺失或认证
+无效时，该 run 应直接判定为 blocked。不能挂载或复制当前 Codex home 的其他内容，
+也不能让主控代替未认证的被测 agent 运行。
 
 ## 1. 准备 Task Group
 
@@ -107,6 +115,14 @@ scratch/skill_generation/reflect-3_attempt_03/
 - `reflect-3`：train inputs、容器可访问环境入口、judge API 调用说明；无 train
   answers。
 
+每次 skill-generation run 都启动一个不带 `--rm` 的具名 agent 容器，并让
+`CODEX_HOME=/tmp/gdpevo-codex-home` 留在容器内部。需要认证时，只读挂载最小的
+凭据引导文件，再复制到容器内 home；不要挂载宿主机的完整 Codex home。运行结束后
+保留停止状态的容器，先用 `docker cp` 只提取匹配的
+`sessions/.../rollout-*.jsonl`（必要时暂存到 `scratch/trace_extract/<run_id>/`），
+复制到正式 trace 目录，写入并核验 metadata、token 和费用，最后再删除暂存目录和
+容器。不要保留完整的容器内 Codex home。
+
 Skill-generation token 用量不计入 solver 效率指标。
 
 ## 4. 运行 Test Solvers
@@ -145,9 +161,10 @@ attempt 目录中重新测试受影响任务。污染 attempt 不打分、不纳
 
 Solver 在自己的 attempt 目录中写 `answer.json`。
 
-每次 solver attempt 都由 Codex 主控从该 attempt 目录启动一个 Dockerized Codex
-进程。只挂载 attempt 目录和供 `CODEX_HOME` 使用的专用 Codex home，不要挂载完整
-workspace 或 task group。
+每次 solver attempt 都由 Codex 主控从该 attempt 目录启动一个不带 `--rm` 的
+Dockerized Codex 进程。只挂载 attempt 目录，并让
+`CODEX_HOME=/tmp/gdpevo-codex-home` 留在容器内部；需要认证时只读挂载最小凭据引导
+文件，不要挂载完整 workspace、task group 或宿主机 Codex home。
 
 ## 5. 打分与聚合
 
@@ -162,14 +179,17 @@ workspace 或 task group。
 
 该 ID 必须出现在 solver prompt、attempt 目录和 `run_metadata.yaml` 中。
 
-主 agent 从 attempt 专用 `CODEX_HOME` 里的 Codex 原始 session trace 中回填
-token 用量、solver turn count 和 tool-call count。应确认 trace 使用预期 attempt
-目录，并包含匹配的 `eval_attempt_id`。
+进程结束后，先保留停止状态的容器，用 `docker cp` 从容器内的
+`CODEX_HOME` 找到 Codex 主 session trace；必要时只把 `sessions/` 暂存到
+`scratch/trace_extract/<run_id>/`。确认它使用预期 attempt 目录并包含匹配的
+`eval_attempt_id`，只把该 JSONL 复制到正式 trace 目录，再从复制后的文件回填并核验
+token 用量、费用、solver turn count、tool-call count 和 `run_metadata.yaml`。完成后
+才能删除暂存目录和停止状态的容器。
 
 Codex 原始 session traces 应位于：
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
 在 `run_metadata.yaml` 中记录原始 session trace 路径。如果原始 session trace

@@ -1,413 +1,102 @@
 {
-  "schema_name": "buyer_hybrid_review_escalation_v1",
-  "response_rule": "Return a single JSON object only. Do not include markdown or explanatory prose.",
-  "numeric_conventions": {
-    "currency_fields": "Integer US dollars, no commas or currency symbols.",
-    "percent_fields": "Number rounded to two decimal places, expressed as percentage points, e.g. 12.50.",
-    "month_fields": "Integer number of months.",
-    "not_applicable": "Use null for numeric fields that do not apply."
+  "schema_name": "test_004_nimbus_transition_tax_review",
+  "version": "1.0",
+  "instructions": {
+    "language": "English only",
+    "deal_id": "Use PRJ_NIMBUS",
+    "currency": "USD integer dollars",
+    "ordering": {
+      "transition_issues": "Sort by issue_id ascending unless priority_order is requested elsewhere.",
+      "required_redlines": "Sort by redline_id ascending.",
+      "operational_risk.priority_order": "Order from highest negotiation priority to lowest."
+    },
+    "possible_issue_ids": [
+      "CUSTOMER_CONSENT_TERMINATION_RIGHT",
+      "CUSTOMER_CONSENT_NOTICE_ONLY",
+      "DATA_PROCESSING_ADDENDUM",
+      "FIELD_EMPLOYEE_CONTINUITY_PTO",
+      "EXECUTIVE_RETENTION_COVENANT",
+      "GOVERNING_LAW_FORUM_FIX",
+      "IP_DOMAIN_TRANSITION_MISSING",
+      "OPEN_SOURCE_CODE_ESCROW",
+      "OUTSIDE_DATE_EXTENSION_MISSING",
+      "PRIVACY_REMEDIATION_COVENANT",
+      "QUALITY_SYSTEM_TRANSFER",
+      "SECTION_1060_ALLOCATION_MISSING",
+      "SUPPLIER_CONTINUITY_COVENANT",
+      "TRANSFER_TAX_SPLIT_MISSING",
+      "TSA_SCOPE_DURATION_FEES",
+      "WORKING_CAPITAL_TRUE_UP"
+    ],
+    "possible_redline_ids": [
+      "CUSTOMER_CONSENT_CONDITION",
+      "DATA_PROCESSING_ADDENDUM",
+      "EMPLOYEE_CONTINUITY",
+      "EXECUTIVE_RETENTION",
+      "GOVERNING_LAW_FORUM",
+      "IP_DOMAIN_TRANSITION",
+      "OPEN_SOURCE_CODE_ESCROW",
+      "OUTSIDE_DATE_EXTENSION",
+      "PRIVACY_REMEDIATION_COVENANT",
+      "QUALITY_SYSTEM_TRANSFER",
+      "SECTION_1060_ALLOCATION",
+      "SUPPLIER_CONTINUITY_COVENANT",
+      "TRANSFER_TAX_SPLIT",
+      "TSA_SCOPE_FEES",
+      "WORKING_CAPITAL_TRUE_UP"
+    ]
   },
-  "list_conventions": {
-    "reviewed_terms": "Include each currently material reviewed term once. Sort by term_id ascending.",
-    "source_doc_ids": "Sort document identifiers ascending.",
-    "condition_codes": "Sort condition codes ascending.",
-    "terms_requiring_escalation": "Sort term_id values ascending.",
-    "terms_within_playbook": "Sort term_id values ascending.",
-    "approval_conditions": "Sort by condition_id ascending.",
-    "primary_driver_term_ids": "Sort term_id values ascending."
+  "allowed_enums": {
+    "risk_rating": ["LOW", "MEDIUM", "HIGH"],
+    "issue_status": ["in_policy", "out_of_policy", "missing_required_term", "draft_exceeds_playbook", "draft_below_playbook"],
+    "recommended_action": ["delete", "revise", "add", "accept", "escalate", "approve", "approve_with_conditions", "reject"],
+    "redline_action": ["delete", "revise", "add"],
+    "fee_model": ["at_cost", "cost_plus_stranded_overhead", "fixed_below_cost", "fixed_fee", "not_applicable"],
+    "tax_allocation_method": ["buyer_sole_discretion", "seller_sole_discretion", "mutually_agreed_section_1060"],
+    "redirect_type": ["301_OR_302", "301_ONLY", "302_ONLY", "not_applicable"],
+    "forum": ["Delaware Court of Chancery or Delaware federal court", "state court", "federal court", "other"],
+    "overall_posture": ["accept_as_drafted", "revise_before_signing", "escalate_to_business_lead", "reject"]
   },
-  "top_level_required_keys": {
-    "deal_id": {
-      "type": "string",
-      "required_value": "D-KEPLER-155"
-    },
-    "review_type": {
-      "type": "enum",
-      "allowed_values": [
-        "BUYER_HYBRID_REVIEW_ESCALATION"
-      ]
-    },
-    "currency": {
-      "type": "enum",
-      "allowed_values": [
-        "USD"
-      ]
-    },
-    "reviewed_terms": {
-      "type": "list<object>"
-    },
-    "committee_packet": {
-      "type": "object"
-    }
-  },
-  "reviewed_term_object_required_keys": {
-    "term_id": {
-      "type": "enum",
-      "allowed_values": [
-        "ESCROW",
-        "GOVERNANCE",
-        "HSR",
-        "INDEMNITY_CAP",
-        "IP_TRANSITION",
-        "MATERIAL_CONSENTS",
-        "NONCOMPETE",
-        "ROLLOVER",
-        "TAX_ESCROW",
-        "WORKING_CAPITAL"
-      ]
-    },
-    "source_clause_id": {
-      "type": "string or null"
-    },
-    "policy_rule_id": {
-      "type": "string or null"
-    },
-    "review_status": {
-      "type": "enum",
-      "allowed_values": [
-        "ESCALATION_REQUIRED",
-        "NO_ISSUE",
-        "OUT_OF_SCOPE",
-        "WITHIN_PLAYBOOK",
-        "WITHIN_PLAYBOOK_FALLBACK"
-      ]
-    },
-    "escalation_required": {
-      "type": "boolean"
-    },
-    "committee_route": {
-      "type": "enum",
-      "allowed_values": [
-        "INVESTMENT_COMMITTEE",
-        "LEGAL_RISK_COMMITTEE",
-        "NO_COMMITTEE_ROUTE"
-      ]
-    },
-    "deviation_code": {
-      "type": "enum",
-      "allowed_values": [
-        "ABOVE_CAP_THRESHOLD",
-        "ABOVE_ROLLOVER_MISMATCH_THRESHOLD",
-        "FOUNDER_ORDINARY_COURSE_VETO",
-        "HSR_NOT_REQUIRED",
-        "MATERIAL_CONSENT_REQUIRED",
-        "NO_DEVIATION",
-        "OUT_OF_SCOPE",
-        "WITHIN_ESCROW_FALLBACK",
-        "WITHIN_NONCOMPETE_FALLBACK",
-        "WITHIN_TAX_ESCROW_RANGE"
-      ]
-    },
-    "severity": {
-      "type": "enum",
-      "allowed_values": [
-        "LOW",
-        "MEDIUM",
-        "HIGH",
-        "CRITICAL"
-      ]
-    },
-    "approval_recommendation": {
-      "type": "enum",
-      "allowed_values": [
-        "APPROVE_AS_DRAFTED",
-        "APPROVE_WITH_CONDITIONS",
-        "DO_NOT_APPROVE_AS_DRAFTED",
-        "NO_APPROVAL_NEEDED"
-      ]
-    },
-    "recommended_position": {
-      "type": "enum",
-      "allowed_values": [
-        "ACCEPT_AS_DRAFTED",
-        "ACCEPT_WITHIN_FALLBACK",
-        "CONFIRM_CONSENT_AS_CLOSING_CONDITION",
-        "KEEP_NO_HSR_CONDITION",
-        "REMOVE_ORDINARY_COURSE_VETOES",
-        "REQUIRE_IP_PERMISSION_CONFIRMATION",
-        "CAP_REQUIRED_POSITION",
-        "ROLLOVER_REQUIRED_POSITION",
-        "REVISE_WORKING_CAPITAL_ONLY"
-      ]
-    },
-    "condition_codes": {
-      "type": "list<enum>",
-      "allowed_values": [
-        "COMMITTEE_APPROVES_ILLIQUIDITY_DISCOUNT",
-        "DOCUMENT_REVENUE_RECOGNITION_DILIGENCE",
-        "CAP_CONDITION_POSITION",
-        "KEEP_LIMITED_SAAS_ANALYTICS_SCOPE",
-        "PRICE_REDUCTION_IF_DISCOUNT_RETAINED",
-        "REMOVE_BUDGET_AND_ORDINARY_COURSE_DEBT_VETOES",
-        "ROLLOVER_CONDITION_POSITION",
-        "TAX_EXPOSURE_IDENTIFIED"
-      ]
-    },
-    "quantification": {
-      "type": "object"
-    },
-    "source_doc_ids": {
-      "type": "list<string>"
-    }
-  },
-  "quantification_allowed_fields": {
-    "calculation_base": {
-      "type": "enum",
-      "allowed_values": [
-        "HEADLINE_VALUE",
-        "ROLLOVER_EQUITY_VALUE",
-        "GOVERNANCE_RIGHTS",
-        "FOUNDER_EMPLOYMENT",
-        "NONE"
-      ]
-    },
-    "draft_percent": {
-      "type": "number or null",
-      "precision": "two decimal percentage points"
-    },
-    "fallback_percent": {
-      "type": "number or null",
-      "precision": "two decimal percentage points"
-    },
-    "policy_threshold_percent": {
-      "type": "number or null",
-      "precision": "two decimal percentage points"
-    },
-    "deviation_percent": {
-      "type": "number or null",
-      "precision": "two decimal percentage points"
-    },
-    "draft_amount_usd": {
-      "type": "integer or null",
-      "unit": "USD"
-    },
-    "fallback_amount_usd": {
-      "type": "integer or null",
-      "unit": "USD"
-    },
-    "excess_amount_usd": {
-      "type": "integer or null",
-      "unit": "USD"
-    },
-    "exposure_amount_usd": {
-      "type": "integer or null",
-      "unit": "USD"
-    },
-    "exposure_basis": {
-      "type": "enum",
-      "allowed_values": [
-        "DRAFT_AMOUNT",
-        "POLICY_THRESHOLD_EXCESS",
-        "NON_QUANTIFIED_CONTROL_RISK",
-        "NONE"
-      ]
-    },
-    "draft_months": {
-      "type": "integer or null"
-    },
-    "max_months": {
-      "type": "integer or null"
-    },
-    "debt_threshold_usd": {
-      "type": "integer or null",
-      "unit": "USD"
-    },
-    "benchmark_id": {
-      "type": "string or null"
-    },
-    "benchmark_sample_size": {
-      "type": "integer or null"
-    },
-    "benchmark_count_above_threshold": {
-      "type": "integer or null"
-    }
-  },
-  "committee_packet_schema": {
-    "policy_id": {
-      "type": "string"
-    },
-    "committee_route": {
-      "type": "enum",
-      "allowed_values": [
-        "INVESTMENT_COMMITTEE",
-        "LEGAL_RISK_COMMITTEE",
-        "NO_COMMITTEE_ROUTE"
-      ]
-    },
-    "approval_required": {
-      "type": "boolean"
-    },
-    "committee_members": {
-      "type": "list<string>",
-      "description": "Use names exactly as shown in the Deal Desk committee record."
-    },
-    "committee_source_doc_id": {
-      "type": "string or null"
-    },
-    "terms_requiring_escalation": {
-      "type": "list<enum>",
-      "allowed_values": [
-        "ESCROW",
-        "GOVERNANCE",
-        "HSR",
-        "INDEMNITY_CAP",
-        "IP_TRANSITION",
-        "MATERIAL_CONSENTS",
-        "NONCOMPETE",
-        "ROLLOVER",
-        "TAX_ESCROW",
-        "WORKING_CAPITAL"
-      ]
-    },
-    "terms_within_playbook": {
-      "type": "list<enum>",
-      "allowed_values": [
-        "ESCROW",
-        "GOVERNANCE",
-        "HSR",
-        "INDEMNITY_CAP",
-        "IP_TRANSITION",
-        "MATERIAL_CONSENTS",
-        "NONCOMPETE",
-        "ROLLOVER",
-        "TAX_ESCROW",
-        "WORKING_CAPITAL"
-      ]
-    },
-    "reviewed_term_count": {
-      "type": "integer"
-    },
-    "escalation_term_count": {
-      "type": "integer"
-    },
-    "within_playbook_term_count": {
-      "type": "integer"
-    },
-    "aggregate_risk_tier": {
-      "type": "enum",
-      "allowed_values": [
-        "LOW",
-        "MEDIUM",
-        "HIGH",
-        "CRITICAL"
-      ]
-    },
-    "final_action": {
-      "type": "enum",
-      "allowed_values": [
-        "ESCALATE_AND_APPROVE_AS_DRAFTED",
-        "ESCALATE_AND_RENEGOTIATE_BEFORE_SIGNING",
-        "ESCALATE_FOR_INFORMATION_ONLY",
-        "NO_ESCALATION"
-      ]
-    },
-    "primary_driver_term_ids": {
-      "type": "list<enum>",
-      "allowed_values": [
-        "ESCROW",
-        "GOVERNANCE",
-        "HSR",
-        "INDEMNITY_CAP",
-        "IP_TRANSITION",
-        "MATERIAL_CONSENTS",
-        "NONCOMPETE",
-        "ROLLOVER",
-        "TAX_ESCROW",
-        "WORKING_CAPITAL"
-      ]
-    },
-    "total_quantified_exposure_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "total_policy_excess_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "approval_conditions": {
-      "type": "list<object>",
-      "item_schema": {
-        "condition_id": {
-          "type": "string",
-          "description": "Neutral condition label chosen by the solver, such as CONDITION_001. Do not encode the substantive answer in this label."
-        },
-        "term_id": {
-          "type": "enum",
-          "allowed_values": [
-            "ESCROW",
-            "GOVERNANCE",
-            "HSR",
-            "INDEMNITY_CAP",
-            "IP_TRANSITION",
-            "MATERIAL_CONSENTS",
-            "NONCOMPETE",
-            "ROLLOVER",
-            "TAX_ESCROW",
-            "WORKING_CAPITAL"
-          ]
-        },
-        "required_state": {
-          "type": "enum",
-          "allowed_values": [
-            "ACCEPT_AS_DRAFTED",
-            "ACCEPT_WITHIN_FALLBACK",
-            "CAP_CONDITION_POSITION",
-            "CAP_REQUIRED_POSITION",
-            "COMMITTEE_APPROVES_ILLIQUIDITY_DISCOUNT",
-            "CONFIRM_CONSENT_AS_CLOSING_CONDITION",
-            "DOCUMENT_REVENUE_RECOGNITION_DILIGENCE",
-            "DOCUMENT_REVENUE_RECOGNITION_DILIGENCE_OR_DEAL_LEAD_CONFIRMATION",
-            "IP_PERMISSION_CONFIRMED",
-            "KEEP_LIMITED_SAAS_ANALYTICS_SCOPE",
-            "KEEP_NO_HSR_CONDITION",
-            "LIMITED_NONCOMPETE_SCOPE_CONFIRMED",
-            "MATERIAL_CONSENT_CLOSING_CONDITION_CONFIRMED",
-            "NO_HSR_FILING_CONDITION_CONFIRMED",
-            "PRICE_REDUCTION_IF_DISCOUNT_RETAINED",
-            "REMOVE_BUDGET_AND_ORDINARY_COURSE_DEBT_VETOES",
-            "REMOVE_ORDINARY_COURSE_VETOES",
-            "REQUIRE_IP_PERMISSION_CONFIRMATION",
-            "REVISE_WORKING_CAPITAL_ONLY",
-            "ROLLOVER_CONDITION_POSITION",
-            "ROLLOVER_CONDITION_POSITION_OR_PRICE_REDUCTION",
-            "ROLLOVER_REQUIRED_POSITION",
-            "TAX_EXPOSURE_IDENTIFIED",
-            "WORKING_CAPITAL_TERMS_ACCEPTED"
-          ]
-        }
+  "required_output_shape": {
+    "deal_id": "string",
+    "client_side": "string",
+    "transition_issues": [
+      {
+        "issue_id": "one value from possible_issue_ids",
+        "category": "string",
+        "source_term_ids": ["string"],
+        "source_record_ids": ["string"],
+        "issue_status": "enum issue_status",
+        "risk_rating": "enum risk_rating",
+        "recommended_action": "enum recommended_action",
+        "draft_value_normalized": {},
+        "required_position_normalized": {},
+        "quantified_impact_dollars": "integer or null"
       }
-    },
-    "strategic_context": {
-      "type": "object",
-      "schema": {
-        "batna_code": {
-          "type": "enum",
-          "allowed_values": [
-            "LOWER_HEADLINE_PRICE_AVAILABLE",
-            "NO_CLEAR_BATNA",
-            "WALK_AWAY_TO_ALT_TARGET"
-          ]
-        },
-        "ownership_context": {
-          "type": "enum",
-          "allowed_values": [
-            "FOUNDER_GOVERNANCE_PRESSURE",
-            "FUND_SELLER_CASH_CERTAINTY",
-            "MANAGEMENT_ROLLOVER_ONLY"
-          ]
-        },
-        "strategic_rationale": {
-          "type": "enum",
-          "allowed_values": [
-            "CONTROL_INVESTMENT_WITH_MEANINGFUL_ROLLOVER",
-            "NON_STRATEGIC_ADD_ON",
-            "PURE_FINANCIAL_BUY"
-          ]
-        },
-        "benchmark_memo_required": {
-          "type": "boolean"
-        }
+    ],
+    "required_redlines": [
+      {
+        "redline_id": "one value from possible_redline_ids",
+        "related_issue_id": "one value from possible_issue_ids",
+        "redline_action": "enum redline_action",
+        "must_have_terms": {}
       }
+    ],
+    "operational_risk": {
+      "overall_risk_rating": "enum risk_rating",
+      "overall_posture": "enum overall_posture",
+      "priority_order": ["issue_id values selected in transition_issues, ordered from highest negotiation priority to lowest"],
+      "quantified_exposures": {
+        "stranded_cost_gap_dollars": "integer",
+        "field_operations_pto_liability_dollars": "integer",
+        "required_closing_consent_amount_at_risk_dollars": "integer",
+        "top_customer_annual_revenue_at_risk_dollars": "integer",
+        "closing_certainty_high_dollars": "integer",
+        "transition_disruption_high_dollars": "integer"
+      },
+      "required_closing_consent_ids": ["string"],
+      "material_contract_consent_ids": ["string"],
+      "business_outcomes_protected": ["string"]
     }
   }
 }

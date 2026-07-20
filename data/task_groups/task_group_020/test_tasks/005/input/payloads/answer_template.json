@@ -1,423 +1,128 @@
 {
-  "schema_name": "buyer_rollover_spa_risk_allocation_v1",
-  "response_rule": "Return a single JSON object only. Do not include Markdown or explanatory prose.",
-  "top_level_required_keys": {
-    "deal_id": {
-      "type": "string",
-      "required_value": "D-SOLSTICE-820"
-    },
-    "deal_terms": {
-      "type": "object"
-    },
-    "risk_overrides": {
-      "type": "object"
+  "task_id": "test_005",
+  "deal_id": "PRJ_ROOK",
+  "memo": {
+    "prepared_for": "M&A Committee",
+    "client_name": "string",
+    "project_name": "string",
+    "target_name": "string",
+    "counterparty_name": "string",
+    "policy_id": "string",
+    "signing_date": "YYYY-MM-DD",
+    "meeting_date": "YYYY-MM-DD",
+    "currency": "USD",
+    "value_basis": "equity value",
+    "headline_value_usd": 0
+  },
+  "waiver_matrix": [
+    {
+      "term_id": "stable draft term id",
+      "category": "reverse_termination_fee | termination_fee | voting_agreements | mae_carveouts | fiduciary_out | rw_survival | consent_closing_condition | regulatory_efforts",
+      "clause_ref": "string",
+      "issue_status": "in_policy | out_of_policy | restricted | near_threshold | noncommittee_item",
+      "risk_rating": "LOW | MEDIUM | HIGH",
+      "waiver_required": "boolean",
+      "draft_metric": {
+        "value": 0,
+        "unit": "percent_points | months | additional_carveouts | restricted_change | dollars",
+        "basis": "equity value | fully diluted shares | approved list | all representations | public-company merger covenant | purchase price",
+        "amount_usd": 0,
+        "total_fully_diluted_shares": 0,
+        "locked_share_count": 0,
+        "added_count": 0,
+        "restricted_carveouts": [
+          "stable_carveout_id"
+        ]
+      },
+      "policy_metric": {
+        "threshold_value": 0,
+        "unit": "percent_points | months | carveouts | restricted_change | dollars",
+        "basis": "equity value | fully diluted shares | approved list | all representations | public-company merger covenant | purchase price",
+        "threshold_amount_usd": 0,
+        "policy_max_locked_shares": 0,
+        "approved_carveout_groups": [
+          "stable_group_id"
+        ]
+      },
+      "delta": {
+        "percent_points": 0,
+        "amount_usd": 0,
+        "excess_locked_shares": 0,
+        "excess_count": 0,
+        "unapproved_carveout_count": 0
+      },
+      "benchmark": {
+        "metric": "string",
+        "sample_size": 0,
+        "median": 0,
+        "upper_quartile": 0,
+        "position": "at_or_below_median | between_median_and_upper_quartile | at_upper_quartile | above_upper_quartile | not_applicable"
+      },
+      "exposure": {
+        "type": "closing_certainty | deal_protection | mae_definition | not_quantified",
+        "low_usd": 0,
+        "high_usd": 0,
+        "source_estimate_id": "string"
+      },
+      "recommendation": "approve | approve_with_conditions | reject",
+      "required_conditions": [
+        "stable_condition_id"
+      ],
+      "concession_posture": "must_fix | tradeable_if_capped | tradeable_if_narrowed"
     }
-  },
-  "numeric_conventions": {
-    "currency_fields": "Integer US dollars, no commas or currency symbols.",
-    "percent_fields": "Number rounded to two decimal places, expressed as percentage points, e.g. 3.50.",
-    "month_fields": "Integer number of months.",
-    "nulls": "Use null only where the schema explicitly permits a null value."
-  },
-  "list_conventions": {
-    "seller_allocations": "Sort by seller_id alphabetically.",
-    "required_customer_consents": "Sort by contract_name alphabetically.",
-    "post_closing_notice_items": "Sort strings alphabetically.",
-    "other_approvals": "Sort strings alphabetically.",
-    "transition_service_codes": "Sort enum values alphabetically.",
-    "source_ids": "For risk_overrides.source_ids, include only controlling risk-allocation authority sources and sort them alphabetically; exclude calculation-only schedules, non-controlling diligence sources, and stale/template sources.",
-    "controlling_clause_source_ids": "Sort active clause IDs that control override rows alphabetically; exclude active clauses reviewed but accepted without override.",
-    "non_overridden_active_clause_ids": "Sort active clause IDs alphabetically.",
-    "rejected_template_clause_ids": "Sort stale/template clause IDs alphabetically.",
-    "override_codes": "Sort enum values alphabetically; include only actual deal-specific override positions, not stale/template rejection status by itself.",
-    "overridden_clause_codes": "Sort enum values alphabetically; include only clauses requiring a drafting override.",
-    "non_overridden_clause_codes": "Sort enum values alphabetically; include active clauses reviewed but not overridden.",
-    "overridden_clauses": "Sort by clause_code alphabetically.",
-    "unrevised_trigger_codes": "Sort enum values alphabetically."
-  },
-  "enums": {
-    "structure": [
-      "STOCK_PURCHASE",
-      "ASSET_PURCHASE",
-      "MERGER",
-      "ROLLOVER_STOCK_PURCHASE"
-    ],
-    "client_side": [
-      "BUYER",
-      "SELLER"
-    ],
-    "allocation_basis": [
-      "ACTIVE_CAP_TABLE_ALLOCATION_BASIS",
-      "ACTIVE_ALLOCATION_SCHEDULE",
-      "STALE_CAP_TABLE",
-      "COUNTERPARTY_DRAFT"
-    ],
-    "basket_type": [
-      "DEDUCTIBLE",
-      "TIPPING",
-      "NONE"
-    ],
-    "cap_basis": [
-      "GENERAL_ESCROW_AMOUNT",
-      "CASH_CONSIDERATION",
-      "HEADLINE_VALUE",
-      "NONE"
-    ],
-    "note_offset_position": [
-      "REJECT_UNLESS_LENDER_CONSENT",
-      "ALLOW_WITHOUT_CONSENT",
-      "ACCEPT_AS_DRAFTED",
-      "NOT_APPLICABLE"
-    ],
-    "nwc_mechanic": [
-      "TRUE_UP_AGAINST_ACTIVE_BALANCE_SHEET",
-      "DOLLAR_FOR_DOLLAR_OUTSIDE_COLLAR",
-      "STALE_BALANCE_SHEET_BASELINE",
-      "NO_ADJUSTMENT"
-    ],
-    "condition_type": [
-      "CLOSING",
-      "COVENANT",
-      "NOTICE",
-      "POST_CLOSING_NOTICE"
-    ],
-    "customer_consent_status": [
-      "CONSENT_DRAFTING_POSITION",
-      "POST_CLOSING_COVENANT_ONLY",
-      "NO_CUSTOMER_CONSENTS_REQUIRED"
-    ],
-    "hsr_status": [
-      "REQUIRED",
-      "NOT_REQUIRED",
-      "UNCLEAR"
-    ],
-    "hsr_clause_position": [
-      "FILING_CONDITION",
-      "COOPERATION_COVENANT_ONLY",
-      "OMIT_HSR_LANGUAGE"
-    ],
-    "hsr_basis_code": [
-      "HSR_BASIS_RECORD_A",
-      "HSR_BASIS_RECORD_B",
-      "HSR_BASIS_RECORD_C",
-      "HSR_BASIS_RECORD_D",
-      "HSR_BASIS_UNKNOWN"
-    ],
-    "transition_service_code": [
-      "DISPATCH",
-      "FLEET_TELEMATICS",
-      "SAFETY_REPORTING",
-      "FINANCE_REPORTING",
-      "HR_SUPPORT",
-      "IT_HELPDESK",
-      "CUSTOMER_NOTICE_SUPPORT",
-      "REGULATORY_SUPPORT"
-    ],
-    "override_code": [
-      "ALLOCATION_SOURCE_POSITION",
-      "CAP_OVERRIDE_POSITION",
-      "NOTE_OFFSET_OVERRIDE_POSITION",
-      "ESCROW_OVERRIDE_POSITION",
-      "TEMPLATE_SOURCE_POSITION",
-      "NWC_OVERRIDE_POSITION",
-      "BASKET_OVERRIDE_POSITION",
-      "CONSENT_OVERRIDE_POSITION",
-      "HSR_OVERRIDE_POSITION",
-      "TSA_OVERRIDE_POSITION"
-    ],
-    "source_precedence_code": [
-      "ACTIVE_DEAL_SPECIFIC_INSTRUCTIONS_CONTROL",
-      "GENERIC_ROLLOVER_POLICY_ONLY",
-      "GENERIC_TEMPLATE_CONTROLS",
-      "STALE_EXPORT_CONTROLS"
-    ],
-    "routing_precedence_code": [
-      "DEAL_SPECIFIC_COMMITTEE_NOTE_CONTROLS",
-      "POLICY_TOPIC_BODY_CONTROLS",
-      "NO_APPROVAL_ROUTING"
-    ],
-    "policy_rule_id": [
-      "ROLL-CAP",
-      "ROLL-CASH",
-      "ROLL-ESCROW",
-      "ROLL-NWC"
-    ],
-    "clause_code": [
-      "BASKET",
-      "CAP",
-      "CASH_ROLLOVER",
-      "ESCROW",
-      "NOTE_OFFSET",
-      "NWC"
-    ],
-    "override_action": [
-      "ACCEPT_ACTIVE_SCHEDULE",
-      "CAP_AT_ESCROW",
-      "NO_CHANGE",
-      "REDUCE",
-      "REJECT",
-      "REVISE"
-    ],
-    "draft_position_code": [
-      "DRAFT_BASKET_POSITION",
-      "DRAFT_CAP_POSITION",
-      "DRAFT_CASH_ROLLOVER_POSITION",
-      "DRAFT_ESCROW_POSITION",
-      "DRAFT_NOTE_OFFSET_POSITION",
-      "DRAFT_NWC_POSITION"
-    ],
-    "required_position_code": [
-      "REQUIRED_CASH_ROLLOVER_POSITION",
-      "REQUIRED_CAP_POSITION",
-      "REQUIRED_BASKET_POSITION",
-      "REQUIRED_NOTE_OFFSET_POSITION",
-      "REQUIRED_ESCROW_POSITION",
-      "REQUIRED_NWC_POSITION"
-    ],
-    "non_overridden_clause_position": [
-      "DO_NOT_LIST_AS_OVERRIDE",
-      "REVISE_AS_OVERRIDE",
-      "ESCALATE_ONLY"
-    ],
-    "approval_body": [
-      "CREDIT_COMMITTEE",
-      "FINANCE_COMMITTEE",
-      "DEAL_LEAD",
-      "NONE"
-    ],
-    "unrevised_trigger_code": [
-      "CAP_APPROVAL_TRIGGER",
-      "NWC_APPROVAL_TRIGGER",
-      "NOTE_OFFSET_APPROVAL_TRIGGER",
-      "TAX_ESCROW_THRESHOLD_TRIGGER",
-      "BASKET_APPROVAL_TRIGGER",
-      "CONSENT_APPROVAL_TRIGGER",
-      "HSR_APPROVAL_TRIGGER",
-      "TSA_APPROVAL_TRIGGER",
-      "SURVIVAL_APPROVAL_TRIGGER"
-    ],
-    "posture_code": [
-      "REVISE_BEFORE_SIGNING",
-      "APPROVE_AS_DRAFTED",
-      "ESCALATE_ONLY",
-      "NO_ISSUE"
-    ],
-    "signing_readiness": [
-      "READY_AFTER_REVISIONS",
-      "READY_NOW",
-      "NOT_READY_PENDING_APPROVAL"
-    ],
-    "drafting_position": [
-      "ALLOCATION_DRAFTING_POSITION",
-      "CAP_DRAFTING_POSITION",
-      "CAP_FALLBACK_POSITION",
-      "ESCROW_DRAFTING_POSITION",
-      "HSR_DRAFTING_POSITION",
-      "NOTE_OFFSET_DRAFTING_POSITION",
-      "CONSENT_DRAFTING_POSITION",
-      "NWC_DRAFTING_POSITION"
-    ]
-  },
-  "schema": {
-    "deal_id": "string",
-    "deal_terms": {
-      "structure": "enum:structure",
-      "buyer": "string",
-      "seller": "string",
-      "target": "string",
-      "client": "string",
-      "client_side": "enum:client_side",
-      "headline_value_usd": "integer dollars",
-      "equity_value_usd": "integer dollars",
-      "signing_date": "YYYY-MM-DD",
-      "closing_deadline": "YYYY-MM-DD",
-      "allocation": {
-        "allocation_basis": "enum:allocation_basis",
-        "allocation_source_doc_id": "string",
-        "allocation_source_as_of": "YYYY-MM-DD",
-        "consideration_mix_usd": {
-          "cash_at_close": "integer dollars",
-          "seller_note": "integer dollars",
-          "rollover_equity": "integer dollars",
-          "earnout": "integer dollars",
-          "total_consideration": "integer dollars"
-        },
-        "seller_allocations": [
-          {
-            "seller_id": "stable uppercase snake-case id",
-            "seller_name": "string",
-            "seller_role": "string",
-            "ownership_percent": "number percentage to two decimals",
-            "cash_at_close_usd": "integer dollars",
-            "seller_note_usd": "integer dollars",
-            "rollover_equity_usd": "integer dollars",
-            "earnout_usd": "integer dollars",
-            "total_proceeds_usd": "integer dollars"
-          }
-        ]
-      },
-      "indemnity": {
-        "general_escrow_percent": "number percentage to two decimals",
-        "general_escrow_amount_usd": "integer dollars",
-        "tax_escrow_draft_percent": "number percentage to two decimals",
-        "tax_escrow_draft_amount_usd": "integer dollars",
-        "tax_escrow_target_percent": "number percentage to two decimals",
-        "tax_escrow_target_amount_usd": "integer dollars",
-        "aggregate_escrow_draft_percent": "number percentage to two decimals",
-        "aggregate_escrow_draft_amount_usd": "integer dollars",
-        "aggregate_escrow_target_percent": "number percentage to two decimals",
-        "aggregate_escrow_target_amount_usd": "integer dollars",
-        "draft_cap_percent": "number percentage to two decimals",
-        "draft_cap_amount_usd": "integer dollars",
-        "draft_cap_basis": "enum:cap_basis",
-        "target_general_cap_percent_of_headline": "number percentage to two decimals",
-        "target_general_cap_amount_usd": "integer dollars",
-        "target_general_cap_basis": "enum:cap_basis",
-        "fallback_cap_percent": "number percentage to two decimals",
-        "fallback_cap_amount_usd": "integer dollars",
-        "fallback_cap_basis": "enum:cap_basis",
-        "basket_type": "enum:basket_type",
-        "basket_percent": "number percentage to two decimals",
-        "basket_amount_usd": "integer dollars",
-        "de_minimis_usd": "integer dollars",
-        "general_reps_survival_months": "integer months",
-        "fundamental_reps_survival_months": "integer months",
-        "tax_reps_survival_months": "integer months"
-      },
-      "note_offset": {
-        "seller_note_usd": "integer dollars",
-        "unilateral_offset_allowed": "boolean",
-        "lender_consent_required": "boolean",
-        "position": "enum:note_offset_position",
-        "cash_at_close_if_offset_rejected_usd": "integer dollars",
-        "cash_after_unilateral_offset_usd": "integer dollars"
-      },
-      "working_capital": {
-        "target_usd": "integer dollars",
-        "draft_collar_usd": "integer dollars",
-        "draft_collar_percent_of_headline_value": "number percentage to two decimals",
-        "max_policy_collar_usd": "integer dollars",
-        "max_policy_collar_percent": "number percentage to two decimals",
-        "excess_collar_usd": "integer dollars",
-        "mechanic": "enum:nwc_mechanic",
-        "stale_baseline_rejected": "boolean"
-      },
-      "closing_risk_flags": {
-        "required_customer_consents": [
-          {
-            "contract_name": "string",
-            "annual_revenue_usd": "integer dollars or null",
-            "annual_cost_usd": "integer dollars or null",
-            "condition_type": "enum:condition_type",
-            "consent_required": "boolean"
-          }
-        ],
-        "post_closing_notice_items": [
-          "string"
-        ],
-        "customer_consent_status": "enum:customer_consent_status",
-        "customer_revenue_at_risk_usd": "integer dollars",
-        "hsr_status": "enum:hsr_status",
-        "hsr_filing_condition": "boolean",
-        "hsr_clause_position": "enum:hsr_clause_position",
-        "hsr_basis_code": "enum:hsr_basis_code",
-        "other_approvals": [
-          "string"
-        ],
-        "transition_services_required": "boolean",
-        "transition_service_codes": [
-          "enum:transition_service_code"
-        ],
-        "ip_transition_required": "boolean"
-      }
-    },
-    "risk_overrides": {
-      "policy_id": "string",
-      "policy_version": "string",
-      "source_precedence": {
-        "source_precedence_code": "enum:source_precedence_code",
-        "routing_precedence_code": "enum:routing_precedence_code",
-        "controlling_risk_source_ids": [
-          "document or policy id"
-        ],
-        "controlling_clause_source_ids": [
-          "active clause id"
-        ],
-        "non_overridden_active_clause_ids": [
-          "active clause id"
-        ],
-        "rejected_template_clause_ids": [
-          "stale/template clause id"
-        ],
-        "rejected_document_source_ids": [
-          "stale/template document id"
-        ]
-      },
-      "source_ids": [
-        "controlling document or policy id for the risk-allocation override package"
-      ],
-      "superseded_source_ids": [
-        "document id"
-      ],
-      "override_codes": [
-        "enum:override_code"
-      ],
-      "overridden_clause_codes": [
-        "enum:clause_code"
-      ],
-      "non_overridden_clause_codes": [
-        "enum:clause_code"
-      ],
-      "overridden_clauses": [
-        {
-          "clause_code": "enum:clause_code",
-          "source_clause_id": "string",
-          "source_doc_id": "string",
-          "policy_rule_id": "enum:policy_rule_id",
-          "override_action": "enum:override_action",
-          "draft_position_code": "enum:draft_position_code",
-          "required_position_code": "enum:required_position_code",
-          "approval_required_if_unrevised": "boolean",
-          "approval_body": "enum:approval_body",
-          "routing_source_id": "document or policy id",
-          "unrevised_trigger_code": "enum:unrevised_trigger_code"
-        }
-      ],
-      "non_overridden_clause_handling": [
-        {
-          "clause_code": "enum:clause_code",
-          "source_clause_id": "string",
-          "position": "enum:non_overridden_clause_position",
-          "approval_required_if_unrevised": "boolean",
-          "approval_body": "enum:approval_body"
-        }
-      ],
-      "approval_summary": {
-        "approval_required_if_unrevised": "boolean",
-        "approval_bodies_if_unrevised": [
-          "enum:approval_body"
-        ],
-        "approval_body_source_id": "document or policy id",
-        "current_policy_exception_count": "integer",
-        "committee_member_names": [
-          "string"
-        ],
-        "unrevised_trigger_codes": [
-          "enum:unrevised_trigger_code"
-        ]
-      },
-      "final_drafting_posture": {
-        "posture_code": "enum:posture_code",
-        "signing_readiness": "enum:signing_readiness",
-        "allocation_position": "enum:drafting_position",
-        "note_offset_position": "enum:drafting_position",
-        "escrow_position": "enum:drafting_position",
-        "cap_position": "enum:drafting_position",
-        "nwc_position": "enum:drafting_position",
-        "consent_position": "enum:drafting_position",
-        "hsr_position": "enum:drafting_position",
-        "fallback_position": "enum:drafting_position"
-      }
+  ],
+  "negotiation_sequence": [
+    {
+      "rank": 0,
+      "category": "reverse_termination_fee | termination_fee | voting_agreements | mae_carveouts | fiduciary_out | rw_survival | consent_closing_condition | regulatory_efforts",
+      "term_id": "stable draft term id",
+      "priority_type": "legal_blocker | economic_concession | definition_concession | regulatory_condition | closing_condition",
+      "recommended_action": "cap_at_policy | reduce_to_policy_threshold | restore_required_trigger | narrow_and_add_exception | require_committee_waiver | accept_as_tradeable | reject_as_drafted",
+      "committee_message": "short normalized action label"
     }
+  ],
+  "aggregate_summary": {
+    "waiver_term_count": 0,
+    "excluded_noncommittee_terms": [
+      "stable draft term id"
+    ],
+    "excluded_noncommittee_categories": [
+      "category enum"
+    ],
+    "risk_counts": {
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0
+    },
+    "aggregate_quantified_exposure_low_usd": 0,
+    "aggregate_quantified_exposure_high_usd": 0,
+    "included_exposure_components": [
+      "component category selected from risk estimates, fee deltas, or policy deltas"
+    ],
+    "excluded_exposure_components": [
+      "component category excluded from aggregate quantification"
+    ],
+    "reverse_termination_fee_excess_amount_usd": 0,
+    "company_termination_fee_excess_amount_usd": 0,
+    "required_closing_consent_amount_at_risk_usd": 0,
+    "material_contract_revenue_requiring_consent_usd": 0,
+    "deal_certainty_flags": {
+      "hsr_required": "boolean",
+      "industry_review_required": "boolean",
+      "hell_or_high_water_required": "boolean",
+      "required_closing_consents_present": "boolean",
+      "top_customer_consent_high_risk": "boolean",
+      "support_agreement_above_policy": "boolean",
+      "topping_bid_deterrence_rationale_present": "boolean",
+      "counterparty_timing_pressure_present": "boolean",
+      "must_fix_legal_blocker_present": "boolean",
+      "economic_terms_tradeable_if_capped": "boolean"
+    },
+    "committee_conditions": [
+      "stable_condition_id"
+    ],
+    "overall_recommendation": "approve | approve_with_conditions | reject",
+    "final_negotiation_posture": "hold_legal_line_on_lockup_trade_economic_terms | reject_until_legal_blockers_fixed | approve_conditioned_on_policy_caps | accept_tradeable_terms_with_committee_reporting",
+    "committee_action": "short normalized action label"
   }
 }

@@ -1,175 +1,37 @@
-# train_001 Notes - Alder Ridge Buyer SPA Term Population
+# train_001 Notes / train_001 说明
 
 ## English
 
-### Data and Source Lineage
+This task is built for `task_group_020` from source scenario `SCN_020_ma_transaction_contract_review_and_negotiation`, with transfer lineage to examples `E001`, `E002`, and `E003`. The specific brief is `train_001`: seller-side counsel reviews buyer APA paper for `PRJ_JUNIPER`. The construction evidence comes from the generated shared workbench data in `task_group/task_group_020/env/`, especially the deal record, draft terms, `PB_SELLER_A` playbook rules, employee records, consents, regulatory record, benchmarks, risk estimates, diligence findings, and notes. No environment source file, database, manifest, seed, or setup artifact is copied into the task payloads; the only task-local payload is `input/payloads/answer_template.json`.
 
-This task belongs to `task_group_020`, scenario `SCN_020_ma_transaction_contract_review_and_negotiation`, derived from source examples `E001`, `E002`, and `E003`. The direct task pattern is closest to `E001`: populate buyer-side stock purchase terms by reconciling a deal profile, draft agreement, cap table, financial schedule, consent matrix, regulatory status, and client instructions.
+The visible task asks the solver to use `<TASK_ENV_BASE_URL>` and produce a structured JSON issue register, priority order, and summary metrics. The expected workflow is to identify `PRJ_JUNIPER`, read the current buyer draft terms, compare them to `PB_SELLER_A`, calculate purchase-price-based dollar effects from the `headline_value`, and add missing seller-protective APA terms where the supporting deal data makes those terms necessary. The important objects are draft term IDs `TERM_PRJ_JUNIPER_01` through `TERM_PRJ_JUNIPER_05`, playbook categories `financing_condition`, `reverse_break_fee`, `escrow`, `indemnity_cap`, `survival_period`, and `transition_services`, plus employee, consent, risk, and regulatory facts.
 
-The shared environment is `Aster Legal Deal Desk`, implemented under `task_group/task_group_020/env/`. The generated data source is `env/data/dealdesk.json`, with public metadata in `env/data/manifest.json`. This task uses deal `D-ALDER-447` and policy `P-BUYER-MIDMARKET-2026`. The only task-local solver-visible payload is `input/payloads/answer_template.json`.
+The scenario fit is a realistic seller-side M&A workflow: counsel must reconcile buyer paper against the seller playbook, quantify economic exposure, separate closing-certainty issues from tradeable economics, and produce normalized work product that a deal team can route for negotiation. The environment data flow mirrors a deal workbench: draft terms hold counterparty paper, playbook rules hold the client's position, risk and benchmark rows contextualize deviations, and employee/consent/regulatory tables identify missing operational provisions.
 
-### Task Definition
+Material map: `input/prompt.txt` is the solver-visible instruction and uses only `<TASK_ENV_BASE_URL>`. `answer_template.json` defines the English-only schema, units, enums, stable issue identifiers, and summary fields. `output/answer.json` is the standard answer. `eval/eval.sh` delegates to `eval/evaluate.py`, which performs deterministic all-or-nothing checks. In the environment, `/api/deals/PRJ_JUNIPER` supplies deal economics, `/api/deals/PRJ_JUNIPER/terms` supplies draft deviations, `/api/playbooks/PB_SELLER_A/rules` supplies control positions, `/api/deals/PRJ_JUNIPER/employees` supplies workforce and PTO metrics, `/api/deals/PRJ_JUNIPER/regulatory` supplies HSR and HHW facts, and `/api/deals/PRJ_JUNIPER/risk-estimates` supplies aggregate exposure ranges.
 
-The solver is asked, in `input/prompt.txt`, to use the Aster Legal Deal Desk Web/API base URL supplied by the runner, review deal `D-ALDER-447`, and return a JSON object matching the answer template. The expected business result is the buyer-side SPA term population package for Alder Ridge, divided into:
+The standard answer selects eleven issue IDs: `FINANCING_CONDITION`, `REVERSE_BREAK_FEE`, `ESCROW`, `INDEMNITY_CAP`, `SURVIVAL_PERIOD`, `INDEMNITY_BASKET`, `NON_COMPETE_NON_SOLICIT`, `EMPLOYEE_CONTINUITY`, `TRANSITION_SERVICES`, `TAX_ALLOCATION`, and `GOVERNING_LAW_FORUM`. Key calculations use `headline_value` 286,000,000 dollars. The 6.0 percent reverse break fee is 17,160,000 dollars. The 14.0 percent escrow is 40,040,000 dollars; the 10.0 percent fallback is 28,600,000 dollars; excess over fallback is 11,440,000 dollars; the release period excess is 6 months. The 18.0 percent indemnity cap is 51,480,000 dollars; the 12.5 percent fallback is 35,750,000 dollars; excess over fallback is 15,730,000 dollars. Employee count is 174 and PTO liability is 3,520,000 dollars. Risk exposure totals are 7,722,000 low and 26,026,000 high.
 
-- `deal_terms`: structure, consideration, active cap table source, escrow, basket, indemnity cap, and NWC mechanics.
-- `seller_allocations`: seller names, roles, active ownership percentages, and gross proceeds.
-- `closing_flags`: material consents, HSR conclusion, employment agreements, non-compete limits, transition service status, and IP assignment confirmation.
+The evaluator has eight scoring goals with raw weights: issue set (3), financing/RBF/HHW (3), escrow (2), indemnity/basket/survival (2), restrictive covenants (1), employee/TSA (2), tax/law (1), and priority/summary (2). These cover distinct business outcomes: closing certainty, escrow economics, indemnity exposure, restrictive covenants, employee transition, tax allocation, governing law, and regulatory efforts. Each point is deterministic and whole-point only. Common pitfalls are using upfront cash instead of headline value, missing absent-term issues, treating the playbook fallback as the preferred position, omitting HSR while rejecting HHW, failing to total PTO across all employee groups, and producing narrative rather than controlled JSON.
 
-The prompt intentionally does not provide an SOP checklist or scored values. Solvers must use the public deal-room records and avoid stale documents and generic template provisions.
+As a train task, this teaches transferable SOP rather than a tutorial: identify the controlling role-specific rule set, use stable IDs, compute percentages from the correct base, treat draft silence as a deviation when the deal context requires a protective term, classify risk and actions with enums, and rank negotiation priorities by closing certainty before pure economics. Those habits transfer to later seller-side APA and carveout transition tasks without giving away their hidden facts.
 
-### Scenario Fit
-
-This task fits the M&A legal operations scenario because it requires transaction counsel behavior rather than a single lookup. The solver must coordinate multiple deal-room surfaces, distinguish active schedules from stale exports, compute financial terms, and turn legal/business records into a normalized drafting package. It exercises the recurring task-group convention that active deal-room documents and latest written client instructions control over stale cap tables and template language.
-
-### Material Map
-
-- `GET /api/deals/D-ALDER-447` and `/deals/D-ALDER-447`: deal profile, economics, party names, signing and closing dates, active/stale document links, structured schedules, and client positions.
-- `DOC-ALDER447-TERM-01`: signed commercial term sheet with headline value, equity value, timing, and economics JSON.
-- `DOC-ALDER447-DRAFT-02`: active draft terms for escrow, NWC, consents, HSR, and non-compete.
-- `DOC-ALDER447-EMAIL-03`: latest client instruction email, including current economics, required consents, no-HSR posture, fallback authority, and escalation notes.
-- `DOC-ALDER447-CAP-ACTIVE`: active June 30, 2026 ownership and cap table schedule used for seller allocations.
-- `DOC-ALDER447-CAP-STALE`: stale March 31, 2026 cap table retained as a distractor.
-- `DOC-ALDER447-FIN-04`: working capital, escrow, basket, cap, and consideration schedule.
-- `DOC-ALDER447-MATCON-05`: material contract consent matrix and regulatory status.
-- `DOC-ALDER447-DISC-06`: employment, restrictive covenant, transition services, and IP transition schedules.
-- `DOC-ALDER447-TEMPLATE-99`: generic template provisions retained as distractors.
-- `P-BUYER-MIDMARKET-2026`: Northstar buyer risk memo and SPA playbook for policy context.
-- `/api/clauses?deal_id=D-ALDER-447`: active clause records and stale template distractors for clause-level verification.
-
-### Solution and Evaluation Basis
-
-The standard answer in `output/answer.json` is based on the active deal profile and active documents. Headline purchase price and equity value are both USD 184,000,000. The consideration mix is USD 172,500,000 cash at close and USD 11,500,000 rollover equity, with no seller note or earnout. Because the active cap table expresses ownership as percentages and no share count is generated, `per_share_price_usd` is null with basis `NO_SHARE_COUNT_IN_ACTIVE_CAP_TABLE`. The answer also reports `price_per_as_converted_percent_point_usd`: USD 1,840,000 per 1.00 ownership percentage point.
-
-The active cap table is `DOC-ALDER447-CAP-ACTIVE`, as of 2026-06-30. Seller gross proceeds from that active schedule are:
-
-- Alder ESOP Rollover Pool: 23.7 percent, USD 43,608,000.
-- Alder Founder Trust: 44.2 percent, USD 81,328,000.
-- Gannet Ventures II, L.P.: 32.1 percent, USD 59,064,000.
-
-Escrows are 10.0 percent general escrow, USD 18,400,000, and 2.5 percent tax escrow, USD 4,600,000. Both are within policy for this task because the deal-specific escalation note is triggered only if the general escrow exceeds 10.0 percent or the tax escrow exceeds 3.0 percent. NWC uses a USD 18,600,000 target, USD 750,000 collar, and dollar-for-dollar adjustment outside the collar. The collar is 0.41 percent of equity value after rounding to two decimal places.
-
-The two required material consents are ForgeWorks SaaS MSA and Municipal Fleet Data License, both closing conditions. Northline Hosting Order is not included in `required_material_consents` because the source matrix marks consent_required as false. HSR is not required because the antitrust memo says the size-of-person test is not met; the draft should have no HSR closing condition and only a cooperation covenant. Founder employment agreements are required for Mina Calder and Owen Petrie for two years. The acceptable non-compete is 36 months only if limited to target products and current territories, with no broad affiliate covenant.
-
-The evaluator has seven exact-match scoring points, raw weight total 15:
-
-- `SP1_PURCHASE_PRICE_CAP_TABLE`, weight 3: purchase price, consideration mix, active cap table source, active date, per-share availability, and per ownership-point value.
-- `SP2_SELLER_ALLOCATIONS`, weight 3: active seller allocation set.
-- `SP3_ESCROW_TAX_ESCROW`, weight 2: general escrow and tax escrow amounts, percentages, and policy status.
-- `SP4_NWC_MECHANICS`, weight 2: NWC target, collar, adjustment mechanic, and collar percentage.
-- `SP5_CONSENT_CONDITIONS`, weight 2: material consents as closing conditions.
-- `SP6_HSR_EXCLUSION`, weight 1: no-HSR conclusion and empty other regulatory approvals list.
-- `SP7_EMPLOYMENT_NONCOMPETE`, weight 2: founder employment and narrowed non-compete terms.
-
-The evaluator accepts a prediction path as its first argument and defaults to `output/answer.json`. It prints JSON with normalized score, earned weight, total weight, and point-level pass/fail results. Lists are normalized by stable sort keys, and numeric values are compared at the precision declared in the answer template.
-
-Likely model pitfalls include using the stale March cap table, treating the generic template non-compete as controlling, including Northline Hosting Order as a required consent, adding an HSR closing condition despite the counsel memo, or treating exactly 10.0 percent general escrow as an escalation.
-
-### Transfer Design
-
-As a train task, `train_001` is a real formal task rather than a tutorial. By attempting it and comparing against the answer, a solver can infer several reusable conventions for later task-group work:
-
-- Active deal-room schedules control over stale cap table exports and generic template provisions.
-- Latest client instructions can narrow or qualify generic playbook positions.
-- Structured output should use controlled enums, integer dollar amounts, two-decimal percentages, and sorted lists.
-- Buyer-side term population requires cross-checking economics, cap table, consents, HSR status, employment terms, and restrictive covenants across multiple environment surfaces.
-- Consent and regulatory flags should be based on deal-specific records, not boilerplate drafting assumptions.
-
-These conventions are intended to transfer to `test_001` and `test_005` most directly, and also support the review/escalation tasks where stale records, template clauses, and policy thresholds are distractors.
-
-### Construction Record
-
-Author: task-builder subagent for `task_group_020/train_001`.
-
-Created: 2026-07-07.
-
-Updated: 2026-07-07.
-
-Major changes: created prompt, answer template, standard answer, evaluator, and bilingual notes for deal `D-ALDER-447`.
+Construction record: authored by `task-builder-train-001` on 2026-07-18. Initial version created the prompt, template, standard answer, bilingual notes, and deterministic evaluator for `PRJ_JUNIPER`.
 
 ## 中文
 
-### 数据和来源
+本任务属于 `task_group_020`，来源场景为 `SCN_020_ma_transaction_contract_review_and_negotiation`，并与示例 `E001`、`E002`、`E003` 有迁移关系。具体任务简报是 `train_001`：卖方律师审阅 `PRJ_JUNIPER` 的买方资产购买协议。构造证据来自共享工作台环境 `task_group/task_group_020/env/` 中生成的数据，重点包括交易记录、草案条款、`PB_SELLER_A` 卖方规则、员工记录、同意事项、监管记录、市场基准、风险估计、尽调发现和交易备注。任务 payload 中没有复制环境源代码、数据库、manifest、seed 或 setup 文件；唯一的本地 payload 是 `input/payloads/answer_template.json`。
 
-本任务属于 `task_group_020`，场景为 `SCN_020_ma_transaction_contract_review_and_negotiation`，来源示例为 `E001`、`E002` 和 `E003`。本任务最接近 `E001`：通过核对交易档案、起草协议、股权表、财务附表、同意矩阵、监管状态和客户指示，填充买方股票购买协议条款。
+求解者可见任务要求使用 `<TASK_ENV_BASE_URL>`，输出结构化 JSON，包括问题清单、优先级排序和汇总指标。预期流程是定位 `PRJ_JUNIPER`，读取当前买方草案条款，与 `PB_SELLER_A` 对比，按 `headline_value` 计算以购买价格为基础的金额影响，并在交易数据表明需要卖方保护条款但草案缺失时加入缺失问题。关键对象包括 `TERM_PRJ_JUNIPER_01` 至 `TERM_PRJ_JUNIPER_05`、规则类别 `financing_condition`、`reverse_break_fee`、`escrow`、`indemnity_cap`、`survival_period`、`transition_services`，以及员工、同意、风险和监管事实。
 
-共享环境是 `Aster Legal Deal Desk`，实现位置在 `task_group/task_group_020/env/`。生成数据来源为 `env/data/dealdesk.json`，公开元数据在 `env/data/manifest.json`。本任务使用交易 `D-ALDER-447` 和政策 `P-BUYER-MIDMARKET-2026`。任务本地唯一对求解器可见的 payload 是 `input/payloads/answer_template.json`。
+该任务贴合真实卖方并购工作流：律师需要把买方文件与卖方规则核对，量化经济风险，把成交确定性问题和可交易经济条款区分开，并形成可供交易团队谈判使用的标准化成果。环境数据流也对应真实交易工作台：草案条款保存交易对手文本，规则表保存客户立场，风险和基准表提供偏离背景，员工、同意和监管表帮助识别缺失的运营条款。
 
-### 任务定义
+材料地图：`input/prompt.txt` 是求解者可见指令，只使用 `<TASK_ENV_BASE_URL>`。`answer_template.json` 定义英文 schema、单位、枚举、稳定问题标识和汇总字段。`output/answer.json` 是标准答案。`eval/eval.sh` 调用 `eval/evaluate.py`，后者执行确定性的全有或全无检查。环境中，`/api/deals/PRJ_JUNIPER` 提供交易经济数据，`/api/deals/PRJ_JUNIPER/terms` 提供草案偏离，`/api/playbooks/PB_SELLER_A/rules` 提供控制立场，`/api/deals/PRJ_JUNIPER/employees` 提供员工和 PTO 指标，`/api/deals/PRJ_JUNIPER/regulatory` 提供 HSR 和 HHW 事实，`/api/deals/PRJ_JUNIPER/risk-estimates` 提供风险区间汇总。
 
-求解器在 `input/prompt.txt` 中被要求使用运行器提供的 Aster Legal Deal Desk Web/API base URL，查看交易 `D-ALDER-447`，并返回符合 answer template 的 JSON。期望业务结果是 Alder Ridge 买方 SPA 条款填充包，分为：
+标准答案选择十一个问题标识：`FINANCING_CONDITION`、`REVERSE_BREAK_FEE`、`ESCROW`、`INDEMNITY_CAP`、`SURVIVAL_PERIOD`、`INDEMNITY_BASKET`、`NON_COMPETE_NON_SOLICIT`、`EMPLOYEE_CONTINUITY`、`TRANSITION_SERVICES`、`TAX_ALLOCATION`、`GOVERNING_LAW_FORUM`。关键计算使用 286,000,000 美元的 `headline_value`。6.0% 反向分手费为 17,160,000 美元。14.0% 托管为 40,040,000 美元；10.0% fallback 为 28,600,000 美元；超出 fallback 的金额为 11,440,000 美元；释放期超出 6 个月。18.0% 一般赔偿上限为 51,480,000 美元；12.5% fallback 为 35,750,000 美元；超出 fallback 的金额为 15,730,000 美元。员工总数为 174，PTO 负债为 3,520,000 美元。风险区间合计为低端 7,722,000 美元和高端 26,026,000 美元。
 
-- `deal_terms`：交易结构、对价、有效股权表来源、托管、basket、赔偿上限和营运资本机制。
-- `seller_allocations`：卖方名称、角色、有效持股比例和总收益。
-- `closing_flags`：重大合同同意、HSR 结论、雇佣协议、竞业限制、过渡服务和 IP 转让确认。
+评估器包含八个评分目标及原始权重：问题集合 (3)、融资/反向分手费/HHW (3)、托管 (2)、赔偿/篮子/存续期 (2)、限制性契约 (1)、员工/TSA (2)、税务/法律 (1)、优先级和汇总 (2)。这些目标覆盖不同业务结果：成交确定性、托管经济、赔偿风险、限制性契约、员工过渡、税务分配、管辖法律和监管努力。每个评分点都是确定性的全有或全无检查。常见错误包括用 upfront cash 代替 headline value、漏掉缺失条款问题、把 fallback 当作 preferred position、拒绝 HHW 时漏掉 HSR、没有汇总所有员工组的 PTO，以及输出叙述文本而不是受控 JSON。
 
-提示词刻意不提供 SOP 清单或得分答案。求解器必须使用公开交易室记录，并避开过期文件和通用模板条款。
+作为训练任务，它传递的是可迁移的 SOP，而不是教程：识别控制性的角色规则，使用稳定 ID，按正确基数计算百分比，在交易背景需要保护条款时把草案沉默视为偏离，用枚举分类风险和行动，并在谈判排序中把成交确定性放在纯经济问题之前。这些习惯可迁移到后续卖方 APA 和 carveout transition 任务，但不会泄露测试任务事实。
 
-### 场景匹配
-
-本任务符合并购法律运营场景，因为它要求交易律师式工作，而不是单点查询。求解器需要协调多个交易室入口，区分有效附表和过期导出，计算财务条款，并把法律和业务记录转为规范化起草输入。它训练任务组中的重复规则：有效交易室文件和最新书面客户指示优先于过期股权表和模板语言。
-
-### 材料地图
-
-- `GET /api/deals/D-ALDER-447` 和 `/deals/D-ALDER-447`：交易档案、经济条款、主体名称、签约和交割日期、有效及过期文件链接、结构化附表和客户立场。
-- `DOC-ALDER447-TERM-01`：已签署商业条款书，包含 headline value、equity value、时间安排和经济条款 JSON。
-- `DOC-ALDER447-DRAFT-02`：有效起草条款，包括托管、营运资本、同意、HSR 和竞业限制。
-- `DOC-ALDER447-EMAIL-03`：最新客户指示邮件，包括当前经济条款、所需同意、无 HSR 立场、fallback 权限和升级说明。
-- `DOC-ALDER447-CAP-ACTIVE`：2026-06-30 有效所有权和股权表，用于卖方分配。
-- `DOC-ALDER447-CAP-STALE`：2026-03-31 过期股权表，是干扰材料。
-- `DOC-ALDER447-FIN-04`：营运资本、托管、basket、cap 和对价附表。
-- `DOC-ALDER447-MATCON-05`：重大合同同意矩阵和监管状态。
-- `DOC-ALDER447-DISC-06`：雇佣、限制性契约、过渡服务和 IP 过渡附表。
-- `DOC-ALDER447-TEMPLATE-99`：通用模板条款，是干扰材料。
-- `P-BUYER-MIDMARKET-2026`：Northstar 买方风险备忘录和 SPA playbook。
-- `/api/clauses?deal_id=D-ALDER-447`：有效条款记录和过期模板干扰项。
-
-### 答案和评估依据
-
-标准答案 `output/answer.json` 基于有效交易档案和有效文件。Headline purchase price 和 equity value 都是 184,000,000 美元。对价组合为 closing cash 172,500,000 美元、rollover equity 11,500,000 美元，没有 seller note 或 earnout。由于有效股权表以百分比表达所有权，且没有生成具体股份数，`per_share_price_usd` 为 null，basis 为 `NO_SHARE_COUNT_IN_ACTIVE_CAP_TABLE`。答案同时填写 `price_per_as_converted_percent_point_usd`，即每 1.00 个所有权百分点 1,840,000 美元。
-
-有效股权表是 `DOC-ALDER447-CAP-ACTIVE`，日期为 2026-06-30。有效附表中的卖方总收益为：
-
-- Alder ESOP Rollover Pool：23.7%，43,608,000 美元。
-- Alder Founder Trust：44.2%，81,328,000 美元。
-- Gannet Ventures II, L.P.：32.1%，59,064,000 美元。
-
-一般托管为 10.0%，18,400,000 美元；税务托管为 2.5%，4,600,000 美元。二者在本任务中均为政策内，因为交易特定升级说明只在一般托管超过 10.0% 或税务托管超过 3.0% 时触发。营运资本目标为 18,600,000 美元，collar 为 750,000 美元，collar 外逐美元调整。collar 占 equity value 的比例四舍五入为 0.41%。
-
-两个必需的重大合同同意是 ForgeWorks SaaS MSA 和 Municipal Fleet Data License，均为交割条件。Northline Hosting Order 不列入 `required_material_consents`，因为来源矩阵标记为不需要同意。HSR 不需要申报，因为反垄断备忘录说明 size-of-person test 未满足；草案应没有 HSR 交割条件，只保留合作义务。Mina Calder 和 Owen Petrie 需要两年雇佣协议。可接受的竞业限制是 36 个月，但必须限于目标产品和当前地域，且不能有宽泛关联方限制。
-
-评估器有七个 exact-match 评分点，原始总权重 15：
-
-- `SP1_PURCHASE_PRICE_CAP_TABLE`，权重 3：购买价格、对价组合、有效股权表来源、有效日期、每股价格可用性和每所有权百分点价值。
-- `SP2_SELLER_ALLOCATIONS`，权重 3：有效卖方分配集合。
-- `SP3_ESCROW_TAX_ESCROW`，权重 2：一般托管和税务托管的金额、比例和政策状态。
-- `SP4_NWC_MECHANICS`，权重 2：营运资本目标、collar、调整机制和 collar 比例。
-- `SP5_CONSENT_CONDITIONS`，权重 2：重大同意作为交割条件。
-- `SP6_HSR_EXCLUSION`，权重 1：无 HSR 结论和空的其他监管批准列表。
-- `SP7_EMPLOYMENT_NONCOMPETE`，权重 2：创始人雇佣和缩窄后的竞业限制条款。
-
-评估器接受预测文件路径作为第一个参数，默认使用 `output/answer.json`。输出 JSON 包括标准化得分、获得权重、总权重和各评分点通过情况。列表按稳定键排序，数字按 answer template 声明的精度比较。
-
-常见模型错误包括使用 3 月过期股权表、把通用模板竞业限制当作控制条款、把 Northline Hosting Order 列为必需同意、尽管律师备忘录已有结论仍加入 HSR 交割条件，或把正好 10.0% 的一般托管误判为需要升级。
-
-### 迁移设计
-
-作为训练任务，`train_001` 是真实正式任务，不是教程。求解器尝试本任务并对照答案后，可以归纳出若干可迁移规则：
-
-- 有效交易室附表优先于过期股权表导出和通用模板条款。
-- 最新客户指示可以缩窄或限定通用 playbook 立场。
-- 结构化输出应使用受控枚举、整数美元金额、两位小数百分比和排序列表。
-- 买方条款填充需要跨多个环境入口核对经济条款、股权表、同意、HSR 状态、雇佣条款和限制性契约。
-- 同意和监管 flags 应以交易特定记录为依据，而不是以样板起草假设为依据。
-
-这些规则主要迁移到 `test_001` 和 `test_005`，也支持其他审查和升级任务，因为那些任务同样包含过期记录、模板条款和政策阈值干扰项。
-
-### 构造记录
-
-作者：`task_group_020/train_001` task-builder subagent。
-
-创建日期：2026-07-07。
-
-更新日期：2026-07-07。
-
-主要变更：为交易 `D-ALDER-447` 创建 prompt、answer template、标准答案、评估器和双语 notes。
+构造记录：作者 `task-builder-train-001`，创建日期 2026-07-18。初始版本为 `PRJ_JUNIPER` 创建了 prompt、template、标准答案、双语 notes 和确定性 evaluator。

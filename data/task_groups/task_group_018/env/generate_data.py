@@ -1,1372 +1,1915 @@
-#!/usr/bin/env python3
-"""Generate deterministic clerk operations data for task_group_018."""
-
-from __future__ import annotations
-
 import json
 import random
-from datetime import date, datetime, timedelta
+import sqlite3
 from pathlib import Path
 
 
+SEED = 180518
 BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "data"
-DATA_FILE = DATA_DIR / "clerk_ops.json"
-MANIFEST_FILE = DATA_DIR / "manifest.json"
+GENERATED_DIR = BASE_DIR / "generated"
+DB_PATH = GENERATED_DIR / "court_ops.db"
+MANIFEST_PATH = GENERATED_DIR / "manifest.json"
 
-SCHEMA_VERSION = "1.0"
-GENERATED_AT = "2026-07-07T00:00:00Z"
-SEEDS = {
-    "master": 18072026,
-    "cases": 18072027,
-    "citations": 18072028,
-    "fees": 18072029,
-    "hearings": 18072030,
-    "finance": 18072031,
-    "stale_exports": 18072032,
+TARGET_IDENTIFIERS = {
+    "train_001": {"cases": ["RC-25-0412", "RC-25-0418", "RC-24-0987", "RC-25-0502"]},
+    "train_002": {"citations": ["OR26-TR-1188", "OR26-TR-1194"]},
+    "train_003": {"cases": ["VA-CR24-0716-00"], "petitions": ["VA-PET-716A"]},
+    "train_004": {"cases": ["UC-25-0221", "UC-25-0224", "UC-25-0230", "UC-24-0775", "UC-25-0238"]},
+    "train_005": {
+        "cases": ["VA-CR25-0884-00", "VA-CR25-0913-00"],
+        "petitions": ["VA-PET-884A", "VA-PET-913A"],
+    },
+    "test_001": {"cases": ["MC-25-0601", "MC-25-0604", "MC-24-1109", "MC-25-0618", "MC-25-0622"]},
+    "test_002": {"citations": ["OR27-TR-2201", "OR27-TR-2208", "OR27-TR-2219"]},
+    "test_003": {"cases": ["VA-CR25-1044-00"], "petitions": ["VA-PET-1044A"]},
+    "test_004": {"cases": ["LC-25-0320", "LC-25-0326", "LC-24-0899", "LC-25-0331"]},
+    "test_005": {
+        "cases": ["VA-CR25-1172-00", "VA-CR25-1186-00"],
+        "petitions": ["VA-PET-1172B", "VA-PET-1186A"],
+    },
 }
 
-COUNTIES = [
-    {"county": "Benton", "court": "Benton County Circuit Court", "code": "BEN"},
-    {"county": "Lane", "court": "Lane County Justice Court", "code": "LAN"},
-    {"county": "Gloucester", "court": "Gloucester County Superior Court", "code": "GLO"},
-    {"county": "Marion", "court": "Marion County Circuit Court", "code": "MAR"},
-    {"county": "Wasco", "court": "Wasco County District Court", "code": "WAS"},
-    {"county": "Columbia", "court": "Columbia County Circuit Court", "code": "COL"},
-    {"county": "Jefferson", "court": "Jefferson County Municipal Court", "code": "JEF"},
-    {"county": "Middlesex", "court": "Middlesex County Superior Court", "code": "MID"},
-]
 
-COUNTY_BY_NAME = {row["county"]: row for row in COUNTIES}
+def main():
+    random.seed(SEED)
+    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+    if DB_PATH.exists():
+        DB_PATH.unlink()
 
-FIRST_NAMES = [
-    "Alicia",
-    "Andre",
-    "Bianca",
-    "Calvin",
-    "Daniel",
-    "Darla",
-    "Elena",
-    "Evan",
-    "Fatima",
-    "Felix",
-    "Gabriel",
-    "Hannah",
-    "Imani",
-    "Isaac",
-    "Janelle",
-    "Jonah",
-    "Kara",
-    "Luis",
-    "Marta",
-    "Miguel",
-    "Nadia",
-    "Owen",
-    "Priya",
-    "Renee",
-    "Samuel",
-    "Talia",
-    "Victor",
-    "Yasmin",
-]
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("pragma foreign_keys = on")
+    create_schema(conn)
+    load_static_data(conn)
+    load_target_records(conn)
+    load_background_records(conn)
+    conn.commit()
 
-LAST_NAMES = [
-    "Abbott",
-    "Bennett",
-    "Brooks",
-    "Chen",
-    "Cruz",
-    "Diaz",
-    "Ellis",
-    "Foster",
-    "Garcia",
-    "Hayes",
-    "Ibarra",
-    "Jones",
-    "Keller",
-    "Lopez",
-    "Mason",
-    "Nguyen",
-    "Patel",
-    "Reed",
-    "Santos",
-    "Turner",
-    "Vargas",
-    "Walker",
-    "Young",
-]
-
-JUDGES = [
-    "Hon. Amara Kline",
-    "Hon. Robert Vale",
-    "Hon. Nina Bell",
-    "Hon. Patrick Howe",
-    "Hon. Selene Cross",
-    "Hon. Thomas Rivera",
-    "Hon. Miriam Fox",
-    "Hon. George Fielding",
-]
-
-CLERKS = [
-    "Dana Holt",
-    "Marcus Lee",
-    "Nora Finch",
-    "Elise Grant",
-    "Walter Pierce",
-    "Julia Stone",
-    "Omar Blake",
-    "Tessa Irving",
-]
-
-FIRMS = [
-    "County Public Defender Office",
-    "Northbank Defense Group",
-    "Riverside Legal Clinic",
-    "Cedar Street Law",
-    "Harbor Rights Project",
-    "Independent Appointed Counsel Panel",
-    "Mason & Vale LLP",
-    "Kepler Law Offices",
-]
-
-CRIMINAL_CHARGES = [
-    ("CR-121", "Theft in the second degree", "misdemeanor"),
-    ("CR-209", "Criminal mischief", "misdemeanor"),
-    ("CR-330", "Unlawful possession of a controlled substance", "felony"),
-    ("CR-412", "Assault in the fourth degree", "misdemeanor"),
-    ("CR-507", "Failure to appear", "misdemeanor"),
-    ("CR-610", "Identity theft", "felony"),
-]
-
-DUI_CHARGES = [
-    ("DUI-101", "Driving under the influence of intoxicants", "misdemeanor"),
-    ("DUI-104", "Refusal to submit to chemical test", "violation"),
-    ("DUI-210", "Reckless driving related to DUI", "misdemeanor"),
-    ("DUI-225", "Open container violation", "violation"),
-]
-
-COMPLIANCE_CHARGES = [
-    ("CMP-040", "Probation review", "compliance"),
-    ("CMP-055", "Failure to complete treatment", "compliance"),
-    ("CMP-072", "Missed payment review", "compliance"),
-    ("CMP-088", "License reinstatement compliance", "compliance"),
-]
-
-TRAFFIC_VIOLATIONS = [
-    ("TR-201", "Speeding 11 to 20 mph over limit"),
-    ("TR-202", "Speeding 21 to 30 mph over limit"),
-    ("TR-215", "Failure to obey traffic control device"),
-    ("TR-231", "Driving while suspended"),
-    ("TR-244", "No proof of insurance"),
-    ("TR-260", "Unsafe lane change"),
-]
-
-STATUSES_BY_MATTER = {
-    "criminal": ["open", "closed", "probation_active", "deferred", "warrant"],
-    "traffic": ["open", "closed", "deferred", "satisfied"],
-    "dui": ["open", "closed", "probation_active", "compliance_review"],
-    "compliance": ["open", "satisfied", "compliance_review", "warrant"],
-}
-
-PLEAS = ["not_guilty", "guilty", "no_contest", "deferred_entry", "not_entered"]
-VERDICTS = ["guilty", "dismissed", "deferred", "not_adjudicated", "not_guilty"]
-DISPOSITIONS = ["convicted", "dismissed", "deferred", "amended", "pending"]
-DEFENSE_TYPES = ["public_defender", "appointed_private", "retained", "unknown"]
-
-
-def iso(value: date) -> str:
-    return value.isoformat()
-
-
-def parse_day(value: str) -> date:
-    return datetime.strptime(value, "%Y-%m-%d").date()
-
-
-def add_days(value: str, days: int) -> str:
-    return iso(parse_day(value) + timedelta(days=days))
-
-
-def random_day(rng: random.Random, start: str, end: str) -> str:
-    start_day = parse_day(start)
-    end_day = parse_day(end)
-    span = (end_day - start_day).days
-    return iso(start_day + timedelta(days=rng.randint(0, span)))
-
-
-def money(value: float) -> float:
-    return round(value + 1e-9, 2)
-
-
-def person_name(rng: random.Random) -> str:
-    return f"{rng.choice(FIRST_NAMES)} {rng.choice(LAST_NAMES)}"
-
-
-def dob(rng: random.Random) -> str:
-    return random_day(rng, "1962-01-01", "2005-12-31")
-
-
-def sid(rng: random.Random) -> str:
-    return f"SID{rng.randint(100000, 999999)}"
-
-
-def case_number(county: str, year: int, sequence: int) -> str:
-    code = COUNTY_BY_NAME[county]["code"]
-    return f"{str(year)[-2:]}-{code}-{sequence:05d}"
-
-
-def citation_number(county: str, year: int, sequence: int) -> str:
-    code = COUNTY_BY_NAME[county]["code"]
-    return f"CIT-{code}-{year}-{sequence:05d}"
-
-
-def make_charge(
-    charge_id: str,
-    statute: str,
-    description: str,
-    severity: str,
-    offense_date: str,
-    plea: str,
-    verdict: str,
-    disposition: str,
-) -> dict:
-    return {
-        "charge_id": charge_id,
-        "statute": statute,
-        "description": description,
-        "severity": severity,
-        "offense_date": offense_date,
-        "plea": plea,
-        "verdict": verdict,
-        "disposition": disposition,
-    }
-
-
-def build_attorneys() -> list[dict]:
-    attorneys = []
-    names = [
-        "Helena Moore",
-        "Simon Park",
-        "Theresa Walsh",
-        "Owen Clarke",
-        "Mina Patel",
-        "Gareth Phelps",
-        "Laura Kim",
-        "Carlos Reed",
-        "Beatrice Young",
-        "Jonas Meyer",
-        "Priya Nair",
-        "Violet Ames",
-        "Felix Grant",
-        "Rachel Stone",
-        "Nolan Pierce",
-        "Irene Mason",
-    ]
-    rng = random.Random(SEEDS["master"])
-    for index, name in enumerate(names, start=1):
-        counties = rng.sample([row["county"] for row in COUNTIES], rng.randint(1, 3))
-        attorneys.append(
-            {
-                "attorney_id": f"ATT-{index:03d}",
-                "name": name,
-                "bar_number": f"BAR{rng.randint(10000, 99999)}",
-                "firm": rng.choice(FIRMS),
-                "counties": counties,
-                "phone": f"555-{rng.randint(200, 899)}-{rng.randint(1000, 9999)}",
-                "email": f"{name.lower().replace(' ', '.')}@example-legal.test",
-                "active": rng.random() > 0.08,
-                "defense_types": rng.sample(DEFENSE_TYPES[:-1], rng.randint(1, 3)),
-                "notes": rng.choice(
-                    [
-                        "Accepts appointment conflicts by written confirmation only.",
-                        "Listed on stale assignment exports under a former firm name.",
-                        "Requires clerk callback for same-day hearing coverage.",
-                        "No special notes.",
-                    ]
-                ),
-            }
-        )
-    return attorneys
-
-
-def attorney_for_county(rng: random.Random, attorneys: list[dict], county: str) -> str:
-    candidates = [row for row in attorneys if county in row["counties"] and row["active"]]
-    if not candidates:
-        candidates = attorneys
-    return rng.choice(candidates)["name"]
-
-
-def sentence_for(matter_type: str, status: str, rng: random.Random) -> dict:
-    if status in {"open", "warrant"}:
-        return {
-            "jail_days": 0,
-            "suspended_days": 0,
-            "community_service_hours": 0,
-            "treatment_ordered": False,
-            "notes": "No final sentence recorded.",
-        }
-    if matter_type == "dui":
-        return {
-            "jail_days": rng.choice([2, 5, 10, 20]),
-            "suspended_days": rng.choice([0, 20, 40, 80]),
-            "community_service_hours": rng.choice([24, 40, 80]),
-            "treatment_ordered": True,
-            "notes": rng.choice(["Victim panel required.", "Ignition interlock review required."]),
-        }
-    if matter_type == "criminal":
-        return {
-            "jail_days": rng.choice([0, 5, 10, 30, 60]),
-            "suspended_days": rng.choice([0, 30, 60, 90]),
-            "community_service_hours": rng.choice([0, 20, 40, 80]),
-            "treatment_ordered": rng.random() < 0.25,
-            "notes": rng.choice(["Standard conditions apply.", "Restitution review remains open."]),
-        }
-    if matter_type == "traffic":
-        return {
-            "jail_days": 0,
-            "suspended_days": 0,
-            "community_service_hours": rng.choice([0, 8, 16]),
-            "treatment_ordered": False,
-            "notes": rng.choice(["Traffic school eligible.", "Fine only."]),
-        }
-    return {
-        "jail_days": 0,
-        "suspended_days": 0,
-        "community_service_hours": rng.choice([0, 10, 20]),
-        "treatment_ordered": rng.random() < 0.15,
-        "notes": "Compliance conditions reviewed.",
-    }
-
-
-def anchor_cases(attorneys: list[dict]) -> list[dict]:
-    anchors = [
-        {
-            "case_number": "24-BEN-00132",
-            "county": "Benton",
-            "matter_type": "criminal",
-            "defendant_name": "Miguel Santos",
-            "defendant_dob": "1988-04-17",
-            "sid_number": "SID410782",
-            "status": "probation_active",
-            "filing_date": "2024-03-19",
-            "charges": [
-                make_charge(
-                    "CHG-001",
-                    "CR-121",
-                    "Theft in the second degree",
-                    "misdemeanor",
-                    "2024-03-02",
-                    "guilty",
-                    "guilty",
-                    "convicted",
-                ),
-                make_charge(
-                    "CHG-002",
-                    "CR-507",
-                    "Failure to appear",
-                    "misdemeanor",
-                    "2024-04-15",
-                    "no_contest",
-                    "guilty",
-                    "convicted",
-                ),
-            ],
-            "defense_attorney": "Helena Moore",
-            "defense_type": "public_defender",
-            "disposition_date": "2024-08-22",
-            "probation_months": 18,
-            "license_suspension_months": 0,
-            "restitution_ordered": 640.00,
-            "tags": ["restitution_review", "active_payment_plan", "similar_name_distractor"],
-        },
-        {
-            "case_number": "24-BEN-00141",
-            "county": "Benton",
-            "matter_type": "criminal",
-            "defendant_name": "Michael Santos",
-            "defendant_dob": "1988-04-19",
-            "sid_number": "SID410872",
-            "status": "closed",
-            "filing_date": "2024-03-22",
-            "charges": [
-                make_charge(
-                    "CHG-001",
-                    "CR-209",
-                    "Criminal mischief",
-                    "misdemeanor",
-                    "2024-03-04",
-                    "no_contest",
-                    "guilty",
-                    "convicted",
-                )
-            ],
-            "defense_attorney": "Simon Park",
-            "defense_type": "retained",
-            "disposition_date": "2024-07-30",
-            "probation_months": 12,
-            "license_suspension_months": 0,
-            "restitution_ordered": 125.00,
-            "tags": ["name_conflict", "closed"],
-        },
-        {
-            "case_number": "25-BEN-00058",
-            "county": "Benton",
-            "matter_type": "criminal",
-            "defendant_name": "Nadia Brooks",
-            "defendant_dob": "1995-11-08",
-            "sid_number": "SID552019",
-            "status": "open",
-            "filing_date": "2025-02-13",
-            "charges": [
-                make_charge(
-                    "CHG-001",
-                    "CR-412",
-                    "Assault in the fourth degree",
-                    "misdemeanor",
-                    "2025-01-29",
-                    "not_guilty",
-                    "not_adjudicated",
-                    "pending",
-                )
-            ],
-            "defense_attorney": "Theresa Walsh",
-            "defense_type": "appointed_private",
-            "disposition_date": None,
-            "probation_months": 0,
-            "license_suspension_months": 0,
-            "restitution_ordered": 0.00,
-            "tags": ["pending_trial", "benton_criminal"],
-        },
-        {
-            "case_number": "23-GLO-00218",
-            "county": "Gloucester",
-            "matter_type": "dui",
-            "defendant_name": "Darla Nguyen",
-            "defendant_dob": "1982-09-21",
-            "sid_number": "SID667204",
-            "status": "probation_active",
-            "filing_date": "2023-12-11",
-            "charges": [
-                make_charge(
-                    "CHG-001",
-                    "DUI-101",
-                    "Driving under the influence of intoxicants",
-                    "misdemeanor",
-                    "2023-11-27",
-                    "guilty",
-                    "guilty",
-                    "convicted",
-                ),
-                make_charge(
-                    "CHG-002",
-                    "DUI-104",
-                    "Refusal to submit to chemical test",
-                    "violation",
-                    "2023-11-27",
-                    "no_contest",
-                    "guilty",
-                    "convicted",
-                ),
-            ],
-            "defense_attorney": "Owen Clarke",
-            "defense_type": "retained",
-            "disposition_date": "2024-04-09",
-            "probation_months": 24,
-            "license_suspension_months": 12,
-            "restitution_ordered": 0.00,
-            "tags": ["dui_program", "license_hold"],
-        },
-        {
-            "case_number": "24-MID-00077",
-            "county": "Middlesex",
-            "matter_type": "dui",
-            "defendant_name": "Victor Hayes",
-            "defendant_dob": "1979-01-30",
-            "sid_number": "SID709321",
-            "status": "compliance_review",
-            "filing_date": "2024-01-18",
-            "charges": [
-                make_charge(
-                    "CHG-001",
-                    "DUI-101",
-                    "Driving under the influence of intoxicants",
-                    "misdemeanor",
-                    "2024-01-03",
-                    "guilty",
-                    "guilty",
-                    "convicted",
-                ),
-                make_charge(
-                    "CHG-002",
-                    "DUI-210",
-                    "Reckless driving related to DUI",
-                    "misdemeanor",
-                    "2024-01-03",
-                    "no_contest",
-                    "dismissed",
-                    "dismissed",
-                ),
-            ],
-            "defense_attorney": "Mina Patel",
-            "defense_type": "appointed_private",
-            "disposition_date": "2024-06-14",
-            "probation_months": 30,
-            "license_suspension_months": 18,
-            "restitution_ordered": 0.00,
-            "tags": ["dui_program", "missed_treatment_notice"],
-        },
-        {
-            "case_number": "24-MAR-00305",
-            "county": "Marion",
-            "matter_type": "criminal",
-            "defendant_name": "Alicia Walker",
-            "defendant_dob": "1990-07-12",
-            "sid_number": "SID882410",
-            "status": "closed",
-            "filing_date": "2024-05-06",
-            "charges": [
-                make_charge(
-                    "CHG-001", "CR-610", "Identity theft", "felony", "2024-04-18", "guilty", "guilty", "convicted"
-                ),
-                make_charge(
-                    "CHG-002",
-                    "CR-121",
-                    "Theft in the second degree",
-                    "misdemeanor",
-                    "2024-04-18",
-                    "guilty",
-                    "guilty",
-                    "amended",
-                ),
-            ],
-            "defense_attorney": "Gareth Phelps",
-            "defense_type": "public_defender",
-            "disposition_date": "2024-10-02",
-            "probation_months": 36,
-            "license_suspension_months": 0,
-            "restitution_ordered": 1420.75,
-            "tags": ["amended_count", "docket_conflict", "financial_hold"],
-        },
-        {
-            "case_number": "25-COL-00112",
-            "county": "Columbia",
-            "matter_type": "criminal",
-            "defendant_name": "Jonah Reed",
-            "defendant_dob": "1998-02-25",
-            "sid_number": "SID771903",
-            "status": "deferred",
-            "filing_date": "2025-01-27",
-            "charges": [
-                make_charge(
-                    "CHG-001",
-                    "CR-330",
-                    "Unlawful possession of a controlled substance",
-                    "felony",
-                    "2025-01-09",
-                    "deferred_entry",
-                    "deferred",
-                    "deferred",
-                )
-            ],
-            "defense_attorney": "Laura Kim",
-            "defense_type": "appointed_private",
-            "disposition_date": "2025-04-04",
-            "probation_months": 18,
-            "license_suspension_months": 0,
-            "restitution_ordered": 0.00,
-            "tags": ["diversion_review", "drug_treatment"],
-        },
-        {
-            "case_number": "24-WAS-00290",
-            "county": "Wasco",
-            "matter_type": "compliance",
-            "defendant_name": "Priya Mason",
-            "defendant_dob": "1985-12-02",
-            "sid_number": "SID930218",
-            "status": "compliance_review",
-            "filing_date": "2024-11-19",
-            "charges": [
-                make_charge(
-                    "CHG-001",
-                    "CMP-072",
-                    "Missed payment review",
-                    "compliance",
-                    "2024-11-12",
-                    "not_entered",
-                    "not_adjudicated",
-                    "pending",
-                )
-            ],
-            "defense_attorney": "Carlos Reed",
-            "defense_type": "unknown",
-            "disposition_date": None,
-            "probation_months": 0,
-            "license_suspension_months": 0,
-            "restitution_ordered": 215.50,
-            "tags": ["payment_review", "multi_county_match"],
-        },
-        {
-            "case_number": "23-WAS-00144",
-            "county": "Wasco",
-            "matter_type": "compliance",
-            "defendant_name": "Samuel Turner",
-            "defendant_dob": "1976-05-05",
-            "sid_number": "SID222901",
-            "status": "satisfied",
-            "filing_date": "2023-09-08",
-            "charges": [
-                make_charge(
-                    "CHG-001",
-                    "CMP-088",
-                    "License reinstatement compliance",
-                    "compliance",
-                    "2023-08-25",
-                    "not_entered",
-                    "not_adjudicated",
-                    "satisfied",
-                )
-            ],
-            "defense_attorney": "Rachel Stone",
-            "defense_type": "retained",
-            "disposition_date": "2024-02-01",
-            "probation_months": 0,
-            "license_suspension_months": 0,
-            "restitution_ordered": 0.00,
-            "tags": ["license_reinstated", "closed_financial"],
-        },
-    ]
-    for row in anchors:
-        row["court"] = COUNTY_BY_NAME[row["county"]]["court"]
-        row["sentence"] = sentence_for(row["matter_type"], row["status"], random.Random(row["sid_number"]))
-        if row["defense_attorney"] not in {attorney["name"] for attorney in attorneys}:
-            row["defense_attorney"] = attorneys[0]["name"]
-    return anchors
-
-
-def generate_cases(attorneys: list[dict]) -> list[dict]:
-    rng = random.Random(SEEDS["cases"])
-    cases = anchor_cases(attorneys)
-    used = {row["case_number"] for row in cases}
-    seq_by_county_year: dict[tuple[str, int], int] = {}
-    matter_choices = ["criminal", "traffic", "dui", "compliance"]
-    matter_weights = [0.36, 0.16, 0.20, 0.28]
-
-    while len(cases) < 112:
-        county = rng.choice(COUNTIES)["county"]
-        filing_date = random_day(rng, "2023-01-01", "2025-06-15")
-        year = parse_day(filing_date).year
-        key = (county, year)
-        seq_by_county_year[key] = seq_by_county_year.get(key, 1000) + 1
-        number = case_number(county, year, seq_by_county_year[key])
-        if number in used:
-            continue
-        used.add(number)
-
-        matter_type = rng.choices(matter_choices, weights=matter_weights, k=1)[0]
-        status = rng.choice(STATUSES_BY_MATTER[matter_type])
-        disposition_date = None
-        if status not in {"open", "warrant"}:
-            disposition_date = add_days(filing_date, rng.randint(45, 210))
-        charge_pool = {
-            "criminal": CRIMINAL_CHARGES,
-            "traffic": [(code, desc, "violation") for code, desc in TRAFFIC_VIOLATIONS],
-            "dui": DUI_CHARGES,
-            "compliance": COMPLIANCE_CHARGES,
-        }[matter_type]
-        charge_count = rng.choice([1, 1, 1, 2, 2, 3])
-        selected_charges = rng.sample(charge_pool, min(charge_count, len(charge_pool)))
-        charges = []
-        for index, item in enumerate(selected_charges, start=1):
-            if matter_type == "traffic":
-                statute, description, severity = item
-            else:
-                statute, description, severity = item
-            if status in {"open", "warrant", "compliance_review"} and rng.random() < 0.55:
-                plea = "not_entered"
-                verdict = "not_adjudicated"
-                disposition = "pending"
-            else:
-                plea = rng.choice(PLEAS)
-                verdict = rng.choice(VERDICTS)
-                disposition = rng.choice(DISPOSITIONS)
-            charges.append(
-                make_charge(
-                    f"CHG-{index:03d}",
-                    statute,
-                    description,
-                    severity,
-                    add_days(filing_date, -rng.randint(1, 45)),
-                    plea,
-                    verdict,
-                    disposition,
-                )
-            )
-
-        defendant = person_name(rng)
-        if rng.random() < 0.08:
-            defendant = rng.choice(["Miguel Santos", "Alicia Walker", "Victor Hayes", "Priya Mason"])
-        restitution = 0.0
-        if matter_type in {"criminal", "compliance"} and status not in {"open", "warrant"}:
-            restitution = money(rng.choice([0, 0, 0, rng.uniform(75, 1850)]))
-
-        cases.append(
-            {
-                "case_number": number,
-                "county": county,
-                "court": COUNTY_BY_NAME[county]["court"],
-                "matter_type": matter_type,
-                "defendant_name": defendant,
-                "defendant_dob": dob(rng),
-                "sid_number": sid(rng),
-                "status": status,
-                "filing_date": filing_date,
-                "charges": charges,
-                "defense_attorney": attorney_for_county(rng, attorneys, county),
-                "defense_type": rng.choice(DEFENSE_TYPES),
-                "disposition_date": disposition_date,
-                "sentence": sentence_for(matter_type, status, rng),
-                "probation_months": rng.choice([0, 6, 12, 18, 24, 36]) if matter_type != "traffic" else 0,
-                "license_suspension_months": rng.choice([0, 0, 3, 6, 12, 18]) if matter_type == "dui" else 0,
-                "restitution_ordered": restitution,
-                "tags": sorted(
-                    set(
-                        rng.sample(
-                            [
-                                "stale_export_conflict",
-                                "similar_name",
-                                "fee_effective_date_sensitive",
-                                "manual_review",
-                                "active_payment_plan",
-                                "attorney_changed",
-                                "financial_hold",
-                                "calendar_overlap",
-                                "clean_record",
-                            ],
-                            rng.randint(1, 3),
-                        )
-                    )
-                ),
-            }
-        )
-    return sorted(cases, key=lambda row: row["case_number"])
-
-
-def anchor_citations() -> list[dict]:
-    return [
-        {
-            "citation_number": "CIT-LAN-2024-00411",
-            "county": "Lane",
-            "defendant_name": "Evan Turner",
-            "violation_code": "TR-202",
-            "violation_description": "Speeding 21 to 30 mph over limit",
-            "event_date": "2024-09-14",
-            "hearing_date": "2024-11-08",
-            "speed_mph": 78,
-            "posted_speed_mph": 55,
-            "plea": "no_contest",
-            "disposition": "convicted",
-            "payment_plan_requested": True,
-            "first_due_date": "2024-12-09",
-            "requested_monthly_amount": 45.00,
-        },
-        {
-            "citation_number": "CIT-LAN-2024-00412",
-            "county": "Lane",
-            "defendant_name": "Evan Tuner",
-            "violation_code": "TR-215",
-            "violation_description": "Failure to obey traffic control device",
-            "event_date": "2024-09-14",
-            "hearing_date": "2024-11-08",
-            "speed_mph": None,
-            "posted_speed_mph": None,
-            "plea": "not_entered",
-            "disposition": "pending",
-            "payment_plan_requested": False,
-            "first_due_date": None,
-            "requested_monthly_amount": None,
-        },
-        {
-            "citation_number": "CIT-JEF-2025-00127",
-            "county": "Jefferson",
-            "defendant_name": "Kara Lopez",
-            "violation_code": "TR-231",
-            "violation_description": "Driving while suspended",
-            "event_date": "2025-02-20",
-            "hearing_date": "2025-04-03",
-            "speed_mph": None,
-            "posted_speed_mph": None,
-            "plea": "guilty",
-            "disposition": "convicted",
-            "payment_plan_requested": True,
-            "first_due_date": "2025-05-05",
-            "requested_monthly_amount": 35.00,
-        },
-        {
-            "citation_number": "CIT-JEF-2025-00138",
-            "county": "Jefferson",
-            "defendant_name": "Kara Lopaz",
-            "violation_code": "TR-244",
-            "violation_description": "No proof of insurance",
-            "event_date": "2025-03-01",
-            "hearing_date": "2025-04-03",
-            "speed_mph": None,
-            "posted_speed_mph": None,
-            "plea": "not_entered",
-            "disposition": "dismissed",
-            "payment_plan_requested": False,
-            "first_due_date": None,
-            "requested_monthly_amount": None,
-        },
-    ]
-
-
-def generate_citations() -> list[dict]:
-    rng = random.Random(SEEDS["citations"])
-    citations = anchor_citations()
-    used = {row["citation_number"] for row in citations}
-    seq_by_county_year: dict[tuple[str, int], int] = {}
-
-    while len(citations) < 68:
-        county = rng.choice(COUNTIES)["county"]
-        event_date = random_day(rng, "2023-01-01", "2025-06-30")
-        year = parse_day(event_date).year
-        key = (county, year)
-        seq_by_county_year[key] = seq_by_county_year.get(key, 700) + 1
-        number = citation_number(county, year, seq_by_county_year[key])
-        if number in used:
-            continue
-        used.add(number)
-        code, description = rng.choice(TRAFFIC_VIOLATIONS)
-        is_speed = code in {"TR-201", "TR-202"}
-        posted = rng.choice([25, 30, 35, 45, 55, 65]) if is_speed else None
-        speed = posted + rng.randint(11, 33) if posted else None
-        hearing_date = add_days(event_date, rng.randint(25, 80))
-        disposition = rng.choice(["pending", "convicted", "dismissed", "deferred", "satisfied"])
-        payment_plan_requested = disposition in {"convicted", "deferred"} and rng.random() < 0.45
-        first_due_date = (
-            add_days(hearing_date, rng.choice([30, 35, 45])) if disposition in {"convicted", "deferred"} else None
-        )
-        citations.append(
-            {
-                "citation_number": number,
-                "county": county,
-                "defendant_name": person_name(rng),
-                "violation_code": code,
-                "violation_description": description,
-                "event_date": event_date,
-                "hearing_date": hearing_date,
-                "speed_mph": speed,
-                "posted_speed_mph": posted,
-                "plea": rng.choice(PLEAS),
-                "disposition": disposition,
-                "payment_plan_requested": payment_plan_requested,
-                "first_due_date": first_due_date,
-                "requested_monthly_amount": money(rng.choice([25, 30, 35, 40, 45, 50, 60]))
-                if payment_plan_requested
-                else None,
-            }
-        )
-    return sorted(citations, key=lambda row: row["citation_number"])
-
-
-def generate_fee_schedules() -> list[dict]:
-    rng = random.Random(SEEDS["fees"])
-    templates = {
-        "criminal": [
-            ("CR-FILING", "Criminal filing assessment", "case filed", 95.0, True),
-            ("CR-CONV", "Conviction assessment", "conviction entered", 160.0, True),
-            ("CR-PROB", "Probation setup fee", "probation ordered", 80.0, False),
-            ("CR-REST-ADM", "Restitution administration fee", "restitution ordered", 25.0, False),
-        ],
-        "traffic": [
-            ("TR-BASE", "Traffic base fine", "violation convicted or deferred", 130.0, True),
-            ("TR-SPEED", "Speed surcharge", "speed over posted limit", 60.0, False),
-            ("TR-SCHOOL", "Traffic safety school fee", "traffic school elected", 45.0, False),
-            ("TR-LATE", "Late payment fee", "payment more than 30 days late", 25.0, False),
-        ],
-        "dui": [
-            ("DUI-CONV", "DUI conviction assessment", "dui conviction entered", 375.0, True),
-            ("DUI-TREAT", "Alcohol assessment and treatment referral", "treatment ordered", 190.0, True),
-            ("DUI-LIC", "License suspension processing fee", "license suspension ordered", 85.0, True),
-            ("DUI-PROB", "DUI probation monitoring fee", "probation ordered", 120.0, False),
-        ],
-        "compliance": [
-            ("CMP-REVIEW", "Compliance review filing fee", "review scheduled", 55.0, True),
-            ("CMP-REINSTATE", "Reinstatement processing fee", "reinstatement requested", 70.0, False),
-            ("CMP-MONITOR", "Compliance monitoring fee", "monitoring ordered", 40.0, False),
-            ("CMP-RETURN", "Return-to-court notice fee", "missed payment notice issued", 20.0, False),
+    counts = table_counts(conn)
+    manifest = {
+        "service": "court-operations-portal",
+        "seed": SEED,
+        "generation_time": "2026-07-18T00:00:00Z",
+        "database": "generated/court_ops.db",
+        "table_counts": counts,
+        "target_identifiers": TARGET_IDENTIFIERS,
+        "notes": [
+            "Target identifiers are mixed into shared domain tables.",
+            "Records include stale fee schedules, similar names, incomplete identifiers, and closed/background matters.",
         ],
     }
-    rows = []
-    for county_row in COUNTIES:
-        county = county_row["county"]
-        county_adjustment = rng.choice([-10, -5, 0, 5, 10, 15])
-        for matter_type, fee_rows in templates.items():
-            for code, description, applies_when, amount, mandatory in fee_rows:
-                current_amount = money(max(5.0, amount + county_adjustment + rng.choice([0, 2.5, 5.0])))
-                rows.append(
-                    {
-                        "county": county,
-                        "matter_type": matter_type,
-                        "fee_code": code,
-                        "description": description,
-                        "applies_when": applies_when,
-                        "amount": current_amount,
-                        "effective_start": "2025-01-01",
-                        "effective_end": None,
-                        "mandatory": mandatory,
-                    }
-                )
-                if rng.random() < 0.65:
-                    rows.append(
-                        {
-                            "county": county,
-                            "matter_type": matter_type,
-                            "fee_code": code,
-                            "description": f"Obsolete {description.lower()}",
-                            "applies_when": applies_when,
-                            "amount": money(max(5.0, current_amount - rng.choice([5, 10, 15]))),
-                            "effective_start": "2023-01-01",
-                            "effective_end": "2024-12-31",
-                            "mandatory": mandatory,
-                        }
-                    )
-    return sorted(rows, key=lambda row: (row["county"], row["matter_type"], row["fee_code"], row["effective_start"]))
+    MANIFEST_PATH.write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
+    conn.close()
 
 
-def generate_payment_policies() -> list[dict]:
-    rng = random.Random(SEEDS["fees"] + 11)
-    policies = []
-    unsupported_pool = ["DUI-104", "CR-610", "TR-231", "CMP-072", "CR-507"]
-    for county_row in COUNTIES:
-        county = county_row["county"]
-        minimum = rng.choice([20, 25, 30, 35, 40])
-        maximum = rng.choice([150, 175, 200, 225, 250])
-        policies.append(
-            {
-                "county": county,
-                "policy_name": f"{county} installment and compliance payment policy",
-                "min_monthly": float(minimum),
-                "max_monthly": float(maximum),
-                "allows_final_smaller_payment": rng.random() < 0.75,
-                "first_due_days_after_order": rng.choice([30, 35, 45]),
-                "return_to_court_days_after_missed_payment": rng.choice([20, 25, 30, 35]),
-                "unknown_field_placeholder": "TBD from case file",
-                "unsupported_charge_codes": sorted(rng.sample(unsupported_pool, rng.randint(1, 3))),
-            }
-        )
-    return sorted(policies, key=lambda row: row["county"])
+def create_schema(conn):
+    conn.executescript(
+        """
+        create table jurisdictions (
+            jurisdiction_code text primary key,
+            state text not null,
+            county text not null,
+            court_name text not null,
+            court_level text not null,
+            policy_ref text,
+            active integer not null,
+            clerk_office text,
+            phone text,
+            timezone text not null
+        );
+
+        create table cases (
+            case_number text primary key,
+            jurisdiction_code text not null references jurisdictions(jurisdiction_code),
+            case_type text not null,
+            defendant_first text not null,
+            defendant_last text not null,
+            defendant_dob text,
+            filed_date text,
+            disposition_date text,
+            status text not null,
+            counsel_type text,
+            attorney_name text,
+            judge text,
+            prosecutor text,
+            source_system text,
+            source_updated_at text,
+            attorney_label_raw text,
+            notes text,
+            external_party_id text
+        );
+
+        create table charges (
+            charge_id text primary key,
+            case_number text not null references cases(case_number),
+            count_no integer not null,
+            offense_code text,
+            statute text,
+            description text,
+            severity text,
+            offense_date text,
+            plea text,
+            verdict text,
+            disposition text,
+            fine_amount real,
+            jail_days_imposed integer,
+            jail_days_suspended integer,
+            probation_months integer,
+            license_suspension_months integer,
+            presumptive_min_months integer,
+            presumptive_max_months integer,
+            departure_type text,
+            departure_reason text,
+            assessment_code text
+        );
+
+        create table docket_entries (
+            entry_id text primary key,
+            case_number text not null references cases(case_number),
+            entry_date text not null,
+            entry_type text not null,
+            text text not null,
+            source text not null,
+            entered_by text
+        );
+
+        create table citations (
+            citation_number text primary key,
+            jurisdiction_code text not null references jurisdictions(jurisdiction_code),
+            defendant_name text not null,
+            defendant_dob text,
+            violation_code text,
+            statute text,
+            violation_desc text,
+            event_date text,
+            hearing_date text,
+            plea text,
+            disposition text,
+            speed_mph integer,
+            zone_mph integer,
+            officer text,
+            standard_fine real,
+            county_surcharge real,
+            amount_due real,
+            plan_approved integer,
+            monthly_payment real,
+            first_due_date text,
+            final_payment_amount real,
+            plan_notes text,
+            status text
+        );
+
+        create table fee_schedules (
+            fee_id text primary key,
+            jurisdiction_code text not null references jurisdictions(jurisdiction_code),
+            fee_type text not null,
+            violation_code text,
+            statute text,
+            label text not null,
+            amount real not null,
+            effective_date text not null,
+            end_date text,
+            mandatory integer not null,
+            priority integer,
+            notes text
+        );
+
+        create table payment_policies (
+            policy_id text primary key,
+            jurisdiction_code text not null references jurisdictions(jurisdiction_code),
+            policy_name text not null,
+            min_monthly real,
+            max_monthly real,
+            down_payment_required integer,
+            first_due_days integer,
+            return_to_court_offset_days integer,
+            subsequent_petition_rule text,
+            account_fee real,
+            restitution_priority text,
+            notes text
+        );
+
+        create table form_catalog (
+            form_id text primary key,
+            jurisdiction_code text not null references jurisdictions(jurisdiction_code),
+            form_name text not null,
+            label text not null,
+            required_fields text not null,
+            placeholder_instruction text not null,
+            revision_date text,
+            source_url text
+        );
+
+        create table financial_petitions (
+            petition_id text primary key,
+            case_number text not null references cases(case_number),
+            jurisdiction_code text not null references jurisdictions(jurisdiction_code),
+            petitioner_name text not null,
+            petition_sequence text not null,
+            submitted_date text,
+            income_monthly real,
+            household_size integer,
+            obligations_monthly real,
+            public_assistance integer,
+            restitution_balance real,
+            fines_costs_balance real,
+            account_fee_applicable integer,
+            requested_monthly real,
+            approved_monthly real,
+            first_due_date text,
+            final_due_date text,
+            return_to_court_date text,
+            default_status text,
+            license_suspension_months integer,
+            probation_report_datetime text,
+            employment_status text,
+            notes text
+        );
+        """
+    )
 
 
-def current_fees_for(fee_schedules: list[dict], county: str, matter_type: str, effective_on: str) -> list[dict]:
-    target = parse_day(effective_on)
-    rows = []
-    for row in fee_schedules:
-        if row["county"] != county or row["matter_type"] != matter_type:
-            continue
-        start = parse_day(row["effective_start"])
-        end = parse_day(row["effective_end"]) if row["effective_end"] else None
-        if start <= target and (end is None or target <= end):
-            rows.append(row)
-    return rows
-
-
-def generate_financial_obligations(cases: list[dict], fee_schedules: list[dict], policies: list[dict]) -> list[dict]:
-    rng = random.Random(SEEDS["finance"])
-    policy_by_county = {row["county"]: row for row in policies}
-    obligations = []
-    for case in cases:
-        include = case["status"] not in {"open", "warrant"} or rng.random() < 0.70
-        if not include:
-            continue
-        order_date = case["disposition_date"] or add_days(case["filing_date"], rng.randint(35, 115))
-        fee_rows = current_fees_for(fee_schedules, case["county"], case["matter_type"], order_date)
-        mandatory = [row for row in fee_rows if row["mandatory"]]
-        optional = [row for row in fee_rows if not row["mandatory"]]
-        selected = mandatory + rng.sample(optional, min(len(optional), rng.randint(0, 2)))
-        if not selected:
-            selected = rng.sample(fee_rows, min(len(fee_rows), 2))
-        components = [
-            {
-                "fee_code": row["fee_code"],
-                "description": row["description"],
-                "amount": row["amount"],
-                "source_effective_start": row["effective_start"],
-            }
-            for row in selected
-        ]
-        principal = money(sum(item["amount"] for item in components) + float(case["restitution_ordered"]))
-        amount_paid = money(rng.uniform(0, principal)) if principal > 0 else 0.0
-        if case["status"] in {"satisfied", "closed"} and rng.random() < 0.45:
-            amount_paid = principal
-        balance = money(max(0.0, principal - amount_paid))
-        policy = policy_by_county[case["county"]]
-        monthly = None
-        if balance > 0:
-            monthly = money(
-                min(policy["max_monthly"], max(policy["min_monthly"], rng.choice([25, 35, 45, 60, 75, 90, 125])))
-            )
-        obligations.append(
-            {
-                "case_number": case["case_number"],
-                "county": case["county"],
-                "order_date": order_date,
-                "principal_amount": principal,
-                "fee_components": components,
-                "restitution_amount": case["restitution_ordered"],
-                "amount_paid": amount_paid,
-                "balance_due": balance,
-                "payment_plan": balance > 0 and rng.random() < 0.80,
-                "monthly_amount": monthly,
-                "next_due_date": add_days(order_date, policy["first_due_days_after_order"]) if balance > 0 else None,
-                "missed_payments": rng.choice([0, 0, 0, 1, 2]) if balance > 0 else 0,
-                "status": "paid" if balance == 0 else rng.choice(["current", "delinquent", "pending_adjustment"]),
-                "source": "live financial ledger",
-            }
-        )
-    return sorted(obligations, key=lambda row: row["case_number"])
-
-
-def generate_docket_entries(cases: list[dict]) -> list[dict]:
-    rng = random.Random(SEEDS["cases"] + 44)
-    rows = []
-    for case in cases:
-        entries = []
-        entry_date = case["filing_date"]
-        entries.append(
-            {
-                "entry_id": f"{case['case_number']}-D001",
-                "entry_date": entry_date,
-                "event_type": "filing",
-                "text": f"Complaint filed in {case['court']} for {case['matter_type']} matter.",
-                "entered_by": rng.choice(CLERKS),
-                "source": "live docket",
-            }
-        )
-        entries.append(
-            {
-                "entry_id": f"{case['case_number']}-D002",
-                "entry_date": add_days(entry_date, rng.randint(4, 18)),
-                "event_type": "appearance",
-                "text": f"Initial appearance; defense listed as {case['defense_type']}.",
-                "entered_by": rng.choice(CLERKS),
-                "source": "live docket",
-            }
-        )
-        if case["disposition_date"]:
-            entries.append(
-                {
-                    "entry_id": f"{case['case_number']}-D003",
-                    "entry_date": case["disposition_date"],
-                    "event_type": "disposition",
-                    "text": f"Disposition entered for {len(case['charges'])} charge records.",
-                    "entered_by": rng.choice(CLERKS),
-                    "source": "live docket",
-                }
-            )
-        if case["status"] in {"probation_active", "compliance_review", "warrant"}:
-            entries.append(
-                {
-                    "entry_id": f"{case['case_number']}-D004",
-                    "entry_date": add_days(case["disposition_date"] or case["filing_date"], rng.randint(20, 140)),
-                    "event_type": "review",
-                    "text": rng.choice(
-                        [
-                            "Payment review set; clerk note says amount should be verified against live ledger.",
-                            "Compliance review scheduled after provider notice.",
-                            "Attorney assignment changed in minute sheet but not on stale export.",
-                            "Return-to-court notice prepared; service status pending.",
-                        ]
-                    ),
-                    "entered_by": rng.choice(CLERKS),
-                    "source": "live docket",
-                }
-            )
-        if case["case_number"] in {"24-MAR-00305", "25-COL-00112", "24-BEN-00132"}:
-            entries.append(
-                {
-                    "entry_id": f"{case['case_number']}-D099",
-                    "entry_date": add_days(case["disposition_date"] or case["filing_date"], 3),
-                    "event_type": "correction",
-                    "text": "Corrected docket entry supersedes a prior clerk note that used an obsolete charge description.",
-                    "entered_by": "Dana Holt",
-                    "source": "live docket correction",
-                    "supersedes_entry_id": f"{case['case_number']}-D003",
-                }
-            )
-        rows.append(
-            {"case_number": case["case_number"], "entries": sorted(entries, key=lambda item: item["entry_date"])}
-        )
-    return sorted(rows, key=lambda row: row["case_number"])
-
-
-def generate_hearings(cases: list[dict], citations: list[dict]) -> list[dict]:
-    rng = random.Random(SEEDS["hearings"])
-    hearings = []
-    matters_by_county: dict[str, list[str]] = {row["county"]: [] for row in COUNTIES}
-    for case in cases:
-        matters_by_county[case["county"]].append(case["case_number"])
-    for citation in citations:
-        matters_by_county[citation["county"]].append(citation["citation_number"])
-
-    for index in range(1, 57):
-        county = rng.choice(COUNTIES)["county"]
-        hearing_date = random_day(rng, "2024-01-10", "2025-07-20")
-        candidates = matters_by_county[county]
-        matter_count = rng.choice([1, 1, 2, 2, 3, 4])
-        matters = sorted(rng.sample(candidates, min(len(candidates), matter_count)))
-        minute_entries = []
-        for matter in matters:
-            minute_entries.append(
-                {
-                    "matter_id": matter,
-                    "entry_type": rng.choice(["appearance", "plea", "review", "financial", "continuance"]),
-                    "note": rng.choice(
-                        [
-                            "Minute note contains abbreviated attorney initials; verify against live case record.",
-                            "Outcome entered from bench sheet; financial amount may be preliminary.",
-                            "Defendant name matches a similar record; check date of birth before filing.",
-                            "Hearing continued after docket call.",
-                            "Clerk flagged stale export discrepancy.",
-                        ]
-                    ),
-                    "status": rng.choice(["finalized", "draft", "needs_review"]),
-                }
-            )
-        hearings.append(
-            {
-                "hearing_id": f"HRG-{index:04d}",
-                "county": county,
-                "hearing_date": hearing_date,
-                "judge": rng.choice(JUDGES),
-                "clerk": rng.choice(CLERKS),
-                "matters": matters,
-                "minute_entries": minute_entries,
-            }
-        )
-
-    fixed_hearings = [
-        {
-            "hearing_id": "HRG-9001",
-            "county": "Marion",
-            "hearing_date": "2024-10-02",
-            "judge": "Hon. Amara Kline",
-            "clerk": "Dana Holt",
-            "matters": ["24-MAR-00305"],
-            "minute_entries": [
-                {
-                    "matter_id": "24-MAR-00305",
-                    "entry_type": "disposition",
-                    "note": "Bench sheet referenced amended count; live docket correction controls final charge description.",
-                    "status": "finalized",
-                }
-            ],
-        },
-        {
-            "hearing_id": "HRG-9002",
-            "county": "Columbia",
-            "hearing_date": "2025-04-04",
-            "judge": "Hon. Robert Vale",
-            "clerk": "Marcus Lee",
-            "matters": ["25-COL-00112"],
-            "minute_entries": [
-                {
-                    "matter_id": "25-COL-00112",
-                    "entry_type": "plea",
-                    "note": "Deferred entry accepted; treatment proof due before next review.",
-                    "status": "finalized",
-                }
-            ],
-        },
-    ]
-    hearings.extend(fixed_hearings)
-    return sorted(hearings, key=lambda row: (row["hearing_date"], row["county"], row["hearing_id"]))
-
-
-def stale_case_record(case: dict, rng: random.Random) -> dict:
-    stale = {
-        "source_type": "case",
-        "case_number": case["case_number"],
-        "county": case["county"],
-        "defendant_name": case["defendant_name"],
-        "status": case["status"],
-        "defense_attorney": case["defense_attorney"],
-        "balance_due_hint": None,
-        "known_conflict": rng.choice(
-            [
-                "status may be older than live docket",
-                "attorney may be prior assignment",
-                "balance is from a prior ledger batch",
-                "charge text may predate amendment",
-            ]
+def load_static_data(conn):
+    jurisdictions = [
+        (
+            "AR-RC",
+            "AR",
+            "Redwood",
+            "Redwood County Circuit Court",
+            "Circuit",
+            "AR_SENT_2025_REDWOOD",
+            1,
+            "Criminal/Finance",
+            "870-555-0181",
+            "America/Chicago",
         ),
-    }
-    if rng.random() < 0.45:
-        stale["status"] = rng.choice(["open", "closed", "pending", "review"])
-    if rng.random() < 0.35:
-        stale["defense_attorney"] = rng.choice(["Former Counsel", "Public Defender Pending", case["defense_attorney"]])
-    return stale
-
-
-def stale_citation_record(citation: dict, rng: random.Random) -> dict:
-    return {
-        "source_type": "citation",
-        "citation_number": citation["citation_number"],
-        "county": citation["county"],
-        "defendant_name": citation["defendant_name"],
-        "hearing_date": add_days(citation["hearing_date"], rng.choice([-7, -1, 0, 14])),
-        "disposition": rng.choice([citation["disposition"], "pending", "not_imported"]),
-        "known_conflict": "citation export may not include later plea or payment-plan action",
-    }
-
-
-def generate_stale_exports(cases: list[dict], citations: list[dict]) -> list[dict]:
-    rng = random.Random(SEEDS["stale_exports"])
-    exports = []
-    export_names = [
-        "case_status_roster",
-        "financial_ledger_snapshot",
-        "citation_hearing_calendar",
-        "attorney_assignment_export",
-        "probation_review_queue",
+        (
+            "AR-UC",
+            "AR",
+            "Union",
+            "Union County Circuit Court",
+            "Circuit",
+            "AR_SENT_2025_UNION",
+            1,
+            "Criminal",
+            "870-555-0220",
+            "America/Chicago",
+        ),
+        (
+            "AR-MC",
+            "AR",
+            "Madison",
+            "Madison County Circuit Court",
+            "Circuit",
+            "AR_SENT_2025_MADISON",
+            1,
+            "Criminal/Finance",
+            "479-555-0600",
+            "America/Chicago",
+        ),
+        (
+            "AR-LC",
+            "AR",
+            "Lake",
+            "Lake County Circuit Court",
+            "Circuit",
+            "AR_SENT_2025_LAKE",
+            1,
+            "Criminal",
+            "870-555-0320",
+            "America/Chicago",
+        ),
+        (
+            "OR22-JEFF",
+            "OR",
+            "Jefferson",
+            "22nd Judicial District - Jefferson County",
+            "Circuit",
+            "OR_SOF24_22JD",
+            1,
+            "Traffic Violations",
+            "541-555-1190",
+            "America/Los_Angeles",
+        ),
+        (
+            "OR27-CLAT",
+            "OR",
+            "Clatsop",
+            "27th Judicial District - Clatsop County",
+            "Circuit",
+            "OR_SOF25_27JD",
+            1,
+            "Traffic Violations",
+            "503-555-2200",
+            "America/Los_Angeles",
+        ),
+        (
+            "VA-GLO",
+            "VA",
+            "Gloucester",
+            "Gloucester County Circuit Court",
+            "Circuit",
+            "VA_GLO_PAY_2025",
+            1,
+            "Criminal/Financial",
+            "804-555-0716",
+            "America/New_York",
+        ),
+        (
+            "VA-HAM",
+            "VA",
+            "Hampton",
+            "Hampton Circuit Court",
+            "Circuit",
+            "VA_HAM_PAY_2025",
+            1,
+            "Criminal/Financial",
+            "757-555-1172",
+            "America/New_York",
+        ),
+        (
+            "OR19-LINN",
+            "OR",
+            "Linn",
+            "19th Judicial District - Linn County",
+            "Circuit",
+            "OR_SOF24_19JD",
+            1,
+            "Traffic Violations",
+            "541-555-4419",
+            "America/Los_Angeles",
+        ),
+        (
+            "AR-WC",
+            "AR",
+            "White",
+            "White County Circuit Court",
+            "Circuit",
+            "AR_SENT_2024_WHITE",
+            1,
+            "Criminal",
+            "501-555-0144",
+            "America/Chicago",
+        ),
     ]
-    for index in range(10):
-        county = COUNTIES[index % len(COUNTIES)]["county"]
-        name = export_names[index % len(export_names)]
-        county_cases = [row for row in cases if row["county"] == county]
-        county_citations = [row for row in citations if row["county"] == county]
-        records = []
-        if county_cases:
-            for case in rng.sample(county_cases, min(len(county_cases), rng.randint(5, 9))):
-                records.append(stale_case_record(case, rng))
-        if county_citations and name in {
-            "citation_hearing_calendar",
-            "financial_ledger_snapshot",
-            "case_status_roster",
-        }:
-            for citation in rng.sample(county_citations, min(len(county_citations), rng.randint(2, 5))):
-                records.append(stale_citation_record(citation, rng))
-        exports.append(
-            {
-                "county": county,
-                "name": name,
-                "export_date": random_day(rng, "2023-11-01", "2025-02-28"),
-                "records": records,
-            }
+    conn.executemany("insert into jurisdictions values (?,?,?,?,?,?,?,?,?,?)", jurisdictions)
+
+    fee_rows = [
+        (
+            "F-AR-RC-FILE-2025",
+            "AR-RC",
+            "court_cost",
+            None,
+            None,
+            "Circuit criminal court cost",
+            150,
+            "2025-01-01",
+            None,
+            1,
+            10,
+            "Current criminal court cost.",
+        ),
+        (
+            "F-AR-RC-PD-2025",
+            "AR-RC",
+            "user_fee",
+            None,
+            None,
+            "Public Defender User Fee",
+            200,
+            "2025-01-01",
+            None,
+            0,
+            30,
+            "Apply only when counsel is public defender, not appointed private counsel.",
+        ),
+        (
+            "F-AR-RC-DRUG-OLD",
+            "AR-RC",
+            "assessment",
+            None,
+            "Ark. Code 5-64",
+            "Drug Crime Assessment Fee",
+            125,
+            "2023-01-01",
+            "2024-12-31",
+            1,
+            20,
+            "Stale amount retained for audit history.",
+        ),
+        (
+            "F-AR-RC-DRUG-2025",
+            "AR-RC",
+            "assessment",
+            None,
+            "Ark. Code 5-64",
+            "Drug Crime Assessment Fee",
+            250,
+            "2025-01-01",
+            None,
+            1,
+            20,
+            "Current amount for 2025 dispositions.",
+        ),
+        (
+            "F-AR-UC-FILE-2025",
+            "AR-UC",
+            "court_cost",
+            None,
+            None,
+            "Circuit criminal court cost",
+            150,
+            "2025-01-01",
+            None,
+            1,
+            10,
+            "County standard.",
+        ),
+        (
+            "F-AR-UC-LAB-2025",
+            "AR-UC",
+            "assessment",
+            None,
+            "Ark. Code 12-12",
+            "Crime Laboratory Fee",
+            75,
+            "2025-01-01",
+            None,
+            1,
+            25,
+            "Mandatory for controlled substance counts.",
+        ),
+        (
+            "F-AR-MC-FILE-2025",
+            "AR-MC",
+            "court_cost",
+            None,
+            None,
+            "Circuit criminal court cost",
+            155,
+            "2025-01-01",
+            None,
+            1,
+            10,
+            "Madison County local schedule.",
+        ),
+        (
+            "F-AR-LC-FILE-2025",
+            "AR-LC",
+            "court_cost",
+            None,
+            None,
+            "Circuit criminal court cost",
+            145,
+            "2025-01-01",
+            None,
+            1,
+            10,
+            "Lake County local schedule.",
+        ),
+        (
+            "F-OR22-100-OLD",
+            "OR22-JEFF",
+            "standard_fine",
+            "ORS_811_109_100PLUS",
+            "ORS 811.109(5)",
+            "Speeding 100 mph or greater",
+            1000,
+            "2022-01-01",
+            "2023-12-31",
+            1,
+            1,
+            "Stale SOF amount.",
+        ),
+        (
+            "F-OR22-100-2024",
+            "OR22-JEFF",
+            "standard_fine",
+            "ORS_811_109_100PLUS",
+            "ORS 811.109(5)",
+            "Speeding 100 mph or greater",
+            1150,
+            "2024-01-01",
+            None,
+            1,
+            1,
+            "SOF24 standard fine, not statutory maximum.",
+        ),
+        (
+            "F-OR22-31-2024",
+            "OR22-JEFF",
+            "standard_fine",
+            "ORS_811_109_31_40",
+            "ORS 811.109",
+            "Speeding 31 to 40 mph over limit",
+            440,
+            "2024-01-01",
+            None,
+            1,
+            1,
+            "SOF24 tier.",
+        ),
+        (
+            "F-OR22-SUR-2024",
+            "OR22-JEFF",
+            "county_surcharge",
+            None,
+            None,
+            "Jefferson County traffic surcharge",
+            5,
+            "2024-01-01",
+            None,
+            1,
+            2,
+            "Add once per citation.",
+        ),
+        (
+            "F-OR27-100-2025",
+            "OR27-CLAT",
+            "standard_fine",
+            "ORS_811_109_100PLUS",
+            "ORS 811.109(5)",
+            "Speeding 100 mph or greater",
+            1200,
+            "2025-01-01",
+            None,
+            1,
+            1,
+            "Local 2025 schedule.",
+        ),
+        (
+            "F-OR27-21-2025",
+            "OR27-CLAT",
+            "standard_fine",
+            "ORS_811_109_21_30",
+            "ORS 811.109",
+            "Speeding 21 to 30 mph over limit",
+            265,
+            "2025-01-01",
+            None,
+            1,
+            1,
+            "Local 2025 schedule.",
+        ),
+        (
+            "F-OR27-SUR-2025",
+            "OR27-CLAT",
+            "county_surcharge",
+            None,
+            None,
+            "Clatsop County traffic surcharge",
+            10,
+            "2025-01-01",
+            None,
+            1,
+            2,
+            "Add once per citation.",
+        ),
+        (
+            "F-VA-GLO-COST-2025",
+            "VA-GLO",
+            "court_cost",
+            None,
+            None,
+            "Circuit court costs",
+            160,
+            "2025-01-01",
+            None,
+            1,
+            10,
+            "Court costs for criminal conviction.",
+        ),
+        (
+            "F-VA-HAM-COST-2025",
+            "VA-HAM",
+            "court_cost",
+            None,
+            None,
+            "Circuit court costs",
+            180,
+            "2025-01-01",
+            None,
+            1,
+            10,
+            "Hampton court costs.",
+        ),
+        (
+            "F-VA-HAM-ACCT-2025",
+            "VA-HAM",
+            "account_fee",
+            None,
+            None,
+            "Account management fee",
+            25,
+            "2025-01-01",
+            None,
+            0,
+            60,
+            "Charged only when policy flags account fee.",
+        ),
+    ]
+    conn.executemany("insert into fee_schedules values (?,?,?,?,?,?,?,?,?,?,?,?)", fee_rows)
+
+    policies = [
+        (
+            "POL-OR22-EPP",
+            "OR22-JEFF",
+            "Extended payment plan",
+            50,
+            100,
+            0,
+            33,
+            30,
+            "New petition allowed after default review; no automatic DMV or collection fee.",
+            0,
+            "Not applicable",
+            "First due date is usually the 15th of the next month if set after disposition.",
+        ),
+        (
+            "POL-OR27-EPP",
+            "OR27-CLAT",
+            "Extended payment plan",
+            40,
+            125,
+            0,
+            30,
+            35,
+            "Second request requires clerk supervisor notation.",
+            0,
+            "Not applicable",
+            "Use citation number as account reference.",
+        ),
+        (
+            "POL-VA-GLO-FIRST",
+            "VA-GLO",
+            "First petition installment order",
+            50,
+            100,
+            0,
+            30,
+            60,
+            "Subsequent petition requires court appearance unless clerk grants same-day correction.",
+            0,
+            "Restitution before fines and costs",
+            "Use monthly amount that fits disposable income; unknown identifiers remain TBD from case file.",
+        ),
+        (
+            "POL-VA-HAM-FIRST",
+            "VA-HAM",
+            "First petition installment order",
+            75,
+            150,
+            0,
+            30,
+            60,
+            "Second petition requires judge review and return-to-court date.",
+            25,
+            "Restitution before fines and costs",
+            "Account fee may apply on non-indigent cases.",
+        ),
+        (
+            "POL-AR-RC-CRIM",
+            "AR-RC",
+            "Criminal financial entry",
+            25,
+            250,
+            0,
+            30,
+            45,
+            "Court may convert to show-cause after missed payment.",
+            0,
+            "Restitution before discretionary fines",
+            "Apply only fees effective on disposition date.",
+        ),
+    ]
+    conn.executemany("insert into payment_policies values (?,?,?,?,?,?,?,?,?,?,?,?)", policies)
+
+    forms = [
+        (
+            "AR_SENT_ORDER",
+            "AR-RC",
+            "Arkansas Sentencing Order",
+            "Sentencing Order",
+            ["case_number", "defendant_name", "dob", "charges", "sentence", "fees"],
+            "Use case file value for unknown identifiers; do not resolve with assumptions.",
+            "2025-02-01",
+            "internal://forms/ar_sent_order",
+        ),
+        (
+            "OR_22JD_PLAN",
+            "OR22-JEFF",
+            "22nd Judicial District Extended Payment Plan",
+            "Extended Payment Plan Agreement",
+            ["citation_number", "defendant_name", "total_due", "monthly_payment", "first_due_date"],
+            "Leave unavailable address or phone as blank/TBD per citation file.",
+            "2024-03-12",
+            "internal://forms/or_22jd_plan",
+        ),
+        (
+            "OR_27JD_PLAN",
+            "OR27-CLAT",
+            "27th Judicial District Extended Payment Plan",
+            "Payment Plan Agreement",
+            ["citation_number", "account_reference", "amount_due", "payment_schedule"],
+            "Use citation number as account reference unless court account exists.",
+            "2025-01-10",
+            "internal://forms/or_27jd_plan",
+        ),
+        (
+            "VA_CC1375",
+            "VA-GLO",
+            "Notice of Referral to Probation Officer",
+            "CC-1375 Probation Referral",
+            ["case_number", "defendant_name", "conviction_date", "report_datetime", "probation_term"],
+            "Unknown SSN, address, phone, and license number must be TBD from case file.",
+            "2024-07-01",
+            "internal://forms/va_cc1375",
+        ),
+        (
+            "VA_CC1379",
+            "VA-GLO",
+            "License Suspension and Installment Payment Order",
+            "CC-1379 Installment/License Order",
+            ["case_number", "license_suspension", "total_due", "installment_amount", "return_to_court_date"],
+            "Do not invent driver license number; use TBD from case file.",
+            "2024-07-01",
+            "internal://forms/va_cc1379",
+        ),
+        (
+            "VA_HAM_CC1379",
+            "VA-HAM",
+            "License Suspension and Installment Payment Order",
+            "CC-1379 Installment/License Order",
+            ["case_number", "license_suspension", "total_due", "installment_amount", "account_fee"],
+            "Use Hampton local account-fee policy before marking fee due.",
+            "2025-01-01",
+            "internal://forms/va_ham_cc1379",
+        ),
+    ]
+    conn.executemany(
+        "insert into form_catalog values (?,?,?,?,?,?,?,?)",
+        [
+            (fid, jur, name, label, json.dumps(fields), instruction, rev, url)
+            for fid, jur, name, label, fields, instruction, rev, url in forms
+        ],
+    )
+
+
+def load_target_records(conn):
+    case_specs = [
+        (
+            "RC-25-0412",
+            "AR-RC",
+            "criminal",
+            "Evan",
+            "Simmons",
+            "1991-04-18",
+            "2025-02-14",
+            "2025-06-09",
+            "disposed",
+            "appointed_private",
+            "Lena Ortiz",
+            "Whitfield",
+            "K. Shaw",
+            "AOC-CMS",
+            "2025-06-09T16:24:00",
+            "APPT PRIVATE - county pay",
+            "Defense memo confirms DOB; appointed private counsel is not public defender fee eligible.",
+            "P-00412",
+        ),
+        (
+            "RC-25-0418",
+            "AR-RC",
+            "criminal",
+            "Marisol",
+            "Vega",
+            "1988-11-22",
+            "2025-02-19",
+            "2025-06-09",
+            "disposed",
+            "public_defender",
+            "C. Hill",
+            "Whitfield",
+            "K. Shaw",
+            "AOC-CMS",
+            "2025-06-09T16:27:00",
+            "PD",
+            "Controlled substance conviction; drug assessment must use 2025 fee schedule.",
+            "P-00418",
+        ),
+        (
+            "RC-24-0987",
+            "AR-RC",
+            "criminal",
+            "Tanya",
+            "Morales",
+            "1979-07-03",
+            "2024-12-16",
+            "2025-06-09",
+            "disposed",
+            "retained",
+            "James Pell",
+            "Whitfield",
+            "K. Shaw",
+            "Legacy-CMS",
+            "2025-06-09T15:58:00",
+            "RET",
+            "Judge noted top-of-range sentence but no departure finding.",
+            "P-00987",
+        ),
+        (
+            "RC-25-0502",
+            "AR-RC",
+            "criminal",
+            "Nolan",
+            "Reed",
+            "2000-01-09",
+            "2025-03-03",
+            "2025-06-09",
+            "deferred",
+            "public_defender",
+            "C. Hill",
+            "Whitfield",
+            "K. Shaw",
+            "AOC-CMS",
+            "2025-06-09T16:31:00",
+            "PD conflict label on intake",
+            "Docket has unsigned draft disposition; final entry should remain deferred until order signed.",
+            "P-00502",
+        ),
+        (
+            "UC-25-0221",
+            "AR-UC",
+            "criminal",
+            "Iris",
+            "Dawson",
+            "1995-03-12",
+            "2025-01-22",
+            "2025-05-20",
+            "disposed",
+            "retained",
+            "Mark Trent",
+            "Holland",
+            "P. Vance",
+            "AOC-CMS",
+            "2025-05-20T13:10:00",
+            "RET",
+            "Plea to amended count one.",
+            "U-0221",
+        ),
+        (
+            "UC-25-0224",
+            "AR-UC",
+            "criminal",
+            "Andre",
+            "Price",
+            "1984-08-02",
+            "2025-01-23",
+            "2025-05-20",
+            "disposed",
+            "public_defender",
+            "N. Brooks",
+            "Holland",
+            "P. Vance",
+            "AOC-CMS",
+            "2025-05-20T13:21:00",
+            "PD",
+            "Lab fee applies to controlled-substance charge.",
+            "U-0224",
+        ),
+        (
+            "UC-25-0230",
+            "AR-UC",
+            "criminal",
+            "Helena",
+            "Cross",
+            None,
+            "2025-01-29",
+            "2025-05-20",
+            "disposed",
+            "retained",
+            "M. Vail",
+            "Holland",
+            "P. Vance",
+            "AOC-CMS",
+            "2025-05-20T13:38:00",
+            "RET - DOB missing",
+            "DOB missing in CMS; docket note says verify from paper file.",
+            "U-0230",
+        ),
+        (
+            "UC-24-0775",
+            "AR-UC",
+            "criminal",
+            "Rafael",
+            "King",
+            "1990-05-30",
+            "2024-11-01",
+            "2025-05-20",
+            "disposed",
+            "appointed_private",
+            "J. Sale",
+            "Holland",
+            "P. Vance",
+            "Legacy-CMS",
+            "2025-05-20T12:58:00",
+            "APD",
+            "Attorney label resembles public defender but memo identifies appointed private counsel.",
+            "U-0775",
+        ),
+        (
+            "UC-25-0238",
+            "AR-UC",
+            "criminal",
+            "Mei",
+            "Lin",
+            "2002-12-11",
+            "2025-02-03",
+            None,
+            "pending",
+            "public_defender",
+            "N. Brooks",
+            "Holland",
+            "P. Vance",
+            "AOC-CMS",
+            "2025-05-20T13:59:00",
+            "PD",
+            "Hearing continued; no disposition entry yet.",
+            "U-0238",
+        ),
+        (
+            "MC-25-0601",
+            "AR-MC",
+            "criminal",
+            "Caleb",
+            "Foster",
+            "1987-02-18",
+            "2025-04-01",
+            "2025-07-14",
+            "disposed",
+            "public_defender",
+            "A. Mays",
+            "Sutton",
+            "B. Rios",
+            "AOC-CMS",
+            "2025-07-14T14:06:00",
+            "PD",
+            "Current fee schedule differs from old local worksheet.",
+            "M-0601",
+        ),
+        (
+            "MC-25-0604",
+            "AR-MC",
+            "criminal",
+            "Priya",
+            "Shah",
+            "1993-09-20",
+            "2025-04-02",
+            "2025-07-14",
+            "disposed",
+            "retained",
+            "C. Adler",
+            "Sutton",
+            "B. Rios",
+            "AOC-CMS",
+            "2025-07-14T14:11:00",
+            "RET",
+            "Sentence includes suspended jail term.",
+            "M-0604",
+        ),
+        (
+            "MC-24-1109",
+            "AR-MC",
+            "criminal",
+            "Darren",
+            "Mills",
+            "1975-06-02",
+            "2024-10-21",
+            "2025-07-14",
+            "disposed",
+            "appointed_private",
+            "L. Neff",
+            "Sutton",
+            "B. Rios",
+            "Legacy-CMS",
+            "2025-07-14T13:55:00",
+            "APPT",
+            "Criminal history note conflicts with legacy worksheet.",
+            "M-1109",
+        ),
+        (
+            "MC-25-0618",
+            "AR-MC",
+            "criminal",
+            "Ari",
+            "Gomez",
+            "1999-01-16",
+            "2025-04-18",
+            None,
+            "pending",
+            "public_defender",
+            "A. Mays",
+            "Sutton",
+            "B. Rios",
+            "AOC-CMS",
+            "2025-07-14T14:25:00",
+            "PD",
+            "Draft plea paperwork uploaded, no signed order.",
+            "M-0618",
+        ),
+        (
+            "MC-25-0622",
+            "AR-MC",
+            "criminal",
+            "Lydia",
+            "Cho",
+            "1981-12-08",
+            "2025-04-22",
+            "2025-07-14",
+            "disposed",
+            "retained",
+            "R. Kent",
+            "Sutton",
+            "B. Rios",
+            "AOC-CMS",
+            "2025-07-14T14:37:00",
+            "RET",
+            "Fine waived except mandatory costs.",
+            "M-0622",
+        ),
+        (
+            "LC-25-0320",
+            "AR-LC",
+            "criminal",
+            "Noah",
+            "Baird",
+            "1996-10-03",
+            "2025-02-20",
+            "2025-06-18",
+            "disposed",
+            "retained",
+            "D. Wray",
+            "Mercer",
+            "S. Quinn",
+            "AOC-CMS",
+            "2025-06-18T15:05:00",
+            "RET",
+            "Counts two and three merged for disposition.",
+            "L-0320",
+        ),
+        (
+            "LC-25-0326",
+            "AR-LC",
+            "criminal",
+            "Amina",
+            "Cole",
+            "1989-04-25",
+            "2025-02-21",
+            "2025-06-18",
+            "disposed",
+            "public_defender",
+            "E. Soto",
+            "Mercer",
+            "S. Quinn",
+            "AOC-CMS",
+            "2025-06-18T15:16:00",
+            "PD",
+            "Public defender user fee pending judicial waiver note.",
+            "L-0326",
+        ),
+        (
+            "LC-24-0899",
+            "AR-LC",
+            "criminal",
+            "Kellan",
+            "Stone",
+            "1978-01-14",
+            "2024-12-08",
+            "2025-06-18",
+            "disposed",
+            "appointed_private",
+            "B. Vale",
+            "Mercer",
+            "S. Quinn",
+            "Legacy-CMS",
+            "2025-06-18T14:52:00",
+            "APD private",
+            "Legacy counsel code is ambiguous; docket clarifies appointed private counsel.",
+            "L-0899",
+        ),
+        (
+            "LC-25-0331",
+            "AR-LC",
+            "criminal",
+            "Selena",
+            "Park",
+            "2001-05-07",
+            "2025-02-28",
+            None,
+            "continued",
+            "public_defender",
+            "E. Soto",
+            "Mercer",
+            "S. Quinn",
+            "AOC-CMS",
+            "2025-06-18T15:40:00",
+            "PD",
+            "No final disposition; next hearing scheduled.",
+            "L-0331",
+        ),
+        (
+            "VA-CR24-0716-00",
+            "VA-GLO",
+            "criminal",
+            "Jordan",
+            "Mason",
+            "1990-02-09",
+            "2024-08-12",
+            "2024-09-18",
+            "disposed",
+            "retained",
+            "R. Blake",
+            "Long",
+            "Commonwealth",
+            "VACMS",
+            "2024-10-10T09:31:00",
+            "RET",
+            "DUI first offense; referral report date and payment petition are linked.",
+            "VA0716",
+        ),
+        (
+            "VA-CR25-0884-00",
+            "VA-GLO",
+            "criminal",
+            "Lena",
+            "Walsh",
+            "1986-07-29",
+            "2025-01-30",
+            "2025-03-11",
+            "disposed",
+            "public_defender",
+            "G. Ellis",
+            "Long",
+            "Commonwealth",
+            "VACMS",
+            "2025-03-12T10:20:00",
+            "PD",
+            "License suspension and first payment petition filed same day.",
+            "VA0884",
+        ),
+        (
+            "VA-CR25-0913-00",
+            "VA-GLO",
+            "criminal",
+            "Marcus",
+            "Hill",
+            "1979-11-04",
+            "2025-02-06",
+            "2025-03-17",
+            "disposed",
+            "retained",
+            "L. Ames",
+            "Long",
+            "Commonwealth",
+            "VACMS",
+            "2025-03-18T11:02:00",
+            "RET",
+            "Restitution balance changes installment priority.",
+            "VA0913",
+        ),
+        (
+            "VA-CR25-1044-00",
+            "VA-GLO",
+            "criminal",
+            "Talia",
+            "Nguyen",
+            "1992-06-16",
+            "2025-04-03",
+            "2025-05-08",
+            "disposed",
+            "retained",
+            "M. Cline",
+            "Long",
+            "Commonwealth",
+            "VACMS",
+            "2025-05-09T09:12:00",
+            "RET",
+            "First petition with limited household income and license suspension.",
+            "VA1044",
+        ),
+        (
+            "VA-CR25-1172-00",
+            "VA-HAM",
+            "criminal",
+            "Owen",
+            "Reeves",
+            "1983-03-28",
+            "2025-05-01",
+            "2025-06-06",
+            "disposed",
+            "public_defender",
+            "T. Nolan",
+            "Pierce",
+            "Commonwealth",
+            "VACMS",
+            "2025-06-09T13:45:00",
+            "PD",
+            "Second petition after default; account fee waived.",
+            "VA1172",
+        ),
+        (
+            "VA-CR25-1186-00",
+            "VA-HAM",
+            "criminal",
+            "Camila",
+            "Ortiz",
+            "1997-12-19",
+            "2025-05-08",
+            "2025-06-06",
+            "disposed",
+            "retained",
+            "D. Hsu",
+            "Pierce",
+            "Commonwealth",
+            "VACMS",
+            "2025-06-09T14:02:00",
+            "RET",
+            "First petition; account fee applies under Hampton policy.",
+            "VA1186",
+        ),
+    ]
+    conn.executemany("insert into cases values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", case_specs)
+
+    for idx, case in enumerate(case_specs, start=1):
+        add_charge_for_case(conn, case[0], idx)
+        add_dockets_for_case(conn, case[0], case[7], case[8], case[15])
+
+    citations = [
+        (
+            "OR26-TR-1188",
+            "OR22-JEFF",
+            "Sarah Benton",
+            "1998-02-14",
+            "ORS_811_109_100PLUS",
+            "ORS 811.109(5)",
+            "Speeding 100 mph or greater",
+            "2026-10-02",
+            "2026-11-12",
+            "no contest",
+            "violation found",
+            103,
+            65,
+            "D. Ramos",
+            1150,
+            5,
+            1155,
+            1,
+            50,
+            "2026-12-15",
+            5,
+            "23 payments of 50 and final payment of 5.",
+            "disposed",
+        ),
+        (
+            "OR26-TR-1194",
+            "OR22-JEFF",
+            "Jonah Merritt",
+            "1985-07-11",
+            "ORS_811_109_31_40",
+            "ORS 811.109",
+            "Speeding 31 to 40 mph over limit",
+            "2026-10-04",
+            "2026-11-12",
+            "no contest",
+            "violation found",
+            91,
+            55,
+            "A. Moore",
+            440,
+            5,
+            445,
+            1,
+            55,
+            "2026-12-15",
+            5,
+            "Eight monthly payments of 55 and final payment of 5.",
+            "disposed",
+        ),
+        (
+            "OR27-TR-2201",
+            "OR27-CLAT",
+            "Mina Patel",
+            "1991-03-22",
+            "ORS_811_109_100PLUS",
+            "ORS 811.109(5)",
+            "Speeding 100 mph or greater",
+            "2027-02-18",
+            "2027-03-24",
+            "no contest",
+            "violation found",
+            104,
+            65,
+            "J. Pike",
+            1200,
+            10,
+            1210,
+            1,
+            110,
+            "2027-04-23",
+            0,
+            "Eleven monthly payments of 110.",
+            "disposed",
+        ),
+        (
+            "OR27-TR-2208",
+            "OR27-CLAT",
+            "Victor Lane",
+            "1977-09-09",
+            "ORS_811_109_21_30",
+            "ORS 811.109",
+            "Speeding 21 to 30 mph over limit",
+            "2027-02-21",
+            "2027-03-24",
+            "guilty",
+            "violation found",
+            81,
+            55,
+            "J. Pike",
+            265,
+            10,
+            275,
+            1,
+            55,
+            "2027-04-23",
+            0,
+            "Five monthly payments of 55.",
+            "disposed",
+        ),
+        (
+            "OR27-TR-2219",
+            "OR27-CLAT",
+            "Leah Crane",
+            "2000-05-17",
+            "ORS_811_109_100PLUS",
+            "ORS 811.109(5)",
+            "Speeding 100 mph or greater",
+            "2027-02-25",
+            "2027-03-24",
+            "not guilty",
+            "dismissed by court",
+            101,
+            65,
+            "M. Yates",
+            0,
+            0,
+            0,
+            0,
+            None,
+            None,
+            None,
+            "Dismissed; no plan despite citation being in high-speed batch.",
+            "closed",
+        ),
+    ]
+    conn.executemany("insert into citations values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", citations)
+
+    petitions = [
+        (
+            "VA-PET-716A",
+            "VA-CR24-0716-00",
+            "VA-GLO",
+            "Jordan Mason",
+            "first",
+            "2024-10-10",
+            1920,
+            1,
+            1340,
+            0,
+            0,
+            1260,
+            0,
+            75,
+            75,
+            "2024-11-09",
+            "2026-03-09",
+            "2026-05-08",
+            "current",
+            12,
+            "2024-10-10T09:00:00",
+            "employed",
+            "Use TBD from case file for SSN, address, phone, and driver license.",
+        ),
+        (
+            "VA-PET-884A",
+            "VA-CR25-0884-00",
+            "VA-GLO",
+            "Lena Walsh",
+            "first",
+            "2025-03-12",
+            2250,
+            2,
+            1710,
+            0,
+            0,
+            1435,
+            0,
+            85,
+            85,
+            "2025-04-11",
+            "2026-08-11",
+            "2026-10-10",
+            "current",
+            12,
+            "2025-03-14T08:30:00",
+            "employed",
+            "Clerk note says no account-management fee under Gloucester policy.",
+        ),
+        (
+            "VA-PET-913A",
+            "VA-CR25-0913-00",
+            "VA-GLO",
+            "Marcus Hill",
+            "first",
+            "2025-03-18",
+            1680,
+            3,
+            1515,
+            1,
+            360,
+            1180,
+            0,
+            50,
+            50,
+            "2025-04-17",
+            "2027-10-17",
+            "2027-12-16",
+            "current",
+            6,
+            "2025-03-20T10:00:00",
+            "part-time",
+            "Restitution must be prioritized before fines and costs.",
+        ),
+        (
+            "VA-PET-1044A",
+            "VA-CR25-1044-00",
+            "VA-GLO",
+            "Talia Nguyen",
+            "first",
+            "2025-05-09",
+            2050,
+            2,
+            1785,
+            0,
+            0,
+            980,
+            0,
+            60,
+            60,
+            "2025-06-08",
+            "2026-10-08",
+            "2026-12-07",
+            "current",
+            12,
+            "2025-05-12T09:30:00",
+            "employed",
+            "Low disposable income; requested amount exceeds prudent policy band.",
+        ),
+        (
+            "VA-PET-1172B",
+            "VA-CR25-1172-00",
+            "VA-HAM",
+            "Owen Reeves",
+            "second",
+            "2025-06-10",
+            1450,
+            1,
+            1320,
+            1,
+            240,
+            890,
+            0,
+            75,
+            75,
+            "2025-07-10",
+            "2026-09-10",
+            "2026-11-09",
+            "default review",
+            6,
+            "2025-06-12T13:00:00",
+            "seasonal",
+            "Second petition after missed May payment; judge review required if terms change.",
+        ),
+        (
+            "VA-PET-1186A",
+            "VA-CR25-1186-00",
+            "VA-HAM",
+            "Camila Ortiz",
+            "first",
+            "2025-06-10",
+            3180,
+            1,
+            1805,
+            0,
+            0,
+            1560,
+            1,
+            125,
+            125,
+            "2025-07-10",
+            "2026-07-10",
+            "2026-09-08",
+            "current",
+            12,
+            "2025-06-13T09:00:00",
+            "employed",
+            "Account fee applies because petition is non-indigent and retained counsel.",
+        ),
+    ]
+    conn.executemany(
+        "insert into financial_petitions values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", petitions
+    )
+
+
+def load_background_records(conn):
+    first_names = [
+        "Avery",
+        "Blake",
+        "Casey",
+        "Devon",
+        "Emery",
+        "Finley",
+        "Gray",
+        "Harper",
+        "Indigo",
+        "Jamie",
+        "Kai",
+        "Logan",
+        "Morgan",
+        "Nico",
+        "Parker",
+        "Quinn",
+        "Riley",
+        "Skyler",
+        "Taylor",
+        "Vale",
+    ]
+    last_names = [
+        "Adams",
+        "Baker",
+        "Chen",
+        "Diaz",
+        "Evans",
+        "Flores",
+        "Grant",
+        "Hayes",
+        "Irwin",
+        "Jones",
+        "Kim",
+        "Lopez",
+        "Moore",
+        "Novak",
+        "Owens",
+        "Price",
+        "Reed",
+        "Singh",
+        "Turner",
+        "Young",
+    ]
+    criminal_jurs = ["AR-RC", "AR-UC", "AR-MC", "AR-LC", "AR-WC"]
+    statuses = ["disposed", "pending", "closed", "continued", "deferred"]
+    counsels = ["public_defender", "retained", "appointed_private", "unknown"]
+    judges = ["Whitfield", "Holland", "Sutton", "Mercer", "Benton"]
+
+    used_cases = set(flatten_targets("cases"))
+    for idx in range(1, 86):
+        jur = random.choice(criminal_jurs)
+        prefix = jur.split("-")[1]
+        year = random.choice(["23", "24", "25"])
+        case_number = f"{prefix}-{year}-{7000 + idx:04d}"
+        if case_number in used_cases:
+            continue
+        first = random.choice(first_names)
+        last = random.choice(last_names)
+        filed_year = "20" + year
+        status = random.choices(statuses, weights=[5, 2, 2, 1, 1])[0]
+        disposition = (
+            None
+            if status in {"pending", "continued"}
+            else f"2025-{random.randint(1, 7):02d}-{random.randint(1, 26):02d}"
         )
-    return sorted(exports, key=lambda row: (row["county"], row["name"], row["export_date"]))
+        dob = (
+            None
+            if random.random() < 0.08
+            else f"{random.randint(1970, 2004)}-{random.randint(1, 12):02d}-{random.randint(1, 27):02d}"
+        )
+        row = (
+            case_number,
+            jur,
+            "criminal",
+            first,
+            last,
+            dob,
+            f"{filed_year}-{random.randint(1, 12):02d}-{random.randint(1, 27):02d}",
+            disposition,
+            status,
+            random.choice(counsels),
+            random.choice(["A. Cole", "B. Lin", "C. Ray", "D. Fox", None]),
+            random.choice(judges),
+            random.choice(["K. Shaw", "P. Vance", "B. Rios", "S. Quinn"]),
+            random.choice(["AOC-CMS", "Legacy-CMS", "Intake queue"]),
+            f"2025-07-{random.randint(1, 18):02d}T{random.randint(8, 17):02d}:{random.randint(0, 59):02d}:00",
+            random.choice(["PD", "RET", "APD", "APPT PRIVATE", "UNK"]),
+            random.choice(
+                [
+                    "Old docket entry retained for history.",
+                    "Intake address missing.",
+                    "Similar defendant name appears in closed archive.",
+                    "Financial worksheet is stale.",
+                    "",
+                ]
+            ),
+            f"BG-{idx:04d}",
+        )
+        conn.execute("insert into cases values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
+        add_charge_for_case(conn, case_number, 1000 + idx)
+        if random.random() < 0.45:
+            add_charge_for_case(conn, case_number, 2000 + idx, count_no=2)
+        add_dockets_for_case(conn, case_number, row[7], row[8], row[15])
+
+    traffic_jurs = ["OR22-JEFF", "OR27-CLAT", "OR19-LINN"]
+    used_cites = set(flatten_targets("citations"))
+    for idx in range(1, 101):
+        jur = random.choice(traffic_jurs)
+        cite = f"OR{random.choice(['25', '26', '27'])}-TR-{3000 + idx:04d}"
+        if idx in {8, 19}:
+            cite = f"OR27-TR-22{idx:02d}A"
+        if cite in used_cites:
+            continue
+        zone = random.choice([45, 55, 65])
+        speed = zone + random.choice([12, 18, 25, 34, 42, 101 - zone])
+        code = "ORS_811_109_100PLUS" if speed >= 100 else random.choice(["ORS_811_109_21_30", "ORS_811_109_31_40"])
+        standard, surcharge = fine_for_citation(jur, code)
+        dismissed = random.random() < 0.12
+        amount = 0 if dismissed else standard + surcharge
+        monthly = random.choice([40, 50, 55, 75, 100]) if amount and random.random() < 0.65 else None
+        final = None if monthly in (None, 0) else round(amount % monthly, 2)
+        if final == 0:
+            final = 0
+        row = (
+            cite,
+            jur,
+            f"{random.choice(first_names)} {random.choice(last_names)}",
+            f"{random.randint(1970, 2005)}-{random.randint(1, 12):02d}-{random.randint(1, 27):02d}",
+            code,
+            "ORS 811.109",
+            "Speeding violation",
+            f"2026-{random.randint(1, 12):02d}-{random.randint(1, 27):02d}",
+            f"2026-{random.randint(1, 12):02d}-{random.randint(1, 27):02d}",
+            random.choice(["no contest", "guilty", "not guilty"]),
+            "dismissed by court" if dismissed else "violation found",
+            speed,
+            zone,
+            random.choice(["A. Moore", "D. Ramos", "J. Pike", "M. Yates"]),
+            0 if dismissed else standard,
+            0 if dismissed else surcharge,
+            amount,
+            0 if dismissed else int(monthly is not None),
+            monthly,
+            None if monthly is None else "2026-12-15",
+            final,
+            random.choice(
+                [
+                    "No address on scanned citation.",
+                    "Duplicate-like citation number nearby.",
+                    "Officer amended speed at hearing.",
+                    "",
+                ]
+            ),
+            "closed" if dismissed else "disposed",
+        )
+        conn.execute("insert into citations values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
+
+    used_petitions = set(flatten_targets("petitions"))
+    for idx in range(1, 51):
+        case_no = f"VA-CR25-{2000 + idx:04d}-00"
+        petition = f"VA-PET-{2000 + idx}A"
+        if petition in used_petitions:
+            continue
+        jur = random.choice(["VA-GLO", "VA-HAM"])
+        first = random.choice(first_names)
+        last = random.choice(last_names)
+        conn.execute(
+            "insert into cases values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                case_no,
+                jur,
+                "criminal",
+                first,
+                last,
+                f"{random.randint(1970, 2002)}-{random.randint(1, 12):02d}-{random.randint(1, 27):02d}",
+                f"2025-{random.randint(1, 5):02d}-{random.randint(1, 27):02d}",
+                f"2025-{random.randint(2, 6):02d}-{random.randint(1, 27):02d}",
+                "disposed",
+                random.choice(["public_defender", "retained"]),
+                random.choice(["G. Ellis", "L. Ames", "D. Hsu"]),
+                random.choice(["Long", "Pierce"]),
+                "Commonwealth",
+                "VACMS",
+                f"2025-06-{random.randint(1, 18):02d}T10:00:00",
+                random.choice(["PD", "RET"]),
+                random.choice(
+                    ["Missing phone number.", "Old DC-211 scan attached.", "Payment policy note needs review.", ""]
+                ),
+                f"VA-BG-{idx:04d}",
+            ),
+        )
+        add_charge_for_case(conn, case_no, 3000 + idx)
+        add_dockets_for_case(conn, case_no, f"2025-06-{random.randint(1, 18):02d}", "disposed", "")
+        income = random.randint(1200, 3600)
+        obligations = random.randint(900, 2300)
+        requested = random.choice([50, 75, 100, 125, 150])
+        approved = max(50, min(requested, 100 if jur == "VA-GLO" else 150))
+        conn.execute(
+            "insert into financial_petitions values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                petition,
+                case_no,
+                jur,
+                f"{first} {last}",
+                random.choice(["first", "first", "second"]),
+                f"2025-06-{random.randint(1, 18):02d}",
+                income,
+                random.randint(1, 4),
+                obligations,
+                int(random.random() < 0.25),
+                random.choice([0, 0, 120, 300]),
+                random.randint(450, 1800),
+                int(jur == "VA-HAM" and random.random() < 0.45),
+                requested,
+                approved,
+                "2025-07-15",
+                "2026-12-15",
+                "2027-02-15",
+                random.choice(["current", "default review"]),
+                random.choice([6, 12]),
+                "2025-06-20T09:00:00",
+                random.choice(["employed", "part-time", "unemployed"]),
+                random.choice(
+                    ["Unknown driver license.", "Address TBD from case file.", "Restitution priority flagged.", ""]
+                ),
+            ),
+        )
+
+    add_noise_fees(conn)
 
 
-def build_dataset() -> dict:
-    attorneys = build_attorneys()
-    cases = generate_cases(attorneys)
-    citations = generate_citations()
-    fee_schedules = generate_fee_schedules()
-    policies = generate_payment_policies()
-    obligations = generate_financial_obligations(cases, fee_schedules, policies)
-    docket_entries = generate_docket_entries(cases)
-    hearings = generate_hearings(cases, citations)
-    stale_exports = generate_stale_exports(cases, citations)
-    return {
-        "meta": {
-            "schema_version": SCHEMA_VERSION,
-            "generated_at": GENERATED_AT,
-            "seeds": SEEDS,
-            "description": "Shared court clerk operations records for training and test tasks.",
-        },
-        "counties": COUNTIES,
-        "attorneys": attorneys,
-        "cases": cases,
-        "citations": citations,
-        "fee_schedules": fee_schedules,
-        "payment_policies": policies,
-        "financial_obligations": obligations,
-        "docket_entries": docket_entries,
-        "hearings": hearings,
-        "stale_exports": stale_exports,
-    }
-
-
-def endpoint_list() -> list[str]:
-    return [
-        "GET /health",
-        "GET /api/counties",
-        "GET /api/cases",
-        "GET /api/cases?county=<county>&matter_type=<type>&status=<status>",
-        "GET /api/cases/<case_number>",
-        "GET /api/citations",
-        "GET /api/citations/<citation_number>",
-        "GET /api/hearings?date=<YYYY-MM-DD>&county=<county>",
-        "GET /api/attorneys",
-        "GET /api/fees?county=<county>&matter_type=<type>&effective_on=<YYYY-MM-DD>",
-        "GET /api/payment-policies?county=<county>",
-        "GET /api/financial-obligations?case_number=<case_number>",
-        "GET /api/docket?case_number=<case_number>",
-        "GET /api/stale-exports?county=<county>&name=<export_name>",
-        "GET /api/search?q=<text>",
-        "GET /docs",
+def add_charge_for_case(conn, case_number, serial, count_no=1):
+    statutes = [
+        ("THEFT-CLASS-D", "Ark. Code 5-36-103", "Theft of property", "Class D felony"),
+        ("POSS-CS", "Ark. Code 5-64-419", "Possession of controlled substance", "Class D felony"),
+        ("DWI-1", "Va. Code 18.2-266", "Driving under the influence first offense", "Class 1 misdemeanor"),
+        ("FAIL-APP", "Ark. Code 5-54-120", "Failure to appear", "Class A misdemeanor"),
+        ("FLEEING", "Ark. Code 5-54-125", "Fleeing", "Class D felony"),
     ]
+    offense_code, statute, desc, severity = random.choice(statutes)
+    if case_number.startswith("VA-"):
+        offense_code, statute, desc, severity = (
+            "DUI-1",
+            "Va. Code 18.2-266",
+            "Driving under the influence first offense",
+            "Class 1 misdemeanor",
+        )
+    if case_number in {"RC-25-0418", "UC-25-0224"}:
+        offense_code, statute, desc, severity = (
+            "POSS-CS",
+            "Ark. Code 5-64-419",
+            "Possession of controlled substance",
+            "Class D felony",
+        )
+    disposition = random.choice(["guilty", "dismissed", "nolle prosequi", "deferred"])
+    if any(part in case_number for part in ["0502", "0238", "0618", "0331"]):
+        disposition = "pending"
+    assessment = "DRUG_ASSESSMENT" if offense_code == "POSS-CS" else None
+    conn.execute(
+        "insert into charges values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        (
+            f"CHG-{case_number}-{count_no}",
+            case_number,
+            count_no,
+            offense_code,
+            statute,
+            desc,
+            severity,
+            f"2024-{random.randint(1, 12):02d}-{random.randint(1, 27):02d}",
+            random.choice(["guilty", "no contest", "not guilty"]),
+            disposition if disposition in {"guilty", "deferred"} else None,
+            disposition,
+            random.choice([0, 250, 500, 1000]),
+            random.choice([0, 30, 90, 365]),
+            random.choice([0, 30, 300, 335]),
+            random.choice([0, 6, 12, 24]),
+            12 if case_number.startswith("VA-") else 0,
+            random.choice([0, 6, 12, 18]),
+            random.choice([0, 12, 24, 36]),
+            random.choice(["none", "durational", "dispositional"]),
+            random.choice(["", "top of range", "mitigating treatment record", "plea agreement cap"]),
+            assessment,
+        ),
+    )
 
 
-def build_manifest(dataset: dict) -> dict:
-    docket_entry_total = sum(len(row["entries"]) for row in dataset["docket_entries"])
-    stale_record_total = sum(len(row["records"]) for row in dataset["stale_exports"])
-    return {
-        "schema_version": SCHEMA_VERSION,
-        "generated_at": GENERATED_AT,
-        "seeds": SEEDS,
-        "record_counts": {
-            "counties": len(dataset["counties"]),
-            "attorneys": len(dataset["attorneys"]),
-            "cases": len(dataset["cases"]),
-            "citations": len(dataset["citations"]),
-            "fee_schedule_rows": len(dataset["fee_schedules"]),
-            "payment_policies": len(dataset["payment_policies"]),
-            "financial_obligations": len(dataset["financial_obligations"]),
-            "docket_case_records": len(dataset["docket_entries"]),
-            "docket_entries": docket_entry_total,
-            "hearings": len(dataset["hearings"]),
-            "stale_exports": len(dataset["stale_exports"]),
-            "stale_export_records": stale_record_total,
-        },
-        "files": [
-            "env/generate_data.py",
-            "env/server.py",
-            "env/setup.sh",
-            "env/data/clerk_ops.json",
-            "env/data/manifest.json",
-        ],
-        "endpoints": endpoint_list(),
-        "selected_named_counties": [row["county"] for row in COUNTIES],
-        "known_noise_categories": [
-            "similar defendant names and nearby dates of birth",
-            "nearby case and citation numbers",
-            "obsolete fee rows with explicit effective dates",
-            "stale exports with older status, attorney, hearing, and ledger values",
-            "draft or needs-review hearing minute entries",
-            "docket correction entries that supersede older notes",
-            "missing first due dates for pending citations",
-            "payment policy placeholder value for unknown case-file fields",
-        ],
-        "non_solver_visible_note": "This manifest describes generated shared records and endpoints only. It contains no task IDs, answer keys, or scoring rubrics.",
-    }
+def add_dockets_for_case(conn, case_number, disposition_date, status, note):
+    entries = [
+        ("filing", "Case initiated from complaint/information."),
+        ("hearing", "Arraignment held; counsel status recorded."),
+    ]
+    if disposition_date:
+        entries.append(("disposition", f"Disposition hearing recorded with status {status}."))
+        entries.append(("financial", "Financial obligations worksheet queued for clerk review."))
+    else:
+        entries.append(("continuance", "Matter continued; no final order signed."))
+    if note:
+        entries.append(("clerk_note", note))
+    for idx, (entry_type, text) in enumerate(entries, start=1):
+        conn.execute(
+            "insert into docket_entries values (?,?,?,?,?,?,?)",
+            (
+                f"DCK-{case_number}-{idx}",
+                case_number,
+                disposition_date or f"2025-{random.randint(1, 7):02d}-{random.randint(1, 27):02d}",
+                entry_type,
+                text,
+                random.choice(["courtroom notes", "case-management system", "scanned document", "financial module"]),
+                random.choice(["clerk-a", "clerk-b", "supervisor", "import-job"]),
+            ),
+        )
 
 
-def write_json_if_changed(path: Path, payload: dict) -> None:
-    text = json.dumps(payload, indent=2, sort_keys=False) + "\n"
-    if path.exists() and path.read_text(encoding="utf-8") == text:
-        return
-    path.write_text(text, encoding="utf-8")
+def fine_for_citation(jurisdiction, code):
+    if jurisdiction == "OR22-JEFF":
+        return (1150, 5) if code == "ORS_811_109_100PLUS" else (440 if code.endswith("31_40") else 265, 5)
+    if jurisdiction == "OR27-CLAT":
+        return (1200, 10) if code == "ORS_811_109_100PLUS" else (445 if code.endswith("31_40") else 265, 10)
+    return (1100, 5) if code == "ORS_811_109_100PLUS" else (435 if code.endswith("31_40") else 260, 5)
 
 
-def main() -> None:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    dataset = build_dataset()
-    manifest = build_manifest(dataset)
-    write_json_if_changed(DATA_FILE, dataset)
-    write_json_if_changed(MANIFEST_FILE, manifest)
-    print(f"Wrote {DATA_FILE.relative_to(BASE_DIR)}")
-    print(f"Wrote {MANIFEST_FILE.relative_to(BASE_DIR)}")
-    print(json.dumps(manifest["record_counts"], sort_keys=True))
+def add_noise_fees(conn):
+    rows = []
+    for idx, jur in enumerate(["AR-WC", "OR19-LINN", "VA-GLO", "VA-HAM"], start=1):
+        rows.append(
+            (
+                f"F-NOISE-{idx}-OLD",
+                jur,
+                "stale_local_fee",
+                None,
+                None,
+                "Archived local fee",
+                random.choice([15, 25, 35]),
+                "2021-01-01",
+                "2022-12-31",
+                0,
+                99,
+                "Retained for old-case audit only.",
+            )
+        )
+        rows.append(
+            (
+                f"F-NOISE-{idx}-MISC",
+                jur,
+                "miscellaneous",
+                None,
+                None,
+                "Copy or certification fee",
+                random.choice([2, 5, 10]),
+                "2025-01-01",
+                None,
+                0,
+                90,
+                "Not part of normal sentencing or traffic disposition unless requested.",
+            )
+        )
+    conn.executemany("insert into fee_schedules values (?,?,?,?,?,?,?,?,?,?,?,?)", rows)
+
+
+def table_counts(conn):
+    tables = [
+        "jurisdictions",
+        "cases",
+        "charges",
+        "docket_entries",
+        "citations",
+        "fee_schedules",
+        "payment_policies",
+        "form_catalog",
+        "financial_petitions",
+    ]
+    return {table: conn.execute(f"select count(*) from {table}").fetchone()[0] for table in tables}
+
+
+def flatten_targets(kind):
+    values = []
+    for record in TARGET_IDENTIFIERS.values():
+        values.extend(record.get(kind, []))
+    return values
 
 
 if __name__ == "__main__":

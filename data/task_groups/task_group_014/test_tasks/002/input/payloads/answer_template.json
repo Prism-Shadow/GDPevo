@@ -1,104 +1,197 @@
 {
-  "field_conventions": {
-    "p2p_cases_order": "ascending case_id",
-    "p2p_session_status_allowed_values": [
-      "completed_with_new_information",
-      "completed_no_new_information",
-      "not_completed_additional_information_requested",
-      "completed_provider_no_show"
-    ],
-    "final_determination_allowed_values": [
-      "partial_approval",
-      "denied_upheld",
-      "pending_additional_information",
-      "direct_administrative_denial"
-    ],
-    "overturn_classification_allowed_values": [
-      "partial_overturn",
-      "upheld",
-      "not_finalized",
-      "direct_denial_exempt"
-    ],
-    "letter_queue_category_allowed_values": [
-      "partial_approval_with_appeal_rights",
-      "denial_upheld_with_appeal_rights",
-      "additional_information_request",
-      "administrative_denial_with_appeal_rights"
-    ],
-    "adverse_authority_status_allowed_values": [
-      "md_only_adverse_final",
-      "no_adverse_final_pending_info",
-      "mandatory_md_review_pending_info",
-      "direct_admin_final"
-    ],
-    "final_rationale_code_format": "source_id plus compact outcome reason",
-    "letter_authority_reason_code_format": "letter_queue_category, adverse_authority_status, and final_rationale_code joined with double underscores",
-    "criteria_source_ids": "list source IDs such as SRC003 in ascending order",
-    "criteria_source_selection_trace": "selected criteria source metadata after source-precedence filtering",
-    "criteria_gap_keys": "criterion_key values from coverage_criteria that are missing, stale, unclear, partial, or conflicting; sort ascending",
-    "p2p_source_trace": "values copied or normalized from p2p_sessions for the target case",
-    "review_event_trace": "clinical review event IDs and outcomes that affect finalization",
-    "admin_source_trace": "intake and service-line flags that affect direct administrative handling",
-    "letter_queue_order": "case IDs sorted ascending within each queue"
-  },
-  "board_date": "2025-02-27",
-  "target_bucket": "test_p2p_batch",
-  "p2p_cases": [
-    {
-      "case_id": "AUTH00000",
-      "service_categories": [
-        "Service Category"
-      ],
-      "p2p_session_status": "completed_no_new_information",
-      "criteria_source_ids": [
-        "SRC000"
-      ],
-      "criteria_source_selection_trace": {
-        "selected_source_id": "SRC000",
-        "selected_source_name": "source name",
-        "selected_precedence_rank": 0,
-        "excluded_lower_precedence_source_ids": []
-      },
-      "final_determination": "denied_upheld",
-      "overturn_classification": "upheld",
-      "letter_queue_category": "denial_upheld_with_appeal_rights",
-      "adverse_authority_status": "md_only_adverse_final",
-      "final_rationale_code": "SRC003_criteria_not_clearly_met_no_new_info",
-      "letter_authority_reason_code": "denial_upheld_with_appeal_rights__md_only_adverse_final__SRC003_criteria_not_clearly_met_no_new_info",
-      "criteria_gap_keys": [],
-      "p2p_source_trace": {
-        "p2p_id": "P2P00000",
-        "requesting_provider_joined": true,
-        "new_information": false,
-        "source_outcome": "no_show",
-        "duration_minutes": 0
-      },
-      "review_event_trace": {
-        "medical_director_event_ids": [],
-        "medical_director_outcomes": []
-      },
-      "admin_source_trace": {
-        "facility_in_service_area": true,
-        "oon_exception": false,
-        "mandatory_md_review": false
-      },
-      "additional_info_needed": false,
-      "appeal_rights_notice": false
-    }
+  "title": "Expedited specialty drug appeal and assistance disposition",
+  "format": "Return a single JSON object with the required top-level keys. Do not include markdown or explanatory prose.",
+  "required_top_level_keys": [
+    "case_id",
+    "appeal_id",
+    "drug",
+    "appeal_path",
+    "expedited",
+    "expedited_basis",
+    "appeal_deadline",
+    "owner",
+    "documented_failures",
+    "assistance",
+    "required_packet_items",
+    "missing_packet_items",
+    "next_action",
+    "basis_audit"
   ],
-  "finalization_counts": {
-    "approved_count": 0,
-    "partial_approval_count": 0,
-    "denied_or_upheld_count": 0,
-    "direct_admin_denial_count": 0,
-    "additional_info_needed_count": 0,
-    "appeal_rights_notice_count": 0
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "description": "Northstar case identifier."
+    },
+    "appeal_id": {
+      "type": "string",
+      "description": "Northstar appeal identifier."
+    },
+    "drug": {
+      "type": "enum",
+      "choices": [
+        "Vraylar",
+        "Dupixent",
+        "Humira",
+        "Ozempic",
+        "Rinvoq",
+        "Skyrizi"
+      ]
+    },
+    "appeal_path": {
+      "type": "enum",
+      "choices": [
+        "standard_internal",
+        "expedited_internal",
+        "external_review",
+        "not_eligible"
+      ]
+    },
+    "expedited": {
+      "type": "boolean"
+    },
+    "expedited_basis": {
+      "type": "enum",
+      "choices": [
+        "provider_attested_serious_health_risk",
+        "member_requested_expedited_review",
+        "clinical_record_only",
+        "not_requested",
+        "not_applicable"
+      ]
+    },
+    "appeal_deadline": {
+      "type": "string",
+      "format": "YYYY-MM-DD"
+    },
+    "owner": {
+      "type": "enum",
+      "choices": [
+        "appeals-rx",
+        "um-nurse",
+        "medical-director",
+        "payment-integrity",
+        "member-services"
+      ]
+    },
+    "documented_failures": {
+      "type": "list",
+      "item_type": "string",
+      "item_format": "lowercase therapy or medication name",
+      "ordering_rule": "Sort selected failures by trial start date, earliest first."
+    },
+    "assistance": {
+      "type": "object",
+      "required_keys": [
+        "program_name",
+        "status",
+        "missing_fields"
+      ],
+      "fields": {
+        "program_name": {
+          "type": "enum",
+          "choices": [
+            "Vraylar Connect",
+            "Dupixent MyWay",
+            "Humira Complete",
+            "not_applicable"
+          ]
+        },
+        "status": {
+          "type": "enum",
+          "choices": [
+            "eligible_ready",
+            "eligible_missing_information",
+            "not_eligible",
+            "not_applicable"
+          ]
+        },
+        "missing_fields": {
+          "type": "list",
+          "item_type": "enum",
+          "choices": [
+            "household_income_proof",
+            "denial_notice",
+            "insurance_card",
+            "member_signature",
+            "prescriber_signature"
+          ],
+          "ordering_rule": "Sort selected field IDs in ascending alphabetical order."
+        }
+      }
+    },
+    "required_packet_items": {
+      "type": "list",
+      "item_type": "enum",
+      "choices": [
+        "denial_notice",
+        "member_authorization",
+        "prescriber_rationale",
+        "formulary_failure_evidence",
+        "household_income_proof",
+        "expedited_risk_attestation",
+        "pharmacy_claim_history",
+        "diagnosis_confirmation"
+      ],
+      "ordering_rule": "Use operational packet order: payer appeal items before assistance items."
+    },
+    "missing_packet_items": {
+      "type": "list",
+      "item_type": "enum",
+      "choices": [
+        "denial_notice",
+        "member_authorization",
+        "prescriber_rationale",
+        "formulary_failure_evidence",
+        "household_income_proof",
+        "expedited_risk_attestation",
+        "pharmacy_claim_history",
+        "diagnosis_confirmation"
+      ],
+      "ordering_rule": "Use case-specific gap order: appeal evidence gaps before assistance information gaps."
+    },
+    "next_action": {
+      "type": "enum",
+      "choices": [
+        "request_more_information",
+        "file_appeal",
+        "complete_expedited_appeal_and_request_income_proof",
+        "submit_assistance_application",
+        "issue_denial",
+        "close_not_eligible"
+      ]
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Populate it using the source-precedence and record-grounding convention inferred from solved examples; use environment record IDs and business gap keys, not invented control codes.",
+      "fields": {
+        "source_precedence": {
+          "type": "string",
+          "description": "Use the concise source-precedence category convention inferred from solved examples."
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
   },
-  "letter_queue": {
-    "approval": [],
-    "partial_approval_with_appeal_rights": [],
-    "denial_upheld_with_appeal_rights": [],
-    "administrative_denial_with_appeal_rights": [],
-    "additional_information_request": []
-  }
+  "numeric_precision": "No numeric currency, ratio, or percentage fields are required for this answer.",
+  "additional_properties": "Allowed but not evaluated."
 }

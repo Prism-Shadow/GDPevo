@@ -1,13 +1,16 @@
-Clerk Operations Request
+You are the deputy clerk preparing a Gloucester County Circuit Court post-sentencing packet for a DUI appeal.
 
-Use the shared clerk operations environment at <TASK_ENV_BASE_URL>.
+Target matter:
+- Case: VA-CR25-1044-00
+- Payment petition: VA-PET-1044A
 
-Middlesex County has an intake-tray packet labeled MID-DUI-LIC-PROB-2025JUN for DUI post-hearing clerk entry review. Prepare the clerk-ready JSON for the packet defendants using the local packet materials and the shared clerk records normally available to the office; the final output should be a reconciled packet review, not a copy of any single source.
+Use the local payloads in `input/payloads/` together with the Court Operations Portal at `<TASK_ENV_BASE_URL>`. Useful portal endpoints include:
+- GET /api/cases
+- GET /api/charges
+- GET /api/docket-entries
+- GET /api/payment-policies
+- GET /api/forms
+- GET /api/financial-petitions
+- GET /api/search
 
-Local materials are in `input/payloads/`:
-
-- `middlesex_dui_packet.json`
-- `stale_collateral_extract.csv`
-- `answer_template.json`
-
-Return only JSON conforming to `answer_template.json`.
+Prepare one clerk-ready JSON object matching `input/payloads/answer_template.json`. The output should reconcile the appeal sentencing intake, case memo fields, probation referral fields, CC-1379-style license suspension and installment order fields, payment schedule math, budget review, placeholder fields, and financial exclusions.

@@ -1,0 +1,31 @@
+{
+  "task_id": "test_005",
+  "matter_id": "MTR-VIREO-SEC",
+  "client": "Vireo Labs",
+  "review_label": "cross-system remediation dashboard",
+  "environment": {
+    "base_url": "<TASK_ENV_BASE_URL>",
+    "query_api_key_header": {
+      "name": "X-API-Key",
+      "value": "review-key-017"
+    },
+    "shared_endpoints": [
+      "GET /api/schema",
+      "GET /api/matters",
+      "GET /api/subpoena-categories",
+      "GET /api/productions",
+      "GET /api/custodian-sources",
+      "GET /api/documents/search",
+      "GET /api/privilege-log",
+      "GET /api/qc-findings",
+      "GET /api/retention-events",
+      "GET /api/remediation-actions",
+      "POST /api/query"
+    ]
+  },
+  "output_contract": {
+    "format": "single JSON object",
+    "schema_file": "input/payloads/answer_template.json",
+    "stable_ids": "Use record IDs and request category codes exactly as they appear in the shared hub."
+  }
+}

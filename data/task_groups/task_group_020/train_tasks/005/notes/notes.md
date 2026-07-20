@@ -1,137 +1,41 @@
-# train_005 Notes
+# Train 005 Notes / 训练任务 005 说明
 
 ## English
 
-### Data and Source Lineage
+Data and source lineage: This task belongs to `task_group_020`, derived from scenario `SCN_020_ma_transaction_contract_review_and_negotiation` and source examples `E001`, `E002`, and `E003`. The task brief assigns `train_005` to deal `PRJ_ASTER`, a buyer-side SPA deviation matrix for Project Aster. The standard answer is constructed from the shared generated workbench data in `task_group/task_group_020/env/`, especially the `deals`, `draft_terms`, `playbook_rules`, `regulatory`, `consents`, `material_contracts`, `diligence_findings`, `risk_estimates`, `benchmarks`, `documents`, and `deal_notes` tables. No environment source file, database, manifest, seed, or setup script is copied into the task payloads. The only task-local payload is `input/payloads/answer_template.json`.
 
-This task belongs to scenario `SCN_020_ma_transaction_contract_review_and_negotiation`, derived from source examples `E001`, `E002`, and `E003`. The task implements the task-group design brief for `train_005`: buyer-side first-draft term population plus policy checks for deal `D-HARBOR-562`, code-named Harbor Lantern, in the shared Aster Legal Deal Desk environment.
+Task definition: The solver acts as buyer-side counsel for Aster Health Group in a stock purchase agreement for Aster Revenue Cycle Software. The visible prompt directs the solver to use `<TASK_ENV_BASE_URL>` and return only JSON conforming to the template. The expected work process is to identify `PRJ_ASTER`, read its current seller draft terms, compare them with buyer playbook `PB_BUYER_A`, and cross-check regulatory, consent, material-contract, diligence, benchmark, and risk-estimate records. The required output has three business sections: `position_matrix`, `closing_blockers`, and `risk_totals`.
 
-The generated shared data comes from `task_group/task_group_020/env/data/dealdesk.json` and `task_group/task_group_020/env/data/manifest.json`. The relevant public environment objects are the deal profile for `D-HARBOR-562`, active documents `DOC-HARBOR562-TERM-01`, `DOC-HARBOR562-DRAFT-02`, `DOC-HARBOR562-EMAIL-03`, `DOC-HARBOR562-CAP-ACTIVE`, `DOC-HARBOR562-FIN-04`, `DOC-HARBOR562-MATCON-05`, `DOC-HARBOR562-DISC-06`, stale documents `DOC-HARBOR562-CAP-STALE` and `DOC-HARBOR562-TEMPLATE-99`, active clause records `CL-HARBOR-562-001` through `CL-HARBOR-562-006`, and policy `P-BUYER-MIDMARKET-2026`.
+Scenario fit: This task exercises the M&A contract-review workflow in the shared deal workbench. It requires role-aware source precedence: the buyer playbook and buyer closing requirements control over the seller draft. It also forces long-horizon data reconciliation because the answer cannot be produced from the four draft terms alone. Missing HSR, escrow, knowledge, and material-contract rows must be treated as substantive review findings when the surrounding regulatory, playbook, and contract records show they matter.
 
-Task-local solver-visible files are `input/prompt.txt` and `input/payloads/answer_template.json`. The prompt asks for a realistic legal deal-desk deliverable and does not provide a checklist, answer path, or hidden scoring criteria. The template defines the required JSON shape, units, enum choices, numeric precision, and list ordering rules without filling in the Harbor values.
+Material map: `GET /api/deals/PRJ_ASTER` gives buyer side, purchase price, client, and deal status. `GET /api/deals/PRJ_ASTER/terms` gives the four current seller draft terms: indemnity cap, survival period, materiality scrape, and consent closing condition. `GET /api/playbooks/PB_BUYER_A/rules` supplies the buyer thresholds for indemnity cap, survival period, materiality scrape, consent closing conditions, and employee service credit. `GET /api/deals/PRJ_ASTER/regulatory` shows that HSR is required and hell-or-high-water is not required. `GET /api/deals/PRJ_ASTER/consents` identifies required closing consents `CNS_PRJ_ASTER_01` and `CNS_PRJ_ASTER_03`, including their amount at risk. `GET /api/deals/PRJ_ASTER/material-contracts` identifies consent-required material contracts `MAT_PRJ_ASTER_01` and `MAT_PRJ_ASTER_03` and excludes notice-only `MAT_PRJ_ASTER_02`. `GET /api/deals/PRJ_ASTER/diligence-findings` supports the privacy special indemnity and customer concentration context. `GET /api/deals/PRJ_ASTER/risk-estimates` supplies low and high modeled exposure totals. Benchmarks are supporting context for cap and survival market checks.
 
-### Task Definition and Scenario Fit
+Solution and evaluation basis: The answer uses purchase price of USD 365,000,000. The seller's 8.0% cap equals USD 29,200,000; the buyer fallback 10.0% cap equals USD 36,500,000; the buyer preferred 12.0% cap equals USD 43,800,000; the shortfalls are USD 7,300,000 and USD 14,600,000. The USD 12,000,000 privacy special indemnity is separately noted against the USD 4,380,000 privacy finding but does not fix the general cap shortfall or missing basket record. Survival is 15 months, below the preferred 18 months, and only conditionally acceptable because the playbook fallback depends on 10.0% escrow support, while no escrow, escrow agent, or release row appears in current records. The breach-only materiality scrape is treated as the playbook fallback and accepted. The consent condition is below the preferred all-material-consents position because it covers top ten revenue contracts and excludes payer gateway agreements. HSR clearance must be added as a closing condition. The material-contract closing blockers are `MAT_PRJ_ASTER_01` and `MAT_PRJ_ASTER_03`, with total annual revenue of USD 40,515,000. Required-consent amount at risk is USD 20,925,000. Modeled risk totals are USD 9,855,000 low and USD 33,214,999 high, with closing certainty as the highest high-end category.
 
-The solver acts as buyer counsel preparing the structured first-draft term population and policy checks for a stock purchase agreement. The expected JSON contains `draft_terms` and `policy_checks`. The solver must reconcile a deal profile, active and stale deal-room documents, active clauses, material-contract schedules, financial schedules, the Northstar buyer risk memo/playbook, and the latest client instruction email.
+The evaluator has 8 all-or-nothing scoring goals with raw weights from 1 to 3: issue set and statuses (2), indemnity cap and basket economics (3), survival, knowledge, and escrow reconstruction (2), materiality scrape final position (1), consent and HSR blockers (2), material-contract blockers (2), final positions and priority order (2), and risk totals (2). These cover distinct business outcomes: legal deviation classification, indemnity economics, survival and holdback protection, regulatory and consent closing certainty, material contract treatment, negotiation posture, and aggregate risk reporting. Checks are deterministic: exact enums, exact stable IDs as sets, integer dollar amounts, exact booleans, and exact priority ranks.
 
-This fits the M&A transaction review scenario because it mirrors a first-draft SPA workstream: populate consideration, seller allocation, escrow, cap, basket, survival, working capital, closing-condition, HSR, and drafting-position terms while checking client policy exceptions and approval routing. The task uses the same difficulty drivers as the source examples: cross-document precedence, legal/business judgment, dollar calculations, policy threshold checks, and distractor template/stale records.
+Likely pitfalls: Models may calculate percentages from upfront cash instead of headline purchase price; treat the 15-month survival as acceptable without the escrow condition; miss that absent HSR, escrow, basket, release, and knowledge records can be review findings; include notice-only `MAT_PRJ_ASTER_02` as a blocker; ignore the Facility Lease required consent; or double-count only one of the consent and material-contract dimensions.
 
-### Material Map
+Transfer design: As a train task, this teaches reusable SOP for later tasks in the group. Solvers should infer that role-specific playbooks control the draft, missing draft terms can be deviations, current records should be preferred over stale or distractor records, percentages normally use headline price, stable IDs should be used instead of narrative labels, and closing blockers often require reconciling draft terms with regulatory, consent, and material-contract tables. The task also reinforces the distinction between accepted fallback positions and points that need revision or escalation.
 
-- `D-HARBOR-562` deal profile supplies buyer, seller, target, structure, headline/equity value, signing date, closing deadline, client side, policy id, economics, client positions, and schedules.
-- `DOC-HARBOR562-TERM-01` supplies the signed commercial term sheet and the main economics.
-- `DOC-HARBOR562-DRAFT-02` supplies active first-draft instructions, current drafting posture, fallback authority, and escalation note.
-- `DOC-HARBOR562-EMAIL-03` supplies the latest client instruction and strategic context; it confirms buyer-form use, cap/escrow alignment, material consents, no-HSR facts, earnout fallback, and conditional escalations.
-- `DOC-HARBOR562-CAP-ACTIVE` controls seller ownership and allocation math. `DOC-HARBOR562-CAP-STALE` is a distractor retained for audit only.
-- `DOC-HARBOR562-FIN-04` supplies working capital, escrow, cap, basket, and consideration mix.
-- `DOC-HARBOR562-MATCON-05` supplies material-contract consent status and the regulatory basis for no HSR.
-- `DOC-HARBOR562-DISC-06` supplies employment, non-compete, transition services, and IP transition facts.
-- `DOC-HARBOR562-TEMPLATE-99` is a generic template distractor and should not override active client instructions.
-- `P-BUYER-MIDMARKET-2026` supplies policy thresholds and approval categories for escrow, cap, basket, NWC, non-compete, material consents, and HSR.
-
-### Solution and Evaluation Basis
-
-The answer uses the active cap table as the controlling allocation source. The consideration mix is cash at close `$157,000,000`, seller note `$18,500,000`, rollover equity `$15,000,000`, and earnout `$8,000,000`, totaling `$198,500,000`. Each component is allocated pro rata by active ownership: HarborGrid Founders LLC 51%, Management Option Sellers 18%, and Tern Cyber Fund I 31%. This yields total proceeds of `$101,235,000`, `$35,730,000`, and `$61,535,000`, respectively.
-
-Escrow and indemnity math uses headline value `$198,500,000`. General escrow is 10% or `$19,850,000`; tax escrow is 2% or `$3,970,000`; aggregate escrow is 12% or `$23,820,000`; the general indemnity cap equals the 10% general escrow amount; the deductible basket is 0.75% or `$1,488,750`; de minimis is `$50,000`; survival is 18 months for general reps and 72 months for fundamental and tax reps.
-
-Closing conditions require Federal SOC Platform Order and BlueBank MDR Agreement consents. GovCloud Hosting Addendum is a post-closing notice item. HSR is not required, no filing condition should be included, and the correct HSR drafting position is cooperation covenant only. Other approvals include Federal customer novation consent.
-
-The risk memo override is that no HSR condition should be included despite sensitive cyber assets because reportable thresholds are not met after debt adjustments. The latest client instruction and material-contract/regulatory schedule override generic template language. The active cap table overrides the stale cap export.
-
-All active positions are currently within Northstar policy or covered by the deal-specific override; no approval is required now and current policy exception count is zero. Conditional escalation triggers are adding a financing condition or removing the federal customer consent. Policy checks must use the approval categories and rule ids from `P-BUYER-MIDMARKET-2026`.
-
-The evaluator has six exact-match scoring points, matching the requested plan:
-
-1. `consideration_mix_and_allocation`, weight 3: consideration mix, active allocation source, and seller allocation schedule.
-2. `escrow_cap_basket_math`, weight 3: escrow, cap, basket, de minimis, and survival math.
-3. `consent_hsr_flags`, weight 2: closing consents, post-closing notice, HSR status, HSR clause position, and other approval.
-4. `risk_memo_overrides`, weight 2: override source documents, override codes, superseded documents, and HSR override basis.
-5. `policy_exceptions_approvals`, weight 2: per-topic policy checks and summary approvals/exceptions.
-6. `drafting_position_enums`, weight 2: controlled drafting-position enums.
-
-Likely model pitfalls are using the stale cap table, omitting the seller note or earnout from allocation, subtracting escrow from cash consideration without being asked, treating cyber assets as an automatic HSR filing condition, applying generic template non-compete language, failing to include BlueBank or Federal SOC as closing consents, or marking in-policy terms as approval-required merely because the policy lists escalation thresholds.
-
-### Transfer Design
-
-As a train task, `train_005` reinforces transferable conventions for later test tasks. Solvers can infer that active deal-room records outrank stale exports and generic templates; latest client instructions and deal-specific risk memos can override generic form language; percentages should be applied to headline/equity value as specified; seller allocations can require prorating every consideration component by the active cap table; policy checks must distinguish current approval requirements from conditional future escalation triggers; and drafting outputs should use controlled enums instead of narrative labels.
-
-The task is not a tutorial. The solver must discover the relevant records in the shared environment, select active sources, perform calculations, and reconcile policy thresholds against live deal terms. These habits transfer to buyer-side term-population and policy-check test tasks without revealing test answers.
-
-### Construction Record
-
-Author: task-builder subagent for `task_group_020/train_005`.
-
-Created: 2026-07-07.
-
-Updated: 2026-07-07.
-
-Major changes: created solver prompt, answer template, standard answer, exact-match evaluator, and bilingual notes for `D-HARBOR-562`.
+Construction record: Author `task-builder-train-005`. Created 2026-07-18. Updated 2026-07-18. Major changes: created prompt, answer template, standard answer, deterministic evaluator with eight weighted scoring points, and bilingual notes for `train_tasks/005`.
 
 ## 中文
 
-### 数据和来源脉络
+数据和来源沿革：本任务属于 `task_group_020`，来源场景为 `SCN_020_ma_transaction_contract_review_and_negotiation`，参考源示例为 `E001`、`E002` 和 `E003`。任务简报指定 `train_005` 使用交易 `PRJ_ASTER`，要求为 Project Aster 制作买方 SPA 偏离矩阵。标准答案依据共享生成环境 `task_group/task_group_020/env/` 中的数据构造，重点使用 `deals`、`draft_terms`、`playbook_rules`、`regulatory`、`consents`、`material_contracts`、`diligence_findings`、`risk_estimates`、`benchmarks`、`documents` 和 `deal_notes` 表。没有把环境源代码、数据库、清单、种子或 setup 脚本复制到任务 payload 中。唯一的本任务 payload 是 `input/payloads/answer_template.json`。
 
-本任务属于场景 `SCN_020_ma_transaction_contract_review_and_negotiation`，来源示例为 `E001`、`E002`、`E003`。任务实现 `train_005` 的设计：在共享的 Aster Legal Deal Desk 环境中，为交易 `D-HARBOR-562`（Harbor Lantern）完成买方首稿条款填充和政策检查。
+任务定义：求解者扮演 Aster Health Group 的买方律师，审阅 Aster Revenue Cycle Software 的股权购买协议。可见 prompt 要求使用 `<TASK_ENV_BASE_URL>`，并只返回符合模板的 JSON。预期流程是定位 `PRJ_ASTER`，读取当前卖方草稿条款，对照买方 playbook `PB_BUYER_A`，并交叉核对监管、同意、重大合同、尽调发现、基准和风险估算记录。输出包含三个业务部分：`position_matrix`、`closing_blockers` 和 `risk_totals`。
 
-生成的共享数据来自 `task_group/task_group_020/env/data/dealdesk.json` 和 `task_group/task_group_020/env/data/manifest.json`。相关公开环境对象包括交易档案 `D-HARBOR-562`，有效文件 `DOC-HARBOR562-TERM-01`、`DOC-HARBOR562-DRAFT-02`、`DOC-HARBOR562-EMAIL-03`、`DOC-HARBOR562-CAP-ACTIVE`、`DOC-HARBOR562-FIN-04`、`DOC-HARBOR562-MATCON-05`、`DOC-HARBOR562-DISC-06`，过期或模板文件 `DOC-HARBOR562-CAP-STALE`、`DOC-HARBOR562-TEMPLATE-99`，有效条款记录 `CL-HARBOR-562-001` 至 `CL-HARBOR-562-006`，以及政策 `P-BUYER-MIDMARKET-2026`。
+场景适配：本任务体现共享交易工作台中的 M&A 合同审阅流程。它要求按照角色判断信息优先级：买方 playbook 和买方交割保护优先于卖方草稿。任务还要求长链路数据整合，因为仅靠四条草稿条款无法得到完整答案。当前草稿中缺失的 HSR、escrow、knowledge 和重大合同条款，在监管、playbook 和合同记录显示其重要性时，应当被识别为实质审阅问题。
 
-任务本地、解题者可见的文件是 `input/prompt.txt` 和 `input/payloads/answer_template.json`。提示语是现实业务请求，不提供步骤清单、答案路径或隐藏评分标准。模板只定义 JSON 结构、单位、枚举、数值精度和列表排序规则，不填入 Harbor 的答案值。
+材料地图：`GET /api/deals/PRJ_ASTER` 提供买方身份、购买价格、客户和交易状态。`GET /api/deals/PRJ_ASTER/terms` 提供四条当前卖方草稿条款：赔偿上限、陈述存续期、materiality scrape 和同意交割条件。`GET /api/playbooks/PB_BUYER_A/rules` 提供买方在赔偿上限、存续期、materiality scrape、同意交割条件和员工服务年限方面的要求。`GET /api/deals/PRJ_ASTER/regulatory` 显示需要 HSR 且不要求 hell-or-high-water。`GET /api/deals/PRJ_ASTER/consents` 标识交割前需要满足的同意 `CNS_PRJ_ASTER_01` 和 `CNS_PRJ_ASTER_03` 及其风险金额。`GET /api/deals/PRJ_ASTER/material-contracts` 标识需要同意的重大合同 `MAT_PRJ_ASTER_01` 和 `MAT_PRJ_ASTER_03`，并排除仅需通知的 `MAT_PRJ_ASTER_02`。`GET /api/deals/PRJ_ASTER/diligence-findings` 支持隐私特别赔偿和客户集中度背景。`GET /api/deals/PRJ_ASTER/risk-estimates` 提供低端和高端模型化风险总额。基准数据为赔偿上限和存续期的市场判断提供辅助背景。
 
-### 任务定义与场景匹配
+解答和评估依据：答案使用 USD 365,000,000 的购买价格。卖方 8.0% 上限等于 USD 29,200,000；买方 10.0% fallback 上限等于 USD 36,500,000；买方 12.0% preferred 上限等于 USD 43,800,000；差额分别为 USD 7,300,000 和 USD 14,600,000。USD 12,000,000 的隐私特别赔偿针对 USD 4,380,000 的隐私发现单独记录，但不能弥补一般赔偿上限不足或 basket 记录缺失。15 个月存续期低于 preferred 的 18 个月，且只有在有 10.0% escrow 支持时才可作为 fallback；当前记录没有 escrow、escrow agent 或 release 条款。breach-only materiality scrape 被视为 playbook fallback，可以接受。同意交割条件低于 preferred 的所有重大同意要求，因为草稿只覆盖前十收入合同并排除 payer gateway agreements。HSR clearance 必须作为交割条件补充。重大合同交割 blocker 为 `MAT_PRJ_ASTER_01` 和 `MAT_PRJ_ASTER_03`，合计年收入 USD 40,515,000。需要交割前取得的同意风险金额为 USD 20,925,000。模型化风险低端为 USD 9,855,000，高端为 USD 33,214,999，其中 closing certainty 是高端金额最大的类别。
 
-解题者扮演买方律师，为股票购买协议首稿准备结构化条款和政策检查 JSON。预期输出包含 `draft_terms` 和 `policy_checks`。解题者需要协调交易档案、有效和过期文件、有效条款、重大合同清单、财务附表、Northstar 买方风险备忘录/剧本以及最新客户指示邮件。
+评估器包含 8 个全有或全无评分目标，原始权重均为 1 到 3：问题集合和状态（2）、赔偿上限和 basket 经济计算（3）、存续期、knowledge 和 escrow 重构（2）、materiality scrape 最终立场（1）、同意和 HSR blocker（2）、重大合同 blocker（2）、最终立场和优先级（2）、风险汇总（2）。这些覆盖不同业务结果：法律偏离分类、赔偿经济影响、存续期和 holdback 保护、监管与同意交割确定性、重大合同处理、谈判姿态和汇总风险报告。检查方式是确定性的：枚举精确匹配、稳定 ID 集合精确匹配、整数金额、布尔值和优先级精确匹配。
 
-这符合并购合同审查场景，因为它模拟 SPA 首稿工作流：填充对价、卖方分配、托管、赔偿上限、篮子、存续期、营运资金、交割条件、HSR 和起草立场，同时检查客户政策例外和审批路径。难度来自跨文件优先级、法律和商业判断、金额计算、政策阈值检查，以及模板/过期记录干扰。
+常见陷阱：模型可能用 upfront cash 而不是 headline purchase price 计算百分比；在没有 escrow 条件时把 15 个月存续期直接视为可接受；漏掉当前记录缺失的 HSR、escrow、basket、release 和 knowledge 本身也是审阅发现；把仅需通知的 `MAT_PRJ_ASTER_02` 误列为 blocker；忽视 Facility Lease 所需同意；或把同意和重大合同两个维度混为一个维度。
 
-### 材料地图
+迁移设计：作为训练任务，本任务教授可迁移的 SOP。求解者应当归纳出：角色对应的 playbook 控制草稿审阅；草稿缺失条款可能构成偏离；应优先使用当前记录而非陈旧或干扰记录；百分比通常以 headline price 为基础；输出应使用稳定 ID 而不是叙述标签；交割 blocker 往往需要把草稿条款与监管、同意和重大合同表交叉验证。本任务还强化了可接受 fallback 与需要修改或升级事项之间的区别。
 
-- `D-HARBOR-562` 交易档案提供买方、卖方、目标公司、交易结构、headline/equity value、签署日、最晚交割日、客户方、政策编号、经济条款、客户立场和附表。
-- `DOC-HARBOR562-TERM-01` 提供签署的商业条款书和主要经济条款。
-- `DOC-HARBOR562-DRAFT-02` 提供有效首稿指示、当前起草立场、后备授权和升级提示。
-- `DOC-HARBOR562-EMAIL-03` 提供最新客户指示和战略背景，确认使用买方表格、上限与托管一致、重大同意、无 HSR 事实、earnout 后备方案和条件性升级事项。
-- `DOC-HARBOR562-CAP-ACTIVE` 控制卖方持股和分配计算；`DOC-HARBOR562-CAP-STALE` 只是审计保留的干扰文件。
-- `DOC-HARBOR562-FIN-04` 提供营运资金、托管、赔偿上限、篮子和对价组合。
-- `DOC-HARBOR562-MATCON-05` 提供重大合同同意状态和无 HSR 的监管依据。
-- `DOC-HARBOR562-DISC-06` 提供雇佣、竞业限制、过渡服务和 IP 过渡事实。
-- `DOC-HARBOR562-TEMPLATE-99` 是通用模板干扰项，不能覆盖有效客户指示。
-- `P-BUYER-MIDMARKET-2026` 提供托管、赔偿上限、篮子、营运资金、竞业限制、重大同意和 HSR 的政策阈值与审批类别。
-
-### 答案和评估依据
-
-标准答案使用有效 cap table 作为控制分配来源。对价组合为现金交割 `$157,000,000`、卖方票据 `$18,500,000`、滚存股权 `$15,000,000`、earnout `$8,000,000`，合计 `$198,500,000`。各组成部分按有效持股比例分摊：HarborGrid Founders LLC 51%，Management Option Sellers 18%，Tern Cyber Fund I 31%。对应总收益分别为 `$101,235,000`、`$35,730,000` 和 `$61,535,000`。
-
-托管和赔偿金额以 headline value `$198,500,000` 为基数。一般托管为 10% 即 `$19,850,000`；税务托管为 2% 即 `$3,970,000`；合计托管为 12% 即 `$23,820,000`；一般赔偿上限等于 10% 一般托管金额；deductible basket 为 0.75% 即 `$1,488,750`；de minimis 为 `$50,000`；一般陈述保证存续 18 个月，基本陈述和税务陈述存续 72 个月。
-
-交割条件需要 Federal SOC Platform Order 和 BlueBank MDR Agreement 的同意。GovCloud Hosting Addendum 是交割后通知事项。HSR 不需要申报，不应加入申报条件，正确 HSR 起草立场是仅保留合作承诺。其他审批/同意包括 Federal customer novation consent。
-
-风险备忘录覆盖点是：尽管存在敏感网络安全资产，但因债务调整后未达到可申报阈值，不应加入 HSR 条件。最新客户指示和重大合同/监管附表覆盖通用模板语言。有效 cap table 覆盖过期 cap table 导出。
-
-所有有效立场目前均在 Northstar 政策内，或已有交易特定覆盖依据；当前无需审批，当前政策例外数量为零。条件性升级触发项是加入融资条件，或删除联邦客户同意。政策检查必须使用 `P-BUYER-MIDMARKET-2026` 中的审批类别和规则编号。
-
-评估器包含六个精确匹配评分点，符合指定计划：
-
-1. `consideration_mix_and_allocation`，权重 3：对价组合、有效分配来源和卖方分配表。
-2. `escrow_cap_basket_math`，权重 3：托管、上限、篮子、de minimis 和存续期计算。
-3. `consent_hsr_flags`，权重 2：交割同意、交割后通知、HSR 状态、HSR 条款立场和其他同意。
-4. `risk_memo_overrides`，权重 2：覆盖来源文件、覆盖代码、被覆盖文件和 HSR 覆盖依据。
-5. `policy_exceptions_approvals`，权重 2：逐项政策检查以及审批/例外汇总。
-6. `drafting_position_enums`，权重 2：受控起草立场枚举。
-
-常见模型错误包括使用过期 cap table、漏掉卖方票据或 earnout 的分配、未经要求就从现金对价中扣除托管、把敏感网络安全资产误判为自动 HSR 条件、套用通用模板竞业限制、漏掉 BlueBank 或 Federal SOC 作为交割同意，或因为政策列出升级阈值而把合规条款误标为需要审批。
-
-### 迁移设计
-
-作为训练任务，`train_005` 强化后续测试任务可迁移的惯例：有效交易室记录优先于过期导出和通用模板；最新客户指示和交易特定风险备忘录可以覆盖通用表格语言；百分比应按指定的 headline/equity value 计算；卖方分配可能需要按有效 cap table 对每个对价组成部分逐项按比例分摊；政策检查必须区分当前审批要求和未来条件性升级触发；起草输出应使用受控枚举而不是叙述标签。
-
-本任务不是教程。解题者必须在共享环境中自行发现相关记录、选择有效来源、完成计算，并用实时交易条款对照政策阈值。这些习惯可以迁移到买方条款填充和政策检查类测试任务，但不会泄露测试答案。
-
-### 构建记录
-
-作者：`task_group_020/train_005` 的 task-builder subagent。
-
-创建日期：2026-07-07。
-
-更新日期：2026-07-07。
-
-主要变更：为 `D-HARBOR-562` 创建了解题提示、答案模板、标准答案、精确匹配评估器和双语说明。
+构造记录：作者 `task-builder-train-005`。创建日期 2026-07-18。更新日期 2026-07-18。主要变更：为 `train_tasks/005` 创建 prompt、答案模板、标准答案、带八个加权评分点的确定性评估器，以及双语 notes。

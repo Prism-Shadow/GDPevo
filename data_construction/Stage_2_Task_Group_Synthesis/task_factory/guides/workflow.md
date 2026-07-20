@@ -40,8 +40,8 @@ main construction agent's model or client defaults:
 - Three isolated fewshot skill-generation processes each read all 5 train inputs and matching standard answers, producing 3 independent skill packages.
 - Base: run 3 isolated processes per test task, for 15 processes total.
 - Fewshot: run 3 isolated processes per test task, pairing attempt 01/02/03 with the matching skill package, for another 15 processes total.
-- Every process receives a fresh staged `/work`, dedicated `CODEX_HOME`, fixed prompt, and only the files allowed for that run.
-- Preserve complete Codex session traces and do not access notes, evaluator files, environment source, construction drafts, or other runs.
+- Every process receives a fresh staged `/work`, a dedicated temporary `CODEX_HOME` seeded only with the active `auth.json` and verified by `codex login status`, a fixed prompt, and only the files allowed for that run.
+- Copy only the matched primary `sessions/.../rollout-*.jsonl` into the run's `trace/` directory. Populate and verify all trace-derived token, cost, turn, tool-call and calibration-record fields from that copy before deleting the temporary `CODEX_HOME`. Do not archive the full Codex home or use stdout as the trace. Calibration agents must not access notes, evaluator files, environment source, construction drafts, or other runs.
 
 The reviewer subagent owns independent review:
 
@@ -59,7 +59,7 @@ Construction should move through these stages. Do not skip directly from reading
 | 4. Environment implementation | Clean-context env-builder coding subagent | `env/` | The environment is shared across all tasks, domain-oriented, reachable from a separate agent container, and free of answer-like per-task endpoints |
 | 5. Task construction | 10 task-builder subagents | `train_tasks/` and `test_tasks/` task folders | Each assigned task has solver input, bilingual notes, standard answer, evaluator, and answer template |
 | 6. Integration and evaluator self-check | Main agent | Finalized `task_group.yaml`, path/schema fixes, `scratch/rubric_validation.md`, evaluator and judge-API self-check logs | Every evaluator scores its own answer fully; the rubric covers distinct business outcomes without duplicate scoring; each point earns all of its assigned score or zero; and `/api/judge` rejects test ids without hidden details |
-| 7. Difficulty calibration | Dockerized Codex processes, scored by main agent | `scratch/difficulty_calibration.md`, traces, 3 independent fewshot skill packages, base/fewshot results | Fixed-prompt runs are isolated; overall base score is about `0.40-0.60`; fewshot remains roughly below `0.80` with a gain of about `0.10-0.30` and no saturation |
+| 7. Difficulty calibration | Dockerized Codex processes, scored by main agent | `scratch/difficulty_calibration.md`, primary session JSONL traces, 3 independent fewshot skill packages, base/fewshot results | Fixed-prompt runs are isolated; overall base score is about `0.40-0.60`; fewshot remains roughly below `0.80` with a gain of about `0.10-0.30` and no saturation |
 | 8. Independent review and rework | Reviewer subagent and main agent | Review findings, rework records, rerun calibration where needed | Structure, environment, notes, evaluation, transfer, and difficulty requirements all pass |
 
 ## Construction Flow
@@ -113,7 +113,7 @@ Design docs must be written before implementation, not backfilled by the same sc
 - The env-builder coding subagent owns `env/` implementation and programmatic data-generation code.
 - Task-builder subagents own task-file generation. The main agent should not directly generate all task prompts, standard answers, notes, and evaluators in one monolithic builder script.
 - A monolithic script that creates env, all task files, answers, notes, evaluators, scratch docs, and skills is not a valid substitute for subagent construction.
-- Calibration runs must use Dockerized `codex exec`, dedicated staged work and `CODEX_HOME` directories, the fixed prompts in `calibration_runtime.md`, and preserved raw traces. Orchestration subagent runs do not count as difficulty evidence.
+- Calibration runs must use Dockerized `codex exec`, dedicated staged work and temporary `CODEX_HOME` directories, the fixed prompts in `calibration_runtime.md`, and copied primary `rollout-*.jsonl` traces. Delete each temporary Codex home only after all trace-derived data has been populated and verified. Orchestration subagent runs do not count as difficulty evidence.
 - Subagent write scopes should be clear to avoid overwriting each other.
 - Subagents must not transform notes, standard answers, or eval files into solver-facing input.
 - All temporary designs, solver runs, skills, and review records belong under `scratch/`.

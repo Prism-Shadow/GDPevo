@@ -1,29 +1,23 @@
 {
-  "schema_name": "contractor_eligibility_review_v1",
-  "required_top_level_keys": [
-    "batch_id",
-    "review_cutoff_date",
-    "application_decisions",
-    "deficiency_counts",
-    "bulletin_impacts"
-  ],
-  "top_level_fields": {
-    "batch_id": {
-      "type": "string",
-      "required_value": "HS-2026-Q1A"
-    },
-    "review_cutoff_date": {
-      "type": "string",
-      "format": "YYYY-MM-DD",
-      "required_value": "2026-03-01"
-    },
+  "description": "Required JSON output for train_001 contractor batch eligibility review.",
+  "top_level_keys": {
     "application_decisions": {
       "type": "list",
       "ordering": "ascending by application_id",
-      "coverage": "include every application returned for batch HS-2026-Q1A and no other applications",
-      "item_fields": {
+      "required_length": 8,
+      "item_schema": {
         "application_id": {
-          "type": "string"
+          "type": "enum",
+          "allowed_values": [
+            "C-TR1-001",
+            "C-TR1-002",
+            "C-TR1-003",
+            "C-TR1-004",
+            "C-TR1-005",
+            "C-TR1-006",
+            "C-TR1-007",
+            "C-TR1-008"
+          ]
         },
         "determination": {
           "type": "enum",
@@ -33,91 +27,92 @@
             "DENY"
           ]
         },
-        "reason_codes": {
-          "type": "list[enum]",
-          "ordering": "use the enum order listed here",
+        "deficiency_codes": {
+          "type": "list",
+          "item_type": "enum",
+          "ordering": "ascending lexical order",
           "allowed_values": [
-            "NO_DEFICIENCY",
-            "BOND_SHORTFALL",
-            "BOND_CANCELLED",
-            "INSURANCE_VERIFY",
-            "UNRESOLVED_PENALTY",
-            "FIELD_NOTE_HOLD",
-            "DISQUALIFYING_CONDUCT",
-            "EXPERIENCE_VERIFY",
-            "CORRESPONDENCE_HOLD",
-            "ADVERSE_PRIOR_REGISTRATION",
-            "EXAM_SCORE_SHORTFALL",
-            "FINANCIAL_STATEMENT_MISSING"
+            "active_suspension",
+            "bond_cancelled",
+            "bond_shortfall",
+            "endorsement_missing",
+            "endorsement_pending",
+            "experience_shortfall",
+            "inspection_doc_gap",
+            "inspection_safety_recheck",
+            "insurance_expired",
+            "insurance_pending",
+            "insurance_shortfall",
+            "open_minor_violation",
+            "open_serious_violation"
           ]
         },
-        "primary_bulletin_ids": {
-          "type": "list[string]",
-          "ordering": "ascending bulletin_id; use an empty list when no bulletin drives the decision"
+        "required_actions": {
+          "type": "list",
+          "item_type": "enum",
+          "ordering": "ascending lexical order",
+          "allowed_values": [
+            "board_review_suspension",
+            "clear_document_gap",
+            "complete_safety_recheck",
+            "increase_bond_amount",
+            "increase_insurance_amount",
+            "obtain_current_bond",
+            "obtain_required_endorsement",
+            "provide_current_insurance",
+            "resolve_minor_violation_review",
+            "resolve_serious_violation",
+            "submit_experience_evidence",
+            "verify_insurance_binding",
+            "verify_pending_endorsement"
+          ]
         },
-        "next_action": {
+        "risk_tier": {
           "type": "enum",
           "allowed_values": [
-            "NO_ACTION",
-            "REQUEST_BOND_RIDER",
-            "REQUEST_REPLACEMENT_BOND",
-            "REQUEST_INSURANCE_VERIFICATION",
-            "REFER_UNRESOLVED_PENALTY",
-            "REQUEST_FIELD_CLEARANCE",
-            "REQUEST_EXPERIENCE_DOCUMENTATION",
-            "DENY_APPLICATION",
-            "COMBINED_HOLD_REVIEW"
+            "low",
+            "medium",
+            "high"
           ]
+        },
+        "policy_impacted": {
+          "type": "boolean",
+          "meaning": "Whether the current policy baseline changes the eligibility analysis for this application."
         }
       }
     },
-    "deficiency_counts": {
+    "summary": {
       "type": "object",
-      "required_fields": {
-        "applications_reviewed": "integer",
-        "determinations": {
-          "APPROVE": "integer",
-          "HOLD": "integer",
-          "DENY": "integer"
+      "required_keys": {
+        "approve_count": {
+          "type": "integer",
+          "units": "applications"
         },
-        "reason_codes": {
-          "NO_DEFICIENCY": "integer",
-          "BOND_SHORTFALL": "integer",
-          "BOND_CANCELLED": "integer",
-          "INSURANCE_VERIFY": "integer",
-          "UNRESOLVED_PENALTY": "integer",
-          "FIELD_NOTE_HOLD": "integer",
-          "DISQUALIFYING_CONDUCT": "integer",
-          "EXPERIENCE_VERIFY": "integer",
-          "CORRESPONDENCE_HOLD": "integer",
-          "ADVERSE_PRIOR_REGISTRATION": "integer",
-          "EXAM_SCORE_SHORTFALL": "integer",
-          "FINANCIAL_STATEMENT_MISSING": "integer"
+        "hold_count": {
+          "type": "integer",
+          "units": "applications"
+        },
+        "deny_count": {
+          "type": "integer",
+          "units": "applications"
+        },
+        "high_risk_application_ids": {
+          "type": "list",
+          "item_type": "application_id",
+          "ordering": "ascending lexical order"
+        },
+        "policy_impacted_application_ids": {
+          "type": "list",
+          "item_type": "application_id",
+          "ordering": "ascending lexical order"
+        },
+        "stale_or_unverified_correspondence_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering": "ascending lexical order"
         }
-      }
-    },
-    "bulletin_impacts": {
-      "type": "object",
-      "required_fields": {
-        "applicable_bulletin_ids": {
-          "type": "list[string]",
-          "ordering": "ascending bulletin_id"
-        },
-        "applications_changed_by_2026_bulletins": {
-          "type": "list[string]",
-          "ordering": "ascending application_id"
-        },
-        "deficiency_count_by_rule_type": {
-          "EXAM_MINIMUM": "integer",
-          "BOND_MINIMUM": "integer",
-          "INSURANCE_MINIMUM": "integer",
-          "EXPERIENCE_MINIMUM": "integer"
-        },
-        "unchanged_by_bulletins_count": "integer"
       }
     }
   },
-  "numeric_precision": {
-    "all_counts": "integer"
-  }
+  "additional_output": "Do not include prose, citations, markdown, comments, or keys not shown in this template."
 }

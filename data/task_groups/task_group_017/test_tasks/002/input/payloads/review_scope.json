@@ -1,0 +1,68 @@
+{
+  "task_id": "test_002",
+  "matter_id": "MTR-PORTOLA-GJ",
+  "client": "Portola Energy",
+  "request_type": "grand jury subpoena",
+  "requested_review": "retention coverage matrix",
+  "environment": {
+    "base_url": "<TASK_ENV_BASE_URL>",
+    "query_api_key_header": "X-API-Key",
+    "query_api_key": "review-key-017",
+    "shared_endpoints": [
+      "GET /api/schema",
+      "GET /api/matters",
+      "GET /api/subpoena-categories",
+      "GET /api/productions",
+      "GET /api/custodian-sources",
+      "GET /api/documents/search",
+      "GET /api/privilege-log",
+      "GET /api/qc-findings",
+      "GET /api/retention-events",
+      "GET /api/remediation-actions",
+      "POST /api/query"
+    ]
+  },
+  "category_synopsis": [
+    {
+      "category_code": "PE-A",
+      "title": "Corporate organization, trading desk personnel, and custodian identity materials"
+    },
+    {
+      "category_code": "PE-B",
+      "title": "Trade blotters, transaction records, and daily or monthly trading support"
+    },
+    {
+      "category_code": "PE-C",
+      "title": "Pricing models, market inputs, and valuation support for energy products"
+    },
+    {
+      "category_code": "PE-D",
+      "title": "Deal chat and voice communications"
+    },
+    {
+      "category_code": "PE-E",
+      "title": "Trading attachments and archive exports"
+    },
+    {
+      "category_code": "PE-F",
+      "title": "Surveillance reports, market-monitoring reviews, and exception reports"
+    },
+    {
+      "category_code": "PE-G",
+      "title": "External broker, counterparty, and exchange communications"
+    },
+    {
+      "category_code": "PE-H",
+      "title": "Compliance policies, trading controls, and escalation procedures"
+    },
+    {
+      "category_code": "PE-I",
+      "title": "Audit tracking, surveillance certification, and remediation follow-up"
+    }
+  ],
+  "output_contract": {
+    "format": "JSON object only",
+    "schema_file": "input/payloads/answer_template.json",
+    "stable_ids": "Use matter, source, event, action, and category identifiers exactly as they appear in the shared hub."
+  }
+}

@@ -1,142 +1,224 @@
 {
-  "schema_name": "train_002_lane_traffic_batch_answer",
+  "schema_name": "traffic_violation_closeout_payment_plan",
+  "schema_version": "1.0",
+  "instructions": {
+    "currency": "Numbers are dollar amounts rounded to two decimals.",
+    "dates": "Use ISO YYYY-MM-DD dates.",
+    "matter_order": "Sort matters by citation_number ascending.",
+    "excluded_charge_order": "Sort excluded_charges by charge_code ascending.",
+    "scored_text": "Use enum values where provided; do not replace enum values with prose."
+  },
   "required_top_level_keys": [
-    "batch_id",
-    "county",
-    "entries",
+    "matters",
+    "excluded_charges",
     "batch_totals"
   ],
-  "ordering_rules": {
-    "entries": "Order by citation_number ascending.",
-    "assessed_components": "Order in the sequence the components are applied.",
-    "excluded_candidate_fee_codes": "Sort ascending by code."
-  },
-  "field_definitions": {
-    "batch_id": {
-      "type": "string"
-    },
-    "county": {
-      "type": "string"
-    },
-    "entries": {
-      "type": "list",
-      "item_type": "object",
-      "required_item_keys": [
-        "citation_number",
-        "account_reference",
-        "defendant_name",
-        "plea",
-        "disposition",
-        "order_date",
-        "assessed_components",
-        "assessed_total",
-        "excluded_candidate_fee_codes",
-        "payment_plan"
+  "matters_item": {
+    "citation_number": {
+      "type": "enum",
+      "allowed": [
+        "OR26-TR-1188",
+        "OR26-TR-1194"
       ]
     },
-    "citation_number": {
+    "jurisdiction_code": {
       "type": "string"
-    },
-    "account_reference": {
-      "type": "string",
-      "description": "Use the citation number when no separate case number is available."
     },
     "defendant_name": {
       "type": "string"
     },
-    "plea": {
-      "type": "enum",
-      "allowed_values": [
-        "not_entered",
-        "guilty",
-        "no_contest",
-        "deferred_entry"
-      ]
-    },
     "disposition": {
-      "type": "enum",
-      "allowed_values": [
-        "convicted",
-        "dismissed",
-        "deferred",
-        "amended",
-        "pending"
-      ]
+      "plea": {
+        "type": "enum",
+        "allowed": [
+          "no_contest",
+          "guilty",
+          "not_guilty",
+          "no_plea_recorded"
+        ]
+      },
+      "finding": {
+        "type": "enum",
+        "allowed": [
+          "violation_found",
+          "dismissed",
+          "continued",
+          "verify_before_entry"
+        ]
+      },
+      "disposition_date": {
+        "type": "date"
+      },
+      "agreement_sequence": {
+        "type": "enum",
+        "allowed": [
+          "post_disposition",
+          "pre_disposition",
+          "same_entry_unknown",
+          "no_agreement"
+        ]
+      }
     },
-    "order_date": {
-      "type": "date",
-      "format": "YYYY-MM-DD"
-    },
-    "assessed_components": {
-      "type": "list",
-      "item_type": "object",
-      "required_item_keys": [
-        "fee_code",
-        "amount"
-      ],
-      "amount_precision": "currency, 2 decimals"
-    },
-    "assessed_total": {
-      "type": "number",
-      "precision": "currency, 2 decimals"
-    },
-    "excluded_candidate_fee_codes": {
-      "type": "list",
-      "item_type": "string"
+    "financial_entry": {
+      "violation_code": {
+        "type": "enum",
+        "allowed": [
+          "ORS_811_109_100PLUS",
+          "ORS_811_109_31_40",
+          "ORS_811_109_21_30",
+          "other"
+        ]
+      },
+      "fine_tier": {
+        "type": "enum",
+        "allowed": [
+          "speed_100_or_greater",
+          "speed_31_to_40_over",
+          "speed_21_to_30_over",
+          "statutory_maximum",
+          "verify_before_entry"
+        ]
+      },
+      "fee_schedule_source": {
+        "type": "enum",
+        "allowed": [
+          "F-OR22-100-2024",
+          "F-OR22-31-2024",
+          "F-OR22-100-OLD",
+          "statutory_maximum_note",
+          "local_memo_only",
+          "verify_before_entry"
+        ]
+      },
+      "standard_fine": {
+        "type": "number"
+      },
+      "county_surcharge": {
+        "type": "number"
+      },
+      "amount_due": {
+        "type": "number"
+      },
+      "unsupported_charge_total_included": {
+        "type": "number"
+      }
     },
     "payment_plan": {
-      "type": "object",
-      "required_keys": [
-        "plan_status",
-        "monthly_amount",
-        "first_due_date",
-        "full_payment_count",
-        "final_payment_amount",
-        "total_payment_count",
-        "final_due_date"
-      ]
+      "plan_status": {
+        "type": "enum",
+        "allowed": [
+          "approved",
+          "not_approved",
+          "not_applicable",
+          "verify_before_entry"
+        ]
+      },
+      "agreement_type": {
+        "type": "enum",
+        "allowed": [
+          "extended_payment_plan",
+          "standard_due_date_only",
+          "none",
+          "verify_before_entry"
+        ]
+      },
+      "monthly_payment": {
+        "type": "number"
+      },
+      "down_payment": {
+        "type": "number"
+      },
+      "first_due_date": {
+        "type": "date"
+      },
+      "full_payment_count": {
+        "type": "integer"
+      },
+      "final_payment_amount": {
+        "type": "number"
+      },
+      "total_installments": {
+        "type": "integer"
+      },
+      "final_due_date": {
+        "type": "date"
+      }
     },
-    "plan_status": {
+    "form_entry": {
+      "form_id": {
+        "type": "enum",
+        "allowed": [
+          "OR_22JD_PLAN",
+          "OR_27JD_PLAN",
+          "other",
+          "verify_before_entry"
+        ]
+      },
+      "form_label": {
+        "type": "enum",
+        "allowed": [
+          "extended_payment_plan_agreement",
+          "payment_plan_agreement",
+          "other",
+          "verify_before_entry"
+        ]
+      },
+      "account_reference": {
+        "type": "string"
+      },
+      "required_labels_used": {
+        "type": "list",
+        "allowed_values": [
+          "Case # / Account #",
+          "Case/Account Balance",
+          "Action Table(s) / Notes",
+          "TERMS of PAYMENT"
+        ]
+      }
+    }
+  },
+  "excluded_charges_item": {
+    "charge_code": {
       "type": "enum",
-      "allowed_values": [
-        "entered_after_disposition",
-        "not_entered",
-        "needs_review"
+      "allowed": [
+        "account_management_fee",
+        "collection_fee",
+        "dmv_fee",
+        "late_payment_fee",
+        "returned_check_fee",
+        "stale_2022_standard_fine",
+        "statutory_maximum_substitution",
+        "traffic_school_fee"
       ]
     },
-    "monthly_amount": {
-      "type": "number",
-      "precision": "currency, 2 decimals"
-    },
-    "first_due_date": {
-      "type": "date",
-      "format": "YYYY-MM-DD"
-    },
-    "full_payment_count": {
-      "type": "integer"
-    },
-    "final_payment_amount": {
-      "type": "number",
-      "precision": "currency, 2 decimals"
-    },
-    "total_payment_count": {
-      "type": "integer"
-    },
-    "final_due_date": {
-      "type": "date",
-      "format": "YYYY-MM-DD"
-    },
-    "batch_totals": {
-      "type": "object",
-      "required_keys": [
-        "assessed_total",
-        "total_full_payments",
-        "total_final_payment_amount",
-        "all_plans_entered_after_disposition"
+    "applies_to": {
+      "type": "enum",
+      "allowed": [
+        "all",
+        "OR26-TR-1188",
+        "OR26-TR-1194"
       ]
     },
-    "all_plans_entered_after_disposition": {
-      "type": "boolean"
+    "reason_code": {
+      "type": "enum",
+      "allowed": [
+        "stale_schedule",
+        "unsupported_post_disposition",
+        "not_in_hearing_order",
+        "not_current_policy",
+        "no_triggering_event"
+      ]
+    }
+  },
+  "batch_totals": {
+    "matter_count": {
+      "type": "integer"
+    },
+    "combined_amount_due": {
+      "type": "number"
+    },
+    "unsupported_charge_total_included": {
+      "type": "number"
     }
   }
 }

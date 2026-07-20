@@ -1,455 +1,131 @@
 {
-  "task_id": "test_003",
-  "packet_id": "MID-DUI-LIC-PROB-2025JUN",
-  "county": "Middlesex",
-  "defendants": [
+  "case_memo": {
+    "case_number": "VA-CR25-1044-00",
+    "court": "Gloucester County Circuit Court",
+    "defendant_name": "Talia Nguyen",
+    "appeal_posture": "circuit_appeal_conviction",
+    "conviction_date": "2025-05-08",
+    "offense": "Driving under the influence, first offense",
+    "statute": "Va. Code 18.2-266",
+    "sentence_summary": {
+      "jail_days_imposed": 30,
+      "jail_days_suspended": 25,
+      "active_jail_days": 5,
+      "fine_imposed": 750.00,
+      "court_costs": 230.00,
+      "fines_and_costs_total": 980.00,
+      "supervised_probation_months": 6,
+      "license_suspension_months": 12,
+      "release_from_active_confinement": "2025-05-09"
+    },
+    "memo_status": {
+      "probation_referral_required": true,
+      "license_order_required": true,
+      "payment_agreement_required": true
+    }
+  },
+  "cc1375": {
+    "form_id": "VA_CC1375",
+    "form_label": "CC-1375 Probation Referral",
+    "case_number": "VA-CR25-1044-00",
+    "defendant_name": "Talia Nguyen",
+    "conviction_date": "2025-05-08",
+    "probation_type": "supervised",
+    "probation_term_months": 6,
+    "report_datetime": "2025-05-12T09:30:00",
+    "probation_officer": "TBD from case file",
+    "probation_office_location": "TBD from case file"
+  },
+  "cc1379": {
+    "form_id": "VA_CC1379",
+    "form_label": "CC-1379 Installment/License Order",
+    "case_number": "VA-CR25-1044-00",
+    "defendant_name": "Talia Nguyen",
+    "driver_license_number": "TBD from case file",
+    "license_suspension": {
+      "status": "suspended",
+      "effective_date": "2025-05-08",
+      "months": 12,
+      "basis": "dui_conviction"
+    },
+    "payment_order": {
+      "agreement_type": "initial_installment",
+      "policy_id": "POL-VA-GLO-FIRST",
+      "total_due": 980.00,
+      "fines_and_costs_balance": 980.00,
+      "restitution_balance": 0.00,
+      "account_fee": 0.00,
+      "down_payment": 0.00,
+      "installment_amount": 60.00,
+      "payment_interval": "monthly",
+      "first_due_date": "2025-06-08",
+      "payment_count": 17,
+      "full_installment_count": 16,
+      "final_payment_amount": 20.00,
+      "final_due_date": "2026-10-08",
+      "return_to_court_date": "2026-12-07",
+      "return_to_court_time": "09:00",
+      "return_to_court_trigger": "nonpayment"
+    }
+  },
+  "budget_review": {
+    "monthly_income": 2050.00,
+    "monthly_obligations": 1785.00,
+    "monthly_disposable_income": 265.00,
+    "selected_installment_amount": 60.00,
+    "support_classification": "supported_by_budget",
+    "policy_band": {
+      "minimum_monthly": 50.00,
+      "maximum_monthly": 100.00
+    }
+  },
+  "placeholder_fields": [
     {
-      "case_number": "24-MID-00077",
-      "defendant_name": "Victor Hayes",
-      "source_resolution": {
-        "controlling_source": "live_record",
-        "live_case_status": "compliance_review",
-        "conviction_posture": "dui_conviction",
-        "order_date": "2024-06-14",
-        "collateral_extract_used_as_final": false,
-        "rejected_disposition_source_details": [
-          {
-            "source": "stale_collateral_extract",
-            "reason": "older_extract"
-          }
-        ]
-      },
-      "charge_outcomes": [
-        {
-          "charge_id": "CHG-001",
-          "statute": "DUI-101",
-          "disposition": "convicted"
-        },
-        {
-          "charge_id": "CHG-002",
-          "statute": "DUI-210",
-          "disposition": "dismissed"
-        }
-      ],
-      "identity_fields": {
-        "sid_number": "SID709321",
-        "driver_license_number": "TBD from case file",
-        "defendant_phone": "555-010-7712",
-        "defendant_email": "TBD from case file",
-        "mailing_address": "TBD from case file",
-        "probation_officer": "TBD from case file"
-      },
-      "placeholder_audit": {
-        "placeholder_policy": "case_file_pull",
-        "placeholder_fields": [
-          "identity_fields.defendant_email",
-          "identity_fields.driver_license_number",
-          "identity_fields.mailing_address",
-          "identity_fields.probation_officer"
-        ],
-        "placeholder_count": 4,
-        "case_file_pull_required": true
-      },
-      "collateral_orders": {
-        "probation_required": true,
-        "probation_term_months": 30,
-        "probation_report_date": "2024-06-21",
-        "probation_report_time": "09:30",
-        "probation_report_location": "Middlesex Probation Intake - Room 214",
-        "license_suspension_required": true,
-        "license_suspension_months": 18,
-        "license_suspension_start_date": "2024-06-14",
-        "license_start_basis": "disposition_date",
-        "rejected_license_start_candidates": [
-          {
-            "source": "custody_release_date",
-            "date": "2024-06-16"
-          },
-          {
-            "source": "local_draft_suspension_start",
-            "date": "2024-06-16"
-          },
-          {
-            "source": "stale_collateral_extract",
-            "date": "2024-06-16"
-          }
-        ],
-        "treatment_referral_required": true
-      },
-      "financial_order": {
-        "financial_source_resolution": "ledger_record",
-        "amount_source": "ledger_record",
-        "ledger_status": "current",
-        "assessed_fee_codes": [
-          "DUI-CONV",
-          "DUI-LIC",
-          "DUI-PROB",
-          "DUI-TREAT"
-        ],
-        "excluded_fee_or_charge_codes": [
-          "DUI-LATE-SETUP",
-          "DUI-VPANEL"
-        ],
-        "excluded_fee_or_charge_details": [
-          {
-            "code": "DUI-LATE-SETUP",
-            "amount": 15.0
-          },
-          {
-            "code": "DUI-VPANEL",
-            "amount": 45.0
-          }
-        ],
-        "unsupported_rejected_amount": 60.0,
-        "principal_amount": 705.0,
-        "amount_paid_as_of_packet": 703.47,
-        "current_balance_due": 1.53
-      },
-      "payment_plan": {
-        "plan_action": "retain_live_plan",
-        "monthly_amount": 25.0,
-        "selected_amount_source": "policy_minimum",
-        "rejected_monthly_candidates": [
-          {
-            "source": "stale_extract",
-            "amount": 20.0
-          },
-          {
-            "source": "unsigned_intake_sheet",
-            "amount": 20.0
-          }
-        ],
-        "plan_basis": "original_principal",
-        "payment_math_rule": "original_principal_with_remainder",
-        "plan_basis_amount": 705.0,
-        "first_due_date": "2024-07-29",
-        "regular_payment_count": 28,
-        "regular_payment_total": 700.0,
-        "final_payment_amount": 5.0,
-        "total_installments": 29,
-        "final_due_date": "2026-11-29"
-      },
-      "return_to_court": {
-        "required": false,
-        "status": "not_required",
-        "notice_date": null,
-        "basis": "none"
-      },
-      "follow_up_action": "enter_probation_license_payment_order"
+      "field": "cc1375.probation_office_location",
+      "value": "TBD from case file",
+      "reason_code": "missing_office_detail"
     },
     {
-      "case_number": "24-MID-01001",
-      "defendant_name": "Fatima Hayes",
-      "source_resolution": {
-        "controlling_source": "packet_record",
-        "live_case_status": "open",
-        "conviction_posture": "dui_conviction",
-        "order_date": "2025-06-18",
-        "collateral_extract_used_as_final": false,
-        "rejected_disposition_source_details": [
-          {
-            "source": "live_open_case_snapshot",
-            "reason": "superseded_by_later_packet"
-          },
-          {
-            "source": "stale_collateral_extract",
-            "reason": "older_extract"
-          }
-        ]
-      },
-      "charge_outcomes": [
-        {
-          "charge_id": "CHG-001",
-          "statute": "DUI-104",
-          "disposition": "convicted_no_separate_fee"
-        },
-        {
-          "charge_id": "CHG-002",
-          "statute": "DUI-210",
-          "disposition": "dismissed"
-        },
-        {
-          "charge_id": "CHG-003",
-          "statute": "DUI-101",
-          "disposition": "convicted"
-        }
-      ],
-      "identity_fields": {
-        "sid_number": "SID290093",
-        "driver_license_number": "TBD from case file",
-        "defendant_phone": "TBD from case file",
-        "defendant_email": "TBD from case file",
-        "mailing_address": "TBD from case file",
-        "probation_officer": "TBD from case file"
-      },
-      "placeholder_audit": {
-        "placeholder_policy": "case_file_pull",
-        "placeholder_fields": [
-          "identity_fields.defendant_email",
-          "identity_fields.defendant_phone",
-          "identity_fields.driver_license_number",
-          "identity_fields.mailing_address",
-          "identity_fields.probation_officer"
-        ],
-        "placeholder_count": 5,
-        "case_file_pull_required": true
-      },
-      "collateral_orders": {
-        "probation_required": true,
-        "probation_term_months": 18,
-        "probation_report_date": "2025-06-24",
-        "probation_report_time": "10:00",
-        "probation_report_location": "Middlesex Probation Intake - Room 214",
-        "license_suspension_required": true,
-        "license_suspension_months": 18,
-        "license_suspension_start_date": "2025-06-18",
-        "license_start_basis": "disposition_date",
-        "rejected_license_start_candidates": [
-          {
-            "source": "local_draft_suspension_start",
-            "date": "2025-07-01"
-          },
-          {
-            "source": "stale_collateral_extract",
-            "date": "2025-07-01"
-          }
-        ],
-        "treatment_referral_required": true
-      },
-      "financial_order": {
-        "financial_source_resolution": "fee_schedule",
-        "amount_source": "fee_schedule",
-        "ledger_status": "not_open",
-        "assessed_fee_codes": [
-          "DUI-CONV",
-          "DUI-LIC",
-          "DUI-PROB",
-          "DUI-TREAT"
-        ],
-        "excluded_fee_or_charge_codes": [
-          "DUI-104",
-          "DUI-LATE-SETUP",
-          "DUI-VPANEL"
-        ],
-        "excluded_fee_or_charge_details": [
-          {
-            "code": "DUI-104",
-            "amount": 60.0
-          },
-          {
-            "code": "DUI-LATE-SETUP",
-            "amount": 15.0
-          },
-          {
-            "code": "DUI-VPANEL",
-            "amount": 45.0
-          }
-        ],
-        "unsupported_rejected_amount": 120.0,
-        "principal_amount": 765.0,
-        "amount_paid_as_of_packet": 0.0,
-        "current_balance_due": 765.0
-      },
-      "payment_plan": {
-        "plan_action": "open_new_account_plan",
-        "monthly_amount": 125.0,
-        "selected_amount_source": "signed_order",
-        "rejected_monthly_candidates": [
-          {
-            "source": "pre_sentence_worksheet",
-            "amount": 100.0
-          },
-          {
-            "source": "stale_extract",
-            "amount": 100.0
-          },
-          {
-            "source": "unsigned_intake_sheet",
-            "amount": 80.0
-          }
-        ],
-        "plan_basis": "original_principal",
-        "payment_math_rule": "original_principal_with_remainder",
-        "plan_basis_amount": 765.0,
-        "first_due_date": "2025-08-02",
-        "regular_payment_count": 6,
-        "regular_payment_total": 750.0,
-        "final_payment_amount": 15.0,
-        "total_installments": 7,
-        "final_due_date": "2026-02-02"
-      },
-      "return_to_court": {
-        "required": false,
-        "status": "not_required",
-        "notice_date": null,
-        "basis": "none"
-      },
-      "follow_up_action": "open_financial_account_and_enter_order"
+      "field": "cc1375.probation_officer",
+      "value": "TBD from case file",
+      "reason_code": "missing_office_detail"
     },
     {
-      "case_number": "24-MID-01007",
-      "defendant_name": "Isaac Nguyen",
-      "source_resolution": {
-        "controlling_source": "live_record",
-        "live_case_status": "probation_active",
-        "conviction_posture": "amended_dui_reckless",
-        "order_date": "2024-08-19",
-        "collateral_extract_used_as_final": false,
-        "rejected_disposition_source_details": [
-          {
-            "source": "stale_collateral_extract",
-            "reason": "older_extract"
-          }
-        ]
-      },
-      "charge_outcomes": [
-        {
-          "charge_id": "CHG-001",
-          "statute": "DUI-101",
-          "disposition": "dismissed"
-        },
-        {
-          "charge_id": "CHG-002",
-          "statute": "DUI-104",
-          "disposition": "amended"
-        }
-      ],
-      "identity_fields": {
-        "sid_number": "SID649350",
-        "driver_license_number": "MID-DL-649350",
-        "defendant_phone": "TBD from case file",
-        "defendant_email": "TBD from case file",
-        "mailing_address": "TBD from case file",
-        "probation_officer": "TBD from case file"
-      },
-      "placeholder_audit": {
-        "placeholder_policy": "case_file_pull",
-        "placeholder_fields": [
-          "identity_fields.defendant_email",
-          "identity_fields.defendant_phone",
-          "identity_fields.mailing_address",
-          "identity_fields.probation_officer"
-        ],
-        "placeholder_count": 4,
-        "case_file_pull_required": true
-      },
-      "collateral_orders": {
-        "probation_required": true,
-        "probation_term_months": 12,
-        "probation_report_date": "2024-08-26",
-        "probation_report_time": "13:30",
-        "probation_report_location": "Middlesex Probation Intake - Room 214",
-        "license_suspension_required": true,
-        "license_suspension_months": 3,
-        "license_suspension_start_date": "2024-08-19",
-        "license_start_basis": "disposition_date",
-        "rejected_license_start_candidates": [
-          {
-            "source": "local_draft_suspension_start",
-            "date": "2024-08-26"
-          },
-          {
-            "source": "probation_report_date",
-            "date": "2024-08-26"
-          },
-          {
-            "source": "stale_collateral_extract",
-            "date": "2024-08-26"
-          }
-        ],
-        "treatment_referral_required": true
-      },
-      "financial_order": {
-        "financial_source_resolution": "ledger_record",
-        "amount_source": "ledger_record",
-        "ledger_status": "pending_adjustment",
-        "assessed_fee_codes": [
-          "DUI-CONV",
-          "DUI-LIC",
-          "DUI-PROB",
-          "DUI-TREAT"
-        ],
-        "excluded_fee_or_charge_codes": [
-          "DUI-LATE-SETUP",
-          "DUI-VPANEL"
-        ],
-        "excluded_fee_or_charge_details": [
-          {
-            "code": "DUI-LATE-SETUP",
-            "amount": 15.0
-          },
-          {
-            "code": "DUI-VPANEL",
-            "amount": 45.0
-          }
-        ],
-        "unsupported_rejected_amount": 60.0,
-        "principal_amount": 705.0,
-        "amount_paid_as_of_packet": 93.64,
-        "current_balance_due": 611.36
-      },
-      "payment_plan": {
-        "plan_action": "retain_live_plan_pending_return_to_court",
-        "monthly_amount": 35.0,
-        "selected_amount_source": "live_plan",
-        "rejected_monthly_candidates": [
-          {
-            "source": "stale_extract",
-            "amount": 20.0
-          },
-          {
-            "source": "withdrawn_or_unsigned_request",
-            "amount": 20.0
-          }
-        ],
-        "plan_basis": "original_principal",
-        "payment_math_rule": "original_principal_with_remainder",
-        "plan_basis_amount": 705.0,
-        "first_due_date": "2024-10-03",
-        "regular_payment_count": 20,
-        "regular_payment_total": 700.0,
-        "final_payment_amount": 5.0,
-        "total_installments": 21,
-        "final_due_date": "2026-06-03"
-      },
-      "return_to_court": {
-        "required": true,
-        "status": "existing_notice_prepared",
-        "notice_date": "2024-12-09",
-        "basis": "live_record_default"
-      },
-      "follow_up_action": "attach_existing_return_to_court_notice"
+      "field": "cc1379.driver_license_number",
+      "value": "TBD from case file",
+      "reason_code": "missing_identifier"
+    },
+    {
+      "field": "defendant.mailing_address",
+      "value": "TBD from case file",
+      "reason_code": "missing_contact"
+    },
+    {
+      "field": "defendant.phone",
+      "value": "TBD from case file",
+      "reason_code": "missing_contact"
+    },
+    {
+      "field": "defendant.residence_address",
+      "value": "TBD from case file",
+      "reason_code": "missing_contact"
+    },
+    {
+      "field": "defendant.ssn",
+      "value": "TBD from case file",
+      "reason_code": "missing_identifier"
     }
   ],
-  "packet_totals": {
-    "included_case_numbers": [
-      "24-MID-00077",
-      "24-MID-01001",
-      "24-MID-01007"
-    ],
-    "excluded_extract_case_numbers": [
-      "24-MID-01008"
-    ],
-    "live_disposition_case_count": 2,
-    "local_packet_disposition_case_count": 1,
-    "source_rejection_count": 4,
-    "ledger_based_case_count": 2,
-    "schedule_based_case_count": 1,
-    "payment_plan_count": 3,
-    "new_account_plan_count": 1,
-    "live_plan_retained_count": 2,
-    "original_principal_plan_count": 3,
-    "return_to_court_case_numbers": [
-      "24-MID-01007"
-    ],
-    "principal_amount_total": 2175.0,
-    "current_balance_due_total": 1377.89,
-    "placeholder_field_count": 13,
-    "case_file_pull_case_count": 3,
-    "excluded_candidate_line_count": 7,
-    "unsupported_rejected_amount_total": 240.0,
-    "collateral_extract_used_count": 0,
-    "rejected_monthly_candidate_count": 7,
-    "rejected_license_start_candidate_count": 8
-  }
+  "excluded_financial_items": [
+    {
+      "item": "account_management_fee",
+      "amount": 25.00,
+      "reason_code": "no_order_or_policy_support"
+    },
+    {
+      "item": "restitution",
+      "amount": 180.00,
+      "reason_code": "no_order_or_policy_support"
+    }
+  ]
 }

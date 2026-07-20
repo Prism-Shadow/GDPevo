@@ -1,31 +1,37 @@
-# English
+# train_005 hidden notes
 
-Task `train_005` is an SLA aging task for Edge Services as of 2026-04-10, with a 21-day inclusive recent-closed window. The solver-facing prompt points to `<TASK_ENV_BASE_URL>` and asks for exact JSON matching the template without exposing the scoring rubric or hidden answer.
+## English
 
-The answer was computed from the shared environment using the common SLA aging conventions: latest status history as effective state, reliability/security category precedence, SLA targets by category and severity, duplicate cluster representatives from the included population, escaped S1/S2 count, and missing-owner overdue triage.
+Data/source lineage: This task belongs to `SCN_024_engineering_portfolio_work_item_analytics`, derived from source examples `E001`, `E002`, and `E003`, with the direct workflow anchored in the `E002` SLA-aging pattern. The construction data is the generated SQLite environment at `task_group/task_group_024/env/portfolio.db`, especially `work_items` and `sla_policy`. The task-local files are `input/prompt.txt`, `input/payloads/answer_template.json`, `output/answer.json`, and `eval/`.
 
-Assumption: work items with `created_date` after the as-of date are outside the as-of review population, even if a later snapshot export has an open status. This avoids impossible negative age values.
+Task definition: The solver audits Security and Reliability SLA aging for teams `AppSec` and `Identity Services` as of `2026-01-22` with a 21-day recent-closed window. They must identify the primary work item denominator, the overdue subset, severity counts, a prioritized escalation queue, missing owners, duplicate clusters, and the breach rate. Important fields are `id`, `title`, `work_type`, `status`, `team`, `owner`, `created_at`, `due_at`, `closed_at`, `severity`, `labels`, and `duplicate_of`. `mirror_status` and `legacy_category` are stale or distractor fields for this task.
 
-# 中文
+Scenario fit: This is an engineering operations SLA workflow over portfolio work items. It requires reconstructing operational state from status and date fields, separating primary and duplicate records, applying category precedence, and producing escalation-ready structured output. The task reinforces the group convention that a solver must combine API or SQL exploration with business rules rather than simply reading one export field.
 
-`train_005` 是 Edge Services 在 2026-04-10 的 SLA 老化任务，最近关闭窗口为向前 21 天且包含边界日期。面向求解器的提示使用 `<TASK_ENV_BASE_URL>`，要求输出与模板完全一致的 JSON，未暴露评分细则或隐藏答案。
+Material map: The prompt gives the visible business scope and requires JSON output. `answer_template.json` defines field names, list ordering, severity keys, duplicate-cluster representation, and three-decimal breach-rate precision. The `work_items` table provides all candidate records and edge cases. The `sla_policy` table is available for context on severity expectations, although this task scores due-date outcomes already present in `work_items`. `output/answer.json` stores the standard answer. `eval/eval.py` implements deterministic whole-point checks.
 
-答案基于共享环境并按通用 SLA 老化规则计算：使用状态历史中的最新有效状态，按可靠性/安全性优先级分类，按类别和严重级别套用 SLA 目标，从纳入人群中生成重复集群代表，统计逃逸的 S1/S2 项，并列出逾期且缺少负责人的工单。
+Solution and evaluation basis: Category precedence uses work type, labels, and title signals with Security before Reliability before TechDebt before NewFeature. Relevant categories are Security and Reliability. Records are in team scope, created no later than the as-of date, and are either active primary work or closed inside the recent window. Primary metrics exclude `Cancelled`, `Duplicate`, and rows whose `duplicate_of` is non-null. Duplicate rows are still reported as clusters. Overdue means an open primary item has `due_at` before `2026-01-22`, or a recently closed primary item has `due_at` before `closed_at`; same-day due dates are not overdue. The included primary ids are `WI-24024-009`, `WI-24024-012`, `WI-24024-116`, `WI-24024-S021`, `WI-24024-S022`, `WI-24024-S023`, `WI-24024-S024`, `WI-24024-S025`, `WI-24024-S026`, `WI-24024-S027`, and `WI-24024-S028`. The overdue ids are `WI-24024-116`, `WI-24024-S021`, `WI-24024-S022`, `WI-24024-S024`, and `WI-24024-S026`. The escalation order is severity rank S1, S2, S3, S4, then overdue days descending, then id: `WI-24024-S021`, `WI-24024-S026`, `WI-24024-S024`, `WI-24024-S022`, `WI-24024-116`. Severity overdue counts are `{S1: 2, S2: 2, S3: 1, S4: 0}`. Missing owner primary ids are `WI-24024-S026` and `WI-24024-S027`. Duplicate clusters are `WI-24024-S021 -> WI-24024-S029` and `WI-24024-S022 -> WI-24024-S030`. The breach rate is `5 / 11 = 0.455`.
 
-假设：`created_date` 晚于 as-of 日期的工单不属于该 as-of 评审人群，即使后续快照导出的状态为开放，也不纳入计算。这样可以避免出现不合理的负数老化天数。
+Rubric: The evaluator has seven whole-point scoring goals with raw weights `[3, 3, 2, 2, 1, 1, 2]`: included primary set, overdue primary set, severity overdue counts, escalation ordering, missing-owner ids, duplicate clusters, and breach rate. These cover distinct outcomes: eligibility reconstruction, deadline breach detection, severity aggregation, triage prioritization, ownership risk, duplicate hygiene, and executive breach metric. Likely pitfalls include using `legacy_category`, including future-created open records, including duplicate rows in the primary denominator, treating due-on-as-of as overdue, excluding recently closed records, or ordering escalation by due date instead of severity and overdue age.
 
-## Integration Audit Addendum
+Transfer design: As a train task, this should teach solvers the SLA-family operating procedure: query broad work-item data, classify categories with precedence from authoritative fields, include open plus recent closed work, separate duplicate reporting from primary metrics, calculate overdue relative to the right reference date, and normalize sorted sets versus ordered queues. It also reinforces that stale mirror/export fields are present as distractors and that missing-owner reporting applies to included primary items, not only overdue items.
 
-Lineage and materials: this task is an `E002`-style SLA aging task for Edge Services on 2026-04-10. It uses shared work items, status history, SLA policies, owner/team tables, duplicate-cluster fields, escaped severity flags, and the environment SLA policy document. Solver-visible payloads do not expose computed populations or overdue IDs.
+Construction record: Author: Codex task builder. Created: 2026-07-18. Updated: 2026-07-18. Major changes: created the complete train_005 task directory, computed the gold answer from `portfolio.db`, and implemented a deterministic weighted evaluator.
 
-Solution and evaluation basis: the answer includes reliability/security work with effective open status or recent closed status in the inclusive 21-day window, applies SLA targets, and emits normalized population, overdue, bucket, ranking, duplicate, escaped, and missing-owner outputs. The evaluator exact-matches seven business-result points.
+## Chinese
 
-Transfer role: paired with `train_002`, this task establishes that SLA conventions are not product-specific and that duplicate handling remains an audit output rather than a way to remove records from the population.
+数据来源：本任务属于 `SCN_024_engineering_portfolio_work_item_analytics`，来源示例为 `E001`、`E002` 和 `E003`，其中主要继承 `E002` 的 SLA aging 工作流。构造数据来自生成的 SQLite 环境 `task_group/task_group_024/env/portfolio.db`，重点使用 `work_items` 和 `sla_policy`。任务本地文件包括 `input/prompt.txt`、`input/payloads/answer_template.json`、`output/answer.json` 和 `eval/`。
 
-## 集成审核补充
+任务定义：求解者需要按 `2026-01-22` 这个 as-of 日期，对 `AppSec` 和 `Identity Services` 两个团队的 Security 与 Reliability 工作做 SLA aging 审计，最近关闭窗口为 21 天。输出包括 primary work item 分母、逾期子集、按严重等级统计、升级队列、缺少 owner 的记录、重复记录簇，以及三位小数的 breach rate。关键字段是 `id`、`title`、`work_type`、`status`、`team`、`owner`、`created_at`、`due_at`、`closed_at`、`severity`、`labels` 和 `duplicate_of`。`mirror_status` 与 `legacy_category` 是本任务中的陈旧或干扰字段。
 
-数据来源与材料：本任务是 Edge Services 在 2026-04-10 的 `E002` 风格 SLA 老化任务。它使用共享工单、状态历史、SLA 政策、owner/team 表、duplicate-cluster 字段、escaped severity 标志以及环境 SLA 政策文档。求解者可见 payload 不暴露计算出的总体或逾期 ID。
+场景适配：这是工程运营中的 SLA 审计任务，需要从状态和日期字段重建业务状态，区分 primary 与 duplicate 记录，应用类别优先级，并产出可直接用于升级处理的结构化结果。它体现了本任务组的核心要求：不能只读取单个导出字段，而要结合 API/SQL 探索和业务规则。
 
-解法与评测依据：答案纳入有效状态为 open 或处于 21 天包含边界最近关闭窗口内的 reliability/security 工单，应用 SLA 目标，并输出规范化总体、逾期、桶、排序、重复、escaped 和缺 owner 结果。评估器对七个业务结果点精确匹配。
+材料地图：`prompt.txt` 给出可见业务范围并要求 JSON 输出。`answer_template.json` 定义字段名、列表排序、严重等级 key、重复簇结构和 breach rate 精度。`work_items` 表提供候选记录和边界样例。`sla_policy` 表提供严重等级 SLA 背景，但本任务评分使用 `work_items` 中已经存在的 due-date 结果。`output/answer.json` 是标准答案。`eval/eval.py` 实现确定性的整点评分。
 
-迁移作用：该任务与 `train_002` 配对，说明 SLA 约定不是某个产品专属，并且重复集群处理是审计输出，不是从总体中删除记录。
+答案和评分依据：类别优先级使用 `work_type`、`labels` 和 `title` 信号，顺序为 Security、Reliability、TechDebt、NewFeature。本任务只关注 Security 和 Reliability。相关记录必须在团队范围内、`created_at` 不晚于 as-of 日期，并且是活跃 primary 工作或最近窗口内关闭的工作。Primary 指标排除 `Cancelled`、`Duplicate` 和 `duplicate_of` 非空的行。Duplicate 行仍需在 duplicate clusters 中报告。逾期定义为：开放 primary 的 `due_at` 早于 `2026-01-22`，或最近关闭 primary 的 `due_at` 早于 `closed_at`；同一天到期不算逾期。included primary ids 为 `WI-24024-009`、`WI-24024-012`、`WI-24024-116`、`WI-24024-S021`、`WI-24024-S022`、`WI-24024-S023`、`WI-24024-S024`、`WI-24024-S025`、`WI-24024-S026`、`WI-24024-S027`、`WI-24024-S028`。overdue ids 为 `WI-24024-116`、`WI-24024-S021`、`WI-24024-S022`、`WI-24024-S024`、`WI-24024-S026`。升级顺序按严重等级 S1、S2、S3、S4，再按逾期天数降序，再按 id 排序：`WI-24024-S021`、`WI-24024-S026`、`WI-24024-S024`、`WI-24024-S022`、`WI-24024-116`。逾期严重等级统计为 `{S1: 2, S2: 2, S3: 1, S4: 0}`。缺少 owner 的 primary ids 为 `WI-24024-S026` 和 `WI-24024-S027`。重复簇为 `WI-24024-S021 -> WI-24024-S029` 和 `WI-24024-S022 -> WI-24024-S030`。breach rate 为 `5 / 11 = 0.455`。
+
+评分标准：评估器包含七个整点评分目标，原始权重为 `[3, 3, 2, 2, 1, 1, 2]`：included primary set、overdue primary set、severity overdue counts、escalation ordering、missing-owner ids、duplicate clusters、breach rate。这些目标分别覆盖资格重建、截止日期违约识别、严重等级聚合、升级优先级、owner 风险、重复记录治理和管理层 breach 指标。常见错误包括使用 `legacy_category`、纳入 as-of 之后创建的开放记录、把 duplicate 行放入 primary 分母、把 as-of 当天到期视为逾期、漏掉最近关闭记录，或按 due date 而不是严重等级和逾期天数排序升级队列。
+
+迁移设计：作为训练任务，本任务帮助求解者归纳 SLA 类任务的操作方法：先广泛查询 work-item 数据，用权威字段按优先级分类，包含开放工作和最近关闭工作，将 duplicate 报告与 primary 指标分离，按正确参考日期计算逾期，并区分无序集合与有序队列的规范化方式。它还强调 stale mirror/export 字段是干扰项，missing-owner 报告针对 included primary items，而不仅仅是 overdue items。
+
+构造记录：作者：Codex task builder。创建日期：2026-07-18。更新日期：2026-07-18。主要变更：创建完整的 train_005 任务目录，从 `portfolio.db` 计算标准答案，并实现确定性的加权评估器。

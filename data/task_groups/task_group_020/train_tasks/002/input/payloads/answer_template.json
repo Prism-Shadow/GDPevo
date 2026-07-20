@@ -1,262 +1,120 @@
 {
-  "schema_name": "seller_apa_counterparty_paper_review_v1",
-  "response_rule": "Return a single JSON object only. Do not include markdown or explanatory prose.",
-  "top_level_required_keys": {
-    "deal_id": {
-      "type": "string",
-      "required_value": "D-BRASS-219"
+  "task_id": "train_002",
+  "deal_id": "PRJ_MERIDIAN",
+  "economics": {
+    "currency": "USD",
+    "headline_value": null,
+    "upfront_cash": null,
+    "stock_value": null,
+    "milestone_value": null,
+    "holder_allocation": [
+      {
+        "holder": "stable holder name from cap table",
+        "security_class": "stable security class",
+        "fully_diluted_pct": null,
+        "as_converted_shares": null,
+        "cash_amount": null,
+        "stock_amount": null,
+        "total_consideration": null
+      }
+    ],
+    "indemnity_package": {
+      "draft_cap_pct": null,
+      "buyer_preferred_cap_pct": null,
+      "buyer_preferred_cap_amount": null,
+      "buyer_fallback_cap_pct": null,
+      "buyer_fallback_cap_amount": null,
+      "draft_survival_months": null,
+      "buyer_preferred_survival_months": null,
+      "fallback_survival_with_escrow_months": null,
+      "materiality_scrape_required": "FULL_BREACH_AND_DAMAGES | BREACH_ONLY | NONE",
+      "risk_rating": "LOW | MEDIUM | HIGH"
     },
-    "review_type": {
-      "type": "enum",
-      "allowed_values": [
-        "SELLER_APA_COUNTERPARTY_PAPER_REVIEW"
-      ]
+    "escrow": {
+      "basis": "purchase_price | upfront_cash | identified_findings",
+      "required_pct": null,
+      "amount": null,
+      "release_months": null,
+      "release_trigger": "general_rep_survival_expiration | consent_resolution | findings_resolution | other",
+      "status": "required_buyer_fallback | preferred_position | not_required | open_item"
     },
-    "currency": {
-      "type": "enum",
-      "allowed_values": [
-        "USD"
-      ]
-    },
-    "issues": {
-      "type": "list<object>",
-      "ordering": "Sort by issue_id ascending. Include each material issue once. Omit non-issues."
+    "nwc_adjustment": {
+      "required": null,
+      "mechanic": "dollar_for_dollar_outside_collar | fixed_price_no_adjustment | open_item",
+      "collar_amount": null,
+      "source_finding_id": "stable finding ID or null",
+      "status": "add_closing_mechanic | accept | open_item"
     }
   },
-  "issue_object_required_keys": {
-    "issue_id": {
-      "type": "enum",
-      "allowed_values": [
-        "ASSUMED_LIABILITIES_AND_NWC",
-        "CLOSING_DEADLINE",
-        "EMPLOYEE_TSA_IP_TRANSITION",
-        "ESCROW",
-        "FINANCING_CONDITION",
-        "HSR_CONDITION",
-        "MAE",
-        "MATERIAL_CONSENTS",
-        "PURCHASE_PRICE",
-        "RESTRICTIVE_COVENANT",
-        "REVERSE_TERMINATION_FEE",
-        "SURVIVAL_CAP_BASKET",
-        "TAX_ESCROW"
-      ]
-    },
-    "severity": {
-      "type": "enum",
-      "allowed_values": [
-        "CRITICAL",
-        "HIGH",
-        "MEDIUM",
-        "LOW"
-      ]
-    },
-    "recommended_action": {
-      "type": "enum",
-      "allowed_values": [
-        "ACCEPT",
-        "ADD",
-        "ADD_FALLBACK_ONLY",
-        "DELETE",
-        "ESCALATE",
-        "NO_ISSUE",
-        "REVISE"
-      ]
-    },
-    "corrected_value": {
-      "type": "object",
-      "description": "Use only the normalized fields that are relevant to the issue. Currency amounts are integer dollars. Percentages are decimal percentages rounded to two places, not fractions."
-    },
-    "source_ids": {
-      "type": "list<string>",
-      "description": "Document, policy, clause, or benchmark IDs supporting the issue. This field is for auditability and is not a prose evidence memo."
-    }
+  "closing_conditions": {
+    "required_consents": [
+      {
+        "source_id": "stable consent ID",
+        "contract_name": "contract name",
+        "counterparty": "counterparty name",
+        "condition_type": "closing_condition | notice_only | post_closing_covenant",
+        "risk_rating": "LOW | MEDIUM | HIGH",
+        "amount_at_risk": null
+      }
+    ],
+    "material_contract_conditions": [
+      {
+        "contract_id": "stable material contract ID",
+        "contract_name": "contract name",
+        "condition_type": "closing_condition | notice_only | post_closing_covenant",
+        "annual_revenue": null
+      }
+    ],
+    "non_blocking_notices": [
+      "stable source ID"
+    ]
   },
-  "corrected_value_allowed_fields": {
-    "financing_condition_allowed": {
-      "type": "boolean"
-    },
-    "lender_diligence_condition_allowed": {
-      "type": "boolean"
-    },
-    "approval_required": {
-      "type": "enum",
-      "allowed_values": [
-        "DEAL_LEAD",
-        "EMPLOYMENT_COUNSEL",
-        "EXECUTIVE_COMMITTEE",
-        "HR_COMMITTEE",
-        "IP_COUNSEL",
-        "OPERATIONS_COMMITTEE",
-        "SELLER_STEERING_COMMITTEE",
-        "NONE"
-      ]
-    },
-    "replacement": {
-      "type": "enum",
-      "allowed_values": [
-        "CLOSING_CERTAINTY_COVENANT",
-        "NONE"
-      ]
-    },
-    "fallback_only": {
-      "type": "boolean"
-    },
-    "fee_base": {
-      "type": "enum",
-      "allowed_values": [
-        "HEADLINE_VALUE",
-        "EQUITY_VALUE",
-        "NONE"
-      ]
-    },
-    "reverse_fee_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "reverse_fee_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "parent_guarantee_required": {
-      "type": "boolean"
-    },
-    "financing_condition_must_still_be_deleted": {
-      "type": "boolean"
-    },
-    "escrow_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "escrow_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "fallback_escrow_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "fallback_escrow_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "release_months": {
-      "type": "integer"
-    },
-    "investment_benefit": {
-      "type": "enum",
-      "allowed_values": [
-        "FOR_BUYER",
-        "FOR_SELLER",
-        "SPLIT",
-        "NOT_APPLICABLE"
-      ]
-    },
-    "escrow_longer_than_survival_allowed": {
-      "type": "boolean"
-    },
-    "seller_rep_survival_months": {
-      "type": "integer"
-    },
-    "general_cap_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "general_cap_amount_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "basket_percent": {
-      "type": "number",
-      "precision": "two decimal percentage points"
-    },
-    "basket_type": {
-      "type": "enum",
-      "allowed_values": [
-        "DEDUCTIBLE",
-        "TIPPING",
-        "NONE"
-      ]
-    },
-    "de_minimis_required": {
-      "type": "boolean"
-    },
-    "tipping_allowed": {
-      "type": "boolean"
-    },
-    "buyer_assumed_liability_covenant": {
-      "type": "enum",
-      "allowed_values": [
-        "SURVIVE_UNTIL_FULLY_PERFORMED",
-        "SIX_MONTHS",
-        "NOT_APPLICABLE"
-      ]
-    },
-    "working_capital_reset_allowed": {
-      "type": "boolean"
-    },
-    "working_capital_target_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "working_capital_collar_usd": {
-      "type": "integer",
-      "unit": "USD"
-    },
-    "non_compete_years": {
-      "type": "integer"
-    },
-    "customer_non_solicit_years": {
-      "type": "integer"
-    },
-    "worldwide_scope_allowed": {
-      "type": "boolean"
-    },
-    "affiliate_wide_scope_allowed": {
-      "type": "boolean"
-    },
-    "business_scope": {
-      "type": "enum",
-      "allowed_values": [
-        "TRANSFERRED_BUSINESS_ONLY",
-        "ALL_AFFILIATE_BUSINESSES",
-        "ADJACENT_PRODUCTS",
-        "NONE"
-      ]
-    },
-    "buyer_comparable_offer_required": {
-      "type": "boolean"
-    },
-    "warn_and_severance_liability": {
-      "type": "enum",
-      "allowed_values": [
-        "BUYER_FOR_TRANSFERRED_EMPLOYEES",
-        "SELLER",
-        "ALLOCATED_BY_STATUTE",
-        "NOT_APPLICABLE"
-      ]
-    },
-    "tsa_required": {
-      "type": "boolean"
-    },
-    "tsa_services": {
-      "type": "list<enum>",
-      "allowed_values": [
-        "ERP",
-        "IT_HELPDESK",
-        "PAYROLL",
-        "QUALITY_CERTIFICATIONS"
+  "covenants": {
+    "employment": {
+      "continuing_employee_count": null,
+      "service_credit_employee_ids": [
+        "stable employee ID"
       ],
-      "ordering": "Sort alphabetically."
+      "pto_liability_total": null,
+      "warn_risk_employee_ids": [
+        "stable employee ID"
+      ],
+      "required_action": "revise_service_credit_and_pto | accept | open_item"
     },
-    "ip_transition_license_required": {
-      "type": "boolean"
+    "restrictive_covenants": {
+      "required": null,
+      "covered_holder_groups": [
+        "stable holder or employee group name"
+      ],
+      "required_action": "add_founder_executive_non_compete_and_non_solicit | accept | open_item"
     },
-    "retained_ip_boundaries_required": {
-      "type": "boolean"
-    },
-    "trademark_phaseout_months": {
-      "type": "integer"
+    "do_tail_and_expenses": {
+      "do_tail_required": null,
+      "tail_period_years": null,
+      "tail_cost_allocation": "seller_expense_or_purchase_price_reduction | buyer_expense | split | open_item",
+      "seller_transaction_expenses": "seller_responsibility_or_purchase_price_reduction | buyer_responsibility | split | open_item",
+      "buyer_transaction_expenses": "buyer_responsibility | seller_responsibility | split | open_item",
+      "amount_status": "amount_not_in_workbench | amount_quantified"
     }
+  },
+  "regulatory": {
+    "hsr_required": "yes | no",
+    "threshold_basis": "size-of-transaction | below threshold | other",
+    "regulatory_approval": "HSR only | HSR and industry review | none expected | other",
+    "hell_or_high_water_required": "yes | no | limited covenant",
+    "closing_condition_required": null
+  },
+  "closing_readiness": {
+    "overall_status": "READY | READY_WITH_CONDITIONS | NOT_READY",
+    "risk_rating": "LOW | MEDIUM | HIGH",
+    "blocker_ids": [
+      "stable blocker ID"
+    ],
+    "tradeable_issue_ids": [
+      "stable issue ID"
+    ],
+    "closing_consent_amount_at_risk": null,
+    "material_contract_revenue_conditioned": null,
+    "employee_pto_liability_total": null
   }
 }

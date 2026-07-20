@@ -1,31 +1,37 @@
-# Notes
+# train_001 Hidden Notes
 
 ## English
 
-- Builder-facing task notes for `train_001`, the Q4 2025 Identity Platform portfolio mix review.
-- Hidden answer was computed with effective status from `status_history` through `2025-12-31T23:59:59`; `Verified`, `Done`, and `Closed` are eligible, while open and cancelled work is excluded.
-- Category precedence follows the common brief. Security-sensitive token, compliance, vulnerability, credential, audit, and access-control signals take precedence over reliability, tech-debt, and feature signals.
-- The evaluator implements seven scoring points: eligible set, category counts, mix metrics, under-invested categories, largest negative gap, follow-up actions, and evidence samples.
+Data/source lineage: this task belongs to `SCN_024_engineering_portfolio_work_item_analytics` and is derived from the portfolio-mix source pattern represented by `E001`. The construction brief is `scratch/task_builder_assignments.md` for `train_001`, with shared design context in `scratch/task_group_design.md`. The evidence source is the generated SQLite database `task_group/task_group_024/env/portfolio.db`, produced by `task_group/task_group_024/env/generate_data.py`. The solver-visible local payload is `input/payloads/answer_template.json`; the hidden standard answer is `output/answer.json`.
+
+Task definition: the business question is a Q4 2025 closed portfolio mix review for Platform Core and Identity Services across Atlas Backend and Identity. Solvers should use the environment at `<TASK_ENV_BASE_URL>`, locate the `mix_targets` row with `scope_id = train_001`, query matching work items, classify the closed non-duplicate work into the four portfolio buckets, compute count-based percentages, compare against target percentages, identify under-invested categories, and choose a controlled follow-up action.
+
+Scenario fit: this is a realistic engineering operations workflow where a portfolio owner reconciles completed work against an investment target. The important object relationships are work items to teams/product areas, work item status and duplicate state, labels/title/type as category signals, and the `mix_targets` row as the target baseline. The data flow is environment query -> scoped work item set -> category aggregation -> target-gap table -> action decision.
+
+Material map: `work_items` supplies ids, title, work_type, status, team, product_area, closed_at, labels, duplicate_of, mirror_status, and legacy_category. `mix_targets` supplies the target percentages for `train_001`: NewFeature 34.0, TechDebt 24.0, Reliability 22.0, Security 20.0 percentage points. `mirror_status` and `legacy_category` are noisy/stale fields and are intentionally not authoritative for inclusion or category assignment. The prompt gives the business scope but not the detailed hidden construction rules. The answer template defines the exact JSON fields, category names, precision, enum choices, and list expectations. The evaluator scores normalized structured values only.
+
+Solution and evaluation basis: include work items with `closed_at` from 2025-10-01 through 2025-12-31 inclusive, team in Platform Core or Identity Services, product_area in Atlas Backend or Identity, status in Done/Verified/Deployed/Closed, and no duplicate link. Exclude Cancelled, Duplicate, and any item with `duplicate_of` set. Category precedence is Security first when work_type is Security/Compliance or labels/title contain security, cve, auth, encryption, or compliance; then Reliability for Reliability/Incident or reliability, incident, outage, latency, flaky; then TechDebt for Refactor/Chore/Dependency or refactor, migration, cleanup, dependency; otherwise NewFeature. The included ids are `WI-24024-P001`, `WI-24024-P002`, `WI-24024-P003`, `WI-24024-P004`, `WI-24024-075`, `WI-24024-P005`, `WI-24024-P006`, `WI-24024-P007`, `WI-24024-P008`, and `WI-24024-098`. Counts are NewFeature 0, TechDebt 2, Reliability 3, Security 5. Percentages are 0.0, 20.0, 30.0, and 50.0. Gaps are actual minus target: -34.0, -4.0, 8.0, and 30.0. Under-invested categories are NewFeature and TechDebt, with `REBALANCE_CAPACITY` focused first on NewFeature. Excluded duplicate records are `WI-24024-P009` and `WI-24024-P011`; the excluded cancelled record is `WI-24024-P010`.
+
+The rubric has seven whole-point scoring goals with raw weights: included set 3, category counts 3, percentages 2, gap table 2, under-invested categories 2, follow-up action 1, and exclusion flags 1. These cover distinct outcomes: eligibility filtering, category classification, numerical aggregation, target comparison, investment judgment, operational action, and noisy-field/exclusion handling. Likely pitfalls include using story points instead of counts, trusting `legacy_category`, trusting `mirror_status`, treating duplicate status and duplicate links inconsistently, missing random generated rows `WI-24024-075` and `WI-24024-098`, applying category signals without precedence, and subtracting target from actual in the wrong direction.
+
+Transfer design: as a train task, this establishes the portfolio-mix SOP for later test tasks. Solvers can infer that closed portfolio scopes are based on authoritative `closed_at`, `status`, and `duplicate_of`; category assignment uses precedence across work_type, labels, and title rather than stale category fields; mix math is count-based and rounded to one decimal; gaps use actual minus target; and action enums should prioritize the largest negative gap. It also encourages using the restricted query endpoint or SQL inspection to enumerate all matching rows, not just fixture-looking ids.
+
+Construction record: authored by Codex task-builder for `train_001` on 2026-07-18. Initial version created the prompt, schema template, bilingual hidden notes, standard answer, and evaluator under `task_group/task_group_024/train_tasks/001/`.
 
 ## 中文
 
-- 这是 `train_001` 的构建说明，任务内容是 Identity Platform 在 2025 年第四季度的组合工作类型复盘。
-- 隐藏答案使用截至 `2025-12-31T23:59:59` 的 `status_history` 计算有效状态；`Verified`、`Done`、`Closed` 计入范围，未完成和取消项不计入。
-- 分类优先级遵循公共说明。与 token、合规、漏洞、凭据、审计、访问控制相关的安全信号优先于可靠性、技术债和功能信号。
-- 评测脚本包含七个得分点：候选工作项集合、分类计数、占比和差距、投入不足类别、最大负差距类别、后续动作以及证据样本。
+数据和来源：本任务属于 `SCN_024_engineering_portfolio_work_item_analytics`，来自 `E001` 所代表的投资组合工作类型分析模式。构建说明来自 `scratch/task_builder_assignments.md` 中的 `train_001`，整体设计来自 `scratch/task_group_design.md`。证据数据是由 `task_group/task_group_024/env/generate_data.py` 生成的 `task_group/task_group_024/env/portfolio.db`。求解者可见的本地载荷是 `input/payloads/answer_template.json`，隐藏标准答案是 `output/answer.json`。
 
-## Integration Audit Addendum
+任务定义：业务问题是为 Platform Core 和 Identity Services 两个团队，在 Atlas Backend 与 Identity 两个产品区域上，完成 2025 年第四季度已关闭工作的组合占比复盘。求解者应使用 `<TASK_ENV_BASE_URL>` 环境，找到 `scope_id = train_001` 的 `mix_targets` 行，查询符合范围的 work items，把非重复且已完成的工作分到四个组合类别，计算按条目数量得到的一位小数百分比，对比目标占比，找出投入不足的类别，并选择受控枚举的后续动作。
 
-Lineage and materials: this task is derived from source example `E001` and uses generated shared environment data: `work_items`, `status_history`, `portfolio_targets`, `teams`, and policy documents. Solver-visible inputs are only `prompt.txt`, `request_context.json`, and `answer_template.json`; the full business data is accessed through `<TASK_ENV_BASE_URL>`.
+场景适配：这是工程运营中常见的组合投资复盘流程。关键对象关系包括 work item 与团队/产品区域的关系，状态和重复项字段，标题/标签/类型中的分类信号，以及 `mix_targets` 作为目标基线。数据流是环境查询 -> 范围内工作项集合 -> 分类聚合 -> 目标差距表 -> 行动建议。
 
-Solution and evaluation basis: the standard answer filters Identity Platform work by 2025-Q4 quarter-end effective state, excludes cancelled work, classifies completed items into controlled portfolio categories, compares mix against targets, and emits exact follow-up actions. Seven exact-match points cover eligible set, counts, percentages/gaps, under-investment, largest gap, action ownership, and evidence IDs.
+材料地图：`work_items` 表提供 id、title、work_type、status、team、product_area、closed_at、labels、duplicate_of、mirror_status 和 legacy_category。`mix_targets` 表提供 `train_001` 的目标百分比：NewFeature 34.0、TechDebt 24.0、Reliability 22.0、Security 20.0。`mirror_status` 和 `legacy_category` 是噪声或过期字段，不能作为纳入或分类的权威依据。prompt 只给业务范围，不泄露详细隐藏规则。answer template 定义 JSON 字段、类别名、精度、枚举选项和列表要求。评估器只评分规范化的结构化结果。
 
-Transfer role: as a train task, it lets the solver infer work-mix conventions by attempting a real task and comparing with the answer. These conventions anchor `test_001`, `test_004`, and `test_005`.
+解答和评估依据：纳入 `closed_at` 在 2025-10-01 到 2025-12-31（含边界）之间、团队为 Platform Core 或 Identity Services、产品区域为 Atlas Backend 或 Identity、状态为 Done/Verified/Deployed/Closed、且 `duplicate_of` 为空的 work items。排除 Cancelled、Duplicate，以及任何设置了 `duplicate_of` 的记录。分类优先级为 Security、Reliability、TechDebt、NewFeature：安全类由 Security/Compliance 类型或 security、cve、auth、encryption、compliance 信号触发；可靠性类由 Reliability/Incident 类型或 reliability、incident、outage、latency、flaky 信号触发；技术债由 Refactor/Chore/Dependency 类型或 refactor、migration、cleanup、dependency 信号触发；否则为 NewFeature。纳入 id 是 `WI-24024-P001`、`WI-24024-P002`、`WI-24024-P003`、`WI-24024-P004`、`WI-24024-075`、`WI-24024-P005`、`WI-24024-P006`、`WI-24024-P007`、`WI-24024-P008`、`WI-24024-098`。计数为 NewFeature 0、TechDebt 2、Reliability 3、Security 5。实际百分比为 0.0、20.0、30.0、50.0。差距为实际减目标：-34.0、-4.0、8.0、30.0。投入不足类别是 NewFeature 和 TechDebt，后续动作是优先针对 NewFeature 的 `REBALANCE_CAPACITY`。排除的重复记录是 `WI-24024-P009` 和 `WI-24024-P011`；排除的取消记录是 `WI-24024-P010`。
 
-## 集成审核补充
+评分规则包含七个整点评分目标，原始权重为：纳入集合 3、类别计数 3、百分比 2、差距表 2、投入不足类别 2、后续动作 1、排除标记 1。这些覆盖不同业务结果：资格过滤、类别分类、数值聚合、目标对比、投资判断、运营动作、以及噪声字段/排除处理。常见错误包括使用 story points 而不是条目数、相信 `legacy_category`、相信 `mirror_status`、没有一致处理 Duplicate 状态和 duplicate_of、漏掉随机生成但符合条件的 `WI-24024-075` 和 `WI-24024-098`、未按优先级处理分类信号、以及把差距方向算反。
 
-数据来源与材料：本任务来自 `E001`，使用生成共享环境中的 `work_items`、`status_history`、`portfolio_targets`、`teams` 和政策文档。求解者可见输入只有 `prompt.txt`、`request_context.json` 和 `answer_template.json`；完整业务数据通过 `<TASK_ENV_BASE_URL>` 访问。
+迁移设计：作为训练任务，本任务建立后续测试任务需要迁移的组合分析 SOP。求解者可以推断出 closed portfolio 范围依赖权威的 `closed_at`、`status` 和 `duplicate_of`；分类应跨 work_type、labels 和 title 按优先级判断，而不是使用过期分类字段；组合占比是按条目数计算并保留一位小数；gap 是实际减目标；行动枚举应优先处理最大负差距。本任务也鼓励使用受限查询端点或 SQL 检查枚举全部匹配行，而不是只看像 fixture 的 id。
 
-解法与评测依据：标准答案按 2025-Q4 季末有效状态筛选 Identity Platform 工单，排除取消项，将已完成项归入受控组合类别，对比目标比例，并输出精确跟进行动。七个精确匹配点覆盖 eligible 集合、计数、百分比/gap、低配、最大 gap、动作归属和证据 ID。
-
-迁移作用：作为训练任务，它让求解者通过真实尝试和答案对比推断 work-mix 约定。这些约定锚定 `test_001`、`test_004` 和 `test_005`。
+构建记录：由 Codex task-builder 于 2026-07-18 为 `train_001` 创建。初始版本在 `task_group/task_group_024/train_tasks/001/` 下添加 prompt、schema 模板、双语隐藏 notes、标准答案和评估器。

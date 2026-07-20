@@ -31,14 +31,12 @@ authoritative efficiency and cost source is the preserved Dockerized `claude -p`
 run trace, not surrounding orchestration output. Use the Kimi K2.6 rate card
 defined below for both solver and evolve cost.
 
-Each solver attempt should preserve these trace files under
+Each solver attempt should preserve these audit files under
 `original_traces/<condition>/<task_id>/attempt_<nn>/`:
 
 ```text
 docker_run_manifest.yaml
-home/.claude/projects/.../<session_id>.jsonl
-debug.log                    # optional
-stderr.log                   # optional
+<session_id>.jsonl           # copied primary Claude Code session
 ```
 
 A single API response is logged across **multiple content-block records**. Across those records `input_tokens`, `cache_creation_input_tokens`, and `cache_read_input_tokens` are **identical**, but `output_tokens` is **streamed (cumulative)** — later records show a larger value. So deduplicate by `message.id`: keep the input/cache buckets from any record, and take the **max `output_tokens`** (the final record) per `message.id`. Naively summing every record over-counts input/cache ~2-3x; keeping the first record under-counts output. After deduping, sum the four buckets across responses:
@@ -48,9 +46,9 @@ A single API response is logged across **multiple content-block records**. Acros
 - `cache_read_input_tokens` — cache reads
 - `output_tokens` — generated tokens
 
-Compute token usage, rounds, and tool calls from the preserved Claude Code
-session JSONL under `.claude/projects/.../<session_id>.jsonl`, and record that
-source in `run_metadata.yaml`.
+Compute token usage, rounds, and tool calls from the copied primary Claude Code
+session JSONL under `original_traces/`, and record that source in
+`run_metadata.yaml`.
 
 Recommended format:
 
@@ -96,7 +94,7 @@ Each `fewshot`, `self`, and `reflect-3` skill-generation run must preserve:
 
 ```text
 scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
 Recommended `evolve_metadata.yaml` format:

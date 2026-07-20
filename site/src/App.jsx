@@ -11,7 +11,7 @@ import { initialThemeChoice, resolveTheme } from "./lib/theme.js";
 function currentPage() {
   const { pathname } = window.location;
   if (pathname.endsWith("/blog-self-evolution.html")) return "blogArticle";
-  if (pathname.endsWith("/release-note.html")) return "releaseNote";
+  if (pathname.endsWith("/release-v2.html")) return "releaseNote";
   if (pathname.endsWith("/blog.html")) return "blogIndex";
   return "home";
 }

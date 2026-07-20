@@ -1,401 +1,316 @@
 #!/usr/bin/env python3
-"""Evaluator for task_group_019 test_005."""
-
-from __future__ import annotations
-
 import json
 import sys
 from pathlib import Path
-from typing import Any
 
 
-POINTS = [
+BOUNDARY_DATE = "2025-05-20"
+
+EXPECTED_QUEUE = [
     {
-        "id": "SP001",
-        "weight": 1,
-        "goal": "Renewal release metadata and post-boundary exclusion count are exact.",
+        "rank": 1,
+        "license_no": "AL-TE5-003",
+        "facility_name": "Test 005 Facility 03",
+        "violation_count": 3,
+        "most_recent_violation_date": "2025-05-16",
+        "match_confidence": "close_address",
+        "risk_tier": "high",
+        "next_step_label": "board_review",
     },
     {
-        "id": "SP002",
-        "weight": 2,
-        "goal": "Top-two renewal queue cases are in the expected order.",
+        "rank": 2,
+        "license_no": "AL-TE5-008",
+        "facility_name": "Test 005 Facility 08",
+        "violation_count": 4,
+        "most_recent_violation_date": "2025-05-08",
+        "match_confidence": "exact",
+        "risk_tier": "high",
+        "next_step_label": "board_review",
     },
     {
-        "id": "SP003",
-        "weight": 3,
-        "goal": "Core board-review renewal membership contains the six strongest cases.",
+        "rank": 3,
+        "license_no": "AL-TE5-005",
+        "facility_name": "Test 005 Facility 05",
+        "violation_count": 4,
+        "most_recent_violation_date": "2025-04-05",
+        "match_confidence": "exact",
+        "risk_tier": "high",
+        "next_step_label": "board_review",
     },
     {
-        "id": "SP004",
-        "weight": 2,
-        "goal": "ALERT, fine, and shared-address manual-review tail cases are exact.",
+        "rank": 4,
+        "license_no": "AL-TE5-007",
+        "facility_name": "Test 005 Facility 07",
+        "violation_count": 3,
+        "most_recent_violation_date": "2025-03-18",
+        "match_confidence": "exact",
+        "risk_tier": "high",
+        "next_step_label": "board_review",
     },
     {
-        "id": "SP005",
-        "weight": 2,
-        "goal": "Renewal queue method flags for match and label counts are exact.",
+        "rank": 5,
+        "license_no": "AL-TE5-002",
+        "facility_name": "Test 005 Facility 02",
+        "violation_count": 4,
+        "most_recent_violation_date": "2025-05-02",
+        "match_confidence": "exact",
+        "risk_tier": "high",
+        "next_step_label": "manual_fine_check",
     },
     {
-        "id": "SP006",
-        "weight": 2,
-        "goal": "Successor premises target and risk counts are exact.",
+        "rank": 6,
+        "license_no": "AL-TE5-001",
+        "facility_name": "Test 005 Facility 01",
+        "violation_count": 3,
+        "most_recent_violation_date": "2025-04-27",
+        "match_confidence": "exact",
+        "risk_tier": "high",
+        "next_step_label": "manual_fine_check",
     },
     {
-        "id": "SP007",
-        "weight": 2,
-        "goal": "Successor recommendation and verification gaps are exact.",
+        "rank": 7,
+        "license_no": "AL-TE5-004",
+        "facility_name": "Test 005 Facility 04",
+        "violation_count": 3,
+        "most_recent_violation_date": "2025-04-15",
+        "match_confidence": "exact",
+        "risk_tier": "high",
+        "next_step_label": "manual_fine_check",
     },
     {
-        "id": "SP008",
-        "weight": 2,
-        "goal": "Successor standard obligations and premises controls are exact.",
-    },
-    {
-        "id": "SP009",
-        "weight": 2,
-        "goal": "First-90-day successor inspection checks are exact.",
+        "rank": 8,
+        "license_no": "AL-TE5-006",
+        "facility_name": "Test 005 Facility 06",
+        "violation_count": 2,
+        "most_recent_violation_date": "2025-03-24",
+        "match_confidence": "exact",
+        "risk_tier": "high",
+        "next_step_label": "manual_fine_check",
     },
 ]
 
-
-CORE_BOARD = {
-    "LIC-RV-2026-0107",
-    "LIC-RV-2026-0134",
-    "LIC-RV-2026-0112",
-    "LIC-RV-2026-0144",
-    "LIC-RV-2026-0128",
-    "LIC-RV-2026-0138",
-}
-TAIL_CASES = {
-    "LIC-RV-2026-0105",
-    "LIC-RV-2026-0110",
-    "LIC-RV-2026-0154",
-    "LIC-RV-2026-0106",
-}
-
-
-def load_json(path: Path) -> Any:
-    with path.open("r", encoding="utf-8-sig") as handle:
-        return json.load(handle)
+EXPECTED_BY_LICENSE = {entry["license_no"]: entry for entry in EXPECTED_QUEUE}
+EXPECTED_ORDER = [entry["license_no"] for entry in EXPECTED_QUEUE]
+EXPECTED_POST_BOUNDARY_IDS = [
+    "AV-AL-TE5-001-LATE",
+    "AV-AL-TE5-002-LATE",
+    "AV-AL-TE5-003-LATE",
+    "AV-AL-TE5-004-LATE",
+    "AV-AL-TE5-005-LATE",
+    "AV-AL-TE5-006-LATE",
+    "AV-AL-TE5-007-LATE",
+    "AV-AL-TE5-008-LATE",
+]
+EXPECTED_CLOSE_OR_UNCERTAIN = ["AL-TE5-003"]
+EXPECTED_BOARD_REVIEW = ["AL-TE5-003", "AL-TE5-005", "AL-TE5-007", "AL-TE5-008"]
 
 
-def to_int(value: Any) -> int | None:
-    if isinstance(value, bool):
-        return None
-    if isinstance(value, int):
-        return value
-    if isinstance(value, str):
-        try:
-            return int(value)
-        except ValueError:
-            return None
-    return None
+def load_json(path):
+    try:
+        with Path(path).open("r", encoding="utf-8") as handle:
+            return json.load(handle), None
+    except Exception as exc:  # noqa: BLE001 - evaluator should report all load errors as data.
+        return None, f"Could not load candidate JSON: {exc}"
 
 
-def as_str(value: Any) -> str | None:
-    return value if isinstance(value, str) else None
-
-
-def as_bool(value: Any) -> bool | None:
-    return value if isinstance(value, bool) else None
-
-
-def sorted_strings(value: Any) -> list[str] | None:
-    if not isinstance(value, list):
-        return None
-    return sorted(str(item) for item in value)
-
-
-def queue(doc: dict[str, Any]) -> list[dict[str, Any]]:
-    value = doc.get("queue")
+def as_list(value):
     return value if isinstance(value, list) else []
 
 
-def by_id(doc: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    result: dict[str, dict[str, Any]] = {}
-    for item in queue(doc):
-        if isinstance(item, dict) and isinstance(item.get("license_id"), str):
-            result[item["license_id"]] = item
-    return result
-
-
-def by_rank(doc: dict[str, Any]) -> dict[int, dict[str, Any]]:
-    result: dict[int, dict[str, Any]] = {}
-    for item in queue(doc):
-        if not isinstance(item, dict):
-            continue
-        rank = to_int(item.get("rank"))
-        if rank is not None and rank not in result:
-            result[rank] = item
-    return result
-
-
-def ids(doc: dict[str, Any]) -> set[str]:
-    return {
-        item["license_id"] for item in queue(doc) if isinstance(item, dict) and isinstance(item.get("license_id"), str)
-    }
-
-
-def ranked_ids(doc: dict[str, Any], start: int, end: int) -> list[str | None]:
-    ranked = by_rank(doc)
-    return [as_str(ranked.get(rank, {}).get("license_id")) for rank in range(start, end + 1)]
-
-
-def flags(doc: dict[str, Any]) -> dict[str, Any]:
-    value = doc.get("method_flags")
+def as_dict(value):
     return value if isinstance(value, dict) else {}
 
 
-def metadata(doc: dict[str, Any]) -> dict[str, Any]:
-    f = flags(doc)
-    return {
-        "release_batch": as_str(f.get("release_batch")),
-        "release_boundary": as_str(f.get("release_boundary")),
-        "queue_size": to_int(f.get("queue_size")),
-        "excluded_post_boundary_count": to_int(f.get("excluded_post_boundary_count")),
-        "post_boundary_exclusion_applied": as_bool(f.get("post_boundary_exclusion_applied")),
-        "shared_address_records_not_spread": as_bool(f.get("shared_address_records_not_spread")),
-    }
+def normalize_string(value):
+    if value is None:
+        return ""
+    return str(value).strip()
 
 
-def count_flags(doc: dict[str, Any]) -> dict[str, Any]:
-    f = flags(doc)
-    return {
-        "exact_match_count": to_int(f.get("exact_match_count")),
-        "close_match_count": to_int(f.get("close_match_count")),
-        "shared_address_manual_count": to_int(f.get("shared_address_manual_count")),
-        "board_review_count": to_int(f.get("board_review_count")),
-        "manual_fine_check_count": to_int(f.get("manual_fine_check_count")),
-        "manual_ALERT_check_count": to_int(f.get("manual_ALERT_check_count")),
-        "additional_record_check_count": to_int(f.get("additional_record_check_count")),
-    }
-
-
-def row_core(doc: dict[str, Any], license_id: str) -> dict[str, Any]:
-    row = by_id(doc).get(license_id, {})
-    return {
-        "facility_name": as_str(row.get("facility_name")),
-        "match_confidence": as_str(row.get("match_confidence")),
-        "violation_count_used": to_int(row.get("violation_count_used")),
-        "most_recent_date_used": as_str(row.get("most_recent_date_used")),
-        "next_step_label": as_str(row.get("next_step_label")),
-    }
-
-
-def successor(doc: dict[str, Any]) -> dict[str, Any]:
-    value = doc.get("successor_premises_review")
-    return value if isinstance(value, dict) else {}
-
-
-def risk(doc: dict[str, Any]) -> dict[str, Any]:
-    value = successor(doc).get("risk_assessment")
-    return value if isinstance(value, dict) else {}
-
-
-def successor_target_risk(doc: dict[str, Any]) -> dict[str, Any]:
-    s = successor(doc)
-    r = risk(doc)
-    return {
-        "review_month": as_str(s.get("review_month")),
-        "application_id": as_str(s.get("application_id")),
-        "premises_id": as_str(s.get("premises_id")),
-        "dba": as_str(s.get("dba")),
-        "same_premises_basis": as_str(r.get("same_premises_basis")),
-        "prior_licensee": as_str(r.get("prior_licensee")),
-        "prior_incident_level": as_str(r.get("prior_incident_level")),
-        "incident_count": to_int(r.get("incident_count")),
-        "unresolved_incident_count": to_int(r.get("unresolved_incident_count")),
-        "high_severity_incident_count": to_int(r.get("high_severity_incident_count")),
-        "unresolved_incident_ids": sorted_strings(r.get("unresolved_incident_ids")),
-        "high_severity_incident_ids": sorted_strings(r.get("high_severity_incident_ids")),
-        "settlement_posture": as_str(r.get("settlement_posture")),
-        "successor_risk_classification": as_str(r.get("successor_risk_classification")),
-        "overall_risk": as_str(r.get("overall_risk")),
-        "current_premises_specific_control_count": to_int(r.get("current_premises_specific_control_count")),
-        "standard_obligations_kept_separate": as_bool(r.get("standard_obligations_kept_separate")),
-    }
-
-
-def map_by_key(value: Any, key: str) -> dict[str, dict[str, Any]] | None:
-    if not isinstance(value, list):
-        return None
-    result: dict[str, dict[str, Any]] = {}
-    for item in value:
-        if not isinstance(item, dict) or not isinstance(item.get(key), str):
-            return None
-        if item[key] in result:
-            return None
-        result[item[key]] = item
-    return result
-
-
-def gaps(doc: dict[str, Any]) -> dict[str, Any] | None:
-    items = map_by_key(successor(doc).get("verification_gaps"), "gap_code")
-    if items is None:
-        return None
-    return {
-        code: {"source_ids": sorted_strings(item.get("source_ids")), "status": as_str(item.get("status"))}
-        for code, item in sorted(items.items())
-    }
-
-
-def recommendation_and_gaps(doc: dict[str, Any]) -> dict[str, Any]:
-    s = successor(doc)
-    return {
-        "recommendation": as_str(s.get("recommendation")),
-        "follow_up_required": as_bool(s.get("follow_up_required")),
-        "verification_gaps": gaps(doc),
-    }
-
-
-def standards(doc: dict[str, Any]) -> dict[str, Any] | None:
-    items = map_by_key(successor(doc).get("standard_obligations"), "obligation_code")
-    if items is None:
-        return None
-    return {
-        code: {
-            "source_obligation_id": as_str(item.get("source_obligation_id")),
-            "evidence_required": as_str(item.get("evidence_required")),
-        }
-        for code, item in sorted(items.items())
-    }
-
-
-def controls(doc: dict[str, Any]) -> dict[str, Any] | None:
-    items = map_by_key(successor(doc).get("premises_specific_controls"), "control_code")
-    if items is None:
-        return None
-    return {
-        code: {
-            "source_ids": sorted_strings(item.get("source_ids")),
-            "evidence_required": as_str(item.get("evidence_required")),
-            "first_90_day_check": as_str(item.get("first_90_day_check")),
-        }
-        for code, item in sorted(items.items())
-    }
-
-
-def checks(doc: dict[str, Any]) -> list[dict[str, Any]] | None:
-    value = successor(doc).get("first_90_day_checks")
-    if not isinstance(value, list):
-        return None
-    normalized = []
-    for item in value:
-        if not isinstance(item, dict):
-            return None
-        normalized.append(
-            {
-                "check_rank": to_int(item.get("check_rank")),
-                "check_code": as_str(item.get("check_code")),
-                "source_ids": sorted_strings(item.get("source_ids")),
-                "timing": as_str(item.get("timing")),
-            }
-        )
-    return sorted(normalized, key=lambda item: (item["check_rank"] is None, item["check_rank"]))
-
-
-def check_point(point_id: str, pred: dict[str, Any], ans: dict[str, Any]) -> tuple[bool, str]:
-    pred_ids = ids(pred)
-
-    if point_id == "SP001":
-        passed = metadata(pred) == metadata(ans)
-        return passed, "metadata matches" if passed else "metadata differs"
-
-    if point_id == "SP002":
-        passed = ranked_ids(pred, 1, 2) == ranked_ids(ans, 1, 2)
-        return passed, "top-two ranks match" if passed else "top-two ranks differ"
-
-    if point_id == "SP003":
-        passed = CORE_BOARD.issubset(pred_ids) and all(
-            row_core(pred, item)["next_step_label"] == row_core(ans, item)["next_step_label"] for item in CORE_BOARD
-        )
-        return passed, "core board-review cases match" if passed else "core board-review cases differ"
-
-    if point_id == "SP004":
-        passed = TAIL_CASES.issubset(pred_ids) and all(
-            row_core(pred, item) == row_core(ans, item) for item in TAIL_CASES
-        )
-        return passed, "tail cases match" if passed else "tail cases differ"
-
-    if point_id == "SP005":
-        passed = count_flags(pred) == count_flags(ans)
-        return passed, "method count flags match" if passed else "method count flags differ"
-
-    if point_id == "SP006":
-        passed = successor_target_risk(pred) == successor_target_risk(ans)
-        return passed, "successor target and risk match" if passed else "successor target or risk differs"
-
-    if point_id == "SP007":
-        passed = recommendation_and_gaps(pred) == recommendation_and_gaps(ans)
-        return (
-            passed,
-            "successor recommendation and gaps match" if passed else "successor recommendation or gaps differ",
-        )
-
-    if point_id == "SP008":
-        passed = {"standard_obligations": standards(pred), "premises_specific_controls": controls(pred)} == {
-            "standard_obligations": standards(ans),
-            "premises_specific_controls": controls(ans),
-        }
-        return (
-            passed,
-            "successor obligations and controls match" if passed else "successor obligations or controls differ",
-        )
-
-    if point_id == "SP009":
-        passed = checks(pred) == checks(ans)
-        return passed, "first-90-day checks match" if passed else "first-90-day checks differ"
-
-    return False, "unknown scoring point"
-
-
-def evaluate(pred: dict[str, Any], ans: dict[str, Any]) -> dict[str, Any]:
-    total_weight = sum(int(point["weight"]) for point in POINTS)
-    earned = 0
-    results = []
-    for point in POINTS:
-        passed, message = check_point(str(point["id"]), pred, ans)
-        weight = int(point["weight"])
-        if passed:
-            earned += weight
-        results.append(
-            {
-                "id": point["id"],
-                "goal": point["goal"],
-                "weight": weight,
-                "passed": passed,
-                "earned_weight": weight if passed else 0,
-                "message": message,
-            }
-        )
-    return {
-        "score": round(earned / total_weight, 6),
-        "earned_weight": earned,
-        "total_weight": total_weight,
-        "points": results,
-    }
-
-
-def main() -> int:
-    if len(sys.argv) != 3:
-        print(
-            json.dumps(
-                {"score": 0, "error": "usage: evaluator.py <prediction.json> <answer.json>", "points": []}, indent=2
-            )
-        )
-        return 2
+def normalize_int(value):
     try:
-        pred = load_json(Path(sys.argv[1]))
-        ans = load_json(Path(sys.argv[2]))
-    except Exception as exc:
-        print(json.dumps({"score": 0, "error": f"json_load_failed: {exc}", "points": []}, indent=2))
-        return 1
-    if not isinstance(pred, dict) or not isinstance(ans, dict):
-        print(json.dumps({"score": 0, "error": "prediction and answer must be JSON objects", "points": []}, indent=2))
-        return 1
-    print(json.dumps(evaluate(pred, ans), indent=2, sort_keys=True))
-    return 0
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def normalize_set(value):
+    return sorted(normalize_string(item) for item in as_list(value))
+
+
+def queue_sorted_by_rank(candidate):
+    entries = as_list(as_dict(candidate).get("queue"))
+    return sorted(
+        entries,
+        key=lambda item: (
+            normalize_int(as_dict(item).get("rank")) is None,
+            normalize_int(as_dict(item).get("rank")) or 9999,
+        ),
+    )
+
+
+def candidate_by_license(candidate):
+    result = {}
+    for entry in as_list(as_dict(candidate).get("queue")):
+        entry = as_dict(entry)
+        license_no = normalize_string(entry.get("license_no"))
+        if license_no:
+            result[license_no] = entry
+    return result
+
+
+def check_order(candidate):
+    entries = queue_sorted_by_rank(candidate)
+    ranks = [normalize_int(as_dict(entry).get("rank")) for entry in entries]
+    order = [normalize_string(as_dict(entry).get("license_no")) for entry in entries]
+    expected_ranks = list(range(1, 9))
+    passed = ranks == expected_ranks and order == EXPECTED_ORDER
+    return (
+        passed,
+        f"Expected rank/license order {list(zip(expected_ranks, EXPECTED_ORDER))}; got {list(zip(ranks, order))}.",
+    )
+
+
+def check_counts_and_dates(candidate):
+    by_license = candidate_by_license(candidate)
+    mismatches = []
+    for license_no, expected in EXPECTED_BY_LICENSE.items():
+        entry = as_dict(by_license.get(license_no))
+        count = normalize_int(entry.get("violation_count"))
+        recent_date = normalize_string(entry.get("most_recent_violation_date"))
+        if count != expected["violation_count"] or recent_date != expected["most_recent_violation_date"]:
+            mismatches.append(
+                {
+                    "license_no": license_no,
+                    "expected": [expected["violation_count"], expected["most_recent_violation_date"]],
+                    "got": [count, recent_date],
+                }
+            )
+    passed = not mismatches
+    return passed, "All counts and most recent dates matched." if passed else f"Mismatches: {mismatches}"
+
+
+def check_match_confidence(candidate):
+    by_license = candidate_by_license(candidate)
+    summary = as_dict(as_dict(candidate).get("summary"))
+    mismatches = []
+    for license_no, expected in EXPECTED_BY_LICENSE.items():
+        got = normalize_string(as_dict(by_license.get(license_no)).get("match_confidence"))
+        if got != expected["match_confidence"]:
+            mismatches.append({"license_no": license_no, "expected": expected["match_confidence"], "got": got})
+    got_summary = normalize_set(summary.get("close_or_uncertain_match_license_numbers"))
+    passed = not mismatches and got_summary == EXPECTED_CLOSE_OR_UNCERTAIN
+    details = "All match confidences and close/uncertain summary matched."
+    if not passed:
+        details = f"Entry mismatches: {mismatches}; expected close/uncertain {EXPECTED_CLOSE_OR_UNCERTAIN}, got {got_summary}."
+    return passed, details
+
+
+def check_next_steps(candidate):
+    by_license = candidate_by_license(candidate)
+    mismatches = []
+    for license_no, expected in EXPECTED_BY_LICENSE.items():
+        got = normalize_string(as_dict(by_license.get(license_no)).get("next_step_label"))
+        if got != expected["next_step_label"]:
+            mismatches.append({"license_no": license_no, "expected": expected["next_step_label"], "got": got})
+    passed = not mismatches
+    return passed, "All next-step labels matched." if passed else f"Mismatches: {mismatches}"
+
+
+def check_boundary_exclusions(candidate):
+    summary = as_dict(as_dict(candidate).get("summary"))
+    got_ids = normalize_set(summary.get("post_boundary_violation_ids_excluded"))
+    entries = as_list(as_dict(candidate).get("queue"))
+    late_dates = [
+        normalize_string(as_dict(entry).get("most_recent_violation_date"))
+        for entry in entries
+        if normalize_string(as_dict(entry).get("most_recent_violation_date")) > BOUNDARY_DATE
+    ]
+    passed = got_ids == EXPECTED_POST_BOUNDARY_IDS and not late_dates
+    details = "Post-boundary exclusions and used dates matched."
+    if not passed:
+        details = f"Expected excluded ids {EXPECTED_POST_BOUNDARY_IDS}, got {got_ids}; late used dates: {late_dates}."
+    return passed, details
+
+
+def check_risk_tiers_and_board_set(candidate):
+    by_license = candidate_by_license(candidate)
+    summary = as_dict(as_dict(candidate).get("summary"))
+    mismatches = []
+    for license_no, expected in EXPECTED_BY_LICENSE.items():
+        got = normalize_string(as_dict(by_license.get(license_no)).get("risk_tier"))
+        if got != expected["risk_tier"]:
+            mismatches.append({"license_no": license_no, "expected": expected["risk_tier"], "got": got})
+    got_board = normalize_set(summary.get("board_review_license_numbers"))
+    passed = not mismatches and got_board == EXPECTED_BOARD_REVIEW
+    details = "Risk tiers and board-review summary matched."
+    if not passed:
+        details = f"Risk tier mismatches: {mismatches}; expected board set {EXPECTED_BOARD_REVIEW}, got {got_board}."
+    return passed, details
+
+
+def check_summary_and_names(candidate):
+    summary = as_dict(as_dict(candidate).get("summary"))
+    by_license = candidate_by_license(candidate)
+    name_mismatches = []
+    for license_no, expected in EXPECTED_BY_LICENSE.items():
+        got = normalize_string(as_dict(by_license.get(license_no)).get("facility_name"))
+        if got != expected["facility_name"]:
+            name_mismatches.append({"license_no": license_no, "expected": expected["facility_name"], "got": got})
+    queue_size = normalize_int(summary.get("queue_size"))
+    boundary = normalize_string(summary.get("boundary_date"))
+    passed = queue_size == 8 and boundary == BOUNDARY_DATE and not name_mismatches
+    details = "Queue size, boundary date, and facility names matched."
+    if not passed:
+        details = f"Expected queue_size 8 and boundary {BOUNDARY_DATE}; got {queue_size} and {boundary}; name mismatches: {name_mismatches}."
+    return passed, details
+
+
+POINTS = [
+    ("SP001", "Correct queue membership and exact rank order.", 3, check_order),
+    ("SP002", "Correct pre-boundary violation counts and most recent dates.", 2, check_counts_and_dates),
+    ("SP003", "Correct match confidence classifications and close-match summary.", 2, check_match_confidence),
+    ("SP004", "Correct controlled next-step labels.", 2, check_next_steps),
+    ("SP005", "Correct exclusion of post-boundary violations.", 2, check_boundary_exclusions),
+    ("SP006", "Correct risk tiers and board-review set.", 2, check_risk_tiers_and_board_set),
+    ("SP007", "Correct queue summary and facility identity fields.", 1, check_summary_and_names),
+]
+
+
+def main():
+    candidate_path = (
+        sys.argv[1] if len(sys.argv) > 1 else str(Path(__file__).resolve().parents[1] / "output" / "answer.json")
+    )
+    candidate, load_error = load_json(candidate_path)
+    if load_error:
+        candidate = {}
+
+    total_weight = sum(point[2] for point in POINTS)
+    point_results = []
+    total_score = 0.0
+    for point_id, goal, weight, checker in POINTS:
+        assigned_score = weight / total_weight
+        if load_error:
+            passed = False
+            details = load_error
+        else:
+            passed, details = checker(candidate)
+        earned_score = assigned_score if passed else 0.0
+        total_score += earned_score
+        point_results.append(
+            {
+                "id": point_id,
+                "goal": goal,
+                "weight": weight,
+                "assigned_score": round(assigned_score, 6),
+                "passed": bool(passed),
+                "earned_score": round(earned_score, 6),
+                "details": details,
+            }
+        )
+
+    print(json.dumps({"score": round(total_score, 6), "points": point_results}, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

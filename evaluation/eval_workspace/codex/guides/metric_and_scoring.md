@@ -55,7 +55,7 @@ Each `fewshot`, `self`, and `reflect-3` skill-generation run must preserve:
 
 ```text
 scratch/skill_generation/<condition>_attempt_<nn>/evolve_metadata.yaml
-original_traces/skill_generation/<condition>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/skill_generation/<condition>/attempt_<nn>/rollout-*.jsonl
 ```
 
 Recommended `evolve_metadata.yaml` format:
@@ -68,7 +68,7 @@ model: gpt-5.5, xhigh
 skill_file: <path to generated SKILL.md>
 
 trace:
-  session_file: <path to complete rollout-*.jsonl or null>
+  session_file: <path to copied primary rollout-*.jsonl or null>
   session_id: <session_id or null>
   match_status: matched
 
