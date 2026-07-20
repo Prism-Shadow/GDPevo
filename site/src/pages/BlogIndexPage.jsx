@@ -20,7 +20,7 @@ const posts = [
   },
   {
     key: "release-v2",
-    href: "release-note.html",
+    href: "release-v2.html",
     title: {
       en: "GDPevo — The V2 Release",
       zh: "GDPevo — V2 版本发布"

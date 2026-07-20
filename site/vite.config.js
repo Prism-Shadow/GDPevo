@@ -13,7 +13,8 @@ export default defineConfig({
         index: resolve(__dirname, "index.html"),
         blog: resolve(__dirname, "blog.html"),
         selfEvolution: resolve(__dirname, "blog-self-evolution.html"),
-        releaseNote: resolve(__dirname, "release-note.html")
+        releaseV2: resolve(__dirname, "release-v2.html"),
+        releaseNoteRedirect: resolve(__dirname, "release-note.html")
       }
     }
   }
