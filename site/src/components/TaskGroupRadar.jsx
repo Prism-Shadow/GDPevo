@@ -49,6 +49,7 @@ const copy = {
     allFewshot: "All models · fewshot",
     allReflect: "All models · reflect-3",
     active: "Lines on chart",
+    colorHint: "Click a swatch to change color",
     clear: "Clear",
     empty: "Choose conditions or use a quick comparison to add radar lines.",
     average: "ACC",
@@ -74,6 +75,7 @@ const copy = {
     allFewshot: "全部模型 · fewshot",
     allReflect: "全部模型 · reflect-3",
     active: "当前曲线",
+    colorHint: "点击色块可改色",
     clear: "清空",
     empty: "请选择实验条件，或使用快捷比较添加雷达曲线。",
     average: "ACC",
@@ -373,7 +375,10 @@ export function TaskGroupRadar({ lang = "en" }) {
       <div className="radar-body">
         <aside className="radar-active">
           <div className="radar-active-head">
-            <strong>{t.active}</strong>
+            <span className="radar-active-title">
+              <strong>{t.active}</strong>
+              <small>{t.colorHint}</small>
+            </span>
             <button type="button" onClick={() => setSelectedKeys([])} disabled={!selectedKeys.length}>{t.clear}</button>
           </div>
           <div className="radar-series-list">
