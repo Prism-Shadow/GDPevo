@@ -52,6 +52,7 @@ const copy = {
     clear: "Clear",
     empty: "Choose conditions or use a quick comparison to add radar lines.",
     average: "ACC",
+    changeColor: "Change line color",
     remove: "Remove comparison line",
     accuracy: "ACC"
   },
@@ -76,6 +77,7 @@ const copy = {
     clear: "清空",
     empty: "请选择实验条件，或使用快捷比较添加雷达曲线。",
     average: "ACC",
+    changeColor: "调整曲线颜色",
     remove: "移除对比曲线",
     accuracy: "ACC"
   }
@@ -208,6 +210,7 @@ export function TaskGroupRadar({ lang = "en" }) {
   const [selectedKeys, setSelectedKeys] = useState(
     leaderboardModes.map((mode) => `${defaultRun.id}:${mode}`)
   );
+  const [colorOverrides, setColorOverrides] = useState({});
   const [focusedKey, setFocusedKey] = useState(null);
   const seriesRowRefs = useRef(new Map());
 
@@ -244,7 +247,7 @@ export function TaskGroupRadar({ lang = "en" }) {
   const selectedSeries = selectedKeys.map((key) => experimentMap.get(key)).filter(Boolean);
   const styledSeries = selectedSeries.map((series, index) => ({
     ...series,
-    color: experimentColorMap.get(series.key),
+    color: colorOverrides[series.key] ?? experimentColorMap.get(series.key),
     dataKey: `series_${index}`,
     label: seriesName(series)
   }));
@@ -279,6 +282,9 @@ export function TaskGroupRadar({ lang = "en" }) {
     setFilters({ runIds: [], harnesses: [], modes: [mode], methods: [] });
   };
   const removeSeries = (key) => setSelectedKeys((current) => current.filter((item) => item !== key));
+  const changeSeriesColor = (key, color) => {
+    setColorOverrides((current) => ({ ...current, [key]: color }));
+  };
   const toggleFocusedSeries = (key) => setFocusedKey((current) => current === key ? null : key);
 
   useEffect(() => {
@@ -380,13 +386,24 @@ export function TaskGroupRadar({ lang = "en" }) {
                   else seriesRowRefs.current.delete(series.key);
                 }}
               >
+                <label
+                  className="radar-color-picker"
+                  title={`${t.changeColor}: ${series.label}`}
+                >
+                  <input
+                    aria-label={`${t.changeColor}: ${series.label}`}
+                    onInput={(event) => changeSeriesColor(series.key, event.currentTarget.value)}
+                    type="color"
+                    value={series.color}
+                  />
+                  <i aria-hidden="true" style={{ background: series.color }} />
+                </label>
                 <button
                   aria-pressed={focusedKey === series.key}
                   className="radar-series-select"
                   onClick={() => toggleFocusedSeries(series.key)}
                   type="button"
                 >
-                  <i style={{ background: series.color }} />
                   <span>
                     <strong>{series.model} · {series.mode}</strong>
                     <small>{series.harness} · {methodLabels[series.method]} · {t.average} {mean(series.scores).toFixed(2)}%</small>
