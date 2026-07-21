@@ -178,8 +178,8 @@ export const homeContent = {
       zh: "真实任务场景：CRM、ERP、金融、医药、法律和数据分析。"
     },
     lead: {
-      en: "Each group is a shared work scenario with many distracting signals, and the scenarios come from real-business and domain-specific task sources such as [GDPval](https://openai.com/index/gdpval/) and [SOP-Bench](https://github.com/amazon-science/SOP-Bench).",
-      zh: "每组都是一个共享的工作场景，混入了大量\"长得很像\"的干扰记录；场景来自 [GDPval](https://openai.com/index/gdpval/)、[SOP-Bench](https://github.com/amazon-science/SOP-Bench) 等真实业务和领域任务来源。"
+      en: "Each group is built around a shared work scenario: its tasks reuse common SOPs, business rules, domain standards, and operating conventions, while also containing realistic but easily confusable records and contextual details. The scenarios are adapted from real-world business and domain-specific benchmarks such as [GDPval](https://openai.com/index/gdpval/), [SOP-Bench](https://github.com/amazon-science/SOP-Bench), [SaaS-Bench](https://github.com/UniPat-AI/SaaS-Bench), [JobBench](https://github.com/Job-Bench/job-bench-eval), [CHI-Bench](https://huggingface.co/datasets/actava/chi-bench), and [MedAgentBench](https://github.com/stanfordmlgroup/MedAgentBench).",
+      zh: "每个任务组都围绕一个共享的工作场景构建：组内任务会反复使用相同的标准作业流程、业务规则、领域标准和操作惯例，同时也包含大量真实但容易混淆的记录与上下文信息。场景参考并改编自 [GDPval](https://openai.com/index/gdpval/)、[SOP-Bench](https://github.com/amazon-science/SOP-Bench)、[SaaS-Bench](https://github.com/UniPat-AI/SaaS-Bench)、[JobBench](https://github.com/Job-Bench/job-bench-eval)、[CHI-Bench](https://huggingface.co/datasets/actava/chi-bench) 和 [MedAgentBench](https://github.com/stanfordmlgroup/MedAgentBench) 等真实业务与专业领域 benchmark。"
     },
     note: {
       en: "How is the data constructed? How is the evaluation performed? [**Read the blog →**](blog-self-evolution.html)",
