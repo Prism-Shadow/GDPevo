@@ -1,294 +1,297 @@
 {
-  "schema_name": "custodian_production_issue_review",
+  "template_name": "graycliff_cross_system_remediation_dashboard",
   "schema_version": "1.0",
-  "required_top_level_keys_in_order": [
+  "description": "Required JSON output schema for the Graycliff SEC remediation dashboard. This template defines field names, types, ordering, precision, and enum choices; it does not contain the answer.",
+  "output_rule": "Return exactly one JSON object and no prose outside the JSON.",
+  "required_top_level_keys": [
     "matter_id",
-    "custodian_id",
-    "overall_status",
-    "notice_recommended",
-    "issue_findings",
-    "privilege_actions",
-    "attachment_failures",
-    "ranked_escalations"
+    "top_risks",
+    "category_coverage",
+    "retained_or_available_sources",
+    "metrics",
+    "action_plan"
   ],
-  "field_definitions": {
+  "ordering_rules": {
+    "top_risks": "Sort by priority_rank ascending, where 1 is the highest priority.",
+    "category_coverage": "Sort by category_code ascending.",
+    "retained_or_available_sources": "Sort by source_id ascending.",
+    "action_plan": "Sort by rank ascending, where 1 is the highest priority action.",
+    "category_sets": "Sort category codes ascending within each list."
+  },
+  "enums": {
+    "issue_type": [
+      "post_hold_loss",
+      "personal_source_gap",
+      "archive_available",
+      "responsiveness_miscode",
+      "privilege_log_gap",
+      "third_party_waiver",
+      "privilege_miscoding",
+      "missing_required_record",
+      "other"
+    ],
+    "risk_level": [
+      "critical",
+      "high",
+      "medium",
+      "low"
+    ],
+    "risk_status": [
+      "open",
+      "protocol_noncompliant",
+      "remediation_available",
+      "needs_recode",
+      "should_exist_missing",
+      "closed"
+    ],
+    "source_status": [
+      "destroyed",
+      "not_collected",
+      "available_archive",
+      "not_applicable",
+      "should_exist_missing",
+      "unknown"
+    ],
+    "source_type": [
+      "lab_results_archive",
+      "personal_phone",
+      "cloud_mail_archive",
+      "email",
+      "privilege_log",
+      "qc_finding",
+      "qa_audit",
+      "offsite_records",
+      "personal_messaging",
+      "teams_archive",
+      "laptop",
+      "shared_drive",
+      "personal_email",
+      "other"
+    ],
+    "volume_unit": [
+      "boxes",
+      "documents",
+      "emails",
+      "report",
+      "sources",
+      "not_applicable"
+    ],
+    "category_status": [
+      "preservation_loss",
+      "missing_required_record",
+      "personal_source_gap",
+      "source_gap_with_archive_available",
+      "archive_available",
+      "privilege_log_gap",
+      "responsiveness_gap",
+      "underproduced_privilege_corrections",
+      "mixed_preservation_and_missing_record",
+      "no_open_gap"
+    ],
+    "production_impact": [
+      "source_lost",
+      "source_missing",
+      "source_available",
+      "not_produced",
+      "withheld_unlogged",
+      "privilege_exposure",
+      "recode_needed",
+      "missing_record",
+      "underproduced",
+      "no_production_impact"
+    ],
+    "availability_status": [
+      "available_archive",
+      "available_retained_source",
+      "unavailable",
+      "unknown"
+    ],
+    "active_system_issue": [
+      "purged_custodian_mail",
+      "not_collected",
+      "destroyed_archive",
+      "deleted_channel",
+      "none",
+      "unknown"
+    ],
+    "action_type": [
+      "disclose_preservation_issue",
+      "collect_personal_device",
+      "search_archive",
+      "recode_and_produce",
+      "supplement_privilege_log",
+      "waiver_assessment_and_disclosure",
+      "privilege_recode_and_log",
+      "locate_missing_record",
+      "monitor_only"
+    ],
+    "owner": [
+      "outside_counsel",
+      "forensics",
+      "ediscovery_vendor",
+      "review_qc",
+      "privilege_team",
+      "privilege_counsel",
+      "compliance_audit",
+      "client_legal"
+    ],
+    "priority": [
+      "P0",
+      "P1",
+      "P2",
+      "P3"
+    ]
+  },
+  "fields": {
     "matter_id": {
       "type": "string",
       "description": "Matter identifier under review."
     },
-    "custodian_id": {
-      "type": "string",
-      "description": "Custodian identifier under review."
-    },
-    "overall_status": {
-      "type": "enum",
-      "allowed_values": [
-        "ready",
-        "blocked",
-        "needs_escalation"
-      ]
-    },
-    "notice_recommended": {
-      "type": "boolean",
-      "description": "Whether the review recommends escalation for possible regulator or opposing-party notice."
-    },
-    "issue_findings": {
+    "top_risks": {
       "type": "list<object>",
-      "ordering": "Sort by issue_id in ascending lexicographic order.",
-      "required_object_keys_in_order": [
-        "issue_id",
-        "present",
+      "item_required_keys": [
+        "risk_id",
+        "priority_rank",
         "issue_type",
-        "severity",
-        "timing_class",
-        "category_ids",
-        "affected_count",
-        "recovered_count",
-        "unrecovered_count",
-        "primary_action",
-        "secondary_actions",
-        "notice_recommended"
+        "risk_level",
+        "status",
+        "source_status",
+        "production_impact",
+        "affected_categories",
+        "source_refs",
+        "document_count",
+        "volume_count",
+        "volume_unit",
+        "withheld_count",
+        "logged_count",
+        "unlogged_count",
+        "third_party",
+        "recommended_action"
       ],
-      "object_fields": {
-        "issue_id": {
-          "type": "enum",
-          "allowed_values": [
-            "archive_gap",
-            "attachment_failure",
-            "date_range_gap",
-            "duplicate_alias",
-            "laptop_wipe",
-            "personal_email_gap",
-            "privilege_miscoding",
-            "privilege_overdesignation",
-            "privilege_waiver",
-            "retention_policy_gap",
-            "shared_drive_deletion",
-            "stale_review_coding",
-            "unlogged_privilege"
-          ]
-        },
-        "present": {
-          "type": "boolean"
-        },
-        "issue_type": {
-          "type": "enum",
-          "allowed_values": [
-            "collection_gap",
-            "device_wipe",
-            "processing_failure",
-            "privilege_protocol_defect",
-            "review_coding_error",
-            "source_deletion",
-            "third_party_forward",
-            "uncollected_source"
-          ]
-        },
-        "severity": {
-          "type": "enum",
-          "allowed_values": [
-            "critical",
-            "high",
-            "medium",
-            "low"
-          ]
-        },
-        "timing_class": {
-          "type": "enum",
-          "allowed_values": [
-            "post_hold_spoliation",
-            "uncollected_source",
-            "privilege_waiver",
-            "privilege_protocol_defect",
-            "coding_error",
-            "processing_exception",
-            "not_applicable"
-          ]
-        },
-        "category_ids": {
-          "type": "list<string>",
-          "ordering": "Sort category IDs ascending."
-        },
-        "affected_count": {
-          "type": "integer",
-          "units": "records_or_sources"
-        },
-        "recovered_count": {
-          "type": "integer",
-          "units": "records_or_sources"
-        },
-        "unrecovered_count": {
-          "type": "integer",
-          "units": "records_or_sources"
-        },
-        "primary_action": {
-          "type": "enum",
-          "allowed_values": [
-            "clawback_check",
-            "custodian_declaration",
-            "forensic_recovery",
-            "hold_refresh",
-            "no_action",
-            "privilege_review",
-            "regulator_notice",
-            "reprocess_qc",
-            "supplemental_collection",
-            "waiver_assessment"
-          ]
-        },
-        "secondary_actions": {
-          "type": "list<enum>",
-          "allowed_values": [
-            "clawback_check",
-            "custodian_declaration",
-            "forensic_recovery",
-            "hold_refresh",
-            "privilege_log_correction",
-            "privilege_review",
-            "produce_business_only",
-            "regulator_notice",
-            "reprocess_qc",
-            "supplemental_collection",
-            "waiver_assessment"
-          ],
-          "ordering": "Sort action enums ascending."
-        },
-        "notice_recommended": {
-          "type": "boolean"
-        }
+      "item_field_types": {
+        "risk_id": "string stable record ID anchoring the risk",
+        "priority_rank": "integer rank, 1 is highest priority",
+        "issue_type": "enum:issue_type",
+        "risk_level": "enum:risk_level",
+        "status": "enum:risk_status",
+        "source_status": "enum:source_status",
+        "production_impact": "enum:production_impact",
+        "affected_categories": "list of request category codes",
+        "source_refs": "list of stable hub record IDs supporting the risk",
+        "document_count": "integer records, 0 when not applicable",
+        "volume_count": "integer count, 0 when not applicable",
+        "volume_unit": "enum:volume_unit",
+        "withheld_count": "integer records, 0 when not applicable",
+        "logged_count": "integer records, 0 when not applicable",
+        "unlogged_count": "integer records, 0 when not applicable",
+        "third_party": "string or null",
+        "recommended_action": "enum:action_type"
       }
     },
-    "privilege_actions": {
-      "type": "object",
-      "required_keys_in_order": [
-        "waiver_forward",
-        "overdesignation_review",
-        "miscoding_clawback"
+    "category_coverage": {
+      "type": "list<object>",
+      "item_required_keys": [
+        "category_code",
+        "status",
+        "production_impact",
+        "issue_refs",
+        "recommended_action",
+        "open_issue_count"
       ],
-      "common_fields": {
-        "record_count": {
-          "type": "integer"
-        },
-        "category_ids": {
-          "type": "list<string>",
-          "ordering": "Sort category IDs ascending."
-        },
-        "action": {
-          "type": "enum",
-          "allowed_values": [
-            "clawback_check",
-            "privilege_review",
-            "produce_business_only",
-            "waiver_assessment"
-          ]
-        }
-      },
-      "specific_fields": {
-        "waiver_forward": {
-          "waiver_risk": "boolean",
-          "recipient_role": {
-            "type": "enum",
-            "allowed_values": [
-              "outside_banker",
-              "outside_consultant",
-              "opposing_party",
-              "vendor",
-              "unknown"
-            ]
-          }
-        },
-        "overdesignation_review": {
-          "overdesignation_flag": "boolean",
-          "privilege_status": {
-            "type": "enum",
-            "allowed_values": [
-              "business_only",
-              "counsel_communications",
-              "privileged_investigation",
-              "work_product"
-            ]
-          }
-        },
-        "miscoding_clawback": {
-          "first_pass_coding": {
-            "type": "enum",
-            "allowed_values": [
-              "non_privileged",
-              "privileged",
-              "unknown"
-            ]
-          },
-          "production_status": {
-            "type": "enum",
-            "allowed_values": [
-              "produced",
-              "withheld",
-              "redacted",
-              "not_produced"
-            ]
-          },
-          "clawback_required": "boolean"
-        }
+      "item_field_types": {
+        "category_code": "string request category code",
+        "status": "enum:category_status",
+        "production_impact": "enum:production_impact",
+        "issue_refs": "list of hub record IDs supporting the category status",
+        "recommended_action": "enum:action_type",
+        "open_issue_count": "integer count of open issue records summarized for this category"
       }
     },
-    "attachment_failures": {
+    "retained_or_available_sources": {
+      "type": "list<object>",
+      "item_required_keys": [
+        "source_id",
+        "source_type",
+        "availability_status",
+        "active_system_issue",
+        "affected_categories",
+        "limits_loss_for_categories",
+        "recommended_action",
+        "owner",
+        "priority"
+      ],
+      "item_field_types": {
+        "source_id": "string stable source ID",
+        "source_type": "enum:source_type",
+        "availability_status": "enum:availability_status",
+        "active_system_issue": "enum:active_system_issue",
+        "affected_categories": "list of request category codes",
+        "limits_loss_for_categories": "list of request category codes for which the source remains a remediation path",
+        "recommended_action": "enum:action_type",
+        "owner": "enum:owner",
+        "priority": "enum:priority"
+      }
+    },
+    "metrics": {
       "type": "object",
-      "required_keys_in_order": [
-        "total_failed",
-        "password_protected",
-        "corrupt",
-        "category_ids",
-        "primary_action"
+      "required_keys": [
+        "top_risk_count",
+        "destroyed_lab_archive_box_count",
+        "post_hold_loss_event_count",
+        "uncollected_personal_source_count",
+        "available_archive_count",
+        "miscoded_responsive_doc_count",
+        "withheld_privileged_doc_count",
+        "logged_privilege_doc_count",
+        "unlogged_privilege_doc_count",
+        "third_party_waiver_doc_count",
+        "miscoded_privileged_doc_count",
+        "missing_required_record_count",
+        "affected_category_count",
+        "categories_with_open_risk"
       ],
       "field_types": {
-        "total_failed": "integer",
-        "password_protected": "integer",
-        "corrupt": "integer",
-        "category_ids": "list<string>",
-        "primary_action": "enum"
+        "top_risk_count": "integer",
+        "destroyed_lab_archive_box_count": "integer boxes for the destroyed records source named in the task, or 0 when the task's destroyed source is not measured in boxes",
+        "post_hold_loss_event_count": "integer events",
+        "uncollected_personal_source_count": "integer sources",
+        "available_archive_count": "integer sources",
+        "miscoded_responsive_doc_count": "integer documents",
+        "withheld_privileged_doc_count": "integer documents from selected incomplete-log blockers only",
+        "logged_privilege_doc_count": "integer documents from selected incomplete-log blockers only",
+        "unlogged_privilege_doc_count": "integer documents from selected incomplete-log blockers only",
+        "third_party_waiver_doc_count": "integer emails/documents",
+        "miscoded_privileged_doc_count": "integer documents",
+        "missing_required_record_count": "integer records",
+        "affected_category_count": "integer categories",
+        "categories_with_open_risk": "list of request category codes"
       }
     },
-    "ranked_escalations": {
+    "action_plan": {
       "type": "list<object>",
-      "ordering": "Sort by rank ascending; ranks must be consecutive integers starting at 1.",
-      "required_object_keys_in_order": [
+      "item_required_keys": [
         "rank",
-        "issue_id",
-        "escalation_target",
-        "primary_action"
+        "action_type",
+        "owner",
+        "priority",
+        "target_refs",
+        "affected_categories",
+        "due_days"
       ],
-      "object_fields": {
-        "rank": {
-          "type": "integer"
-        },
-        "issue_id": {
-          "type": "enum",
-          "allowed_values_ref": "issue_findings.issue_id"
-        },
-        "escalation_target": {
-          "type": "enum",
-          "allowed_values": [
-            "case_team",
-            "client_it",
-            "client_legal",
-            "forensic_vendor",
-            "privilege_team",
-            "regulator_notice_review",
-            "review_vendor"
-          ]
-        },
-        "primary_action": {
-          "type": "enum",
-          "allowed_values_ref": "issue_findings.primary_action"
-        }
+      "item_field_types": {
+        "rank": "integer rank, 1 is highest priority",
+        "action_type": "enum:action_type",
+        "owner": "enum:owner",
+        "priority": "enum:priority",
+        "target_refs": "list of hub record IDs targeted by the action",
+        "affected_categories": "list of request category codes",
+        "due_days": "integer days from dashboard delivery"
       }
     }
   },
-  "normalization_rules": [
-    "Use exact enum casing shown in this template.",
-    "Use integer counts only.",
-    "Sort category_ids and secondary_actions ascending.",
-    "Sort issue_findings by issue_id ascending.",
-    "Sort ranked_escalations by rank ascending."
-  ]
+  "numeric_precision": {
+    "counts": "whole integers",
+    "due_days": "whole integer days",
+    "priority_rank": "whole integers"
+  }
 }

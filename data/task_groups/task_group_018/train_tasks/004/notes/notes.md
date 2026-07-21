@@ -1,113 +1,119 @@
-# train_004 Notes
+# train_004 Notes - Union County Criminal Disposition Audit/Register
 
-## English
+## English Review Notes
 
-### Data lineage and task definition
+### Data and Source Lineage
 
-This is `task_group_018` / `train_004`, built from scenario `SCN_018_court_clerk_disposition_orders_and_financial_entries` and source examples `E001`, `E002`, and `E003`. The task uses the shared clerk operations environment in `task_group/task_group_018/env/`, especially Marion County case records, attorney records, criminal fee schedules, financial obligations, and docket records. The task-local payload is `input/payloads/marion_mixed_misdemeanor_packet.json`, a stale clerk export plus hearing, financial-review, and counsel-confirmation notes.
+This task belongs to `task_group_018`, based on source scenario `SCN_018_court_clerk_disposition_orders_and_financial_entries` and examples `E001`, `E002`, and `E003`. It is the second Arkansas criminal closeout train task and reinforces the criminal disposition/register conventions from `train_001` with different Union County facts.
 
-The solver-visible request asks for a corrected Marion County mixed misdemeanor update file. The output must follow `input/payloads/answer_template.json` and contain case-level status, disposition, representation, approved fee-code, financial-delta, and docket-action fields. The intended target cases are the five records in the stale export with `queue` equal to `mixed_misdemeanor_docket`: `23-MAR-01004`, `24-MAR-01004`, `25-MAR-01001`, `25-MAR-01002`, and `25-MAR-01003`. The traffic and compliance rows in the packet are distractors.
+The shared environment is the generated Court Operations Portal under `task_group/task_group_018/env/`, especially the read-only tables behind `GET /api/cases`, `GET /api/charges`, `GET /api/docket-entries`, `GET /api/fee-schedules`, and `GET /api/search`. The task-local solver-visible payloads are:
 
-### Scenario fit and material map
+- `input/payloads/union_county_hearing_notes.md`: courtroom outcome notes from Judge Holland's May 20, 2025 docket.
+- `input/payloads/finance_memo_and_worksheet.csv`: noisy finance worksheet with stale and conflicting outcomes.
+- `input/payloads/answer_template.json`: required JSON shape, enums, currency precision, dates, and ordering rules.
 
-The task fits the scenario because it mirrors a clerk post-hearing reconciliation workflow: a stale local export conflicts with live CMS records, the bench packet changes only some hearing facts, counsel confirmations correct representation details, and the financial update depends on fee schedules and live ledger principal amounts.
+Target cases are `UC-25-0221`, `UC-25-0224`, `UC-25-0230`, `UC-24-0775`, and `UC-25-0238`.
 
-Material usage:
+### Task Definition and Scenario Fit
 
-- Shared environment `/api/cases` and `/api/cases/<case_number>`: live Marion case status, disposition dates, charges, defense information, and filing dates.
-- Shared environment `/api/financial-obligations?case_number=<case_number>`: current live `principal_amount` used as the comparison base.
-- Shared environment `/api/fees?county=Marion&matter_type=criminal&effective_on=<date>`: criminal filing and conviction assessments by effective date.
-- Shared environment `/api/attorneys`: confirms Marion-capable attorneys and supported defense types.
-- Task payload stale export: gives the work queue and stale values to reconcile, including distractors.
-- Task payload hearing/review notes: gives the current warrant recall for `24-MAR-01004`, the new disposition for `25-MAR-01003`, and the financial-review limits for `25-MAR-01001` and `25-MAR-01002`.
-- Task payload counsel confirmations: resolves counsel type conflicts for `24-MAR-01004`, `25-MAR-01001`, and `25-MAR-01002`.
+The solver acts as a criminal clerk preparing a disposition audit and register batch. They must reconcile hearing notes, a worksheet, and portal records before entering disposition status, audit decisions, financial postings, docket/register actions, aggregate totals, and exclusions.
 
-### Solution and answer basis
+This matches the source court-clerk scenario: it combines courtroom notes, CMS identity/status records, charge and fee data, local worksheet conflicts, financial posting, and docket/register preparation. It preserves realistic office-work complexity without being a tutorial.
 
-The five output rows are sorted by case number. `23-MAR-01004` remains probation active with its 2024 disposition and old filing assessment of `105.00`; no live update is needed. `24-MAR-01004` has its warrant recalled by the packet, remains open without disposition, keeps only the old filing assessment of `105.00`, and uses Nolan Pierce as retained counsel. `25-MAR-01001` remains closed from `2025-07-22`; the final approved fees are `CR-CONV` and `CR-FILING` for `287.50`, so the live principal `327.50` is reduced by `40.00`. `25-MAR-01002` remains deferred from `2025-09-22`; no conviction or restitution fee is approved, so only `CR-FILING` for `110.00` remains and the live principal `327.50` is reduced by `217.50`. `25-MAR-01003` receives the new `2026-06-18` conviction/probation outcome; there was no live ledger principal, so `CR-CONV` plus `CR-FILING` creates a `287.50` positive delta.
+### Material Map
 
-The aggregate answer has `case_count = 5`, `financial_adjustment_count = 3`, `total_financial_delta = 30.00`, and representation mismatch cases `24-MAR-01004`, `25-MAR-01001`, and `25-MAR-01002`.
+The hearing notes are the best source for courtroom outcomes: amended count on `UC-25-0221`, no-contest guilty controlled-substance conviction on `UC-25-0224`, guilty plea with missing DOB on `UC-25-0230`, bench-trial guilty with appointed private defense counsel on `UC-24-0775`, and continued/no final order on `UC-25-0238`.
 
-Scoring uses nine exact-match points with raw weights:
+The worksheet introduces conflicts: it incorrectly treats `UC-25-0221` as a controlled-substance conviction with a lab fee, misses the lab fee on `UC-25-0224`, carries a blank DOB for `UC-25-0230`, labels `UC-24-0775` as `APD`, and suggests a draft disposition/financial posting for `UC-25-0238`.
 
-- `case_set_and_order`, weight 2: target case set and ascending order.
-- `resolved_statuses_and_dates`, weight 3: resolved status and disposition date for every case.
-- `disposition_classes`, weight 2: disposition class and convicted charge count.
-- `representation_corrections`, weight 2: attorney, defense type, and mismatch flag.
-- `approved_fee_codes`, weight 3: approved fee-code set by case.
-- `case_financial_totals`, weight 3: current ledger principal and corrected approved principal to cents.
-- `financial_deltas_and_count`, weight 3: per-case deltas and adjustment count.
-- `docket_actions`, weight 2: case-level docket action code.
-- `aggregate_rollup`, weight 2: case count, total delta, and mismatch case list.
+The portal supplies identity, case status, counsel metadata, and Union County fees. The relevant fee schedule is `AR-UC`: circuit criminal court cost `150.00` for disposed criminal cases and crime laboratory fee `75.00` for controlled-substance convictions. No disposition or fee should be posted for the pending continued matter.
 
-Likely model pitfalls include treating every stale export row as in scope, using stale status over live records, retroactively applying 2025 fees to 2024 dispositions, posting `CR-REST-ADM` without restitution, posting `CR-PROB` when the note says no separate setup fee, treating statute codes such as `CR-507` as fee codes, and missing counsel-type corrections when the attorney name is unchanged.
+### Solution and Evaluation Basis
 
-### Transfer design
+The standard answer:
 
-As a train task, this task lets a later skill-builder infer several reusable conventions after comparing a blind attempt with the answer: live records normally beat stale local exports; hearing notes alter only the facts actually heard or reviewed; counsel confirmations can override stale/live representation type; fee schedules must be selected by county, matter type, and effective date; unsupported or unpronounced financial rows should not be carried forward; current ledger principal is the comparison base for deltas; and structured outputs should use controlled enums and stable case ordering. These are intended to transfer to the test tasks involving stale-source resolution, fee cleanup, representation mismatch flags, and docket-action decisions.
+- Enters four disposed cases: `UC-24-0775`, `UC-25-0221`, `UC-25-0224`, and `UC-25-0230`.
+- Excludes `UC-25-0238` as continued/pending with no final order and next status check `2025-06-17`.
+- Uses `TBD from case file` for Helena Cross's missing DOB and recommends `verify_before_entry`.
+- Classifies Rafael King's `APD` label as `appointed_private`, using the hearing/memo clarification rather than treating it as public defender counsel.
+- Posts court cost `150.00` on each disposed case.
+- Posts the `75.00` crime laboratory fee only to `UC-25-0224`, because it is the only final controlled-substance conviction in this task.
+- Posts Rafael King's `500.00` fine and no fine on the other cases.
+- Computes totals: disposed case count `4`, excluded pending count `1`, court cost total `600.00`, lab fee total `75.00`, fine total `500.00`, and batch total due `1175.00`.
 
-### Construction record
+The evaluator has eight whole-point checks with raw weights:
 
-Author: task-builder subagent for `train_004`.
+- `SP001` weight 2: correct disposed and pending case sets.
+- `SP002` weight 2: correct audit resolutions for DOB, counsel, amendment, lab-fee omission, and pending-status conflicts.
+- `SP003` weight 3: correct disposition outcomes, pleas, dates, count treatment, and departure statuses.
+- `SP004` weight 3: correct court-cost and crime-lab postings per case.
+- `SP005` weight 2: correct fine and total-due amounts per case.
+- `SP006` weight 2: correct docket/register action and docket code for each case.
+- `SP007` weight 2: correct aggregate register totals.
+- `SP008` weight 1: correct detailed exclusion record for `UC-25-0238`.
 
-Created: 2026-07-07.
+These points cover at least five distinct outcomes: target status/exclusion, audit/conflict resolution, disposition classification, financial posting, docket/register entry, and aggregate totals. Each scoring point is all-or-nothing with no fractional subcredit inside a point.
 
-Updated: 2026-07-07.
+Likely model pitfalls include copying the worksheet's `POSS-CS guilty` row for `UC-25-0221`, missing the lab fee for `UC-25-0224`, using a fabricated DOB for `UC-25-0230`, treating `APD` as public defender on `UC-24-0775`, and entering `UC-25-0238` as disposed despite the continuance.
 
-Major changes: created the task-local packet, answer template, standard answer, bilingual notes, and exact-match evaluator for the Marion County mixed misdemeanor stale-export task.
+### Transfer Design
 
-## 中文
+As a train task, this is not a simplified worked example. It is intended to let fewshot skill generation infer recurring criminal closeout habits: hearing notes control courtroom disposition outcomes; CMS/environment records corroborate identity and status; fee schedules are applied by jurisdiction and current effective date; missing identifiers use controlled placeholders and verify recommendations; counsel abbreviations can require clarification; and continued/pending matters must be excluded from disposed registers and financial postings.
 
-### 数据来源与任务定义
+This anchors later Arkansas criminal test tasks that use similar but not identical conflicts around counsel labels, fee schedules, amended or dismissed charges, missing identity details, docket actions, and aggregate register totals.
 
-本任务是 `task_group_018` 的 `train_004`，来源于场景 `SCN_018_court_clerk_disposition_orders_and_financial_entries` 以及样例 `E001`、`E002`、`E003`。任务使用共享 clerk operations 环境，重点涉及 Marion County 的案件记录、律师记录、刑事费用表、财务义务和 docket 记录。任务本地材料是 `input/payloads/marion_mixed_misdemeanor_packet.json`，其中包含过期的书记员导出、庭审记录、财务复核记录和律师确认信息。
+### Construction Record
 
-求解者需要生成 Marion County 混合轻罪 docket 的更正后 JSON 文件，格式由 `input/payloads/answer_template.json` 定义。目标案件是本地过期导出中 `queue` 为 `mixed_misdemeanor_docket` 的五个案件：`23-MAR-01004`、`24-MAR-01004`、`25-MAR-01001`、`25-MAR-01002`、`25-MAR-01003`。导出中的 traffic 和 compliance 行是干扰项。
+Author: Codex task-builder subagent for `train_004`.
 
-### 场景契合与材料地图
+Created: 2026-07-18.
 
-该任务模拟书记员在庭审后进行案件管理系统更新的真实流程：本地导出已经过期，实时 CMS 记录与其冲突，庭审材料只改变部分事实，律师确认材料修正代理类型，财务更新需要结合有效日期费用表和实时 ledger principal。
+Updated: 2026-07-18.
 
-材料用途如下：
+Major changes: created the `train_tasks/004/` task folder, local payloads, answer template, standard answer, evaluator, and bilingual notes.
 
-- 共享环境 `/api/cases` 和 `/api/cases/<case_number>`：用于核对实时案件状态、处分日期、指控、辩护信息和立案日期。
-- 共享环境 `/api/financial-obligations?case_number=<case_number>`：用于取得当前实时 `principal_amount`，作为 delta 计算基准。
-- 共享环境 `/api/fees?county=Marion&matter_type=criminal&effective_on=<date>`：用于按有效日期查 Marion 刑事案件 filing 和 conviction assessment。
-- 共享环境 `/api/attorneys`：用于核对 Marion 可用律师和代理类型。
-- 本地 stale export：用于确定工作队列和需要调和的过期字段，并包含干扰行。
-- 本地 hearing/review notes：用于确定 `24-MAR-01004` 的 warrant recall、`25-MAR-01003` 的新处分，以及 `25-MAR-01001`、`25-MAR-01002` 的财务复核限制。
-- 本地 counsel confirmations：用于解决 `24-MAR-01004`、`25-MAR-01001`、`25-MAR-01002` 的代理类型冲突。
+## 中文审阅说明
 
-### 答案与评估依据
+### 数据和来源
 
-五个输出行按案件号升序排列。`23-MAR-01004` 保持 probation active 和 2024 年处分，仅保留旧 filing assessment `105.00`，无需更新。`24-MAR-01004` 根据材料撤销 warrant，案件保持 open 且无处分，只保留旧 filing assessment `105.00`，律师类型改为 Nolan Pierce retained。`25-MAR-01001` 保持 `2025-07-22` 的 closed disposition，最终费用为 `CR-CONV` 和 `CR-FILING`，合计 `287.50`，相对实时 principal `327.50` 减少 `40.00`。`25-MAR-01002` 保持 `2025-09-22` 的 deferred disposition，没有 conviction 或 restitution fee，仅保留 `CR-FILING` `110.00`，相对实时 principal `327.50` 减少 `217.50`。`25-MAR-01003` 根据 `2026-06-18` 的新庭审结果进入 conviction/probation；实时 ledger 中没有 principal，因此新增 `CR-CONV` 与 `CR-FILING` 共 `287.50`。
+本任务属于 `task_group_018`，来源场景为 `SCN_018_court_clerk_disposition_orders_and_financial_entries`，参考示例为 `E001`、`E002` 和 `E003`。它是第二个阿肯色刑事结案登记训练任务，用新的 Union County 事实强化 `train_001` 的刑事处分、费用和登记习惯。
 
-汇总答案为 `case_count = 5`，`financial_adjustment_count = 3`，`total_financial_delta = 30.00`，代理冲突案件为 `24-MAR-01004`、`25-MAR-01001`、`25-MAR-01002`。
+共享环境是只读的 Court Operations Portal，主要使用 `GET /api/cases`、`GET /api/charges`、`GET /api/docket-entries`、`GET /api/fee-schedules` 和 `GET /api/search`。本任务本地可见材料包括庭审记录、带冲突的财务工作表，以及答案模板。目标案号是 `UC-25-0221`、`UC-25-0224`、`UC-25-0230`、`UC-24-0775` 和 `UC-25-0238`。
 
-评估包含九个精确匹配评分点：
+### 任务定义和场景契合
 
-- `case_set_and_order`，权重 2：目标案件集合和升序顺序。
-- `resolved_statuses_and_dates`，权重 3：每案的最终状态和处分日期。
-- `disposition_classes`，权重 2：处分类别和 convicted charge 数量。
-- `representation_corrections`，权重 2：律师、代理类型和冲突标记。
-- `approved_fee_codes`，权重 3：每案批准费用代码集合。
-- `case_financial_totals`，权重 3：当前 ledger principal 和更正后 principal。
-- `financial_deltas_and_count`，权重 3：每案 delta 和需财务调整案件数量。
-- `docket_actions`，权重 2：每案 docket action code。
-- `aggregate_rollup`，权重 2：案件数、总 delta 和代理冲突案件列表。
+求解者扮演刑事书记员，需要在录入处分登记前核对庭审记录、工作表和系统记录，输出身份与律师类型审计、处分状态、费用录入、登记动作、汇总金额以及不得结案录入的事项。
 
-常见错误包括：把 stale export 中所有行都当作目标案件、用过期状态覆盖实时记录、把 2025 费用追溯到 2024 处分、在没有 restitution 时保留 `CR-REST-ADM`、在 note 明确未宣告 setup fee 时加入 `CR-PROB`、把 `CR-507` 等 statute 当成 fee code、以及在律师姓名未变但代理类型已变时漏标 representation mismatch。
+该任务符合原始法院书记员场景，因为它要求在庭审结果、CMS 身份和状态、费用表、工作表冲突、财务录入和案件登记之间做长期、多源核对。
+
+### 材料用途
+
+庭审记录是处分结果的主要依据：`UC-25-0221` 是修改后的非毒品定罪，`UC-25-0224` 是受控物质定罪并需要实验室费用，`UC-25-0230` 有缺失 DOB 且需用占位并核验，`UC-24-0775` 的 `APD` 实际是 appointed private defense counsel，`UC-25-0238` 只是继续审理且没有最终命令。
+
+工作表提供真实的噪声和冲突：它错误地给 `UC-25-0221` 加实验室费用，漏掉 `UC-25-0224` 的实验室费用，保留 `UC-25-0230` 的空 DOB，把 `UC-24-0775` 的 `APD` 写成容易误解的标签，并暗示 `UC-25-0238` 可以草稿结案。
+
+环境中的 Union County 费用表给出每个已处分刑事案件的法院成本 `150.00`，以及受控物质定罪的犯罪实验室费用 `75.00`。继续审理的事项不得录入处分或费用。
+
+### 标准答案和评分依据
+
+标准答案将四个案件录入已处分登记，排除 `UC-25-0238`；对 Helena Cross 使用 `TBD from case file` 并建议核验；将 Rafael King 的律师分类为 `appointed_private`；只给 `UC-25-0224` 加 `75.00` 实验室费用；给四个已处分案件各加 `150.00` 法院成本；给 `UC-24-0775` 加 `500.00` 罚金。汇总为已处分 `4` 件、排除 `1` 件、法院成本 `600.00`、实验室费用 `75.00`、罚金 `500.00`、总计 `1175.00`。
+
+评估器包含 8 个整点评分项，权重分别为 2、2、3、3、2、2、2、1。评分覆盖目标案件状态、审计冲突、处分分类、费用录入、登记动作、汇总金额和排除事项，均为确定性的通过或不通过，不在单个评分点内给部分分。
+
+常见错误包括照抄工作表给 `UC-25-0221` 加实验室费用、漏掉 `UC-25-0224` 的实验室费用、为 `UC-25-0230` 编造 DOB、把 `UC-24-0775` 的 `APD` 当成公设辩护人，以及把 `UC-25-0238` 当成已处分案件录入。
 
 ### 迁移设计
 
-作为训练任务，本任务可让后续 skill-builder 在对照标准答案后归纳出可迁移规则：实时记录通常优先于过期本地导出；庭审材料只改变本次庭审或复核涉及的事实；律师确认可修正过期或实时记录中的代理类型；费用表必须按 county、matter type 和 effective date 选择；未支持或未宣告的财务项目不能沿用；delta 应以当前实时 ledger principal 为基准；结构化输出应使用受控枚举和稳定排序。这些经验会迁移到后续测试任务中的过期来源调和、费用清理、代理冲突标记和 docket action 判断。
+这是正式训练任务，不是教程。通过求解并对照答案，少样本技能生成应能归纳出若干可迁移习惯：庭审记录优先决定处分结果；环境记录用于核对身份和状态；按辖区和生效日期应用费用表；缺失身份字段使用受控占位并建议核验；律师缩写需要结合备忘录澄清；继续或待定事项不能进入已处分登记或财务录入。
 
-### 构造记录
+这些经验会支持后续阿肯色刑事测试任务中关于律师标签、费用表、修改或撤销的罪名、缺失身份信息、登记动作和汇总金额的判断。
 
-作者：`train_004` task-builder subagent。
+### 构建记录
 
-创建日期：2026-07-07。
+作者：`train_004` 的 Codex task-builder subagent。
 
-更新日期：2026-07-07。
+创建日期：2026-07-18。
 
-主要变更：创建 Marion County 混合轻罪 stale export 任务的本地材料、答案模板、标准答案、双语 notes 和精确匹配 evaluator。
+更新日期：2026-07-18。
+
+主要变更：创建 `train_tasks/004/` 文件夹、本地材料、答案模板、标准答案、评估器和双语说明。

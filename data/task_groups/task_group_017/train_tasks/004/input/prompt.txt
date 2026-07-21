@@ -1,17 +1,3 @@
-Task: Production tracker, miscoding, and privilege review for matter M-RDL-304.
+Northbay Therapeutics needs a production-readiness review for SEC matter MTR-NORTHBAY-SEC. Use the Investigation Review Hub at <TASK_ENV_BASE_URL> and the environment endpoints available for this run. Do not use local environment source files, database files, generation manifests, or any non-environment source.
 
-You are preparing a structured production-readiness review for the legal team. Use the shared investigation API at <TASK_ENV_BASE_URL> and inspect the matter record, subpoena categories, production logs, privilege logs, QC events, and document records for matter M-RDL-304.
-
-The service exposes JSON endpoints including:
-
-- /api/matters/M-RDL-304
-- /api/subpoena_categories?matter_id=M-RDL-304
-- /api/production_logs?matter_id=M-RDL-304
-- /api/privilege_logs?matter_id=M-RDL-304
-- /api/qc_events?matter_id=M-RDL-304
-- /api/documents?matter_id=M-RDL-304
-- /api/search?matter_id=M-RDL-304&q=...
-
-Return JSON only, conforming to input/payloads/answer_template.json. Do not include a memo or explanatory text outside the JSON.
-
-Your answer should identify the affected subpoena categories, category-level production and privilege status, privilege-log metrics, miscoding findings, and the required remediation actions before the production can be treated as complete.
+If you use the read-only SQL endpoint, send the header X-API-Key: review-key-017. Return a single JSON object conforming to input/payloads/answer_template.json. The review should identify request categories that are not ready for production, list the material issue ledger, quantify privilege and responsiveness blockers, and provide a prioritized readiness action plan.

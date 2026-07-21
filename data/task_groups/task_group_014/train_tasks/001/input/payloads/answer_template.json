@@ -1,27 +1,183 @@
 {
-  "batch_id": "string",
-  "cases": [
-    {
-      "case_id": "string",
-      "first_failing_check": "active_coverage | cob_completion | covered_service | network | service_area | pa_required | retrospective_submission | duplicate_authorization | none",
-      "intake_disposition": "coverage_halt | cob_hold | noncovered_service_denial | network_denial | service_area_denial | notification_only_close | retrospective_submission_halt | duplicate_halt | gold_card_auto_approval | ready_for_review",
-      "duplicate_existing_auth_ids": ["string"],
-      "gold_card_decision": "not_reached_intake_halt | auto_approve | not_eligible_plan | not_eligible_provider | not_eligible_service | not_eligible_md_required | not_eligible_multiple_reasons",
-      "review_queue": "No Review - Intake Halt | Auto Approval | Nurse Clinical Review | Medical Director Review | MedImage Review | CareEquip Review | HomeCare Review",
-      "urgency_class": "routine | urgent | stat",
-      "sla_due_at": "YYYY-MM-DDTHH:MM",
-      "sla_basis": "string",
-      "provider_item": "none | requesting_provider_active_sanction | requesting_provider_credentials_inactive",
-      "notice_required": true
-    }
+  "description": "Required JSON shape for the UM nurse determination summary.",
+  "required_top_level_fields": [
+    "case_id",
+    "recommendation",
+    "final_status",
+    "route",
+    "authorization",
+    "criteria_results",
+    "evidence_documents",
+    "excluded_documents",
+    "determination_letter",
+    "next_action",
+    "basis_audit"
   ],
-  "sla_summary": {
-    "routine_count": 0,
-    "urgent_count": 0,
-    "stat_count": 0,
-    "notice_required_count": 0,
-    "ready_for_clinical_review_count": 0,
-    "auto_approved_count": 0,
-    "duplicate_halt_count": 0
-  }
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "format": "Northstar case identifier"
+    },
+    "recommendation": {
+      "type": "enum",
+      "choices": [
+        "approve",
+        "pend_for_information",
+        "escalate_to_md",
+        "deny",
+        "partial_approval"
+      ]
+    },
+    "final_status": {
+      "type": "enum",
+      "choices": [
+        "approved",
+        "pended",
+        "md_review_required",
+        "denied",
+        "partially_approved",
+        "appeal_overturned",
+        "appeal_upheld"
+      ]
+    },
+    "route": {
+      "type": "enum",
+      "choices": [
+        "nurse_approval",
+        "pending_information",
+        "medical_director_review",
+        "peer_to_peer",
+        "appeal_unit"
+      ]
+    },
+    "authorization": {
+      "type": "object",
+      "required_fields": [
+        "auth_number",
+        "approved_units",
+        "approved_start",
+        "approved_end",
+        "approved_cpt",
+        "modifier"
+      ],
+      "fields": {
+        "auth_number": {
+          "type": "string"
+        },
+        "approved_units": {
+          "type": "integer",
+          "units": "service units"
+        },
+        "approved_start": {
+          "type": "string",
+          "format": "YYYY-MM-DD"
+        },
+        "approved_end": {
+          "type": "string",
+          "format": "YYYY-MM-DD"
+        },
+        "approved_cpt": {
+          "type": "list[string]",
+          "ordering": "ascending CPT code",
+          "items_format": "CPT or HCPCS code"
+        },
+        "modifier": {
+          "type": "string",
+          "format": "line modifier"
+        }
+      }
+    },
+    "criteria_results": {
+      "type": "object",
+      "required_keys": [
+        "PT-ACTIVE",
+        "PT-DEFICIT",
+        "PT-DX",
+        "PT-POC",
+        "PT-UNITS"
+      ],
+      "value_type": "enum",
+      "choices": [
+        "met",
+        "not_met",
+        "unclear",
+        "not_applicable"
+      ]
+    },
+    "evidence_documents": {
+      "type": "list[string]",
+      "ordering": "ascending document_id",
+      "items_format": "document_id"
+    },
+    "excluded_documents": {
+      "type": "list[string]",
+      "ordering": "ascending document_id",
+      "items_format": "document_id"
+    },
+    "determination_letter": {
+      "type": "enum",
+      "choices": [
+        "approval",
+        "information_request",
+        "adverse_determination",
+        "partial_approval"
+      ]
+    },
+    "next_action": {
+      "type": "enum",
+      "choices": [
+        "issue_approval",
+        "request_more_information",
+        "route_md_review",
+        "schedule_p2p",
+        "issue_denial",
+        "file_appeal",
+        "resubmit_corrected_claim",
+        "monitor_no_action"
+      ]
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Record the source-precedence rule, the ordered record precedence trail, the environment record IDs that directly control the result, and the exception/gap records that explain exclusions, denials, missing information, or route priority.",
+      "fields": {
+        "source_precedence": {
+          "type": "enum",
+          "choices": [
+            "current_clinical_records_over_stale_export",
+            "payer_appeal_before_manufacturer_assistance",
+            "effective_benchmark_by_plan_modifier_and_date",
+            "new_patient_specific_p2p_information",
+            "margin_threshold_then_charge_sensitivity",
+            "appeal_deadline_then_clinical_then_payment_integrity"
+          ]
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  },
+  "numeric_precision": {
+    "approved_units": "integer service units"
+  },
+  "date_precision": "calendar day",
+  "additional_fields_allowed": false
 }

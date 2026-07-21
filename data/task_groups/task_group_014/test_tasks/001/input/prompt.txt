@@ -1,15 +1,5 @@
-You are the UM supervisor auditing a cross-state prior authorization intake queue.
+Northstar Health Plan needs a UM nurse reviewer disposition for the routine pediatric speech therapy queue item CASE-TE-001.
 
-Use the SQLite query service at <TASK_ENV_BASE_URL>/query. Submit read-only SQL with POST JSON shaped like:
+Use the shared payer-operations environment at <TASK_ENV_BASE_URL>. The SQL endpoint is POST /sql/query with Authorization: Bearer pa-review-token-014. You may also use the available business API endpoints exposed by the environment. Base your answer on the case record, request line, applicable policy criteria, current clinical evidence, and document status in the environment.
 
-```json
-{"sql": "SELECT ...", "params": []}
-```
-
-Authenticate every request with HTTP Basic Auth using username `payer_ops_solver` and password `revcycle_sql_014`.
-
-Do not assume any local database path or hard-code a runtime host or port. Use only `<TASK_ENV_BASE_URL>` for environment access.
-
-The target worklist is provided in `input/payloads/worklist.json`. Use the SQL service to review the scoped authorization cases and the related member, plan, provider, facility, service-code, prior-authorization, and state SLA records.
-
-Prepare the supervisor audit result for each target case, including intake outcome, gold-card posture, duplicate treatment, queue destination, SLA timing, notice category, and summary metrics. Return one valid JSON object matching `input/payloads/answer_template.json`, with case rows sorted by case ID and no narrative text outside the JSON.
+Return only a JSON object matching input/payloads/answer_template.json. Include the target case, requested speech therapy service details, reviewer recommendation, final status, route, criteria results, any information that must be requested, current evidence document IDs, excluded document IDs, approved units, and response due date.

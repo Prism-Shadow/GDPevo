@@ -1,38 +1,51 @@
 {
-  "product": "Payments",
-  "as_of_date": "2026-02-15",
-  "recent_closed_window_days": 21,
-  "included_count": 0,
-  "included_work_item_ids": [],
-  "overdue_count": 0,
-  "overdue_work_item_ids": [],
-  "aging_bucket_counts": {
-    "0-7": 0,
-    "8-14": 0,
-    "15-30": 0,
-    "31+": 0
+  "task_id": "train_002",
+  "scope": {
+    "teams": [
+      "Data Platform",
+      "Infra Reliability"
+    ],
+    "as_of": "YYYY-MM-DD",
+    "recent_closed_window_days": 14,
+    "sla_categories": [
+      "Reliability",
+      "Security"
+    ]
   },
-  "owner_hotspots": [
+  "included_primary_ids": [
+    "string work item id; sorted lexicographically; primary records only"
+  ],
+  "overdue_primary_ids": [
+    "string work item id; sorted lexicographically; subset of included_primary_ids"
+  ],
+  "aging_bucket_counts": {
+    "0-3": "integer count",
+    "4-7": "integer count",
+    "8-14": "integer count",
+    "15-30": "integer count",
+    "31+": "integer count"
+  },
+  "team_overdue_counts": [
     {
-      "owner_id": "OWNER-ID",
-      "overdue_count": 0,
-      "max_age_days": 0
+      "team": "Data Platform or Infra Reliability; teams listed alphabetically",
+      "overdue_count": "integer count of overdue primary records"
     }
   ],
-  "team_hotspots": [
-    {
-      "team_id": "TEAM-ID",
-      "overdue_count": 0,
-      "max_age_days": 0
-    }
-  ],
+  "top_hotspot": {
+    "team": "team name for the owner/team pair with the most overdue primary records",
+    "owner": "owner name, or UNASSIGNED when owner is missing",
+    "overdue_count": "integer count"
+  },
   "duplicate_clusters": [
     {
-      "cluster_id": "DUP-000",
-      "representative_work_item_id": "WI-0000",
-      "member_ids": []
+      "primary_id": "primary work item id referenced by duplicates; clusters sorted by primary_id",
+      "duplicate_ids": [
+        "duplicate work item id; sorted lexicographically"
+      ]
     }
   ],
-  "escaped_severity_count": 0,
-  "missing_owner_work_item_ids": []
+  "missing_owner_ids": [
+    "string work item id; sorted lexicographically; primary included records with no owner"
+  ],
+  "breach_rate": "number rounded to exactly 3 decimal places; overdue primary count divided by included primary count"
 }

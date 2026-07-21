@@ -84,7 +84,7 @@ reasoning_effort: xhigh
 main agent 直接解题。
 
 使用 `CODEX_ORCHESTRATOR.md` 中的命令形态，并在启动 solver 进程时临时设置每个
-attempt 专用的 `CODEX_HOME=/codex_home`。`CODEX_HOME` 不是任务 `.env` 配置。
+attempt 专用的 `CODEX_HOME=/tmp/gdpevo-codex-home`。`CODEX_HOME` 不是任务 `.env` 配置。
 正式 attempt 不要使用 `codex exec --ephemeral`。
 每次运行都必须原样使用 `guides/agent_prompts.md` 中的固定 prompt，只替换其中
 声明的占位符。

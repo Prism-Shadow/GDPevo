@@ -221,17 +221,17 @@ export const taskGroups = [
   { id: "011", label: "11", domain: "Finance", en: "Credit risk & lending committee", zh: "信用风险与信贷委员会" },
   { id: "012", label: "12", domain: "ERP", en: "HR employee lifecycle & policy", zh: "HR 员工流程与制度" },
   { id: "013", label: "13", domain: "Healthcare", domainKey: "healthcare", domainLabel: { en: "Healthcare", zh: "医药" }, en: "Patient intake, transfer & chart onboarding", zh: "患者接收、转诊与病历建档" },
-  { id: "014", label: "14", domain: "Healthcare", domainKey: "healthcare", domainLabel: { en: "Healthcare", zh: "医药" }, en: "Payer authorization, appeals & reimbursement", zh: "医保授权、申诉与报销运营" },
+  { id: "014", label: "14", domain: "Healthcare", domainKey: "healthcare", domainLabel: { en: "Healthcare", zh: "医药" }, en: "Payer authorization, appeals & payment integrity", zh: "医保授权、申诉与支付审核" },
   { id: "015", label: "15", domain: "Healthcare", domainKey: "healthcare", domainLabel: { en: "Healthcare", zh: "医药" }, en: "EHR data governance & record quality", zh: "电子病历数据治理与记录质控" },
   { id: "016", label: "16", domain: "Healthcare", domainKey: "healthcare", domainLabel: { en: "Healthcare", zh: "医药" }, en: "Clinical protocol decision support", zh: "临床方案与决策支持" },
-  { id: "017", label: "17", domain: "Legal", domainKey: "legal", domainLabel: { en: "Legal", zh: "法律" }, en: "Investigation production review", zh: "调查材料调取与补救复核" },
-  { id: "018", label: "18", domain: "Legal", domainKey: "legal", domainLabel: { en: "Legal", zh: "法律" }, en: "Court disposition & financial entries", zh: "法院处置命令与费用录入" },
-  { id: "019", label: "19", domain: "Legal", domainKey: "legal", domainLabel: { en: "Legal", zh: "法律" }, en: "Regulatory licensing & compliance review", zh: "监管许可资格与合规审查" },
-  { id: "020", label: "20", domain: "Legal", domainKey: "legal", domainLabel: { en: "Legal", zh: "法律" }, en: "M&A contract review & negotiation", zh: "并购合同审查与谈判" },
+  { id: "017", label: "17", domain: "Legal", domainKey: "legal", domainLabel: { en: "Legal", zh: "法律" }, en: "Investigation production gaps & remediation", zh: "调查材料提交缺口与整改" },
+  { id: "018", label: "18", domain: "Legal", domainKey: "legal", domainLabel: { en: "Legal", zh: "法律" }, en: "Court case closeout, fees & supervision", zh: "法院案件结案、费用与监督安排" },
+  { id: "019", label: "19", domain: "Legal", domainKey: "legal", domainLabel: { en: "Legal", zh: "法律" }, en: "Contractor & liquor licensing review", zh: "承包商与酒类许可审查" },
+  { id: "020", label: "20", domain: "Legal", domainKey: "legal", domainLabel: { en: "Legal", zh: "法律" }, en: "M&A contract review, closing & negotiation", zh: "并购合同审查、交割与谈判" },
   { id: "021", label: "21", domain: "Data Analysis", domainKey: "data", domainLabel: { en: "Data Analysis", zh: "数据分析" }, en: "Data cleaning & quality pipeline", zh: "数据清洗与质量控制流程" },
   { id: "022", label: "22", domain: "Data Analysis", domainKey: "data", domainLabel: { en: "Data Analysis", zh: "数据分析" }, en: "SQL analytics & reconciliation", zh: "SQL 分析与数据核对" },
   { id: "023", label: "23", domain: "Data Analysis", domainKey: "data", domainLabel: { en: "Data Analysis", zh: "数据分析" }, en: "Public health statistical modeling", zh: "公共卫生统计建模审计" },
-  { id: "024", label: "24", domain: "Data Analysis", domainKey: "data", domainLabel: { en: "Data Analysis", zh: "数据分析" }, en: "Engineering portfolio analytics", zh: "工程项目组合分析" }
+  { id: "024", label: "24", domain: "Data Analysis", domainKey: "data", domainLabel: { en: "Data Analysis", zh: "数据分析" }, en: "Engineering portfolio, SLA & release analytics", zh: "工程项目组合、服务时限与发布分析" }
 ];
 
 const taskTopicSource = {
@@ -392,16 +392,16 @@ const taskTopicSource = {
     ["test_005", "Test", "Program enrollment plan", "Determine the right program path and follow-up timing from mixed intake records."]
   ],
   "014": [
-    ["train_001", "Train", "Prior authorization review", "Use payer rules and clinical evidence to decide whether an authorization request is ready."],
-    ["train_002", "Train", "Coverage appeal preparation", "Build the evidence package for a drug or service coverage appeal."],
-    ["train_003", "Train", "Reimbursement compliance check", "Check claim and reimbursement facts against payer and clinic policy rules."],
-    ["train_004", "Train", "Service profitability review", "Compare payer terms, service cost, and utilization details before recommending action."],
-    ["train_005", "Train", "Authorization intake routing", "Route authorization requests by urgency, missing evidence, and payer workflow."],
-    ["test_001", "Test", "Denial appeal package", "Identify appeal grounds and required attachments after a payer denial."],
-    ["test_002", "Test", "Drug assistance routing", "Choose the correct coverage, appeal, or assistance path for medication access."],
-    ["test_003", "Test", "Claim correction review", "Find billing corrections and compliance blockers before resubmission."],
-    ["test_004", "Test", "Payer evidence checklist", "Assemble the right evidence list without adding unsupported clinical claims."],
-    ["test_005", "Test", "Escalation decision", "Decide when a case needs peer review, manual queueing, or payer follow-up."]
+    ["train_001", "Train", "Therapy authorization determination", "Review the member, requested therapy, policy criteria, and current clinical evidence to issue an authorization decision."],
+    ["train_002", "Train", "Pharmacy appeal intake", "Set the appeal route and deadline, classify prior-drug evidence, and identify appeal-packet and assistance-program gaps."],
+    ["train_003", "Train", "Cardiac claim repricing", "Apply the current payment benchmark to each claim line and calculate corrected allowed amounts and recovery."],
+    ["train_004", "Train", "Peer-review closure", "Turn a completed physician peer review into the final determination, unresolved criteria, letter, and appeal path."],
+    ["train_005", "Train", "Therapy margin queue", "Calculate service-line costs, margins, and revenue-to-cost ratios, then route underperforming payer segments."],
+    ["test_001", "Test", "Speech therapy authorization", "Decide whether a pediatric speech request can be approved or must wait for current plan-of-care evidence."],
+    ["test_002", "Test", "Expedited drug appeal", "Determine the appeal route, deadline, supporting treatment history, packet gaps, and assistance status."],
+    ["test_003", "Test", "Arthroscopy claim correction", "Reprice an outpatient knee claim and return line-level corrections and recovery instructions."],
+    ["test_004", "Test", "Cardiac imaging peer-review closure", "Close a cardiac imaging review using the completed discussion, policy criteria, authorization, and remaining appeal rights."],
+    ["test_005", "Test", "Mixed payer queue triage", "Route authorization, appeal, claim, and finance items while computing deadlines, reasons, and recovery totals."]
   ],
   "015": [
     ["train_001", "Train", "Duplicate chart merge", "Compare patient records and decide whether a merge is safe and auditable."],
@@ -428,52 +428,52 @@ const taskTopicSource = {
     ["test_005", "Test", "Protocol answer audit", "Check a clinical recommendation against the exact allowed protocol actions."]
   ],
   "017": [
-    ["train_001", "Train", "Subpoena production gap", "Compare subpoena categories with produced materials and identify missing items."],
-    ["train_002", "Train", "Preservation hold review", "Check retention rules, hold dates, and custodian scope for production risk."],
-    ["train_003", "Train", "Custodian collection audit", "Find which custodians, channels, or date ranges are missing from collection."],
-    ["train_004", "Train", "Privilege log check", "Review withheld documents for privilege labels, descriptions, and defects."],
-    ["train_005", "Train", "Remediation plan", "Turn production defects into retrieval, correction, or disclosure actions."],
-    ["test_001", "Test", "Grand jury response audit", "Identify production gaps and evidence needed for a subpoena response."],
-    ["test_002", "Test", "Regulator production review", "Check custodian scope, retention gaps, and missing attachments for a regulator request."],
-    ["test_003", "Test", "Document set QC", "Find inconsistent labels, missing files, and remediation owners in a production set."],
-    ["test_004", "Test", "Hold compliance memo", "Summarize whether preservation obligations were met and what remains at risk."],
-    ["test_005", "Test", "Production remediation queue", "Prioritize follow-up actions before the next legal production deadline."]
+    ["train_001", "Train", "First production gap analysis", "Find preservation failures, missing collections, coding errors, and privilege-log gaps before a grand-jury production."],
+    ["train_002", "Train", "Retention and legal-hold review", "Separate policy-compliant destruction from post-hold loss and identify archives still available for recovery."],
+    ["train_003", "Train", "SEC remediation dashboard", "Combine source loss, collection gaps, privilege defects, and coding findings into a ranked remediation plan."],
+    ["train_004", "Train", "Production readiness review", "Decide which request categories are blocked and quantify the privilege, waiver, and responsiveness work still required."],
+    ["train_005", "Train", "Antitrust subpoena remediation", "Reconcile destroyed bid files, personal messages, privilege gaps, and coding issues for the next production."],
+    ["test_001", "Test", "Grand-jury production audit", "Audit preservation, collection, responsiveness coding, privilege logging, and production readiness for a medical-device matter."],
+    ["test_002", "Test", "Retention coverage matrix", "Classify trading-record losses and available archives across subpoena categories, then assign corrective actions."],
+    ["test_003", "Test", "Custodian issue packet", "Report missing custodian sources, unrecovered valuation records, privilege defects, coding problems, and remediation priorities."],
+    ["test_004", "Test", "Acquisition-records readiness", "Assess collection, coding, and privilege blockers before certifying acquisition communications for production."],
+    ["test_005", "Test", "SEC remediation status dashboard", "Roll up category coverage, source status, retention events, document defects, and the next action plan."]
   ],
   "018": [
-    ["train_001", "Train", "Sentencing order audit", "Reconcile court orders, docket entries, and sentence details."],
-    ["train_002", "Train", "Traffic disposition update", "Apply disposition rules to fines, license effects, and payment timing."],
-    ["train_003", "Train", "Payment-plan calculation", "Calculate financial entries and installment rules from court records."],
-    ["train_004", "Train", "Probation referral check", "Identify required probation, suspension, and compliance orders."],
-    ["train_005", "Train", "Stale export conflict", "Resolve conflicts between docket updates and exported clerk records."],
-    ["test_001", "Test", "Disposition reconciliation", "Align docket, order, and financial records before closing a case."],
-    ["test_002", "Test", "Collateral order entry", "Determine which collateral orders must be entered after disposition."],
-    ["test_003", "Test", "Fee ledger correction", "Find fee, payment, and waiver errors in the case ledger."],
-    ["test_004", "Test", "Installment order review", "Check whether payment-plan terms match the judgment and local rules."],
-    ["test_005", "Test", "Post-disposition audit", "List missing clerk actions before a case can leave the audit queue."]
+    ["train_001", "Train", "Sentencing docket closeout", "Reconcile hearing notes, case and charge records, fees, sentence terms, and docket actions for a criminal batch."],
+    ["train_002", "Train", "Traffic hearing closeout", "Record citation outcomes, amounts due, payment plans, local form handling, and unsupported-charge exclusions."],
+    ["train_003", "Train", "Post-sentencing field packet", "Prepare case, probation, license-suspension, installment, and return-to-court fields without inventing missing data."],
+    ["train_004", "Train", "Criminal disposition register", "Resolve identity, counsel, fee, and status conflicts before cases enter the disposed register."],
+    ["train_005", "Train", "Financial and supervision packet", "Combine payment petitions, sentencing notes, court records, and local policy into clerk-ready financial and supervision orders."],
+    ["test_001", "Test", "Sentencing batch closeout", "Close a county criminal docket with corrected dispositions, fees, sentence summaries, register actions, and totals."],
+    ["test_002", "Test", "Traffic citation closeout", "Reconcile three traffic citations, amounts due, approved installments, form references, and batch totals."],
+    ["test_003", "Test", "DUI appeal sentencing packet", "Prepare the case memo, probation referral, license order, payment schedule, and budget review for a DUI appeal."],
+    ["test_004", "Test", "Criminal docket reconciliation", "Use hearing notes, counsel records, charges, and fee schedules to determine which cases can be closed."],
+    ["test_005", "Test", "Financial and supervision closeout", "Prepare payment and supervision packets for two cases while excluding unsupported fees, conditions, and identifiers."]
   ],
   "019": [
-    ["train_001", "Train", "Contractor license eligibility", "Evaluate license eligibility from insurance, bond, exams, and violation records."],
-    ["train_002", "Train", "Alcohol license risk review", "Check premises, ownership, incidents, and restricted-license rules."],
-    ["train_003", "Train", "Renewal queue triage", "Classify renewals by missing documents, compliance risk, and manual review needs."],
-    ["train_004", "Train", "Address matching review", "Resolve business address conflicts across applications and public records."],
-    ["train_005", "Train", "Compliance follow-up", "Turn licensing defects into applicant follow-up or enforcement actions."],
-    ["test_001", "Test", "Eligibility batch review", "Approve, reject, or queue license applications with clear reasons."],
-    ["test_002", "Test", "Restricted license package", "Prepare a staff package for a restricted or high-risk license."],
-    ["test_003", "Test", "Manual review decision", "Decide when an application needs manual review instead of routine release."],
-    ["test_004", "Test", "Violation impact check", "Determine how prior violations affect renewal or new license eligibility."],
-    ["test_005", "Test", "Release boundary audit", "Identify which cases can be released and which need more evidence."]
+    ["train_001", "Train", "Contractor eligibility batch", "Decide each application from bond, insurance, license history, violations, correspondence, and current policy."],
+    ["train_002", "Train", "Restricted liquor transfer", "Prepare the staff decision package for a restricted-license transfer using premises, settlement, incident, and control evidence."],
+    ["train_003", "Train", "Alcohol renewal risk queue", "Match pre-cutoff violations to licensees, rank manual-review risk, and assign controlled next steps."],
+    ["train_004", "Train", "Contractor exception review", "Resolve specialty, suspension, experience, coverage, complaint, violation, and inspection issues across a contractor batch."],
+    ["train_005", "Train", "Hotel lounge license package", "Assess a restricted hotel-lounge application, remaining verification gaps, monitoring controls, and escalation triggers."],
+    ["test_001", "Test", "Contractor release review", "Approve, hold, or deny a contractor batch and return complete deficiency, action, risk, and policy-impact summaries."],
+    ["test_002", "Test", "Summer renewal risk queue", "Build a ranked alcohol-license review queue from violations occurring before the release boundary."],
+    ["test_003", "Test", "Liquor settlement review", "Determine issuance posture, covered risks, unresolved gaps, operating controls, monitoring, and escalation triggers."],
+    ["test_004", "Test", "Contractor eligibility audit", "Review fifteen applications against current coverage and eligibility rules while keeping batch rollups consistent."],
+    ["test_005", "Test", "Resort renewal risk queue", "Rank resort-area alcohol renewals by matched violations, confidence, risk tier, and required staff action."]
   ],
   "020": [
-    ["train_001", "Train", "Deal profile intake", "Extract buyer, seller, structure, consideration, and key risk terms from deal materials."],
-    ["train_002", "Train", "Draft clause population", "Populate contract clauses from the deal profile and drafting playbook."],
-    ["train_003", "Train", "Term benchmark review", "Compare requested terms with market benchmarks and internal policy."],
-    ["train_004", "Train", "Cap table check", "Use ownership and option data to identify consent or allocation issues."],
-    ["train_005", "Train", "Negotiation escalation", "Flag terms that require committee, legal, or business escalation."],
-    ["test_001", "Test", "Buyer-side draft review", "Find missing and out-of-policy terms in a buyer-side transaction draft."],
-    ["test_002", "Test", "Seller paper markup", "Review counterparty paper and identify negotiation positions."],
-    ["test_003", "Test", "Escalation memo", "Summarize deal terms that exceed the playbook or need approval."],
-    ["test_004", "Test", "Contract consistency check", "Reconcile schedules, definitions, and economics across transaction documents."],
-    ["test_005", "Test", "Negotiation issue list", "Prepare prioritized issues and fallback positions for the deal team."]
+    ["train_001", "Train", "Seller APA issue register", "Compare a buyer's asset-purchase draft with the seller playbook and quantify legal, economic, employee, tax, and regulatory deviations."],
+    ["train_002", "Train", "SPA closing and economics package", "Calculate holder consideration and review indemnity, escrow, working capital, consents, regulation, employees, and closing readiness."],
+    ["train_003", "Train", "Committee escalation package", "Identify draft terms outside committee policy, quantify their exposure, and recommend negotiation or waiver positions."],
+    ["train_004", "Train", "Carveout transition review", "Review intellectual property, transition services, tax allocation, employee continuity, timing, and governing-law protections."],
+    ["train_005", "Train", "Buyer SPA deviation matrix", "Compare a stock-purchase draft with the buyer playbook and prioritize indemnity, consent, regulatory, and contract blockers."],
+    ["test_001", "Test", "Seller issue register", "Find missing or out-of-policy protections in buyer paper and return quantified priorities for the legal and business teams."],
+    ["test_002", "Test", "Committee term escalation", "Route current deal terms that exceed policy thresholds and summarize recommendations and aggregate exposure."],
+    ["test_003", "Test", "Closing and economics package", "Calculate consideration and assess indemnity, consents, contracts, regulation, employees, expenses, and final closing readiness."],
+    ["test_004", "Test", "Transition and tax review", "Review a carveout agreement's transition services, intellectual property, tax, employee, deadline, and forum terms."],
+    ["test_005", "Test", "Negotiation priority matrix", "Compare the current draft with committee policy and supporting records, then rank negotiation and waiver decisions."]
   ],
   "021": [
     ["train_001", "Train", "Contact canonicalization", "Deduplicate contact records and choose canonical fields from noisy sources."],
@@ -512,16 +512,16 @@ const taskTopicSource = {
     ["test_005", "Test", "Publication readiness", "Decide what must be corrected before publishing a health-analysis result."]
   ],
   "024": [
-    ["train_001", "Train", "Engineering work mix", "Classify work items by portfolio category, delivery stream, and quarter."],
-    ["train_002", "Train", "Reliability SLA aging", "Review reliability backlog age, ownership, and breach status."],
-    ["train_003", "Train", "Security backlog review", "Prioritize security work items by severity, dependency, and service impact."],
-    ["train_004", "Train", "Release readiness gate", "Assess whether dependencies, blockers, and risks allow a release to proceed."],
-    ["train_005", "Train", "Delivery risk rollup", "Combine portfolio, blocker, and readiness signals into an executive rollup."],
-    ["test_001", "Test", "Portfolio mix classification", "Classify engineering work and summarize the delivery mix for leadership."],
-    ["test_002", "Test", "Backlog SLA review", "Identify overdue reliability or security items and assign follow-up owners."],
-    ["test_003", "Test", "Release dependency audit", "Find blockers and readiness risks across linked work items."],
-    ["test_004", "Test", "Delivery decision memo", "Recommend go, hold, or escalate based on work-item evidence."],
-    ["test_005", "Test", "Combined risk dashboard", "Prepare a concise dashboard of delivery, SLA, and dependency risks."]
+    ["train_001", "Train", "Closed-work portfolio mix", "Classify completed platform and identity work, compare the actual category mix with targets, and recommend rebalancing."],
+    ["train_002", "Train", "Reliability and security SLA aging", "Separate primary work from duplicates, identify overdue items and aging buckets, and calculate owner and team hotspots."],
+    ["train_003", "Train", "Release readiness assessment", "Use milestones, work status, blockers, and dependency chains to decide whether a release can ship."],
+    ["train_004", "Train", "Checkout portfolio mix", "Measure the completed-work mix for Checkout, exclude distractors, and identify the largest investment deficit."],
+    ["train_005", "Train", "Security and reliability SLA audit", "Build an escalation queue from overdue security and reliability work while reporting duplicates and missing owners separately."],
+    ["test_001", "Test", "Data reliability portfolio mix", "Measure category investment, target gaps, team and owner exposure, exclusions, and the recommended rebalance action."],
+    ["test_002", "Test", "Platform SLA aging", "Audit overdue reliability and security work, aging distribution, duplicate clusters, missing owners, and breach rate."],
+    ["test_003", "Test", "Release readiness with watch items", "Decide ship status from gates and dependencies while reporting lower-impact watch items separately."],
+    ["test_004", "Test", "Integration and billing portfolio mix", "Classify completed work, compute target gaps, and assign follow-up teams for under-invested categories."],
+    ["test_005", "Test", "Edge delivery SLA triage", "Prioritize overdue work and summarize severity, open-versus-closed status, duplicates, ownership gaps, and the oldest unowned item."]
   ]
 };
 
@@ -683,16 +683,16 @@ const taskTopicTranslations = {
     test_005: ["项目登记计划", "根据混合接收记录确定项目路径和跟进时间。"]
   },
   "014": {
-    train_001: ["预授权审查", "根据 payer 规则和临床证据判断授权申请是否准备充分。"],
-    train_002: ["coverage 申诉准备", "为药品或服务 coverage 申诉整理证据包。"],
-    train_003: ["报销合规核对", "按照 payer 和诊所规则检查 claim 与报销事实。"],
-    train_004: ["服务盈利性复核", "在建议动作前比较 payer 条款、服务成本和使用情况。"],
-    train_005: ["授权接收分流", "按紧急程度、缺失证据和 payer 流程分流授权请求。"],
-    test_001: ["拒批申诉材料", "在 payer 拒批后识别申诉理由和所需附件。"],
-    test_002: ["药品援助路径", "为用药可及性选择 coverage、申诉或援助路径。"],
-    test_003: ["claim 修正复核", "在重新提交前找出计费修正和合规阻塞点。"],
-    test_004: ["payer 证据清单", "整理正确证据清单，避免添加没有依据的临床说法。"],
-    test_005: ["升级处理判断", "判断案件何时需要同业评审、人工队列或 payer 跟进。"]
+    train_001: ["治疗预授权判定", "结合参保人信息、申请治疗、政策条件和现有临床材料，作出授权结论。"],
+    train_002: ["药品申诉与援助登记", "确定申诉路径和期限，梳理既往用药证据，并找出申诉材料与援助申请中的缺口。"],
+    train_003: ["心脏影像理赔重定价", "按照当前支付基准逐行重算理赔金额，并计算更正后的应付金额和追回金额。"],
+    train_004: ["同业复核结案", "将医生间复核结果整理为最终结论、未满足条件、通知类型和后续申诉路径。"],
+    train_005: ["治疗项目毛利队列", "计算各服务项目的成本、毛利和收入成本比，并分流表现不佳的医保业务。"],
+    test_001: ["儿童语言治疗授权", "判断语言治疗申请能否批准，或是否必须等待最新治疗计划等材料。"],
+    test_002: ["加急药品申诉", "确定申诉路径、期限、既往治疗依据、材料缺口和援助申请状态。"],
+    test_003: ["关节镜理赔更正", "重算门诊膝关节镜理赔，并给出逐项更正结果和追回处理方式。"],
+    test_004: ["心脏影像同业复核结案", "结合复核讨论、政策条件和授权记录，完成最终结论及仍然适用的申诉权说明。"],
+    test_005: ["医保混合队列分流", "分流授权、申诉、理赔和财务事项，并汇总期限、原因及追回金额。"]
   },
   "015": {
     train_001: ["重复病历合并", "比较患者记录，判断合并是否安全且可审计。"],
@@ -719,52 +719,52 @@ const taskTopicTranslations = {
     test_005: ["方案答案审计", "检查临床建议是否符合明确允许的方案动作。"]
   },
   "017": {
-    train_001: ["传票材料缺口", "对比传票类别和已提交材料，识别缺失项。"],
-    train_002: ["证据保全复核", "检查保留规则、保全日期和保管人范围是否存在提交风险。"],
-    train_003: ["保管人收集审计", "找出缺失的保管人、沟通渠道或日期范围。"],
-    train_004: ["特权日志检查", "复核 withheld documents 的特权标签、描述和缺陷。"],
-    train_005: ["补救计划", "把材料缺陷转化为检索、修正或披露动作。"],
-    test_001: ["大陪审团响应审计", "识别传票响应中的材料缺口和所需证据。"],
-    test_002: ["监管材料复核", "检查监管请求中的保管人范围、保留缺口和缺失附件。"],
-    test_003: ["文件集质检", "找出材料集中的标签不一致、缺失文件和补救负责人。"],
-    test_004: ["保全合规备忘录", "总结保全义务是否满足，以及仍有哪些风险。"],
-    test_005: ["材料补救队列", "在下一次提交截止前排序后续动作。"]
+    train_001: ["首轮材料提交缺口分析", "在向大陪审团提交材料前，找出证据保全失败、资料漏收、文件分类错误和保密审查日志缺口。"],
+    train_002: ["记录留存与诉讼保全审查", "区分保全通知前的合规销毁与通知后的资料丢失，并识别仍可用于补救的归档来源。"],
+    train_003: ["证券调查整改看板", "汇总资料丢失、收集缺口、保密审查缺陷和文件分类问题，并排出整改优先级。"],
+    train_004: ["材料提交准备度审查", "判断哪些调取类别仍被阻塞，并量化保密、披露和内容相关性审查中尚未完成的工作。"],
+    train_005: ["反垄断传票整改", "核对被销毁的投标文件、个人通信、保密日志和分类问题，为下一轮材料提交制定整改方案。"],
+    test_001: ["大陪审团材料提交审计", "审计医疗器械案件中的证据保全、资料收集、文件分类、保密日志和提交准备度。"],
+    test_002: ["记录留存覆盖矩阵", "按传票类别判断交易记录的丢失情况与可用归档来源，并分配补救动作。"],
+    test_003: ["资料保管人问题清单", "汇总保管人资料缺口、未恢复的估值记录、保密审查缺陷、分类问题和整改优先级。"],
+    test_004: ["并购沟通材料提交准备度", "在确认并购沟通材料可以提交前，检查收集、分类和保密审查方面的阻塞点。"],
+    test_005: ["证券调查整改状态看板", "汇总调取类别覆盖、资料来源状态、留存事件、文件缺陷和下一步行动方案。"]
   },
   "018": {
-    train_001: ["判决命令审计", "核对法院命令、案卷记录和量刑细节。"],
-    train_002: ["交通案件处置更新", "将处置规则应用到罚款、驾照影响和付款时间。"],
-    train_003: ["付款计划计算", "根据法院记录计算费用录入和分期规则。"],
-    train_004: ["缓刑转介检查", "识别所需的缓刑、暂停和合规命令。"],
-    train_005: ["过期导出冲突", "处理案卷更新与书记员导出记录之间的冲突。"],
-    test_001: ["处置记录核对", "在结案前对齐案卷、命令和财务记录。"],
-    test_002: ["附带命令录入", "确定处置后必须录入哪些附带命令。"],
-    test_003: ["费用台账修正", "找出案件台账中的费用、付款和减免错误。"],
-    test_004: ["分期命令复核", "检查付款计划条款是否符合判决和地方法规。"],
-    test_005: ["处置后审计", "列出案件离开审计队列前缺失的书记员动作。"]
+    train_001: ["量刑庭审批量结案", "核对庭审记录、案件与罪名信息、费用、量刑内容和案卷动作，完成一批刑事案件结案。"],
+    train_002: ["交通听证结案", "登记交通案件结果、应付金额、分期方案和本地表单信息，并排除没有依据的收费。"],
+    train_003: ["量刑后外勤材料包", "准备案件、缓刑、驾照暂停、分期付款和返庭安排等字段，不补造缺失信息。"],
+    train_004: ["刑事案件结案登记", "在案件进入结案名册前，处理身份、律师、费用和案件状态之间的冲突。"],
+    train_005: ["财务与监督材料包", "将付款申请、量刑记录、法院资料和本地规定整理为书记员可直接使用的财务与监督命令。"],
+    test_001: ["量刑案件批量结案", "完成县法院刑事案件结案，修正处置结果、费用、量刑摘要、登记动作和批次合计。"],
+    test_002: ["交通罚单结案", "核对三张交通罚单的处理结果、应付金额、获批分期、表单编号和批次合计。"],
+    test_003: ["酒驾上诉量刑材料包", "为酒驾上诉准备案件摘要、缓刑转介、驾照命令、付款计划和收支审查。"],
+    test_004: ["刑事庭审记录核对", "结合庭审记录、律师信息、罪名和费用标准，判断哪些案件可以结案。"],
+    test_005: ["财务与监督结案", "为两起案件制作付款与监督材料，同时排除没有依据的费用、条件和编号。"]
   },
   "019": {
-    train_001: ["承包商许可资格", "根据保险、保证金、考试和违规记录评估许可资格。"],
-    train_002: ["酒类许可风险复核", "检查经营地点、所有权、事件和限制性许可规则。"],
-    train_003: ["续期队列分诊", "按缺失文件、合规风险和人工复核需求分类续期。"],
-    train_004: ["地址匹配复核", "处理申请和公开记录之间的营业地址冲突。"],
-    train_005: ["合规跟进", "把许可缺陷转化为申请人跟进或执法动作。"],
-    test_001: ["资格批量复核", "对许可申请作出通过、拒绝或入队决定，并给出理由。"],
-    test_002: ["限制性许可材料", "为受限或高风险许可准备工作人员材料包。"],
-    test_003: ["人工复核判断", "判断申请何时需要人工复核而不是常规放行。"],
-    test_004: ["违规影响检查", "判断历史违规如何影响续期或新许可资格。"],
-    test_005: ["放行边界审计", "识别哪些案件可以放行，哪些还需要更多证据。"]
+    train_001: ["承包商资格批量审查", "结合保证金、保险、历史许可、违规、往来函件和现行政策，逐项决定申请结果。"],
+    train_002: ["受限酒类许可转让", "根据经营场所、和解条件、历史事件和管控证据，为受限许可转让准备审查材料。"],
+    train_003: ["酒类许可续期风险队列", "将截止日前的违规记录与持证主体匹配，按人工复核风险排序并给出标准后续动作。"],
+    train_004: ["承包商异常申请审查", "处理专业资质、暂停记录、从业经历、保险保障、投诉、违规和检查方面的问题。"],
+    train_005: ["酒店酒廊许可材料", "评估酒店酒廊的受限许可申请，列出待核实事项、监控措施和升级处理条件。"],
+    test_001: ["承包商申请放行审查", "对一批申请作出批准、暂缓或拒绝决定，并汇总全部缺陷、处理动作、风险和政策影响。"],
+    test_002: ["夏季续期风险队列", "根据放行截止日前的违规记录，生成按风险排序的酒类许可人工复核队列。"],
+    test_003: ["酒类许可和解审查", "确定发证结论、已受控风险、未解决缺口、经营限制、监控计划和升级条件。"],
+    test_004: ["承包商资格审计", "按照当前保险保障和资格规则审查十五份申请，并确保批次汇总与逐项决定一致。"],
+    test_005: ["度假区续期风险队列", "按照违规匹配、可信度、风险级别和所需动作，对度假区酒类许可续期排序。"]
   },
   "020": {
-    train_001: ["交易信息接收", "从交易材料中提取买方、卖方、结构、对价和关键风险条款。"],
-    train_002: ["合同条款填充", "根据交易信息和起草手册填充合同条款。"],
-    train_003: ["条款基准复核", "将请求条款与市场基准和内部政策比较。"],
-    train_004: ["股权表检查", "用所有权和期权数据识别同意或分配问题。"],
-    train_005: ["谈判升级", "标记需要委员会、法务或业务升级的条款。"],
-    test_001: ["买方草案复核", "找出买方交易草案中缺失和超出政策的条款。"],
-    test_002: ["卖方文本审阅", "复核对方文本并识别谈判立场。"],
-    test_003: ["升级备忘录", "总结超出手册或需要审批的交易条款。"],
-    test_004: ["合同一致性检查", "核对交易文件中的附表、定义和经济条款。"],
-    test_005: ["谈判问题清单", "为交易团队准备优先问题和备用立场。"]
+    train_001: ["卖方资产收购协议问题清单", "将买方草案与卖方规则比较，量化法律、经济、员工、税务和监管条款的偏差。"],
+    train_002: ["股权收购交割与经济条款包", "计算各持有人所得对价，并审查赔偿、托管、营运资金、同意事项、监管、员工和交割准备度。"],
+    train_003: ["并购委员会升级材料", "识别超出委员会政策的草案条款，量化风险敞口，并提出谈判或豁免建议。"],
+    train_004: ["业务剥离过渡条款审查", "审查知识产权、过渡服务、税务分配、员工衔接、交割期限和适用法律保护。"],
+    train_005: ["买方股权收购协议偏差矩阵", "将草案与买方规则比较，并对赔偿、同意事项、监管和重大合同阻塞点排序。"],
+    test_001: ["卖方问题清单", "找出买方草案中缺失或不符合规则的卖方保护条款，并量化法律和业务团队的处理优先级。"],
+    test_002: ["委员会条款升级", "将超出政策门槛的交易条款提交委员会，并汇总建议和整体风险敞口。"],
+    test_003: ["交割与经济条款包", "计算交易对价，审查赔偿、同意事项、重大合同、监管、员工和费用，并判断能否交割。"],
+    test_004: ["过渡与税务条款审查", "审查业务剥离协议中的过渡服务、知识产权、税务、员工、期限和管辖条款。"],
+    test_005: ["谈判优先级矩阵", "将当前草案与委员会政策及交易记录比较，对谈判事项和豁免决定排序。"]
   },
   "021": {
     train_001: ["联系人标准化", "对联系人记录去重，并从噪声来源中选择标准字段。"],
@@ -803,16 +803,16 @@ const taskTopicTranslations = {
     test_005: ["发布准备度", "判断健康分析结果发布前必须修正什么。"]
   },
   "024": {
-    train_001: ["工程工作组合", "按项目组合类别、交付流和季度分类工作项。"],
-    train_002: ["可靠性 SLA 老化", "复核可靠性 backlog 的年龄、负责人和违约状态。"],
-    train_003: ["安全 backlog 复核", "按严重度、依赖和服务影响排序安全工作项。"],
-    train_004: ["发布准备门槛", "评估依赖、阻塞和风险是否允许发布继续。"],
-    train_005: ["交付风险汇总", "把组合、阻塞和准备度信号汇总为管理层报告。"],
-    test_001: ["项目组合分类", "分类工程工作，并为管理层总结交付结构。"],
-    test_002: ["backlog SLA 复核", "识别逾期的可靠性或安全事项，并分配后续负责人。"],
-    test_003: ["发布依赖审计", "在关联工作项中找出阻塞和准备度风险。"],
-    test_004: ["交付决策备忘录", "根据工作项证据建议继续、暂停或升级。"],
-    test_005: ["综合风险看板", "准备交付、SLA 和依赖风险的简洁看板。"]
+    train_001: ["已完成工作组合占比", "分类平台与身份团队完成的工作，对比实际类别占比与目标，并提出资源再平衡建议。"],
+    train_002: ["可靠性与安全事项时限分析", "区分正式工作与重复记录，识别逾期事项和时间分布，并计算负责人及团队的集中风险。"],
+    train_003: ["发布准备度评估", "根据里程碑、工作状态、阻塞因素和依赖链，判断版本是否可以发布。"],
+    train_004: ["结算产品工作组合占比", "衡量结算产品已完成工作的类别结构，排除干扰记录，并找出投入不足最大的类别。"],
+    train_005: ["安全与可靠性事项时限审计", "根据逾期事项生成升级队列，同时单独报告重复记录和负责人缺失问题。"],
+    test_001: ["数据可靠性工作组合占比", "衡量各类投入、目标差距、团队与负责人分布、排除项，并给出资源调整建议。"],
+    test_002: ["平台事项时限分析", "审计逾期的可靠性与安全工作、时间分布、重复记录、负责人缺口和超时比例。"],
+    test_003: ["含观察项的发布准备度评估", "根据发布门槛和依赖关系判断能否发布，并把影响较低的观察事项单独列出。"],
+    test_004: ["集成与计费工作组合占比", "分类已完成工作、计算目标差距，并为投入不足的类别指定跟进团队。"],
+    test_005: ["边缘交付时限分流", "对逾期工作排序，并汇总严重程度、开闭状态、重复记录、负责人缺口和最早的无负责人事项。"]
   }
 };
 

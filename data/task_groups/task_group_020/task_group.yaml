@@ -5,9 +5,16 @@ task_group:
     - E001
     - E002
     - E003
-  domain: Legal / M&A Transaction Contract Review and Negotiation
+  domain: Legal
   description: |
-    A train-predict benchmark for transaction-counsel workflows in a shared Web-based M&A legal operations environment. Solvers use the Aster Legal Deal Desk browser/API service to review deal profiles, draft clauses, policy/playbook records, cap tables, financial schedules, material contracts, benchmark data, and committee rules. Train and test tasks cover buyer-side term population, seller-side counterparty-paper review, and committee escalation of out-of-policy deal terms.
+    A train-predict benchmark for corporate M&A transaction-counsel workflows.
+    Solvers use a shared M&A deal workbench to review draft transaction terms,
+    compare them with seller or buyer playbooks and committee policies, quantify
+    legal and economic deviations, and return structured issue registers,
+    closing packages, or escalation matrices. Train and test tasks share
+    recurring source-precedence, percentage-base, risk-rating, escalation, and
+    negotiation-position conventions while using different deals and output
+    schemas.
 
 env:
   dockerfile: env/Dockerfile
@@ -16,12 +23,14 @@ env:
   files:
     - env/Dockerfile
     - env/setup.sh
-    - env/server.py
+    - env/app.py
+    - env/generate_data.py
     - env/judge_api.py
     - env/endpoints.txt
-    - env/generate_data.py
-    - env/data/dealdesk.json
+    - env/requirements.txt
+    - env/data/ma_workbench.db
     - env/data/manifest.json
+    - env/data/construction_manifest.json
 
 train_tasks:
   - task_id: train_001
@@ -36,23 +45,24 @@ train_tasks:
       script: train_tasks/001/eval/eval.sh
       files:
         - train_tasks/001/eval/eval.sh
-        - train_tasks/001/eval/eval.py
+        - train_tasks/001/eval/evaluate.py
       rubric:
-        - goal: Correct purchase price, consideration mix, active cap table source, per-share availability, and ownership-point value.
+        - goal: Correct issue set for seller APA review.
           weight: 3
-        - goal: Correct seller allocation set from the active cap table.
+        - goal: Correct financing condition, reverse break fee, HSR, and regulatory effort treatment.
           weight: 3
-        - goal: Correct general escrow and tax escrow amounts, percentages, and policy status.
+        - goal: Correct escrow amount, release, and investment-control calculations.
           weight: 2
-        - goal: Correct working capital target, collar, and adjustment mechanic.
+        - goal: Correct indemnity cap, basket, and survival treatment.
           weight: 2
-        - goal: Correct material consent closing conditions.
-          weight: 2
-        - goal: Correct no-HSR conclusion and regulatory approval list.
+        - goal: Correct non-compete and non-solicit treatment.
           weight: 1
-        - goal: Correct founder employment and non-compete terms.
+        - goal: Correct employee continuity and TSA treatment.
           weight: 2
-
+        - goal: Correct tax allocation and law/forum treatment.
+          weight: 1
+        - goal: Correct priority order and summary metrics.
+          weight: 2
   - task_id: train_002
     input: train_tasks/002/input/
     prompt_txt: train_tasks/002/input/prompt.txt
@@ -65,23 +75,24 @@ train_tasks:
       script: train_tasks/002/eval/eval.sh
       files:
         - train_tasks/002/eval/eval.sh
-        - train_tasks/002/eval/eval.py
+        - train_tasks/002/eval/evaluate.py
       rubric:
-        - goal: Correct prohibited financing condition issue and deletion position.
+        - goal: Correct holder-level cash, stock, total consideration, shares, and percentages.
           weight: 3
-        - goal: Correct reverse termination fee fallback recommendation and math.
+        - goal: Correct buyer indemnity fallback, escrow amount, survival, release, and materiality scrape.
           weight: 2
-        - goal: Correct escrow amount, release, and seller-favorable investment terms.
+        - goal: Correct NWC collar and dollar-for-dollar adjustment posture.
           weight: 2
-        - goal: Correct survival, indemnity cap, basket, and de minimis deviations.
+        - goal: Correct required consents, material-contract closing conditions, and non-blocking notices.
           weight: 3
-        - goal: Correct assumed-liability and working-capital reset issue.
+        - goal: Correct HSR status and regulatory closing condition.
           weight: 2
-        - goal: Correct restrictive covenant narrowing.
+        - goal: Correct employee service-credit, PTO, WARN-risk, and restrictive-covenant treatment.
           weight: 2
-        - goal: Correct employee transfer, TSA, WARN, and IP transition issue set.
+        - goal: Correct D&O tail and transaction-expense allocation.
+          weight: 1
+        - goal: Correct final readiness, blocker classification, and business-risk totals.
           weight: 3
-
   - task_id: train_003
     input: train_tasks/003/input/
     prompt_txt: train_tasks/003/input/prompt.txt
@@ -94,25 +105,24 @@ train_tasks:
       script: train_tasks/003/eval/eval.sh
       files:
         - train_tasks/003/eval/eval.sh
-        - train_tasks/003/eval/eval.py
+        - train_tasks/003/eval/evaluate.py
       rubric:
-        - goal: Correct committee routing and committee member set.
+        - goal: Correct out-of-policy committee term set.
+          weight: 3
+        - goal: Correct reverse termination fee threshold, dollar delta, and benchmark position.
+          weight: 3
+        - goal: Correct fiduciary-out deviation and mitigation conditions.
+          weight: 2
+        - goal: Correct representation survival exposure analysis.
+          weight: 2
+        - goal: Correct restricted MAE carve-out classification.
+          weight: 2
+        - goal: Correct recommendation for each escalated term.
+          weight: 2
+        - goal: Correct aggregate exposure summary.
+          weight: 2
+        - goal: Correct committee memo routing and dates.
           weight: 1
-        - goal: Correct RTF threshold, deviation, dollar amounts, and benchmark.
-          weight: 3
-        - goal: Correct fiduciary-out deviation and benchmark context.
-          weight: 2
-        - goal: Correct R&W survival escalation and exposure.
-          weight: 2
-        - goal: Correct MAE restricted carve-out escalation and omitted carve-outs.
-          weight: 2
-        - goal: Correct BATNA, ownership, strategic rationale, and benchmark memo context.
-          weight: 2
-        - goal: Correct individual recommendations for each escalated term.
-          weight: 3
-        - goal: Correct aggregate risk tier, action, drivers, and quantified totals.
-          weight: 2
-
   - task_id: train_004
     input: train_tasks/004/input/
     prompt_txt: train_tasks/004/input/prompt.txt
@@ -127,19 +137,22 @@ train_tasks:
         - train_tasks/004/eval/eval.sh
         - train_tasks/004/eval/evaluate.py
       rubric:
-        - goal: Transfer-employee issue is correctly identified and positioned.
+        - goal: Correct transition issue and redline identifier sets for Project Orion.
+          weight: 2
+        - goal: Correct missing trademark license and domain redirect redline.
+          weight: 2
+        - goal: Correct TSA duration, scope, fee, and stranded-cost treatment.
           weight: 3
-        - goal: TSA and service-continuity issue is correctly identified and positioned.
+        - goal: Correct Section 1060 and transfer-tax allocation redlines.
+          weight: 2
+        - goal: Correct field employee continuity and PTO treatment.
+          weight: 2
+        - goal: Correct outside date and seller regulatory extension protection.
+          weight: 1
+        - goal: Correct Delaware law and forum fix.
+          weight: 1
+        - goal: Correct operational risk posture, priority order, and quantified exposure summary.
           weight: 3
-        - goal: Non-compete and non-solicit limits are correctly narrowed.
-          weight: 2
-        - goal: IP transition period and scope are correctly narrowed.
-          weight: 2
-        - goal: Escrow and closing deadline deviations are correctly quantified.
-          weight: 2
-        - goal: Priority issue severity and action set is correct.
-          weight: 2
-
   - task_id: train_005
     input: train_tasks/005/input/
     prompt_txt: train_tasks/005/input/prompt.txt
@@ -152,19 +165,23 @@ train_tasks:
       script: train_tasks/005/eval/eval.sh
       files:
         - train_tasks/005/eval/eval.sh
-        - train_tasks/005/eval/eval.py
+        - train_tasks/005/eval/evaluate.py
       rubric:
-        - goal: Correct consideration mix and seller allocation schedule.
+        - goal: Correct buyer SPA issue set and statuses.
+          weight: 2
+        - goal: Correct indemnity cap and basket treatment.
           weight: 3
-        - goal: Correct escrow, cap, basket, de minimis, survival, and NWC math.
-          weight: 3
-        - goal: Correct consent and HSR flags.
+        - goal: Correct survival, knowledge, and escrow treatment.
           weight: 2
-        - goal: Correct latest risk memo overrides.
+        - goal: Correct materiality scrape position.
+          weight: 1
+        - goal: Correct consent and HSR blockers.
           weight: 2
-        - goal: Correct policy exceptions and approval posture.
+        - goal: Correct material-contract blockers.
           weight: 2
-        - goal: Correct drafting position enums.
+        - goal: Correct final positions and priority order.
+          weight: 2
+        - goal: Correct risk totals.
           weight: 2
 
 test_tasks:
@@ -180,25 +197,24 @@ test_tasks:
       script: test_tasks/001/eval/eval.sh
       files:
         - test_tasks/001/eval/eval.sh
-        - test_tasks/001/eval/eval.py
+        - test_tasks/001/eval/evaluate.py
       rubric:
-        - goal: Correct controlling source decisions, rejected stale/template sources, active clause IDs, and superseded source IDs.
+        - goal: Correct current issue set and excludes distractors.
+          weight: 2
+        - goal: Correct financing, reverse break fee, and HHW/regulatory treatment.
           weight: 3
-        - goal: Correct controlled drafting posture fields transferred from buyer-side term population and policy-check work.
+        - goal: Correct escrow percentages, dollars, release period, and action.
+          weight: 2
+        - goal: Correct indemnity cap and basket treatment.
+          weight: 2
+        - goal: Correct milestone protection and non-compete posture.
           weight: 1
-        - goal: Correct policy rule IDs, approval categories, current status, approval summary, and conditional trigger set.
-          weight: 3
-        - goal: Correct risk posture, non-triggered thresholds, conditional escalation details, and risk-memo override source IDs.
+        - goal: Correct employee transfer, PTO, service credit, and TSA treatment.
+          weight: 2
+        - goal: Correct tax allocation and law/forum fixes.
           weight: 1
-        - goal: Correct material consent, post-closing notice, HSR, regulatory approval, and source-document treatment.
-          weight: 1
-        - goal: Correct employment, non-compete, transition-service, IP-confirmation, and supporting source-document fields.
-          weight: 1
-        - goal: Correct Lumen deal economics, controlling active cap table, per-share availability, and seller allocation set.
-          weight: 1
-        - goal: Correct escrow, cap, basket, de minimis, and working-capital mechanics with controlled policy status.
-          weight: 1
-
+        - goal: Correct priority order and summary metrics.
+          weight: 2
   - task_id: test_002
     input: test_tasks/002/input/
     prompt_txt: test_tasks/002/input/prompt.txt
@@ -211,23 +227,24 @@ test_tasks:
       script: test_tasks/002/eval/eval.sh
       files:
         - test_tasks/002/eval/eval.sh
-        - test_tasks/002/eval/eval.py
+        - test_tasks/002/eval/evaluate.py
       rubric:
-        - goal: Correct financing condition and fallback reverse-fee issue.
-          weight: 1
-        - goal: Correct escrow terms and seller fallback.
-          weight: 1
-        - goal: Correct survival, cap, basket, and de minimis deviations.
-          weight: 1
-        - goal: Correct employee, TSA, WARN, and service-continuity issue.
-          weight: 1
-        - goal: Correct MAE issue and revision posture.
+        - goal: Correct out-of-policy term set.
+          weight: 2
+        - goal: Correct reverse termination fee math and benchmark support.
           weight: 3
-        - goal: Correct IP transition issue and revision posture.
+        - goal: Correct fiduciary-out mitigation.
+          weight: 2
+        - goal: Correct survival exposure.
+          weight: 2
+        - goal: Correct MAE carve-out classification.
+          weight: 2
+        - goal: Correct term recommendations.
+          weight: 2
+        - goal: Correct aggregate exposure and strategic context.
+          weight: 2
+        - goal: Correct routing and dates.
           weight: 1
-        - goal: Correct issue ranking and summary.
-          weight: 1
-
   - task_id: test_003
     input: test_tasks/003/input/
     prompt_txt: test_tasks/003/input/prompt.txt
@@ -240,23 +257,24 @@ test_tasks:
       script: test_tasks/003/eval/eval.sh
       files:
         - test_tasks/003/eval/eval.sh
-        - test_tasks/003/eval/eval.py
+        - test_tasks/003/eval/evaluate.py
       rubric:
-        - goal: Correct RTF threshold, deviation, dollar amounts, and exposure basis.
-          weight: 2
-        - goal: Correct fiduciary-out escalation decision.
-          weight: 1
-        - goal: Correct R&W survival escalation and full equity-value exposure.
-          weight: 1
-        - goal: Correct MAE restricted carve-out escalation and omitted carve-out codes.
-          weight: 2
-        - goal: Correct benchmark and statistical context for RTF, fiduciary-out, and MAE review.
+        - goal: Correct holder-level cash, stock, total consideration, shares, and percentages.
           weight: 3
-        - goal: Correct individual approval recommendations and term recommendations.
-          weight: 1
-        - goal: Correct aggregate risk, quantified totals, strategic context, and committee routing.
+        - goal: Correct indemnity cap, special indemnity shortfall, survival, and materiality scrape posture.
+          weight: 2
+        - goal: Correct general escrow and NWC collar mechanics.
+          weight: 2
+        - goal: Correct required closing consents and non-blocking consent notice.
+          weight: 2
+        - goal: Correct HSR status and regulatory closing condition.
+          weight: 2
+        - goal: Correct employment, restrictive covenant, D&O tail, and expense treatment.
           weight: 3
-
+        - goal: Correct material-contract closing conditions and debt-payoff workbench status.
+          weight: 2
+        - goal: Correct final readiness, blocker classification, and summary totals.
+          weight: 3
   - task_id: test_004
     input: test_tasks/004/input/
     prompt_txt: test_tasks/004/input/prompt.txt
@@ -269,23 +287,24 @@ test_tasks:
       script: test_tasks/004/eval/eval.sh
       files:
         - test_tasks/004/eval/eval.sh
-        - test_tasks/004/eval/eval.py
+        - test_tasks/004/eval/evaluate.py
       rubric:
-        - goal: Correct escalation-required term set.
-          weight: 1
-        - goal: Correct within-playbook or fallback term set.
+        - goal: Correct transition issue identifier set for Project Nimbus.
+          weight: 2
+        - goal: Correct missing trademark license and domain redirect protections.
+          weight: 2
+        - goal: Correct TSA duration, service scope, fee model, and stranded-cost recovery.
           weight: 3
-        - goal: Correct dollar exposure calculations.
+        - goal: Correct field operations employee continuity and PTO treatment.
+          weight: 2
+        - goal: Correct Section 1060 and transfer-tax allocation package.
+          weight: 2
+        - goal: Correct HSR-driven outside date and seller regulatory extension.
+          weight: 1
+        - goal: Correct Delaware governing law and forum fix.
+          weight: 1
+        - goal: Correct operational risk summary, priority order, quantified exposures, and redline package mapping.
           weight: 3
-        - goal: Correct committee routing.
-          weight: 1
-        - goal: Correct negotiated fallback recommendations.
-          weight: 1
-        - goal: Correct approval conditions.
-          weight: 1
-        - goal: Correct aggregate risk tier and packet summary.
-          weight: 1
-
   - task_id: test_005
     input: test_tasks/005/input/
     prompt_txt: test_tasks/005/input/prompt.txt
@@ -298,21 +317,21 @@ test_tasks:
       script: test_tasks/005/eval/eval.sh
       files:
         - test_tasks/005/eval/eval.sh
-        - test_tasks/005/eval/eval.py
+        - test_tasks/005/eval/evaluate.py
       rubric:
-        - goal: Correct deal terms, allocation math, indemnity values, note/NWC treatment, and closing-risk lookups.
-          weight: 1
-        - goal: Exact controlling risk-allocation source IDs, excluding calculation-only and stale/template document sources.
+        - goal: Correct waiver term set.
           weight: 3
-        - goal: Exact controlling clause source IDs, excluding accepted active clauses and rejecting stale/template clauses.
-          weight: 1
-        - goal: Exact override code set, excluding template-superseded facts, and exact overridden clause-code set.
-          weight: 1
-        - goal: Exact handling of reviewed active clauses that are accepted and must not be treated as overrides.
-          weight: 1
-        - goal: Correct clause-level override substance, source clauses, policy rules, actions, draft positions, and required positions.
-          weight: 1
-        - goal: Correct approval routing fields and summary for unrevised override triggers.
-          weight: 1
-        - goal: Correct final drafting posture tied to the exact source-pruned risk and clause override set.
+        - goal: Correct threshold, delta, and exposure calculations.
+          weight: 3
+        - goal: Correct recommendation choices.
+          weight: 2
+        - goal: Correct concession ranking.
+          weight: 2
+        - goal: Correct BATNA and deal-certainty flags.
+          weight: 2
+        - goal: Correct aggregate risk summary.
+          weight: 2
+        - goal: Correct required committee conditions.
+          weight: 2
+        - goal: Correct final posture and routing.
           weight: 1

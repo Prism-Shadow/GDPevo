@@ -1,41 +1,93 @@
-# train_005 Notes / train_005 说明
+# train_005 Notes: AlloyWorks Cross-System Remediation Dashboard
 
 ## English
 
-Data lineage: this task belongs to `task_group_017`, derived from `SCN_017_white_collar_investigation_production_review`. It primarily transfers retention and hold analysis from source example `E002` and custodian/source-gap review from `E003`, with production-readiness conventions also aligned to `E001`. The shared generated environment under `task_group/task_group_017/env/` is the only business data source used by the task; the task-local payload is `input/payloads/answer_template.json`.
+### Data/source lineage
 
-Task definition: the solver sees an English prompt asking for a collection-readiness status packet for matter `M-PHN-612`. The expected answer is structured JSON with `matter_id`, `overall_readiness`, `custodian_statuses`, `retention_gaps`, `collection_plan`, and `risk_flags`. The target work is to reconcile the matter metadata, custodian table, core subpoena categories `P-01` through `P-05`, current production logs, retention rules, and collection events for the former compliance custodian `C-FC-072`.
+This task belongs to `task_group_017`, scenario `SCN_017_white_collar_investigation_production_review`, with source-example lineage from `E001`, `E002`, and `E003`. It is the formal train task `train_005` for the AlloyWorks DOJ antitrust subpoena matter `MTR-ALLOYWORKS-GJ`. The shared Investigation Review Hub contains the relevant matter, category, retention, custodian-source, document, privilege, QC, and remediation records.
 
-Scenario fit: the task models the same legal workflow as the seed examples: counsel must determine whether subpoena-responsive sources are ready for production, still recoverable from archive, lost or partial under retention behavior, or blocked by hold-notice and supplemental-collection defects. It sits between the retention-policy review family and the custodian collection family.
+The solver-visible materials are `input/prompt.txt`, `input/payloads/matter_context.json`, and `input/payloads/answer_template.json`. The substantive records must come from the hub at `<TASK_ENV_BASE_URL>`. No task-local payload contains the answer facts.
 
-Material map: `/api/matters/M-PHN-612` gives the hold date, subpoena date, deadline, and matter summary. `/api/custodians?matter_id=M-PHN-612` identifies `C-FC-072` as the former compliance custodian and records the missing local PST. `/api/subpoena_categories?matter_id=M-PHN-612` provides `P-01` personnel file, `P-02` Iron archive email, `P-03` Teams chats, `P-04` returned laptop/local PST, and `P-05` personal cloud/text messaging. `/api/collection_events?matter_id=M-PHN-612` supplies the decisive source statuses and counts. `/api/retention_rules?matter_id=M-PHN-612` confirms the five-year personnel-file rule, Iron archive override, Teams purge behavior, and local PST rule. `/api/production_logs?matter_id=M-PHN-612` corroborates current production readiness states, but noisy non-current rows should not override the core current records.
+### Task definition and scenario fit
 
-Solution basis: `C-FC-072` separated in 2022, and the personnel file is retained for five years after separation, so `P-01` is `retained_through_2027` and ready with a retention note. `P-02` is not a final mailbox-loss issue because the Iron archive contains older email and the collection event shows 8,320 collected items; it still needs archive validation and a vendor/archive retrieval-certification action. `P-03` has a Teams pre-2022 gap with `missing_count` 610. `P-04` is blocked by a missing local PST on the returned laptop with `missing_count` 1. `P-05` is the highest source defect because the hold notice omitted personal cloud and text messaging, leaving two source units not noticed and requiring hold refresh plus supplemental collection. The overall readiness is `not_ready_supplemental_collection_required`; the matter metadata's regulator-notice flag is false, so the risk flags set `requires_regulator_notice` to false.
+The business assignment asks for a cross-system remediation dashboard. The solver must rank material risks, summarize affected categories, identify retained or available remediation sources, report numeric metrics, and provide a ranked action plan. This fits the broader investigation-production workflow because it combines hold timing, privilege exceptions, source collection, archive availability, responsiveness coding, zero-production claim validation, and remediation ownership.
 
-Evaluation basis: the evaluator has 8 exact-match weighted points. Raw weights are `2,2,2,2,2,3,3,2`, total 18. `SP001` checks matter readiness and custodian/personnel-retention status. `SP002` through `SP006` each check one core category's source type, timing classification, availability, missing count, readiness status, and primary action. `SP007` checks the ordered collection plan: hold refresh, supplemental collection, laptop PST forensics, Teams gap assessment, archive validation, and vendor/archive retrieval. `SP008` checks the normalized risk-flag set and regulator-notice booleans. The evaluator emits JSON and scores the standard answer at 1.0.
+The output is normalized JSON with `matter_id`, `top_risks`, `category_coverage`, `retained_or_available_sources`, `metrics`, and `action_plan`. This structure was selected after calibration because it is the same output family used by later cross-system test tasks, while the underlying AlloyWorks facts remain a formal training problem.
 
-Likely model pitfalls: solvers may treat active mailbox purge as final loss despite the Iron archive, miss that personnel files remain retained through 2027, overlook that Teams has a pre-2022 gap rather than a generic post-hold spoliation finding, classify the laptop return as fully collected despite the missing PST, or omit the hold refresh because they focus only on collection counts.
+### Material map
 
-Transfer design: as a train task, this answer teaches the recurring SOP that archive availability overrides active-system purge assumptions, retention timing must be tied to the trigger date, and hold-notice omissions for personal/cloud/text sources are collection-readiness defects even without a destruction event. It also reinforces output conventions: stable category IDs, controlled enum classifications, source-specific missing counts, and action-code ordering.
+`input/prompt.txt` gives the user-facing matter request and requires use of the shared hub. `matter_context.json` gives the matter identifier, base URL placeholder, query key, and allowed endpoint inventory. `answer_template.json` defines controlled enum values, list ordering, whole-integer counts, stable identifier fields, and action-plan ranking.
 
-Construction record: authored by Codex on 2026-07-07. Created the prompt, answer template, hidden notes, standard answer, and exact-match evaluator for `train_005`. No environment files, seed files, task group metadata, or other tasks were modified.
+The key environment records are `RET-ALLOY-BOX-POST`, `PRIV-ALLOYWORKS-001`, `PRIV-ALLOYWORKS-002`, `SRC-ALLOY-KLINE-SIGNAL`, `SRC-ALLOY-MORENO-SMS`, `SRC-ALLOY-TEAMS-ARCHIVE`, `QC-ALLOY-ZERO-CLAIM`, `DOC-ALLOY-BID-EMAIL-1`, and `DOC-ALLOY-BID-EMAIL-2`.
 
-## 中文
+### Solution and evaluation basis
 
-数据来源: 本任务属于 `task_group_017`, 来源场景为 `SCN_017_white_collar_investigation_production_review`。任务主要迁移 `E002` 中的 retention/hold 分析方法, 以及 `E003` 中的 custodian/source gap 审查方法, 同时也沿用 `E001` 的 production readiness 判断习惯。共享环境 `task_group/task_group_017/env/` 是唯一业务数据来源; 本任务本地 payload 只有 `input/payloads/answer_template.json`。
+The standard answer ranks `RET-ALLOY-BOX-POST` first as a critical post-hold loss: six off-site bid-file boxes were destroyed after the hold, affecting categories `A`, `C`, and `F`, and requiring preservation-issue disclosure. The second risk is `PRIV-ALLOYWORKS-002`, a third-party waiver privilege entry in category `B` with 34 affected documents. The third risk is `QC-ALLOY-ZERO-CLAIM`, because two category `F` bid emails were responsive but coded nonresponsive and not produced, contradicting the zero-production claim and requiring recode and production. The fourth risk is `PRIV-ALLOYWORKS-001`, a privilege-log gap with 106 withheld documents, 34 logged documents, and 72 unlogged documents. The fifth and sixth risks are the uncollected personal messaging sources `SRC-ALLOY-KLINE-SIGNAL` and `SRC-ALLOY-MORENO-SMS`, both affecting `D` and `F`.
 
-任务定义: solver 可见英文 prompt, 要求对 `M-PHN-612` 输出 collection-readiness status packet。标准答案为结构化 JSON, 包含 `matter_id`, `overall_readiness`, `custodian_statuses`, `retention_gaps`, `collection_plan`, `risk_flags`。核心工作是核对 former compliance custodian `C-FC-072` 与核心 subpoena categories `P-01` 到 `P-05`, 并综合 matter metadata, custodian table, production logs, retention rules 和 collection events。
+The retained remediation source is `SRC-ALLOY-TEAMS-ARCHIVE`, an available Teams archive for the deleted pricing channel affecting `D` and `E`. Category coverage rows summarize preservation loss for `A` and `C`, privilege corrections for `B`, source gap with archive availability for `D`, archive availability for `E`, and responsiveness underproduction for `F`. Required metrics include 6 top risks, 6 destroyed boxes, 1 post-hold loss event, 2 uncollected personal sources, 1 available archive, 2 miscoded responsive documents, 106 withheld privileged documents, 34 logged privilege documents, 72 unlogged privilege documents, 34 waiver documents, 0 missing required records, and 6 affected categories.
 
-场景适配: 该任务延续白领调查中的 subpoena production review 工作流。律师需要判断响应性来源是否可生产、是否可从 archive 恢复、是否因 retention 或 purge 产生缺口、是否因 hold notice 漏发和补充收集未完成而阻塞生产。它连接了 retention-policy review 和 custodian collection review 两个任务族。
+The evaluator has nine whole-point scoring goals with raw weights `[1, 3, 3, 2, 3, 2, 3, 2, 3]`: matter ID, post-hold loss, personal messaging risks, third-party waiver, privilege-log gap, Teams archive availability, zero-claim responsiveness miscoding, category coverage plus metrics, and action-plan order. Each point is all-or-nothing and checks structured IDs, enum values, category sets, counts, owners, ranks, and due-day limits.
 
-材料映射: `/api/matters/M-PHN-612` 给出 subpoena date, hold date, deadline 和 matter summary。`/api/custodians?matter_id=M-PHN-612` 标识 `C-FC-072` 为 former compliance custodian, 并记录 returned laptop 缺少 local PST。`/api/subpoena_categories?matter_id=M-PHN-612` 给出 `P-01` personnel file, `P-02` Iron archive email, `P-03` Teams chats, `P-04` returned laptop/local PST, `P-05` personal cloud/text messaging。`/api/collection_events?matter_id=M-PHN-612` 提供决定性 source status 和 missing counts。`/api/retention_rules?matter_id=M-PHN-612` 证明 personnel file 五年保留、Iron archive 覆盖 active mailbox purge、Teams purge 和 local PST 规则。`/api/production_logs?matter_id=M-PHN-612` 可交叉验证 current production 状态, 但 noisy rows 不能覆盖核心 current records。
+### Transfer design
 
-答案依据: `C-FC-072` 于 2022 年离职, personnel file 按离职后五年保留, 因此应保留到 2027, `P-01` 是 `ready_with_retention_note`。`P-02` 不能因为 mailbox purge 就认定最终丢失, 因为 Iron archive 含 older email, collection event 显示 8,320 件已收集, 但仍需 archive validation 和 vendor/archive retrieval certification。`P-03` 是 Teams pre-2022 gap, `missing_count` 为 610。`P-04` 因 returned laptop 缺失 local PST 阻塞, `missing_count` 为 1。`P-05` 因 hold notice 漏掉 personal cloud 和 text messaging, 两个来源未 notice, 需要 hold refresh 和 supplemental collection。整体状态为 `not_ready_supplemental_collection_required`; matter metadata 中 regulator-notice flag 为 false, 因此 risk flags 的 `requires_regulator_notice` 均为 false。
+This task demonstrates transferable dashboard conventions without disclosing any later test answers. It anchors how to rank risks, keep available archives separate from open loss events, place privilege waiver and log remediation ahead of lower operational collection work, map each material issue to request categories, use stable hub IDs in both risk and action rows, and keep metric counts consistent with the issue ledger. Those conventions should transfer to unseen matters with different categories, record IDs, counts, and privilege issues.
 
-评测依据: evaluator 有 8 个 exact-match scoring points, 原始权重为 `2,2,2,2,2,3,3,2`, 总权重 18。`SP001` 检查 matter readiness 与 custodian/personnel retention。`SP002` 到 `SP006` 分别检查五个核心 category 的 source type, timing classification, availability, missing count, readiness status 和 primary action。`SP007` 检查 action plan 顺序: hold refresh, supplemental collection, laptop PST forensics, Teams gap assessment, archive validation, vendor/archive retrieval。`SP008` 检查 risk flag set 和 regulator notice boolean。标准答案自检得分为 1.0。
+### Likely model pitfalls
 
-常见错误: solver 可能把 active mailbox purge 误判为最终丢失, 忽略 Iron archive; 可能漏掉 personnel file 到 2027 的保留事实; 可能把 Teams pre-2022 gap 误写成 post-hold spoliation; 可能因为 laptop 已 returned/collected 而忽略 missing PST; 也可能只做 supplemental collection 而漏掉 hold refresh。
+The main pitfalls are treating all source gaps as equal priority, missing the zero-production contradiction, counting the available archive as a top open risk, ignoring category coverage, treating waiver and log gaps as generic privilege noise, or copying owner/action text from remediation records without normalizing to the answer template.
 
-迁移设计: 作为 train task, 本任务让后续 skill 学到几个可迁移规则: archive availability 会改变 purge 结论, retention timing 要依据触发日期计算, hold notice 漏掉 personal cloud/text sources 会造成 collection-readiness defect, 即使没有 destruction event。它还强化本组输出规范: 使用稳定 category IDs, 控制枚举, 保留 source-specific missing counts, 并按 action-code/order 输出补救计划。
+### Construction record
 
-构造记录: Codex 于 2026-07-07 创建。本次新增 `train_005` 的 prompt, answer template, hidden notes, standard answer 和 exact-match evaluator。未修改 environment, seed scenario, task_group metadata 或其他任务。
+Author: Task-builder 05 / Codex.
+
+Created: 2026-07-18.
+
+Updated: 2026-07-19.
+
+Major changes: Converted the task from a narrower remediation-plan schema to a cross-system dashboard schema after formal calibration showed weak transfer to dashboard-style tests. Later calibration rework added real AlloyWorks privilege waiver and privilege-log issues so the train set includes a combined preservation, privilege, coding, personal-source, and archive dashboard.
+
+## Chinese
+
+### 数据来源与任务定位
+
+本任务属于 `task_group_017`，场景为 `SCN_017_white_collar_investigation_production_review`，来源示例为 `E001`、`E002` 和 `E003`。这是 AlloyWorks DOJ 反垄断传票事项 `MTR-ALLOYWORKS-GJ` 的正式训练任务 `train_005`。共享 Investigation Review Hub 包含相关的事项、请求类别、留存、custodian source、文档、特权、QC 和补救记录。
+
+求解器可见材料包括 `input/prompt.txt`、`input/payloads/matter_context.json` 和 `input/payloads/answer_template.json`。实体事实必须来自 `<TASK_ENV_BASE_URL>` 的 hub。任务本地 payload 不包含答案事实。
+
+### 任务定义与场景契合
+
+业务目标是生成一个跨系统 remediation dashboard。求解者需要排序 material risks，概括受影响类别，识别 retained or available remediation sources，报告数值指标，并给出排序后的行动计划。该任务契合调查生产审查流程，因为它结合了 hold 时间、特权例外、source collection、archive availability、responsiveness coding、zero-production claim validation 和 remediation ownership。
+
+输出是规范化 JSON，包含 `matter_id`、`top_risks`、`category_coverage`、`retained_or_available_sources`、`metrics` 和 `action_plan`。这个结构是在校准后选定的，因为它与后续 cross-system 测试任务属于同一输出家族，同时 AlloyWorks 的实质事实仍保持正式训练问题。
+
+### 材料地图
+
+`input/prompt.txt` 给出面向求解者的事项请求，并要求使用共享 hub。`matter_context.json` 提供 matter 标识、base URL 占位符、查询密钥和允许端点清单。`answer_template.json` 定义受控枚举、列表排序、整数计数、稳定 ID 字段和 action-plan rank。
+
+关键环境记录是 `RET-ALLOY-BOX-POST`、`PRIV-ALLOYWORKS-001`、`PRIV-ALLOYWORKS-002`、`SRC-ALLOY-KLINE-SIGNAL`、`SRC-ALLOY-MORENO-SMS`、`SRC-ALLOY-TEAMS-ARCHIVE`、`QC-ALLOY-ZERO-CLAIM`、`DOC-ALLOY-BID-EMAIL-1` 和 `DOC-ALLOY-BID-EMAIL-2`。
+
+### 答案与评测依据
+
+标准答案将 `RET-ALLOY-BOX-POST` 排在第一位，认定为 critical post-hold loss：6 箱异地投标文件在 hold 后被销毁，影响 `A`、`C`、`F`，需要披露 preservation issue。第二个风险是 `PRIV-ALLOYWORKS-002`，它是类别 `B` 中 34 份文件的 third-party waiver 特权条目。第三个风险是 `QC-ALLOY-ZERO-CLAIM`，因为两封类别 `F` 的 bid emails 实际 responsive，但被编码为 nonresponsive 且未生产，推翻了 zero-production claim，需要 recode and produce。第四个风险是 `PRIV-ALLOYWORKS-001`，它有 106 份 withheld 文件、34 份 logged 文件和 72 份 unlogged 文件。第五和第六个风险是未收集的个人消息来源 `SRC-ALLOY-KLINE-SIGNAL` 与 `SRC-ALLOY-MORENO-SMS`，都影响 `D` 和 `F`。
+
+可用补救来源是 `SRC-ALLOY-TEAMS-ARCHIVE`，它是已删除 pricing Teams channel 的可用归档，影响 `D` 和 `E`。类别覆盖行分别概括 `A` 和 `C` 的 preservation loss，`B` 的 privilege corrections，`D` 的 source gap with archive availability，`E` 的 archive availability，以及 `F` 的 responsiveness underproduction。必需指标包括 6 个 top risks、6 箱被销毁、1 个 post-hold loss event、2 个 uncollected personal sources、1 个 available archive、2 份 miscoded responsive documents、106 份 withheld privileged documents、34 份 logged privilege documents、72 份 unlogged privilege documents、34 份 waiver documents、0 个 missing required records 和 6 个 affected categories。
+
+评估器包含九个整点评分目标，原始权重为 `[1, 3, 3, 2, 3, 2, 3, 2, 3]`：matter ID、post-hold loss、personal messaging risks、third-party waiver、privilege-log gap、Teams archive availability、zero-claim responsiveness miscoding、category coverage plus metrics，以及 action-plan order。每个评分点只能全得或不得分，并检查结构化 ID、枚举、类别集合、计数、负责人、排序和 due-day 限制。
+
+### 迁移设计
+
+本任务展示 dashboard 类任务的可迁移惯例，但不披露任何后续测试答案。它锚定了如何排序风险、把 available archive 与 open loss event 分开、把 privilege waiver 和 log remediation 放在较低运营性 collection 工作之前、把每个 material issue 映射到请求类别、在 risk 和 action 行中使用稳定 hub ID，并保持指标计数与 issue ledger 一致。这些惯例应迁移到使用不同类别、记录 ID、计数和 privilege issues 的未知事项。
+
+### 常见模型错误
+
+常见错误包括把所有 source gaps 视为同等优先级，漏掉 zero-production contradiction，把 available archive 计为 top open risk，忽略 category coverage，把 waiver 和 log gap 当作普通 privilege 噪声，或者直接复制 remediation records 中的 owner/action 文本而不按 answer template 规范化。
+
+### 构建记录
+
+作者：Task-builder 05 / Codex。
+
+创建时间：2026-07-18。
+
+更新时间：2026-07-19。
+
+主要变更：正式校准显示 dashboard 类测试迁移较弱后，将任务从较窄的 remediation-plan schema 改为 cross-system dashboard schema。后续校准返工加入真实 AlloyWorks privilege waiver 和 privilege-log issues，使训练集包含 preservation、privilege、coding、personal-source 和 archive 组合 dashboard。

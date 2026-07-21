@@ -1,180 +1,85 @@
-# test_001 Notes - Lumen Vale Buyer SPA Term Population
+# test_001 Notes: Project Keystone Seller APA Review
 
 ## English
 
 ### Data and Source Lineage
 
-This task belongs to `task_group_020`, scenario `SCN_020_ma_transaction_contract_review_and_negotiation`, derived from source examples `E001`, `E002`, and `E003`. It implements the `test_001` design brief for buyer-side stock purchase term population and drafting posture on deal `D-LUMEN-908`, code-named Lumen Vale, in the shared Aster Legal Deal Desk environment.
+This task belongs to `SCN_020_ma_transaction_contract_review_and_negotiation` and follows the task-group design for `test_001`: seller-side counsel reviews buyer APA paper for `PRJ_KEYSTONE`. The source-example lineage is `E002` for counterparty-paper deviation review, with transfer support from `E001` for multi-record closing/economics extraction and `E003` for structured issue escalation. The task uses generated environment data from `task_group/task_group_020/env/`, especially `deals`, `draft_terms`, `playbook_rules`, `benchmarks`, `risk_estimates`, `consents`, `employees`, `material_contracts`, `regulatory`, `diligence_findings`, `deal_notes`, and `documents`.
 
-The generated shared data is in `task_group/task_group_020/env/data/dealdesk.json`, with public metadata in `task_group/task_group_020/env/data/manifest.json`. Relevant public environment objects are the deal profile for `D-LUMEN-908`; active documents `DOC-LUMEN908-TERM-01`, `DOC-LUMEN908-DRAFT-02`, `DOC-LUMEN908-EMAIL-03`, `DOC-LUMEN908-CAP-ACTIVE`, `DOC-LUMEN908-FIN-04`, `DOC-LUMEN908-MATCON-05`, and `DOC-LUMEN908-DISC-06`; stale/template documents `DOC-LUMEN908-CAP-STALE` and `DOC-LUMEN908-TEMPLATE-99`; active clauses `CL-LUMEN-908-001` through `CL-LUMEN-908-005`; stale/template clauses `CL-LUMEN-908-S01` and `CL-LUMEN-908-S02`; and policy document `DOC-BUYERMIDMARKET2026-POLICY` for policy `P-BUYER-MIDMARKET-2026`.
+Task-local payloads are limited to `input/payloads/answer_template.json`. The environment database, source generator, manifests, and setup files are not copied into the task payload.
 
-Task-local solver-visible files are `input/prompt.txt` and `input/payloads/answer_template.json`. The prompt states the business request, environment entry point convention, target deal ID, and required JSON keys. It does not give a procedure, source-precedence rule list, scoring rubric, or answers.
+### Task Definition
 
-### Task Definition and Scenario Fit
+The visible prompt asks the solver to act as seller-side counsel for Keystone Instruments LLC in Project Keystone, an asset purchase agreement for Keystone Flow Controls. The solver must use `<TASK_ENV_BASE_URL>` to retrieve the Keystone deal record, current buyer draft terms, the `PB_SELLER_A` seller playbook, and supporting risk, consent, employee, contract, regulatory, diligence, note, and benchmark records.
 
-The solver acts as buyer counsel preparing a structured SPA drafting package for `D-LUMEN-908`. The required JSON now has six top-level sections: `deal_terms`, `seller_allocations`, `closing_flags`, `source_precedence`, `policy_checks`, and `drafting_positions`.
+The expected output is a normalized JSON answer with `issue_register`, `priority_order`, and `summary_metrics`. The issue register uses controlled IDs, status enums, risk ratings, recommended actions, percent-point fields, integer-dollar fields, boolean flags, and business-outcome labels. Important objects are `PRJ_KEYSTONE`, `PB_SELLER_A`, draft terms `TERM_PRJ_KEYSTONE_01` through `TERM_PRJ_KEYSTONE_04`, risk records `RSK_PRJ_KEYSTONE_01` through `RSK_PRJ_KEYSTONE_03`, employee records `EMP_PRJ_KEYSTONE_01` through `EMP_PRJ_KEYSTONE_03`, and closing-required consents `CNS_PRJ_KEYSTONE_01` and `CNS_PRJ_KEYSTONE_03`.
 
-The task fits the M&A legal operations scenario because the solver must reconcile commercial terms, current draft instructions, cap table schedules, material contracts, regulatory status, disclosure schedules, stale/template conflicts, and the Northstar buyer playbook. This preserves the source examples' difficulty drivers: party precision, active-vs-stale source selection, legal drafting posture, approval/risk judgment, and exact financial calculations.
+### Scenario Fit
 
-This file was reworked after direct calibration scored too high: attempts scored 1.0 and 0.733, average 0.867. The previous scoring over-rewarded direct environment lookup and arithmetic. The revised output and evaluator move most weight to transfer-dependent controlled fields: source precedence, exact risk posture, active-vs-stale/template conflict resolution, conditional escalation triggers, precise source IDs, policy checks, and drafting posture enums.
+The task represents real M&A counsel workflow: counsel must reconcile counterparty paper against a client playbook, combine legal terms with deal economics and diligence facts, quantify negotiation gaps, and produce a prioritized response for business stakeholders. It tests coordination across draft terms, legal policy, economics, operations, employment, consents, and regulatory facts in a read-only deal workbench rather than simple document summarization.
 
 ### Material Map
 
-- `GET /api/deals/D-LUMEN-908` and `/deals/D-LUMEN-908`: deal profile, parties, headline/equity value, dates, active/stale document links, schedules, client positions, and negotiation context.
-- `DOC-LUMEN908-TERM-01`: signed commercial term sheet for value, timing, consideration mix, escrow, cap, basket, survival periods, and working capital.
-- `DOC-LUMEN908-DRAFT-02`: active draft instructions for cap-table priority, consents, escrow, non-compete, fallback authority, and escalation posture.
-- `DOC-LUMEN908-EMAIL-03`: latest client instruction confirming active cap-table priority, named consent positions, SensorForge fallback, and escalation if seller uses the stale cap table or moves OmniAuto/KiteRail post-close.
-- `DOC-LUMEN908-CAP-ACTIVE`: controlling July 31, 2026 ownership schedule for seller allocation.
-- `DOC-LUMEN908-CAP-STALE`: February 28, 2026 stale cap table retained for audit trail and rejected as controlling allocation evidence.
-- `DOC-LUMEN908-FIN-04`: financial schedule for working capital, escrow, cap, basket, de minimis, and consideration mix.
-- `DOC-LUMEN908-MATCON-05`: material-contract consent matrix and regulatory status, including HSR and University license consent.
-- `DOC-LUMEN908-DISC-06`: employment, non-compete, transition-service, and IP confirmation facts.
-- `DOC-LUMEN908-TEMPLATE-99`: generic imported template provisions, including distracting non-compete and consent language.
-- `DOC-BUYERMIDMARKET2026-POLICY` / `P-BUYER-MIDMARKET-2026`: Northstar buyer risk memo and SPA playbook with rule IDs, approval categories, thresholds, and policy bases.
-- `/api/clauses?deal_id=D-LUMEN-908`: clause-level active/stale cross-check for allocation, escrow, non-compete, consents, and HSR.
+`/api/deals/PRJ_KEYSTONE` supplies headline value of 248,000,000 dollars, upfront cash of 228,000,000 dollars, milestone value of 20,000,000 dollars, seller-side role, and the `PB_SELLER_A` playbook. `/api/deals/PRJ_KEYSTONE/terms` supplies four current buyer draft terms: financing condition, reverse break fee, indemnity cap, and escrow. `/api/playbooks/PB_SELLER_A/rules` supplies seller limits for financing, indemnity cap, escrow, survival, and transition services. `/api/deals/PRJ_KEYSTONE/benchmarks` provides market context for termination economics and indemnity. `/api/deals/PRJ_KEYSTONE/risk-estimates` supports closing certainty, indemnity leakage, and transition disruption risk. `/api/deals/PRJ_KEYSTONE/employees` supplies headcount, service-credit requirements, and accrued PTO liabilities. `/api/deals/PRJ_KEYSTONE/consents` and `/api/deals/PRJ_KEYSTONE/material-contracts` support closing-certainty and operational-risk context. `/api/deals/PRJ_KEYSTONE/regulatory` supplies HSR-only status and indicates that HHW should not be required.
 
 ### Solution and Evaluation Basis
 
-The standard answer uses `DOC-LUMEN908-CAP-ACTIVE`, dated 2026-07-31, because it supersedes the February stale cap table. Headline purchase price and equity value are both USD 257,500,000. Consideration is USD 232,500,000 cash at close and USD 25,000,000 rollover equity, with no seller note or earnout. The active cap table has no share count, so `per_share_price_usd` is null and `per_share_price_basis` is `NO_SHARE_COUNT_IN_ACTIVE_CAP_TABLE`. One ownership percentage point equals USD 2,575,000.
+The standard answer has seven issues: `financing_condition`, `reverse_break_fee_hhw`, `escrow`, `indemnity_cap_basket`, `employee_tsa`, `milestone_non_compete`, and `tax_law`.
 
-The active seller allocation set is BrightPath Ventures III at 34.0 percent and USD 87,550,000; Lumen Founder Holdings at 39.5 percent and USD 101,712,500; and Lumen Management Pool at 26.5 percent and USD 68,237,500. Seller proceeds are based on headline/equity value, not cash-at-close net of escrow.
+Key calculations use 248,000,000 dollars as the purchase-price or enterprise-value base. The 2.0 percent draft reverse break fee equals 4,960,000 dollars; the 6.0 percent required fallback equals 14,880,000 dollars; the shortfall is 9,920,000 dollars. The 12.0 percent draft escrow equals 29,760,000 dollars; the 10.0 percent fallback equals 24,800,000 dollars; excess over fallback is 4,960,000 dollars, and the release should move from 18 months to 12 months. The 16.0 percent draft indemnity cap equals 39,680,000 dollars; the 12.5 percent fallback equals 31,000,000 dollars; excess over fallback is 8,680,000 dollars. Employee headcount is 174, and PTO liability is 3,520,000 dollars. Closing-required consent amount at risk is 14,490,000 dollars. Total quantified draft delta is 23,560,000 dollars, which combines the reverse break fee shortfall, escrow excess over fallback, and indemnity-cap excess over fallback.
 
-Escrow and indemnity terms are calculated on headline value. General escrow is 10.0 percent or USD 25,750,000; tax escrow is 2.5 percent or USD 6,437,500; indemnity cap is 10.0 percent or USD 25,750,000; the basket is a 0.75 percent deductible basket or USD 1,931,250; and de minimis is USD 60,000. Working capital uses a USD 27,800,000 target, USD 1,000,000 collar, and true-up against the active July balance sheet. The collar is 0.39 percent of equity value.
+The evaluator has eight all-or-nothing scoring points with raw weights: issue set (2), financing/RBF/HHW treatment (3), escrow math (2), indemnity/basket treatment (2), milestone/non-compete treatment (1), employee/TSA treatment (2), tax/law fixes (1), and priority/summary metrics (2). These points cover distinct business outcomes: closing certainty, economic exposure, indemnity recourse, employee continuity and transition operations, milestone value, tax allocation, and dispute control. The checks are deterministic and compare normalized enums, stable issue IDs, booleans, exact integer-dollar amounts, exact month counts, and exact priority ordering. No point gives fractional credit internally.
 
-The required material-contract closing consents are OmniAuto Robotics Supply and KiteRail Deployment Agreement, both sourced to `DOC-LUMEN908-MATCON-05`. SensorForge License is an accepted post-closing notice item only. HSR is required because the antitrust memo says reportable thresholds are met; HSR should be a closing condition and is sourced to `DOC-LUMEN908-MATCON-05`. Other regulatory approvals include University license consent.
-
-Employment and restrictive covenant fields are sourced to `DOC-LUMEN908-DISC-06`. Dani Rowe, founder, and Victor Hsu, VP Controls, require retention agreements. No fixed employment term is stated, so `employment_agreement_term_months` is null. The non-compete is 30 months, limited to target products, and does not allow broad affiliate scope. No general transition services are required, but IP assignment confirmation is required.
-
-Source precedence and drafting posture are central to the revised task. The controlling sources are the active cap table, latest client email, active draft, financial schedule, material-contract schedule, disclosure schedule, and buyer policy. `DOC-LUMEN908-CAP-STALE` and `DOC-LUMEN908-TEMPLATE-99` are superseded. Active clauses `CL-LUMEN-908-001` through `CL-LUMEN-908-005` control over stale/template clauses `CL-LUMEN-908-S01` and `CL-LUMEN-908-S02`. Drafting positions use controlled enums such as `BUYER_FORM`, `ALLOCATION_DRAFTING_POSITION`, `HSR_FILING_CONDITION`, `TARGETED_PRODUCT_SCOPE_RESTRICTIVE_COVENANT`, and `ACTIVE_DRAFT_SUPERSEDES_TEMPLATE`.
-
-Policy checks use `P-BUYER-MIDMARKET-2026` version `2026.2`. Current active terms are within policy; no approval is required now and current policy exception count is zero. The conditional escalation triggers are only `CONSENT_TIMING_TRIGGER` and `ALLOCATION_SOURCE_TRIGGER`. Reviewed but non-triggered thresholds include basket below 0.5 percent, broad non-compete, cap above 12.5 percent, general escrow above 12 percent, tax escrow above 3 percent, unclear HSR analysis, and unverified NWC target.
-
-The evaluator has eight exact-match scoring points, raw weight total 12, synchronized with `task_group.yaml`:
-
-- `SP1_SOURCE_PRECEDENCE_CONTROLLED_SOURCES`, weight 3: source-precedence decisions, active/stale clause IDs, and superseded source IDs.
-- `SP2_DRAFTING_POSTURE_ENUMS`, weight 1: controlled drafting posture fields.
-- `SP3_POLICY_CHECKS_CURRENT_STATUS`, weight 3: policy rule IDs, approval categories, current status, approval summary, and conditional trigger set.
-- `SP4_CONDITIONAL_ESCALATION_RISK_POSTURE`, weight 1: risk posture, non-triggered thresholds, conditional escalation details, and risk-memo override source IDs.
-- `SP5_CONSENT_HSR_SOURCE_SELECTION`, weight 1: consent, post-closing notice, HSR, regulatory approval, and source-document treatment.
-- `SP6_EMPLOYMENT_NONCOMPETE_SOURCE_SELECTION`, weight 1: employment, non-compete, transition service, IP confirmation, and source document.
-- `SP7_ACTIVE_CAP_TABLE_ALLOCATION_MATH`, weight 1: economics, active cap table, per-share availability, and seller allocations.
-- `SP8_ESCROW_NWC_VALUE_POLICY_MATH`, weight 1: escrow, cap, basket, de minimis, and working-capital mechanics.
-
-Likely model pitfalls include using the stale February cap table, treating the generic template as a fallback source, over-including all possible policy thresholds as current conditional triggers, counting SensorForge as a material closing consent, omitting source document IDs, labeling current in-policy terms as approval-required, using the wrong HSR posture from a train task, or returning narrative drafting labels instead of controlled enums.
+Likely solver pitfalls include using upfront cash instead of headline value as the percentage base, treating the reverse break fee benchmark median as the controlling playbook requirement, missing draft silence as an issue for milestone/TSA/tax-law protections, overlooking service-credit and PTO data, counting all consents instead of only closing-required consent amounts at risk, or adding distractor issues such as stale survival or generic material-contract issues.
 
 ### Transfer Design
 
-This test task is anchored by `train_001` and `train_005`.
+This is a test task anchored by `train_001` and `train_004`, with some support from `train_005`. The solver should transfer seller-side APA review habits from `train_001`: buyer financing conditions are not acceptable for the seller, the RBF is a mitigation only if it meets the seller playbook, and percentage math uses the headline/purchase-price base unless a rule says otherwise. From `train_004`, the solver should transfer carveout-transition judgment: missing or buyer-favorable transition-service and employee-transfer mechanics can be operational issues even when not listed as draft terms. From `train_005`, the solver should transfer controlled-output discipline and cap/fallback math.
 
-From `train_001`, solvers should transfer buyer-side term-population conventions: active deal-room schedules control over stale cap tables; active client instructions and disclosure schedules control over templates; seller allocation uses the active ownership schedule and headline/equity value unless the schema states otherwise; regulatory and consent flags come from deal-specific records; and outputs use controlled enums, integer dollars, two-decimal percentages, precise source IDs, and sorted lists.
-
-From `train_005`, solvers should transfer policy and drafting-posture habits: latest client instructions and deal-specific risk records can override generic form language; policy checks must separate current approval requirements from conditional future escalation triggers; active/source override records require exact source and superseded document IDs; and drafting positions should be encoded as controlled enums rather than prose.
-
-The transfer-dependent scoring points are `SP1`, `SP2`, `SP3`, and `SP4`, with additional transfer pressure in `SP5` and `SP6` through source-document selection and active-vs-template conflict resolution. Task-specific exploration remains necessary for Lumen-specific numbers, sellers, contracts, HSR result, source IDs, active and stale clause IDs, and non-compete facts. The solver-visible prompt does not teach the source-precedence or policy-posture procedure.
+The transfer-dependent difficulty is in recognizing missing required protections, combining financing condition and RBF/HHW treatment, and applying seller playbook fallback values correctly. The task-specific exploration difficulty is finding Keystone-specific values across the deal, terms, employees, risk estimates, consents, and regulatory records.
 
 ### Construction Record
 
-Author: task-builder subagent for `task_group_020/test_001`.
-
-Created: 2026-07-07.
-
-Updated: 2026-07-07.
-
-Major changes: created the original task files, then reworked after direct calibration average 0.867 by adding transfer-dependent `source_precedence`, `policy_checks`, `drafting_positions`, stricter `risk_posture_flags`, exact source document IDs, controlled policy measurement codes, and an eight-point evaluator.
+Author: task-builder-test-001. Created: 2026-07-18. Updated: 2026-07-18. Major changes: created `prompt.txt`, `answer_template.json`, `answer.json`, `eval.sh`, `evaluate.py`, and bilingual notes for `test_001`.
 
 ## 中文
 
-### 数据和来源脉络
+### 数据与来源
 
-本任务属于 `task_group_020`，场景为 `SCN_020_ma_transaction_contract_review_and_negotiation`，来源示例为 `E001`、`E002` 和 `E003`。任务实现 `test_001` 的设计：在共享的 Aster Legal Deal Desk 环境中，为交易 `D-LUMEN-908`（Lumen Vale）完成买方股票购买协议条款填充和起草立场判断。
+本任务属于 `SCN_020_ma_transaction_contract_review_and_negotiation`，对应任务组设计中的 `test_001`：卖方律师审查 `PRJ_KEYSTONE` 的买方 APA 文稿。来源示例主要是 `E002` 的交易文件偏差审查，同时借鉴 `E001` 的多记录经济与交割信息抽取，以及 `E003` 的结构化升级判断。任务使用 `task_group/task_group_020/env/` 中生成的环境数据，重点表包括 `deals`、`draft_terms`、`playbook_rules`、`benchmarks`、`risk_estimates`、`consents`、`employees`、`material_contracts`、`regulatory`、`diligence_findings`、`deal_notes` 和 `documents`。
 
-共享生成数据位于 `task_group/task_group_020/env/data/dealdesk.json`，公开元数据位于 `task_group/task_group_020/env/data/manifest.json`。相关公开环境对象包括交易档案 `D-LUMEN-908`；有效文件 `DOC-LUMEN908-TERM-01`、`DOC-LUMEN908-DRAFT-02`、`DOC-LUMEN908-EMAIL-03`、`DOC-LUMEN908-CAP-ACTIVE`、`DOC-LUMEN908-FIN-04`、`DOC-LUMEN908-MATCON-05`、`DOC-LUMEN908-DISC-06`；过期或模板文件 `DOC-LUMEN908-CAP-STALE` 和 `DOC-LUMEN908-TEMPLATE-99`；有效条款 `CL-LUMEN-908-001` 至 `CL-LUMEN-908-005`；过期或模板条款 `CL-LUMEN-908-S01`、`CL-LUMEN-908-S02`；以及政策文件 `DOC-BUYERMIDMARKET2026-POLICY` 和政策 `P-BUYER-MIDMARKET-2026`。
+任务本地 payload 仅包含 `input/payloads/answer_template.json`。环境数据库、生成脚本、manifest 和部署文件没有复制到任务 payload 中。
 
-任务本地、解题者可见文件为 `input/prompt.txt` 和 `input/payloads/answer_template.json`。提示词说明业务请求、环境入口约定、目标交易编号和所需 JSON 键，但不提供操作步骤、来源优先级清单、评分规则或答案。
+### 任务定义
 
-### 任务定义与场景匹配
+可见提示要求解题者作为 Keystone Instruments LLC 的卖方律师，为 Project Keystone 的资产购买协议准备问题清单。解题者需要通过 `<TASK_ENV_BASE_URL>` 获取 Keystone 的交易记录、当前买方草案条款、`PB_SELLER_A` 卖方 playbook，以及风险、同意、员工、合同、监管、尽调、备注和文件记录。
 
-解题者扮演买方律师，为 `D-LUMEN-908` 准备结构化 SPA 起草包。所需 JSON 现在包含六个顶层部分：`deal_terms`、`seller_allocations`、`closing_flags`、`source_precedence`、`policy_checks` 和 `drafting_positions`。
+期望输出是规范化 JSON，包括 `issue_register`、`priority_order` 和 `summary_metrics`。问题清单使用受控的 issue ID、状态枚举、风险评级、建议动作、百分点字段、整数美元字段、布尔字段和业务结果标签。关键对象包括 `PRJ_KEYSTONE`、`PB_SELLER_A`、草案条款 `TERM_PRJ_KEYSTONE_01` 到 `TERM_PRJ_KEYSTONE_04`、风险记录 `RSK_PRJ_KEYSTONE_01` 到 `RSK_PRJ_KEYSTONE_03`、员工记录 `EMP_PRJ_KEYSTONE_01` 到 `EMP_PRJ_KEYSTONE_03`，以及交割所需同意 `CNS_PRJ_KEYSTONE_01` 和 `CNS_PRJ_KEYSTONE_03`。
 
-本任务符合并购法律运营场景，因为解题者必须协调商业条款、当前起草指示、cap table、重大合同、监管状态、披露附表、过期/模板冲突以及 Northstar 买方 playbook。它保留来源示例中的难度因素：主体精确性、有效与过期来源选择、法律起草立场、审批和风险判断，以及精确财务计算。
+### 场景匹配
 
-本文件是在直接校准过高后重做的：两次尝试得分为 1.0 和 0.733，平均 0.867。原评分过多奖励直接环境查询和算术。新版输出和评估器把大部分权重转移到依赖迁移的受控字段：来源优先级、精确风险立场、有效与过期/模板冲突处理、条件性升级触发、精确来源 ID、政策检查和起草立场枚举。
+该任务模拟真实并购律师工作：律师需要把交易对方文稿与客户 playbook 对照，结合法律条款、交易经济、尽调事实和运营信息，量化谈判差距，并向业务团队给出优先级排序。它测试的是只读交易工作台中的跨表取证、规则适用、计算和商业判断，而不是简单摘要。
 
 ### 材料地图
 
-- `GET /api/deals/D-LUMEN-908` 和 `/deals/D-LUMEN-908`：交易档案、主体、headline/equity value、日期、有效/过期文件链接、附表、客户立场和谈判背景。
-- `DOC-LUMEN908-TERM-01`：已签署商业条款书，提供价值、时间安排、对价组合、托管、赔偿上限、basket、存续期和营运资本。
-- `DOC-LUMEN908-DRAFT-02`：有效起草指示，提供 cap table 优先级、同意、托管、竞业限制、fallback 权限和升级立场。
-- `DOC-LUMEN908-EMAIL-03`：最新客户指示，确认有效 cap table 优先、具名同意立场、SensorForge fallback，以及卖方使用过期 cap table 或将 OmniAuto/KiteRail 移至交割后时需升级。
-- `DOC-LUMEN908-CAP-ACTIVE`：2026-07-31 控制性所有权附表，用于卖方分配。
-- `DOC-LUMEN908-CAP-STALE`：2026-02-28 过期 cap table，仅用于审计轨迹，不作为控制性分配依据。
-- `DOC-LUMEN908-FIN-04`：财务附表，提供营运资本、托管、赔偿上限、basket、de minimis 和对价组合。
-- `DOC-LUMEN908-MATCON-05`：重大合同同意矩阵和监管状态，包括 HSR 与大学许可同意。
-- `DOC-LUMEN908-DISC-06`：雇佣、竞业限制、过渡服务和 IP 确认事实。
-- `DOC-LUMEN908-TEMPLATE-99`：通用导入模板条款，包含具有干扰性的竞业限制和同意语言。
-- `DOC-BUYERMIDMARKET2026-POLICY` / `P-BUYER-MIDMARKET-2026`：Northstar 买方风险备忘录和 SPA playbook，包含规则 ID、审批类别、阈值和政策依据。
-- `/api/clauses?deal_id=D-LUMEN-908`：用于 allocation、escrow、non-compete、consents 和 HSR 的条款级有效/过期交叉核对。
+`/api/deals/PRJ_KEYSTONE` 提供 248,000,000 美元 headline value、228,000,000 美元 upfront cash、20,000,000 美元 milestone value、卖方角色和 `PB_SELLER_A`。`/api/deals/PRJ_KEYSTONE/terms` 提供四条当前买方草案条款：融资条件、反向分手费、赔偿上限和 escrow。`/api/playbooks/PB_SELLER_A/rules` 提供卖方在融资、赔偿上限、escrow、陈述存续和过渡服务上的限制。`/api/deals/PRJ_KEYSTONE/benchmarks` 提供终止经济和赔偿的市场背景。`/api/deals/PRJ_KEYSTONE/risk-estimates` 支持交割确定性、赔偿泄漏和过渡中断风险。`/api/deals/PRJ_KEYSTONE/employees` 提供员工人数、服务年限承认要求和 PTO 负债。`/api/deals/PRJ_KEYSTONE/consents` 与 `/api/deals/PRJ_KEYSTONE/material-contracts` 支持交割确定性和运营风险判断。`/api/deals/PRJ_KEYSTONE/regulatory` 提供 HSR-only 状态，并说明不应要求 HHW。
 
-### 答案和评估依据
+### 标准答案与评估依据
 
-标准答案使用日期为 2026-07-31 的 `DOC-LUMEN908-CAP-ACTIVE`，因为它取代 2 月过期 cap table。Headline purchase price 和 equity value 均为 257,500,000 美元。对价为 232,500,000 美元 closing cash 和 25,000,000 美元 rollover equity，没有 seller note 或 earnout。有效 cap table 没有股份数，因此 `per_share_price_usd` 为 null，`per_share_price_basis` 为 `NO_SHARE_COUNT_IN_ACTIVE_CAP_TABLE`。每 1 个所有权百分点价值为 2,575,000 美元。
+标准答案包含七个问题：`financing_condition`、`reverse_break_fee_hhw`、`escrow`、`indemnity_cap_basket`、`employee_tsa`、`milestone_non_compete` 和 `tax_law`。
 
-有效卖方分配集合为 BrightPath Ventures III 34.0%、87,550,000 美元；Lumen Founder Holdings 39.5%、101,712,500 美元；Lumen Management Pool 26.5%、68,237,500 美元。卖方收益基于 headline/equity value，而不是扣除托管后的 closing cash。
+关键计算使用 248,000,000 美元作为 purchase price 或 enterprise value 基数。2.0% 草案反向分手费为 4,960,000 美元；6.0% 规定 fallback 为 14,880,000 美元；缺口为 9,920,000 美元。12.0% 草案 escrow 为 29,760,000 美元；10.0% fallback 为 24,800,000 美元；超过 fallback 4,960,000 美元，释放期应从 18 个月缩短为 12 个月。16.0% 草案赔偿上限为 39,680,000 美元；12.5% fallback 为 31,000,000 美元；超过 fallback 8,680,000 美元。员工总数为 174，PTO 负债为 3,520,000 美元。交割所需同意的风险金额为 14,490,000 美元。量化草案差距合计为 23,560,000 美元，包含反向分手费缺口、escrow 超额和赔偿上限超额。
 
-托管和赔偿条款按 headline value 计算。一般托管为 10.0% 即 25,750,000 美元；税务托管为 2.5% 即 6,437,500 美元；赔偿上限为 10.0% 即 25,750,000 美元；basket 为 0.75% deductible basket 即 1,931,250 美元；de minimis 为 60,000 美元。营运资本目标为 27,800,000 美元，collar 为 1,000,000 美元，并针对 7 月有效资产负债表 true-up。Collar 占 equity value 的比例为 0.39%。
+评估器有八个全有或全无评分点，原始权重分别为：问题集合 2，融资/RBF/HHW 处理 3，escrow 计算 2，赔偿和 basket 处理 2，milestone 和 non-compete 处理 1，员工和 TSA 处理 2，税务和法律管辖修正 1，优先级和汇总指标 2。这些评分点覆盖不同业务结果：交割确定性、经济风险、赔偿追索、员工连续性和过渡运营、milestone 价值、税务分配和争议控制。检查完全确定，比较规范化枚举、稳定 issue ID、布尔值、整数美元金额、月份和优先级顺序；单个评分点内部没有部分得分。
 
-必需重大合同交割同意是 OmniAuto Robotics Supply 和 KiteRail Deployment Agreement，来源均为 `DOC-LUMEN908-MATCON-05`。SensorForge License 仅是可接受的交割后通知事项。HSR 是必需的，因为反垄断备忘录说明达到可申报阈值；因此 HSR 应作为交割条件，来源为 `DOC-LUMEN908-MATCON-05`。其他监管批准包括 University license consent。
-
-雇佣和限制性契约字段来源于 `DOC-LUMEN908-DISC-06`。Dani Rowe, founder 和 Victor Hsu, VP Controls 需要 retention agreements。没有来源说明固定雇佣期限，因此 `employment_agreement_term_months` 为 null。竞业限制为 30 个月、限于目标产品，不允许宽泛关联方范围。无需一般过渡服务，但需要 IP 转让确认。
-
-来源优先级和起草立场是新版任务核心。控制性来源包括有效 cap table、最新客户邮件、有效起草文件、财务附表、重大合同附表、披露附表和买方政策。`DOC-LUMEN908-CAP-STALE` 与 `DOC-LUMEN908-TEMPLATE-99` 被取代。有效条款 `CL-LUMEN-908-001` 至 `CL-LUMEN-908-005` 优先于过期/模板条款 `CL-LUMEN-908-S01` 和 `CL-LUMEN-908-S02`。起草立场使用受控枚举，例如 `BUYER_FORM`、`ALLOCATION_DRAFTING_POSITION`、`HSR_FILING_CONDITION`、`TARGETED_PRODUCT_SCOPE_RESTRICTIVE_COVENANT` 和 `ACTIVE_DRAFT_SUPERSEDES_TEMPLATE`。
-
-政策检查使用 `P-BUYER-MIDMARKET-2026` 版本 `2026.2`。当前有效条款均在政策内；当前无需审批，当前政策例外数为 0。条件性升级触发仅为 `CONSENT_TIMING_TRIGGER` 和 `ALLOCATION_SOURCE_TRIGGER`。已复核但未触发的阈值包括 basket 低于 0.5%、扩大竞业限制、赔偿上限超过 12.5%、一般托管超过 12%、税务托管超过 3%、HSR 分析不清以及未验证 NWC 目标。
-
-评估器有 8 个 exact-match 评分点，原始总权重为 12，并已与 `task_group.yaml` 同步：
-
-- `SP1_SOURCE_PRECEDENCE_CONTROLLED_SOURCES`，权重 3：来源优先级决策、有效/过期条款 ID 和被取代来源 ID。
-- `SP2_DRAFTING_POSTURE_ENUMS`，权重 1：受控起草立场字段。
-- `SP3_POLICY_CHECKS_CURRENT_STATUS`，权重 3：政策规则 ID、审批类别、当前状态、审批摘要和条件性触发集合。
-- `SP4_CONDITIONAL_ESCALATION_RISK_POSTURE`，权重 1：风险立场、未触发阈值、条件性升级明细和风险备忘录覆盖来源 ID。
-- `SP5_CONSENT_HSR_SOURCE_SELECTION`，权重 1：同意、交割后通知、HSR、监管批准和来源文件处理。
-- `SP6_EMPLOYMENT_NONCOMPETE_SOURCE_SELECTION`，权重 1：雇佣、竞业限制、过渡服务、IP 确认和来源文件。
-- `SP7_ACTIVE_CAP_TABLE_ALLOCATION_MATH`，权重 1：交易经济条款、有效 cap table、每股价格可用性和卖方分配。
-- `SP8_ESCROW_NWC_VALUE_POLICY_MATH`，权重 1：托管、赔偿上限、basket、de minimis 和营运资本机制。
-
-常见模型错误包括使用 2 月过期 cap table、把通用模板当作 fallback 来源、把所有可能政策阈值都列为当前条件性触发、把 SensorForge 作为重大交割同意、遗漏来源文件 ID、把当前政策内条款标为需要审批、套用训练任务中的错误 HSR 立场，或用叙述性起草标签代替受控枚举。
+常见错误包括使用 upfront cash 而不是 headline value 作为百分比基数，把 RBF 市场 benchmark 中位数当作控制性 playbook 要求，忽略草案沉默导致的 milestone/TSA/tax-law 缺失保护，没有合并服务年限和 PTO 数据，把所有同意金额而不是交割所需同意金额纳入汇总，或加入陈述存续、一般重大合同等干扰项。
 
 ### 迁移设计
 
-本测试任务由 `train_001` 和 `train_005` 锚定。
+这是测试任务，主要锚定 `train_001` 和 `train_004`，并部分借鉴 `train_005`。解题者应从 `train_001` 迁移卖方 APA 审查习惯：卖方不接受买方融资条件，RBF 只有达到卖方 playbook 要求时才是有效缓释，百分比计算默认使用 headline/purchase-price 基数。从 `train_004` 迁移 carveout 过渡判断：即便 draft term 表中没有明列，缺失或偏向买方的过渡服务和员工转移机制也可能构成运营问题。从 `train_005` 迁移受控输出格式和 cap/fallback 计算方法。
 
-从 `train_001`，解题者应迁移买方条款填充惯例：有效交易室附表优先于过期 cap table；有效客户指示和披露附表优先于模板；除非 schema 另有说明，卖方分配使用有效所有权附表和 headline/equity value；监管和同意 flags 来自交易特定记录；输出使用受控枚举、整数美元、两位小数百分比、精确来源 ID 和排序列表。
-
-从 `train_005`，解题者应迁移政策和起草立场习惯：最新客户指示和交易特定风险记录可以覆盖通用表格语言；政策检查必须区分当前审批需求和未来条件性升级触发；有效来源覆盖记录需要精确来源和被取代文件 ID；起草立场应编码为受控枚举而不是自由叙述。
-
-依赖迁移的评分点是 `SP1`、`SP2`、`SP3` 和 `SP4`；`SP5` 和 `SP6` 也通过来源文件选择及有效/模板冲突处理体现迁移要求。任务自身探索仍需找出 Lumen 特有数字、卖方、合同、HSR 结果、来源 ID、有效和过期条款 ID 以及竞业限制事实。解题者可见提示词不教授来源优先级或政策立场流程。
+迁移依赖的难点在于识别缺失的必要保护、合并融资条件与 RBF/HHW 处理，并正确应用卖方 playbook fallback。任务本地探索的难点在于从 Keystone 的交易、条款、员工、风险估计、同意和监管记录中找到具体数值。
 
 ### 构建记录
 
-作者：`task_group_020/test_001` task-builder subagent。
-
-创建日期：2026-07-07。
-
-更新日期：2026-07-07。
-
-主要变更：创建原始任务文件；随后在直接校准平均 0.867 后重做，新增依赖迁移的 `source_precedence`、`policy_checks`、`drafting_positions`、更严格的 `risk_posture_flags`、精确来源文件 ID、受控政策测量代码，以及 8 点评估器。
-
-## Evaluation Synchronization Update
-
-The evaluator has eight exact-match scoring points, raw weight total 12, synchronized with `task_group.yaml`:
-
-- `SP1_SOURCE_PRECEDENCE_CONTROLLED_SOURCES`, weight 3: source-precedence decisions, active/stale clause IDs, and superseded source IDs.
-- `SP2_DRAFTING_POSTURE_ENUMS`, weight 1: controlled drafting posture fields.
-- `SP3_POLICY_CHECKS_CURRENT_STATUS`, weight 3: policy rule IDs, approval categories, current status, approval summary, and conditional trigger set.
-- `SP4_CONDITIONAL_ESCALATION_RISK_POSTURE`, weight 1: risk posture, non-triggered thresholds, conditional escalation details, and risk-memo override source IDs.
-- `SP5_CONSENT_HSR_SOURCE_SELECTION`, weight 1: consent, post-closing notice, HSR, regulatory approval, and source-document treatment.
-- `SP6_EMPLOYMENT_NONCOMPETE_SOURCE_SELECTION`, weight 1: employment, non-compete, transition service, IP confirmation, and source document.
-- `SP7_ACTIVE_CAP_TABLE_ALLOCATION_MATH`, weight 1: economics, active cap table, per-share availability, and seller allocations.
-- `SP8_ESCROW_NWC_VALUE_POLICY_MATH`, weight 1: escrow, cap, basket, de minimis, and working-capital mechanics.
-
-This section is authoritative for evaluator weight documentation after the latest rework. It matches `eval/eval.py` and `task_group.yaml`.
+作者：task-builder-test-001。创建日期：2026-07-18。更新日期：2026-07-18。主要变更：为 `test_001` 创建了 `prompt.txt`、`answer_template.json`、`answer.json`、`eval.sh`、`evaluate.py` 和双语 notes。

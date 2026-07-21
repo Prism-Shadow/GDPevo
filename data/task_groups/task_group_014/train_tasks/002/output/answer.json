@@ -1,98 +1,57 @@
 {
-  "review_date": "2025-02-13",
-  "case_reviews": [
-    {
-      "case_id": "AUTH00007",
-      "service_category": "Durable Medical Equipment",
-      "criteria_source_id": "SRC003",
-      "nurse_recommendation": "approve_as_requested",
-      "md_escalation_required": false,
-      "md_escalation_reason_code": "none",
-      "missing_evidence_keys": [],
-      "p2p_suitable": false,
-      "approved_units": 12
-    },
-    {
-      "case_id": "AUTH00008",
-      "service_category": "Experimental Therapy",
-      "criteria_source_id": "SRC003",
-      "nurse_recommendation": "escalate_to_md",
-      "md_escalation_required": true,
-      "md_escalation_reason_code": "benefit_exclusion_or_mandatory_md",
-      "missing_evidence_keys": [
-        "not_experimental",
-        "standard_options_failed"
-      ],
-      "p2p_suitable": false,
-      "approved_units": null
-    },
-    {
-      "case_id": "AUTH00009",
-      "service_category": "Home Health",
-      "criteria_source_id": "SRC003",
-      "nurse_recommendation": "escalate_to_md",
-      "md_escalation_required": true,
-      "md_escalation_reason_code": "criteria_not_clearly_met",
-      "missing_evidence_keys": [
-        "homebound_status",
-        "physician_plan"
-      ],
-      "p2p_suitable": true,
-      "approved_units": null
-    },
-    {
-      "case_id": "AUTH00010",
-      "service_category": "Physical Therapy",
-      "criteria_source_id": "SRC003",
-      "nurse_recommendation": "escalate_to_md",
-      "md_escalation_required": true,
-      "md_escalation_reason_code": "adverse_multiline_request",
-      "missing_evidence_keys": [
-        "functional_limitation",
-        "plan_of_care"
-      ],
-      "p2p_suitable": true,
-      "approved_units": null
-    },
-    {
-      "case_id": "AUTH00011",
-      "service_category": "Physical Therapy",
-      "criteria_source_id": "SRC003",
-      "nurse_recommendation": "escalate_to_md",
-      "md_escalation_required": true,
-      "md_escalation_reason_code": "criteria_not_clearly_met",
-      "missing_evidence_keys": [
-        "functional_limitation",
-        "measurable_progress",
-        "plan_of_care"
-      ],
-      "p2p_suitable": true,
-      "approved_units": null
-    },
-    {
-      "case_id": "AUTH00012",
-      "service_category": "Physical Therapy",
-      "criteria_source_id": "SRC003",
-      "nurse_recommendation": "escalate_to_md",
-      "md_escalation_required": true,
-      "md_escalation_reason_code": "criteria_not_clearly_met",
-      "missing_evidence_keys": [
-        "functional_limitation",
-        "measurable_progress",
-        "plan_of_care"
-      ],
-      "p2p_suitable": true,
-      "approved_units": null
-    }
+  "case_id": "APPEAL-TR-002",
+  "appeal_id": "APL-TR-002",
+  "drug": "Vraylar",
+  "appeal_path": "standard_internal",
+  "expedited": false,
+  "appeal_deadline": "2026-06-07",
+  "owner": "appeals-rx",
+  "documented_failures": [
+    "quetiapine"
   ],
-  "queue_counts": {
-    "md_escalations_by_service_category": {
-      "Experimental Therapy": 1,
-      "Home Health": 1,
-      "Physical Therapy": 3
-    },
-    "total_md_escalations": 5,
-    "nurse_approval_count": 1,
-    "p2p_suitable_count": 4
+  "undocumented_or_insufficient_failures": [
+    "lurasidone"
+  ],
+  "criteria_results": {
+    "DRUG-AUTH": "met",
+    "DRUG-DENIAL": "met",
+    "DRUG-RATIONALE": "met",
+    "DRUG-FAILURES": "partial"
+  },
+  "required_packet_items": [
+    "denial_notice",
+    "member_authorization",
+    "prescriber_rationale",
+    "formulary_failure_evidence",
+    "household_income_proof"
+  ],
+  "missing_packet_items": [
+    "lurasidone_fill_record",
+    "household_income_proof"
+  ],
+  "assistance": {
+    "program_name": "Vraylar Connect",
+    "status": "eligible_missing_information",
+    "missing_fields": [
+      "household_income_proof"
+    ]
+  },
+  "next_action": "request_more_information",
+  "basis_audit": {
+    "source_precedence": "payer_appeal_before_manufacturer_assistance",
+    "controlling_record_ids": [
+      "APL-TR-002",
+      "TRIAL-TR-002-1"
+    ],
+    "exception_record_ids": [
+      "TRIAL-TR-002-2",
+      "household_income_proof"
+    ],
+    "precedence_record_order": [
+      "APL-TR-002",
+      "TRIAL-TR-002-1",
+      "TRIAL-TR-002-2",
+      "household_income_proof"
+    ]
   }
 }

@@ -1,239 +1,165 @@
 {
-  "schema_name": "restricted_alcohol_license_review",
-  "schema_version": "1.0",
-  "output_contract": {
-    "top_level_required_keys": [
-      "application_id",
-      "premises_id",
-      "review_month",
-      "recommendation",
-      "risk_assessment",
-      "verification_gaps",
-      "inspection_controls",
-      "review_month_comparison"
-    ],
-    "field_definitions": {
-      "application_id": {
-        "type": "string",
-        "description": "Target alcohol application ID."
-      },
-      "premises_id": {
-        "type": "string",
-        "description": "Target premises ID."
-      },
-      "review_month": {
-        "type": "string",
-        "format": "YYYY-MM"
-      },
-      "recommendation": {
+  "task_id": "train_002",
+  "response_file": "answer.json",
+  "description": "Restricted liquor license staff package for one application and location.",
+  "required_top_level_keys": [
+    "application_id",
+    "recommended_posture",
+    "same_premises_basis_applies",
+    "covered_risk_codes",
+    "verification_gap_codes",
+    "standard_obligation_codes",
+    "location_specific_control_codes",
+    "first_90_day_plan",
+    "escalation_trigger_codes"
+  ],
+  "schema": {
+    "application_id": {
+      "type": "string",
+      "required": true,
+      "value_source": "Target application id from the prompt."
+    },
+    "recommended_posture": {
+      "type": "enum",
+      "required": true,
+      "allowed_values": [
+        "issue_restricted",
+        "request_follow_up",
+        "deny"
+      ]
+    },
+    "same_premises_basis_applies": {
+      "type": "boolean",
+      "required": true
+    },
+    "covered_risk_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
         "type": "enum",
         "allowed_values": [
-          "ISSUE_RESTRICTED",
-          "REQUEST_FOLLOWUP",
-          "DENY"
+          "AFTER_HOURS",
+          "ASSAULT",
+          "FOOD_SERVICE_GAP",
+          "MINOR_SALE",
+          "NOISE",
+          "PUBLIC_SAFETY",
+          "SALE_TO_MINOR",
+          "SAME_PREMISES",
+          "TAX_HOLD"
         ]
       },
-      "risk_assessment": {
-        "type": "object",
-        "required_keys": [
-          "same_premises_basis",
-          "prior_incident_level",
-          "incident_count",
-          "unresolved_incident_count",
-          "high_severity_incident_count",
-          "settlement_posture",
-          "control_coverage",
-          "overall_risk"
-        ],
-        "fields": {
-          "same_premises_basis": {
-            "type": "enum",
-            "allowed_values": [
-              "NONE",
-              "PRIOR_SETTLEMENT_AT_ADDRESS",
-              "SAME_ADDRESS_OVERLAP"
-            ]
-          },
-          "prior_incident_level": {
-            "type": "enum",
-            "allowed_values": [
-              "NONE",
-              "LOW",
-              "MODERATE",
-              "HIGH"
-            ]
-          },
-          "incident_count": {
-            "type": "integer",
-            "units": "incidents"
-          },
-          "unresolved_incident_count": {
-            "type": "integer",
-            "units": "incidents with pending or blank disposition"
-          },
-          "high_severity_incident_count": {
-            "type": "integer",
-            "units": "incidents"
-          },
-          "settlement_posture": {
-            "type": "enum",
-            "allowed_values": [
-              "NONE",
-              "PRIOR_WARNING_WITH_CONTROLS",
-              "PRIOR_RESTRICTED_OR_DENIAL",
-              "CURRENT_SETTLEMENT"
-            ]
-          },
-          "control_coverage": {
-            "type": "enum",
-            "allowed_values": [
-              "ADEQUATE_LOCATION_SPECIFIC",
-              "STANDARD_ONLY",
-              "NO_CONTROLS"
-            ]
-          },
-          "overall_risk": {
-            "type": "enum",
-            "allowed_values": [
-              "LOW",
-              "MODERATE",
-              "ELEVATED",
-              "SEVERE"
-            ]
-          }
-        }
-      },
-      "verification_gaps": {
-        "type": "list",
-        "item_type": "enum",
-        "order": "not significant",
+      "ordering": "Sort ascending by code and remove duplicates."
+    },
+    "verification_gap_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
+        "type": "enum",
         "allowed_values": [
-          "AGE_VERIFICATION_CONTROL_NOT_IN_CURRENT_RESTRICTIONS",
-          "LATE_NIGHT_SECURITY_CONTROL_NOT_IN_CURRENT_RESTRICTIONS",
-          "PENDING_POLICE_CALL_DISPOSITIONS",
-          "SECURITY_PLAN_LAPSE_DISPOSITION_MISSING",
-          "SETTLEMENT_TERMS_NOT_FOUND",
-          "NO_VERIFICATION_GAPS"
+          "CONTROL_SIGNAGE_CONFLICTING",
+          "CONTROL_SIGNAGE_CURRENT_MISSING",
+          "FLOOR_PLAN_CONFLICTING",
+          "FLOOR_PLAN_STALE",
+          "NEIGHBOR_NOTICE_MISSING",
+          "OPEN_INCIDENT_FOLLOW_UP",
+          "POLICE_MEMO_CONFLICTING",
+          "SITE_PHOTO_MISSING",
+          "TAX_CLEARANCE_MISSING"
         ]
       },
-      "inspection_controls": {
-        "type": "object",
-        "required_keys": [
-          "standard_obligations",
-          "location_specific_restrictions"
-        ],
-        "fields": {
-          "standard_obligations": {
-            "type": "list",
-            "order": "not significant; identify each item by control_code",
-            "item_required_keys": [
-              "control_code",
-              "source",
-              "evidence_required"
-            ],
-            "control_code_allowed_values": [
-              "FOOD_SERVICE",
-              "INCIDENT_REPORT",
-              "PUBLIC_RECORDS",
-              "RTL_DISPLAY",
-              "RTL_SALES",
-              "RTL_STAFF",
-              "TRAINING_STANDARD",
-              "F_COM_FOOD",
-              "F_COM_SERVER",
-              "F_COM_MINORS",
-              "TAVERN_AGE",
-              "TAVERN_HOURS",
-              "TAVERN_SECURITY",
-              "BREW_PRODUCTION",
-              "BREW_SAMPLES",
-              "BREW_TRAINING"
-            ],
-            "source_allowed_values": [
-              "LICENSE_TYPE_STANDARD",
-              "ALL_LICENSE_STANDARD",
-              "PROPOSED_STANDARD_OBLIGATION"
-            ],
-            "evidence_required_allowed_values": [
-              "menu and receipts",
-              "incident report log",
-              "records binder",
-              "photo evidence",
-              "sales audit",
-              "training roster",
-              "menu, invoices",
-              "inspection log",
-              "closing log",
-              "security plan",
-              "floor plan",
-              "sample log",
-              "permit roster"
-            ]
-          },
-          "location_specific_restrictions": {
-            "type": "list",
-            "order": "not significant; identify each item by control_code",
-            "item_required_keys": [
-              "control_code",
-              "status",
-              "evidence_required",
-              "first_90_day_focus"
-            ],
-            "control_code_allowed_values": [
-              "AGE_CHECK",
-              "NO_AFTER_MIDNIGHT_SERVICE",
-              "PATIO_LIMIT",
-              "SECURITY_LOG"
-            ],
-            "status_allowed_values": [
-              "CURRENT_PROPOSED",
-              "FOLLOWUP_REQUIRED_BEFORE_ISSUE",
-              "NOT_APPLICABLE"
-            ],
-            "evidence_required_allowed_values": [
-              "device audit",
-              "service log",
-              "patio closure log",
-              "weekly log"
-            ],
-            "first_90_day_focus_allowed_values": [
-              "DEVICE_AUDIT",
-              "SERVICE_LOG_REVIEW",
-              "PATIO_CLOSURE_LOG_REVIEW",
-              "WEEKLY_LOG_REVIEW"
-            ]
-          }
-        }
+      "ordering": "Sort ascending by code and remove duplicates."
+    },
+    "standard_obligation_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "CCTV",
+          "DELIVERY",
+          "FOOD_SERVICE",
+          "HOURS",
+          "ID_CHECK",
+          "NOISE",
+          "PATIO",
+          "SECURITY"
+        ]
       },
-      "review_month_comparison": {
+      "ordering": "Sort ascending by code and remove duplicates."
+    },
+    "location_specific_control_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "CCTV",
+          "DELIVERY",
+          "FOOD_SERVICE",
+          "HOURS",
+          "ID_CHECK",
+          "NOISE",
+          "PATIO",
+          "SECURITY"
+        ]
+      },
+      "ordering": "Sort ascending by code and remove duplicates."
+    },
+    "first_90_day_plan": {
+      "type": "array",
+      "required": true,
+      "ordering": "Sort ascending by check_code and remove duplicate check_code/timing pairs.",
+      "items": {
         "type": "object",
         "required_keys": [
-          "review_month_application_count",
-          "restricted_reviews_with_location_specific_controls_count",
-          "target_current_location_specific_control_count",
-          "target_has_location_specific_controls",
-          "application_ids_with_location_specific_controls"
+          "check_code",
+          "timing"
         ],
-        "fields": {
-          "review_month_application_count": {
-            "type": "integer"
+        "properties": {
+          "check_code": {
+            "type": "enum",
+            "allowed_values": [
+              "after_hours_visit",
+              "control_signage_recheck",
+              "food_service_check",
+              "id_check_observation",
+              "noise_log_review",
+              "patio_boundary_check",
+              "police_memo_follow_up",
+              "security_cctv_walkthrough",
+              "tax_clearance_check"
+            ]
           },
-          "restricted_reviews_with_location_specific_controls_count": {
-            "type": "integer"
-          },
-          "target_current_location_specific_control_count": {
-            "type": "integer"
-          },
-          "target_has_location_specific_controls": {
-            "type": "boolean"
-          },
-          "application_ids_with_location_specific_controls": {
-            "type": "list",
-            "item_type": "string",
-            "order": "not significant"
+          "timing": {
+            "type": "enum",
+            "allowed_values": [
+              "first_30_days",
+              "days_31_60",
+              "days_61_90"
+            ]
           }
         }
       }
+    },
+    "escalation_trigger_codes": {
+      "type": "array",
+      "required": true,
+      "items": {
+        "type": "enum",
+        "allowed_values": [
+          "AFTER_HOURS_VIOLATION",
+          "BOARD_ORDER_CONFLICT",
+          "CONTROL_SIGNAGE_NOT_VERIFIED",
+          "MAJOR_INCIDENT_REPORTED",
+          "REFERRED_MINOR_SALE_UNRESOLVED",
+          "SECURITY_CCTV_CONTROL_FAILURE",
+          "TAX_HOLD_REOPENED"
+        ]
+      },
+      "ordering": "Sort ascending by code and remove duplicates."
     }
-  }
+  },
+  "numeric_precision": "No numeric scored fields are required for this task.",
+  "date_format": "YYYY-MM-DD when dates are used inside any optional unscored fields."
 }

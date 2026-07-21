@@ -1,93 +1,113 @@
-# Train 001 Notes - M-CRN-041 First Rolling Production Gap Review
+# train_001 Notes
 
-## English Audit Notes
+## English
 
-Lineage:
-- Scenario source: `SCN_017_white_collar_investigation_production_review`.
-- Task group: `task_group_017`, operation family "Production/category gap review".
-- Matter fixture: `M-CRN-041`, Crownpoint Neurodevices Market Integrity Inquiry.
+### Data and source lineage
 
-Task definition:
-- The solver acts for the production team before an SEC status call.
-- The solver must inspect shared API records and a small partner request payload, then return only structured JSON.
-- The task asks for materially deficient first rolling production categories, priority issues, disclosure need, and remediation actions.
-- Solver-visible prompt and payload files are English-only and avoid SOP checklists, answers, and scoring weights.
+This task belongs to `task_group_017`, scenario `SCN_017_white_collar_investigation_production_review`. It is anchored mainly in source example `E001` and also uses recurring issue types from `E002` and `E003`: production gap analysis, preservation loss, privilege-log defects, custodian-source gaps, and responsiveness coding errors.
 
-Material map:
-- `matters`: `M-CRN-041` identifies SEC Enforcement, subpoena date `2024-03-14`, hold date `2024-03-15`, deadline `2024-08-30`, and regulator notice flag true.
-- `subpoena_categories`: relevant scored categories are `CRN-03`, `CRN-04`, `CRN-05`, and `CRN-06`; noisy comparator categories `CR-N001` onward are not part of the standard answer.
-- `collection_events`: `CE-0001` records the unavailable G. Weller iPhone, factory reset six days after subpoena, with Signal and WhatsApp unavailable; `CE-0002` records collection of the former QA director mailbox but notes the miscoding.
-- `production_logs`: `PL-0001` records the miscoded testing-accuracy email for `CRN-03`; `PL-0002` records 4,232 privileged-coded records, 1,847 logged, and 2,385 unlogged for `CRN-04`; `PL-0003` records 1,247 withheld and zero produced for `CRN-06`.
-- `privilege_logs`: `PV-0001` supports the `CRN-04` privilege-log gap; `PV-0002` flags over-designation risk for the counsel communications category.
-- `qc_events`: `QC-0001` identifies one miscoded complaint/testing-accuracy item and points to broader complaints category treatment.
-- `custodians`: `C-GW-014` is G. Weller with the personal phone/Signal/WhatsApp gap; `C-QA-027` is R. Sen, former QA director, with the testing-accuracy email miscoding.
-- `documents`: `DOC-CRN-TEST-ACC-001` is the former QA director email about testing-accuracy concerns, coded non-responsive and not produced.
-- `input/payloads/partner_request.json`: gives only the realistic assignment context and output expectations, not answer facts.
+The formal task is the Sentinel Medical first rolling production gap analysis for matter `MTR-SENTINEL-GJ`. Solver-visible inputs are `input/prompt.txt`, `input/payloads/request_context.json`, and `input/payloads/answer_template.json`. The business evidence is intended to be discovered through the shared Investigation Review Hub at `<TASK_ENV_BASE_URL>`, not through local environment files.
 
-Solution and evaluation basis:
-- `PI-CRN-PERSONAL-DEVICE`: `CRN-05` is blocked because the personal phone was factory reset after subpoena/hold and Signal/WhatsApp are unavailable. The answer marks this critical, post-hold, notice-required, with regulator notice plus supplemental collection, forensic follow-up, hold refresh, and custodian declaration.
-- `PI-CRN-QA-MISCODE`: `CRN-03` needs supplemental production because the testing-accuracy concern email was collected but miscoded non-responsive under a narrow complaints label. The answer ties `CE-0002`, `PL-0001`, `QC-0001`, and `DOC-CRN-TEST-ACC-001`.
-- `PI-CRN-PRIV-UNLOGGED`: `CRN-04` has a privilege protocol defect. The controlling counts are withheld/privileged-coded `4232`, logged `1847`, and unlogged `2385`.
-- `PI-CRN-COUNSEL-OVERBROAD`: `CRN-06` has an overbroad counsel-communications withholding issue because 1,247 records are withheld and zero are produced.
-- The affected category set is exactly `CRN-03`, `CRN-04`, `CRN-05`, and `CRN-06`.
-- Disclosure is required because of the post-hold personal-channel loss and the privilege-log production defect. The next-action ranking puts regulator notice first, then source remediation, QC reprocessing, privilege-log supplement, and over-designation review.
-- The evaluator uses 8 exact-match scoring points, raw weights in `{1,2,3}`, and emits `score` plus `points`. Self-check against `output/answer.json` returns `score: 1.0`.
+The hidden construction facts used for the standard answer are the injected environment records for `MTR-SENTINEL-GJ`:
 
-Transfer design:
-- This train task teaches that subpoena category scope controls over narrower review-guide labels.
-- It teaches that missing personal devices and encrypted chat channels are category-impact issues and may require disclosure.
-- It teaches privilege-log gap calculation by comparing privileged/withheld totals to logged totals.
-- It teaches that a category with all records withheld and none produced can be an over-designation risk even when labeled counsel communications.
-- It transfers to later test tasks by preserving the same issue taxonomy, category mapping, controlled actions, and exact count discipline while changing matter IDs and facts.
+- `SRC-SENT-ALDEN-PHONE`: Nora Alden's personal iPhone was erased on 2025-02-04 after the 2025-01-27 subpoena, status `lost`, affecting `R15` and `R09`.
+- `DOC-SENT-ALDEN-DEALER-ESC`: dealer complaint email dated 2024-10-18, responsive to `R09`, coded nonresponsive and not produced.
+- `QC-SENT-R09-NR`: QC finding for one complaint email miscoded nonresponsive for `R09`, severity high.
+- `PRIV-SENT-LOG-GAP`: `R11`, 3180 documents withheld, 1410 logged, so 1770 withheld documents are unlogged and the privilege log is incomplete.
+- `SRC-SENT-BOARD-SP`: board SharePoint site not collected, affecting `R07`, `R08`, and `R09`.
 
-Construction record:
-- Files created only under `task_group/task_group_017/train_tasks/001/`.
-- No shared environment files, seed scenario files, other tasks, scratch files, or group metadata were modified.
-- The answer schema, expected answer, and evaluator were built from generated API records and the group design brief.
-- The evaluator accepts a prediction path as the first argument or through `PREDICTION`, defaults to the task answer, and normalizes list ordering while requiring exact scalar values.
+### Task definition and material map
 
-## 中文审计说明
+The prompt asks for a structured legal operations escalation packet rather than a prose memo. The expected answer is JSON with `matter_id`, `critical_findings`, `category_statuses`, `metrics`, and `priority_actions`. The template provides enum choices and ordering rules but does not disclose the answers, endpoint call sequence, scoring weights, or hidden SOP.
 
-血缘来源：
-- 场景来源：`SCN_017_white_collar_investigation_production_review`。
-- 任务组：`task_group_017`，操作族为“生产/类别缺口审查”。
-- 事项夹具：`M-CRN-041`，Crownpoint Neurodevices Market Integrity Inquiry。
+The review hub tables and endpoints supply the matter, request categories, production statistics, source status records, document metadata, privilege summary, QC findings, and remediation candidates. The task-local `request_context.json` only scopes the request to Sentinel Medical and the first rolling production workstream.
 
-任务定义：
-- 解题方扮演 SEC 状态会前的生产审查团队成员。
-- 解题方需要查看共享 API 记录和一个小型合伙人请求负载，并且只返回结构化 JSON。
-- 任务要求识别第一轮生产中存在实质缺陷的传票类别、优先问题、是否需要披露以及补救动作。
-- 面向解题方的 prompt 和 payload 仅使用英文，不包含 SOP 清单、答案或评分权重。
+### Solution and evaluation basis
 
-材料映射：
-- `matters`：`M-CRN-041` 显示 SEC Enforcement，传票日期 `2024-03-14`，保全日期 `2024-03-15`，截止日期 `2024-08-30`，并有监管通知标记。
-- `subpoena_categories`：评分相关类别是 `CRN-03`、`CRN-04`、`CRN-05`、`CRN-06`；`CR-N001` 之后的噪声类别不属于标准答案。
-- `collection_events`：`CE-0001` 记录 G. Weller iPhone 不可用，传票后六天恢复出厂设置，Signal 和 WhatsApp 不可用；`CE-0002` 记录前 QA 主管邮箱已收集但存在编码错误。
-- `production_logs`：`PL-0001` 记录 `CRN-03` 测试准确性邮件被误编码；`PL-0002` 记录 `CRN-04` 有 4,232 条特权编码记录、1,847 条已登录、2,385 条未登录；`PL-0003` 记录 `CRN-06` 有 1,247 条扣留且零生产。
-- `privilege_logs`：`PV-0001` 支撑 `CRN-04` 特权日志缺口；`PV-0002` 标记律师通信类别存在过度指定风险。
-- `qc_events`：`QC-0001` 指出一条投诉/测试准确性项目被误编码，并提示投诉类别应按更宽范围处理。
-- `custodians`：`C-GW-014` 是 G. Weller，涉及个人手机、Signal、WhatsApp 缺口；`C-QA-027` 是前 QA 主管 R. Sen，涉及测试准确性邮件误编码。
-- `documents`：`DOC-CRN-TEST-ACC-001` 是前 QA 主管关于测试准确性问题的邮件，被编码为 non-responsive 且未生产。
-- `input/payloads/partner_request.json`：只提供真实工作场景和输出要求，不提供答案事实。
+The standard answer has four root findings. The phone wipe is a preservation failure because it occurred after the subpoena and the source status is lost; it affects the personal-device and complaint communications categories `R15` and `R09`. The dealer complaint email and matching QC row create a responsiveness miscoding gap for `R09`; the document must be recoded and produced. The privilege-log issue is a protocol defect for `R11`: 3180 withheld minus 1410 logged equals 1770 unlogged documents. The board SharePoint source is a collection gap affecting `R07`, `R08`, and `R09`.
 
-解答与评估依据：
-- `PI-CRN-PERSONAL-DEVICE`：`CRN-05` 被阻塞，因为个人手机在传票/保全后被恢复出厂设置，Signal 和 WhatsApp 不可用。标准答案将其列为 critical、post-hold、需要通知，并要求监管通知、补充收集、取证跟进、保全刷新和保管人声明。
-- `PI-CRN-QA-MISCODE`：`CRN-03` 需要补充生产，因为测试准确性关注邮件已经收集，但被过窄投诉标签误编码为非响应。标准答案关联 `CE-0002`、`PL-0001`、`QC-0001` 和 `DOC-CRN-TEST-ACC-001`。
-- `PI-CRN-PRIV-UNLOGGED`：`CRN-04` 是特权协议缺陷。控制性计数为扣留/特权编码 `4232`、已登录 `1847`、未登录 `2385`。
-- `PI-CRN-COUNSEL-OVERBROAD`：`CRN-06` 是律师通信过度扣留问题，因为 1,247 条记录全部扣留且零生产。
-- 受影响类别集合精确为 `CRN-03`、`CRN-04`、`CRN-05`、`CRN-06`。
-- 由于保全后的个人通信来源损失以及特权日志生产缺陷，需要披露。下一步动作排序为监管通知、来源补救、QC 重处理、特权日志补充、过度指定审查。
-- 评估器有 8 个精确匹配评分点，原始权重均在 `{1,2,3}` 中，并输出 `score` 和 `points`。对 `output/answer.json` 自检返回 `score: 1.0`。
+The seven whole-point scoring goals are:
 
-迁移设计：
-- 本训练任务教会解题方：传票类别范围优先于较窄的内部审查指南标签。
-- 本任务教会：缺失个人设备和加密聊天渠道会影响类别完整性，并可能需要披露。
-- 本任务教会：特权日志缺口应通过比较特权/扣留总数与已登录总数计算。
-- 本任务教会：即便类别名是律师通信，如果所有记录扣留且没有任何生产，也可能存在过度指定风险。
-- 这些规则会迁移到后续测试任务，但测试会更换事项 ID、类别名称和具体事实。
+- `P1_phone_preservation`, weight 3: phone preservation failure, lost status, `R09/R15` category impacts, and a disclosure or forensic action.
+- `P2_r09_miscoded_complaint`, weight 3: complaint document and QC reference, `R09`, not produced impact, one document, and recode-and-produce action.
+- `P3_privilege_log_gap`, weight 3: `R11`, 3180 withheld, 1410 logged, 1770 unlogged, and protocol noncompliance.
+- `P4_board_sharepoint_gap`, weight 2: uncollected board SharePoint source, `R07/R08/R09`, source-missing impact, and collect-source action.
+- `P5_category_status_matrix`, weight 2: correct category status rows for `R07`, `R08`, `R09`, `R11`, and `R15`.
+- `P6_metrics_and_readiness`, weight 1: correct rollup metrics and `rolling_production_ready: false`.
+- `P7_priority_action_set`, weight 3: required action set with action type, owner, target IDs, category impacts, and unique priority ranks.
 
-构建记录：
-- 文件只创建在 `task_group/task_group_017/train_tasks/001/` 下。
-- 未修改共享环境、种子场景、其他任务、scratch 文件或任务组元数据。
-- 答案 schema、标准答案和评估器均来自生成的 API 记录和任务组设计说明。
-- 评估器接受第一个命令行参数或 `PREDICTION` 环境变量作为预测路径，默认使用本任务答案；它会归一化列表顺序，但标量值必须精确匹配。
+The evaluator is deterministic and structured. It normalizes list ordering and string casing for enums and IDs, but each scoring point is all-or-nothing. It does not evaluate prose quality.
+
+Likely model pitfalls include treating the phone wipe as a generic collection note rather than a post-subpoena preservation problem, finding the dealer complaint email but missing that it was coded nonresponsive and not produced, using the privilege `logged_count` as the gap rather than calculating 3180 minus 1410, and listing the board SharePoint source without mapping it to all three impacted categories.
+
+### Transfer design
+
+As a train task, this is not a tutorial. It is a solved example from which a fewshot skill generator can infer recurring task-group conventions: use the review hub rather than local files, map source and document defects to request categories, distinguish preservation failure from ordinary collection incompleteness, treat responsive nonresponsive-coded documents as production gaps, compute privilege-log arithmetic explicitly, and express remediation as controlled action-owner-target JSON.
+
+The transfer value is intended for later unseen tasks, especially `test_001`, `test_004`, and `test_005`. Those tasks reuse the same business reasoning but change matter IDs, category codes, custodians, source systems, counts, and document facts.
+
+### Construction record
+
+Author: Task-builder 01, Codex.
+
+Created: 2026-07-18.
+
+Updated: 2026-07-18.
+
+Major changes: Created the formal `train_001` task folder with solver input, answer template, request context payload, standard answer, bilingual notes, and deterministic evaluator.
+
+## 中文
+
+### 数据与来源
+
+本任务属于 `task_group_017`，场景为 `SCN_017_white_collar_investigation_production_review`。它主要锚定源示例 `E001`，同时复用 `E002` 和 `E003` 中的常见问题类型：生产缺口分析、保全损失、特权日志缺陷、custodian source 缺口和 responsiveness 编码错误。
+
+正式任务是 Sentinel Medical 在 `MTR-SENTINEL-GJ` 事项中的第一轮 rolling production gap analysis。求解者可见材料包括 `input/prompt.txt`、`input/payloads/request_context.json` 和 `input/payloads/answer_template.json`。业务证据应通过 `<TASK_ENV_BASE_URL>` 上的共享 Investigation Review Hub 查询，而不是读取本地环境文件。
+
+标准答案使用的隐藏构造事实如下：
+
+- `SRC-SENT-ALDEN-PHONE`：Nora Alden 的个人 iPhone 在 2025-02-04 被擦除，晚于 2025-01-27 的 subpoena；source status 为 `lost`，影响 `R15` 和 `R09`。
+- `DOC-SENT-ALDEN-DEALER-ESC`：2024-10-18 的 dealer complaint email，响应 `R09`，但被编码为 nonresponsive，且未生产。
+- `QC-SENT-R09-NR`：QC 记录显示一封 `R09` complaint email 被错误编码为 nonresponsive，严重性为 high。
+- `PRIV-SENT-LOG-GAP`：`R11` 下 3180 份文件被 withheld，只有 1410 份进入 privilege log，因此有 1770 份 withheld 文件未记录，privilege log 不完整。
+- `SRC-SENT-BOARD-SP`：board SharePoint site 未收集，影响 `R07`、`R08` 和 `R09`。
+
+### 任务定义与材料映射
+
+提示要求输出结构化的 legal operations escalation packet，而不是普通备忘录。预期答案是 JSON，包含 `matter_id`、`critical_findings`、`category_statuses`、`metrics` 和 `priority_actions`。模板给出 enum 选项和排序规则，但不暴露答案、端点调用顺序、评分权重或隐藏 SOP。
+
+Review Hub 的表和端点提供 matter、request categories、production statistics、source status、document metadata、privilege summary、QC findings 和 remediation candidates。任务本地的 `request_context.json` 只用于限定 Sentinel Medical 和第一轮 production 工作流。
+
+### 解法与评估依据
+
+标准答案包含四个根问题。手机擦除发生在 subpoena 之后，且 source status 为 lost，因此属于 preservation failure，影响个人设备和 complaint communications 类别 `R15` 和 `R09`。Dealer complaint email 与对应 QC 记录构成 `R09` 的 responsiveness miscoding gap，需要 recode and produce。Privilege log 问题是 `R11` 的 protocol defect：3180 withheld 减去 1410 logged 等于 1770 unlogged。Board SharePoint source 未收集，构成 collection gap，影响 `R07`、`R08` 和 `R09`。
+
+七个整点评分目标为：
+
+- `P1_phone_preservation`，权重 3：手机保全失败、lost 状态、`R09/R15` 类别影响，以及 disclosure 或 forensic 行动。
+- `P2_r09_miscoded_complaint`，权重 3：complaint document 和 QC reference、`R09`、not produced 影响、一份文件，以及 recode-and-produce 行动。
+- `P3_privilege_log_gap`，权重 3：`R11`、3180 withheld、1410 logged、1770 unlogged，以及 protocol noncompliance。
+- `P4_board_sharepoint_gap`，权重 2：未收集的 board SharePoint source、`R07/R08/R09`、source-missing 影响，以及 collect-source 行动。
+- `P5_category_status_matrix`，权重 2：`R07`、`R08`、`R09`、`R11` 和 `R15` 的正确 category status rows。
+- `P6_metrics_and_readiness`，权重 1：正确汇总指标和 `rolling_production_ready: false`。
+- `P7_priority_action_set`，权重 3：必要行动集合，包括 action type、owner、target IDs、category impacts 和唯一 priority ranks。
+
+评估器是确定性的结构化评分。它会规范化列表顺序以及 enum 和 ID 的大小写，但每个评分点只能全得或不得分。评估器不评价自由文本质量。
+
+模型容易失败的地方包括：把手机擦除当作普通 collection note，而不是 subpoena 后的保全问题；找到 dealer complaint email 但遗漏它被编码为 nonresponsive 且未生产；把 privilege 的 `logged_count` 误当作缺口，而不是计算 3180 减 1410；列出 board SharePoint source 但没有映射到全部三个受影响类别。
+
+### 迁移设计
+
+作为训练任务，本任务不是教程。fewshot skill generator 可以通过该真实任务和标准答案推断出 task group 的可迁移约定：使用 review hub 而不是本地文件；把 source 和 document defect 映射到 request categories；区分 preservation failure 和普通 collection incompleteness；把 responsive 但 nonresponsive-coded 的文件视为生产缺口；显式计算 privilege-log arithmetic；并用受控的 action-owner-target JSON 表达补救措施。
+
+迁移价值主要面向后续未见任务，尤其是 `test_001`、`test_004` 和 `test_005`。这些任务复用相同业务推理，但会改变 matter IDs、category codes、custodians、source systems、counts 和 document facts。
+
+### 构造记录
+
+作者：Task-builder 01，Codex。
+
+创建日期：2026-07-18。
+
+更新日期：2026-07-18。
+
+主要变更：创建完整的 `train_001` 正式任务目录，包括求解者输入、答案模板、请求上下文 payload、标准答案、双语 notes 和确定性评估器。

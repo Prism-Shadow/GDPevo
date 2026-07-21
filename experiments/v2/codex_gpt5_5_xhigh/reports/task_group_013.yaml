@@ -1,0 +1,379 @@
+task_group_id: task_group_013
+scenario_id: SCN_013_healthcare_patient_intake_transfer
+model: gpt-5.5, xhigh
+harness: codex
+evolve:
+  pricing:
+    basis: standard_api_text_token_equivalent
+    uncached_input_usd_per_million: 5.0
+    cached_input_usd_per_million: 0.5
+    output_usd_per_million: 30.0
+  conditions:
+    fewshot:
+      attempts:
+        attempt_01:
+          input_tokens: 1430960
+          cached_input_tokens: 1321088
+          output_tokens: 19986
+          total_tokens: 1450946
+          cost_usd: 1.809484
+        attempt_02:
+          input_tokens: 1401692
+          cached_input_tokens: 1276800
+          output_tokens: 19071
+          total_tokens: 1420763
+          cost_usd: 1.83499
+        attempt_03:
+          input_tokens: 1009630
+          cached_input_tokens: 914816
+          output_tokens: 11891
+          total_tokens: 1021521
+          cost_usd: 1.288208
+      summary:
+        input_tokens_avg_3: 1280760.67
+        cached_input_tokens_avg_3: 1170901.33
+        output_tokens_avg_3: 16982.67
+        cost_usd_avg_3: 1.64422733
+    self:
+      attempts:
+        attempt_01:
+          input_tokens: 1684015
+          cached_input_tokens: 1555456
+          output_tokens: 18514
+          total_tokens: 1702529
+          cost_usd: 1.975943
+        attempt_02:
+          input_tokens: 2009319
+          cached_input_tokens: 1869056
+          output_tokens: 18696
+          total_tokens: 2028015
+          cost_usd: 2.196723
+        attempt_03:
+          input_tokens: 1470590
+          cached_input_tokens: 1349504
+          output_tokens: 17077
+          total_tokens: 1487667
+          cost_usd: 1.792492
+      summary:
+        input_tokens_avg_3: 1721308.0
+        cached_input_tokens_avg_3: 1591338.67
+        output_tokens_avg_3: 18095.67
+        cost_usd_avg_3: 1.988386
+    reflect-3:
+      attempts:
+        attempt_01:
+          input_tokens: 3119285
+          cached_input_tokens: 2971904
+          output_tokens: 42651
+          total_tokens: 3161936
+          cost_usd: 3.502387
+        attempt_02:
+          input_tokens: 3199296
+          cached_input_tokens: 2918016
+          output_tokens: 47629
+          total_tokens: 3246925
+          cost_usd: 4.294278
+        attempt_03:
+          input_tokens: 5162142
+          cached_input_tokens: 4979072
+          output_tokens: 51719
+          total_tokens: 5213861
+          cost_usd: 4.956456
+      summary:
+        input_tokens_avg_3: 3826907.67
+        cached_input_tokens_avg_3: 3622997.33
+        output_tokens_avg_3: 47333.0
+        cost_usd_avg_3: 4.25104033
+conditions:
+  base:
+    overall_acc_at_3: 0.4377
+    overall_std_at_3: 0.0632
+    efficiency:
+      cached_input_tokens_avg_3: 826743.47
+      input_tokens_avg_3: 919797.13
+      output_tokens_avg_3: 19729.07
+      rounds_avg_3: 15.13
+      tool_calls_avg_3: 40.8
+    tasks:
+      test_001:
+        scores:
+        - 0.3529411765
+        - 0.3529411765
+        - 0.4705882353
+        acc_at_3: 0.3922
+        std_at_3: 0.0555
+        cached_input_tokens_avg_3: 773546.67
+        input_tokens_avg_3: 867559.0
+        output_tokens_avg_3: 21571.0
+        rounds_avg_3: 14.33
+        tool_calls_avg_3: 43.67
+      test_002:
+        scores:
+        - 0.5
+        - 0.5
+        - 0.5
+        acc_at_3: 0.5
+        std_at_3: 0.0
+        cached_input_tokens_avg_3: 719914.67
+        input_tokens_avg_3: 810639.33
+        output_tokens_avg_3: 18599.33
+        rounds_avg_3: 13.67
+        tool_calls_avg_3: 42.33
+      test_003:
+        scores:
+        - 0.4375
+        - 0.4375
+        - 0.4375
+        acc_at_3: 0.4375
+        std_at_3: 0.0
+        cached_input_tokens_avg_3: 974250.67
+        input_tokens_avg_3: 1086384.0
+        output_tokens_avg_3: 19332.67
+        rounds_avg_3: 19.33
+        tool_calls_avg_3: 42.67
+      test_004:
+        scores:
+        - 0.6428571429
+        - 0.3571428571
+        - 0.6428571429
+        acc_at_3: 0.5476
+        std_at_3: 0.1347
+        cached_input_tokens_avg_3: 449749.33
+        input_tokens_avg_3: 505785.33
+        output_tokens_avg_3: 17100.0
+        rounds_avg_3: 11.67
+        tool_calls_avg_3: 23.33
+      test_005:
+        scores:
+        - 0.4
+        - 0.4
+        - 0.1333333333
+        acc_at_3: 0.3111
+        std_at_3: 0.1257
+        cached_input_tokens_avg_3: 1216256.0
+        input_tokens_avg_3: 1328618.0
+        output_tokens_avg_3: 22042.33
+        rounds_avg_3: 16.67
+        tool_calls_avg_3: 52.0
+  fewshot:
+    skill_dirs:
+      attempt_01: ../skills/fewshot/fewshot_attempt_01
+      attempt_02: ../skills/fewshot/fewshot_attempt_02
+      attempt_03: ../skills/fewshot/fewshot_attempt_03
+    overall_acc_at_3: 0.5383
+    overall_std_at_3: 0.067
+    efficiency:
+      cached_input_tokens_avg_3: 565888.0
+      input_tokens_avg_3: 631148.67
+      output_tokens_avg_3: 15911.93
+      rounds_avg_3: 12.6
+      tool_calls_avg_3: 31.53
+    tasks:
+      test_001:
+        scores:
+        - 0.3529411765
+        - 0.3529411765
+        - 0.4705882353
+        acc_at_3: 0.3922
+        std_at_3: 0.0555
+        cached_input_tokens_avg_3: 360832.0
+        input_tokens_avg_3: 408656.67
+        output_tokens_avg_3: 11932.33
+        rounds_avg_3: 10.33
+        tool_calls_avg_3: 27.33
+      test_002:
+        scores:
+        - 0.6111111111
+        - 0.6666666667
+        - 0.5
+        acc_at_3: 0.5926
+        std_at_3: 0.0693
+        cached_input_tokens_avg_3: 648277.33
+        input_tokens_avg_3: 722297.0
+        output_tokens_avg_3: 21475.0
+        rounds_avg_3: 14.67
+        tool_calls_avg_3: 34.33
+      test_003:
+        scores:
+        - 1.0
+        - 1.0
+        - 0.6875
+        acc_at_3: 0.8958
+        std_at_3: 0.1473
+        cached_input_tokens_avg_3: 565802.67
+        input_tokens_avg_3: 626864.0
+        output_tokens_avg_3: 10725.33
+        rounds_avg_3: 11.33
+        tool_calls_avg_3: 27.67
+      test_004:
+        scores:
+        - 0.5
+        - 0.5
+        - 0.5
+        acc_at_3: 0.5
+        std_at_3: 0.0
+        cached_input_tokens_avg_3: 532992.0
+        input_tokens_avg_3: 595821.67
+        output_tokens_avg_3: 17343.33
+        rounds_avg_3: 12.67
+        tool_calls_avg_3: 27.33
+      test_005:
+        scores:
+        - 0.2666666667
+        - 0.4
+        - 0.2666666667
+        acc_at_3: 0.3111
+        std_at_3: 0.0629
+        cached_input_tokens_avg_3: 721536.0
+        input_tokens_avg_3: 802104.0
+        output_tokens_avg_3: 18083.67
+        rounds_avg_3: 14.0
+        tool_calls_avg_3: 41.0
+  self:
+    skill_dirs:
+      attempt_01: ../skills/self/self_attempt_01
+      attempt_02: ../skills/self/self_attempt_02
+      attempt_03: ../skills/self/self_attempt_03
+    overall_acc_at_3: 0.4533
+    overall_std_at_3: 0.1048
+    efficiency:
+      cached_input_tokens_avg_3: 486434.13
+      input_tokens_avg_3: 547404.0
+      output_tokens_avg_3: 16605.73
+      rounds_avg_3: 13.6
+      tool_calls_avg_3: 29.27
+    tasks:
+      test_001:
+        scores:
+        - 0.5294117647
+        - 0.2352941176
+        - 0.4705882353
+        acc_at_3: 0.4118
+        std_at_3: 0.1271
+        cached_input_tokens_avg_3: 491264.0
+        input_tokens_avg_3: 541038.67
+        output_tokens_avg_3: 14873.0
+        rounds_avg_3: 15.67
+        tool_calls_avg_3: 34.0
+      test_002:
+        scores:
+        - 0.4444444444
+        - 0.4444444444
+        - 0.5
+        acc_at_3: 0.463
+        std_at_3: 0.0262
+        cached_input_tokens_avg_3: 464810.67
+        input_tokens_avg_3: 534035.0
+        output_tokens_avg_3: 18884.33
+        rounds_avg_3: 13.67
+        tool_calls_avg_3: 25.0
+      test_003:
+        scores:
+        - 0.6875
+        - 0.4375
+        - 0.8125
+        acc_at_3: 0.6458
+        std_at_3: 0.1559
+        cached_input_tokens_avg_3: 474666.67
+        input_tokens_avg_3: 532909.33
+        output_tokens_avg_3: 12702.67
+        rounds_avg_3: 11.33
+        tool_calls_avg_3: 28.0
+      test_004:
+        scores:
+        - 0.5
+        - 0.4285714286
+        - 0.6428571429
+        acc_at_3: 0.5238
+        std_at_3: 0.0891
+        cached_input_tokens_avg_3: 388949.33
+        input_tokens_avg_3: 444558.33
+        output_tokens_avg_3: 18074.0
+        rounds_avg_3: 11.0
+        tool_calls_avg_3: 29.33
+      test_005:
+        scores:
+        - 0.1333333333
+        - 0.1333333333
+        - 0.4
+        acc_at_3: 0.2222
+        std_at_3: 0.1257
+        cached_input_tokens_avg_3: 612480.0
+        input_tokens_avg_3: 684478.67
+        output_tokens_avg_3: 18494.67
+        rounds_avg_3: 16.33
+        tool_calls_avg_3: 30.0
+  reflect-3:
+    skill_dirs:
+      attempt_01: ../skills/reflect-3/reflect-3_attempt_01
+      attempt_02: ../skills/reflect-3/reflect-3_attempt_02
+      attempt_03: ../skills/reflect-3/reflect-3_attempt_03
+    overall_acc_at_3: 0.4891
+    overall_std_at_3: 0.1297
+    efficiency:
+      cached_input_tokens_avg_3: 636219.73
+      input_tokens_avg_3: 715137.2
+      output_tokens_avg_3: 18119.0
+      rounds_avg_3: 13.4
+      tool_calls_avg_3: 35.73
+    tasks:
+      test_001:
+        scores:
+        - 0.4705882353
+        - 0.5294117647
+        - 0.4705882353
+        acc_at_3: 0.4902
+        std_at_3: 0.0277
+        cached_input_tokens_avg_3: 351829.33
+        input_tokens_avg_3: 412686.67
+        output_tokens_avg_3: 16151.67
+        rounds_avg_3: 12.0
+        tool_calls_avg_3: 33.33
+      test_002:
+        scores:
+        - 0.3333333333
+        - 0.3333333333
+        - 0.6111111111
+        acc_at_3: 0.4259
+        std_at_3: 0.1309
+        cached_input_tokens_avg_3: 839125.33
+        input_tokens_avg_3: 927366.67
+        output_tokens_avg_3: 23758.0
+        rounds_avg_3: 17.0
+        tool_calls_avg_3: 40.67
+      test_003:
+        scores:
+        - 0.4375
+        - 0.4375
+        - 0.8125
+        acc_at_3: 0.5625
+        std_at_3: 0.1768
+        cached_input_tokens_avg_3: 700672.0
+        input_tokens_avg_3: 786702.67
+        output_tokens_avg_3: 16678.67
+        rounds_avg_3: 14.0
+        tool_calls_avg_3: 38.0
+      test_004:
+        scores:
+        - 0.3571428571
+        - 0.5
+        - 0.6428571429
+        acc_at_3: 0.5
+        std_at_3: 0.1166
+        cached_input_tokens_avg_3: 394709.33
+        input_tokens_avg_3: 466804.67
+        output_tokens_avg_3: 15040.67
+        rounds_avg_3: 10.33
+        tool_calls_avg_3: 30.67
+      test_005:
+        scores:
+        - 0.2666666667
+        - 0.4
+        - 0.7333333333
+        acc_at_3: 0.4667
+        std_at_3: 0.1963
+        cached_input_tokens_avg_3: 894762.67
+        input_tokens_avg_3: 982125.33
+        output_tokens_avg_3: 18966.0
+        rounds_avg_3: 13.67
+        tool_calls_avg_3: 36.0

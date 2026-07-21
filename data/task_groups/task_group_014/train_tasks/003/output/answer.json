@@ -1,134 +1,65 @@
 {
-  "docket_id": "train_drug_batch",
-  "medication_cases": [
+  "claim_id": "CLAIM-TR-003",
+  "case_id": "CLAIM-TR-003",
+  "auth_number": "NPA-2404980",
+  "benchmark_source": "Northstar Commercial Imaging Schedule",
+  "benchmark_version": "2026Q2",
+  "stale_source_rejected": "Legacy Imaging Export",
+  "paid_total": 940.0,
+  "correct_allowed_total": 1175.0,
+  "recovery_amount": 235.0,
+  "lines": [
     {
-      "med_case_id": "MED00001",
-      "drug_name": "Remicade",
-      "member_plan_type": "Commercial",
-      "appeal": {
-        "eligibility_status": "appeal_incomplete",
-        "missing_policy_requirements": [
-          "tb_screen"
-        ],
-        "expedited_classification": "expedited_requested_needs_evidence",
-        "filing_deadline": "2025-06-02",
-        "deadline_status": "timely_received",
-        "next_step": "collect_tb_screen_then_submit"
-      },
-      "assistance": {
-        "program_id": "AP001",
-        "eligibility_status": "assistance_ineligible",
-        "blocking_reasons": [
-          "income_over_program_limit"
-        ],
-        "program_owner": "not_routed",
-        "form_name": "Remicade Access Enrollment",
-        "next_step": "no_manufacturer_route_income_over_limit"
-      },
-      "path_separation": "appeal_only"
+      "line_id": "CL-TR-003-1",
+      "cpt_code": "78452",
+      "modifier": "TC",
+      "units": 1,
+      "paid_amount": 608.0,
+      "correct_allowed_amount": 760.0,
+      "recovery_amount": 152.0,
+      "disposition": "correct_upward"
     },
     {
-      "med_case_id": "MED00002",
-      "drug_name": "Dupixent",
-      "member_plan_type": "Medicare Advantage",
-      "appeal": {
-        "eligibility_status": "appeal_incomplete",
-        "missing_policy_requirements": [
-          "topical_failure"
-        ],
-        "expedited_classification": "expedited_requested_needs_evidence",
-        "filing_deadline": "2025-06-07",
-        "deadline_status": "timely_received",
-        "next_step": "collect_topical_failure_then_submit"
-      },
-      "assistance": {
-        "program_id": "AP002",
-        "eligibility_status": "assistance_ineligible",
-        "blocking_reasons": [
-          "income_over_program_limit",
-          "commercial_insurance_required",
-          "government_plan_excluded",
-          "denial_letter_missing",
-          "assistance_consent_missing"
-        ],
-        "program_owner": "not_routed",
-        "form_name": "Dupixent MyWay Enrollment",
-        "next_step": "no_manufacturer_route_government_income_and_documents"
-      },
-      "path_separation": "appeal_only"
+      "line_id": "CL-TR-003-2",
+      "cpt_code": "A9500",
+      "modifier": null,
+      "units": 2,
+      "paid_amount": 288.0,
+      "correct_allowed_amount": 360.0,
+      "recovery_amount": 72.0,
+      "disposition": "correct_upward"
     },
     {
-      "med_case_id": "MED00003",
-      "drug_name": "Eliquis",
-      "member_plan_type": "Medicaid",
-      "appeal": {
-        "eligibility_status": "appeal_ready",
-        "missing_policy_requirements": [],
-        "expedited_classification": "expedited_accepted_72h",
-        "filing_deadline": "2025-06-12",
-        "deadline_status": "timely_received",
-        "next_step": "submit_expedited_appeal"
-      },
-      "assistance": {
-        "program_id": "AP003",
-        "eligibility_status": "assistance_ineligible",
-        "blocking_reasons": [
-          "commercial_insurance_required",
-          "government_plan_excluded"
-        ],
-        "program_owner": "not_routed",
-        "form_name": "Anticoagulant Support Form",
-        "next_step": "no_manufacturer_route_government_plan"
-      },
-      "path_separation": "appeal_only"
-    },
-    {
-      "med_case_id": "MED00004",
-      "drug_name": "Ozempic",
-      "member_plan_type": "Commercial",
-      "appeal": {
-        "eligibility_status": "appeal_incomplete",
-        "missing_policy_requirements": [
-          "step_therapy"
-        ],
-        "expedited_classification": "standard_30d",
-        "filing_deadline": "2025-06-17",
-        "deadline_status": "timely_received",
-        "next_step": "collect_metformin_trial_then_submit"
-      },
-      "assistance": {
-        "program_id": "AP004",
-        "eligibility_status": "assistance_ineligible",
-        "blocking_reasons": [
-          "denial_letter_missing",
-          "assistance_consent_missing"
-        ],
-        "program_owner": "manufacturer_assistance_team",
-        "form_name": "Diabetes Savings Support Form",
-        "next_step": "collect_denial_letter_and_consent"
-      },
-      "path_separation": "parallel_appeal_and_assistance"
+      "line_id": "CL-TR-003-3",
+      "cpt_code": "93016",
+      "modifier": null,
+      "units": 1,
+      "paid_amount": 44.0,
+      "correct_allowed_amount": 55.0,
+      "recovery_amount": 11.0,
+      "disposition": "correct_upward"
     }
   ],
-  "appeal_summary": {
-    "total_cases": 4,
-    "appeal_ready": 1,
-    "appeal_incomplete": 3,
-    "appeal_not_timely": 0,
-    "expedited_accepted_72h": 1,
-    "expedited_requested_needs_evidence": 2,
-    "standard_30d": 1,
-    "timely_received": 4
-  },
-  "assistance_summary": {
-    "total_cases": 4,
-    "assistance_eligible": 0,
-    "manufacturer_team_follow_up": 1,
-    "not_routed": 3,
-    "income_over_program_limit": 2,
-    "commercial_insurance_required": 2,
-    "government_plan_excluded": 2,
-    "denial_letter_missing": 2,
-    "assistance_consent_missing": 2
+  "resubmission_route": "payment_integrity_correction",
+  "priority": "standard",
+  "basis_audit": {
+    "source_precedence": "effective_benchmark_by_plan_modifier_and_date",
+    "controlling_record_ids": [
+      "CL-TR-003-1",
+      "CL-TR-003-2",
+      "CL-TR-003-3",
+      "BM-TR-003-78452",
+      "BM-TR-003-A9500",
+      "BM-TR-003-93016"
+    ],
+    "exception_record_ids": [
+      "BM-OLD-78452"
+    ],
+    "precedence_record_order": [
+      "BM-TR-003-78452",
+      "BM-TR-003-A9500",
+      "BM-TR-003-93016",
+      "BM-OLD-78452"
+    ]
   }
 }

@@ -1,226 +1,294 @@
 {
-  "template_name": "train_005_collection_readiness_v1",
-  "output_contract": {
-    "required_top_level_keys": [
-      "matter_id",
-      "overall_readiness",
-      "custodian_statuses",
-      "retention_gaps",
-      "collection_plan",
-      "risk_flags"
+  "template_name": "alloyworks_cross_system_remediation_dashboard",
+  "schema_version": "1.0",
+  "description": "Required JSON output schema for the AlloyWorks DOJ remediation dashboard. This template defines field names, types, ordering, precision, and enum choices; it does not contain the answer.",
+  "output_rule": "Return exactly one JSON object and no prose outside the JSON.",
+  "required_top_level_keys": [
+    "matter_id",
+    "top_risks",
+    "category_coverage",
+    "retained_or_available_sources",
+    "metrics",
+    "action_plan"
+  ],
+  "ordering_rules": {
+    "top_risks": "Sort by priority_rank ascending, where 1 is the highest priority.",
+    "category_coverage": "Sort by category_code ascending.",
+    "retained_or_available_sources": "Sort by source_id ascending.",
+    "action_plan": "Sort by rank ascending, where 1 is the highest priority action.",
+    "category_sets": "Sort category codes ascending within each list."
+  },
+  "enums": {
+    "issue_type": [
+      "post_hold_loss",
+      "personal_source_gap",
+      "archive_available",
+      "responsiveness_miscode",
+      "privilege_log_gap",
+      "third_party_waiver",
+      "privilege_miscoding",
+      "missing_required_record",
+      "other"
     ],
+    "risk_level": [
+      "critical",
+      "high",
+      "medium",
+      "low"
+    ],
+    "risk_status": [
+      "open",
+      "protocol_noncompliant",
+      "remediation_available",
+      "needs_recode",
+      "should_exist_missing",
+      "closed"
+    ],
+    "source_status": [
+      "destroyed",
+      "not_collected",
+      "available_archive",
+      "not_applicable",
+      "should_exist_missing",
+      "unknown"
+    ],
+    "source_type": [
+      "lab_results_archive",
+      "personal_phone",
+      "cloud_mail_archive",
+      "email",
+      "privilege_log",
+      "qc_finding",
+      "qa_audit",
+      "offsite_records",
+      "personal_messaging",
+      "teams_archive",
+      "other"
+    ],
+    "volume_unit": [
+      "boxes",
+      "documents",
+      "emails",
+      "report",
+      "sources",
+      "not_applicable"
+    ],
+    "category_status": [
+      "preservation_loss",
+      "missing_required_record",
+      "personal_source_gap",
+      "source_gap_with_archive_available",
+      "archive_available",
+      "privilege_log_gap",
+      "responsiveness_gap",
+      "underproduced_privilege_corrections",
+      "mixed_preservation_and_missing_record",
+      "no_open_gap"
+    ],
+    "production_impact": [
+      "source_lost",
+      "source_missing",
+      "source_available",
+      "not_produced",
+      "withheld_unlogged",
+      "privilege_exposure",
+      "recode_needed",
+      "missing_record",
+      "underproduced",
+      "no_production_impact"
+    ],
+    "availability_status": [
+      "available_archive",
+      "available_retained_source",
+      "unavailable",
+      "unknown"
+    ],
+    "active_system_issue": [
+      "purged_custodian_mail",
+      "not_collected",
+      "destroyed_archive",
+      "deleted_channel",
+      "none",
+      "unknown"
+    ],
+    "action_type": [
+      "disclose_preservation_issue",
+      "collect_personal_device",
+      "search_archive",
+      "recode_and_produce",
+      "supplement_privilege_log",
+      "waiver_assessment_and_disclosure",
+      "privilege_recode_and_log",
+      "locate_missing_record",
+      "monitor_only"
+    ],
+    "owner": [
+      "outside_counsel",
+      "forensics",
+      "ediscovery_vendor",
+      "review_qc",
+      "privilege_team",
+      "privilege_counsel",
+      "compliance_audit",
+      "client_legal"
+    ],
+    "priority": [
+      "P0",
+      "P1",
+      "P2",
+      "P3"
+    ]
+  },
+  "fields": {
     "matter_id": {
       "type": "string",
-      "required_value": "M-PHN-612"
+      "description": "Matter identifier under review."
     },
-    "overall_readiness": {
-      "type": "enum",
-      "allowed_values": [
-        "ready",
-        "ready_with_retention_note",
-        "not_ready_supplemental_collection_required",
-        "not_ready_post_hold_loss"
-      ]
-    },
-    "custodian_statuses": {
-      "type": "list",
-      "ordering": "sort by custodian_id ascending",
-      "item": {
-        "custodian_id": {
-          "type": "string"
-        },
-        "role_status": {
-          "type": "enum",
-          "allowed_values": [
-            "former_compliance_custodian",
-            "active_related_custodian",
-            "other"
-          ]
-        },
-        "personnel_file_retention": {
-          "type": "enum",
-          "allowed_values": [
-            "retained_through_2027",
-            "expired_before_hold",
-            "not_requested",
-            "unknown"
-          ]
-        },
-        "readiness_status": {
-          "type": "enum",
-          "allowed_values": [
-            "ready",
-            "ready_with_retention_note",
-            "ready_after_archive_validation",
-            "blocked_source_gap",
-            "blocked_hold_notice_gap",
-            "not_in_scope"
-          ]
-        },
-        "required_action_codes": {
-          "type": "list",
-          "ordering": "sort alphabetically by action_code",
-          "item_type": "enum",
-          "allowed_values": [
-            "archive_validation",
-            "hold_refresh",
-            "laptop_pst_forensics",
-            "no_action",
-            "regulator_notice",
-            "supplemental_collection",
-            "teams_gap_assessment",
-            "vendor_archive_retrieval"
-          ]
-        }
+    "top_risks": {
+      "type": "list<object>",
+      "item_required_keys": [
+        "risk_id",
+        "priority_rank",
+        "issue_type",
+        "risk_level",
+        "status",
+        "source_status",
+        "production_impact",
+        "affected_categories",
+        "source_refs",
+        "document_count",
+        "volume_count",
+        "volume_unit",
+        "withheld_count",
+        "logged_count",
+        "unlogged_count",
+        "third_party",
+        "recommended_action"
+      ],
+      "item_field_types": {
+        "risk_id": "string stable record ID anchoring the risk",
+        "priority_rank": "integer rank, 1 is highest priority",
+        "issue_type": "enum:issue_type",
+        "risk_level": "enum:risk_level",
+        "status": "enum:risk_status",
+        "source_status": "enum:source_status",
+        "production_impact": "enum:production_impact",
+        "affected_categories": "list of request category codes",
+        "source_refs": "list of stable hub record IDs supporting the risk",
+        "document_count": "integer records, 0 when not applicable",
+        "volume_count": "integer count, 0 when not applicable",
+        "volume_unit": "enum:volume_unit",
+        "withheld_count": "integer records, 0 when not applicable",
+        "logged_count": "integer records, 0 when not applicable",
+        "unlogged_count": "integer records, 0 when not applicable",
+        "third_party": "string or null",
+        "recommended_action": "enum:action_type"
       }
     },
-    "retention_gaps": {
-      "type": "list",
-      "ordering": "sort by category_id ascending",
-      "item": {
-        "category_id": {
-          "type": "string"
-        },
-        "source_type": {
-          "type": "enum",
-          "allowed_values": [
-            "personnel_file",
-            "email_archive",
-            "teams",
-            "laptop_pst",
-            "personal_cloud_text",
-            "other"
-          ]
-        },
-        "timing_classification": {
-          "type": "enum",
-          "allowed_values": [
-            "within_retention_available",
-            "recoverable_archive",
-            "pre_2022_teams_gap",
-            "uncollected_source",
-            "hold_notice_defect",
-            "post_hold_spoliation",
-            "no_material_gap",
-            "unknown"
-          ]
-        },
-        "availability_status": {
-          "type": "enum",
-          "allowed_values": [
-            "available",
-            "collected",
-            "recoverable",
-            "partial_gap",
-            "missing",
-            "not_noticed",
-            "unknown"
-          ]
-        },
-        "missing_count": {
-          "type": "integer",
-          "unit": "records or source units from the collection event"
-        },
-        "ready_status": {
-          "type": "enum",
-          "allowed_values": [
-            "ready",
-            "ready_with_retention_note",
-            "ready_after_archive_validation",
-            "blocked_source_gap",
-            "blocked_hold_notice_gap"
-          ]
-        },
-        "primary_action": {
-          "type": "enum",
-          "allowed_values": [
-            "archive_validation",
-            "hold_refresh",
-            "laptop_pst_forensics",
-            "no_action",
-            "supplemental_collection",
-            "teams_gap_assessment",
-            "vendor_archive_retrieval"
-          ]
-        }
+    "category_coverage": {
+      "type": "list<object>",
+      "item_required_keys": [
+        "category_code",
+        "status",
+        "production_impact",
+        "issue_refs",
+        "recommended_action",
+        "open_issue_count"
+      ],
+      "item_field_types": {
+        "category_code": "string request category code",
+        "status": "enum:category_status",
+        "production_impact": "enum:production_impact",
+        "issue_refs": "list of hub record IDs supporting the category status",
+        "recommended_action": "enum:action_type",
+        "open_issue_count": "integer count of open issue records summarized for this category"
       }
     },
-    "collection_plan": {
-      "type": "list",
-      "ordering": "sort by priority_rank ascending",
-      "item": {
-        "priority_rank": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "action_code": {
-          "type": "enum",
-          "allowed_values": [
-            "archive_validation",
-            "hold_refresh",
-            "laptop_pst_forensics",
-            "regulator_notice",
-            "supplemental_collection",
-            "teams_gap_assessment",
-            "vendor_archive_retrieval"
-          ]
-        },
-        "target_category_ids": {
-          "type": "list",
-          "ordering": "sort category IDs ascending",
-          "item_type": "string"
-        },
-        "target_source_types": {
-          "type": "list",
-          "ordering": "sort source type enums alphabetically",
-          "item_type": "enum",
-          "allowed_values": [
-            "personnel_file",
-            "email_archive",
-            "teams",
-            "laptop_pst",
-            "personal_cloud_text",
-            "other"
-          ]
-        },
-        "required_before_production": {
-          "type": "boolean"
-        }
+    "retained_or_available_sources": {
+      "type": "list<object>",
+      "item_required_keys": [
+        "source_id",
+        "source_type",
+        "availability_status",
+        "active_system_issue",
+        "affected_categories",
+        "limits_loss_for_categories",
+        "recommended_action",
+        "owner",
+        "priority"
+      ],
+      "item_field_types": {
+        "source_id": "string stable source ID",
+        "source_type": "enum:source_type",
+        "availability_status": "enum:availability_status",
+        "active_system_issue": "enum:active_system_issue",
+        "affected_categories": "list of request category codes",
+        "limits_loss_for_categories": "list of request category codes for which the source remains a remediation path",
+        "recommended_action": "enum:action_type",
+        "owner": "enum:owner",
+        "priority": "enum:priority"
       }
     },
-    "risk_flags": {
-      "type": "list",
-      "ordering": "sort by flag_code ascending",
-      "item": {
-        "flag_code": {
-          "type": "enum",
-          "allowed_values": [
-            "archive_recoverable_email",
-            "former_personnel_retained",
-            "hold_notice_omitted_personal_cloud_text",
-            "missing_local_pst",
-            "post_hold_loss",
-            "teams_pre_2022_gap"
-          ]
-        },
-        "severity": {
-          "type": "enum",
-          "allowed_values": [
-            "critical",
-            "high",
-            "medium",
-            "low"
-          ]
-        },
-        "category_ids": {
-          "type": "list",
-          "ordering": "sort category IDs ascending",
-          "item_type": "string"
-        },
-        "requires_regulator_notice": {
-          "type": "boolean"
-        }
+    "metrics": {
+      "type": "object",
+      "required_keys": [
+        "top_risk_count",
+        "destroyed_lab_archive_box_count",
+        "post_hold_loss_event_count",
+        "uncollected_personal_source_count",
+        "available_archive_count",
+        "miscoded_responsive_doc_count",
+        "withheld_privileged_doc_count",
+        "logged_privilege_doc_count",
+        "unlogged_privilege_doc_count",
+        "third_party_waiver_doc_count",
+        "miscoded_privileged_doc_count",
+        "missing_required_record_count",
+        "affected_category_count",
+        "categories_with_open_risk"
+      ],
+      "field_types": {
+        "top_risk_count": "integer",
+        "destroyed_lab_archive_box_count": "integer boxes for the destroyed records source named in the task",
+        "post_hold_loss_event_count": "integer events",
+        "uncollected_personal_source_count": "integer sources",
+        "available_archive_count": "integer sources",
+        "miscoded_responsive_doc_count": "integer documents",
+        "withheld_privileged_doc_count": "integer documents",
+        "logged_privilege_doc_count": "integer documents",
+        "unlogged_privilege_doc_count": "integer documents",
+        "third_party_waiver_doc_count": "integer emails/documents",
+        "miscoded_privileged_doc_count": "integer documents",
+        "missing_required_record_count": "integer records",
+        "affected_category_count": "integer categories",
+        "categories_with_open_risk": "list of request category codes"
+      }
+    },
+    "action_plan": {
+      "type": "list<object>",
+      "item_required_keys": [
+        "rank",
+        "action_type",
+        "owner",
+        "priority",
+        "target_refs",
+        "affected_categories",
+        "due_days"
+      ],
+      "item_field_types": {
+        "rank": "integer rank, 1 is highest priority",
+        "action_type": "enum:action_type",
+        "owner": "enum:owner",
+        "priority": "enum:priority",
+        "target_refs": "list of hub record IDs targeted by the action",
+        "affected_categories": "list of request category codes",
+        "due_days": "integer days from dashboard delivery"
       }
     }
+  },
+  "numeric_precision": {
+    "counts": "whole integers",
+    "due_days": "whole integer days",
+    "priority_rank": "whole integers"
   }
 }

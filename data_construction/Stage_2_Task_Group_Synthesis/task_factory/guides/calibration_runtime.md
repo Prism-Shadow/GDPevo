@@ -13,13 +13,47 @@ as blocked rather than substituting another model or reasoning effort.
 
 ## Isolation Contract
 
-For every run, create a fresh staged work directory and a dedicated Codex home.
-Mount only those two directories:
+For every run, create a fresh staged work directory and a dedicated temporary
+Codex home. Mount only those two directories:
 
 ```text
 scratch/calibration_runs/<run_kind>/<run_id>/work/       -> /work
 scratch/calibration_runs/<run_kind>/<run_id>/codex_home/ -> /codex_home
 ```
+
+Before changing `CODEX_HOME` for any run, resolve the active Codex home used by
+the orchestrator:
+
+```bash
+HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+```
+
+Seed every new temporary home with only the active login credential:
+
+```bash
+install -d -m 700 "$CODEX_HOME_DIR"
+test -f "$HOST_CODEX_HOME/auth.json" || {
+  echo "Calibration blocked: active Codex auth.json was not found" >&2
+  exit 1
+}
+install -m 600 "$HOST_CODEX_HOME/auth.json" "$CODEX_HOME_DIR/auth.json"
+```
+
+Do this on the orchestrator host before mounting the temporary directory into
+the agent container. Do not copy the full active Codex home, `config.toml`,
+sessions, databases, logs, skills, plugins, caches, or other state. The model
+and reasoning effort are fixed by the launch command, so host configuration is
+not needed. Never place `auth.json` in `/work` or any retained artifact.
+
+Before the formal process, use the same agent image and temporary-home mount to
+run `CODEX_HOME=/codex_home codex login status`. Continue only when it confirms
+an active login. Otherwise record calibration as blocked; do not launch an
+unauthenticated attempt and do not substitute the orchestration agent or a
+different model.
+
+The mounted `codex_home/` is disposable runtime state, not a calibration
+artifact. The only Codex-home file retained after the run is the matched primary
+session JSONL described below.
 
 Do not mount the repository, full task group, parent workspace, user home,
 `env/`, notes, evaluators, standard answers not explicitly allowed for that run,
@@ -68,11 +102,32 @@ docker run --rm \
 ```
 
 `CODEX_HOME` is a temporary runtime variable for that process. Do not use
-`--ephemeral`: preserve the complete `rollout-*.jsonl` under the dedicated
-`codex_home/` as the primary trace. Record and verify `model: gpt-5.5` and
-`reasoning_effort: xhigh`, together with the image, owner, network and container
-names, state mode, run id, staged files, trace path, and exit status in the
-calibration record.
+`--ephemeral`. After the process exits, locate the primary session file under:
+
+```text
+<CODEX_HOME_DIR>/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+```
+
+Require exactly one session file for the isolated process and verify that it
+contains the expected run id and staged `/work` path. Copy that one file to:
+
+```text
+scratch/calibration_runs/<run_kind>/<run_id>/trace/rollout-*.jsonl
+```
+
+Use the copied JSONL to populate and verify token, cost, turn, tool-call,
+contamination, and calibration-record fields. Only after those fields are
+complete may the entire temporary `codex_home/` be deleted. Do not retain or copy the full
+`CODEX_HOME`; in particular, do not archive its config, credentials, logs,
+skills, plugins, caches, databases, or other runtime state. Stdout/stderr and
+`codex exec --json` output are not substitutes for the primary session JSONL
+and are not required trace artifacts.
+
+Record and verify `model: gpt-5.5` and `reasoning_effort: xhigh`, together with
+the image, owner, network and container names, state mode, run id, staged files,
+copied trace path, cleanup result, and exit status in the calibration record. If
+the session file is missing or ambiguous, record the reason rather than copying
+an arbitrary file, remove the temporary home, and rerun with a new run id.
 
 ## Prompt Contract
 
@@ -133,13 +188,18 @@ Solve exactly one test task using only files staged in the current /work directo
 
 A run is valid only when:
 
+- its temporary home was seeded only with the active `auth.json`, and
+  `codex login status` passed through the same image and mount;
 - it ran through the Codex harness with `gpt-5.5` and `xhigh` reasoning effort;
 - its work directory was fresh and contained only the materials allowed above;
 - the environment health check succeeded from a disposable container on the
   same Docker network through `http://task-env:<TASK_ENV_PORT>/`;
 - the process produced the expected `answer.json` or complete skill package;
-- the complete Codex session trace is preserved, or a concrete missing reason is
-  recorded;
+- the matched primary Codex session JSONL is copied into the run's `trace/`
+  directory, or a concrete missing reason is recorded;
+- all token, cost, turn, tool-call and calibration-record fields derived from
+  the trace have been populated and verified;
+- the temporary `codex_home/` has been deleted only after that verification;
 - the trace shows no access to forbidden material; and
 - scoring was performed outside the agent process by the main agent.
 

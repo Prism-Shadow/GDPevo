@@ -1,141 +1,222 @@
 {
-  "field_conventions": {
-    "case_actions_order": "ascending med_case_id",
-    "appeal_viability_decision_allowed_values": [
-      "appeal_ready",
-      "appeal_incomplete",
-      "appeal_not_timely"
-    ],
-    "appeal_turnaround_allowed_values": [
-      "expedited_accepted_72h",
-      "expedited_requested_needs_evidence",
-      "standard_30d"
-    ],
-    "policy_gaps_allowed_values": [
-      "step_therapy_gap",
-      "tb_screen_gap",
-      "topical_failure_gap"
-    ],
-    "deadline_status_allowed_values": [
-      "timely_received",
-      "late_received"
-    ],
-    "internal_review_next_step_allowed_values": [
-      "file_standard_internal_appeal",
-      "pharmacy_clinician_review_for_step_and_tb_evidence",
-      "pharmacy_clinician_review_for_topical_failure_evidence",
-      "file_expedited_internal_appeal"
-    ],
-    "external_review_next_step_allowed_values": [
-      "not_ready_internal_appeal_pending",
-      "not_ready_policy_evidence_gap"
-    ],
-    "assistance_eligibility_status_allowed_values": [
-      "assistance_eligible",
-      "assistance_ineligible"
-    ],
-    "assistance_blocking_reasons_allowed_values": [
-      "income_over_program_limit",
-      "commercial_insurance_required",
-      "government_plan_excluded",
-      "denial_letter_missing",
-      "assistance_consent_missing"
-    ],
-    "program_owner_allowed_values": [
-      "manufacturer_assistance_team",
-      "not_routed"
-    ],
-    "assistance_next_step_allowed_values": [
-      "open_humira_assistance_enrollment",
-      "no_manufacturer_route_government_income_and_documents",
-      "no_manufacturer_route_government_plan",
-      "collect_assistance_consent"
-    ],
-    "path_separation_allowed_values": [
-      "parallel_appeal_and_assistance",
-      "appeal_only"
-    ],
-    "policy_requirement_status_allowed_values": [
-      "met",
-      "missing"
-    ],
-    "numeric_precision": "integer totals; dates as YYYY-MM-DD"
-  },
-  "docket_id": "",
-  "docket_date": "YYYY-MM-DD",
-  "case_actions": [
-    {
-      "med_case_id": "",
-      "drug_name": "",
-      "member_plan_type": "",
-      "appeal": {
-        "viability_decision": "",
-        "turnaround": "",
-        "policy_gaps": [],
-        "policy_requirement_keys_missing": [],
-        "policy_evidence_trace": [
-          {
-            "requirement_key": "diagnosis",
-            "requirement_status": "met",
-            "accepted_trial_ids": [],
-            "rejected_trial_ids": []
-          }
-        ],
-        "filing_deadline": "YYYY-MM-DD",
-        "deadline_status": "",
-        "deadline_basis": {
-          "adverse_notice_date": "YYYY-MM-DD",
-          "appeal_received_date": "YYYY-MM-DD",
-          "deadline_days": 60,
-          "days_from_notice_to_receipt": 0
-        },
-        "appeal_source_flags": {
-          "expedited_attestation": false,
-          "new_evidence_received": false,
-          "authorized_representative_on_file": false
-        },
-        "internal_review_next_step": "",
-        "external_review_next_step": "",
-        "pharmacy_clinician_required": false
-      },
-      "assistance": {
-        "program_id": "",
-        "eligibility_status": "",
-        "blocking_reasons": [],
-        "financial_trace": {
-          "household_size": 0,
-          "annual_income": 0.0,
-          "fpl_base_amount": 0.0,
-          "program_income_limit": 0.0,
-          "income_pct_fpl": 0.0
-        },
-        "document_trace": {
-          "insurance_type": "",
-          "has_denial_letter": false,
-          "assistance_consent_on_file": false,
-          "program_requires_commercial_insurance": false,
-          "program_excludes_government_plan": false
-        },
-        "program_owner": "",
-        "form_name": "",
-        "next_step": ""
-      },
-      "path_separation": ""
-    }
+  "schema_name": "northstar_surgery_claim_correction_packet",
+  "schema_version": "1.0",
+  "output_rule": "Return exactly one JSON object. Do not include markdown, comments, or prose outside the JSON.",
+  "top_level_required_keys": [
+    "claim_id",
+    "case_id",
+    "auth_number",
+    "plan_type",
+    "benchmark_source",
+    "benchmark_version",
+    "paid_total",
+    "correct_allowed_total",
+    "recovery_amount",
+    "lines",
+    "resubmission_route",
+    "priority",
+    "basis_audit"
   ],
-  "program_totals": {
-    "total_cases": 0,
-    "appeal_ready": 0,
-    "appeal_incomplete": 0,
-    "appeal_not_timely": 0,
-    "expedited_accepted_72h": 0,
-    "expedited_requested_needs_evidence": 0,
-    "standard_30d": 0,
-    "assistance_eligible": 0,
-    "manufacturer_team_follow_up": 0,
-    "not_routed": 0,
-    "parallel_appeal_and_assistance": 0,
-    "appeal_only": 0,
-    "pharmacy_clinician_routed": 0
+  "field_definitions": {
+    "claim_id": {
+      "type": "string",
+      "description": "The target claim identifier."
+    },
+    "case_id": {
+      "type": "string",
+      "description": "The case identifier associated with the claim."
+    },
+    "auth_number": {
+      "type": "string",
+      "description": "The authorization number associated with the target claim."
+    },
+    "plan_type": {
+      "type": "enum<string>",
+      "description": "The member plan type used for benchmark selection."
+    },
+    "benchmark_source": {
+      "type": "enum<string>",
+      "description": "The rate schedule source used for repricing."
+    },
+    "benchmark_version": {
+      "type": "string",
+      "description": "The rate schedule version used for repricing."
+    },
+    "paid_total": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places."
+    },
+    "correct_allowed_total": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places."
+    },
+    "recovery_amount": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places. This is the net correction amount after summing all line-level recoveries."
+    },
+    "lines": {
+      "type": "list<object>",
+      "ordering": "Sort by the claim line order from the environment.",
+      "object_required_keys": [
+        "line_id",
+        "cpt_code",
+        "modifier",
+        "units",
+        "paid_amount",
+        "correct_allowed_amount",
+        "recovery_amount",
+        "disposition"
+      ]
+    },
+    "resubmission_route": {
+      "type": "enum<string>",
+      "description": "Operational route for the correction."
+    },
+    "priority": {
+      "type": "enum<string>",
+      "description": "Operational priority for the correction."
+    },
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Populate it using the source-precedence and record-grounding convention inferred from solved examples; use environment record IDs and business gap keys, not invented control codes.",
+      "fields": {
+        "source_precedence": {
+          "type": "string",
+          "description": "Use the concise source-precedence category convention inferred from solved examples."
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
+  },
+  "line_field_definitions": {
+    "line_id": {
+      "type": "string",
+      "description": "Stable claim line identifier."
+    },
+    "cpt_code": {
+      "type": "string",
+      "description": "CPT or HCPCS code for the claim line."
+    },
+    "modifier": {
+      "type": "string or null",
+      "description": "Use null when the claim line has no modifier."
+    },
+    "units": {
+      "type": "integer",
+      "description": "Claim line units."
+    },
+    "paid_amount": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places."
+    },
+    "correct_allowed_amount": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places after applying units."
+    },
+    "recovery_amount": {
+      "type": "number",
+      "unit": "USD",
+      "numeric_precision": "Round to two decimal places. Negative values indicate a line-level overpayment or denial offset."
+    },
+    "disposition": {
+      "type": "enum<string>",
+      "description": "Line correction disposition."
+    }
+  },
+  "allowed_enums": {
+    "plan_type": [
+      "commercial",
+      "medicaid",
+      "medicare_advantage",
+      "workers_comp"
+    ],
+    "benchmark_source": [
+      "Northstar WC Surgery Schedule",
+      "Northstar Commercial Imaging Schedule",
+      "Northstar Distractor Schedule",
+      "Legacy Imaging Export"
+    ],
+    "disposition": [
+      "correct_upward",
+      "correct_downward",
+      "no_change",
+      "deny_unsupported_modifier",
+      "deny_line"
+    ],
+    "resubmission_route": [
+      "payment_integrity_correction",
+      "provider_adjustment",
+      "appeal_reopen",
+      "no_resubmission"
+    ],
+    "priority": [
+      "standard",
+      "expedited",
+      "urgent",
+      "monitor_only"
+    ]
+  },
+  "normalization_notes": {
+    "currency": "Use JSON numbers in dollars rounded to cents.",
+    "modifier": "Use null, not an empty string, when no modifier is present.",
+    "line_order": "The lines list must follow claim-line order from the source claim."
+  },
+  "fields": {
+    "basis_audit": {
+      "type": "object",
+      "required_keys": [
+        "source_precedence",
+        "precedence_record_order",
+        "controlling_record_ids",
+        "exception_record_ids"
+      ],
+      "description": "Business basis audit trail. Populate it using the source-precedence and record-grounding convention inferred from solved examples; use environment record IDs and business gap keys, not invented control codes.",
+      "fields": {
+        "source_precedence": {
+          "type": "string",
+          "description": "Use the concise source-precedence category convention inferred from solved examples."
+        },
+        "controlling_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use the operational evidence order for the records that directly control the result."
+        },
+        "exception_record_ids": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "Use business gap/exception order: criteria or route gaps before stale or excluded records when both appear."
+        },
+        "precedence_record_order": {
+          "type": "list",
+          "item_type": "string",
+          "ordering_rule": "List the controlling and exception records in source-precedence order, highest priority first."
+        }
+      }
+    }
   }
 }

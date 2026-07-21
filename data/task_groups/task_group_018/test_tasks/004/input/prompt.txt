@@ -1,9 +1,25 @@
-Today is 2026-03-06. You are helping the Benton County Circuit Court audit desk clear a post-disposition financial release queue before the next clerk import batch is approved.
+You are closing Judge Mercer's Lake County Circuit Court criminal docket from June 18, 2025.
 
-Use the shared clerk operations environment at <TASK_ENV_BASE_URL>.
+Prepare the structured closeout JSON described by `input/payloads/answer_template.json` for these Lake County matters:
 
-The task-local materials in `input/payloads/` contain the queue packet that came from finance, including old import extracts, fee and counsel-cost references, ledger correction notices, and release-board notes. The shared environment has the live case records, docket entries, financial obligations, attorney directory, fee schedules, payment policy, and stale exports.
+- LC-25-0320
+- LC-25-0326
+- LC-24-0899
+- LC-25-0331
 
-Prepare a clerk-ready JSON answer that matches `input/payloads/answer_template.json`. Include one row for each Benton criminal matter that belongs in this post-disposition finance release audit, ordered by case number. Exclude queue rows that are only routing context or are not ready for this audit batch. Resolve the controlling status, disposition and assessment dates, defense-fee treatment, approved assessments, ledger-credit corrections, corrected balance, and release or hold decision.
+Use the Court Operations Portal at <TASK_ENV_BASE_URL> for the public case, charge, docket, jurisdiction, and fee-schedule records. Relevant endpoints include:
 
-Return only the completed JSON object.
+- GET /api/jurisdictions
+- GET /api/cases
+- GET /api/charges
+- GET /api/docket-entries
+- GET /api/fee-schedules
+- GET /api/search
+
+Local materials are in `input/payloads/`:
+
+- `lake_hearing_notes_2025-06-18.md`
+- `lake_counsel_memo_and_worksheet.csv`
+- `lake_finance_queue_payloads.json`
+
+Return a single JSON object. It should reflect the final clerk closeout after reconciliation: which matters enter the disposed register, which matter stays out, corrected counsel and filing/source decisions, charge/count disposition treatment, departure classification, per-case financial posting, docket/register action codes, and Lake County register totals.

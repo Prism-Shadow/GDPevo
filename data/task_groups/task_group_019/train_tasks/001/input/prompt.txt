@@ -1,9 +1,24 @@
-You are conducting a formal Harbor State contractor eligibility review for batch HS-2026-Q1A.
+You are a Senior Licensing Examiner for the State Contractors Licensing Board. The Q2 eligibility batch below has been escalated for a structured application decision:
 
-The Cascadia Licensing Review Portal (CLRP) will be available at:
+- C-TR1-001
+- C-TR1-002
+- C-TR1-003
+- C-TR1-004
+- C-TR1-005
+- C-TR1-006
+- C-TR1-007
+- C-TR1-008
 
-<TASK_ENV_BASE_URL>
+Use the shared licensing environment at <TASK_ENV_BASE_URL>. Relevant records are available from:
 
-Use the shared CLRP API and public exports only. Do not inspect local environment files, generated databases, manifests, setup scripts, or hidden task files. The review cutoff date for this batch is 2026-03-01.
+- GET <TASK_ENV_BASE_URL>/api/policies
+- GET <TASK_ENV_BASE_URL>/api/contractor/applications
+- GET <TASK_ENV_BASE_URL>/api/contractor/bonds
+- GET <TASK_ENV_BASE_URL>/api/contractor/insurance
+- GET <TASK_ENV_BASE_URL>/api/contractor/license-history
+- GET <TASK_ENV_BASE_URL>/api/contractor/violations
+- GET <TASK_ENV_BASE_URL>/api/contractor/correspondence
+- GET <TASK_ENV_BASE_URL>/api/contractor/inspections
+- POST <TASK_ENV_BASE_URL>/api/sql
 
-Return one JSON object matching `payloads/answer_template.json`. Include eligibility decisions for every application in HS-2026-Q1A, deficiency counts, and the bulletin-impact summary. Use only the controlled enum values defined in the template, and do not include narrative outside the JSON.
+Return only JSON that conforms to input/payloads/answer_template.json. Include exactly the eight target applications, ordered by application_id. Use empty arrays when no codes apply, and make the batch summary consistent with the application-level decisions.

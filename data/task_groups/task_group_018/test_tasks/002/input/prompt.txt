@@ -1,7 +1,9 @@
-Jefferson County Municipal Court needs the afternoon traffic control batch prepared for financial-entry review.
+You are closing out the March 24, 2027 traffic hearing batch for Oregon 27th Judicial District, Clatsop County citations OR27-TR-2201, OR27-TR-2208, and OR27-TR-2219.
 
-Use the shared clerk operations environment at <TASK_ENV_BASE_URL>.
+Use the Court Operations Portal at <TASK_ENV_BASE_URL> to verify citation records, active fee schedules, payment policy, and form metadata. Relevant portal endpoints include GET /api/citations, GET /api/fee-schedules, GET /api/payment-policies, GET /api/forms, and GET /api/search.
 
-The local packet is in `input/payloads/jefferson_afternoon_traffic_packet.json`, and the required response shape is defined in `input/payloads/answer_template.json`. Prepare one JSON response for the Jefferson citation rows listed in the packet. Use the citation number as the account reference when the live citation record does not provide a separate case or account number.
+Local materials are in the payloads directory:
+- clatsop_hearing_closeout_memo.md
+- clatsop_payment_form_excerpt.md
 
-The packet mixes current bench minutes, signed correction slips, collections notes, candidate import codes, and older history pulls. The final response should resolve the clerk-ready record posture, violation used for assessment, effective fee schedule bucket, supported assessment components, excluded candidate codes, payment-plan decision, and batch totals. Keep amounts in dollars to two decimals and dates in ISO `YYYY-MM-DD` format.
+Return a single JSON object matching input/payloads/answer_template.json. The closeout should record the disposition and financial entry for each citation, compute amounts due at disposition, structure any approved payment plans, identify the local form/account-reference handling, and summarize the batch.

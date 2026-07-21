@@ -19,7 +19,7 @@ run 都必须放在干净、专属的 staged 目录中，并将该目录作为 D
 启动隔离 agent run 前先读 `CODEX_ORCHESTRATOR.md`。正式 Claude Code 命令形态为：
 
 ```bash
-CLAUDE_CONFIG_DIR=/claude_config claude -p --permission-mode bypassPermissions --session-id "$CLAUDE_SESSION_ID" "$PROMPT"
+CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config claude -p --permission-mode bypassPermissions --session-id "$CLAUDE_SESSION_ID" "$PROMPT"
 ```
 
 `CLAUDE_CONFIG_DIR` 是该 agent 进程运行时临时设置的环境变量，不是任务 `.env`
@@ -107,12 +107,20 @@ scratch/skill_generation/reflect-3_attempt_03/
 - `reflect-3`：train inputs、容器可访问环境入口、judge API 调用说明；无 train
   answers。
 
-每次 skill-generation run 都创建专用挂载的 Claude config 目录和唯一 session
-ID，并将完整 session trace 保存到：
+每次 skill-generation run 都启动一个不带 `--rm` 的具名 agent 容器，并让
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` 留在容器内部，配合唯一 session ID。
+需要认证时只读挂载最小的凭据引导文件，不要挂载宿主机 `.claude` 目录或完整配置树。
+运行结束后保留停止状态的容器，使用 `docker cp` 只提取
+`projects/<sanitized-cwd>/<claude_session_id>.jsonl` 中匹配的主 session 文件（必要时
+先把 `projects/` 暂存到 `scratch/trace_extract/<run_id>/`），复制到：
 
 ```text
-original_traces/skill_generation/<condition>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/skill_generation/<condition>/attempt_<nn>/<claude_session_id>.jsonl
 ```
+
+从复制后的文件回填并核验用量和费用，确认 trace 与 metadata 均已落盘后，再删除
+暂存目录和停止状态的容器。不要保存容器内完整配置、凭据、plugins、缓存、日志、
+数据库，也不要把 stdout/stderr 当作 trace。
 
 对应的用量记录写到：
 
@@ -160,9 +168,10 @@ attempt 目录中重新测试受影响任务。污染 attempt 不打分、不纳
 
 Solver 在自己的 attempt 目录中写 `answer.json`。
 
-每次 solver attempt 都由 Codex 主控从该 attempt 目录启动一个 Dockerized Claude
-Code 进程。只挂载 attempt 目录和供 `CLAUDE_CONFIG_DIR` 使用的专用 Claude
-config 目录，不要挂载完整 workspace 或 task group。
+每次 solver attempt 都由 Codex 主控从该 attempt 目录启动一个不带 `--rm` 的
+Dockerized Claude Code 进程。只挂载 attempt 目录，并让
+`CLAUDE_CONFIG_DIR=/tmp/gdpevo-claude-config` 留在容器内部；需要认证时只读挂载
+最小凭据引导文件，不要挂载完整 workspace、task group 或宿主机配置目录。
 
 ## 5. 打分与聚合
 
@@ -177,20 +186,24 @@ config 目录，不要挂载完整 workspace 或 task group。
 
 该 ID 必须出现在 solver prompt、attempt 目录和 `run_metadata.yaml` 中。
 
-主 agent 从 attempt 专用 `CLAUDE_CONFIG_DIR` 里的 Claude Code 原始 session
-trace 中回填 token 用量、solver turn count 和 tool-call count。按 `message.id`
-去重：input/cache 桶取任一条记录，`output_tokens` 取同一 message id 的最大值，
-然后跨响应求和。
+运行结束后，先保留停止状态的容器，主 agent 根据唯一 session ID 从容器内的
+`CLAUDE_CONFIG_DIR` 找到对应的 Claude Code 主 session JSONL，必要时只把
+`projects/` 暂存到 `scratch/trace_extract/<run_id>/`。核对工作目录，并只把这个文件
+复制到 `original_traces/`。从复制后的文件回填 token、费用、solver turn count 和
+tool-call count。按 `message.id` 去重：input/cache 桶取任一条记录，
+`output_tokens` 取同一 message id 的最大值，然后跨响应求和。
 
 Claude Code session traces 应位于：
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/claude_config/projects/<sanitized-cwd>/<claude_session_id>.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/<claude_session_id>.jsonl
 ```
 
-在 `run_metadata.yaml` 中记录原始 session trace 路径。如果原始 session trace
-缺失，将 trace 路径写为 `null`，token、turn 和 tool-call 字段也保持 `null`，并
-报告 trace 问题。
+在 `run_metadata.yaml` 中记录复制后的主 session trace 路径。确认 trace、token、
+费用、turn、tool-call 和 metadata 都已完整落盘后，再删除暂存目录和停止状态的
+容器。不要保存完整的容器内 `CLAUDE_CONFIG_DIR` 或 stdout。如果 session trace
+缺失或匹配不唯一，则 trace 路径写 `null`，token、turn 和 tool-call 字段也保持
+`null`，记录原因，清理暂存目录和容器，并使用新的 session ID 重跑。
 
 所有 runs 完成后，聚合四种条件的 `acc@3`、population `std@3`、各桶 token 和 solver turn count 和 tool-call counts。效率指标只统计
 test solver 写答案的过程：先对同一个 test task 的 3 次 attempts 取平均，再对

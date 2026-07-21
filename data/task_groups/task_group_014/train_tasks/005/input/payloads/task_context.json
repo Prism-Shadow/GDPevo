@@ -1,0 +1,24 @@
+{
+  "task_id": "train_005",
+  "business_id": "QUEUE-TR-005",
+  "requester_role": "UM-finance operations analyst",
+  "reporting_period": "2026-05",
+  "request_date": "2026-06-03",
+  "environment_access": {
+    "base_url": "<TASK_ENV_BASE_URL>",
+    "sql_endpoint": "POST /sql/query",
+    "authorization_header": "Bearer pa-review-token-014"
+  },
+  "finance_memo": {
+    "subject": "May therapy margin queue",
+    "source_table": "service_margin",
+    "queue_row_ids": [
+      "SM-TR-005-MCD",
+      "SM-TR-005-COM",
+      "SM-TR-005-WC"
+    ],
+    "total_cost_definition": "variable_cost plus fixed_cost_allocated",
+    "revenue_to_cost_threshold": 1.2,
+    "review_scope": "Use only the listed queue row IDs for this request. Separate below-threshold payer-service issues from rows flagged as charge sensitive."
+  }
+}

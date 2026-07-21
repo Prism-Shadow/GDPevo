@@ -1,15 +1,11 @@
-CLRP needs a mixed renewal and restricted-premises review package.
+You are supporting the Alcohol Renewal Unit with a resort-area pre-release renewal screen.
 
-CLRP base URL: <TASK_ENV_BASE_URL>
+Build a ranked manual-review queue for the current target license numbers AL-TE5-001 through AL-TE5-008. The release boundary is 2025-05-20, and the target queue size is 8.
 
-Renewal release batch: RV-2026-FALL
-Release boundary: 2026-10-15
+Use the licensing environment data service:
+- GET <TASK_ENV_BASE_URL>/api/alcohol/licensees
+- GET <TASK_ENV_BASE_URL>/api/alcohol/violations
+- GET <TASK_ENV_BASE_URL>/api/renewal/rules
+- POST <TASK_ENV_BASE_URL>/api/sql, if SQL access is available in your environment instructions
 
-Restricted-premises follow-up target:
-Review month: 2026-05
-Application: AA-2026-0017
-Premises: PM-2026-017
-
-Use the public CLRP renewal roster, renewal violation history, address search, alcohol application, premises, incident, settlement, restriction, and standard-obligation records as needed. The renewal queue must contain exactly 12 current licensees ranked for manual review before the release batch is cleared. The successor-premises section should flag the target May application for the restricted-license follow-up posture that the records support.
-
-Return only one JSON object conforming to input/payloads/answer_template.json. Use the controlled enum values from the template and do not include markdown, citations, or narrative outside the JSON.
+Return only a JSON object matching input/payloads/answer_template.json. The queue should include the required rank, license identity, matched violation count and most recent date used, match confidence, risk tier, next-step label, and summary fields needed for release staff review.

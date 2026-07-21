@@ -1,50 +1,29 @@
 {
-  "schema_name": "train_001_crn_first_rolling_production_gap_review",
+  "schema_name": "sentinel_first_rolling_gap_analysis_answer",
   "schema_version": "1.0",
-  "description": "Return one JSON object matching this contract. Do not include this schema metadata in the response.",
   "required_top_level_keys": [
     "matter_id",
-    "production_phase",
-    "category_findings",
-    "priority_issues",
-    "disclosure_required",
-    "next_actions"
-  ],
-  "top_level_order": [
-    "matter_id",
-    "production_phase",
-    "category_findings",
-    "priority_issues",
-    "disclosure_required",
-    "next_actions"
+    "critical_findings",
+    "category_statuses",
+    "metrics",
+    "priority_actions"
   ],
   "ordering_rules": {
-    "category_findings": "Include only materially deficient subpoena categories and sort by category_id ascending.",
-    "priority_issues": "Sort by issue_id ascending.",
-    "next_actions": "Sort by rank ascending, with consecutive integer ranks starting at 1.",
-    "category_ids": "Sort category IDs ascending.",
-    "custodian_ids": "Sort custodian IDs ascending.",
-    "document_ids": "Sort document IDs ascending.",
-    "source_event_ids": "Sort IDs ascending by prefix group and numeric suffix.",
-    "affected_sources": "Sort source names alphabetically.",
-    "issue_ids": "Sort issue IDs ascending unless next_actions rank defines the row order.",
-    "secondary_actions": "Sort action enums ascending."
+    "critical_findings": "Sort by finding_id ascending.",
+    "category_statuses": "Sort by category_code ascending.",
+    "priority_actions": "Sort by priority_rank ascending, with 1 as the highest priority."
   },
   "enums": {
-    "production_phase": [
-      "first_rolling"
-    ],
-    "category_status": [
-      "blocked",
-      "needs_supplemental_production",
-      "needs_privilege_correction",
-      "needs_privilege_review"
-    ],
     "issue_type": [
-      "personal_channel_gap",
-      "review_coding_error",
+      "preservation_failure",
+      "collection_gap",
+      "responsiveness_miscode",
       "privilege_log_gap",
-      "privilege_overdesignation"
+      "retention_loss",
+      "privilege_waiver",
+      "over_designation",
+      "miscoded_privilege",
+      "other"
     ],
     "severity": [
       "critical",
@@ -52,138 +31,169 @@
       "medium",
       "low"
     ],
-    "timing_class": [
-      "post_hold_spoliation",
-      "coding_error",
-      "privilege_protocol_defect"
+    "finding_status": [
+      "open",
+      "remediation_pending",
+      "protocol_noncompliant",
+      "ready",
+      "no_gap"
     ],
-    "action": [
-      "regulator_notice",
-      "supplemental_collection",
-      "reprocess_qc",
-      "supplemental_production",
-      "privilege_log_supplement",
-      "privilege_review",
-      "produce_nonprivileged",
+    "source_status": [
+      "lost",
+      "not_collected",
+      "partial",
+      "collected",
+      "pending",
+      "not_applicable"
+    ],
+    "category_status": [
+      "complete",
+      "incomplete",
+      "collection_gap",
+      "preservation_risk",
+      "responsiveness_gap",
+      "privilege_log_gap",
+      "withholding_gap",
+      "no_current_gap"
+    ],
+    "production_impact": [
+      "underproduced",
+      "not_produced",
+      "withheld_unlogged",
+      "source_missing",
+      "source_lost",
+      "recode_needed",
+      "no_production_impact"
+    ],
+    "action_type": [
+      "disclose_to_government",
       "forensic_recovery",
-      "custodian_declaration",
-      "hold_refresh"
+      "collect_source",
+      "recode_and_produce",
+      "supplement_privilege_log",
+      "quality_control_review",
+      "privilege_re_review",
+      "investigate",
+      "no_action"
     ],
-    "owner_queue": [
-      "legal",
-      "e_discovery",
+    "owner": [
+      "outside_counsel",
+      "client_legal",
+      "client_it",
+      "ediscovery_vendor",
       "review_vendor",
       "privilege_team",
-      "client_it"
+      "records_vendor",
+      "investigation_team"
+    ],
+    "priority": [
+      "P0",
+      "P1",
+      "P2",
+      "P3"
     ]
   },
   "fields": {
     "matter_id": {
       "type": "string",
-      "required_value": "M-CRN-041"
+      "description": "Matter ID from the request and review hub."
     },
-    "production_phase": {
-      "type": "enum",
-      "required_value": "first_rolling"
-    },
-    "category_findings": {
-      "type": "list<object>",
-      "required_object_keys": [
-        "category_id",
+    "critical_findings": {
+      "type": "list",
+      "description": "One object per material gap or defect. Use a stable hub record ID as finding_id when one record anchors the finding.",
+      "item_required_keys": [
         "finding_id",
-        "category_status",
-        "blocked",
-        "issue_ids",
-        "affected_sources",
-        "source_event_ids",
-        "primary_action",
-        "notice_required"
-      ],
-      "object_fields": {
-        "category_id": "string subpoena category ID",
-        "finding_id": "string stable category finding ID",
-        "category_status": "enum",
-        "blocked": "boolean",
-        "issue_ids": "list<string>",
-        "affected_sources": "list<string>",
-        "source_event_ids": "list<string> from API records",
-        "primary_action": "enum action",
-        "notice_required": "boolean"
-      }
-    },
-    "priority_issues": {
-      "type": "list<object>",
-      "required_object_keys": [
-        "issue_id",
         "issue_type",
         "severity",
-        "timing_class",
-        "category_ids",
-        "custodian_ids",
-        "document_ids",
-        "source_event_ids",
-        "affected_sources",
-        "affected_count",
-        "produced_count",
+        "finding_status",
+        "source_status",
+        "production_impact",
+        "category_impacts",
+        "source_refs",
+        "document_count",
         "withheld_count",
-        "privilege_logged_count",
-        "unlogged_privilege_count",
-        "primary_action",
-        "secondary_actions",
-        "notice_required"
+        "logged_count",
+        "unlogged_count",
+        "recommended_action"
       ],
-      "object_fields": {
-        "issue_id": "string stable issue ID",
-        "issue_type": "enum",
-        "severity": "enum",
-        "timing_class": "enum",
-        "category_ids": "list<string>",
-        "custodian_ids": "list<string>",
-        "document_ids": "list<string>",
-        "source_event_ids": "list<string> from API records",
-        "affected_sources": "list<string>",
-        "affected_count": "integer count; use 0 if not applicable",
-        "produced_count": "integer count; use 0 if not applicable",
-        "withheld_count": "integer count; use 0 if not applicable",
-        "privilege_logged_count": "integer count; use 0 if not applicable",
-        "unlogged_privilege_count": "integer count; use 0 if not applicable",
-        "primary_action": "enum action",
-        "secondary_actions": "list<enum action>",
-        "notice_required": "boolean"
+      "item_fields": {
+        "finding_id": "string stable key",
+        "issue_type": "enum issue_type",
+        "severity": "enum severity",
+        "finding_status": "enum finding_status",
+        "source_status": "enum source_status",
+        "production_impact": "enum production_impact",
+        "category_impacts": "list of request category codes sorted ascending",
+        "source_refs": "list of hub record IDs supporting the finding, sorted ascending",
+        "document_count": "integer count, use 0 when not applicable",
+        "withheld_count": "integer count, use 0 when not applicable",
+        "logged_count": "integer count, use 0 when not applicable",
+        "unlogged_count": "integer count, use 0 when not applicable",
+        "recommended_action": "enum action_type"
       }
     },
-    "disclosure_required": {
-      "type": "boolean"
-    },
-    "next_actions": {
-      "type": "list<object>",
-      "required_object_keys": [
-        "rank",
-        "action_id",
-        "action",
-        "issue_ids",
-        "category_ids",
-        "owner_queue",
-        "disclosure_step",
-        "due_basis"
+    "category_statuses": {
+      "type": "list",
+      "description": "One object for each subpoena/request category with a material non-complete status in the current gap analysis.",
+      "item_required_keys": [
+        "category_code",
+        "status",
+        "production_impact",
+        "source_refs",
+        "recommended_action"
       ],
-      "object_fields": {
-        "rank": "integer starting at 1",
-        "action_id": "string stable action ID",
-        "action": "enum action",
-        "issue_ids": "list<string>",
-        "category_ids": "list<string>",
-        "owner_queue": "enum owner_queue",
-        "disclosure_step": "boolean",
-        "due_basis": "short string"
+      "item_fields": {
+        "category_code": "string request category code",
+        "status": "enum category_status",
+        "production_impact": "enum production_impact",
+        "source_refs": "list of hub record IDs supporting the status, sorted ascending",
+        "recommended_action": "enum action_type"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required_keys": [
+        "unlogged_privilege_docs",
+        "miscoded_responsive_doc_count",
+        "lost_personal_device_count",
+        "uncollected_board_source_count",
+        "categories_with_open_gaps",
+        "rolling_production_ready"
+      ],
+      "field_types": {
+        "unlogged_privilege_docs": "integer documents",
+        "miscoded_responsive_doc_count": "integer documents",
+        "lost_personal_device_count": "integer sources",
+        "uncollected_board_source_count": "integer sources",
+        "categories_with_open_gaps": "integer categories",
+        "rolling_production_ready": "boolean"
+      }
+    },
+    "priority_actions": {
+      "type": "list",
+      "description": "Action plan items keyed by action_id and sorted by priority_rank.",
+      "item_required_keys": [
+        "action_id",
+        "priority_rank",
+        "priority",
+        "action_type",
+        "owner",
+        "target_refs",
+        "category_impacts"
+      ],
+      "item_fields": {
+        "action_id": "string stable key",
+        "priority_rank": "integer rank, 1 is highest priority",
+        "priority": "enum priority",
+        "action_type": "enum action_type",
+        "owner": "enum owner",
+        "target_refs": "list of hub record IDs targeted by the action, sorted ascending",
+        "category_impacts": "list of request category codes sorted ascending"
       }
     }
   },
-  "normalization_rules": [
-    "Use exact enum casing shown in this template.",
-    "Use integer counts only.",
-    "Use true and false JSON booleans.",
-    "Do not include unscored narrative fields.",
-    "Do not include categories that have only noisy or stale non-material records."
-  ]
+  "numeric_precision": {
+    "all_counts": "whole integers",
+    "score_fields": "none in candidate answer"
+  }
 }

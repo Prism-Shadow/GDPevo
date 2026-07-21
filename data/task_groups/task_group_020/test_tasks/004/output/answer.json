@@ -1,292 +1,294 @@
 {
-  "deal_id": "D-KEPLER-155",
-  "review_type": "BUYER_HYBRID_REVIEW_ESCALATION",
-  "currency": "USD",
-  "reviewed_terms": [
+  "deal_id": "PRJ_NIMBUS",
+  "client_side": "seller",
+  "transition_issues": [
     {
-      "term_id": "ESCROW",
-      "source_clause_id": "CL-KEPLER-155-001",
-      "policy_rule_id": "HYB-ESCROW",
-      "review_status": "WITHIN_PLAYBOOK_FALLBACK",
-      "escalation_required": false,
-      "committee_route": "NO_COMMITTEE_ROUTE",
-      "deviation_code": "WITHIN_ESCROW_FALLBACK",
-      "severity": "MEDIUM",
-      "approval_recommendation": "NO_APPROVAL_NEEDED",
-      "recommended_position": "ACCEPT_WITHIN_FALLBACK",
-      "condition_codes": [
-        "DOCUMENT_REVENUE_RECOGNITION_DILIGENCE"
-      ],
-      "quantification": {
-        "calculation_base": "HEADLINE_VALUE",
-        "draft_percent": 12.0,
-        "fallback_percent": 12.0,
-        "policy_threshold_percent": 12.0,
-        "deviation_percent": 0.0,
-        "draft_amount_usd": 17520000,
-        "fallback_amount_usd": 17520000,
-        "excess_amount_usd": 0,
-        "exposure_amount_usd": 17520000,
-        "exposure_basis": "DRAFT_AMOUNT",
-        "draft_months": null,
-        "max_months": null,
-        "debt_threshold_usd": null,
-        "benchmark_id": "BM-ESCROW-SAAS-ANALYTICS-2024-040",
-        "benchmark_sample_size": 28,
-        "benchmark_count_above_threshold": 2
+      "issue_id": "CUSTOMER_CONSENT_TERMINATION_RIGHT",
+      "category": "customer_consent_condition",
+      "source_term_ids": ["TERM_PRJ_NIMBUS_03"],
+      "source_record_ids": ["CNS_PRJ_NIMBUS_01", "CNS_PRJ_NIMBUS_03", "MAT_PRJ_NIMBUS_01", "MAT_PRJ_NIMBUS_03"],
+      "issue_status": "draft_exceeds_playbook",
+      "risk_rating": "HIGH",
+      "recommended_action": "revise",
+      "draft_value_normalized": {
+        "buyer_delay_right": "any_top_eight_enterprise_consent_missing",
+        "draft_contract_count": 8
       },
-      "source_doc_ids": [
-        "DOC-KEPLER155-DRAFT-02",
-        "DOC-KEPLER155-EMAIL-03",
-        "DOC-KEPLER155-FIN-04"
-      ]
+      "required_position_normalized": {
+        "limit_to_required_closing_consents": true,
+        "exclude_notice_only_consents": true,
+        "material_adverse_impact_standard_required": true
+      },
+      "quantified_impact_dollars": 34950000
     },
     {
-      "term_id": "GOVERNANCE",
-      "source_clause_id": "CL-KEPLER-155-005",
-      "policy_rule_id": "HYB-GOVERNANCE",
-      "review_status": "ESCALATION_REQUIRED",
-      "escalation_required": true,
-      "committee_route": "INVESTMENT_COMMITTEE",
-      "deviation_code": "FOUNDER_ORDINARY_COURSE_VETO",
-      "severity": "HIGH",
-      "approval_recommendation": "APPROVE_WITH_CONDITIONS",
-      "recommended_position": "REMOVE_ORDINARY_COURSE_VETOES",
-      "condition_codes": [
-        "REMOVE_BUDGET_AND_ORDINARY_COURSE_DEBT_VETOES"
-      ],
-      "quantification": {
-        "calculation_base": "GOVERNANCE_RIGHTS",
-        "draft_percent": null,
-        "fallback_percent": null,
-        "policy_threshold_percent": null,
-        "deviation_percent": null,
-        "draft_amount_usd": null,
-        "fallback_amount_usd": null,
-        "excess_amount_usd": null,
-        "exposure_amount_usd": null,
-        "exposure_basis": "NON_QUANTIFIED_CONTROL_RISK",
-        "draft_months": null,
-        "max_months": null,
-        "debt_threshold_usd": 1000000,
-        "benchmark_id": null,
-        "benchmark_sample_size": null,
-        "benchmark_count_above_threshold": null
+      "issue_id": "FIELD_EMPLOYEE_CONTINUITY_PTO",
+      "category": "employee_transfer",
+      "source_term_ids": [],
+      "source_record_ids": ["EMP_PRJ_NIMBUS_03"],
+      "issue_status": "out_of_policy",
+      "risk_rating": "HIGH",
+      "recommended_action": "revise",
+      "draft_value_normalized": {
+        "buyer_cherry_pick_right": true,
+        "affected_employee_group": "field and operations",
+        "affected_employee_count": 37
       },
-      "source_doc_ids": [
-        "DOC-KEPLER155-COMMITTEE-07",
-        "DOC-KEPLER155-DRAFT-02",
-        "DOC-KEPLER155-EMAIL-03"
-      ]
+      "required_position_normalized": {
+        "defined_transfer_process": true,
+        "service_credit_required": true,
+        "accrued_pto_allocation_required": true,
+        "comparable_terms_required": true
+      },
+      "quantified_impact_dollars": 1240000
     },
     {
-      "term_id": "INDEMNITY_CAP",
-      "source_clause_id": "CL-KEPLER-155-004",
-      "policy_rule_id": "HYB-CAP",
-      "review_status": "ESCALATION_REQUIRED",
-      "escalation_required": true,
-      "committee_route": "INVESTMENT_COMMITTEE",
-      "deviation_code": "ABOVE_CAP_THRESHOLD",
-      "severity": "HIGH",
-      "approval_recommendation": "APPROVE_WITH_CONDITIONS",
-      "recommended_position": "CAP_REQUIRED_POSITION",
-      "condition_codes": [
-        "CAP_CONDITION_POSITION"
-      ],
-      "quantification": {
-        "calculation_base": "HEADLINE_VALUE",
-        "draft_percent": 15.0,
-        "fallback_percent": 12.5,
-        "policy_threshold_percent": 12.5,
-        "deviation_percent": 2.5,
-        "draft_amount_usd": 21900000,
-        "fallback_amount_usd": 18250000,
-        "excess_amount_usd": 3650000,
-        "exposure_amount_usd": 21900000,
-        "exposure_basis": "DRAFT_AMOUNT",
-        "draft_months": null,
-        "max_months": null,
-        "debt_threshold_usd": null,
-        "benchmark_id": null,
-        "benchmark_sample_size": null,
-        "benchmark_count_above_threshold": null
+      "issue_id": "GOVERNING_LAW_FORUM_FIX",
+      "category": "governing_law_forum",
+      "source_term_ids": [],
+      "source_record_ids": ["DOC_PRJ_NIMBUS_01"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "MEDIUM",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "governing_law_specified": false,
+        "forum_specified": false
       },
-      "source_doc_ids": [
-        "DOC-KEPLER155-COMMITTEE-07",
-        "DOC-KEPLER155-DRAFT-02",
-        "DOC-KEPLER155-EMAIL-03",
-        "DOC-KEPLER155-FIN-04"
-      ]
+      "required_position_normalized": {
+        "governing_law": "Delaware",
+        "forum": "Delaware Court of Chancery or Delaware federal court",
+        "apply_to_ancillary_documents": true
+      },
+      "quantified_impact_dollars": null
     },
     {
-      "term_id": "NONCOMPETE",
-      "source_clause_id": "CL-KEPLER-155-006",
-      "policy_rule_id": null,
-      "review_status": "WITHIN_PLAYBOOK_FALLBACK",
-      "escalation_required": false,
-      "committee_route": "NO_COMMITTEE_ROUTE",
-      "deviation_code": "WITHIN_NONCOMPETE_FALLBACK",
-      "severity": "LOW",
-      "approval_recommendation": "NO_APPROVAL_NEEDED",
-      "recommended_position": "ACCEPT_WITHIN_FALLBACK",
-      "condition_codes": [
-        "KEEP_LIMITED_SAAS_ANALYTICS_SCOPE"
-      ],
-      "quantification": {
-        "calculation_base": "FOUNDER_EMPLOYMENT",
-        "draft_percent": null,
-        "fallback_percent": null,
-        "policy_threshold_percent": null,
-        "deviation_percent": null,
-        "draft_amount_usd": null,
-        "fallback_amount_usd": null,
-        "excess_amount_usd": null,
-        "exposure_amount_usd": null,
-        "exposure_basis": "NONE",
-        "draft_months": 36,
-        "max_months": 36,
-        "debt_threshold_usd": null,
-        "benchmark_id": null,
-        "benchmark_sample_size": null,
-        "benchmark_count_above_threshold": null
+      "issue_id": "IP_DOMAIN_TRANSITION_MISSING",
+      "category": "ip_domain_transition",
+      "source_term_ids": [],
+      "source_record_ids": ["DOC_PRJ_NIMBUS_01"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "HIGH",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "transitional_trademark_license_present": false,
+        "domain_redirect_present": false
       },
-      "source_doc_ids": [
-        "DOC-KEPLER155-DISC-06",
-        "DOC-KEPLER155-DRAFT-02"
-      ]
+      "required_position_normalized": {
+        "trademark_license_days": 180,
+        "domain_redirect_months": 12,
+        "redirect_type": "301_OR_302",
+        "all_pages_and_subdomains": true,
+        "buyer_maintain_domains": true
+      },
+      "quantified_impact_dollars": null
     },
     {
-      "term_id": "ROLLOVER",
-      "source_clause_id": "CL-KEPLER-155-003",
-      "policy_rule_id": "HYB-ROLLOVER",
-      "review_status": "ESCALATION_REQUIRED",
-      "escalation_required": true,
-      "committee_route": "INVESTMENT_COMMITTEE",
-      "deviation_code": "ABOVE_ROLLOVER_MISMATCH_THRESHOLD",
-      "severity": "HIGH",
-      "approval_recommendation": "APPROVE_WITH_CONDITIONS",
-      "recommended_position": "ROLLOVER_REQUIRED_POSITION",
-      "condition_codes": [
-        "COMMITTEE_APPROVES_ILLIQUIDITY_DISCOUNT",
-        "PRICE_REDUCTION_IF_DISCOUNT_RETAINED",
-        "ROLLOVER_CONDITION_POSITION"
-      ],
-      "quantification": {
-        "calculation_base": "ROLLOVER_EQUITY_VALUE",
-        "draft_percent": 3.5,
-        "fallback_percent": 2.0,
-        "policy_threshold_percent": 2.0,
-        "deviation_percent": 1.5,
-        "draft_amount_usd": 1400000,
-        "fallback_amount_usd": 800000,
-        "excess_amount_usd": 600000,
-        "exposure_amount_usd": 1400000,
-        "exposure_basis": "DRAFT_AMOUNT",
-        "draft_months": null,
-        "max_months": null,
-        "debt_threshold_usd": null,
-        "benchmark_id": "BM-ROLLOVER-VALUATION-2026",
-        "benchmark_sample_size": 22,
-        "benchmark_count_above_threshold": 2
+      "issue_id": "OUTSIDE_DATE_EXTENSION_MISSING",
+      "category": "closing_deadline",
+      "source_term_ids": [],
+      "source_record_ids": ["REG_PRJ_NIMBUS", "RSK_PRJ_NIMBUS_01"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "HIGH",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "outside_date_present": false,
+        "seller_regulatory_extension_present": false,
+        "hsr_required": true
       },
-      "source_doc_ids": [
-        "DOC-KEPLER155-DRAFT-02",
-        "DOC-KEPLER155-EMAIL-03",
-        "DOC-KEPLER155-FIN-04"
-      ]
+      "required_position_normalized": {
+        "initial_outside_date_days": 120,
+        "seller_regulatory_extension_days": 30,
+        "maximum_without_board_approval_days": 240
+      },
+      "quantified_impact_dollars": 27900000
     },
     {
-      "term_id": "TAX_ESCROW",
-      "source_clause_id": "CL-KEPLER-155-002",
-      "policy_rule_id": "HYB-ESCROW",
-      "review_status": "WITHIN_PLAYBOOK",
-      "escalation_required": false,
-      "committee_route": "NO_COMMITTEE_ROUTE",
-      "deviation_code": "WITHIN_TAX_ESCROW_RANGE",
-      "severity": "LOW",
-      "approval_recommendation": "NO_APPROVAL_NEEDED",
-      "recommended_position": "ACCEPT_AS_DRAFTED",
-      "condition_codes": [
-        "TAX_EXPOSURE_IDENTIFIED"
-      ],
-      "quantification": {
-        "calculation_base": "HEADLINE_VALUE",
-        "draft_percent": 2.0,
-        "fallback_percent": 3.0,
-        "policy_threshold_percent": 3.0,
-        "deviation_percent": 0.0,
-        "draft_amount_usd": 2920000,
-        "fallback_amount_usd": 4380000,
-        "excess_amount_usd": 0,
-        "exposure_amount_usd": 2920000,
-        "exposure_basis": "DRAFT_AMOUNT",
-        "draft_months": null,
-        "max_months": null,
-        "debt_threshold_usd": null,
-        "benchmark_id": null,
-        "benchmark_sample_size": null,
-        "benchmark_count_above_threshold": null
+      "issue_id": "SECTION_1060_ALLOCATION_MISSING",
+      "category": "tax_allocation",
+      "source_term_ids": [],
+      "source_record_ids": ["DOC_PRJ_NIMBUS_01"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "MEDIUM",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "section_1060_allocation_method": null,
+        "form_8594_consistency": false
       },
-      "source_doc_ids": [
-        "DOC-KEPLER155-DRAFT-02",
-        "DOC-KEPLER155-FIN-04"
-      ]
+      "required_position_normalized": {
+        "tax_allocation_method": "mutually_agreed_section_1060",
+        "mutually_agreed_within_days": 90,
+        "form_8594_consistency": true
+      },
+      "quantified_impact_dollars": null
+    },
+    {
+      "issue_id": "TRANSFER_TAX_SPLIT_MISSING",
+      "category": "transfer_tax",
+      "source_term_ids": [],
+      "source_record_ids": ["DOC_PRJ_NIMBUS_01"],
+      "issue_status": "missing_required_term",
+      "risk_rating": "MEDIUM",
+      "recommended_action": "add",
+      "draft_value_normalized": {
+        "transfer_tax_allocation_specified": false
+      },
+      "required_position_normalized": {
+        "seller_percent": 50,
+        "buyer_percent": 50,
+        "bulk_sale_costs_same_split": true
+      },
+      "quantified_impact_dollars": null
+    },
+    {
+      "issue_id": "TSA_SCOPE_DURATION_FEES",
+      "category": "transition_services",
+      "source_term_ids": ["TERM_PRJ_NIMBUS_01", "TERM_PRJ_NIMBUS_02"],
+      "source_record_ids": ["RSK_PRJ_NIMBUS_03"],
+      "issue_status": "draft_exceeds_playbook",
+      "risk_rating": "HIGH",
+      "recommended_action": "revise",
+      "draft_value_normalized": {
+        "draft_months": 18,
+        "services": ["identity", "billing", "tier-two support"],
+        "fee_model": "fixed_below_cost",
+        "stranded_cost_gap_dollars": 9400000
+      },
+      "required_position_normalized": {
+        "preferred_months": 6,
+        "fallback_months": 9,
+        "excess_months_over_fallback": 9,
+        "fee_model": "cost_plus_stranded_overhead",
+        "clean_termination_right": true
+      },
+      "quantified_impact_dollars": 9400000
     }
   ],
-  "committee_packet": {
-    "policy_id": "P-HYBRID-INVEST-2026",
-    "committee_route": "INVESTMENT_COMMITTEE",
-    "approval_required": true,
-    "committee_members": [
-      "Ruth Hall",
-      "Devin Cho",
-      "Mika Stone"
-    ],
-    "committee_source_doc_id": "DOC-KEPLER155-COMMITTEE-07",
-    "terms_requiring_escalation": [
-      "GOVERNANCE",
-      "INDEMNITY_CAP",
-      "ROLLOVER"
-    ],
-    "terms_within_playbook": [
-      "ESCROW",
-      "NONCOMPETE",
-      "TAX_ESCROW"
-    ],
-    "reviewed_term_count": 6,
-    "escalation_term_count": 3,
-    "within_playbook_term_count": 3,
-    "aggregate_risk_tier": "HIGH",
-    "final_action": "ESCALATE_AND_RENEGOTIATE_BEFORE_SIGNING",
-    "primary_driver_term_ids": [
-      "GOVERNANCE",
-      "INDEMNITY_CAP",
-      "ROLLOVER"
-    ],
-    "total_quantified_exposure_usd": 23300000,
-    "total_policy_excess_usd": 4250000,
-    "approval_conditions": [
-      {
-        "condition_id": "CONDITION_001",
-        "term_id": "INDEMNITY_CAP",
-        "required_state": "CAP_CONDITION_POSITION"
-      },
-      {
-        "condition_id": "CONDITION_002",
-        "term_id": "GOVERNANCE",
-        "required_state": "REMOVE_BUDGET_AND_ORDINARY_COURSE_DEBT_VETOES"
-      },
-      {
-        "condition_id": "CONDITION_003",
-        "term_id": "ROLLOVER",
-        "required_state": "ROLLOVER_CONDITION_POSITION_OR_PRICE_REDUCTION"
+  "required_redlines": [
+    {
+      "redline_id": "CUSTOMER_CONSENT_CONDITION",
+      "related_issue_id": "CUSTOMER_CONSENT_TERMINATION_RIGHT",
+      "redline_action": "revise",
+      "must_have_terms": {
+        "limit_to_required_closing_consents": true,
+        "required_closing_consent_ids": ["CNS_PRJ_NIMBUS_01", "CNS_PRJ_NIMBUS_03"],
+        "exclude_notice_only_consents": true,
+        "material_adverse_impact_standard_required": true
       }
-    ],
-    "strategic_context": {
-      "batna_code": "LOWER_HEADLINE_PRICE_AVAILABLE",
-      "ownership_context": "FOUNDER_GOVERNANCE_PRESSURE",
-      "strategic_rationale": "CONTROL_INVESTMENT_WITH_MEANINGFUL_ROLLOVER",
-      "benchmark_memo_required": true
+    },
+    {
+      "redline_id": "EMPLOYEE_CONTINUITY",
+      "related_issue_id": "FIELD_EMPLOYEE_CONTINUITY_PTO",
+      "redline_action": "revise",
+      "must_have_terms": {
+        "affected_employee_group": "field and operations",
+        "must_offer_all_field_operations": true,
+        "affected_employee_count": 37,
+        "service_credit_required": true,
+        "accrued_pto_allocation_required": true,
+        "pto_liability_dollars": 1240000,
+        "warn_risk": "medium"
+      }
+    },
+    {
+      "redline_id": "GOVERNING_LAW_FORUM",
+      "related_issue_id": "GOVERNING_LAW_FORUM_FIX",
+      "redline_action": "add",
+      "must_have_terms": {
+        "governing_law": "Delaware",
+        "forum": "Delaware Court of Chancery or Delaware federal court",
+        "apply_to_ancillary_documents": true
+      }
+    },
+    {
+      "redline_id": "IP_DOMAIN_TRANSITION",
+      "related_issue_id": "IP_DOMAIN_TRANSITION_MISSING",
+      "redline_action": "add",
+      "must_have_terms": {
+        "transitional_trademark_license_required": true,
+        "trademark_license_days": 180,
+        "domain_redirect_required": true,
+        "domain_redirect_months": 12,
+        "redirect_type": "301_OR_302",
+        "all_pages_and_subdomains": true,
+        "buyer_maintain_domains": true
+      }
+    },
+    {
+      "redline_id": "OUTSIDE_DATE_EXTENSION",
+      "related_issue_id": "OUTSIDE_DATE_EXTENSION_MISSING",
+      "redline_action": "add",
+      "must_have_terms": {
+        "initial_outside_date_days": 120,
+        "seller_regulatory_extension_days": 30,
+        "applies_because_hsr_required": true,
+        "maximum_without_board_approval_days": 240
+      }
+    },
+    {
+      "redline_id": "SECTION_1060_ALLOCATION",
+      "related_issue_id": "SECTION_1060_ALLOCATION_MISSING",
+      "redline_action": "add",
+      "must_have_terms": {
+        "tax_allocation_method": "mutually_agreed_section_1060",
+        "mutually_agreed_within_days": 90,
+        "form_8594_consistency": true
+      }
+    },
+    {
+      "redline_id": "TRANSFER_TAX_SPLIT",
+      "related_issue_id": "TRANSFER_TAX_SPLIT_MISSING",
+      "redline_action": "add",
+      "must_have_terms": {
+        "seller_percent": 50,
+        "buyer_percent": 50,
+        "bulk_sale_costs_same_split": true
+      }
+    },
+    {
+      "redline_id": "TSA_SCOPE_FEES",
+      "related_issue_id": "TSA_SCOPE_DURATION_FEES",
+      "redline_action": "revise",
+      "must_have_terms": {
+        "max_duration_months": 9,
+        "preferred_duration_months": 6,
+        "services": ["identity", "billing", "tier-two support"],
+        "fee_model": "cost_plus_stranded_overhead",
+        "stranded_cost_reimbursement_dollars": 9400000,
+        "clean_termination_right": true
+      }
     }
+  ],
+  "operational_risk": {
+    "overall_risk_rating": "HIGH",
+    "overall_posture": "revise_before_signing",
+    "priority_order": [
+      "TSA_SCOPE_DURATION_FEES",
+      "CUSTOMER_CONSENT_TERMINATION_RIGHT",
+      "OUTSIDE_DATE_EXTENSION_MISSING",
+      "IP_DOMAIN_TRANSITION_MISSING",
+      "FIELD_EMPLOYEE_CONTINUITY_PTO",
+      "SECTION_1060_ALLOCATION_MISSING",
+      "TRANSFER_TAX_SPLIT_MISSING",
+      "GOVERNING_LAW_FORUM_FIX"
+    ],
+    "quantified_exposures": {
+      "stranded_cost_gap_dollars": 9400000,
+      "field_operations_pto_liability_dollars": 1240000,
+      "required_closing_consent_amount_at_risk_dollars": 34950000,
+      "top_customer_annual_revenue_at_risk_dollars": 52700000,
+      "closing_certainty_high_dollars": 27900000,
+      "transition_disruption_high_dollars": 11160000
+    },
+    "required_closing_consent_ids": ["CNS_PRJ_NIMBUS_01", "CNS_PRJ_NIMBUS_03"],
+    "material_contract_consent_ids": ["MAT_PRJ_NIMBUS_01", "MAT_PRJ_NIMBUS_03"],
+    "business_outcomes_protected": [
+      "transition_cost_recovery",
+      "customer_consent_closing_certainty",
+      "IP_and_domain_continuity",
+      "workforce_continuity",
+      "tax_reporting_consistency",
+      "regulatory_deadline_protection",
+      "dispute_forum_control"
+    ]
   }
 }

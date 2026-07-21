@@ -22,7 +22,7 @@ Read `CODEX_ORCHESTRATOR.md` before launching isolated agent runs. The formal
 Codex command shape is:
 
 ```bash
-CODEX_HOME=/codex_home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
+CODEX_HOME=/tmp/gdpevo-codex-home codex exec -C /work -m gpt-5.5 -c 'model_reasoning_effort="xhigh"' --dangerously-bypass-approvals-and-sandbox --json "$PROMPT"
 ```
 
 `CODEX_HOME` is a runtime-only temporary environment variable for that agent
@@ -30,6 +30,15 @@ process, not a task `.env` setting. Do not use `codex exec --ephemeral` for
 formal attempts. Use the exact mode-specific prompt in `agent_prompts.md` for
 every process; replace only declared placeholders and do not append task hints
 or extra paths.
+
+Resolve the orchestrator's active Codex home once as
+`HOST_CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"`. If authentication is needed,
+mount only `$HOST_CODEX_HOME/auth.json` read-only at
+`/run/gdpevo-bootstrap/auth.json`, copy it with mode `0600` into the
+container-local `CODEX_HOME`, and run `codex login status` inside the same named
+container. A missing or invalid login blocks the run. Do not mount or copy the
+rest of the active Codex home, and do not substitute the orchestrator for an
+unauthenticated tested-agent process.
 
 ## 1. Prepare The Task Group
 
@@ -121,17 +130,21 @@ Give every skill-generation run a unique evolve attempt ID:
 <task_group_id>__skill_generation__<condition>__attempt_<nn>__<timestamp>
 ```
 
-Create a dedicated mounted `CODEX_HOME` for that run under:
-
-```text
-original_traces/skill_generation/<condition>/attempt_<nn>/codex_home/
-```
-
-After the run, preserve the complete raw `rollout-*.jsonl` session trace and
-write `evolve_metadata.yaml` in the matching staged directory under
+For each run, create a named agent container without `--rm` and keep
+`CODEX_HOME=/tmp/gdpevo-codex-home` inside the container. If authentication is
+needed, mount only the minimum bootstrap credential read-only, copy it into the
+container-local home, and do not mount a host Codex home. After the run, keep the
+stopped container until the answer or skill, primary trace, and metadata are
+complete. Use `docker cp` to extract only the matching `sessions/.../rollout-*.jsonl`
+file, or a temporary sessions subtree under `scratch/trace_extract/<run_id>/` for
+discovery. Copy the selected JSONL to
+`original_traces/skill_generation/<condition>/attempt_<nn>/` and write
+`evolve_metadata.yaml` in the matching staged directory under
 `scratch/skill_generation/`. The metadata must contain the evolve attempt ID,
 skill output path, trace path, token usage, pricing inputs, and calculated USD
-cost. Token and cost values must come from the matched raw Codex trace.
+cost. Token and cost values must come from the copied Codex trace. Verify the
+metadata before removing the extraction directory and stopped container. Never
+retain the complete container-local Codex home.
 
 Skill-generation token usage and cost are reported as evolve metrics. They are
 not included in test solver efficiency metrics.
@@ -177,9 +190,11 @@ contaminated attempt.
 The solver writes `answer.json` in its own attempt directory.
 
 Each solver attempt is launched by the Codex orchestrator as a Dockerized Codex
-process from that attempt directory. Mount only the attempt directory and the
-per-attempt Codex home used for `CODEX_HOME`; do not mount the full workspace or
-task group.
+process from that attempt directory. Create a named container without `--rm`,
+mount only the attempt directory, and keep `CODEX_HOME=/tmp/gdpevo-codex-home`
+inside the container. If authentication is needed, mount only the minimum
+read-only bootstrap credential. Do not mount the full workspace, task group, or
+host Codex home.
 
 ## 5. Score And Aggregate
 
@@ -195,14 +210,20 @@ Every solver attempt must have a unique `eval_attempt_id`:
 The ID must appear in the solver prompt, attempt directory, and
 `run_metadata.yaml`.
 
-Backfill token usage, solver turn count, and tool-call count from the raw Codex
-session trace written into the attempt-mounted `CODEX_HOME`. Confirm the trace
-uses the expected attempt directory and contains the matching `eval_attempt_id`.
+After the process exits, keep the stopped container and use `docker cp` to extract
+only the raw Codex session trace from its container-local `CODEX_HOME`. Copy the
+exact `sessions/.../rollout-*.jsonl`, or temporarily extract the sessions subtree
+under `scratch/trace_extract/<run_id>/` when discovery is necessary. Confirm it
+uses the expected attempt directory and contains the matching `eval_attempt_id`,
+then copy only that primary JSONL into the canonical trace directory. Backfill and
+verify token usage, cost, solver turn count, tool-call count, and
+`run_metadata.yaml` from the copied file. Only then delete the extraction
+directory and stopped container.
 
 Codex raw session traces should be under:
 
 ```text
-original_traces/<condition>/<task_id>/attempt_<nn>/codex_home/sessions/<YYYY>/<MM>/<DD>/rollout-*.jsonl
+original_traces/<condition>/<task_id>/attempt_<nn>/rollout-*.jsonl
 ```
 
 Record the raw session trace path in `run_metadata.yaml`. If the raw session
@@ -218,7 +239,7 @@ or main-agent summarization in solver efficiency.
 
 Separately aggregate evolve token usage and cost across the 3 skill-generation
 runs for `fewshot`, `self`, and `reflect-3`. Preserve each attempt's metadata and
-trace path in the workspace audit files. In the formal report, keep only each
+copied primary trace path in the workspace audit files, not its runtime home. In the formal report, keep only each
 attempt's token and cost fields plus the arithmetic mean of each token bucket
 and USD cost, without mixing them into solver efficiency.
 

@@ -1,11 +1,16 @@
-You are preparing the May 2026 restricted on-premises alcohol licensing review in the Cascadia Licensing Review Portal.
+You are preparing an internal staff package for a restricted liquor-license settlement review.
 
-CLRP base URL: <TASK_ENV_BASE_URL>
+Target application: L-TE3-001
+Target location: LOC-TE3
 
-Target application: AA-2026-0036
-Target premises: PM-2026-036
-Review month: 2026-05
+Use the licensing environment at <TASK_ENV_BASE_URL>. Relevant records are available from:
 
-Prepare a reviewer-ready JSON result for the target file. The result should cover the issuance recommendation, same-premises risk, control overlap, verification gaps, standard obligations, location-specific restrictions, and first-90-day inspection priorities.
+- GET /api/policies
+- GET /api/liquor/applications
+- GET /api/liquor/settlements
+- GET /api/liquor/privileges
+- GET /api/liquor/incidents
+- GET /api/liquor/site-evidence
+- POST /api/sql
 
-Use the CLRP public records for the target application, premises, incidents, settlements, restrictions, standard obligations, and address history as needed. Return only one JSON object conforming to input/payloads/answer_template.json. Do not include markdown or narrative outside the JSON.
+Return only a JSON answer matching input/payloads/answer_template.json. The package should state the issuance posture, same-premises applicability, covered risks, unresolved verification gaps, ordinary license obligations, location-specific controls, first-90-day monitoring plan, and field escalation triggers.

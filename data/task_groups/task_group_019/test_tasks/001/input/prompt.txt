@@ -1,9 +1,17 @@
-You are conducting a Harbor State contractor eligibility review for batch HS-2026-Q2A.
+You are supporting the State Contractors Licensing Board with a pending contractor application batch review.
 
-The Cascadia Licensing Review Portal (CLRP) will be available at:
+Review application ids C-TE1-001 through C-TE1-009 for current eligibility and staff release handling.
 
-<TASK_ENV_BASE_URL>
+Use the licensing environment at <TASK_ENV_BASE_URL>. The relevant public endpoints are:
 
-Use the CLRP public API and public exports only. Do not inspect local environment files, generated databases, manifests, setup scripts, hidden task files, or evaluation files. The review cutoff date for this batch is 2026-06-20.
+- GET /api/policies
+- GET /api/contractor/applications
+- GET /api/contractor/bonds
+- GET /api/contractor/insurance
+- GET /api/contractor/license-history
+- GET /api/contractor/violations
+- GET /api/contractor/correspondence
+- GET /api/contractor/inspections
+- POST /api/sql, if SQL access is available in your environment instructions
 
-Return one JSON object matching `input/payloads/answer_template.json`. Include eligibility decisions for every application in HS-2026-Q2A, deficiency counts, and the bulletin-impact summary. Use only the controlled enum values defined in the template, and do not include narrative outside the JSON.
+Return only a JSON object matching input/payloads/answer_template.json. Include one decision object for each target application, ordered by application_id, and include the batch summary fields needed by release staff.

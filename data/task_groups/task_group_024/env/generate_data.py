@@ -1,1264 +1,2553 @@
 #!/usr/bin/env python3
-"""Generate the shared engineering operations data set."""
-
-from __future__ import annotations
-
 import json
 import random
-from collections import defaultdict
+import sqlite3
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
 
-SEED = 2702401
-ROOT = Path(__file__).resolve().parent
-DATA_DIR = ROOT / "data"
+SEED = 24024
+BASE_DIR = Path(__file__).resolve().parent
+DB_PATH = BASE_DIR / "portfolio.db"
+MANIFEST_PATH = BASE_DIR / "data_manifest.json"
+GENERATED_AT = "2026-07-18T00:00:00Z"
 
-CATEGORIES = ("NewFeature", "TechDebt", "Reliability", "Security")
-TERMINAL_STATUSES = {"Done", "Closed", "Verified", "Cancelled"}
-OPEN_STATUSES = {"New", "In Progress", "Blocked", "Review"}
-ACTIVE_STATUSES = OPEN_STATUSES | {"Reopened"}
-
-PRODUCTS = [
-    {"name": "Identity Platform", "code": "IDP", "director": "Maya Stone"},
-    {"name": "Payments", "code": "PAY", "director": "Jonah Price"},
-    {"name": "Data Platform", "code": "DAT", "director": "Nina Hart"},
-    {"name": "Edge Services", "code": "EDG", "director": "Owen Reed"},
-    {"name": "Collaboration Suite", "code": "COL", "director": "Priya Vale"},
-    {"name": "Mobile Platform", "code": "MOB", "director": "Leo Brooks"},
-    {"name": "Core Services", "code": "COR", "director": "Iris Blake"},
-    {"name": "Atlas Admin", "code": "ATL", "director": "Samira Wells"},
-    {"name": "Observability Tools", "code": "OBS", "director": "Theo Grant"},
-    {"name": "Internal Developer Portal", "code": "DEV", "director": "Clara Quinn"},
-    {"name": "CRM Integrations", "code": "CRM", "director": "Marcus Flynn"},
+TEAMS = [
+    "Platform Core",
+    "Identity Services",
+    "Infra Reliability",
+    "Data Platform",
+    "Mobile Client",
+    "Growth Experiences",
+    "AppSec",
+    "Observability",
+    "Core Services",
+    "Integrations",
+    "Billing",
+    "API Foundations",
+    "Revenue Platform",
+    "Edge Delivery",
+    "Release Engineering",
 ]
 
-PRODUCT_AREAS = {
-    "Identity Platform": ["OAuth flow", "session broker", "tenant roles", "token rotation", "directory sync"],
-    "Payments": ["ledger posting", "chargeback queue", "settlement batch", "risk scoring", "invoice webhook"],
-    "Data Platform": ["warehouse sync", "schema registry", "query planner", "stream connector", "lineage graph"],
-    "Edge Services": ["traffic router", "cache purge", "TLS edge", "regional failover", "rate limiter"],
-    "Collaboration Suite": [
-        "document canvas",
-        "sharing panel",
-        "presence service",
-        "comment digest",
-        "workspace search",
-    ],
-    "Mobile Platform": ["offline sync", "push delivery", "release channel", "crash capture", "mobile auth"],
-    "Core Services": ["job scheduler", "configuration store", "service mesh", "message bus", "audit pipeline"],
-    "Atlas Admin": ["admin console", "role templates", "tenant import", "policy editor", "approval queue"],
-    "Observability Tools": ["metric ingest", "alert routing", "trace sampler", "dashboard export", "log archive"],
-    "Internal Developer Portal": [
-        "catalog sync",
-        "template runner",
-        "build insights",
-        "developer docs",
-        "service scorecard",
-    ],
-    "CRM Integrations": ["contact sync", "opportunity bridge", "account dedupe", "activity feed", "CRM webhook"],
-}
-
-OWNER_NAMES = {
-    "IDP": ["Avery Chen", "Morgan Ellis", "Riley Shah", "Taylor Brooks"],
-    "PAY": ["Jordan Lane", "Casey Moore", "Robin Patel", "Blair Santos"],
-    "DAT": ["Alex Kim", "Emery Clark", "Harper Ng", "Drew Fisher"],
-    "EDG": ["Jamie Moss", "Quinn Rivera", "Parker Hale", "Reese Donovan"],
-    "COL": ["Dana Cole", "Skyler Finch", "Rowan Gray", "Kendall Pierce"],
-    "MOB": ["Devon Park", "Ari Bell", "Sage Turner", "Milan Fox"],
-    "COR": ["Hayden Scott", "Finley Ward", "Jules Warren", "Lennox Page"],
-    "ATL": ["Cameron West", "Noel Bryant", "Elliot Cross", "Marin Hayes"],
-    "OBS": ["Sydney North", "Kai Mason", "Tessa Green", "Remy Blake"],
-    "DEV": ["Arden Lake", "Marlowe Dean", "Kris Rowan", "Shawn Dale"],
-    "CRM": ["Bailey Ross", "Indigo Pierce", "Luca Miles", "Nico Flynn"],
-}
-
-ROLE_ORDER = ["Engineering Manager", "Staff Engineer", "Reliability Lead", "Security Engineer"]
-
-RELEASE_DEFS = [
-    {
-        "release_id": "REL-IDP-2025Q4",
-        "name": "Guardian Identity Q4",
-        "product": "Identity Platform",
-        "release_date": "2025-12-18",
-        "readiness_target": 0.93,
-        "release_train": "Guardian",
-    },
-    {
-        "release_id": "REL-PAY-2026Q1",
-        "name": "Ledger Flow 2026.1",
-        "product": "Payments",
-        "release_date": "2026-02-28",
-        "readiness_target": 0.92,
-        "release_train": "Ledger Flow",
-    },
-    {
-        "release_id": "REL-ORION-38",
-        "name": "Orion 3.8",
-        "product": "Data Platform",
-        "release_date": "2026-03-12",
-        "readiness_target": 0.92,
-        "release_train": "Orion",
-    },
-    {
-        "release_id": "REL-EDGE-2026Q1",
-        "name": "Lattice Edge 2026.1",
-        "product": "Edge Services",
-        "release_date": "2026-03-22",
-        "readiness_target": 0.90,
-        "release_train": "Lattice",
-    },
-    {
-        "release_id": "REL-COL-2026Q2",
-        "name": "Canvas Collaboration 2026.2",
-        "product": "Collaboration Suite",
-        "release_date": "2026-06-25",
-        "readiness_target": 0.91,
-        "release_train": "Canvas",
-    },
-    {
-        "release_id": "REL-CORE-2026Q2",
-        "name": "Halley Core Q2 Train",
-        "product": "Core Services",
-        "release_date": "2026-06-28",
-        "readiness_target": 0.94,
-        "release_train": "Halley",
-    },
-    {
-        "release_id": "REL-VEGA-20",
-        "name": "Vega 2.0",
-        "product": "Mobile Platform",
-        "release_date": "2026-06-30",
-        "readiness_target": 0.90,
-        "release_train": "Vega",
-    },
-    {
-        "release_id": "REL-ATLAS-Q3",
-        "name": "Atlas Admin Q3 Control Train",
-        "product": "Atlas Admin",
-        "release_date": "2026-07-15",
-        "readiness_target": 0.93,
-        "release_train": "Atlas Control",
-    },
-    {
-        "release_id": "REL-OBS-2026Q2",
-        "name": "Hubble Observability 2026.2",
-        "product": "Observability Tools",
-        "release_date": "2026-06-18",
-        "readiness_target": 0.89,
-        "release_train": "Hubble",
-    },
+PRODUCT_AREAS = [
+    "Atlas Backend",
+    "Identity",
+    "Data Reliability",
+    "Checkout",
+    "Security Operations",
+    "Core Runtime",
+    "API Connectivity",
+    "Revenue Systems",
+    "Edge Routing",
+    "Release Train",
 ]
 
-MILESTONE_NAMES = [
-    ("Scope Lock", -56, True),
-    ("API Complete", -38, True),
-    ("Integration Complete", -24, False),
-    ("Security Review", -13, True),
-    ("Launch Readiness", -4, True),
+WORK_TYPES = [
+    "Feature",
+    "Enhancement",
+    "Bug",
+    "Incident",
+    "Chore",
+    "Refactor",
+    "Security",
+    "Compliance",
+    "Reliability",
+    "Dependency",
 ]
 
-SLA_TARGETS = {
-    "Reliability": {"S1": 2, "S2": 5, "S3": 10, "S4": 21},
-    "Security": {"S1": 3, "S2": 7, "S3": 14, "S4": 30},
-    "TechDebt": {"S1": 14, "S2": 30, "S3": 45, "S4": 60},
-    "NewFeature": {"S1": 30, "S2": 45, "S3": 75, "S4": 90},
-}
-
-BLOCKER_TYPES = [
-    "External Dependency",
-    "Environment",
-    "Security Review",
-    "Capacity",
-    "Design Decision",
-    "Data Migration",
-    "Vendor",
-    "Ownership Gap",
+STATUSES = [
+    "Backlog",
+    "In Progress",
+    "Review",
+    "Done",
+    "Verified",
+    "Deployed",
+    "Closed",
+    "Cancelled",
+    "Duplicate",
+    "Reopened",
 ]
 
-CAUSE_TEXTS = {
-    "External Dependency": [
-        "Waiting on upstream API contract approval.",
-        "Dependent service has not exposed the required event.",
-        "Partner system certification window moved later.",
-    ],
-    "Environment": [
-        "Staging environment is missing the required regional capacity.",
-        "Test data refresh is delayed for shared validation tenants.",
-        "Build lane is blocked by an infrastructure image mismatch.",
-    ],
-    "Security Review": [
-        "Security review found an unresolved privilege boundary question.",
-        "Threat model sign-off is pending for elevated access paths.",
-        "Compliance evidence is incomplete for audit controls.",
-    ],
-    "Capacity": [
-        "Load test shows capacity below the launch threshold.",
-        "Queue depth increases above the operational guardrail.",
-        "Shard allocation is not ready for peak regional traffic.",
-    ],
-    "Design Decision": [
-        "Architecture decision is pending from the product council.",
-        "The owner group has not selected the migration fallback path.",
-        "Cross-team behavior remains ambiguous for rollback handling.",
-    ],
-    "Data Migration": [
-        "Backfill validation is failing for historical tenant records.",
-        "Migration checksum is not stable across dry-run attempts.",
-        "Data retention exception needs explicit approval.",
-    ],
-    "Vendor": [
-        "Vendor response is overdue for SDK compatibility details.",
-        "Third-party incident delays final certification.",
-        "Vendor test account is not available in the required region.",
-    ],
-    "Ownership Gap": [
-        "No accountable owner is assigned for final production validation.",
-        "Escalation is waiting for a service owner decision.",
-        "Hand-off between teams left the follow-up queue unowned.",
-    ],
-}
+CLOSED_STATUSES = {"Done", "Verified", "Deployed", "Closed", "Cancelled", "Duplicate"}
+SEVERITIES = ["S1", "S2", "S3", "S4"]
+QUARTERS = ["2025-Q3", "2025-Q4", "2026-Q1"]
 
 
-def parse_date(value: str) -> date:
-    return date.fromisoformat(value)
+def iso(d):
+    return d.isoformat() if d else None
 
 
-def date_string(value: date) -> str:
-    return value.isoformat()
+def quarter_for(d):
+    if d.year == 2025 and 7 <= d.month <= 9:
+        return "2025-Q3"
+    if d.year == 2025 and 10 <= d.month <= 12:
+        return "2025-Q4"
+    if d.year == 2026 and 1 <= d.month <= 3:
+        return "2026-Q1"
+    return None
 
 
-def timestamp(value: date, hour: int = 9, minute: int = 0) -> str:
-    return datetime(value.year, value.month, value.day, hour, minute, 0).isoformat()
+def choose_release(rng, target_date, labels):
+    if target_date < date(2025, 10, 1):
+        return None
+    if "rollout" in labels or "release" in labels or rng.random() < 0.38:
+        if target_date <= date(2025, 12, 31):
+            return "REL-NOVA-2025-12"
+        if target_date <= date(2026, 2, 24):
+            return "REL-ORION-2026-02"
+        return "REL-ZEPHYR-2026-03"
+    return None
 
 
-def quarter_for(value: date) -> str:
-    quarter = ((value.month - 1) // 3) + 1
-    return f"{value.year}-Q{quarter}"
+def make_labels(rng, work_type, title_tokens):
+    labels = set()
+    type_labels = {
+        "Security": ["security", "auth", "encryption"],
+        "Compliance": ["security", "compliance"],
+        "Reliability": ["reliability", "latency"],
+        "Incident": ["incident", "outage"],
+        "Refactor": ["refactor", "cleanup"],
+        "Chore": ["cleanup"],
+        "Dependency": ["migration", "dependency"],
+        "Feature": ["feature", "rollout"],
+        "Enhancement": ["feature"],
+        "Bug": ["flaky"],
+    }
+    labels.update(type_labels.get(work_type, []))
+    for token in title_tokens:
+        if token in {
+            "security",
+            "cve",
+            "auth",
+            "encryption",
+            "reliability",
+            "incident",
+            "outage",
+            "latency",
+            "flaky",
+            "refactor",
+            "migration",
+            "cleanup",
+            "feature",
+            "rollout",
+        }:
+            labels.add(token)
+    if rng.random() < 0.12:
+        labels.add(rng.choice(["stale-export", "customer-request", "papertrail", "follow-up"]))
+    return sorted(labels)
 
 
-def slug(value: str) -> str:
-    return "".join(ch if ch.isalnum() else "-" for ch in value.lower()).strip("-")
+def create_schema(conn):
+    conn.executescript(
+        """
+        DROP TABLE IF EXISTS work_items;
+        DROP TABLE IF EXISTS mix_targets;
+        DROP TABLE IF EXISTS sla_policy;
+        DROP TABLE IF EXISTS releases;
+        DROP TABLE IF EXISTS milestones;
+        DROP TABLE IF EXISTS dependencies;
+        DROP TABLE IF EXISTS blockers;
+
+        CREATE TABLE work_items (
+            id TEXT PRIMARY KEY,
+            title TEXT,
+            work_type TEXT,
+            status TEXT,
+            team TEXT,
+            owner TEXT,
+            product_area TEXT,
+            created_at TEXT,
+            due_at TEXT,
+            closed_at TEXT,
+            severity TEXT,
+            priority INTEGER,
+            labels TEXT,
+            story_points INTEGER,
+            release_id TEXT,
+            milestone_id TEXT,
+            duplicate_of TEXT,
+            mirror_status TEXT,
+            legacy_category TEXT
+        );
+
+        CREATE TABLE mix_targets (
+            scope_id TEXT,
+            quarter TEXT,
+            team_group TEXT,
+            product_area TEXT,
+            new_feature_pct REAL,
+            tech_debt_pct REAL,
+            reliability_pct REAL,
+            security_pct REAL
+        );
+
+        CREATE TABLE sla_policy (
+            severity TEXT PRIMARY KEY,
+            days_to_due INTEGER
+        );
+
+        CREATE TABLE releases (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            target_date TEXT,
+            train TEXT
+        );
+
+        CREATE TABLE milestones (
+            id TEXT PRIMARY KEY,
+            release_id TEXT,
+            name TEXT,
+            owner_team TEXT
+        );
+
+        CREATE TABLE dependencies (
+            blocked_id TEXT,
+            depends_on_id TEXT,
+            relation TEXT
+        );
+
+        CREATE TABLE blockers (
+            id TEXT PRIMARY KEY,
+            work_item_id TEXT,
+            release_id TEXT,
+            severity TEXT,
+            cause TEXT,
+            status TEXT,
+            opened_at TEXT,
+            resolved_at TEXT
+        );
+        """
+    )
 
 
-def clamp_date(value: date, lower: date, upper: date) -> date:
-    return max(lower, min(value, upper))
+def fixture_items():
+    rows = [
+        (
+            "WI-24024-001",
+            "Patch cve auth token replay in edge callback",
+            "Security",
+            "Deployed",
+            "AppSec",
+            "Avery Quinn",
+            "Security Operations",
+            "2025-07-12",
+            "2025-07-19",
+            "2025-07-18",
+            "S1",
+            1,
+            ["security", "cve", "auth", "encryption"],
+            5,
+            None,
+            None,
+            None,
+            "Closed",
+            "feature",
+        ),
+        (
+            "WI-24024-002",
+            "Identity encryption key rotation rollout",
+            "Security",
+            "Verified",
+            "Identity Services",
+            "Mina Shah",
+            "Identity",
+            "2025-08-03",
+            "2025-08-15",
+            "2025-08-14",
+            "S2",
+            2,
+            ["security", "encryption", "rollout"],
+            8,
+            None,
+            None,
+            None,
+            "Done",
+            "maintenance",
+        ),
+        (
+            "WI-24024-003",
+            "Checkout latency incident follow-up",
+            "Incident",
+            "Closed",
+            "Infra Reliability",
+            "Owen Hart",
+            "Checkout",
+            "2025-08-22",
+            "2025-08-25",
+            "2025-08-28",
+            "S1",
+            1,
+            ["incident", "latency", "outage", "reliability"],
+            3,
+            None,
+            None,
+            None,
+            "Closed",
+            "bug",
+        ),
+        (
+            "WI-24024-004",
+            "Atlas backend feature flag rollout",
+            "Feature",
+            "Done",
+            "Platform Core",
+            "Nora Patel",
+            "Atlas Backend",
+            "2025-09-02",
+            "2025-09-28",
+            "2025-09-26",
+            "S3",
+            3,
+            ["feature", "rollout"],
+            13,
+            None,
+            None,
+            None,
+            "Done",
+            "new",
+        ),
+        (
+            "WI-24024-005",
+            "Refactor legacy migration cleanup for event writer",
+            "Refactor",
+            "Closed",
+            "Data Platform",
+            "Liam Chen",
+            "Data Reliability",
+            "2025-09-11",
+            "2025-10-04",
+            "2025-10-06",
+            "S3",
+            4,
+            ["refactor", "migration", "cleanup"],
+            8,
+            None,
+            None,
+            None,
+            "Complete",
+            "tech-debt",
+        ),
+        (
+            "WI-24024-006",
+            "Duplicate auth encryption alert from stale mirror",
+            "Bug",
+            "Duplicate",
+            "AppSec",
+            "Avery Quinn",
+            "Security Operations",
+            "2025-09-13",
+            "2025-09-20",
+            "2025-09-21",
+            "S2",
+            2,
+            ["security", "auth", "stale-export"],
+            2,
+            None,
+            None,
+            "WI-24024-001",
+            "Open",
+            "security",
+        ),
+        (
+            "WI-24024-007",
+            "Mobile client flaky checkout retry bug",
+            "Bug",
+            "Closed",
+            "Mobile Client",
+            None,
+            "Checkout",
+            "2025-10-02",
+            "2025-10-16",
+            "2025-10-19",
+            "S2",
+            2,
+            ["flaky", "reliability"],
+            5,
+            None,
+            None,
+            None,
+            "Closed",
+            "quality",
+        ),
+        (
+            "WI-24024-008",
+            "Release train Orion gateway readiness",
+            "Feature",
+            "Deployed",
+            "Release Engineering",
+            "Sofia Reyes",
+            "Release Train",
+            "2025-11-03",
+            "2026-02-13",
+            "2026-02-12",
+            "S3",
+            3,
+            ["feature", "rollout", "release"],
+            8,
+            "REL-ORION-2026-02",
+            "MIL-ORION-GA",
+            None,
+            "Done",
+            "release",
+        ),
+        (
+            "WI-24024-009",
+            "Orion auth dependency upgrade",
+            "Dependency",
+            "Verified",
+            "Identity Services",
+            "Mina Shah",
+            "Identity",
+            "2025-12-01",
+            "2026-01-22",
+            "2026-01-20",
+            "S2",
+            2,
+            ["auth", "migration", "security"],
+            5,
+            "REL-ORION-2026-02",
+            "MIL-ORION-HARDEN",
+            None,
+            "Verified",
+            "maintenance",
+        ),
+        (
+            "WI-24024-010",
+            "Orion edge routing outage rehearsal",
+            "Reliability",
+            "Review",
+            "Edge Delivery",
+            None,
+            "Edge Routing",
+            "2026-01-06",
+            "2026-02-05",
+            None,
+            "S1",
+            1,
+            ["reliability", "outage", "latency"],
+            8,
+            "REL-ORION-2026-02",
+            "MIL-ORION-RC",
+            None,
+            "In Progress",
+            "incident",
+        ),
+        (
+            "WI-24024-011",
+            "Orion billing invoice feature rollout",
+            "Feature",
+            "Done",
+            "Billing",
+            "Theo Brooks",
+            "Revenue Systems",
+            "2026-01-08",
+            "2026-02-15",
+            "2026-02-16",
+            "S3",
+            3,
+            ["feature", "rollout"],
+            13,
+            "REL-ORION-2026-02",
+            "MIL-ORION-GA",
+            None,
+            "Done",
+            "new",
+        ),
+        (
+            "WI-24024-012",
+            "Orion appsec blocker cve scan exception",
+            "Security",
+            "In Progress",
+            "AppSec",
+            "Priya Stone",
+            "Security Operations",
+            "2026-01-15",
+            "2026-02-07",
+            None,
+            "S1",
+            1,
+            ["security", "cve", "auth"],
+            5,
+            "REL-ORION-2026-02",
+            "MIL-ORION-HARDEN",
+            None,
+            "Open",
+            "security",
+        ),
+        (
+            "WI-24024-013",
+            "Zephyr API connectivity migration cleanup",
+            "Refactor",
+            "Closed",
+            "API Foundations",
+            "Jon Bell",
+            "API Connectivity",
+            "2026-01-20",
+            "2026-03-01",
+            "2026-02-27",
+            "S3",
+            4,
+            ["refactor", "migration", "cleanup"],
+            8,
+            "REL-ZEPHYR-2026-03",
+            "MIL-ZEPHYR-BETA",
+            None,
+            "Closed",
+            "tech-debt",
+        ),
+        (
+            "WI-24024-014",
+            "Zephyr revenue platform feature launch",
+            "Feature",
+            "Review",
+            "Revenue Platform",
+            "Mara Singh",
+            "Revenue Systems",
+            "2026-02-01",
+            "2026-03-15",
+            None,
+            "S3",
+            3,
+            ["feature", "rollout"],
+            13,
+            "REL-ZEPHYR-2026-03",
+            "MIL-ZEPHYR-GA",
+            None,
+            "Review",
+            "new",
+        ),
+        (
+            "WI-24024-015",
+            "Zephyr data reliability latency guardrail",
+            "Reliability",
+            "Verified",
+            "Data Platform",
+            "Liam Chen",
+            "Data Reliability",
+            "2026-02-07",
+            "2026-03-05",
+            "2026-03-04",
+            "S2",
+            2,
+            ["reliability", "latency"],
+            8,
+            "REL-ZEPHYR-2026-03",
+            "MIL-ZEPHYR-HARDEN",
+            None,
+            "Verified",
+            "quality",
+        ),
+        (
+            "WI-24024-016",
+            "Zephyr duplicate rollout smoke report",
+            "Bug",
+            "Duplicate",
+            "Release Engineering",
+            "Sofia Reyes",
+            "Release Train",
+            "2026-02-10",
+            "2026-02-20",
+            "2026-02-18",
+            "S4",
+            5,
+            ["rollout", "stale-export"],
+            1,
+            "REL-ZEPHYR-2026-03",
+            "MIL-ZEPHYR-GA",
+            "WI-24024-014",
+            "Open",
+            "bug",
+        ),
+        (
+            "WI-24024-017",
+            "Zephyr encryption audit evidence",
+            "Compliance",
+            "Backlog",
+            "AppSec",
+            None,
+            "Security Operations",
+            "2026-02-14",
+            "2026-03-08",
+            None,
+            "S2",
+            2,
+            ["security", "encryption", "compliance"],
+            5,
+            "REL-ZEPHYR-2026-03",
+            "MIL-ZEPHYR-HARDEN",
+            None,
+            "Backlog",
+            "security",
+        ),
+        (
+            "WI-24024-018",
+            "Nova release train cleanup report",
+            "Chore",
+            "Closed",
+            "Release Engineering",
+            "Sofia Reyes",
+            "Release Train",
+            "2025-10-12",
+            "2025-12-15",
+            "2025-12-17",
+            "S4",
+            5,
+            ["cleanup", "release"],
+            3,
+            "REL-NOVA-2025-12",
+            "MIL-NOVA-GA",
+            None,
+            "Closed",
+            "admin",
+        ),
+    ]
+    rows.extend(portfolio_scope_items())
+    rows.extend(sla_scope_items())
+    return rows
 
 
-class Builder:
-    def __init__(self, seed: int):
-        self.rng = random.Random(seed)
-        self.teams = []
-        self.owners = []
-        self.work_items = []
-        self.status_history = []
-        self.dependencies = []
-        self.blockers = []
-        self.releases = []
-        self.milestones = []
-        self.milestone_items = []
-        self.portfolio_targets = []
-        self.sla_policies = []
-        self.documents = []
-        self.item_counter = 1
-        self.blocker_counter = 1
-        self.duplicate_counter = 1
-        self.team_by_product = {}
-        self.owners_by_team = defaultdict(list)
-        self.release_by_id = {}
-        self.milestones_by_release = defaultdict(list)
-        self.item_by_id = {}
-        self.item_meta = {}
-        self.milestone_item_keys = set()
-        self.dependency_keys = set()
-        self.scope_items = defaultdict(list)
-        self.construction_index = {
-            "seed": seed,
-            "scope_notes": "Hidden construction aid for task builders. This file is not served by the HTTP service.",
-            "scopes": {},
-            "notable_records": {},
-        }
+def portfolio_scope_items():
+    rows = []
 
-    def random_date(self, start: date, end: date) -> date:
-        if end < start:
-            return start
-        delta = (end - start).days
-        return start + timedelta(days=self.rng.randint(0, delta))
-
-    def next_work_item_id(self) -> str:
-        value = f"WI-{self.item_counter:04d}"
-        self.item_counter += 1
-        return value
-
-    def next_blocker_id(self) -> str:
-        value = f"BLK-{self.blocker_counter:04d}"
-        self.blocker_counter += 1
-        return value
-
-    def next_duplicate_cluster_id(self) -> str:
-        value = f"DUP-{self.duplicate_counter:03d}"
-        self.duplicate_counter += 1
-        return value
-
-    def build_people(self) -> None:
-        for product in PRODUCTS:
-            team = {
-                "team_id": f"TEAM-{product['code']}",
-                "name": f"{product['name']} Engineering",
-                "product_line": product["name"],
-                "director": product["director"],
-            }
-            self.teams.append(team)
-            self.team_by_product[product["name"]] = team
-            for index, role in enumerate(ROLE_ORDER):
-                owner = {
-                    "owner_id": f"OWN-{product['code']}-{index + 1}",
-                    "display_name": OWNER_NAMES[product["code"]][index],
-                    "team_id": team["team_id"],
-                    "role": role,
-                }
-                self.owners.append(owner)
-                self.owners_by_team[team["team_id"]].append(owner)
-
-    def build_releases(self) -> None:
-        for release in RELEASE_DEFS:
-            self.releases.append(dict(release))
-            self.release_by_id[release["release_id"]] = release
-            release_date = parse_date(release["release_date"])
-            compact_id = release["release_id"].replace("REL-", "").replace("-", "")
-            for index, (name, offset, critical) in enumerate(MILESTONE_NAMES, start=1):
-                milestone = {
-                    "milestone_id": f"MS-{compact_id}-{index:02d}",
-                    "release_id": release["release_id"],
-                    "name": name,
-                    "target_date": date_string(release_date + timedelta(days=offset)),
-                    "critical": critical,
-                }
-                self.milestones.append(milestone)
-                self.milestones_by_release[release["release_id"]].append(milestone)
-
-    def build_targets(self) -> None:
-        target_profiles = {
-            "Identity Platform": [45, 20, 20, 15],
-            "Payments": [38, 18, 24, 20],
-            "Data Platform": [35, 30, 20, 15],
-            "Edge Services": [34, 22, 29, 15],
-            "Collaboration Suite": [50, 20, 15, 15],
-            "Mobile Platform": [42, 18, 24, 16],
-            "Core Services": [35, 20, 25, 20],
-            "Atlas Admin": [30, 25, 15, 30],
-            "Observability Tools": [32, 28, 30, 10],
-            "Internal Developer Portal": [46, 32, 14, 8],
-            "CRM Integrations": [48, 22, 18, 12],
-        }
-        quarters = ["2025-Q4", "2026-Q1", "2026-Q2", "2026-Q3"]
-        for product in target_profiles:
-            base = target_profiles[product]
-            for quarter in quarters:
-                adjustments = [0, 0, 0, 0]
-                if quarter == "2026-Q2":
-                    adjustments = [0, -2, 1, 1]
-                elif quarter == "2026-Q3":
-                    adjustments = [-3, 1, 1, 1]
-                values = [base[i] + adjustments[i] for i in range(4)]
-                values[0] += 100 - sum(values)
-                for category, target in zip(CATEGORIES, values):
-                    self.portfolio_targets.append(
-                        {
-                            "product": product,
-                            "quarter": quarter,
-                            "category": category,
-                            "target_percentage": target,
-                        }
-                    )
-
-    def build_sla_policies(self) -> None:
-        for category in CATEGORIES:
-            for severity, target_days in SLA_TARGETS[category].items():
-                self.sla_policies.append(
-                    {
-                        "category": category,
-                        "severity": severity,
-                        "target_days": target_days,
-                        "applies_to_status": ["New", "In Progress", "Blocked", "Review", "Verified", "Closed", "Done"],
-                    }
-                )
-
-    def build_documents(self) -> None:
-        self.documents = [
-            {
-                "document_id": "DOC-CATEGORY-POLICY",
-                "title": "Engineering Work Category Policy",
-                "updated_date": "2026-01-10",
-                "tags": ["portfolio", "classification", "work mix"],
-                "body": (
-                    "Portfolio reviews summarize completed engineering work across product delivery, platform investment, operational hardening, and security-oriented work. "
-                    "Reviewers should use the available work item metadata consistently and reconcile unclear labels with the broader item context."
-                ),
-            },
-            {
-                "document_id": "DOC-SLA-POLICY",
-                "title": "Reliability and Security SLA Aging Policy",
-                "updated_date": "2026-02-01",
-                "tags": ["sla", "aging", "triage"],
-                "body": (
-                    "SLA aging reviews combine work-item dates, severity, ownership, and queue state to identify operational risk. "
-                    "Exports may require reconciliation across related records, and duplicate clusters are useful context for triage and audit."
-                ),
-            },
-            {
-                "document_id": "DOC-RELEASE-READINESS",
-                "title": "Release Readiness Policy",
-                "updated_date": "2026-02-18",
-                "tags": ["release", "milestone", "readiness"],
-                "body": (
-                    "Release readiness reviews combine release records, milestones, work items, blockers, dependencies, owners, and team context. "
-                    "The goal is to identify whether unresolved delivery risk remains before the release date and which work requires escalation."
-                ),
-            },
-            {
-                "document_id": "DOC-EXPORT-NOTES",
-                "title": "Work Item Export Data Quality Notes",
-                "updated_date": "2026-03-05",
-                "tags": ["export", "status", "data quality"],
-                "body": (
-                    "The work item export is a periodic snapshot. Status export, owner assignment, labels, and release links can be stale or incomplete. "
-                    "Analysts should compare available records when an operational review depends on the state of an item at a specific date."
-                ),
-            },
-        ]
-
-    def choose_owner(self, product: str, category: str, severity: str, missing_chance: float) -> str | None:
-        if self.rng.random() < missing_chance:
-            return None
-        owners = self.owners_by_team[self.team_by_product[product]["team_id"]]
-        if category == "Security":
-            preferred = [owner for owner in owners if owner["role"] == "Security Engineer"]
-        elif category == "Reliability":
-            preferred = [owner for owner in owners if owner["role"] == "Reliability Lead"]
-        elif severity in {"S1", "S2"}:
-            preferred = [owner for owner in owners if owner["role"] in {"Staff Engineer", "Engineering Manager"}]
-        else:
-            preferred = owners
-        return self.rng.choice(preferred or owners)["owner_id"]
-
-    def category_template(
-        self, category: str, product: str, area: str, duplicate_cluster: str | None
-    ) -> tuple[str, str, list[str], str]:
-        product_words = product.split()[0]
-        if category == "Security":
-            work_type = self.rng.choice(["Vulnerability", "Compliance", "Security"])
-            title = self.rng.choice(
-                [
-                    f"Patch {area} vulnerability in {product_words}",
-                    f"Harden {area} access control",
-                    f"Complete compliance evidence for {area}",
-                    f"Rotate exposed credential path for {area}",
-                ]
-            )
-            labels = ["security", "vulnerability" if work_type == "Vulnerability" else "compliance"]
-            description = (
-                f"Security work for {area} with audit evidence, access-control review, and release validation."
-            )
-            if self.rng.random() < 0.22:
-                labels.append("reliability")
-        elif category == "Reliability":
-            work_type = self.rng.choice(["Incident", "Reliability", "Bug"])
-            title = self.rng.choice(
-                [
-                    f"Reduce {area} SLO breach rate",
-                    f"Stabilize {area} retry storm",
-                    f"Fix customer-impacting {area} incident",
-                    f"Add failover guardrail for {area}",
-                ]
-            )
-            labels = ["reliability", self.rng.choice(["slo", "incident", "capacity", "resiliency"])]
-            description = (
-                f"Reliability work for {area} covering operational alarms, SLO risk, and customer-impact analysis."
-            )
-            if self.rng.random() < 0.28:
-                labels.append("tech-debt")
-        elif category == "TechDebt":
-            work_type = self.rng.choice(["Refactor", "Cleanup", "Migration", "Platform"])
-            title = self.rng.choice(
-                [
-                    f"Refactor {area} service boundary",
-                    f"Retire legacy {area} migration path",
-                    f"Clean up internal {area} job flow",
-                    f"Modernize {area} platform dependency",
-                ]
-            )
-            labels = ["tech-debt", self.rng.choice(["cleanup", "migration", "internal", "platform"])]
-            description = f"Internal modernization for {area}; the change reduces maintenance cost and simplifies future delivery."
-            if self.rng.random() < 0.16:
-                labels.append("reliability-review")
-        else:
-            work_type = self.rng.choice(["Feature", "Enhancement", "Experiment"])
-            title = self.rng.choice(
-                [
-                    f"Add {area} guided workflow",
-                    f"Launch {area} customer setting",
-                    f"Expand {area} analytics panel",
-                    f"Improve {area} onboarding path",
-                ]
-            )
-            labels = ["feature", self.rng.choice(["customer", "enhancement", "growth", "workflow"])]
-            description = f"Customer-facing delivery for {area} with product acceptance criteria and rollout notes."
-        if duplicate_cluster:
-            title = f"Duplicate signal {duplicate_cluster}: {title}"
-            labels = sorted(set(labels + ["duplicate"]))
-        return title, work_type, labels, description
-
-    def choose_severity(self, category: str) -> str:
-        if category == "Security":
-            return self.rng.choices(["S1", "S2", "S3", "S4"], weights=[10, 35, 38, 17], k=1)[0]
-        if category == "Reliability":
-            return self.rng.choices(["S1", "S2", "S3", "S4"], weights=[14, 34, 36, 16], k=1)[0]
-        if category == "TechDebt":
-            return self.rng.choices(["S1", "S2", "S3", "S4"], weights=[2, 14, 45, 39], k=1)[0]
-        return self.rng.choices(["S1", "S2", "S3", "S4"], weights=[1, 10, 44, 45], k=1)[0]
-
-    def stale_status_for(self, effective_status: str) -> str:
-        if effective_status in {"Closed", "Done", "Verified"}:
-            return self.rng.choice(["In Progress", "Review", "Blocked"])
-        if effective_status == "Cancelled":
-            return self.rng.choice(["In Progress", "Review", "Closed"])
-        if effective_status in {"Blocked", "Review", "In Progress"}:
-            return self.rng.choice(["New", "Closed", "Done"])
-        return self.rng.choice(["In Progress", "Review"])
-
-    def add_history(self, work_item_id: str, created_date: date, updated_date: date, effective_status: str) -> None:
-        span = max(0, (updated_date - created_date).days)
-        events = [("New", created_date, "system")]
-        if effective_status != "New" and span >= 1:
-            events.append(
-                ("In Progress", created_date + timedelta(days=max(1, min(span, span // 3 or 1))), "workflow")
-            )
-        if effective_status in {"Blocked", "Review", "Verified", "Done", "Closed"} and span >= 3:
-            intermediate = "Blocked" if effective_status == "Blocked" else "Review"
-            if intermediate != events[-1][0]:
-                events.append(
-                    (intermediate, created_date + timedelta(days=max(2, min(span, (span * 2) // 3 or 2))), "workflow")
-                )
-        if effective_status != events[-1][0]:
-            events.append(
-                (effective_status, updated_date, self.rng.choice(["workflow", "automation", "manual_update"]))
-            )
-
-        seen = set()
-        for index, (status, event_date, source) in enumerate(events):
-            event_date = clamp_date(event_date, created_date, updated_date)
-            key = (status, event_date)
-            if key in seen:
-                continue
-            seen.add(key)
-            self.status_history.append(
-                {
-                    "work_item_id": work_item_id,
-                    "status": status,
-                    "timestamp": timestamp(event_date, 9 + (index % 8), (index * 7) % 60),
-                    "source": source,
-                }
-            )
-
-    def add_work_item(
-        self,
-        product: str,
-        category: str,
-        created_date: date,
-        effective_status: str,
-        *,
-        updated_date: date | None = None,
-        closed_date: date | None = None,
-        due_date: date | None = None,
-        release_ids: list[str] | None = None,
-        target_area: str | None = None,
-        duplicate_cluster: str | None = None,
-        severity: str | None = None,
-        owner_id: str | None | object = ...,
-        labels_extra: list[str] | None = None,
-        escaped: bool | None = None,
-        customer_impact: bool | None = None,
-        work_type: str | None = None,
-        title: str | None = None,
-        description: str | None = None,
-        scope_tags: list[str] | None = None,
-        stale_export_chance: float = 0.14,
-        milestone_id: str | None = None,
-        missing_owner_chance: float = 0.04,
-    ) -> str:
-        release_ids = list(release_ids or [])
-        scope_tags = list(scope_tags or [])
-        target_area = target_area or self.rng.choice(PRODUCT_AREAS[product])
-        severity = severity or self.choose_severity(category)
-        if due_date is None:
-            due_date = created_date + timedelta(days=SLA_TARGETS[category][severity])
-        if effective_status in TERMINAL_STATUSES:
-            closed_date = closed_date or created_date + timedelta(days=self.rng.randint(4, 45))
-            updated_date = updated_date or closed_date
-        else:
-            closed_date = None
-            updated_date = updated_date or (created_date + timedelta(days=self.rng.randint(1, 45)))
-        updated_date = max(created_date, updated_date)
-        if owner_id is ...:
-            owner_id = self.choose_owner(product, category, severity, missing_owner_chance)
-        if title is None or description is None or work_type is None:
-            generated_title, generated_work_type, labels, generated_description = self.category_template(
-                category, product, target_area, duplicate_cluster
-            )
-            title = title or generated_title
-            work_type = work_type or generated_work_type
-            description = description or generated_description
-        else:
-            labels = []
-        labels = sorted(set(labels + (labels_extra or []) + [slug(target_area)]))
-        if escaped is None:
-            escaped = category in {"Reliability", "Security"} and severity in {"S1", "S2"} and self.rng.random() < 0.28
-        if customer_impact is None:
-            customer_impact = category in {"Reliability", "Security"} and severity in {"S1", "S2", "S3"}
-        status_export = effective_status
-        if self.rng.random() < stale_export_chance:
-            status_export = self.stale_status_for(effective_status)
-        effective_anchor_date = closed_date if closed_date else updated_date
-        item = {
-            "id": self.next_work_item_id(),
-            "title": title,
-            "description": description,
-            "product": product,
-            "team_id": self.team_by_product[product]["team_id"],
-            "owner_id": owner_id,
-            "work_type": work_type,
-            "labels": labels,
-            "severity": severity,
-            "status_export": status_export,
-            "created_date": date_string(created_date),
-            "updated_date": date_string(updated_date),
-            "closed_date": date_string(closed_date) if closed_date else None,
-            "due_date": date_string(due_date) if due_date else None,
-            "quarter": quarter_for(effective_anchor_date),
-            "release_ids": release_ids,
-            "target_area": target_area,
-            "duplicate_cluster": duplicate_cluster,
-            "escaped": bool(escaped),
-            "customer_impact": bool(customer_impact),
-        }
-        self.work_items.append(item)
-        self.item_by_id[item["id"]] = item
-        self.item_meta[item["id"]] = {
-            "category": category,
-            "effective_status": effective_status,
-            "scope_tags": scope_tags,
-        }
-        self.add_history(item["id"], created_date, updated_date, effective_status)
-        for scope in scope_tags:
-            self.scope_items[scope].append(item["id"])
-        if milestone_id:
-            self.add_milestone_item(milestone_id, item["id"])
-        return item["id"]
-
-    def add_milestone_item(self, milestone_id: str, work_item_id: str) -> None:
-        key = (milestone_id, work_item_id)
-        if key in self.milestone_item_keys:
-            return
-        self.milestone_item_keys.add(key)
-        self.milestone_items.append({"milestone_id": milestone_id, "work_item_id": work_item_id})
-
-    def assign_missing_milestone_items(self) -> None:
-        for item in self.work_items:
-            for release_id in item["release_ids"]:
-                milestones = self.milestones_by_release.get(release_id, [])
-                if not milestones:
-                    continue
-                milestone = self.rng.choice(milestones)
-                self.add_milestone_item(milestone["milestone_id"], item["id"])
-
-    def add_dependency(self, upstream_id: str, downstream_id: str, dependency_type: str, critical: bool) -> None:
-        if upstream_id == downstream_id:
-            return
-        key = (upstream_id, downstream_id, dependency_type)
-        if key in self.dependency_keys:
-            return
-        self.dependency_keys.add(key)
-        self.dependencies.append(
-            {
-                "upstream_id": upstream_id,
-                "downstream_id": downstream_id,
-                "dependency_type": dependency_type,
-                "critical": bool(critical),
-            }
-        )
-
-    def add_blocker(
-        self,
-        work_item_id: str,
-        blocker_type: str | None = None,
-        *,
-        active: bool = True,
-        created_date: date | None = None,
-        resolved_date: date | None = None,
-        severity: str | None = None,
-    ) -> str:
-        item = self.item_by_id[work_item_id]
-        blocker_type = blocker_type or self.rng.choice(BLOCKER_TYPES)
-        item_created = parse_date(item["created_date"])
-        item_updated = parse_date(item["updated_date"])
-        created_date = created_date or self.random_date(item_created, item_updated)
-        if active:
-            resolved_date = None
-        elif resolved_date is None:
-            resolved_date = created_date + timedelta(days=self.rng.randint(1, 18))
-        blocker = {
-            "blocker_id": self.next_blocker_id(),
-            "work_item_id": work_item_id,
-            "blocker_type": blocker_type,
-            "cause_text": self.rng.choice(CAUSE_TEXTS[blocker_type]),
-            "active": bool(active),
-            "created_date": date_string(created_date),
-            "resolved_date": date_string(resolved_date) if resolved_date else None,
-            "severity": severity or item["severity"],
-        }
-        self.blockers.append(blocker)
-        return blocker["blocker_id"]
-
-    def make_scope_record(self, key: str, **values: object) -> None:
-        self.construction_index["scopes"][key] = values
-
-
-def add_portfolio_batch(
-    builder: Builder,
-    scope: str,
-    product: str,
-    quarter_start: str,
-    quarter_end: str,
-    counts: dict[str, int],
-    release_id: str | None,
-) -> None:
-    start = parse_date(quarter_start)
-    end = parse_date(quarter_end)
-    for category, count in counts.items():
-        for _ in range(count):
-            closed = builder.random_date(start, end)
-            created = closed - timedelta(days=builder.rng.randint(8, 72))
-            status = builder.rng.choices(["Closed", "Done", "Verified"], weights=[50, 30, 20], k=1)[0]
-            due_date = created + timedelta(
-                days=SLA_TARGETS[category][builder.choose_severity(category)] + builder.rng.randint(-2, 12)
-            )
-            builder.add_work_item(
-                product,
-                category,
-                created,
+    def add(
+        suffix,
+        title,
+        work_type,
+        status,
+        team,
+        owner,
+        product_area,
+        created_at,
+        due_at,
+        closed_at,
+        severity,
+        priority,
+        labels,
+        story_points,
+        duplicate_of=None,
+        mirror_status="Closed",
+        legacy_category="new",
+    ):
+        rows.append(
+            (
+                f"WI-24024-P{suffix:03d}",
+                title,
+                work_type,
                 status,
-                closed_date=closed,
-                due_date=due_date,
-                release_ids=[release_id] if release_id and builder.rng.random() < 0.78 else [],
-                scope_tags=[scope],
-                stale_export_chance=0.20,
-                missing_owner_chance=0.03 if category not in {"Security", "Reliability"} else 0.08,
+                team,
+                owner,
+                product_area,
+                created_at,
+                due_at,
+                closed_at,
+                severity,
+                priority,
+                labels,
+                story_points,
+                None,
+                None,
+                duplicate_of,
+                mirror_status,
+                legacy_category,
             )
-    builder.make_scope_record(
-        scope,
-        product=product,
-        quarter=quarter_for(start),
-        release_id=release_id,
-        notable_work_item_ids=builder.scope_items[scope][:12],
-        purpose="Portfolio work-mix construction scope.",
+        )
+
+    # train_001: Platform Core and Identity Services, Atlas Backend and Identity, Q4 2025 closed.
+    add(
+        1,
+        "Atlas backend feature rollout with stale security label",
+        "Feature",
+        "Closed",
+        "Platform Core",
+        "Nora Patel",
+        "Atlas Backend",
+        "2025-09-24",
+        "2025-10-11",
+        "2025-10-10",
+        "S3",
+        3,
+        ["feature", "rollout", "security"],
+        8,
+        legacy_category="security",
+    )
+    add(
+        2,
+        "Identity auth encryption refactor cleanup",
+        "Refactor",
+        "Verified",
+        "Identity Services",
+        "Mina Shah",
+        "Identity",
+        "2025-10-02",
+        "2025-10-20",
+        "2025-10-18",
+        "S2",
+        2,
+        ["auth", "encryption", "cleanup", "refactor"],
+        5,
+        legacy_category="tech-debt",
+    )
+    add(
+        3,
+        "Atlas latency incident follow-up feature toggle",
+        "Incident",
+        "Done",
+        "Platform Core",
+        "Nora Patel",
+        "Atlas Backend",
+        "2025-10-08",
+        "2025-10-25",
+        "2025-10-24",
+        "S1",
+        1,
+        ["incident", "latency", "feature", "reliability"],
+        3,
+        legacy_category="new",
+    )
+    add(
+        4,
+        "Identity consent screen feature migration",
+        "Feature",
+        "Deployed",
+        "Identity Services",
+        "Mina Shah",
+        "Identity",
+        "2025-10-14",
+        "2025-11-05",
+        "2025-11-02",
+        "S3",
+        3,
+        ["feature", "migration"],
+        13,
+        legacy_category="maintenance",
+    )
+    add(
+        5,
+        "Atlas queue cleanup for flaky reliability alert",
+        "Chore",
+        "Closed",
+        "Platform Core",
+        "Devon Wells",
+        "Atlas Backend",
+        "2025-10-21",
+        "2025-11-12",
+        "2025-11-11",
+        "S3",
+        4,
+        ["cleanup", "flaky", "reliability"],
+        5,
+        legacy_category="quality",
+    )
+    add(
+        6,
+        "Identity cve audit for rollout banner",
+        "Security",
+        "Verified",
+        "Identity Services",
+        "Avery Quinn",
+        "Identity",
+        "2025-11-01",
+        "2025-11-14",
+        "2025-11-13",
+        "S1",
+        1,
+        ["security", "cve", "rollout"],
+        8,
+        legacy_category="new",
+    )
+    add(
+        7,
+        "Atlas migration cleanup with auth title",
+        "Dependency",
+        "Closed",
+        "Platform Core",
+        "Elena Park",
+        "Atlas Backend",
+        "2025-11-07",
+        "2025-11-28",
+        "2025-11-25",
+        "S3",
+        4,
+        ["migration", "cleanup", "auth"],
+        8,
+        legacy_category="security",
+    )
+    add(
+        8,
+        "Identity outage recovery dashboard enhancement",
+        "Enhancement",
+        "Done",
+        "Identity Services",
+        "Mina Shah",
+        "Identity",
+        "2025-11-16",
+        "2025-12-03",
+        "2025-12-01",
+        "S2",
+        2,
+        ["outage", "reliability", "feature"],
+        5,
+        legacy_category="new",
+    )
+    add(
+        9,
+        "Atlas duplicate migration note",
+        "Bug",
+        "Duplicate",
+        "Platform Core",
+        "Devon Wells",
+        "Atlas Backend",
+        "2025-11-20",
+        "2025-12-01",
+        "2025-12-02",
+        "S4",
+        5,
+        ["cleanup", "migration"],
+        1,
+        duplicate_of="WI-24024-P007",
+        mirror_status="Open",
+        legacy_category="tech-debt",
+    )
+    add(
+        10,
+        "Identity cancelled auth feature spike",
+        "Feature",
+        "Cancelled",
+        "Identity Services",
+        "Mina Shah",
+        "Identity",
+        "2025-11-23",
+        "2025-12-15",
+        "2025-12-13",
+        "S3",
+        3,
+        ["feature", "auth"],
+        3,
+        mirror_status="Done",
+        legacy_category="new",
+    )
+    add(
+        11,
+        "Atlas backend security duplicate export",
+        "Security",
+        "Closed",
+        "Platform Core",
+        "Avery Quinn",
+        "Atlas Backend",
+        "2025-12-01",
+        "2025-12-12",
+        "2025-12-10",
+        "S2",
+        2,
+        ["security", "stale-export"],
+        2,
+        duplicate_of="WI-24024-P006",
+        legacy_category="security",
     )
 
-
-def add_sla_batch(builder: Builder, scope: str, product: str, as_of: str, count: int, release_id: str | None) -> None:
-    as_of_date = parse_date(as_of)
-    for index in range(count):
-        category = builder.rng.choice(["Reliability", "Security"])
-        severity = builder.choose_severity(category)
-        age = builder.rng.randint(1, 85)
-        created = as_of_date - timedelta(days=age)
-        status = builder.rng.choices(
-            ["New", "In Progress", "Blocked", "Review", "Closed", "Done", "Verified"],
-            weights=[8, 29, 24, 13, 10, 8, 8],
-            k=1,
-        )[0]
-        closed = None
-        updated = as_of_date - timedelta(days=builder.rng.randint(0, 18))
-        if status in TERMINAL_STATUSES:
-            recently_closed = builder.rng.random() < 0.72
-            close_age = builder.rng.randint(0, 21 if recently_closed else 70)
-            closed = as_of_date - timedelta(days=close_age)
-            updated = closed
-            created = min(created, closed - timedelta(days=builder.rng.randint(2, 55)))
-        labels_extra = ["sla-review"]
-        if index % 7 == 0:
-            labels_extra.append("customer-escalation")
-        builder.add_work_item(
-            product,
-            category,
-            created,
-            status,
-            updated_date=updated,
-            closed_date=closed,
-            release_ids=[release_id] if release_id and builder.rng.random() < 0.32 else [],
-            severity=severity,
-            labels_extra=labels_extra,
-            scope_tags=[scope],
-            stale_export_chance=0.27,
-            missing_owner_chance=0.18 if severity in {"S1", "S2"} else 0.07,
-        )
-    builder.make_scope_record(
-        scope,
-        product=product,
-        as_of_date=as_of,
-        release_id=release_id,
-        notable_work_item_ids=builder.scope_items[scope][:14],
-        purpose="SLA aging construction scope.",
+    # train_004: Mobile Client and Growth Experiences, Checkout, Q4 2025 closed.
+    add(
+        21,
+        "Mobile checkout reliability retry cleanup",
+        "Bug",
+        "Closed",
+        "Mobile Client",
+        "Cass Morgan",
+        "Checkout",
+        "2025-09-29",
+        "2025-10-09",
+        "2025-10-08",
+        "S2",
+        2,
+        ["reliability", "flaky", "cleanup"],
+        5,
+        legacy_category="bug",
+    )
+    add(
+        22,
+        "Growth checkout feature rollout with auth guard",
+        "Feature",
+        "Verified",
+        "Growth Experiences",
+        "Elena Park",
+        "Checkout",
+        "2025-10-04",
+        "2025-10-24",
+        "2025-10-23",
+        "S3",
+        3,
+        ["feature", "rollout", "auth"],
+        8,
+        legacy_category="security",
+    )
+    add(
+        23,
+        "Mobile encryption crash fix for checkout",
+        "Security",
+        "Deployed",
+        "Mobile Client",
+        "Cass Morgan",
+        "Checkout",
+        "2025-10-12",
+        "2025-10-27",
+        "2025-10-26",
+        "S1",
+        1,
+        ["security", "encryption", "flaky"],
+        5,
+        legacy_category="quality",
+    )
+    add(
+        24,
+        "Growth checkout migration cleanup experiment",
+        "Refactor",
+        "Closed",
+        "Growth Experiences",
+        "Elena Park",
+        "Checkout",
+        "2025-10-19",
+        "2025-11-07",
+        "2025-11-06",
+        "S3",
+        4,
+        ["migration", "cleanup", "feature"],
+        8,
+        legacy_category="new",
+    )
+    add(
+        25,
+        "Mobile checkout outage follow-up banner",
+        "Incident",
+        "Done",
+        "Mobile Client",
+        None,
+        "Checkout",
+        "2025-10-28",
+        "2025-11-08",
+        "2025-11-09",
+        "S1",
+        1,
+        ["outage", "incident", "feature"],
+        3,
+        legacy_category="new",
+    )
+    add(
+        26,
+        "Growth payment sheet feature polish",
+        "Enhancement",
+        "Verified",
+        "Growth Experiences",
+        "Elena Park",
+        "Checkout",
+        "2025-11-03",
+        "2025-11-20",
+        "2025-11-19",
+        "S4",
+        4,
+        ["feature", "rollout"],
+        5,
+        legacy_category="maintenance",
+    )
+    add(
+        27,
+        "Mobile checkout flaky latency guardrail",
+        "Reliability",
+        "Closed",
+        "Mobile Client",
+        "Cass Morgan",
+        "Checkout",
+        "2025-11-11",
+        "2025-11-26",
+        "2025-11-24",
+        "S2",
+        2,
+        ["reliability", "latency", "flaky"],
+        8,
+        legacy_category="bug",
+    )
+    add(
+        28,
+        "Growth checkout cve copy update",
+        "Compliance",
+        "Done",
+        "Growth Experiences",
+        "Avery Quinn",
+        "Checkout",
+        "2025-11-18",
+        "2025-12-04",
+        "2025-12-03",
+        "S2",
+        2,
+        ["security", "cve", "feature"],
+        3,
+        legacy_category="new",
+    )
+    add(
+        29,
+        "Mobile checkout duplicate retry report",
+        "Bug",
+        "Duplicate",
+        "Mobile Client",
+        "Cass Morgan",
+        "Checkout",
+        "2025-11-21",
+        "2025-12-02",
+        "2025-12-01",
+        "S3",
+        4,
+        ["flaky", "reliability"],
+        1,
+        duplicate_of="WI-24024-P027",
+        mirror_status="Open",
+        legacy_category="quality",
+    )
+    add(
+        30,
+        "Growth checkout cancelled rollout deck",
+        "Feature",
+        "Cancelled",
+        "Growth Experiences",
+        "Elena Park",
+        "Checkout",
+        "2025-12-01",
+        "2025-12-16",
+        "2025-12-15",
+        "S4",
+        5,
+        ["feature", "rollout"],
+        2,
+        mirror_status="Done",
+        legacy_category="new",
+    )
+    add(
+        31,
+        "Mobile checkout cleanup duplicate record",
+        "Chore",
+        "Closed",
+        "Mobile Client",
+        "Cass Morgan",
+        "Checkout",
+        "2025-12-05",
+        "2025-12-18",
+        "2025-12-17",
+        "S4",
+        5,
+        ["cleanup"],
+        2,
+        duplicate_of="WI-24024-P024",
+        legacy_category="tech-debt",
     )
 
-
-def add_duplicate_clusters(builder: Builder) -> None:
-    cluster_plan = [
-        ("Payments", "2026-02-15", 5, "sla_payments_2026_02_15", "REL-PAY-2026Q1"),
-        ("Edge Services", "2026-04-10", 5, "sla_edge_services_2026_04_10", "REL-EDGE-2026Q1"),
-        ("Mobile Platform", "2026-06-20", 6, "sla_mobile_platform_2026_06_20", "REL-VEGA-20"),
-        ("Core Services", "2026-06-30", 2, "combined_core_services_q2_2026", "REL-CORE-2026Q2"),
-        ("Observability Tools", "2026-06-05", 2, "distractor_observability_duplicates", "REL-OBS-2026Q2"),
-        ("CRM Integrations", "2026-05-20", 2, "distractor_crm_duplicates", None),
-        ("Identity Platform", "2025-12-12", 2, "distractor_identity_duplicates", "REL-IDP-2025Q4"),
-    ]
-    symptom_terms = [
-        "timeout spike",
-        "token refresh failure",
-        "audit export drift",
-        "regional failover alarm",
-        "permission mismatch",
-        "webhook replay loop",
-        "cache eviction storm",
-        "compliance evidence gap",
-    ]
-    for product, as_of, clusters, scope, release_id in cluster_plan:
-        as_of_date = parse_date(as_of)
-        for _ in range(clusters):
-            cluster_id = builder.next_duplicate_cluster_id()
-            category = builder.rng.choice(["Reliability", "Security"])
-            symptom = builder.rng.choice(symptom_terms)
-            item_count = builder.rng.choice([2, 3, 3, 4])
-            for copy_index in range(item_count):
-                severity = builder.choose_severity(category)
-                created = as_of_date - timedelta(days=builder.rng.randint(4, 55))
-                status = builder.rng.choices(
-                    ["In Progress", "Blocked", "Review", "Closed", "Verified"], weights=[28, 28, 14, 18, 12], k=1
-                )[0]
-                closed = None
-                updated = as_of_date - timedelta(days=builder.rng.randint(0, 12))
-                if status in TERMINAL_STATUSES:
-                    closed = as_of_date - timedelta(days=builder.rng.randint(0, 25))
-                    updated = closed
-                area = builder.rng.choice(PRODUCT_AREAS[product])
-                title = f"Duplicate signal {cluster_id}: {symptom} on {area} variant {copy_index + 1}"
-                description = (
-                    f"Related report for {symptom} affecting {area}; duplicate cluster kept for operational audit."
-                )
-                builder.add_work_item(
-                    product,
-                    category,
-                    created,
-                    status,
-                    updated_date=updated,
-                    closed_date=closed,
-                    release_ids=[release_id] if release_id and builder.rng.random() < 0.45 else [],
-                    target_area=area,
-                    duplicate_cluster=cluster_id,
-                    severity=severity,
-                    title=title,
-                    description=description,
-                    work_type="Incident" if category == "Reliability" else "Vulnerability",
-                    labels_extra=["duplicate", "customer-signal", slug(symptom)],
-                    scope_tags=[scope],
-                    stale_export_chance=0.30,
-                    missing_owner_chance=0.17,
-                )
-
-
-def add_release_batch(
-    builder: Builder,
-    scope: str,
-    release_id: str,
-    count: int,
-    gate_count: int,
-) -> None:
-    release = builder.release_by_id[release_id]
-    product = release["product"]
-    release_date = parse_date(release["release_date"])
-    critical_milestones = [m for m in builder.milestones_by_release[release_id] if m["critical"]]
-    all_milestones = builder.milestones_by_release[release_id]
-    gate_ids = []
-    for gate_index in range(gate_count):
-        category = builder.rng.choice(["Reliability", "Security"])
-        created = release_date - timedelta(days=builder.rng.randint(36, 74))
-        updated = release_date - timedelta(days=builder.rng.randint(3, 18))
-        milestone = builder.rng.choice(critical_milestones)
-        item_id = builder.add_work_item(
-            product,
-            category,
-            created,
-            "Blocked",
-            updated_date=updated,
-            release_ids=[release_id],
-            severity=builder.rng.choice(["S1", "S2"]),
-            labels_extra=["release-gate", "critical-path"],
-            scope_tags=[scope],
-            stale_export_chance=0.35,
-            milestone_id=milestone["milestone_id"],
-            missing_owner_chance=0.10,
-        )
-        gate_ids.append(item_id)
-    for _ in range(count - gate_count):
-        category = builder.rng.choices(CATEGORIES, weights=[36, 23, 24, 17], k=1)[0]
-        created = release_date - timedelta(days=builder.rng.randint(28, 100))
-        status = builder.rng.choices(
-            ["Done", "Closed", "Verified", "In Progress", "Review", "Blocked", "Cancelled"],
-            weights=[22, 24, 15, 16, 9, 8, 6],
-            k=1,
-        )[0]
-        closed = None
-        updated = release_date - timedelta(days=builder.rng.randint(1, 24))
-        if status in TERMINAL_STATUSES:
-            closed = release_date - timedelta(days=builder.rng.randint(1, 28))
-            updated = closed
-        milestone = builder.rng.choice(all_milestones)
-        builder.add_work_item(
-            product,
-            category,
-            created,
-            status,
-            updated_date=updated,
-            closed_date=closed,
-            release_ids=[release_id],
-            labels_extra=["release-scope"],
-            scope_tags=[scope],
-            stale_export_chance=0.18,
-            milestone_id=milestone["milestone_id"],
-            missing_owner_chance=0.06,
-        )
-    builder.make_scope_record(
-        scope,
-        product=product,
-        release_id=release_id,
-        release_name=release["name"],
-        notable_gate_candidates=gate_ids,
-        notable_work_item_ids=builder.scope_items[scope][:16],
-        purpose="Release readiness construction scope.",
-    )
-
-
-def add_random_distractors(builder: Builder, count: int) -> None:
-    product_names = [product["name"] for product in PRODUCTS]
-    release_ids = [release["release_id"] for release in RELEASE_DEFS]
-    for index in range(count):
-        product = builder.rng.choice(product_names)
-        category = builder.rng.choices(CATEGORIES, weights=[34, 25, 25, 16], k=1)[0]
-        created = builder.random_date(parse_date("2025-07-01"), parse_date("2026-07-05"))
-        status = builder.rng.choices(
-            ["New", "In Progress", "Blocked", "Review", "Done", "Closed", "Verified", "Cancelled"],
-            weights=[5, 18, 12, 8, 16, 18, 14, 9],
-            k=1,
-        )[0]
-        closed = None
-        updated = created + timedelta(days=builder.rng.randint(1, 80))
-        if status in TERMINAL_STATUSES:
-            closed = updated
-        release_ids_for_item = []
-        if builder.rng.random() < 0.34:
-            matching_releases = [release["release_id"] for release in RELEASE_DEFS if release["product"] == product]
-            release_ids_for_item = [builder.rng.choice(matching_releases or release_ids)]
-        builder.add_work_item(
-            product,
-            category,
-            created,
-            status,
-            updated_date=updated,
-            closed_date=closed,
-            release_ids=release_ids_for_item,
-            labels_extra=["distractor"] if index % 5 == 0 else [],
-            stale_export_chance=0.18,
-            missing_owner_chance=0.07,
-        )
-
-
-def add_dependencies(builder: Builder) -> None:
-    for scope in ["release_orion_3_8", "release_vega_2_0", "release_atlas_admin_train"]:
-        item_ids = builder.scope_items[scope]
-        blocked = [item_id for item_id in item_ids if builder.item_meta[item_id]["effective_status"] == "Blocked"]
-        incomplete = [
-            item_id
-            for item_id in item_ids
-            if builder.item_meta[item_id]["effective_status"] in {"In Progress", "Review", "Blocked", "New"}
-        ]
-        complete = [
-            item_id
-            for item_id in item_ids
-            if builder.item_meta[item_id]["effective_status"] in {"Done", "Closed", "Verified"}
-        ]
-        chains = []
-        for index, upstream in enumerate(blocked[:3]):
-            downstream_pool = [item_id for item_id in incomplete + complete if item_id != upstream]
-            if downstream_pool:
-                downstream = downstream_pool[(index * 3) % len(downstream_pool)]
-                builder.add_dependency(upstream, downstream, "blocks", True)
-                chains.append([upstream, downstream])
-        if len(incomplete) >= 2 and complete:
-            builder.add_dependency(incomplete[0], incomplete[1], "requires", True)
-            builder.add_dependency(incomplete[1], complete[0], "blocks", False)
-            chains.extend([[incomplete[0], incomplete[1]], [incomplete[1], complete[0]]])
-        builder.construction_index["scopes"][scope]["critical_dependency_examples"] = chains[:5]
-
-    by_release = defaultdict(list)
-    by_product = defaultdict(list)
-    for item in builder.work_items:
-        by_product[item["product"]].append(item["id"])
-        for release_id in item["release_ids"]:
-            by_release[release_id].append(item["id"])
-
-    attempts = 0
-    while len(builder.dependencies) < 86 and attempts < 1000:
-        attempts += 1
-        if builder.rng.random() < 0.65:
-            release_pool = builder.rng.choice([ids for ids in by_release.values() if len(ids) >= 2])
-            upstream, downstream = builder.rng.sample(release_pool, 2)
-        else:
-            product_pool = builder.rng.choice([ids for ids in by_product.values() if len(ids) >= 2])
-            upstream, downstream = builder.rng.sample(product_pool, 2)
-        builder.add_dependency(
-            upstream,
-            downstream,
-            builder.rng.choice(["blocks", "requires", "duplicates_signal", "validates"]),
-            builder.rng.random() < 0.34,
-        )
-
-
-def add_blockers(builder: Builder) -> None:
-    blocked_items = [item_id for item_id, meta in builder.item_meta.items() if meta["effective_status"] == "Blocked"]
-    active_candidates = blocked_items[:]
-    builder.rng.shuffle(active_candidates)
-    for item_id in active_candidates[:38]:
-        preferred_type = "Security Review" if builder.item_meta[item_id]["category"] == "Security" else None
-        if item_id in builder.construction_index["scopes"].get("release_orion_3_8", {}).get(
-            "notable_gate_candidates", []
-        ):
-            preferred_type = builder.rng.choice(["Capacity", "Data Migration", "Security Review"])
-        if item_id in builder.construction_index["scopes"].get("release_vega_2_0", {}).get(
-            "notable_gate_candidates", []
-        ):
-            preferred_type = builder.rng.choice(["External Dependency", "Environment", "Vendor"])
-        if item_id in builder.construction_index["scopes"].get("release_atlas_admin_train", {}).get(
-            "notable_gate_candidates", []
-        ):
-            preferred_type = builder.rng.choice(["Security Review", "Ownership Gap", "Design Decision"])
-        builder.add_blocker(item_id, preferred_type, active=True)
-
-    non_blocked = [
-        item["id"]
-        for item in builder.work_items
-        if builder.item_meta[item["id"]]["effective_status"] in {"In Progress", "Review", "Closed", "Done", "Verified"}
-    ]
-    builder.rng.shuffle(non_blocked)
-    for item_id in non_blocked[:24]:
-        item = builder.item_by_id[item_id]
-        created = parse_date(item["created_date"]) + timedelta(days=builder.rng.randint(1, 12))
-        active = (
-            builder.item_meta[item_id]["effective_status"] in {"In Progress", "Review"} and builder.rng.random() < 0.35
-        )
-        builder.add_blocker(
-            item_id,
-            builder.rng.choice(BLOCKER_TYPES),
-            active=active,
-            created_date=created,
-            resolved_date=None if active else created + timedelta(days=builder.rng.randint(2, 20)),
-        )
-
-    if len(builder.blockers) < 48:
-        remaining = [item["id"] for item in builder.work_items]
-        while len(builder.blockers) < 48:
-            builder.add_blocker(builder.rng.choice(remaining), active=builder.rng.random() < 0.5)
-
-
-def build_dataset() -> Builder:
-    builder = Builder(SEED)
-    builder.build_people()
-    builder.build_releases()
-    builder.build_targets()
-    builder.build_sla_policies()
-    builder.build_documents()
-
-    add_portfolio_batch(
-        builder,
-        "portfolio_identity_q4_2025",
-        "Identity Platform",
-        "2025-10-01",
-        "2025-12-31",
-        {"NewFeature": 13, "TechDebt": 7, "Reliability": 6, "Security": 5},
-        "REL-IDP-2025Q4",
-    )
-    add_portfolio_batch(
-        builder,
-        "portfolio_data_platform_q1_2026",
+    # test_001: Data Platform and Observability, Data Reliability, Q4 2025 closed.
+    add(
+        41,
+        "Data replay feature rollout with outage tag",
+        "Feature",
+        "Closed",
         "Data Platform",
+        "Liam Chen",
+        "Data Reliability",
+        "2025-10-01",
+        "2025-10-17",
+        "2025-10-16",
+        "S3",
+        3,
+        ["feature", "rollout", "outage"],
+        13,
+        legacy_category="quality",
+    )
+    add(
+        42,
+        "Observability latency guardrail refactor",
+        "Refactor",
+        "Verified",
+        "Observability",
+        "Devon Wells",
+        "Data Reliability",
+        "2025-10-06",
+        "2025-10-23",
+        "2025-10-21",
+        "S2",
+        2,
+        ["latency", "reliability", "refactor"],
+        8,
+        legacy_category="tech-debt",
+    )
+    add(
+        43,
+        "Data pipeline cve library migration",
+        "Dependency",
+        "Closed",
+        "Data Platform",
+        "Liam Chen",
+        "Data Reliability",
+        "2025-10-13",
+        "2025-11-01",
+        "2025-10-31",
+        "S2",
+        2,
+        ["cve", "migration", "security"],
+        5,
+        legacy_category="maintenance",
+    )
+    add(
+        44,
+        "Observability alert cleanup for feature launch",
+        "Chore",
+        "Done",
+        "Observability",
+        "Devon Wells",
+        "Data Reliability",
+        "2025-10-22",
+        "2025-11-09",
+        "2025-11-08",
+        "S3",
+        4,
+        ["cleanup", "feature"],
+        3,
+        legacy_category="new",
+    )
+    add(
+        45,
+        "Data reliability outage postmortem automation",
+        "Incident",
+        "Deployed",
+        "Data Platform",
+        None,
+        "Data Reliability",
+        "2025-10-30",
+        "2025-11-13",
+        "2025-11-12",
+        "S1",
+        1,
+        ["incident", "outage", "reliability"],
+        5,
+        legacy_category="bug",
+    )
+    add(
+        46,
+        "Observability encryption audit dashboard",
+        "Compliance",
+        "Verified",
+        "Observability",
+        "Avery Quinn",
+        "Data Reliability",
+        "2025-11-05",
+        "2025-11-21",
+        "2025-11-20",
+        "S2",
+        2,
+        ["security", "encryption", "feature"],
+        8,
+        legacy_category="new",
+    )
+    add(
+        47,
+        "Data flaky partition repair rollout",
+        "Bug",
+        "Closed",
+        "Data Platform",
+        "Liam Chen",
+        "Data Reliability",
+        "2025-11-13",
+        "2025-11-30",
+        "2025-11-29",
+        "S2",
+        2,
+        ["flaky", "reliability", "rollout"],
+        5,
+        legacy_category="quality",
+    )
+    add(
+        48,
+        "Observability retention migration cleanup",
+        "Refactor",
+        "Done",
+        "Observability",
+        "Devon Wells",
+        "Data Reliability",
+        "2025-11-19",
+        "2025-12-08",
+        "2025-12-07",
+        "S3",
+        4,
+        ["migration", "cleanup"],
+        8,
+        legacy_category="security",
+    )
+    add(
+        49,
+        "Data reliability duplicate alert export",
+        "Bug",
+        "Duplicate",
+        "Data Platform",
+        "Liam Chen",
+        "Data Reliability",
+        "2025-11-23",
+        "2025-12-04",
+        "2025-12-03",
+        "S3",
+        4,
+        ["reliability", "stale-export"],
+        1,
+        duplicate_of="WI-24024-P047",
+        mirror_status="Open",
+        legacy_category="quality",
+    )
+    add(
+        50,
+        "Observability cancelled feature cleanup plan",
+        "Feature",
+        "Cancelled",
+        "Observability",
+        "Devon Wells",
+        "Data Reliability",
+        "2025-12-02",
+        "2025-12-16",
+        "2025-12-15",
+        "S4",
+        5,
+        ["feature", "cleanup"],
+        2,
+        mirror_status="Complete",
+        legacy_category="new",
+    )
+    add(
+        51,
+        "Data platform security duplicate audit",
+        "Security",
+        "Closed",
+        "Data Platform",
+        "Avery Quinn",
+        "Data Reliability",
+        "2025-12-07",
+        "2025-12-21",
+        "2025-12-20",
+        "S2",
+        2,
+        ["security", "auth"],
+        3,
+        duplicate_of="WI-24024-P043",
+        legacy_category="security",
+    )
+
+    # test_004: Integrations, Billing, API Foundations, Revenue Platform across API Connectivity and Revenue Systems.
+    add(
+        61,
+        "API connectivity feature rollout with latency label",
+        "Feature",
+        "Closed",
+        "API Foundations",
+        "Jon Bell",
+        "API Connectivity",
+        "2025-10-03",
+        "2025-10-20",
+        "2025-10-18",
+        "S3",
+        3,
+        ["feature", "rollout", "latency"],
+        13,
+        legacy_category="quality",
+    )
+    add(
+        62,
+        "Billing encryption ledger migration",
+        "Dependency",
+        "Verified",
+        "Billing",
+        "Theo Brooks",
+        "Revenue Systems",
+        "2025-10-08",
+        "2025-10-27",
+        "2025-10-26",
+        "S2",
+        2,
+        ["encryption", "migration", "security"],
+        8,
+        legacy_category="maintenance",
+    )
+    add(
+        63,
+        "Integrations outage retry cleanup",
+        "Incident",
+        "Closed",
+        "Integrations",
+        "Jon Bell",
+        "API Connectivity",
+        "2025-10-15",
+        "2025-10-30",
+        "2025-10-29",
+        "S1",
+        1,
+        ["outage", "incident", "cleanup"],
+        5,
+        legacy_category="tech-debt",
+    )
+    add(
+        64,
+        "Revenue platform customer feature launch",
+        "Feature",
+        "Deployed",
+        "Revenue Platform",
+        "Mara Singh",
+        "Revenue Systems",
+        "2025-10-23",
+        "2025-11-14",
+        "2025-11-13",
+        "S3",
+        3,
+        ["feature", "rollout"],
+        13,
+        legacy_category="new",
+    )
+    add(
+        65,
+        "API gateway auth cve remediation",
+        "Security",
+        "Verified",
+        "API Foundations",
+        "Avery Quinn",
+        "API Connectivity",
+        "2025-10-31",
+        "2025-11-12",
+        "2025-11-11",
+        "S1",
+        1,
+        ["security", "auth", "cve"],
+        8,
+        legacy_category="bug",
+    )
+    add(
+        66,
+        "Billing flaky invoice reliability guardrail",
+        "Reliability",
+        "Done",
+        "Billing",
+        None,
+        "Revenue Systems",
+        "2025-11-06",
+        "2025-11-24",
+        "2025-11-22",
+        "S2",
+        2,
+        ["flaky", "reliability"],
+        5,
+        legacy_category="quality",
+    )
+    add(
+        67,
+        "Integrations contract refactor feature cleanup",
+        "Refactor",
+        "Closed",
+        "Integrations",
+        "Jon Bell",
+        "API Connectivity",
+        "2025-11-14",
+        "2025-12-02",
+        "2025-12-01",
+        "S3",
+        4,
+        ["refactor", "feature", "cleanup"],
+        8,
+        legacy_category="new",
+    )
+    add(
+        68,
+        "Revenue systems compliance encryption evidence",
+        "Compliance",
+        "Verified",
+        "Revenue Platform",
+        "Mara Singh",
+        "Revenue Systems",
+        "2025-11-20",
+        "2025-12-09",
+        "2025-12-08",
+        "S2",
+        2,
+        ["security", "encryption", "compliance"],
+        5,
+        legacy_category="maintenance",
+    )
+    add(
+        69,
+        "API duplicate connectivity incident export",
+        "Bug",
+        "Duplicate",
+        "API Foundations",
+        "Jon Bell",
+        "API Connectivity",
+        "2025-11-23",
+        "2025-12-05",
+        "2025-12-04",
+        "S3",
+        4,
+        ["incident", "stale-export"],
+        1,
+        duplicate_of="WI-24024-P063",
+        mirror_status="Open",
+        legacy_category="bug",
+    )
+    add(
+        70,
+        "Billing cancelled rollout migration",
+        "Feature",
+        "Cancelled",
+        "Billing",
+        "Theo Brooks",
+        "Revenue Systems",
+        "2025-12-01",
+        "2025-12-16",
+        "2025-12-14",
+        "S4",
+        5,
+        ["feature", "migration"],
+        3,
+        mirror_status="Done",
+        legacy_category="new",
+    )
+    add(
+        71,
+        "Revenue platform duplicate cve cleanup",
+        "Security",
+        "Closed",
+        "Revenue Platform",
+        "Avery Quinn",
+        "Revenue Systems",
+        "2025-12-04",
+        "2025-12-18",
+        "2025-12-17",
+        "S2",
+        2,
+        ["security", "cve", "cleanup"],
+        3,
+        duplicate_of="WI-24024-P065",
+        legacy_category="security",
+    )
+
+    return rows
+
+
+def sla_scope_items():
+    rows = []
+
+    def add(
+        suffix,
+        title,
+        work_type,
+        status,
+        team,
+        owner,
+        product_area,
+        created_at,
+        due_at,
+        closed_at,
+        severity,
+        priority,
+        labels,
+        story_points,
+        duplicate_of=None,
+        mirror_status="Open",
+        legacy_category="quality",
+    ):
+        rows.append(
+            (
+                f"WI-24024-S{suffix:03d}",
+                title,
+                work_type,
+                status,
+                team,
+                owner,
+                product_area,
+                created_at,
+                due_at,
+                closed_at,
+                severity,
+                priority,
+                labels,
+                story_points,
+                None,
+                None,
+                duplicate_of,
+                mirror_status,
+                legacy_category,
+            )
+        )
+
+    # train_002: Infra Reliability and Data Platform, as_of 2026-01-15, recent closed window 14 days.
+    add(
+        1,
+        "Infra reliability outage runbook overdue",
+        "Reliability",
+        "In Progress",
+        "Infra Reliability",
+        "Owen Hart",
+        "Data Reliability",
+        "2026-01-03",
+        "2026-01-10",
+        None,
+        "S2",
+        1,
+        ["reliability", "outage"],
+        5,
+    )
+    add(
+        2,
+        "Data platform cve replay patch overdue",
+        "Security",
+        "Review",
+        "Data Platform",
+        "Liam Chen",
+        "Data Reliability",
+        "2026-01-05",
+        "2026-01-12",
+        None,
+        "S1",
+        1,
+        ["security", "cve"],
+        3,
+        legacy_category="security",
+    )
+    add(
+        3,
+        "Infra latency alert boundary due",
+        "Incident",
+        "Backlog",
+        "Infra Reliability",
+        "Owen Hart",
+        "Data Reliability",
+        "2026-01-09",
+        "2026-01-15",
+        None,
+        "S3",
+        3,
+        ["latency", "incident", "reliability"],
+        3,
+    )
+    add(
+        4,
+        "Data reliability closed overdue incident",
+        "Incident",
+        "Closed",
+        "Data Platform",
+        "Liam Chen",
+        "Data Reliability",
+        "2025-12-28",
+        "2026-01-04",
+        "2026-01-05",
+        "S2",
+        2,
+        ["incident", "reliability"],
+        5,
+        mirror_status="Closed",
+    )
+    add(
+        5,
+        "Infra security closed before due",
+        "Security",
+        "Verified",
+        "Infra Reliability",
+        "Avery Quinn",
+        "Security Operations",
+        "2026-01-02",
+        "2026-01-20",
+        "2026-01-14",
+        "S2",
+        2,
+        ["security", "auth"],
+        8,
+        mirror_status="Done",
+        legacy_category="security",
+    )
+    add(
+        6,
+        "Data platform reliability missing owner",
+        "Reliability",
+        "In Progress",
+        "Data Platform",
+        None,
+        "Data Reliability",
+        "2026-01-04",
+        "2026-01-08",
+        None,
+        "S2",
+        1,
+        ["reliability", "flaky"],
+        5,
+    )
+    add(
+        7,
+        "Infra encryption audit missing owner",
+        "Compliance",
+        "Review",
+        "Infra Reliability",
+        None,
+        "Security Operations",
+        "2026-01-06",
+        "2026-01-25",
+        None,
+        "S3",
+        3,
+        ["security", "encryption"],
+        3,
+        legacy_category="security",
+    )
+    add(
+        8,
+        "Data latency guardrail not overdue",
+        "Reliability",
+        "In Progress",
+        "Data Platform",
+        "Liam Chen",
+        "Data Reliability",
+        "2026-01-12",
+        "2026-01-28",
+        None,
+        "S3",
+        3,
+        ["reliability", "latency"],
+        8,
+    )
+    add(
+        9,
+        "Infra duplicate outage ticket",
+        "Bug",
+        "Duplicate",
+        "Infra Reliability",
+        "Owen Hart",
+        "Data Reliability",
+        "2026-01-11",
+        "2026-01-18",
+        "2026-01-12",
+        "S3",
+        4,
+        ["outage", "reliability"],
+        1,
+        duplicate_of="WI-24024-S001",
+        mirror_status="Open",
+    )
+    add(
+        10,
+        "Data duplicate cve export",
+        "Security",
+        "Duplicate",
+        "Data Platform",
+        "Avery Quinn",
+        "Security Operations",
+        "2026-01-10",
+        "2026-01-14",
+        "2026-01-13",
+        "S2",
+        2,
+        ["security", "cve", "stale-export"],
+        1,
+        duplicate_of="WI-24024-S002",
+        mirror_status="Open",
+        legacy_category="security",
+    )
+
+    # train_005: AppSec and Identity Services, as_of 2026-01-22, recent closed window 21 days.
+    add(
+        21,
+        "AppSec cve exception overdue",
+        "Security",
+        "In Progress",
+        "AppSec",
+        "Priya Stone",
+        "Security Operations",
+        "2026-01-08",
+        "2026-01-12",
+        None,
+        "S1",
+        1,
+        ["security", "cve"],
+        5,
+        legacy_category="security",
+    )
+    add(
+        22,
+        "Identity auth outage follow-up overdue",
+        "Incident",
+        "Review",
+        "Identity Services",
+        "Mina Shah",
+        "Identity",
+        "2026-01-06",
+        "2026-01-16",
+        None,
+        "S2",
+        1,
+        ["auth", "outage", "reliability"],
+        3,
+    )
+    add(
+        23,
+        "AppSec encryption evidence not overdue",
+        "Compliance",
+        "Backlog",
+        "AppSec",
+        "Priya Stone",
+        "Security Operations",
+        "2026-01-15",
+        "2026-01-31",
+        None,
+        "S3",
+        3,
+        ["security", "encryption"],
+        5,
+        legacy_category="security",
+    )
+    add(
+        24,
+        "Identity reliability closed late",
+        "Reliability",
+        "Closed",
+        "Identity Services",
+        "Mina Shah",
+        "Identity",
         "2026-01-01",
-        "2026-03-31",
-        {"NewFeature": 10, "TechDebt": 11, "Reliability": 7, "Security": 5},
-        "REL-ORION-38",
+        "2026-01-10",
+        "2026-01-18",
+        "S2",
+        2,
+        ["reliability", "latency"],
+        8,
+        mirror_status="Closed",
     )
-    add_portfolio_batch(
-        builder,
-        "portfolio_collaboration_suite_q2_2026",
-        "Collaboration Suite",
-        "2026-04-01",
-        "2026-06-30",
-        {"NewFeature": 17, "TechDebt": 8, "Reliability": 6, "Security": 5},
-        "REL-COL-2026Q2",
+    add(
+        25,
+        "AppSec security closed before due",
+        "Security",
+        "Verified",
+        "AppSec",
+        "Avery Quinn",
+        "Security Operations",
+        "2026-01-03",
+        "2026-01-24",
+        "2026-01-19",
+        "S2",
+        2,
+        ["security", "auth"],
+        5,
+        mirror_status="Done",
+        legacy_category="security",
     )
-    add_portfolio_batch(
-        builder,
-        "combined_core_services_q2_2026",
+    add(
+        26,
+        "Identity cve owner gap overdue",
+        "Security",
+        "In Progress",
+        "Identity Services",
+        None,
+        "Identity",
+        "2026-01-10",
+        "2026-01-18",
+        None,
+        "S1",
+        1,
+        ["security", "cve", "auth"],
+        5,
+        legacy_category="security",
+    )
+    add(
+        27,
+        "AppSec flaky scanner reliability owner gap",
+        "Reliability",
+        "Review",
+        "AppSec",
+        None,
+        "Security Operations",
+        "2026-01-11",
+        "2026-01-29",
+        None,
+        "S3",
+        3,
+        ["reliability", "flaky"],
+        3,
+    )
+    add(
+        28,
+        "Identity encryption rotation due today",
+        "Security",
+        "In Progress",
+        "Identity Services",
+        "Mina Shah",
+        "Identity",
+        "2026-01-14",
+        "2026-01-22",
+        None,
+        "S2",
+        2,
+        ["security", "encryption"],
+        8,
+        legacy_category="security",
+    )
+    add(
+        29,
+        "AppSec duplicate cve alert",
+        "Security",
+        "Duplicate",
+        "AppSec",
+        "Priya Stone",
+        "Security Operations",
+        "2026-01-18",
+        "2026-01-21",
+        "2026-01-20",
+        "S1",
+        1,
+        ["security", "cve"],
+        1,
+        duplicate_of="WI-24024-S021",
+        mirror_status="Open",
+        legacy_category="security",
+    )
+    add(
+        30,
+        "Identity duplicate outage mirror",
+        "Bug",
+        "Duplicate",
+        "Identity Services",
+        "Mina Shah",
+        "Identity",
+        "2026-01-16",
+        "2026-01-20",
+        "2026-01-21",
+        "S2",
+        2,
+        ["outage", "reliability", "stale-export"],
+        1,
+        duplicate_of="WI-24024-S022",
+        mirror_status="Open",
+    )
+
+    # test_002: Core Services and Platform Core, as_of 2026-01-18, recent closed window 10 days.
+    add(
+        41,
+        "Core runtime incident overdue",
+        "Incident",
+        "In Progress",
         "Core Services",
-        "2026-04-01",
-        "2026-06-30",
-        {"NewFeature": 9, "TechDebt": 6, "Reliability": 9, "Security": 6},
-        "REL-CORE-2026Q2",
+        "Devon Wells",
+        "Core Runtime",
+        "2026-01-07",
+        "2026-01-11",
+        None,
+        "S2",
+        1,
+        ["incident", "reliability"],
+        5,
     )
-    add_portfolio_batch(
-        builder,
-        "portfolio_atlas_admin_release_scope",
-        "Atlas Admin",
-        "2026-04-01",
-        "2026-06-30",
-        {"NewFeature": 8, "TechDebt": 7, "Reliability": 5, "Security": 10},
-        "REL-ATLAS-Q3",
+    add(
+        42,
+        "Platform auth cve overdue",
+        "Security",
+        "Review",
+        "Platform Core",
+        "Avery Quinn",
+        "Atlas Backend",
+        "2026-01-09",
+        "2026-01-13",
+        None,
+        "S1",
+        1,
+        ["security", "auth", "cve"],
+        3,
+        legacy_category="security",
+    )
+    add(
+        43,
+        "Core latency repair not overdue",
+        "Reliability",
+        "Backlog",
+        "Core Services",
+        "Devon Wells",
+        "Core Runtime",
+        "2026-01-12",
+        "2026-01-25",
+        None,
+        "S3",
+        3,
+        ["reliability", "latency"],
+        8,
+    )
+    add(
+        44,
+        "Platform outage closed late",
+        "Incident",
+        "Closed",
+        "Platform Core",
+        "Nora Patel",
+        "Atlas Backend",
+        "2026-01-01",
+        "2026-01-08",
+        "2026-01-15",
+        "S2",
+        2,
+        ["outage", "reliability"],
+        5,
+        mirror_status="Closed",
+    )
+    add(
+        45,
+        "Core security closed before due",
+        "Security",
+        "Verified",
+        "Core Services",
+        "Avery Quinn",
+        "Core Runtime",
+        "2026-01-05",
+        "2026-01-21",
+        "2026-01-17",
+        "S2",
+        2,
+        ["security", "encryption"],
+        5,
+        mirror_status="Done",
+        legacy_category="security",
+    )
+    add(
+        46,
+        "Platform reliability owner gap overdue",
+        "Reliability",
+        "In Progress",
+        "Platform Core",
+        None,
+        "Atlas Backend",
+        "2026-01-06",
+        "2026-01-12",
+        None,
+        "S2",
+        1,
+        ["reliability", "flaky"],
+        5,
+    )
+    add(
+        47,
+        "Core cve owner gap not overdue",
+        "Security",
+        "Review",
+        "Core Services",
+        None,
+        "Core Runtime",
+        "2026-01-14",
+        "2026-01-28",
+        None,
+        "S3",
+        3,
+        ["security", "cve"],
+        3,
+        legacy_category="security",
+    )
+    add(
+        48,
+        "Platform latency boundary due",
+        "Reliability",
+        "In Progress",
+        "Platform Core",
+        "Nora Patel",
+        "Atlas Backend",
+        "2026-01-13",
+        "2026-01-18",
+        None,
+        "S3",
+        3,
+        ["reliability", "latency"],
+        8,
+    )
+    add(
+        49,
+        "Core duplicate incident export",
+        "Bug",
+        "Duplicate",
+        "Core Services",
+        "Devon Wells",
+        "Core Runtime",
+        "2026-01-13",
+        "2026-01-17",
+        "2026-01-16",
+        "S3",
+        4,
+        ["incident", "reliability"],
+        1,
+        duplicate_of="WI-24024-S041",
+        mirror_status="Open",
+    )
+    add(
+        50,
+        "Platform duplicate cve mirror",
+        "Security",
+        "Duplicate",
+        "Platform Core",
+        "Avery Quinn",
+        "Atlas Backend",
+        "2026-01-14",
+        "2026-01-18",
+        "2026-01-17",
+        "S2",
+        2,
+        ["security", "cve", "stale-export"],
+        1,
+        duplicate_of="WI-24024-S042",
+        mirror_status="Open",
+        legacy_category="security",
     )
 
-    add_sla_batch(builder, "sla_payments_2026_02_15", "Payments", "2026-02-15", 30, "REL-PAY-2026Q1")
-    add_sla_batch(builder, "sla_edge_services_2026_04_10", "Edge Services", "2026-04-10", 28, "REL-EDGE-2026Q1")
-    add_sla_batch(builder, "sla_mobile_platform_2026_06_20", "Mobile Platform", "2026-06-20", 34, "REL-VEGA-20")
-    add_sla_batch(builder, "combined_core_services_q2_2026", "Core Services", "2026-06-30", 22, "REL-CORE-2026Q2")
-
-    add_duplicate_clusters(builder)
-
-    add_release_batch(builder, "release_orion_3_8", "REL-ORION-38", 28, 4)
-    add_release_batch(builder, "release_vega_2_0", "REL-VEGA-20", 30, 5)
-    add_release_batch(builder, "release_atlas_admin_train", "REL-ATLAS-Q3", 28, 5)
-    add_release_batch(builder, "release_collaboration_canvas_2026_2", "REL-COL-2026Q2", 16, 2)
-    add_release_batch(builder, "release_payments_ledger_2026_1", "REL-PAY-2026Q1", 15, 1)
-
-    add_random_distractors(builder, 64)
-
-    builder.assign_missing_milestone_items()
-    add_dependencies(builder)
-    add_blockers(builder)
-
-    duplicate_clusters = sorted(
-        {item["duplicate_cluster"] for item in builder.work_items if item["duplicate_cluster"]}
+    # test_005: Edge Delivery, as_of 2026-01-25, recent closed window 14 days.
+    add(
+        61,
+        "Edge routing outage overdue",
+        "Incident",
+        "In Progress",
+        "Edge Delivery",
+        "Elena Park",
+        "Edge Routing",
+        "2026-01-12",
+        "2026-01-17",
+        None,
+        "S1",
+        1,
+        ["outage", "incident", "reliability"],
+        5,
     )
-    builder.construction_index["notable_records"] = {
-        "duplicate_clusters": duplicate_clusters,
-        "stale_status_export_item_ids": [
-            item["id"]
-            for item in builder.work_items
-            if item["status_export"] != builder.item_meta[item["id"]]["effective_status"]
-        ][:60],
-        "missing_owner_item_ids": [item["id"] for item in builder.work_items if item["owner_id"] is None][:60],
+    add(
+        62,
+        "Edge cve certificate patch overdue",
+        "Security",
+        "Review",
+        "Edge Delivery",
+        "Avery Quinn",
+        "Edge Routing",
+        "2026-01-14",
+        "2026-01-20",
+        None,
+        "S2",
+        1,
+        ["security", "cve", "encryption"],
+        3,
+        legacy_category="security",
+    )
+    add(
+        63,
+        "Edge latency guardrail not overdue",
+        "Reliability",
+        "Backlog",
+        "Edge Delivery",
+        "Elena Park",
+        "Edge Routing",
+        "2026-01-18",
+        "2026-02-02",
+        None,
+        "S3",
+        3,
+        ["reliability", "latency"],
+        8,
+    )
+    add(
+        64,
+        "Edge reliability closed late",
+        "Reliability",
+        "Closed",
+        "Edge Delivery",
+        "Elena Park",
+        "Edge Routing",
+        "2026-01-05",
+        "2026-01-12",
+        "2026-01-18",
+        "S2",
+        2,
+        ["reliability", "flaky"],
+        5,
+        mirror_status="Closed",
+    )
+    add(
+        65,
+        "Edge security closed before due",
+        "Security",
+        "Verified",
+        "Edge Delivery",
+        "Avery Quinn",
+        "Edge Routing",
+        "2026-01-08",
+        "2026-01-28",
+        "2026-01-23",
+        "S2",
+        2,
+        ["security", "auth"],
+        5,
+        mirror_status="Done",
+        legacy_category="security",
+    )
+    add(
+        66,
+        "Edge outage owner gap overdue",
+        "Incident",
+        "In Progress",
+        "Edge Delivery",
+        None,
+        "Edge Routing",
+        "2026-01-10",
+        "2026-01-15",
+        None,
+        "S1",
+        1,
+        ["outage", "reliability"],
+        5,
+    )
+    add(
+        67,
+        "Edge encryption owner gap not overdue",
+        "Compliance",
+        "Review",
+        "Edge Delivery",
+        None,
+        "Edge Routing",
+        "2026-01-16",
+        "2026-02-05",
+        None,
+        "S3",
+        3,
+        ["security", "encryption"],
+        3,
+        legacy_category="security",
+    )
+    add(
+        68,
+        "Edge latency due today",
+        "Reliability",
+        "In Progress",
+        "Edge Delivery",
+        "Elena Park",
+        "Edge Routing",
+        "2026-01-19",
+        "2026-01-25",
+        None,
+        "S3",
+        3,
+        ["reliability", "latency"],
+        8,
+    )
+    add(
+        69,
+        "Edge duplicate outage export",
+        "Bug",
+        "Duplicate",
+        "Edge Delivery",
+        "Elena Park",
+        "Edge Routing",
+        "2026-01-20",
+        "2026-01-23",
+        "2026-01-22",
+        "S3",
+        4,
+        ["outage", "reliability"],
+        1,
+        duplicate_of="WI-24024-S061",
+        mirror_status="Open",
+    )
+    add(
+        70,
+        "Edge duplicate cve mirror",
+        "Security",
+        "Duplicate",
+        "Edge Delivery",
+        "Avery Quinn",
+        "Edge Routing",
+        "2026-01-20",
+        "2026-01-24",
+        "2026-01-24",
+        "S2",
+        2,
+        ["security", "cve", "stale-export"],
+        1,
+        duplicate_of="WI-24024-S062",
+        mirror_status="Open",
+        legacy_category="security",
+    )
+
+    return rows
+
+
+def insert_static_rows(conn):
+    releases = [
+        ("REL-ORION-2026-02", "Orion February portfolio train", "2026-02-20", "Orion"),
+        ("REL-ZEPHYR-2026-03", "Zephyr March portfolio train", "2026-03-27", "Zephyr"),
+        ("REL-NOVA-2025-12", "Nova December maintenance train", "2025-12-19", "Nova"),
+    ]
+    conn.executemany("INSERT INTO releases VALUES (?, ?, ?, ?)", releases)
+
+    milestones = [
+        ("MIL-ORION-BETA", "REL-ORION-2026-02", "Orion beta freeze", "Release Engineering"),
+        ("MIL-ORION-HARDEN", "REL-ORION-2026-02", "Orion security and reliability hardening", "AppSec"),
+        ("MIL-ORION-RC", "REL-ORION-2026-02", "Orion release candidate", "Edge Delivery"),
+        ("MIL-ORION-GA", "REL-ORION-2026-02", "Orion general availability", "Release Engineering"),
+        ("MIL-ZEPHYR-BETA", "REL-ZEPHYR-2026-03", "Zephyr beta freeze", "API Foundations"),
+        ("MIL-ZEPHYR-HARDEN", "REL-ZEPHYR-2026-03", "Zephyr hardening checkpoint", "Data Platform"),
+        ("MIL-ZEPHYR-RC", "REL-ZEPHYR-2026-03", "Zephyr release candidate", "Revenue Platform"),
+        ("MIL-ZEPHYR-GA", "REL-ZEPHYR-2026-03", "Zephyr general availability", "Release Engineering"),
+        ("MIL-NOVA-GA", "REL-NOVA-2025-12", "Nova maintenance availability", "Release Engineering"),
+    ]
+    conn.executemany("INSERT INTO milestones VALUES (?, ?, ?, ?)", milestones)
+
+    sla = [("S1", 3), ("S2", 10), ("S3", 21), ("S4", 45)]
+    conn.executemany("INSERT INTO sla_policy VALUES (?, ?)", sla)
+
+    team_groups = {
+        "Core Systems": ["Platform Core", "Core Services", "API Foundations"],
+        "Trust": ["Identity Services", "AppSec", "Infra Reliability"],
+        "Customer Revenue": ["Billing", "Revenue Platform", "Growth Experiences"],
+        "Delivery": ["Release Engineering", "Edge Delivery", "Mobile Client"],
+        "Data": ["Data Platform", "Observability", "Integrations"],
     }
-    for scope, item_ids in builder.scope_items.items():
-        if scope not in builder.construction_index["scopes"]:
-            builder.make_scope_record(scope, notable_work_item_ids=item_ids[:12])
-        else:
-            builder.construction_index["scopes"][scope].setdefault("notable_work_item_ids", item_ids[:12])
-
-    return builder
-
-
-def write_json(path: Path, value: object) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(value, handle, indent=2, sort_keys=True)
-        handle.write("\n")
-
-
-def write_dataset(builder: Builder) -> dict[str, int]:
-    tables = {
-        "teams.json": builder.teams,
-        "owners.json": builder.owners,
-        "work_items.json": builder.work_items,
-        "status_history.json": sorted(builder.status_history, key=lambda row: (row["work_item_id"], row["timestamp"])),
-        "dependencies.json": builder.dependencies,
-        "blockers.json": builder.blockers,
-        "releases.json": builder.releases,
-        "milestones.json": builder.milestones,
-        "milestone_items.json": builder.milestone_items,
-        "portfolio_targets.json": builder.portfolio_targets,
-        "sla_policies.json": builder.sla_policies,
-        "documents.json": builder.documents,
-        "construction_index.json": builder.construction_index,
-    }
-    for filename, records in tables.items():
-        write_json(DATA_DIR / filename, records)
-
-    duplicate_cluster_count = len(
-        {item["duplicate_cluster"] for item in builder.work_items if item["duplicate_cluster"]}
+    rows = []
+    rng = random.Random(SEED + 99)
+    for quarter in QUARTERS:
+        for group in team_groups:
+            for area in rng.sample(PRODUCT_AREAS, 5):
+                security = round(rng.uniform(0.08, 0.22), 2)
+                reliability = round(rng.uniform(0.14, 0.28), 2)
+                tech_debt = round(rng.uniform(0.18, 0.32), 2)
+                new_feature = round(max(0.15, 1.0 - security - reliability - tech_debt), 2)
+                scope_id = f"{quarter}:{group}:{area}".replace(" ", "-").upper()
+                rows.append((scope_id, quarter, group, area, new_feature, tech_debt, reliability, security))
+    rows.extend(
+        [
+            (
+                "train_001",
+                "2025-Q4",
+                "Platform Core + Identity Services",
+                "Atlas Backend + Identity",
+                0.34,
+                0.24,
+                0.22,
+                0.20,
+            ),
+            ("train_004", "2025-Q4", "Mobile Client + Growth Experiences", "Checkout", 0.42, 0.20, 0.24, 0.14),
+            ("test_001", "2025-Q4", "Data Platform + Observability", "Data Reliability", 0.30, 0.26, 0.28, 0.16),
+            (
+                "test_004",
+                "2025-Q4",
+                "Integrations + Billing + API Foundations + Revenue Platform",
+                "API Connectivity + Revenue Systems",
+                0.36,
+                0.22,
+                0.20,
+                0.22,
+            ),
+        ]
     )
-    stale_status_conflicts = sum(
-        1 for item in builder.work_items if item["status_export"] != builder.item_meta[item["id"]]["effective_status"]
-    )
-    counts = {
-        "teams": len(builder.teams),
-        "owners": len(builder.owners),
-        "work_items": len(builder.work_items),
-        "status_history": len(builder.status_history),
-        "dependencies": len(builder.dependencies),
-        "blockers": len(builder.blockers),
-        "releases": len(builder.releases),
-        "milestones": len(builder.milestones),
-        "milestone_items": len(builder.milestone_items),
-        "portfolio_targets": len(builder.portfolio_targets),
-        "sla_policies": len(builder.sla_policies),
-        "documents": len(builder.documents),
-        "duplicate_clusters": duplicate_cluster_count,
-        "stale_status_conflicts": stale_status_conflicts,
+    conn.executemany("INSERT INTO mix_targets VALUES (?, ?, ?, ?, ?, ?, ?, ?)", rows)
+
+
+def insert_work_items(conn):
+    rng = random.Random(SEED)
+    rows = fixture_items()
+    used_ids = {row[0] for row in rows}
+    title_actions = [
+        "stabilize",
+        "rollout",
+        "cleanup",
+        "refactor",
+        "migrate",
+        "harden",
+        "audit",
+        "repair",
+        "extend",
+        "deprecate",
+    ]
+    title_subjects = [
+        "auth session cache",
+        "checkout adapter",
+        "edge routing policy",
+        "billing ledger writer",
+        "mobile telemetry batch",
+        "atlas backend queue",
+        "api gateway contract",
+        "release train dashboard",
+        "observability alert",
+        "data replay worker",
+        "identity consent record",
+        "core runtime scheduler",
+    ]
+    title_signals = [
+        "security",
+        "cve",
+        "auth",
+        "encryption",
+        "reliability",
+        "incident",
+        "outage",
+        "latency",
+        "flaky",
+        "refactor",
+        "migration",
+        "cleanup",
+        "feature",
+        "rollout",
+    ]
+    owners = [
+        "Avery Quinn",
+        "Mina Shah",
+        "Owen Hart",
+        "Nora Patel",
+        "Liam Chen",
+        "Sofia Reyes",
+        "Theo Brooks",
+        "Priya Stone",
+        "Jon Bell",
+        "Mara Singh",
+        "Cass Morgan",
+        "Elena Park",
+        "Devon Wells",
+    ]
+    release_milestones = {
+        "REL-ORION-2026-02": ["MIL-ORION-BETA", "MIL-ORION-HARDEN", "MIL-ORION-RC", "MIL-ORION-GA"],
+        "REL-ZEPHYR-2026-03": ["MIL-ZEPHYR-BETA", "MIL-ZEPHYR-HARDEN", "MIL-ZEPHYR-RC", "MIL-ZEPHYR-GA"],
+        "REL-NOVA-2025-12": ["MIL-NOVA-GA"],
     }
+
+    start = date(2025, 7, 1)
+    end = date(2026, 3, 31)
+    total_days = (end - start).days
+
+    for i in range(19, 156):
+        item_id = f"WI-24024-{i:03d}"
+        while item_id in used_ids:
+            i += 1
+            item_id = f"WI-24024-{i:03d}"
+        used_ids.add(item_id)
+        created = start + timedelta(days=rng.randint(0, total_days))
+        work_type = rng.choices(
+            WORK_TYPES,
+            weights=[17, 14, 14, 7, 9, 11, 9, 5, 8, 6],
+            k=1,
+        )[0]
+        signal = rng.choice(title_signals)
+        action = rng.choice(title_actions)
+        subject = rng.choice(title_subjects)
+        title_tokens = [signal]
+        title = f"{action.title()} {signal} {subject}"
+        status = rng.choices(STATUSES, weights=[8, 12, 10, 16, 11, 12, 11, 4, 4, 2], k=1)[0]
+        severity = rng.choices(SEVERITIES, weights=[10, 28, 42, 20], k=1)[0]
+        labels = make_labels(rng, work_type, title_tokens)
+        due = created + timedelta(days=rng.randint(4, 55))
+        closed = None
+        if status in CLOSED_STATUSES:
+            closed = created + timedelta(days=rng.randint(2, 70))
+            if closed > end + timedelta(days=12):
+                closed = None
+                status = rng.choice(["In Progress", "Review", "Reopened"])
+        release_id = choose_release(rng, due, labels)
+        milestone_id = rng.choice(release_milestones[release_id]) if release_id else None
+        duplicate_of = None
+        if rng.random() < 0.08 and rows:
+            duplicate_of = rng.choice(rows)[0]
+            status = "Duplicate"
+            closed = created + timedelta(days=rng.randint(1, 15))
+        owner = None if rng.random() < 0.09 else rng.choice(owners)
+        mirror_status = rng.choice(["Open", "In Progress", "Done", "Closed", "Complete", "Blocked"])
+        legacy_category = rng.choice(["new", "bug", "maintenance", "security", "tech-debt", "quality", "admin"])
+        rows.append(
+            (
+                item_id,
+                title,
+                work_type,
+                status,
+                rng.choice(TEAMS),
+                owner,
+                rng.choice(PRODUCT_AREAS),
+                iso(created),
+                iso(due),
+                iso(closed),
+                severity,
+                rng.randint(1, 5),
+                labels,
+                rng.choice([1, 2, 3, 5, 8, 13]),
+                release_id,
+                milestone_id,
+                duplicate_of,
+                mirror_status,
+                legacy_category,
+            )
+        )
+
+    conn.executemany(
+        """
+        INSERT INTO work_items (
+            id, title, work_type, status, team, owner, product_area, created_at,
+            due_at, closed_at, severity, priority, labels, story_points,
+            release_id, milestone_id, duplicate_of, mirror_status, legacy_category
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        [
+            (
+                row[0],
+                row[1],
+                row[2],
+                row[3],
+                row[4],
+                row[5],
+                row[6],
+                row[7],
+                row[8],
+                row[9],
+                row[10],
+                row[11],
+                json.dumps(row[12], separators=(",", ":")),
+                row[13],
+                row[14],
+                row[15],
+                row[16],
+                row[17],
+                row[18],
+            )
+            for row in rows
+        ],
+    )
+    return rows
+
+
+def insert_dependencies_and_blockers(conn, work_rows):
+    rng = random.Random(SEED + 7)
+    dependencies = [
+        ("WI-24024-010", "WI-24024-009", "blocks-release-readiness"),
+        ("WI-24024-012", "WI-24024-001", "security-review-required"),
+        ("WI-24024-014", "WI-24024-013", "implementation-dependency"),
+        ("WI-24024-017", "WI-24024-015", "audit-evidence-required"),
+    ]
+    release_items = [row for row in work_rows if row[14]]
+    for row in rng.sample(release_items, min(28, len(release_items))):
+        candidate = rng.choice(work_rows)
+        if row[0] != candidate[0]:
+            dependencies.append(
+                (row[0], candidate[0], rng.choice(["depends-on", "blocks-release-readiness", "validation-required"]))
+            )
+    conn.executemany("INSERT INTO dependencies VALUES (?, ?, ?)", dependencies)
+
+    blockers = [
+        (
+            "BLK-24024-001",
+            "WI-24024-010",
+            "REL-ORION-2026-02",
+            "High",
+            "open reliability rehearsal gap",
+            "Open",
+            "2026-02-06",
+            None,
+        ),
+        (
+            "BLK-24024-002",
+            "WI-24024-012",
+            "REL-ORION-2026-02",
+            "Critical",
+            "unresolved cve exception",
+            "Open",
+            "2026-02-08",
+            None,
+        ),
+        (
+            "BLK-24024-003",
+            "WI-24024-017",
+            "REL-ZEPHYR-2026-03",
+            "High",
+            "missing encryption audit evidence",
+            "Open",
+            "2026-03-03",
+            None,
+        ),
+        (
+            "BLK-24024-004",
+            "WI-24024-015",
+            "REL-ZEPHYR-2026-03",
+            "Medium",
+            "latency guardrail verification",
+            "Resolved",
+            "2026-03-01",
+            "2026-03-04",
+        ),
+        (
+            "BLK-24024-005",
+            "WI-24024-018",
+            "REL-NOVA-2025-12",
+            "Low",
+            "late cleanup report signoff",
+            "Resolved",
+            "2025-12-16",
+            "2025-12-18",
+        ),
+    ]
+    for idx, row in enumerate(rng.sample(release_items, min(18, len(release_items))), start=6):
+        opened = datetime.strptime(row[7], "%Y-%m-%d").date() + timedelta(days=rng.randint(8, 45))
+        status = rng.choices(["Open", "Resolved", "Monitoring"], weights=[3, 6, 2], k=1)[0]
+        resolved = None if status != "Resolved" else opened + timedelta(days=rng.randint(1, 12))
+        blockers.append(
+            (
+                f"BLK-24024-{idx:03d}",
+                row[0],
+                row[14],
+                rng.choice(["Low", "Medium", "High"]),
+                rng.choice(
+                    [
+                        "owner unavailable",
+                        "dependency validation late",
+                        "contract review pending",
+                        "customer escalation review",
+                        "release note evidence gap",
+                    ]
+                ),
+                status,
+                iso(opened),
+                iso(resolved),
+            )
+        )
+    conn.executemany("INSERT INTO blockers VALUES (?, ?, ?, ?, ?, ?, ?, ?)", blockers)
+
+
+def table_counts(conn):
+    tables = ["work_items", "mix_targets", "sla_policy", "releases", "milestones", "dependencies", "blockers"]
+    return {table: conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0] for table in tables}
+
+
+def main():
+    if DB_PATH.exists():
+        DB_PATH.unlink()
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        create_schema(conn)
+        insert_static_rows(conn)
+        work_rows = insert_work_items(conn)
+        insert_dependencies_and_blockers(conn, work_rows)
+        conn.commit()
+        counts = table_counts(conn)
+    finally:
+        conn.close()
+
     manifest = {
         "seed": SEED,
-        "generated_files": sorted(str(Path("data") / filename) for filename in tables),
-        "record_counts": counts,
-        "public_endpoint_summary": [
-            "GET /",
-            "GET /health",
-            "GET /web/dashboard",
-            "GET /web/policies",
-            "GET /api/teams",
-            "GET /api/owners",
-            "GET /api/work-items",
-            "GET /api/work-items?product=<name>&quarter=<quarter>&status=<status>&category_hint=<hint>&release_id=<id>",
-            "GET /api/work-items/<id>",
-            "GET /api/status-history?work_item_id=<id>",
-            "GET /api/status-history?product=<name>",
-            "GET /api/dependencies",
-            "GET /api/dependencies?release_id=<id>",
-            "GET /api/blockers",
-            "GET /api/blockers?release_id=<id>&active=true",
-            "GET /api/releases",
-            "GET /api/releases/<release_id>",
-            "GET /api/milestones?release_id=<release_id>",
-            "GET /api/milestone-items?release_id=<release_id>",
-            "GET /api/portfolio-targets?product=<name>&quarter=<quarter>",
-            "GET /api/sla-policies",
-            "GET /api/search?q=<text>",
+        "generated_at": GENERATED_AT,
+        "files": ["portfolio.db", "data_manifest.json"],
+        "row_counts": counts,
+        "injected_scope_ids": [
+            "train_001",
+            "train_002",
+            "train_004",
+            "train_005",
+            "test_001",
+            "test_002",
+            "test_004",
+            "test_005",
+            "portfolio-mix-2025-q3",
+            "portfolio-mix-2025-q4",
+            "portfolio-mix-2026-q1",
+            "sla-open-and-recently-closed",
+            "duplicates-and-missing-owners",
+            "release-readiness-orion",
+            "release-readiness-zephyr",
         ],
-        "setup_command": "TASK_ENV_BIND=0.0.0.0 TASK_ENV_PORT=9024 ./setup.sh",
+        "available_releases": ["REL-ORION-2026-02", "REL-ZEPHYR-2026-03", "REL-NOVA-2025-12"],
+        "endpoint_count": 13,
     }
-    write_json(ROOT / "manifest.json", manifest)
-    return counts
-
-
-def main() -> None:
-    builder = build_dataset()
-    counts = write_dataset(builder)
-    print(json.dumps({"seed": SEED, "record_counts": counts}, indent=2, sort_keys=True))
+    MANIFEST_PATH.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(json.dumps({"ok": True, "database": str(DB_PATH), "row_counts": counts}, sort_keys=True))
 
 
 if __name__ == "__main__":

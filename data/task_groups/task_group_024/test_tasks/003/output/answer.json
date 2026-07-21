@@ -1,59 +1,88 @@
 {
-  "release_id": "REL-VEGA-20",
-  "as_of_date": "2026-06-30",
-  "ship_decision": "NoShip",
-  "risk_tier": "High",
-  "milestones": [
+  "release_id": "REL-ZEPHYR-2026-03",
+  "ship_decision": "NO_SHIP",
+  "milestone_completion": [
     {
-      "milestone_id": "MS-VEGA20-01",
-      "critical": true,
-      "completion_percentage": 58.8
+      "milestone_id": "MIL-ZEPHYR-BETA",
+      "complete_primary": 4,
+      "primary_total": 5,
+      "completion_pct": 80.0
     },
     {
-      "milestone_id": "MS-VEGA20-02",
-      "critical": true,
-      "completion_percentage": 50.0
+      "milestone_id": "MIL-ZEPHYR-GA",
+      "complete_primary": 2,
+      "primary_total": 6,
+      "completion_pct": 33.3
     },
     {
-      "milestone_id": "MS-VEGA20-03",
-      "critical": false,
-      "completion_percentage": 52.9
+      "milestone_id": "MIL-ZEPHYR-HARDEN",
+      "complete_primary": 3,
+      "primary_total": 6,
+      "completion_pct": 50.0
     },
     {
-      "milestone_id": "MS-VEGA20-04",
-      "critical": true,
-      "completion_percentage": 76.9
-    },
-    {
-      "milestone_id": "MS-VEGA20-05",
-      "critical": true,
-      "completion_percentage": 57.1
+      "milestone_id": "MIL-ZEPHYR-RC",
+      "complete_primary": 1,
+      "primary_total": 2,
+      "completion_pct": 50.0
     }
   ],
   "gating_work_item_ids": [
-    "WI-0308",
-    "WI-0316",
-    "WI-0375",
-    "WI-0376",
-    "WI-0378",
-    "WI-0470"
+    "WI-24024-017",
+    "WI-24024-054",
+    "WI-24024-087",
+    "WI-24024-140"
   ],
   "blocker_cause_counts": {
-    "ExternalDependency": 3,
-    "Environment": 0,
-    "SecurityReview": 3,
-    "Capacity": 0,
-    "DesignDecision": 0,
-    "DataMigration": 0,
-    "Vendor": 0,
-    "OwnershipGap": 0
+    "missing encryption audit evidence": 1
   },
-  "critical_dependency_chain": [
-    "WI-0374",
-    "WI-0375"
+  "critical_dependency_chains": [
+    [
+      "WI-24024-054",
+      "WI-24024-132"
+    ],
+    [
+      "WI-24024-087",
+      "WI-24024-050"
+    ],
+    [
+      "WI-24024-140",
+      "WI-24024-127"
+    ]
   ],
-  "owner_escalation_ids": [
-    "OWN-MOB-3",
-    "OWN-MOB-4"
-  ]
+  "watch_work_item_ids": [
+    "WI-24024-014",
+    "WI-24024-032",
+    "WI-24024-079",
+    "WI-24024-090",
+    "WI-24024-115"
+  ],
+  "watch_blocker_cause_counts": {
+    "dependency validation late": 1,
+    "owner unavailable": 1,
+    "release note evidence gap": 1
+  },
+  "watch_milestone_summary": [
+    {
+      "milestone_id": "MIL-ZEPHYR-BETA",
+      "owner_team": "API Foundations",
+      "watch_primary_count": 1
+    },
+    {
+      "milestone_id": "MIL-ZEPHYR-GA",
+      "owner_team": "Release Engineering",
+      "watch_primary_count": 2
+    },
+    {
+      "milestone_id": "MIL-ZEPHYR-HARDEN",
+      "owner_team": "Data Platform",
+      "watch_primary_count": 1
+    },
+    {
+      "milestone_id": "MIL-ZEPHYR-RC",
+      "owner_team": "Revenue Platform",
+      "watch_primary_count": 1
+    }
+  ],
+  "readiness_score": 0.526
 }

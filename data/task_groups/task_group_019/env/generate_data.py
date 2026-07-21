@@ -1,1753 +1,2174 @@
-#!/usr/bin/env python3
-"""Generate deterministic CLRP SQLite data and manifests."""
-
-from __future__ import annotations
-
-import datetime as dt
 import json
 import random
 import sqlite3
+from datetime import date, timedelta
 from pathlib import Path
 
 
+SEED = 19019
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
-DB_PATH = DATA_DIR / "clrp.db"
-PUBLIC_MANIFEST_PATH = DATA_DIR / "public_manifest.json"
-CONSTRUCTION_MANIFEST_PATH = DATA_DIR / "construction_manifest.json"
+DB_PATH = DATA_DIR / "licensing.db"
+MANIFEST_PATH = DATA_DIR / "manifest.json"
 
-SEEDS = {
-    "contractors": 1901901,
-    "alcohol": 1901902,
-    "renewals": 1901903,
+CONTRACTOR_TARGETS = {
+    "train_001": [f"C-TR1-{idx:03d}" for idx in range(1, 9)],
+    "train_004": [f"C-TR4-{idx:03d}" for idx in range(1, 8)],
+    "test_001": [f"C-TE1-{idx:03d}" for idx in range(1, 10)],
+    "test_004": [f"C-TE4-{idx:03d}" for idx in range(1, 16)],
 }
 
-GENERATED_AT = "2026-07-07T00:00:00Z"
+LIQUOR_TARGETS = {
+    "train_002": {"application_id": "L-TR2-001", "location_id": "LOC-TR2"},
+    "train_005": {"application_id": "L-TR5-001", "location_id": "LOC-TR5"},
+    "test_003": {"application_id": "L-TE3-001", "location_id": "LOC-TE3"},
+}
 
-TRADES = [
-    "General Builder",
-    "Roofing",
-    "Electrical",
-    "Plumbing",
-    "HVAC",
-    "Solar",
-    "Concrete",
-    "Fire Protection",
+RENEWAL_TARGETS = {
+    "train_003": {
+        "target_queue_size": 10,
+        "boundary": "2025-04-10",
+        "prefix": "AL-TR3",
+    },
+    "test_002": {
+        "target_queue_size": 12,
+        "boundary": "2025-06-15",
+        "prefix": "AL-TE2",
+    },
+    "test_005": {
+        "target_queue_size": 8,
+        "boundary": "2025-05-20",
+        "prefix": "AL-TE5",
+    },
+}
+
+RENEWAL_NON_EXACT_CASES = {
+    "train_003": {
+        "current_idx": 6,
+        "old_license_no": "AL-TR3-OLD-006",
+        "match_basis": "successor_to",
+        "expected_match_confidence": "successor",
+        "current_exact_violations": [
+            {
+                "suffix": "1",
+                "days_before": 86,
+                "theme": "missing posting",
+                "severity": "minor",
+                "disposition": "warning",
+                "fine_balance": 0.0,
+                "alert_flag": 0,
+            }
+        ],
+        "old_violations": [
+            {
+                "suffix": "S1",
+                "days_before": 11,
+                "theme": "sale to minor",
+                "severity": "serious",
+                "disposition": "open",
+                "fine_balance": 0.0,
+                "alert_flag": 1,
+            },
+            {
+                "suffix": "S2",
+                "days_before": 28,
+                "theme": "unpaid fine",
+                "severity": "serious",
+                "disposition": "pending",
+                "fine_balance": 500.0,
+                "alert_flag": 1,
+            },
+        ],
+    },
+    "test_002": {
+        "current_idx": 12,
+        "old_license_no": "AL-TE2-OLD-012",
+        "match_basis": "successor_to",
+        "expected_match_confidence": "successor",
+        "current_exact_violations": [
+            {
+                "suffix": "1",
+                "days_before": 74,
+                "theme": "late renewal",
+                "severity": "minor",
+                "disposition": "warning",
+                "fine_balance": 0.0,
+                "alert_flag": 0,
+            }
+        ],
+        "old_violations": [
+            {
+                "suffix": "S1",
+                "days_before": 5,
+                "theme": "sale to minor",
+                "severity": "serious",
+                "disposition": "open",
+                "fine_balance": 0.0,
+                "alert_flag": 1,
+            },
+            {
+                "suffix": "S2",
+                "days_before": 23,
+                "theme": "after hours",
+                "severity": "serious",
+                "disposition": "pending",
+                "fine_balance": 450.0,
+                "alert_flag": 1,
+            },
+        ],
+    },
+    "test_005": {
+        "current_idx": 3,
+        "old_license_no": "AL-TE5-OLD-003",
+        "old_address": "233 Lincoln Avenue",
+        "match_basis": "successor_to_close_address",
+        "expected_match_confidence": "close_successor",
+        "current_exact_violations": [
+            {
+                "suffix": "1",
+                "days_before": 61,
+                "theme": "missing posting",
+                "severity": "minor",
+                "disposition": "warning",
+                "fine_balance": 0.0,
+                "alert_flag": 0,
+            }
+        ],
+        "old_violations": [
+            {
+                "suffix": "S1",
+                "days_before": 4,
+                "theme": "sale to minor",
+                "severity": "serious",
+                "disposition": "open",
+                "fine_balance": 0.0,
+                "alert_flag": 1,
+            },
+            {
+                "suffix": "S2",
+                "days_before": 29,
+                "theme": "unpaid fine",
+                "severity": "serious",
+                "disposition": "pending",
+                "fine_balance": 350.0,
+                "alert_flag": 1,
+            },
+        ],
+    },
+}
+
+TABLES = [
+    "policies",
+    "contractor_applications",
+    "contractor_bonds",
+    "contractor_insurance",
+    "contractor_license_history",
+    "contractor_violations",
+    "contractor_correspondence",
+    "contractor_inspections",
+    "liquor_applications",
+    "liquor_settlements",
+    "liquor_privileges",
+    "liquor_incidents",
+    "liquor_site_evidence",
+    "alcohol_licensees",
+    "alcohol_violations",
+    "renewal_rules",
 ]
 
-BOND_REQUIREMENTS = {
-    "General Builder": 15000,
-    "Roofing": 18000,
-    "Electrical": 16000,
-    "Plumbing": 16000,
-    "HVAC": 14000,
-    "Solar": 20000,
-    "Concrete": 12000,
-    "Fire Protection": 17000,
-}
-
-INSURANCE_REQUIREMENTS = {
-    "General Builder": 500000,
-    "Roofing": 500000,
-    "Electrical": 750000,
-    "Plumbing": 750000,
-    "HVAC": 500000,
-    "Solar": 1000000,
-    "Concrete": 500000,
-    "Fire Protection": 1000000,
-}
-
-CONTRACTOR_BATCH_SIZES = {
-    "HS-2026-Q1A": 12,
-    "HS-2026-Q1B": 11,
-    "HS-2026-Q2A": 14,
-    "HS-2026-Q2B": 13,
-}
-
-CONTRACTOR_ISSUE_PATTERNS = {
-    "HS-2026-Q1A": [
-        ["NO_DEFICIENCY"],
-        ["BOND_SHORTFALL"],
-        ["INSURANCE_VERIFY"],
-        ["UNRESOLVED_PENALTY"],
-        ["FIELD_NOTE_HOLD"],
-        ["BOND_CANCELLED"],
-        ["EXPERIENCE_VERIFY"],
-        ["NO_DEFICIENCY"],
-        ["BOND_SHORTFALL", "INSURANCE_VERIFY"],
-        ["DISQUALIFYING_CONDUCT"],
-        ["NO_DEFICIENCY"],
-        ["FIELD_NOTE_HOLD", "UNRESOLVED_PENALTY"],
-    ],
-    "HS-2026-Q1B": [
-        ["ADVERSE_PRIOR_REGISTRATION"],
-        ["BOND_CANCELLED"],
-        ["NO_DEFICIENCY"],
-        ["INSURANCE_VERIFY"],
-        ["FIELD_NOTE_HOLD"],
-        ["BOND_SHORTFALL"],
-        ["NO_DEFICIENCY"],
-        ["UNRESOLVED_PENALTY"],
-        ["EXPERIENCE_VERIFY"],
-        ["CORRESPONDENCE_HOLD"],
-        ["NO_DEFICIENCY"],
-    ],
-    "HS-2026-Q2A": [
-        ["NO_DEFICIENCY"],
-        ["BOND_SHORTFALL"],
-        ["INSURANCE_VERIFY"],
-        ["CORRESPONDENCE_HOLD"],
-        ["FIELD_NOTE_HOLD"],
-        ["NO_DEFICIENCY"],
-        ["UNRESOLVED_PENALTY"],
-        ["BOND_CANCELLED"],
-        ["DISQUALIFYING_CONDUCT"],
-        ["EXPERIENCE_VERIFY"],
-        ["NO_DEFICIENCY"],
-        ["BOND_SHORTFALL", "INSURANCE_VERIFY"],
-        ["NO_DEFICIENCY"],
-        ["ADVERSE_PRIOR_REGISTRATION"],
-    ],
-    "HS-2026-Q2B": [
-        ["BOND_SHORTFALL"],
-        ["NO_DEFICIENCY"],
-        ["INSURANCE_VERIFY"],
-        ["FIELD_NOTE_HOLD"],
-        ["UNRESOLVED_PENALTY"],
-        ["NO_DEFICIENCY"],
-        ["BOND_CANCELLED"],
-        ["EXPERIENCE_VERIFY"],
-        ["CORRESPONDENCE_HOLD"],
-        ["NO_DEFICIENCY"],
-        ["BOND_SHORTFALL"],
-        ["DISQUALIFYING_CONDUCT"],
-        ["NO_DEFICIENCY"],
-    ],
-}
+TRADE_CONFIGS = [
+    {
+        "trade": "Electrical",
+        "requested_class": "Class A",
+        "min_bond": 50000,
+        "min_insurance": 1000000,
+        "experience": 5,
+        "endorsement": "EE-1",
+    },
+    {
+        "trade": "Plumbing",
+        "requested_class": "Class B",
+        "min_bond": 30000,
+        "min_insurance": 750000,
+        "experience": 4,
+        "endorsement": "PH-2",
+    },
+    {
+        "trade": "HVAC",
+        "requested_class": "Class B",
+        "min_bond": 25000,
+        "min_insurance": 500000,
+        "experience": 3,
+        "endorsement": "MECH-H",
+    },
+    {
+        "trade": "General Building",
+        "requested_class": "Class A",
+        "min_bond": 75000,
+        "min_insurance": 1000000,
+        "experience": 5,
+        "endorsement": "GB-A",
+    },
+    {
+        "trade": "Roofing",
+        "requested_class": "Limited",
+        "min_bond": 20000,
+        "min_insurance": 500000,
+        "experience": 2,
+        "endorsement": None,
+    },
+    {
+        "trade": "Solar",
+        "requested_class": "Specialty",
+        "min_bond": 30000,
+        "min_insurance": 750000,
+        "experience": 3,
+        "endorsement": "SOL-PLUS",
+    },
+]
 
 
-def date_between(rng: random.Random, start: str, end: str) -> str:
-    start_date = dt.date.fromisoformat(start)
-    end_date = dt.date.fromisoformat(end)
-    span = (end_date - start_date).days
-    return (start_date + dt.timedelta(days=rng.randint(0, span))).isoformat()
+def iso(year, month, day):
+    return date(year, month, day).isoformat()
 
 
-def date_add(date_text: str, days: int) -> str:
-    return (dt.date.fromisoformat(date_text) + dt.timedelta(days=days)).isoformat()
+def date_between(rng, start, end):
+    span = (end - start).days
+    return (start + timedelta(days=rng.randint(0, span))).isoformat()
 
 
-def insert_many(conn: sqlite3.Connection, table: str, rows: list[dict]) -> None:
+def insert_many(cur, table, rows):
     if not rows:
         return
-    columns = list(rows[0].keys())
-    placeholders = ", ".join(["?"] * len(columns))
-    column_sql = ", ".join(columns)
-    values = [[row[column] for column in columns] for row in rows]
-    conn.executemany(
-        f"INSERT INTO {table} ({column_sql}) VALUES ({placeholders})",
-        values,
+    keys = list(rows[0].keys())
+    placeholders = ", ".join(["?"] * len(keys))
+    columns = ", ".join(keys)
+    cur.executemany(
+        f"INSERT INTO {table} ({columns}) VALUES ({placeholders})",
+        [tuple(row[key] for key in keys) for row in rows],
     )
 
 
-def create_schema(conn: sqlite3.Connection) -> None:
-    conn.executescript(
+def create_schema(cur):
+    for table in reversed(TABLES):
+        cur.execute(f"DROP TABLE IF EXISTS {table}")
+
+    cur.executescript(
         """
-        PRAGMA foreign_keys = OFF;
+        CREATE TABLE policies (
+            policy_id TEXT PRIMARY KEY,
+            agency TEXT NOT NULL,
+            family TEXT NOT NULL,
+            effective_date TEXT NOT NULL,
+            title TEXT NOT NULL,
+            citation TEXT NOT NULL,
+            rule_code TEXT NOT NULL,
+            details_json TEXT NOT NULL
+        );
 
         CREATE TABLE contractor_applications (
             application_id TEXT PRIMARY KEY,
-            batch_id TEXT NOT NULL,
-            legal_name TEXT NOT NULL,
-            dba TEXT NOT NULL,
-            principal_name TEXT NOT NULL,
+            applicant_name TEXT NOT NULL,
             trade TEXT NOT NULL,
-            application_date TEXT NOT NULL,
-            exam_score INTEGER NOT NULL,
-            experience_years INTEGER NOT NULL,
-            financial_statement_filed INTEGER NOT NULL,
-            background_status TEXT NOT NULL,
-            declared_bond_amount INTEGER NOT NULL,
-            declared_insurance_carrier TEXT NOT NULL,
-            declared_insurance_policy TEXT NOT NULL,
-            prior_registration_id TEXT
+            county TEXT NOT NULL,
+            submitted_date TEXT NOT NULL,
+            years_experience INTEGER NOT NULL,
+            endorsement_status TEXT NOT NULL,
+            prior_license_id TEXT,
+            requested_class TEXT NOT NULL,
+            self_disclosed_issue TEXT,
+            target_group TEXT
         );
 
         CREATE TABLE contractor_bonds (
             bond_id TEXT PRIMARY KEY,
-            legal_name TEXT NOT NULL,
-            principal_name TEXT NOT NULL,
-            trade TEXT NOT NULL,
+            application_id TEXT NOT NULL,
             amount INTEGER NOT NULL,
             status TEXT NOT NULL,
             effective_date TEXT NOT NULL,
-            cancellation_date TEXT,
-            surety TEXT NOT NULL,
-            last_update TEXT NOT NULL,
-            note TEXT NOT NULL
+            cancel_date TEXT,
+            source_date TEXT NOT NULL,
+            surety TEXT NOT NULL
         );
 
         CREATE TABLE contractor_insurance (
-            policy_id TEXT PRIMARY KEY,
-            legal_name TEXT NOT NULL,
-            carrier TEXT NOT NULL,
-            policy_number TEXT NOT NULL,
+            insurance_id TEXT PRIMARY KEY,
+            application_id TEXT NOT NULL,
+            amount INTEGER NOT NULL,
             status TEXT NOT NULL,
-            coverage_amount INTEGER NOT NULL,
-            effective_date TEXT NOT NULL,
+            verified_date TEXT NOT NULL,
             expiration_date TEXT NOT NULL,
-            verification_status TEXT NOT NULL,
-            last_update TEXT NOT NULL
+            insurer TEXT NOT NULL
+        );
+
+        CREATE TABLE contractor_license_history (
+            license_id TEXT PRIMARY KEY,
+            applicant_name TEXT NOT NULL,
+            status TEXT NOT NULL,
+            status_date TEXT NOT NULL,
+            trade TEXT NOT NULL,
+            notes TEXT
         );
 
         CREATE TABLE contractor_violations (
             violation_id TEXT PRIMARY KEY,
-            legal_name TEXT NOT NULL,
-            principal_name TEXT NOT NULL,
+            related_application_id TEXT,
+            license_id TEXT,
             violation_date TEXT NOT NULL,
-            violation_type TEXT NOT NULL,
+            severity TEXT NOT NULL,
+            theme TEXT NOT NULL,
             status TEXT NOT NULL,
-            penalty_due_cents INTEGER NOT NULL,
-            ag_referral INTEGER NOT NULL,
-            severity TEXT NOT NULL
-        );
-
-        CREATE TABLE contractor_complaints (
-            complaint_id TEXT PRIMARY KEY,
-            legal_name TEXT NOT NULL,
-            received_date TEXT NOT NULL,
-            complaint_type TEXT NOT NULL,
-            status TEXT NOT NULL,
-            linked_field_note_id TEXT,
-            severity TEXT NOT NULL
-        );
-
-        CREATE TABLE contractor_field_notes (
-            note_id TEXT PRIMARY KEY,
-            legal_name TEXT NOT NULL,
-            inspection_date TEXT NOT NULL,
-            inspector TEXT NOT NULL,
-            finding_type TEXT NOT NULL,
-            summary TEXT NOT NULL,
-            recommended_action TEXT NOT NULL
+            resolved_date TEXT
         );
 
         CREATE TABLE contractor_correspondence (
-            item_id TEXT PRIMARY KEY,
+            correspondence_id TEXT PRIMARY KEY,
+            related_application_id TEXT NOT NULL,
             received_date TEXT NOT NULL,
-            subject_name TEXT NOT NULL,
-            item_type TEXT NOT NULL,
-            summary TEXT NOT NULL,
-            affects_application_id TEXT,
-            document_status TEXT NOT NULL
+            subject TEXT NOT NULL,
+            assertion_type TEXT NOT NULL,
+            assertion_value TEXT NOT NULL,
+            verified_by_agency INTEGER NOT NULL,
+            notes TEXT
         );
 
-        CREATE TABLE contractor_bulletins (
-            bulletin_id TEXT PRIMARY KEY,
-            effective_date TEXT NOT NULL,
-            trade_scope TEXT NOT NULL,
-            rule_type TEXT NOT NULL,
-            threshold_value INTEGER NOT NULL,
-            citation TEXT NOT NULL,
-            summary TEXT NOT NULL,
-            prior_rule TEXT NOT NULL
+        CREATE TABLE contractor_inspections (
+            inspection_id TEXT PRIMARY KEY,
+            related_application_id TEXT NOT NULL,
+            inspection_date TEXT NOT NULL,
+            result TEXT NOT NULL,
+            finding_code TEXT NOT NULL,
+            notes TEXT
         );
 
-        CREATE TABLE alcohol_applications (
+        CREATE TABLE liquor_applications (
             application_id TEXT PRIMARY KEY,
-            premises_id TEXT NOT NULL,
+            agency TEXT NOT NULL,
             applicant_name TEXT NOT NULL,
             dba TEXT NOT NULL,
             address TEXT NOT NULL,
-            city TEXT NOT NULL,
-            license_type TEXT NOT NULL,
-            review_month TEXT NOT NULL,
-            requested_posture TEXT NOT NULL
+            license_class TEXT NOT NULL,
+            location_id TEXT NOT NULL,
+            submitted_date TEXT NOT NULL,
+            requested_posture TEXT NOT NULL,
+            target_group TEXT
         );
 
-        CREATE TABLE alcohol_premises (
-            premises_id TEXT PRIMARY KEY,
-            address TEXT NOT NULL,
-            city TEXT NOT NULL,
-            current_dba TEXT NOT NULL,
-            same_premises_basis TEXT NOT NULL,
-            prior_licensee TEXT NOT NULL,
-            risk_summary TEXT NOT NULL
-        );
-
-        CREATE TABLE alcohol_incidents (
-            incident_id TEXT PRIMARY KEY,
-            premises_id TEXT NOT NULL,
-            incident_date TEXT NOT NULL,
-            incident_type TEXT NOT NULL,
-            severity TEXT NOT NULL,
-            disposition TEXT,
-            source TEXT NOT NULL
-        );
-
-        CREATE TABLE alcohol_settlements (
+        CREATE TABLE liquor_settlements (
             settlement_id TEXT PRIMARY KEY,
-            premises_id TEXT NOT NULL,
-            settlement_date TEXT NOT NULL,
-            prior_or_current TEXT NOT NULL,
-            original_posture TEXT NOT NULL,
-            final_terms_summary TEXT NOT NULL
+            location_id TEXT NOT NULL,
+            effective_date TEXT NOT NULL,
+            settlement_type TEXT NOT NULL,
+            basis_code TEXT NOT NULL,
+            controls_json TEXT NOT NULL,
+            source_name TEXT NOT NULL
         );
 
-        CREATE TABLE alcohol_restrictions (
-            restriction_id TEXT PRIMARY KEY,
-            premises_id TEXT NOT NULL,
-            settlement_id TEXT NOT NULL,
-            restriction_code TEXT NOT NULL,
-            description TEXT NOT NULL,
-            category TEXT NOT NULL,
-            start_time TEXT,
-            end_time TEXT,
-            evidence_required TEXT NOT NULL
-        );
-
-        CREATE TABLE alcohol_standard_obligations (
-            obligation_id TEXT PRIMARY KEY,
-            license_type TEXT NOT NULL,
+        CREATE TABLE liquor_privileges (
+            privilege_id TEXT PRIMARY KEY,
+            license_class TEXT NOT NULL,
             obligation_code TEXT NOT NULL,
             description TEXT NOT NULL,
-            evidence_required TEXT NOT NULL
+            standard_required INTEGER NOT NULL
         );
 
-        CREATE TABLE renewal_licensees (
-            license_id TEXT PRIMARY KEY,
-            facility_name TEXT NOT NULL,
-            legal_name TEXT NOT NULL,
-            address TEXT NOT NULL,
-            city TEXT NOT NULL,
-            channel_type TEXT NOT NULL,
-            license_type TEXT NOT NULL,
+        CREATE TABLE liquor_incidents (
+            incident_id TEXT PRIMARY KEY,
+            location_id TEXT NOT NULL,
+            incident_date TEXT NOT NULL,
+            risk_code TEXT NOT NULL,
+            severity TEXT NOT NULL,
             status TEXT NOT NULL,
-            release_batch TEXT NOT NULL,
-            successor_hint TEXT
+            source_name TEXT NOT NULL
         );
 
-        CREATE TABLE renewal_violations (
-            violation_id TEXT PRIMARY KEY,
-            historical_name TEXT NOT NULL,
+        CREATE TABLE liquor_site_evidence (
+            evidence_id TEXT PRIMARY KEY,
+            location_id TEXT NOT NULL,
+            evidence_date TEXT NOT NULL,
+            evidence_code TEXT NOT NULL,
+            status TEXT NOT NULL,
+            notes TEXT
+        );
+
+        CREATE TABLE alcohol_licensees (
+            license_no TEXT PRIMARY KEY,
+            agency TEXT NOT NULL,
+            facility_name TEXT NOT NULL,
             address TEXT NOT NULL,
-            city TEXT NOT NULL,
-            violation_date TEXT NOT NULL,
-            violation_code TEXT NOT NULL,
-            theme TEXT NOT NULL,
-            disposition TEXT,
-            fine_cents INTEGER NOT NULL,
-            alert_related INTEGER NOT NULL,
-            severity TEXT NOT NULL
+            channel_type TEXT NOT NULL,
+            active INTEGER NOT NULL,
+            location_id TEXT NOT NULL,
+            successor_to TEXT,
+            target_group TEXT
         );
 
-        CREATE INDEX idx_contractor_app_batch ON contractor_applications(batch_id);
-        CREATE INDEX idx_contractor_app_name ON contractor_applications(legal_name);
-        CREATE INDEX idx_contractor_app_principal ON contractor_applications(principal_name);
-        CREATE INDEX idx_contractor_bonds_name ON contractor_bonds(legal_name);
-        CREATE INDEX idx_contractor_bonds_principal ON contractor_bonds(principal_name);
-        CREATE INDEX idx_contractor_bonds_update ON contractor_bonds(last_update);
-        CREATE INDEX idx_contractor_insurance_name ON contractor_insurance(legal_name);
-        CREATE INDEX idx_contractor_violations_name ON contractor_violations(legal_name);
-        CREATE INDEX idx_contractor_violations_principal ON contractor_violations(principal_name);
-        CREATE INDEX idx_contractor_violations_date ON contractor_violations(violation_date);
-        CREATE INDEX idx_contractor_complaints_name ON contractor_complaints(legal_name);
-        CREATE INDEX idx_contractor_field_notes_name ON contractor_field_notes(legal_name);
-        CREATE INDEX idx_contractor_correspondence_app ON contractor_correspondence(affects_application_id);
-        CREATE INDEX idx_contractor_bulletins_date ON contractor_bulletins(effective_date);
+        CREATE TABLE alcohol_violations (
+            violation_id TEXT PRIMARY KEY,
+            license_no TEXT NOT NULL,
+            facility_name TEXT NOT NULL,
+            address TEXT NOT NULL,
+            violation_date TEXT NOT NULL,
+            theme TEXT NOT NULL,
+            severity TEXT NOT NULL,
+            disposition TEXT NOT NULL,
+            fine_balance REAL NOT NULL,
+            alert_flag INTEGER NOT NULL,
+            source_name TEXT NOT NULL
+        );
 
-        CREATE INDEX idx_alcohol_app_month ON alcohol_applications(review_month);
-        CREATE INDEX idx_alcohol_app_premises ON alcohol_applications(premises_id);
-        CREATE INDEX idx_alcohol_premises_address ON alcohol_premises(address);
-        CREATE INDEX idx_alcohol_incidents_premises ON alcohol_incidents(premises_id);
-        CREATE INDEX idx_alcohol_incidents_date ON alcohol_incidents(incident_date);
-        CREATE INDEX idx_alcohol_settlements_premises ON alcohol_settlements(premises_id);
-        CREATE INDEX idx_alcohol_restrictions_premises ON alcohol_restrictions(premises_id);
-        CREATE INDEX idx_alcohol_obligations_type ON alcohol_standard_obligations(license_type);
-
-        CREATE INDEX idx_renewal_licensees_batch ON renewal_licensees(release_batch);
-        CREATE INDEX idx_renewal_licensees_address ON renewal_licensees(address);
-        CREATE INDEX idx_renewal_licensees_name ON renewal_licensees(facility_name);
-        CREATE INDEX idx_renewal_violations_city ON renewal_violations(city);
-        CREATE INDEX idx_renewal_violations_address ON renewal_violations(address);
-        CREATE INDEX idx_renewal_violations_name ON renewal_violations(historical_name);
-        CREATE INDEX idx_renewal_violations_date ON renewal_violations(violation_date);
+        CREATE TABLE renewal_rules (
+            rule_id TEXT PRIMARY KEY,
+            agency TEXT NOT NULL,
+            effective_date TEXT NOT NULL,
+            release_boundary TEXT NOT NULL,
+            title TEXT NOT NULL,
+            details_json TEXT NOT NULL
+        );
         """
     )
 
-
-def contractor_name(index: int) -> tuple[str, str, str]:
-    first = [
-        "Alder",
-        "Beacon",
-        "Cascade",
-        "Duwamish",
-        "Evergreen",
-        "Fircrest",
-        "Glacier",
-        "Harbor",
-        "Ironwood",
-        "Juniper",
-        "Kestrel",
-        "Larch",
-        "Madrona",
-        "Northstar",
-        "Orchard",
-        "Pioneer",
-        "Quarry",
-        "Rainier",
-        "Soundview",
-        "Timberline",
-        "Union",
-        "Vashon",
-        "Westlake",
-        "Yarrow",
+    index_statements = [
+        "CREATE INDEX idx_contractor_app_target ON contractor_applications(target_group)",
+        "CREATE INDEX idx_contractor_bonds_app ON contractor_bonds(application_id)",
+        "CREATE INDEX idx_contractor_ins_app ON contractor_insurance(application_id)",
+        "CREATE INDEX idx_contractor_viol_app ON contractor_violations(related_application_id)",
+        "CREATE INDEX idx_liquor_apps_location ON liquor_applications(location_id)",
+        "CREATE INDEX idx_liquor_settlements_location ON liquor_settlements(location_id)",
+        "CREATE INDEX idx_liquor_incidents_location ON liquor_incidents(location_id)",
+        "CREATE INDEX idx_alcohol_licensees_target ON alcohol_licensees(target_group)",
+        "CREATE INDEX idx_alcohol_violations_license ON alcohol_violations(license_no)",
+        "CREATE INDEX idx_alcohol_violations_date ON alcohol_violations(violation_date)",
     ]
-    second = [
-        "Summit",
-        "Cedar",
-        "Ridge",
-        "Marina",
-        "Foundry",
-        "Station",
-        "Terrace",
-        "Point",
-        "Harbor",
-        "Bridge",
-        "Valley",
-        "Crest",
-    ]
-    suffix = [
-        "Builders LLC",
-        "Contracting Inc",
-        "Construction Group",
-        "Restoration LLC",
-        "Works Co",
-        "Services LLC",
-    ]
-    legal = f"{first[index % len(first)]} {second[(index // len(first)) % len(second)]} {suffix[index % len(suffix)]}"
-    if index >= len(first) * len(second):
-        legal = f"{legal} {index:03d}"
-    dba = legal.replace(" LLC", "").replace(" Inc", "").replace(" Co", "")
-    principal = f"{['Morgan', 'Taylor', 'Jordan', 'Casey', 'Riley', 'Avery', 'Quinn', 'Rowan'][index % 8]} {['Chen', 'Patel', 'Nguyen', 'Garcia', 'Bennett', 'Murphy', 'Singh', 'Lopez'][(index // 8) % 8]}"
-    return legal, dba, principal
+    for statement in index_statements:
+        cur.execute(statement)
 
 
-def build_contractor_bulletins() -> list[dict]:
-    rows: list[dict] = []
-    specs = [
-        (
-            "CB-2026-001",
-            "2026-01-05",
-            "ALL",
-            "EXAM_MINIMUM",
-            72,
-            "HSRC 18.12.040",
-            "Minimum passing exam score is 72 for 2026 submissions.",
-            "Passing score was 70.",
-        ),
-        (
-            "CB-2026-002",
-            "2026-01-15",
-            "General Builder",
-            "BOND_MINIMUM",
-            15000,
-            "HSRC 18.20.110",
-            "General Builder bonds must meet the 2026 minimum.",
-            "Prior minimum was 12000.",
-        ),
-        (
-            "CB-2026-003",
-            "2026-01-20",
-            "Concrete",
-            "BOND_MINIMUM",
-            12000,
-            "HSRC 18.20.115",
-            "Concrete trade minimum bond remains lower than structural trades.",
-            "Prior minimum was 10000.",
-        ),
-        (
-            "CB-2026-004",
-            "2026-02-01",
-            "Roofing",
-            "BOND_MINIMUM",
-            18000,
-            "HSRC 18.20.130",
-            "Roofing registrations require higher storm-loss bond coverage.",
-            "Prior minimum was 15000.",
-        ),
-        (
-            "CB-2026-005",
-            "2026-02-01",
-            "Roofing",
-            "INSURANCE_MINIMUM",
-            500000,
-            "HSRC 18.22.055",
-            "Roofing files require active liability coverage verified by carrier.",
-            "Carrier attestation was previously optional.",
-        ),
-        (
-            "CB-2026-006",
-            "2026-02-10",
-            "Electrical",
-            "BOND_MINIMUM",
-            16000,
-            "HSRC 18.20.140",
-            "Electrical contractor bonds must meet the updated amount.",
-            "Prior minimum was 14000.",
-        ),
-        (
-            "CB-2026-007",
-            "2026-02-10",
-            "Electrical",
-            "INSURANCE_MINIMUM",
-            750000,
-            "HSRC 18.22.062",
-            "Electrical liability coverage minimum increased.",
-            "Prior minimum was 500000.",
-        ),
-        (
-            "CB-2026-008",
-            "2026-02-15",
-            "Plumbing",
-            "BOND_MINIMUM",
-            16000,
-            "HSRC 18.20.150",
-            "Plumbing contractor bond minimum increased.",
-            "Prior minimum was 13000.",
-        ),
-        (
-            "CB-2026-009",
-            "2026-02-15",
-            "Plumbing",
-            "INSURANCE_MINIMUM",
-            750000,
-            "HSRC 18.22.064",
-            "Plumbing liability coverage minimum increased.",
-            "Prior minimum was 500000.",
-        ),
-        (
-            "CB-2026-010",
-            "2026-03-01",
-            "HVAC",
-            "BOND_MINIMUM",
-            14000,
-            "HSRC 18.20.160",
-            "HVAC bond minimum increased for refrigerant work.",
-            "Prior minimum was 11000.",
-        ),
-        (
-            "CB-2026-011",
-            "2026-03-01",
-            "HVAC",
-            "EXPERIENCE_MINIMUM",
-            3,
-            "HSRC 18.18.030",
-            "HVAC principals must document three years of qualifying experience.",
-            "Prior requirement was two years.",
-        ),
-        (
-            "CB-2026-012",
-            "2026-03-12",
-            "Solar",
-            "BOND_MINIMUM",
-            20000,
-            "HSRC 18.20.170",
-            "Solar installer bond minimum increased for storage projects.",
-            "Prior minimum was 15000.",
-        ),
-        (
-            "CB-2026-013",
-            "2026-03-12",
-            "Solar",
-            "INSURANCE_MINIMUM",
-            1000000,
-            "HSRC 18.22.070",
-            "Solar installers must carry one million dollars in liability coverage.",
-            "Prior minimum was 750000.",
-        ),
-        (
-            "CB-2026-014",
-            "2026-03-20",
-            "Fire Protection",
-            "BOND_MINIMUM",
-            17000,
-            "HSRC 18.20.180",
-            "Fire Protection bond minimum increased.",
-            "Prior minimum was 14000.",
-        ),
-        (
-            "CB-2026-015",
-            "2026-03-20",
-            "Fire Protection",
-            "INSURANCE_MINIMUM",
-            1000000,
-            "HSRC 18.22.075",
-            "Fire Protection files require verified one million dollar coverage.",
-            "Prior minimum was 750000.",
-        ),
-        (
-            "CB-2026-016",
-            "2026-04-01",
-            "ALL",
-            "BACKGROUND_SCREENING",
-            1,
-            "HSRC 18.16.090",
-            "Unresolved financial penalties require hold before board review.",
-            "Unresolved penalties were discretionary review notes.",
-        ),
-        (
-            "CB-2026-017",
-            "2026-04-10",
-            "ALL",
-            "CORRESPONDENCE_REVIEW",
-            1,
-            "HSRC 18.10.050",
-            "Material correspondence received after filing must be reviewed before approval.",
-            "Late correspondence was reviewed after registration issuance.",
-        ),
-        (
-            "CB-2026-018",
-            "2026-05-01",
-            "General Builder",
-            "EXPERIENCE_MINIMUM",
-            4,
-            "HSRC 18.18.010",
-            "General Builder principals must show four years of qualifying experience.",
-            "Prior requirement was three years.",
-        ),
-        (
-            "CB-2026-019",
-            "2026-05-01",
-            "Concrete",
-            "EXPERIENCE_MINIMUM",
-            3,
-            "HSRC 18.18.020",
-            "Concrete principals must show three years of qualifying experience.",
-            "Prior requirement was two years.",
-        ),
-        (
-            "CB-2026-020",
-            "2026-05-15",
-            "ALL",
-            "FIELD_NOTE_REVIEW",
-            1,
-            "HSRC 18.14.080",
-            "Open field-note holds must be resolved before registration issuance.",
-            "Inspector notes were advisory unless escalated.",
-        ),
-    ]
-    for bulletin_id, effective_date, trade_scope, rule_type, threshold_value, citation, summary, prior_rule in specs:
+def build_policy_rows():
+    rows = []
+    for idx, cfg in enumerate(TRADE_CONFIGS, start=1):
         rows.append(
             {
-                "bulletin_id": bulletin_id,
-                "effective_date": effective_date,
-                "trade_scope": trade_scope,
-                "rule_type": rule_type,
-                "threshold_value": threshold_value,
+                "policy_id": f"POL-CON-{idx:03d}",
+                "agency": "State Contractors Licensing Board",
+                "family": "contractor",
+                "effective_date": "2025-01-01" if idx % 2 else "2025-03-15",
+                "title": f"{cfg['trade']} {cfg['requested_class']} application standards",
+                "citation": f"SCLB 2025-{idx:02d}",
+                "rule_code": f"CON-{cfg['trade'][:3].upper()}-{cfg['requested_class'].replace(' ', '')}",
+                "details_json": json.dumps(
+                    {
+                        "minimum_bond": cfg["min_bond"],
+                        "minimum_insurance": cfg["min_insurance"],
+                        "minimum_years_experience": cfg["experience"],
+                        "required_endorsement": cfg["endorsement"],
+                        "serious_open_violation_blocks": True,
+                    },
+                    sort_keys=True,
+                ),
+            }
+        )
+
+    extra_policies = [
+        (
+            "POL-CON-LEGACY",
+            "contractor",
+            "2024-01-01",
+            "Prior contractor review baseline",
+            "SCLB 2024-10",
+            "CON-LEGACY",
+            {
+                "minimum_bond_reduction": 10000,
+                "endorsement_required_for_specialty": False,
+                "use_for_prior_rule_comparison": True,
+            },
+        ),
+        (
+            "POL-LIQ-001",
+            "liquor",
+            "2024-11-20",
+            "Restricted premises control review",
+            "ABC 4.18",
+            "LIQ-SETTLEMENT-CONTROLS",
+            {
+                "same_premises_history_matters": True,
+                "current_site_evidence_required": True,
+                "standard_privileges_separate_from_controls": True,
+            },
+        ),
+        (
+            "POL-LIQ-002",
+            "liquor",
+            "2025-02-01",
+            "Incident severity matrix",
+            "ABC 7.04",
+            "LIQ-RISK-MATRIX",
+            {"major_incidents_trigger_board_review": True},
+        ),
+        (
+            "POL-REN-001",
+            "renewal",
+            "2025-01-01",
+            "Renewal hold release export boundary",
+            "OLCC REN-2025",
+            "REN-BOUNDARY",
+            {
+                "known_on_or_before_boundary_only": True,
+                "exact_license_match_preferred": True,
+                "successor_match_mark_uncertain": True,
+            },
+        ),
+    ]
+    for policy_id, family, effective, title, citation, rule_code, details in extra_policies:
+        rows.append(
+            {
+                "policy_id": policy_id,
+                "agency": "Office of Licensing Review",
+                "family": family,
+                "effective_date": effective,
+                "title": title,
                 "citation": citation,
-                "summary": summary,
-                "prior_rule": prior_rule,
+                "rule_code": rule_code,
+                "details_json": json.dumps(details, sort_keys=True),
             }
         )
     return rows
 
 
-def build_contractor_domain() -> tuple[dict[str, list[dict]], dict]:
-    rng = random.Random(SEEDS["contractors"])
-    applications: list[dict] = []
-    app_tags: dict[str, list[str]] = {}
-    anchor_metadata: dict[str, list[dict]] = {}
-    app_index = 0
-
-    batch_start_dates = {
-        "HS-2026-Q1A": ("2026-01-10", "2026-02-20"),
-        "HS-2026-Q1B": ("2026-02-22", "2026-03-31"),
-        "HS-2026-Q2A": ("2026-04-01", "2026-05-15"),
-        "HS-2026-Q2B": ("2026-05-16", "2026-06-28"),
-    }
-
-    for batch_id, count in CONTRACTOR_BATCH_SIZES.items():
-        anchor_metadata[batch_id] = []
-        for batch_offset in range(count):
-            app_index += 1
-            legal_name, dba, principal = contractor_name(app_index)
-            trade = TRADES[(app_index + batch_offset) % len(TRADES)]
-            issue_tags = CONTRACTOR_ISSUE_PATTERNS[batch_id][batch_offset]
-            start, end = batch_start_dates[batch_id]
-            application_date = date_between(rng, start, end)
-            required_bond = BOND_REQUIREMENTS[trade]
-            declared_bond_amount = required_bond
-            if "BOND_SHORTFALL" in issue_tags:
-                declared_bond_amount = required_bond - rng.choice([1000, 1500, 2500])
-            exam_score = 74 + (app_index % 18)
-            if "DISQUALIFYING_CONDUCT" in issue_tags:
-                exam_score = 79
-            experience_years = 4 + (app_index % 7)
-            if "EXPERIENCE_VERIFY" in issue_tags:
-                experience_years = max(1, rng.choice([1, 2]))
-            background_status = "clear"
-            if "ADVERSE_PRIOR_REGISTRATION" in issue_tags:
-                background_status = "needs_review"
-            if "DISQUALIFYING_CONDUCT" in issue_tags:
-                background_status = "adverse"
-            prior_registration_id = ""
-            if "ADVERSE_PRIOR_REGISTRATION" in issue_tags or "DISQUALIFYING_CONDUCT" in issue_tags:
-                prior_registration_id = f"REG-2024-{app_index:04d}"
-            applications.append(
-                {
-                    "application_id": f"CA-2026-{app_index:04d}",
-                    "batch_id": batch_id,
-                    "legal_name": legal_name,
-                    "dba": dba,
-                    "principal_name": principal,
-                    "trade": trade,
-                    "application_date": application_date,
-                    "exam_score": exam_score,
-                    "experience_years": experience_years,
-                    "financial_statement_filed": 0
-                    if "CORRESPONDENCE_HOLD" in issue_tags and app_index % 2 == 0
-                    else 1,
-                    "background_status": background_status,
-                    "declared_bond_amount": declared_bond_amount,
-                    "declared_insurance_carrier": rng.choice(
-                        ["Northwest Mutual Casualty", "Sound Surety Risk", "Cedar State Insurance", "Harbor Indemnity"]
-                    ),
-                    "declared_insurance_policy": f"POL-HS-{app_index:05d}",
-                    "prior_registration_id": prior_registration_id,
-                }
-            )
-            app_tags[legal_name] = issue_tags
-            anchor_metadata[batch_id].append(
-                {
-                    "application_id": f"CA-2026-{app_index:04d}",
-                    "legal_name": legal_name,
-                    "issue_tags": issue_tags,
-                }
-            )
-
-    extra_batches = ["HS-2026-Q3A", "HS-2026-Q3B", "HS-2026-LEGACY", "HS-2026-SPECIAL"]
-    random_issue_pool = [
-        ["NO_DEFICIENCY"],
-        ["NO_DEFICIENCY"],
-        ["BOND_SHORTFALL"],
-        ["INSURANCE_VERIFY"],
-        ["FIELD_NOTE_HOLD"],
-        ["UNRESOLVED_PENALTY"],
-        ["BOND_CANCELLED"],
-        ["EXPERIENCE_VERIFY"],
+def build_privilege_rows():
+    classes = ["Tavern", "Restaurant", "BeerWine", "Package"]
+    obligations = [
+        ("ID_CHECK", "Age verification procedures at point of sale", 1),
+        ("HOURS", "Restricted operating hours must be posted", 1),
+        ("SECURITY", "Security staffing during late service windows", 0),
+        ("FOOD_SERVICE", "Meal availability during alcohol service", 1),
+        ("CCTV", "Camera coverage for entry and sale points", 0),
+        ("PATIO", "Outdoor service plan and boundary markers", 0),
+        ("NOISE", "Noise mitigation log for residential adjacency", 0),
+        ("DELIVERY", "Delivery endorsement controls", 0),
     ]
-    while len(applications) < 88:
-        app_index += 1
-        legal_name, dba, principal = contractor_name(app_index)
-        batch_id = rng.choice(extra_batches)
-        trade = rng.choice(TRADES)
-        issue_tags = list(rng.choice(random_issue_pool))
-        application_date = date_between(rng, "2026-01-05", "2026-06-30")
-        required_bond = BOND_REQUIREMENTS[trade]
-        declared_bond_amount = (
-            required_bond - rng.choice([1000, 2000]) if "BOND_SHORTFALL" in issue_tags else required_bond
-        )
-        applications.append(
+    rows = []
+    idx = 1
+    for license_class in classes:
+        for obligation, description, required in obligations:
+            if license_class == "Package" and obligation in {"FOOD_SERVICE", "PATIO"}:
+                continue
+            if license_class == "BeerWine" and obligation == "DELIVERY":
+                continue
+            rows.append(
+                {
+                    "privilege_id": f"PRV-{idx:03d}",
+                    "license_class": license_class,
+                    "obligation_code": obligation,
+                    "description": description,
+                    "standard_required": required,
+                }
+            )
+            idx += 1
+    return rows
+
+
+def build_renewal_rules():
+    rule_specs = [
+        ("REN-001", "2025-01-01", "2025-04-10", "Spring early release review"),
+        ("REN-002", "2025-02-15", "2025-05-20", "Spring late release review"),
+        ("REN-003", "2025-03-01", "2025-06-15", "Summer release review"),
+        ("REN-004", "2024-12-01", "2025-03-01", "Legacy alert migration"),
+        ("REN-005", "2025-06-01", "2025-07-15", "Post-release monitoring"),
+    ]
+    rows = []
+    for rule_id, effective, boundary, title in rule_specs:
+        rows.append(
             {
-                "application_id": f"CA-2026-{app_index:04d}",
-                "batch_id": batch_id,
-                "legal_name": legal_name,
-                "dba": dba,
-                "principal_name": principal,
-                "trade": trade,
-                "application_date": application_date,
-                "exam_score": rng.randint(68, 94),
-                "experience_years": rng.randint(1, 9),
-                "financial_statement_filed": 1 if rng.random() > 0.08 else 0,
-                "background_status": rng.choices(["clear", "needs_review", "adverse"], weights=[82, 14, 4])[0],
-                "declared_bond_amount": declared_bond_amount,
-                "declared_insurance_carrier": rng.choice(
-                    ["Northwest Mutual Casualty", "Sound Surety Risk", "Cedar State Insurance", "Harbor Indemnity"]
+                "rule_id": rule_id,
+                "agency": "Alcohol Renewal Unit",
+                "effective_date": effective,
+                "release_boundary": boundary,
+                "title": title,
+                "details_json": json.dumps(
+                    {
+                        "use_violations_on_or_before": boundary,
+                        "late_rows_are_distractors": True,
+                        "unpaid_fines_require_hold": True,
+                        "alert_flag_requires_manual_review": True,
+                    },
+                    sort_keys=True,
                 ),
-                "declared_insurance_policy": f"POL-HS-{app_index:05d}",
-                "prior_registration_id": "" if rng.random() > 0.18 else f"REG-2024-{rng.randint(1000, 9999)}",
             }
         )
-        app_tags[legal_name] = issue_tags
+    return rows
 
-    bonds: list[dict] = []
-    sureties = ["Cascadia Bonding", "Harbor Surety", "Evergreen Surety", "Sound Indemnity", "Pioneer Bonds"]
-    for i, app in enumerate(applications, start=1):
-        tags = app_tags[app["legal_name"]]
-        required = BOND_REQUIREMENTS[app["trade"]]
-        status = "active"
-        cancellation_date = ""
-        amount = required
-        note = "Active bond matched to current application."
-        if "BOND_SHORTFALL" in tags:
-            amount = max(5000, required - rng.choice([1000, 2000, 3000]))
-            note = "Active bond amount is below current bulletin minimum."
-        if "BOND_CANCELLED" in tags:
-            status = "cancelled"
-            cancellation_date = date_add(app["application_date"], rng.randint(4, 24))
-            note = "Surety cancellation notice received before reviewer clearance."
-        if "NO_DEFICIENCY" in tags and rng.random() < 0.05:
-            status = "reduced"
-            amount = required - 500
-            note = "Surety sent reduction notice pending review."
-        bonds.append(
-            {
-                "bond_id": f"BND-2026-{i:04d}",
-                "legal_name": app["legal_name"],
-                "principal_name": app["principal_name"],
-                "trade": app["trade"],
-                "amount": amount,
-                "status": status,
-                "effective_date": date_add(app["application_date"], -rng.randint(5, 60)),
-                "cancellation_date": cancellation_date,
-                "surety": rng.choice(sureties),
-                "last_update": date_add(app["application_date"], rng.randint(0, 35)),
-                "note": note,
-            }
-        )
-    while len(bonds) < 96:
-        source = rng.choice(applications)
-        bonds.append(
-            {
-                "bond_id": f"BND-2026-{len(bonds) + 1:04d}",
-                "legal_name": source["legal_name"].replace("LLC", "Holdings LLC").replace("Inc", "Services Inc"),
-                "principal_name": source["principal_name"],
-                "trade": source["trade"],
-                "amount": BOND_REQUIREMENTS[source["trade"]],
-                "status": rng.choice(["active", "expired", "cancelled"]),
-                "effective_date": date_between(rng, "2024-01-01", "2025-12-31"),
-                "cancellation_date": "" if rng.random() > 0.4 else date_between(rng, "2025-01-01", "2026-02-01"),
-                "surety": rng.choice(sureties),
-                "last_update": date_between(rng, "2025-01-01", "2026-06-30"),
-                "note": "Distractor surety record for similar legal name or prior entity.",
-            }
-        )
 
-    insurance: list[dict] = []
-    carriers = [
-        "Northwest Mutual Casualty",
-        "Sound Surety Risk",
-        "Cedar State Insurance",
-        "Harbor Indemnity",
-        "Rainier Liability Exchange",
+def build_contractor_data(rng):
+    counties = ["Summit", "Lake", "Canyon", "Redwood", "Prairie", "Harbor"]
+    name_roots = [
+        "Alder",
+        "Blue Ridge",
+        "Cedar",
+        "Delta",
+        "Evergreen",
+        "Frontier",
+        "Granite",
+        "Harborline",
+        "Ironwood",
+        "Juniper",
+        "Keystone",
+        "Larch",
+        "Mesa",
+        "Northbank",
+        "Orchard",
+        "Pioneer",
+        "Quartz",
+        "Riverview",
+        "Sage",
+        "Timber",
     ]
-    priority_apps = sorted(applications, key=lambda row: 0 if row["batch_id"] in CONTRACTOR_BATCH_SIZES else 1)
-    for app in priority_apps[:82]:
-        tags = app_tags[app["legal_name"]]
-        carrier = app["declared_insurance_carrier"]
-        status = "active"
-        verification_status = "verified"
-        coverage_amount = INSURANCE_REQUIREMENTS[app["trade"]]
-        if "INSURANCE_VERIFY" in tags:
-            verification_status = rng.choice(["pending", "carrier_mismatch"])
-            if verification_status == "carrier_mismatch":
-                carrier = rng.choice([name for name in carriers if name != app["declared_insurance_carrier"]])
-        elif rng.random() < 0.08:
-            status = "expired"
-            verification_status = "stale"
+    sureties = [
+        "Union Surety",
+        "Civic Bonding",
+        "Northwest Indemnity",
+        "Granite Mutual",
+        "Harbor Surety",
+    ]
+    insurers = [
+        "Civic Risk Pool",
+        "Northfield Casualty",
+        "Evergreen Commercial",
+        "Builders Mutual",
+        "Prairie Shield",
+    ]
+
+    applications = []
+    bonds = []
+    insurance = []
+    histories = []
+    violations = []
+    correspondence = []
+    inspections = []
+    manifest_targets = {}
+
+    target_offsets = {"train_001": 0, "train_004": 1, "test_001": 2, "test_004": 3}
+
+    def add_application(app_id, target_group, idx, is_target):
+        cfg = TRADE_CONFIGS[(idx + target_offsets.get(target_group, 0)) % len(TRADE_CONFIGS)]
+        applicant_name = (
+            f"{name_roots[(idx * 3) % len(name_roots)]} {cfg['trade']} Services LLC"
+            if is_target
+            else f"{rng.choice(name_roots)} {rng.choice(['Contracting', 'Works', 'Builders', 'Systems'])} {idx:03d}"
+        )
+        status_cycle = ["verified", "missing", "pending", "not_required"]
+        endorsement_status = "not_required" if cfg["endorsement"] is None else status_cycle[idx % 3]
+        prior_license_id = f"CL-{app_id.replace('-', '')[-7:]}" if idx % 4 != 1 else None
+        issue_options = [None, "prior complaint disclosed", "late bond certificate", "name change"]
+        application = {
+            "application_id": app_id,
+            "applicant_name": applicant_name,
+            "trade": cfg["trade"],
+            "county": counties[idx % len(counties)],
+            "submitted_date": date_between(rng, date(2025, 1, 3), date(2025, 7, 15)),
+            "years_experience": max(0, cfg["experience"] + ((idx % 5) - 2)),
+            "endorsement_status": endorsement_status,
+            "prior_license_id": prior_license_id,
+            "requested_class": cfg["requested_class"],
+            "self_disclosed_issue": issue_options[idx % len(issue_options)],
+            "target_group": target_group if is_target else rng.choice([None, None, None, "audit_pool"]),
+        }
+        applications.append(application)
+
+        profile = idx % 6
+        active_bond_amount = cfg["min_bond"] - 5000 if profile == 1 else cfg["min_bond"] + rng.choice([0, 5000, 15000])
+        bond_status = "cancelled" if profile == 4 else "active"
+        bonds.append(
+            {
+                "bond_id": f"BND-{app_id}-A",
+                "application_id": app_id,
+                "amount": active_bond_amount,
+                "status": bond_status,
+                "effective_date": date_between(rng, date(2025, 1, 1), date(2025, 4, 20)),
+                "cancel_date": "2025-05-30" if bond_status == "cancelled" else None,
+                "source_date": date_between(rng, date(2025, 4, 1), date(2025, 7, 20)),
+                "surety": rng.choice(sureties),
+            }
+        )
+        bonds.append(
+            {
+                "bond_id": f"BND-{app_id}-OLD",
+                "application_id": app_id,
+                "amount": max(10000, cfg["min_bond"] - rng.choice([5000, 10000, 15000])),
+                "status": rng.choice(["expired", "cancelled"]),
+                "effective_date": date_between(rng, date(2023, 1, 1), date(2024, 6, 30)),
+                "cancel_date": date_between(rng, date(2024, 8, 1), date(2024, 12, 31)),
+                "source_date": date_between(rng, date(2024, 8, 1), date(2025, 1, 15)),
+                "surety": rng.choice(sureties),
+            }
+        )
+
+        expiration = "2025-04-15" if profile == 2 else date_between(rng, date(2025, 8, 1), date(2026, 7, 1))
         insurance.append(
             {
-                "policy_id": f"INS-2026-{len(insurance) + 1:04d}",
-                "legal_name": app["legal_name"],
-                "carrier": carrier,
-                "policy_number": app["declared_insurance_policy"],
-                "status": status,
-                "coverage_amount": coverage_amount,
-                "effective_date": date_add(app["application_date"], -rng.randint(20, 90)),
-                "expiration_date": date_between(rng, "2026-08-01", "2027-08-01")
-                if status == "active"
-                else date_between(rng, "2025-08-01", "2026-02-01"),
-                "verification_status": verification_status,
-                "last_update": date_add(app["application_date"], rng.randint(0, 25)),
+                "insurance_id": f"INS-{app_id}-A",
+                "application_id": app_id,
+                "amount": cfg["min_insurance"] - 250000 if profile == 5 else cfg["min_insurance"],
+                "status": "active" if profile != 3 else "pending",
+                "verified_date": date_between(rng, date(2025, 1, 10), date(2025, 7, 12)),
+                "expiration_date": expiration,
+                "insurer": rng.choice(insurers),
+            }
+        )
+        insurance.append(
+            {
+                "insurance_id": f"INS-{app_id}-OLD",
+                "application_id": app_id,
+                "amount": max(250000, cfg["min_insurance"] - 500000),
+                "status": "expired",
+                "verified_date": date_between(rng, date(2024, 1, 1), date(2024, 12, 15)),
+                "expiration_date": date_between(rng, date(2024, 6, 1), date(2025, 1, 31)),
+                "insurer": rng.choice(insurers),
             }
         )
 
-    violations: list[dict] = []
-    violation_types = [
-        "unlicensed activity",
-        "advertising misrepresentation",
-        "permit abandonment",
-        "wage complaint",
-        "fraudulent registration",
-        "safety order ignored",
-    ]
-    for app in applications:
-        tags = app_tags[app["legal_name"]]
-        if "UNRESOLVED_PENALTY" in tags or "DISQUALIFYING_CONDUCT" in tags or "ADVERSE_PRIOR_REGISTRATION" in tags:
-            vtype = "fraudulent registration" if "DISQUALIFYING_CONDUCT" in tags else rng.choice(violation_types)
+        if prior_license_id:
+            license_status = "suspended" if profile == 3 else rng.choice(["active", "expired", "active"])
+            histories.append(
+                {
+                    "license_id": prior_license_id,
+                    "applicant_name": applicant_name,
+                    "status": license_status,
+                    "status_date": date_between(rng, date(2024, 1, 1), date(2025, 6, 30)),
+                    "trade": cfg["trade"],
+                    "notes": "Active suspension pending board action"
+                    if license_status == "suspended"
+                    else "Registry history matched by applicant name",
+                }
+            )
+
+        if profile in {0, 2, 4}:
             violations.append(
                 {
-                    "violation_id": f"CV-2026-{len(violations) + 1:04d}",
-                    "legal_name": app["legal_name"],
-                    "principal_name": app["principal_name"],
-                    "violation_date": date_between(rng, "2023-01-01", "2026-05-31"),
-                    "violation_type": vtype,
-                    "status": "unresolved",
-                    "penalty_due_cents": rng.choice([45000, 80000, 125000, 220000]),
-                    "ag_referral": 1 if vtype in {"fraudulent registration", "unlicensed activity"} else 0,
-                    "severity": "high" if vtype in {"fraudulent registration", "safety order ignored"} else "medium",
+                    "violation_id": f"CV-{app_id}-1",
+                    "related_application_id": app_id,
+                    "license_id": prior_license_id,
+                    "violation_date": date_between(rng, date(2023, 6, 1), date(2025, 5, 1)),
+                    "severity": rng.choice(["minor", "medium"]),
+                    "theme": rng.choice(["advertising", "complaint", "bond lapse"]),
+                    "status": "resolved",
+                    "resolved_date": date_between(rng, date(2024, 3, 1), date(2025, 6, 1)),
                 }
             )
-    while len(violations) < 88:
-        app = rng.choice(applications)
-        resolved = rng.random() > 0.28
-        violations.append(
-            {
-                "violation_id": f"CV-2026-{len(violations) + 1:04d}",
-                "legal_name": app["legal_name"] if rng.random() > 0.1 else app["dba"],
-                "principal_name": app["principal_name"],
-                "violation_date": date_between(rng, "2022-01-01", "2026-06-30"),
-                "violation_type": rng.choice(violation_types),
-                "status": "resolved" if resolved else "unresolved",
-                "penalty_due_cents": 0 if resolved else rng.choice([25000, 50000, 90000, 175000]),
-                "ag_referral": 1 if rng.random() < 0.12 else 0,
-                "severity": rng.choices(["low", "medium", "high"], weights=[48, 38, 14])[0],
-            }
-        )
-
-    field_notes: list[dict] = []
-    inspectors = ["I. Alvarez", "M. Brooks", "S. Chandra", "T. Evans", "N. Foster"]
-    for app in applications:
-        tags = app_tags[app["legal_name"]]
-        if "FIELD_NOTE_HOLD" in tags:
-            field_notes.append(
+        if profile == 5:
+            violations.append(
                 {
-                    "note_id": f"FN-2026-{len(field_notes) + 1:04d}",
-                    "legal_name": app["legal_name"],
-                    "inspection_date": date_add(app["application_date"], rng.randint(1, 18)),
-                    "inspector": rng.choice(inspectors),
-                    "finding_type": "open hold",
-                    "summary": "Inspector found unresolved site-control or subcontractor documentation issue.",
-                    "recommended_action": "hold for inspector clearance",
+                    "violation_id": f"CV-{app_id}-S",
+                    "related_application_id": app_id,
+                    "license_id": prior_license_id,
+                    "violation_date": date_between(rng, date(2025, 1, 1), date(2025, 6, 20)),
+                    "severity": "serious",
+                    "theme": "unpermitted work",
+                    "status": "open",
+                    "resolved_date": None,
                 }
             )
-    while len(field_notes) < 44:
-        app = rng.choice(applications)
-        field_notes.append(
-            {
-                "note_id": f"FN-2026-{len(field_notes) + 1:04d}",
-                "legal_name": app["legal_name"],
-                "inspection_date": date_between(rng, "2025-01-01", "2026-06-30"),
-                "inspector": rng.choice(inspectors),
-                "finding_type": rng.choice(["resolved note", "site visit", "document check", "open hold"]),
-                "summary": rng.choice(
-                    [
-                        "Field contact confirmed project address and license category.",
-                        "Inspector requested lien disclosure backup.",
-                        "Prior job complaint appears resolved with owner acknowledgement.",
-                        "Open inspector hold awaiting photographs and permit correction.",
-                    ]
-                ),
-                "recommended_action": rng.choice(
-                    ["no action", "verify documents", "hold for inspector clearance", "attach to application file"]
-                ),
-            }
-        )
 
-    complaints: list[dict] = []
-    linked_note_ids = [row["note_id"] for row in field_notes]
-    complaint_types = ["unlicensed activity", "workmanship", "payment dispute", "abandoned project", "advertising"]
-    for i in range(44):
-        app = rng.choice(applications)
-        tags = app_tags[app["legal_name"]]
-        status = "open" if "FIELD_NOTE_HOLD" in tags or rng.random() < 0.28 else "closed"
-        complaints.append(
-            {
-                "complaint_id": f"CC-2026-{i + 1:04d}",
-                "legal_name": app["legal_name"],
-                "received_date": date_between(rng, "2024-01-01", "2026-06-30"),
-                "complaint_type": rng.choice(complaint_types),
-                "status": status,
-                "linked_field_note_id": rng.choice(linked_note_ids) if rng.random() < 0.45 else "",
-                "severity": rng.choices(["low", "medium", "high"], weights=[52, 36, 12])[0],
-            }
-        )
-
-    correspondence: list[dict] = []
-    for app in applications:
-        tags = app_tags[app["legal_name"]]
-        if any(
-            tag in tags
-            for tag in ["BOND_CANCELLED", "INSURANCE_VERIFY", "CORRESPONDENCE_HOLD", "ADVERSE_PRIOR_REGISTRATION"]
-        ):
-            item_type = "material notice"
-            summary = "Material follow-up received after application filing."
-            if "BOND_CANCELLED" in tags:
-                summary = "Surety cancellation notice received; reviewer must reconcile with bond record."
-            elif "INSURANCE_VERIFY" in tags:
-                summary = "Carrier verification differs from declared policy or remains pending."
-            elif "ADVERSE_PRIOR_REGISTRATION" in tags:
-                summary = "Prior-registration file requested because principal may be successor to adverse entity."
-            correspondence.append(
-                {
-                    "item_id": f"COR-2026-{len(correspondence) + 1:04d}",
-                    "received_date": date_add(app["application_date"], rng.randint(1, 30)),
-                    "subject_name": app["legal_name"],
-                    "item_type": item_type,
-                    "summary": summary,
-                    "affects_application_id": app["application_id"],
-                    "document_status": rng.choice(["new", "needs_review", "indexed"]),
-                }
-            )
-    while len(correspondence) < 58:
-        app = rng.choice(applications)
         correspondence.append(
             {
-                "item_id": f"COR-2026-{len(correspondence) + 1:04d}",
-                "received_date": date_between(rng, "2026-01-01", "2026-06-30"),
-                "subject_name": app["legal_name"],
-                "item_type": rng.choice(
-                    ["public inquiry", "certificate upload", "address correction", "material notice"]
+                "correspondence_id": f"COR-{app_id}-1",
+                "related_application_id": app_id,
+                "received_date": date_between(rng, date(2025, 2, 1), date(2025, 7, 12)),
+                "subject": rng.choice(
+                    ["experience affidavit", "endorsement certificate", "bond correction", "name match"]
                 ),
-                "summary": rng.choice(
+                "assertion_type": rng.choice(
+                    ["experience_update", "endorsement_status", "bond_amount", "prior_license_match"]
+                ),
+                "assertion_value": rng.choice(
+                    ["agency verified", "applicant supplied", "registry corrected", "pending outside agency"]
+                ),
+                "verified_by_agency": 1 if idx % 3 != 1 else 0,
+                "notes": rng.choice(
                     [
-                        "Applicant uploaded certificate copy.",
-                        "Public inquiry references a similarly named contractor.",
-                        "Mailroom indexed address correction for the application file.",
-                        "Reviewer requested updated financial statement.",
+                        "Linked to registry case notes",
+                        "Applicant copy only; no agency confirmation",
+                        "Verified by licensing specialist",
+                        "Stale attachment predates application",
                     ]
                 ),
-                "affects_application_id": app["application_id"],
-                "document_status": rng.choice(["indexed", "needs_review", "closed"]),
             }
         )
-
-    return (
-        {
-            "contractor_applications": applications,
-            "contractor_bonds": bonds,
-            "contractor_insurance": insurance,
-            "contractor_violations": violations,
-            "contractor_complaints": complaints,
-            "contractor_field_notes": field_notes,
-            "contractor_correspondence": correspondence,
-            "contractor_bulletins": build_contractor_bulletins(),
-        },
-        anchor_metadata,
-    )
-
-
-def build_alcohol_domain() -> tuple[dict[str, list[dict]], dict]:
-    rng = random.Random(SEEDS["alcohol"])
-    cities = ["Port Mason", "Lakeview", "Silverton", "Cedar Falls", "Bay Crossing"]
-    street_names = ["Market", "Pine", "Union", "Harbor", "Cedar", "Summit", "Front", "Rail", "Orchard", "Mill"]
-    dba_words = [
-        "Lantern",
-        "Juniper",
-        "Copper",
-        "Waypoint",
-        "Mosaic",
-        "Harbor",
-        "Foundry",
-        "Garden",
-        "Anchor",
-        "Signal",
-    ]
-    review_months = ["2026-02", "2026-03", "2026-05", "2026-04", "2026-06"]
-    license_types = ["F-COM", "TAVERN", "BREWPUB", "F-RTL"]
-
-    anchor_premises = {
-        "2026-02": [
-            ("PM-2026-003", ["SAME_PREMISES_OVERLAP", "STANDARD_OBLIGATION", "INCIDENT_HISTORY"]),
-            ("PM-2026-011", ["VERIFICATION_GAP", "PRIOR_SETTLEMENT"]),
-        ],
-        "2026-03": [
-            ("PM-2026-018", ["SAME_PREMISES_OVERLAP", "CONTROL_OVERLAP", "FIRST_90_DAY_CHECK"]),
-            ("PM-2026-024", ["STANDARD_OBLIGATION", "INCIDENT_HISTORY"]),
-        ],
-        "2026-05": [
-            ("PM-2026-036", ["SAME_PREMISES_OVERLAP", "CONTROL_OVERLAP", "VERIFICATION_GAP"]),
-            ("PM-2026-044", ["PRIOR_SETTLEMENT", "FIRST_90_DAY_CHECK"]),
-        ],
-    }
-
-    premises: list[dict] = []
-    applications: list[dict] = []
-    anchor_metadata: dict[str, list[dict]] = {"2026-02": [], "2026-03": [], "2026-05": []}
-    premises_tags: dict[str, list[str]] = {}
-
-    for idx in range(1, 57):
-        premises_id = f"PM-2026-{idx:03d}"
-        city = cities[idx % len(cities)]
-        address = f"{100 + idx * 7} {street_names[idx % len(street_names)]} St"
-        current_dba = f"{dba_words[idx % len(dba_words)]} Room {idx:02d}"
-        prior_licensee = f"{dba_words[(idx + 3) % len(dba_words)]} Hospitality LLC"
-        month = review_months[idx % len(review_months)]
-        issue_tags: list[str] = []
-        for anchor_month, specs in anchor_premises.items():
-            for anchor_id, tags in specs:
-                if premises_id == anchor_id:
-                    month = anchor_month
-                    issue_tags = tags
-        if not issue_tags and rng.random() < 0.22:
-            issue_tags = rng.choice(
-                [
-                    ["INCIDENT_HISTORY"],
-                    ["PRIOR_SETTLEMENT"],
-                    ["STANDARD_OBLIGATION"],
-                    ["VERIFICATION_GAP"],
-                    ["SAME_PREMISES_OVERLAP"],
-                ]
-            )
-        premises_tags[premises_id] = issue_tags
-        same_basis = "none"
-        risk_summary = "No current same-premises issue found in public history."
-        if "SAME_PREMISES_OVERLAP" in issue_tags:
-            same_basis = "same address and overlapping service area as prior licensee"
-            risk_summary = "Prior same-premises operation had incidents that overlap proposed controls."
-        elif "PRIOR_SETTLEMENT" in issue_tags:
-            same_basis = "prior settlement at address"
-            risk_summary = "Settlement history requires restriction comparison before issuance."
-        premises.append(
-            {
-                "premises_id": premises_id,
-                "address": address,
-                "city": city,
-                "current_dba": current_dba,
-                "same_premises_basis": same_basis,
-                "prior_licensee": prior_licensee,
-                "risk_summary": risk_summary,
-            }
-        )
-        application_id = f"AA-2026-{idx:04d}"
-        license_type = license_types[idx % len(license_types)]
-        applications.append(
-            {
-                "application_id": application_id,
-                "premises_id": premises_id,
-                "applicant_name": f"{current_dba} License Group LLC",
-                "dba": current_dba,
-                "address": address,
-                "city": city,
-                "license_type": license_type,
-                "review_month": month,
-                "requested_posture": "restricted issuance"
-                if issue_tags
-                else rng.choice(["standard issuance", "restricted issuance", "follow-up needed"]),
-            }
-        )
-        if month in anchor_metadata and issue_tags:
-            anchor_metadata[month].append(
+        if is_target or idx % 3 == 0:
+            inspections.append(
                 {
-                    "application_id": application_id,
-                    "premises_id": premises_id,
-                    "dba": current_dba,
-                    "issue_tags": issue_tags,
-                }
-            )
-
-    incident_types = [
-        "service to visibly intoxicated patron",
-        "minor on premises",
-        "late-night disorder",
-        "noise complaint",
-        "security plan lapse",
-        "assault call",
-    ]
-    incidents: list[dict] = []
-    for premise in premises:
-        tags = premises_tags[premise["premises_id"]]
-        base_count = 1 if "INCIDENT_HISTORY" in tags else 0
-        if "SAME_PREMISES_OVERLAP" in tags:
-            base_count += 2
-        for _ in range(base_count):
-            incidents.append(
-                {
-                    "incident_id": f"AI-2026-{len(incidents) + 1:04d}",
-                    "premises_id": premise["premises_id"],
-                    "incident_date": date_between(rng, "2023-01-01", "2026-05-31"),
-                    "incident_type": rng.choice(incident_types),
-                    "severity": rng.choices(["low", "medium", "high"], weights=[18, 48, 34])[0],
-                    "disposition": rng.choice(["warning", "citation", "settled", "pending", ""]),
-                    "source": rng.choice(
-                        ["police call log", "license inspection", "public complaint", "settlement exhibit"]
+                    "inspection_id": f"CI-{app_id}-1",
+                    "related_application_id": app_id,
+                    "inspection_date": date_between(rng, date(2025, 2, 15), date(2025, 7, 5)),
+                    "result": rng.choice(["pass", "conditional", "fail"]),
+                    "finding_code": rng.choice(["NONE", "DOC_GAP", "UNVERIFIED_SITE", "SAFETY_RECHECK"]),
+                    "notes": rng.choice(
+                        [
+                            "Field note matches application trade",
+                            "Site visit found incomplete signage",
+                            "No adverse field finding",
+                            "Follow-up requested by regional inspector",
+                        ]
                     ),
                 }
             )
-    while len(incidents) < 150:
-        premise = rng.choice(premises)
-        incidents.append(
-            {
-                "incident_id": f"AI-2026-{len(incidents) + 1:04d}",
-                "premises_id": premise["premises_id"],
-                "incident_date": date_between(rng, "2022-01-01", "2026-06-30"),
-                "incident_type": rng.choice(incident_types),
-                "severity": rng.choices(["low", "medium", "high"], weights=[50, 35, 15])[0],
-                "disposition": rng.choice(["warning", "citation", "settled", "pending", "", "no violation found"]),
-                "source": rng.choice(
-                    ["police call log", "license inspection", "public complaint", "neighborhood letter"]
-                ),
-            }
-        )
 
-    settlements: list[dict] = []
-    settlement_premises = [premise for premise in premises if premises_tags[premise["premises_id"]]]
-    while len(settlement_premises) < 34:
-        candidate = rng.choice(premises)
-        if candidate not in settlement_premises:
-            settlement_premises.append(candidate)
-    for premise in settlement_premises[:34]:
-        tags = premises_tags[premise["premises_id"]]
-        settlements.append(
+    idx = 0
+    for target_group, app_ids in CONTRACTOR_TARGETS.items():
+        manifest_targets[target_group] = {"contractor_application_ids": list(app_ids)}
+        generated_app_ids = app_ids[:6] if target_group == "test_004" else app_ids
+        for app_id in generated_app_ids:
+            idx += 1
+            add_application(app_id, target_group, idx, True)
+
+    distractor_count = 72
+    for n in range(1, distractor_count + 1):
+        idx += 1
+        add_application(f"C-DIS-{n:03d}", None, idx, False)
+
+    while len(histories) < 130:
+        cfg = rng.choice(TRADE_CONFIGS)
+        n = len(histories) + 1
+        histories.append(
             {
-                "settlement_id": f"AS-2026-{len(settlements) + 1:04d}",
-                "premises_id": premise["premises_id"],
-                "settlement_date": date_between(rng, "2022-01-01", "2026-04-30"),
-                "prior_or_current": "prior" if "SAME_PREMISES_OVERLAP" in tags or rng.random() < 0.7 else "current",
-                "original_posture": rng.choice(["deny", "suspend", "restricted issue", "warning"]),
-                "final_terms_summary": rng.choice(
+                "license_id": f"CL-HIST-{n:04d}",
+                "applicant_name": f"{rng.choice(name_roots)} Legacy Licensee {n:03d}",
+                "status": rng.choice(["active", "active", "expired", "suspended", "revoked"]),
+                "status_date": date_between(rng, date(2022, 1, 1), date(2025, 7, 1)),
+                "trade": cfg["trade"],
+                "notes": rng.choice(
                     [
-                        "Restricted late-night service and required door logs.",
-                        "Required security staffing and incident reporting.",
-                        "Settlement allowed operation with age-verification controls.",
-                        "Noise abatement and quarterly inspection condition.",
+                        "Legacy import from prior registry",
+                        "Complaint-only match, no application link",
+                        "Status verified by board clerk",
+                        "Address differs from current application",
                     ]
                 ),
             }
         )
 
-    restrictions: list[dict] = []
-    restriction_specs = [
-        (
-            "NO_AFTER_MIDNIGHT_SERVICE",
-            "No alcohol service after midnight",
-            "premises-specific",
-            "00:00",
-            "06:00",
-            "service log",
-        ),
-        ("SECURITY_LOG", "Maintain security staffing and incident log", "premises-specific", "", "", "weekly log"),
-        (
-            "AGE_CHECK",
-            "Electronic age-verification for all alcohol sales",
-            "premises-specific",
-            "",
-            "",
-            "device audit",
-        ),
-        ("PATIO_LIMIT", "Close patio service by 10 PM", "premises-specific", "22:00", "06:00", "patio closure log"),
-        ("TRAINING_STANDARD", "Server training evidence required", "standard-obligation", "", "", "training roster"),
-        (
-            "FOOD_SERVICE",
-            "Maintain required food service during alcohol sales",
-            "standard-obligation",
-            "",
-            "",
-            "menu and receipts",
-        ),
-    ]
-    for settlement in settlements:
-        count = 2 if len(restrictions) < 58 else 1
-        for _ in range(count):
-            code, description, category, start_time, end_time, evidence = rng.choice(restriction_specs)
-            restrictions.append(
-                {
-                    "restriction_id": f"AR-2026-{len(restrictions) + 1:04d}",
-                    "premises_id": settlement["premises_id"],
-                    "settlement_id": settlement["settlement_id"],
-                    "restriction_code": code,
-                    "description": description,
-                    "category": category,
-                    "start_time": start_time,
-                    "end_time": end_time,
-                    "evidence_required": evidence,
-                }
-            )
-            if len(restrictions) >= 65:
-                break
-        if len(restrictions) >= 65:
-            break
+    while len(violations) < 190:
+        app = rng.choice(applications)
+        n = len(violations) + 1
+        status = rng.choice(["open", "resolved", "dismissed", "resolved"])
+        violations.append(
+            {
+                "violation_id": f"CV-DIS-{n:04d}",
+                "related_application_id": app["application_id"] if rng.random() < 0.7 else None,
+                "license_id": app["prior_license_id"]
+                if app["prior_license_id"] and rng.random() < 0.6
+                else f"CL-HIST-{rng.randint(1, 130):04d}",
+                "violation_date": date_between(rng, date(2022, 7, 1), date(2025, 7, 1)),
+                "severity": rng.choice(["minor", "medium", "serious"]),
+                "theme": rng.choice(["complaint", "unpermitted work", "safety", "advertising", "bond lapse"]),
+                "status": status,
+                "resolved_date": None if status == "open" else date_between(rng, date(2023, 1, 1), date(2025, 7, 10)),
+            }
+        )
 
-    obligations: list[dict] = []
-    obligation_specs = {
-        "F-COM": [
-            ("F_COM_FOOD", "Maintain commercial food service while alcohol is sold.", "menu, invoices"),
-            ("F_COM_SERVER", "Keep server training records on site.", "training roster"),
-            ("F_COM_MINORS", "Post minor-access restrictions at entrances.", "photo evidence"),
-        ],
-        "TAVERN": [
-            ("TAVERN_AGE", "Verify age for all alcohol service.", "inspection log"),
-            ("TAVERN_HOURS", "Comply with licensed hours and closing checks.", "closing log"),
-            ("TAVERN_SECURITY", "Maintain incident response plan.", "security plan"),
-        ],
-        "BREWPUB": [
-            ("BREW_PRODUCTION", "Maintain production-area separation.", "floor plan"),
-            ("BREW_SAMPLES", "Track sample service limits.", "sample log"),
-            ("BREW_TRAINING", "Keep alcohol server permits current.", "permit roster"),
-        ],
-        "F-RTL": [
-            ("RTL_DISPLAY", "Display license and age signage.", "photo evidence"),
-            ("RTL_SALES", "Maintain off-premises sale controls.", "sales audit"),
-            ("RTL_STAFF", "Train clerks on restricted sales.", "training roster"),
-        ],
-    }
-    for license_type, specs in obligation_specs.items():
-        for code, description, evidence in specs:
-            obligations.append(
-                {
-                    "obligation_id": f"AO-2026-{len(obligations) + 1:04d}",
-                    "license_type": license_type,
-                    "obligation_code": code,
-                    "description": description,
-                    "evidence_required": evidence,
-                }
-            )
-    obligations.extend(
+    while len(correspondence) < 118:
+        app = rng.choice(applications)
+        n = len(correspondence) + 1
+        correspondence.append(
+            {
+                "correspondence_id": f"COR-DIS-{n:04d}",
+                "related_application_id": app["application_id"],
+                "received_date": date_between(rng, date(2024, 10, 1), date(2025, 7, 15)),
+                "subject": rng.choice(
+                    [
+                        "bond update",
+                        "insurance upload",
+                        "experience affidavit",
+                        "public complaint",
+                        "endorsement correction",
+                    ]
+                ),
+                "assertion_type": rng.choice(
+                    [
+                        "bond_amount",
+                        "insurance_amount",
+                        "experience_update",
+                        "discipline_response",
+                        "endorsement_status",
+                    ]
+                ),
+                "assertion_value": rng.choice(
+                    [
+                        "verified current",
+                        "unverified applicant note",
+                        "conflicts with registry",
+                        "superseded by later source",
+                    ]
+                ),
+                "verified_by_agency": 1 if rng.random() < 0.55 else 0,
+                "notes": rng.choice(
+                    ["Office upload", "Email from applicant", "Agency cross-check", "County desk note"]
+                ),
+            }
+        )
+
+    while len(inspections) < 82:
+        app = rng.choice(applications)
+        n = len(inspections) + 1
+        inspections.append(
+            {
+                "inspection_id": f"CI-DIS-{n:04d}",
+                "related_application_id": app["application_id"],
+                "inspection_date": date_between(rng, date(2024, 11, 1), date(2025, 7, 15)),
+                "result": rng.choice(["pass", "conditional", "fail", "no access"]),
+                "finding_code": rng.choice(["NONE", "DOC_GAP", "UNVERIFIED_SITE", "SAFETY_RECHECK", "WRONG_TRADE"]),
+                "notes": rng.choice(
+                    ["Routine field note", "Potential stale export", "Inspection matched address", "Follow-up pending"]
+                ),
+            }
+        )
+
+    # Append the reworked test_004 expansion after RNG-driven distractors so
+    # existing train/liquor/renewal data remains stable across regeneration.
+    applications.extend(
         [
             {
-                "obligation_id": "AO-2026-0013",
-                "license_type": "ALL",
-                "obligation_code": "PUBLIC_RECORDS",
-                "description": "Keep licensing records available for inspection.",
-                "evidence_required": "records binder",
+                "application_id": "C-TE4-007",
+                "applicant_name": "North Terminal Electrical Services LLC",
+                "trade": "Electrical",
+                "county": "Lake",
+                "submitted_date": "2025-05-21",
+                "years_experience": 6,
+                "endorsement_status": "verified",
+                "prior_license_id": "CL-CTE4007",
+                "requested_class": "Class A",
+                "self_disclosed_issue": None,
+                "target_group": "test_004",
             },
             {
-                "obligation_id": "AO-2026-0014",
-                "license_type": "ALL",
-                "obligation_code": "INCIDENT_REPORT",
-                "description": "Report severe incidents to the board within required timelines.",
-                "evidence_required": "incident report log",
+                "application_id": "C-TE4-008",
+                "applicant_name": "Orchid Plumbing Services LLC",
+                "trade": "Plumbing",
+                "county": "Canyon",
+                "submitted_date": "2025-06-02",
+                "years_experience": 3,
+                "endorsement_status": "missing",
+                "prior_license_id": "CL-CTE4008",
+                "requested_class": "Class B",
+                "self_disclosed_issue": "prior complaint disclosed",
+                "target_group": "test_004",
+            },
+            {
+                "application_id": "C-TE4-009",
+                "applicant_name": "Pine State HVAC Services LLC",
+                "trade": "HVAC",
+                "county": "Redwood",
+                "submitted_date": "2025-04-18",
+                "years_experience": 3,
+                "endorsement_status": "verified",
+                "prior_license_id": "CL-CTE4009",
+                "requested_class": "Class B",
+                "self_disclosed_issue": "late bond certificate",
+                "target_group": "test_004",
+            },
+            {
+                "application_id": "C-TE4-010",
+                "applicant_name": "Riverview General Building Services LLC",
+                "trade": "General Building",
+                "county": "Prairie",
+                "submitted_date": "2025-05-04",
+                "years_experience": 5,
+                "endorsement_status": "verified",
+                "prior_license_id": "CL-CTE4010",
+                "requested_class": "Class A",
+                "self_disclosed_issue": "name change",
+                "target_group": "test_004",
+            },
+            {
+                "application_id": "C-TE4-011",
+                "applicant_name": "Sage Roofing Services LLC",
+                "trade": "Roofing",
+                "county": "Harbor",
+                "submitted_date": "2025-03-27",
+                "years_experience": 2,
+                "endorsement_status": "not_required",
+                "prior_license_id": None,
+                "requested_class": "Limited",
+                "self_disclosed_issue": None,
+                "target_group": "test_004",
+            },
+            {
+                "application_id": "C-TE4-012",
+                "applicant_name": "Timber Solar Services LLC",
+                "trade": "Solar",
+                "county": "Summit",
+                "submitted_date": "2025-06-17",
+                "years_experience": 3,
+                "endorsement_status": "missing",
+                "prior_license_id": "CL-CTE4012",
+                "requested_class": "Specialty",
+                "self_disclosed_issue": "late bond certificate",
+                "target_group": "test_004",
+            },
+            {
+                "application_id": "C-TE4-013",
+                "applicant_name": "Alder Electrical Services LLC",
+                "trade": "Electrical",
+                "county": "Lake",
+                "submitted_date": "2025-07-01",
+                "years_experience": 5,
+                "endorsement_status": "verified",
+                "prior_license_id": "CL-CTE4013",
+                "requested_class": "Class A",
+                "self_disclosed_issue": "prior complaint disclosed",
+                "target_group": "test_004",
+            },
+            {
+                "application_id": "C-TE4-014",
+                "applicant_name": "Blue Ridge Plumbing Services LLC",
+                "trade": "Plumbing",
+                "county": "Canyon",
+                "submitted_date": "2025-04-30",
+                "years_experience": 4,
+                "endorsement_status": "pending",
+                "prior_license_id": "CL-CTE4014",
+                "requested_class": "Class B",
+                "self_disclosed_issue": "name change",
+                "target_group": "test_004",
+            },
+            {
+                "application_id": "C-TE4-015",
+                "applicant_name": "Crescent HVAC Services LLC",
+                "trade": "HVAC",
+                "county": "Redwood",
+                "submitted_date": "2025-02-20",
+                "years_experience": 2,
+                "endorsement_status": "verified",
+                "prior_license_id": "CL-CTE4015",
+                "requested_class": "Class B",
+                "self_disclosed_issue": "prior complaint disclosed",
+                "target_group": "test_004",
+            },
+        ]
+    )
+    bonds.extend(
+        [
+            {
+                "bond_id": "BND-C-TE4-007-A",
+                "application_id": "C-TE4-007",
+                "amount": 50000,
+                "status": "active",
+                "effective_date": "2025-02-01",
+                "cancel_date": None,
+                "source_date": "2025-06-15",
+                "surety": "Union Surety",
+            },
+            {
+                "bond_id": "BND-C-TE4-007-OLD",
+                "application_id": "C-TE4-007",
+                "amount": 35000,
+                "status": "expired",
+                "effective_date": "2023-02-01",
+                "cancel_date": "2024-08-30",
+                "source_date": "2024-09-02",
+                "surety": "Civic Bonding",
+            },
+            {
+                "bond_id": "BND-C-TE4-008-A",
+                "application_id": "C-TE4-008",
+                "amount": 30000,
+                "status": "active",
+                "effective_date": "2025-02-07",
+                "cancel_date": None,
+                "source_date": "2025-06-20",
+                "surety": "Harbor Surety",
+            },
+            {
+                "bond_id": "BND-C-TE4-008-OLD",
+                "application_id": "C-TE4-008",
+                "amount": 20000,
+                "status": "expired",
+                "effective_date": "2023-05-01",
+                "cancel_date": "2024-10-19",
+                "source_date": "2024-10-20",
+                "surety": "Union Surety",
+            },
+            {
+                "bond_id": "BND-C-TE4-009-A",
+                "application_id": "C-TE4-009",
+                "amount": 20000,
+                "status": "active",
+                "effective_date": "2025-03-11",
+                "cancel_date": None,
+                "source_date": "2025-07-02",
+                "surety": "Granite Mutual",
+            },
+            {
+                "bond_id": "BND-C-TE4-009-OLD",
+                "application_id": "C-TE4-009",
+                "amount": 15000,
+                "status": "expired",
+                "effective_date": "2023-04-01",
+                "cancel_date": "2024-11-01",
+                "source_date": "2024-11-03",
+                "surety": "Civic Bonding",
+            },
+            {
+                "bond_id": "BND-C-TE4-010-A",
+                "application_id": "C-TE4-010",
+                "amount": 75000,
+                "status": "active",
+                "effective_date": "2025-01-18",
+                "cancel_date": None,
+                "source_date": "2025-06-29",
+                "surety": "Northwest Indemnity",
+            },
+            {
+                "bond_id": "BND-C-TE4-010-OLD",
+                "application_id": "C-TE4-010",
+                "amount": 60000,
+                "status": "expired",
+                "effective_date": "2023-03-01",
+                "cancel_date": "2024-10-01",
+                "source_date": "2024-10-05",
+                "surety": "Harbor Surety",
+            },
+            {
+                "bond_id": "BND-C-TE4-011-A",
+                "application_id": "C-TE4-011",
+                "amount": 20000,
+                "status": "cancelled",
+                "effective_date": "2025-01-20",
+                "cancel_date": "2025-05-22",
+                "source_date": "2025-06-01",
+                "surety": "Prairie Shield",
+            },
+            {
+                "bond_id": "BND-C-TE4-011-OLD",
+                "application_id": "C-TE4-011",
+                "amount": 15000,
+                "status": "expired",
+                "effective_date": "2023-02-14",
+                "cancel_date": "2024-09-21",
+                "source_date": "2024-09-24",
+                "surety": "Union Surety",
+            },
+            {
+                "bond_id": "BND-C-TE4-012-A",
+                "application_id": "C-TE4-012",
+                "amount": 30000,
+                "status": "active",
+                "effective_date": "2025-02-18",
+                "cancel_date": None,
+                "source_date": "2025-07-08",
+                "surety": "Granite Mutual",
+            },
+            {
+                "bond_id": "BND-C-TE4-012-OLD",
+                "application_id": "C-TE4-012",
+                "amount": 20000,
+                "status": "expired",
+                "effective_date": "2023-03-19",
+                "cancel_date": "2024-12-10",
+                "source_date": "2024-12-11",
+                "surety": "Northwest Indemnity",
+            },
+            {
+                "bond_id": "BND-C-TE4-013-A",
+                "application_id": "C-TE4-013",
+                "amount": 50000,
+                "status": "active",
+                "effective_date": "2025-03-01",
+                "cancel_date": None,
+                "source_date": "2025-07-11",
+                "surety": "Civic Bonding",
+            },
+            {
+                "bond_id": "BND-C-TE4-013-OLD",
+                "application_id": "C-TE4-013",
+                "amount": 35000,
+                "status": "expired",
+                "effective_date": "2023-05-03",
+                "cancel_date": "2024-11-12",
+                "source_date": "2024-11-14",
+                "surety": "Harbor Surety",
+            },
+            {
+                "bond_id": "BND-C-TE4-014-A",
+                "application_id": "C-TE4-014",
+                "amount": 30000,
+                "status": "cancelled",
+                "effective_date": "2025-01-25",
+                "cancel_date": "2025-04-28",
+                "source_date": "2025-05-04",
+                "surety": "Union Surety",
+            },
+            {
+                "bond_id": "BND-C-TE4-014-OLD",
+                "application_id": "C-TE4-014",
+                "amount": 20000,
+                "status": "expired",
+                "effective_date": "2023-01-21",
+                "cancel_date": "2024-08-15",
+                "source_date": "2024-08-16",
+                "surety": "Civic Bonding",
+            },
+            {
+                "bond_id": "BND-C-TE4-015-A",
+                "application_id": "C-TE4-015",
+                "amount": 25000,
+                "status": "active",
+                "effective_date": "2025-02-28",
+                "cancel_date": None,
+                "source_date": "2025-06-23",
+                "surety": "Harbor Surety",
+            },
+            {
+                "bond_id": "BND-C-TE4-015-OLD",
+                "application_id": "C-TE4-015",
+                "amount": 15000,
+                "status": "expired",
+                "effective_date": "2023-04-27",
+                "cancel_date": "2024-12-12",
+                "source_date": "2024-12-16",
+                "surety": "Granite Mutual",
+            },
+        ]
+    )
+    insurance.extend(
+        [
+            {
+                "insurance_id": "INS-C-TE4-007-A",
+                "application_id": "C-TE4-007",
+                "amount": 1000000,
+                "status": "active",
+                "verified_date": "2025-06-01",
+                "expiration_date": "2026-02-01",
+                "insurer": "Civic Risk Pool",
+            },
+            {
+                "insurance_id": "INS-C-TE4-007-OLD",
+                "application_id": "C-TE4-007",
+                "amount": 500000,
+                "status": "expired",
+                "verified_date": "2024-06-01",
+                "expiration_date": "2024-12-31",
+                "insurer": "Northfield Casualty",
+            },
+            {
+                "insurance_id": "INS-C-TE4-008-A",
+                "application_id": "C-TE4-008",
+                "amount": 750000,
+                "status": "active",
+                "verified_date": "2025-06-03",
+                "expiration_date": "2026-03-01",
+                "insurer": "Builders Mutual",
+            },
+            {
+                "insurance_id": "INS-C-TE4-008-OLD",
+                "application_id": "C-TE4-008",
+                "amount": 250000,
+                "status": "expired",
+                "verified_date": "2024-05-01",
+                "expiration_date": "2024-12-31",
+                "insurer": "Prairie Shield",
+            },
+            {
+                "insurance_id": "INS-C-TE4-009-A",
+                "application_id": "C-TE4-009",
+                "amount": 500000,
+                "status": "active",
+                "verified_date": "2025-05-30",
+                "expiration_date": "2026-02-15",
+                "insurer": "Evergreen Commercial",
+            },
+            {
+                "insurance_id": "INS-C-TE4-009-OLD",
+                "application_id": "C-TE4-009",
+                "amount": 250000,
+                "status": "expired",
+                "verified_date": "2024-05-10",
+                "expiration_date": "2024-11-30",
+                "insurer": "Civic Risk Pool",
+            },
+            {
+                "insurance_id": "INS-C-TE4-010-A",
+                "application_id": "C-TE4-010",
+                "amount": 1000000,
+                "status": "pending",
+                "verified_date": "2025-06-14",
+                "expiration_date": "2026-01-15",
+                "insurer": "Northfield Casualty",
+            },
+            {
+                "insurance_id": "INS-C-TE4-010-OLD",
+                "application_id": "C-TE4-010",
+                "amount": 500000,
+                "status": "expired",
+                "verified_date": "2024-02-18",
+                "expiration_date": "2024-10-31",
+                "insurer": "Builders Mutual",
+            },
+            {
+                "insurance_id": "INS-C-TE4-011-A",
+                "application_id": "C-TE4-011",
+                "amount": 500000,
+                "status": "active",
+                "verified_date": "2025-03-15",
+                "expiration_date": "2025-04-15",
+                "insurer": "Prairie Shield",
+            },
+            {
+                "insurance_id": "INS-C-TE4-011-OLD",
+                "application_id": "C-TE4-011",
+                "amount": 250000,
+                "status": "expired",
+                "verified_date": "2024-04-10",
+                "expiration_date": "2024-10-01",
+                "insurer": "Northfield Casualty",
+            },
+            {
+                "insurance_id": "INS-C-TE4-012-A",
+                "application_id": "C-TE4-012",
+                "amount": 750000,
+                "status": "active",
+                "verified_date": "2025-06-30",
+                "expiration_date": "2026-05-01",
+                "insurer": "Civic Risk Pool",
+            },
+            {
+                "insurance_id": "INS-C-TE4-012-OLD",
+                "application_id": "C-TE4-012",
+                "amount": 250000,
+                "status": "expired",
+                "verified_date": "2024-06-22",
+                "expiration_date": "2024-12-31",
+                "insurer": "Builders Mutual",
+            },
+            {
+                "insurance_id": "INS-C-TE4-013-A",
+                "application_id": "C-TE4-013",
+                "amount": 750000,
+                "status": "active",
+                "verified_date": "2025-07-05",
+                "expiration_date": "2026-04-01",
+                "insurer": "Evergreen Commercial",
+            },
+            {
+                "insurance_id": "INS-C-TE4-013-OLD",
+                "application_id": "C-TE4-013",
+                "amount": 500000,
+                "status": "expired",
+                "verified_date": "2024-06-15",
+                "expiration_date": "2024-12-31",
+                "insurer": "Civic Risk Pool",
+            },
+            {
+                "insurance_id": "INS-C-TE4-014-A",
+                "application_id": "C-TE4-014",
+                "amount": 750000,
+                "status": "pending",
+                "verified_date": "2025-06-07",
+                "expiration_date": "2026-02-20",
+                "insurer": "Prairie Shield",
+            },
+            {
+                "insurance_id": "INS-C-TE4-014-OLD",
+                "application_id": "C-TE4-014",
+                "amount": 250000,
+                "status": "expired",
+                "verified_date": "2024-06-01",
+                "expiration_date": "2024-11-11",
+                "insurer": "Builders Mutual",
+            },
+            {
+                "insurance_id": "INS-C-TE4-015-A",
+                "application_id": "C-TE4-015",
+                "amount": 500000,
+                "status": "active",
+                "verified_date": "2025-06-21",
+                "expiration_date": "2026-06-01",
+                "insurer": "Northfield Casualty",
+            },
+            {
+                "insurance_id": "INS-C-TE4-015-OLD",
+                "application_id": "C-TE4-015",
+                "amount": 250000,
+                "status": "expired",
+                "verified_date": "2024-06-09",
+                "expiration_date": "2024-12-31",
+                "insurer": "Civic Risk Pool",
+            },
+        ]
+    )
+    histories.extend(
+        [
+            {
+                "license_id": "CL-CTE4007",
+                "applicant_name": "North Terminal Electrical Services LLC",
+                "status": "active",
+                "status_date": "2025-01-10",
+                "trade": "Electrical",
+                "notes": "Registry history matched by applicant name",
+            },
+            {
+                "license_id": "CL-CTE4008",
+                "applicant_name": "Orchid Plumbing Services LLC",
+                "status": "active",
+                "status_date": "2024-09-03",
+                "trade": "Plumbing",
+                "notes": "Registry history matched by applicant name",
+            },
+            {
+                "license_id": "CL-CTE4009",
+                "applicant_name": "Pine State HVAC Services LLC",
+                "status": "active",
+                "status_date": "2024-11-16",
+                "trade": "HVAC",
+                "notes": "Registry history matched by applicant name",
+            },
+            {
+                "license_id": "CL-CTE4010",
+                "applicant_name": "Riverview General Building Services LLC",
+                "status": "suspended",
+                "status_date": "2025-03-18",
+                "trade": "General Building",
+                "notes": "Active suspension pending board action",
+            },
+            {
+                "license_id": "CL-CTE4012",
+                "applicant_name": "Timber Solar Services LLC",
+                "status": "active",
+                "status_date": "2024-10-25",
+                "trade": "Solar",
+                "notes": "Registry history matched by applicant name",
+            },
+            {
+                "license_id": "CL-CTE4013",
+                "applicant_name": "Alder Electrical Services LLC",
+                "status": "active",
+                "status_date": "2024-08-09",
+                "trade": "Electrical",
+                "notes": "Registry history matched by applicant name",
+            },
+            {
+                "license_id": "CL-CTE4014",
+                "applicant_name": "Blue Ridge Plumbing Services LLC",
+                "status": "active",
+                "status_date": "2024-12-13",
+                "trade": "Plumbing",
+                "notes": "Registry history matched by applicant name",
+            },
+            {
+                "license_id": "CL-CTE4015",
+                "applicant_name": "Crescent HVAC Services LLC",
+                "status": "active",
+                "status_date": "2025-02-02",
+                "trade": "HVAC",
+                "notes": "Registry history matched by applicant name",
+            },
+        ]
+    )
+    violations.extend(
+        [
+            {
+                "violation_id": "CV-C-TE4-003-S",
+                "related_application_id": "C-TE4-003",
+                "license_id": "CL-CTE4003",
+                "violation_date": "2025-05-09",
+                "severity": "serious",
+                "theme": "unpermitted work",
+                "status": "open",
+                "resolved_date": None,
+            },
+            {
+                "violation_id": "CV-C-TE4-004-M",
+                "related_application_id": "C-TE4-004",
+                "license_id": "CL-CTE4004",
+                "violation_date": "2025-04-21",
+                "severity": "minor",
+                "theme": "advertising",
+                "status": "open",
+                "resolved_date": None,
+            },
+            {
+                "violation_id": "CV-C-TE4-008-CS",
+                "related_application_id": "C-TE4-008",
+                "license_id": "CL-CTE4008",
+                "violation_date": "2024-10-12",
+                "severity": "serious",
+                "theme": "bond lapse",
+                "status": "resolved",
+                "resolved_date": "2025-01-14",
+            },
+            {
+                "violation_id": "CV-C-TE4-009-M",
+                "related_application_id": "C-TE4-009",
+                "license_id": "CL-CTE4009",
+                "violation_date": "2025-03-08",
+                "severity": "medium",
+                "theme": "advertising",
+                "status": "open",
+                "resolved_date": None,
+            },
+            {
+                "violation_id": "CV-C-TE4-013-S",
+                "related_application_id": "C-TE4-013",
+                "license_id": "CL-CTE4013",
+                "violation_date": "2025-06-11",
+                "severity": "serious",
+                "theme": "unpermitted work",
+                "status": "open",
+                "resolved_date": None,
+            },
+            {
+                "violation_id": "CV-C-TE4-015-CS",
+                "related_application_id": "C-TE4-015",
+                "license_id": "CL-CTE4015",
+                "violation_date": "2024-09-19",
+                "severity": "serious",
+                "theme": "safety",
+                "status": "resolved",
+                "resolved_date": "2025-02-18",
+            },
+            {
+                "violation_id": "CV-C-TE4-015-M",
+                "related_application_id": "C-TE4-015",
+                "license_id": "CL-CTE4015",
+                "violation_date": "2025-05-07",
+                "severity": "minor",
+                "theme": "advertising",
+                "status": "open",
+                "resolved_date": None,
+            },
+        ]
+    )
+    correspondence.extend(
+        [
+            {
+                "correspondence_id": "COR-C-TE4-007-1",
+                "related_application_id": "C-TE4-007",
+                "received_date": "2025-06-20",
+                "subject": "name match",
+                "assertion_type": "prior_license_match",
+                "assertion_value": "agency verified",
+                "verified_by_agency": 1,
+                "notes": "Verified by licensing specialist",
+            },
+            {
+                "correspondence_id": "COR-C-TE4-008-1",
+                "related_application_id": "C-TE4-008",
+                "received_date": "2025-06-04",
+                "subject": "experience affidavit",
+                "assertion_type": "experience_update",
+                "assertion_value": "pending outside agency",
+                "verified_by_agency": 1,
+                "notes": "Linked to registry case notes",
+            },
+            {
+                "correspondence_id": "COR-C-TE4-009-1",
+                "related_application_id": "C-TE4-009",
+                "received_date": "2025-05-11",
+                "subject": "bond correction",
+                "assertion_type": "bond_amount",
+                "assertion_value": "applicant supplied",
+                "verified_by_agency": 1,
+                "notes": "Verified by licensing specialist",
+            },
+            {
+                "correspondence_id": "COR-C-TE4-010-1",
+                "related_application_id": "C-TE4-010",
+                "received_date": "2025-05-24",
+                "subject": "discipline response",
+                "assertion_type": "discipline_response",
+                "assertion_value": "pending outside agency",
+                "verified_by_agency": 1,
+                "notes": "Linked to registry case notes",
+            },
+            {
+                "correspondence_id": "COR-C-TE4-011-1",
+                "related_application_id": "C-TE4-011",
+                "received_date": "2025-04-20",
+                "subject": "bond correction",
+                "assertion_type": "bond_amount",
+                "assertion_value": "agency verified",
+                "verified_by_agency": 1,
+                "notes": "Verified by licensing specialist",
+            },
+            {
+                "correspondence_id": "COR-C-TE4-012-1",
+                "related_application_id": "C-TE4-012",
+                "received_date": "2025-06-28",
+                "subject": "endorsement certificate",
+                "assertion_type": "endorsement_status",
+                "assertion_value": "applicant supplied",
+                "verified_by_agency": 0,
+                "notes": "Applicant copy only; no agency confirmation",
+            },
+            {
+                "correspondence_id": "COR-C-TE4-013-1",
+                "related_application_id": "C-TE4-013",
+                "received_date": "2025-07-10",
+                "subject": "insurance upload",
+                "assertion_type": "insurance_amount",
+                "assertion_value": "agency verified",
+                "verified_by_agency": 1,
+                "notes": "Verified by licensing specialist",
+            },
+            {
+                "correspondence_id": "COR-C-TE4-014-1",
+                "related_application_id": "C-TE4-014",
+                "received_date": "2025-03-03",
+                "subject": "bond correction",
+                "assertion_type": "bond_amount",
+                "assertion_value": "registry corrected",
+                "verified_by_agency": 0,
+                "notes": "Stale attachment predates application",
+            },
+            {
+                "correspondence_id": "COR-C-TE4-015-1",
+                "related_application_id": "C-TE4-015",
+                "received_date": "2025-06-05",
+                "subject": "experience affidavit",
+                "assertion_type": "experience_update",
+                "assertion_value": "agency verified",
+                "verified_by_agency": 1,
+                "notes": "Verified by licensing specialist",
+            },
+        ]
+    )
+    inspections.extend(
+        [
+            {
+                "inspection_id": "CI-C-TE4-007-1",
+                "related_application_id": "C-TE4-007",
+                "inspection_date": "2025-06-08",
+                "result": "pass",
+                "finding_code": "NONE",
+                "notes": "Field note matches application trade",
+            },
+            {
+                "inspection_id": "CI-C-TE4-008-1",
+                "related_application_id": "C-TE4-008",
+                "inspection_date": "2025-05-26",
+                "result": "conditional",
+                "finding_code": "DOC_GAP",
+                "notes": "Follow-up requested by regional inspector",
+            },
+            {
+                "inspection_id": "CI-C-TE4-009-1",
+                "related_application_id": "C-TE4-009",
+                "inspection_date": "2025-05-01",
+                "result": "pass",
+                "finding_code": "NONE",
+                "notes": "Field note matches application trade",
+            },
+            {
+                "inspection_id": "CI-C-TE4-010-1",
+                "related_application_id": "C-TE4-010",
+                "inspection_date": "2025-06-18",
+                "result": "conditional",
+                "finding_code": "UNVERIFIED_SITE",
+                "notes": "Follow-up requested by regional inspector",
+            },
+            {
+                "inspection_id": "CI-C-TE4-011-1",
+                "related_application_id": "C-TE4-011",
+                "inspection_date": "2025-04-30",
+                "result": "pass",
+                "finding_code": "NONE",
+                "notes": "No adverse field finding",
+            },
+            {
+                "inspection_id": "CI-C-TE4-012-1",
+                "related_application_id": "C-TE4-012",
+                "inspection_date": "2025-06-19",
+                "result": "conditional",
+                "finding_code": "DOC_GAP",
+                "notes": "Site visit found incomplete signage",
+            },
+            {
+                "inspection_id": "CI-C-TE4-013-1",
+                "related_application_id": "C-TE4-013",
+                "inspection_date": "2025-07-08",
+                "result": "fail",
+                "finding_code": "SAFETY_RECHECK",
+                "notes": "Follow-up requested by regional inspector",
+            },
+            {
+                "inspection_id": "CI-C-TE4-014-1",
+                "related_application_id": "C-TE4-014",
+                "inspection_date": "2025-05-19",
+                "result": "conditional",
+                "finding_code": "UNVERIFIED_SITE",
+                "notes": "Potential stale export",
+            },
+            {
+                "inspection_id": "CI-C-TE4-015-1",
+                "related_application_id": "C-TE4-015",
+                "inspection_date": "2025-04-14",
+                "result": "pass",
+                "finding_code": "NONE",
+                "notes": "No adverse field finding",
             },
         ]
     )
 
-    return (
-        {
-            "alcohol_applications": applications,
-            "alcohol_premises": premises,
-            "alcohol_incidents": incidents,
-            "alcohol_settlements": settlements,
-            "alcohol_restrictions": restrictions,
-            "alcohol_standard_obligations": obligations,
-        },
-        anchor_metadata,
-    )
-
-
-def close_match_name(name: str, rng: random.Random) -> str:
-    replacements = [
-        ("Grill", "Grille"),
-        ("Market", "Mkt"),
-        ("Cafe", "Cafe and Bar"),
-        ("Room", "Rm"),
-        ("House", "Haus"),
-        ("Kitchen", "Kitch"),
-    ]
-    for old, new in replacements:
-        if old in name:
-            return name.replace(old, new)
-    return f"{name} Formerly"
-
-
-def build_renewal_domain() -> tuple[dict[str, list[dict]], dict]:
-    rng = random.Random(SEEDS["renewals"])
-    batches = [("RV-2026-SPRING", 50), ("RV-2026-SUMMER", 52), ("RV-2026-FALL", 54)]
-    cities = ["Port Mason", "Lakeview", "Silverton", "Cedar Falls", "Bay Crossing", "Northport"]
-    channels = ["bar", "restaurant", "grocery", "club", "hotel", "music venue"]
-    license_types = ["F-COM", "TAVERN", "F-RTL", "BREWPUB"]
-    street_names = [
-        "Market",
-        "Pine",
-        "Union",
-        "Harbor",
-        "Cedar",
-        "Summit",
-        "Front",
-        "Rail",
-        "Orchard",
-        "Mill",
-        "Dock",
-        "State",
-    ]
-    name_words = [
-        "Blue",
-        "Maple",
-        "Signal",
-        "Copper",
-        "Drift",
-        "Civic",
-        "Hearth",
-        "Pier",
-        "Crescent",
-        "Urban",
-        "Depot",
-        "Vista",
-    ]
-    second_words = [
-        "Grill",
-        "Market",
-        "Cafe",
-        "Room",
-        "House",
-        "Kitchen",
-        "Tap",
-        "Bottle",
-        "Lounge",
-        "Diner",
-        "Cellar",
-        "Hall",
-    ]
-    release_boundaries = {
-        "RV-2026-SPRING": "2026-04-15",
-        "RV-2026-SUMMER": "2026-07-15",
-        "RV-2026-FALL": "2026-10-15",
-    }
-    anchor_patterns = {
-        "RV-2026-SPRING": [
-            ["EXACT_MATCH", "ALERT_PATTERN"],
-            ["CLOSE_MATCH"],
-            ["SHARED_ADDRESS"],
-            ["FINE_HISTORY"],
-            ["POST_BOUNDARY"],
-            ["SEVERE_CONDUCT"],
-            ["NO_REVIEW"],
-            ["EXACT_MATCH"],
-            ["CLOSE_MATCH", "FINE_HISTORY"],
-            ["ALERT_PATTERN"],
-        ],
-        "RV-2026-SUMMER": [
-            ["EXACT_MATCH", "ALERT_PATTERN"],
-            ["CLOSE_MATCH"],
-            ["SHARED_ADDRESS"],
-            ["POST_BOUNDARY"],
-            ["FINE_HISTORY"],
-            ["SEVERE_CONDUCT"],
-            ["EXACT_MATCH"],
-            ["CLOSE_MATCH", "ALERT_PATTERN"],
-            ["NO_REVIEW"],
-            ["SHARED_ADDRESS"],
-            ["FINE_HISTORY"],
-            ["POST_BOUNDARY"],
-        ],
-        "RV-2026-FALL": [
-            ["EXACT_MATCH"],
-            ["CLOSE_MATCH"],
-            ["ALERT_PATTERN"],
-            ["SHARED_ADDRESS"],
-            ["SEVERE_CONDUCT"],
-            ["POST_BOUNDARY"],
-            ["FINE_HISTORY"],
-            ["CLOSE_MATCH", "FINE_HISTORY"],
-            ["NO_REVIEW"],
-            ["EXACT_MATCH", "ALERT_PATTERN"],
-            ["SHARED_ADDRESS"],
-            ["POST_BOUNDARY"],
-        ],
+    return {
+        "contractor_applications": applications,
+        "contractor_bonds": bonds,
+        "contractor_insurance": insurance,
+        "contractor_license_history": histories,
+        "contractor_violations": violations,
+        "contractor_correspondence": correspondence,
+        "contractor_inspections": inspections,
+        "manifest_targets": manifest_targets,
     }
 
-    licensees: list[dict] = []
-    anchor_metadata: dict[str, list[dict]] = {batch: [] for batch, _ in batches}
-    license_tags: dict[str, list[str]] = {}
-    idx = 0
-    for batch, count in batches:
-        for local_idx in range(count):
-            idx += 1
-            facility_name = f"{name_words[idx % len(name_words)]} {second_words[(idx // len(name_words)) % len(second_words)]} {idx:03d}"
-            city = cities[idx % len(cities)]
-            address_number = 200 + idx * 5
-            if local_idx in {2, 9}:
-                address_number = 777
-            address = f"{address_number} {street_names[idx % len(street_names)]} Ave"
-            license_id = f"LIC-RV-2026-{idx:04d}"
-            tags = (
-                anchor_patterns.get(batch, [])[local_idx]
-                if local_idx < len(anchor_patterns.get(batch, []))
-                else rng.choice(
-                    [
-                        ["NO_REVIEW"],
-                        ["EXACT_MATCH"],
-                        ["CLOSE_MATCH"],
-                        ["FINE_HISTORY"],
-                        ["POST_BOUNDARY"],
-                        ["ALERT_PATTERN"],
-                    ]
-                )
-            )
-            license_tags[license_id] = tags
-            successor_hint = ""
-            if "CLOSE_MATCH" in tags:
-                successor_hint = close_match_name(facility_name, rng)
-            if idx in {22, 86, 129}:
-                successor_hint = "successor at prior restricted premises"
-            licensees.append(
-                {
-                    "license_id": license_id,
-                    "facility_name": facility_name,
-                    "legal_name": f"{facility_name} Operations LLC",
-                    "address": address,
-                    "city": city,
-                    "channel_type": channels[idx % len(channels)],
-                    "license_type": license_types[idx % len(license_types)],
-                    "status": rng.choices(["active", "conditional", "pending renewal"], weights=[78, 14, 8])[0],
-                    "release_batch": batch,
-                    "successor_hint": successor_hint,
-                }
-            )
-            if local_idx < len(anchor_patterns.get(batch, [])):
-                anchor_metadata[batch].append(
-                    {
-                        "license_id": license_id,
-                        "facility_name": facility_name,
-                        "address": address,
-                        "issue_tags": tags,
-                    }
-                )
 
-    violation_codes = [
-        "LATE_RENEWAL",
-        "MINOR_SALE",
-        "ALERT",
-        "UNPAID_FINE",
-        "SUSPENSION",
-        "DISORDER",
-        "INSPECTION_FAIL",
-        "NOISE",
+def build_liquor_data(rng):
+    classes = ["Tavern", "Restaurant", "BeerWine", "Package"]
+    posture = ["new", "transfer", "renewal_with_controls", "settlement_review"]
+    applicants = [
+        "Bridge & Barrel LLC",
+        "Crescent Market Group",
+        "Eastgate Social House",
+        "Foundry Foods Inc",
+        "Harbor Night LLC",
+        "Lakeview Stores",
+        "Mosaic Dining",
+        "North Terminal Group",
+        "Orchid Hospitality",
+        "Pine State Markets",
     ]
-    themes = [
-        "administrative",
-        "minor service",
-        "ALERT pattern",
-        "fine collection",
-        "board sanction",
-        "public safety",
-        "inspection",
-        "neighborhood impact",
-    ]
-    violations: list[dict] = []
-    for licensee in licensees:
-        tags = license_tags[licensee["license_id"]]
-        boundary = release_boundaries[licensee["release_batch"]]
-        count = 0
-        if "NO_REVIEW" not in tags:
-            count += 1
-        if "ALERT_PATTERN" in tags or "FINE_HISTORY" in tags or "SEVERE_CONDUCT" in tags:
-            count += 1
-        if "POST_BOUNDARY" in tags:
-            count += 1
-        for entry_index in range(count):
-            historical_name = licensee["facility_name"]
-            if "CLOSE_MATCH" in tags and entry_index == 0:
-                historical_name = close_match_name(licensee["facility_name"], rng)
-            violation_date = date_between(rng, "2024-01-01", date_add(boundary, -1))
-            if "POST_BOUNDARY" in tags and entry_index == count - 1:
-                violation_date = date_between(rng, date_add(boundary, 1), "2026-12-15")
-            code = rng.choice(violation_codes)
-            theme = themes[violation_codes.index(code)]
-            alert_related = 1 if "ALERT_PATTERN" in tags or code == "ALERT" else 0
-            fine = 0
-            if "FINE_HISTORY" in tags or code in {"UNPAID_FINE", "MINOR_SALE", "SUSPENSION"}:
-                fine = rng.choice([15000, 30000, 75000, 125000])
-            severity = (
-                "high"
-                if "SEVERE_CONDUCT" in tags or code == "SUSPENSION"
-                else rng.choices(["low", "medium", "high"], weights=[42, 42, 16])[0]
-            )
-            violations.append(
-                {
-                    "violation_id": f"RV-2026-{len(violations) + 1:04d}",
-                    "historical_name": historical_name,
-                    "address": licensee["address"],
-                    "city": licensee["city"],
-                    "violation_date": violation_date,
-                    "violation_code": code,
-                    "theme": theme,
-                    "disposition": rng.choice(["paid", "warning", "settled", "suspended", "", "pending"]),
-                    "fine_cents": fine,
-                    "alert_related": alert_related,
-                    "severity": severity,
-                }
-            )
+    streets = ["Market", "Pine", "Main", "Ferry", "Union", "Water", "Cedar", "Monroe"]
+    applications = []
+    settlements = []
+    incidents = []
+    evidence = []
+    manifest_targets = {}
 
-    while len(violations) < 336:
-        licensee = rng.choice(licensees)
-        boundary = release_boundaries[licensee["release_batch"]]
-        code = rng.choice(violation_codes)
-        post_boundary = rng.random() < 0.16
-        historical_name = licensee["facility_name"]
-        if rng.random() < 0.18:
-            historical_name = close_match_name(licensee["facility_name"], rng)
-        address = licensee["address"]
-        if rng.random() < 0.08:
-            address = f"Suite B, {address}"
-        violations.append(
+    def add_liquor_app(application_id, location_id, target_group, idx, is_target):
+        license_class = classes[idx % len(classes)]
+        dba = f"{rng.choice(['Copper', 'Station', 'Vista', 'Anchor', 'Corner'])} {rng.choice(['Taproom', 'Market', 'Kitchen', 'Club'])} {idx:02d}"
+        address = f"{100 + idx * 7} {streets[idx % len(streets)]} St"
+        applications.append(
             {
-                "violation_id": f"RV-2026-{len(violations) + 1:04d}",
-                "historical_name": historical_name,
+                "application_id": application_id,
+                "agency": "Alcohol Control Board",
+                "applicant_name": applicants[idx % len(applicants)],
+                "dba": dba,
                 "address": address,
-                "city": licensee["city"],
-                "violation_date": date_between(rng, date_add(boundary, 1), "2026-12-20")
-                if post_boundary
-                else date_between(rng, "2023-01-01", date_add(boundary, -1)),
-                "violation_code": code,
-                "theme": themes[violation_codes.index(code)],
-                "disposition": rng.choice(["paid", "warning", "settled", "suspended", "", "pending", "dismissed"]),
-                "fine_cents": rng.choice([0, 0, 10000, 25000, 50000, 100000]),
-                "alert_related": 1 if code == "ALERT" or rng.random() < 0.18 else 0,
-                "severity": rng.choices(["low", "medium", "high"], weights=[52, 34, 14])[0],
+                "license_class": license_class,
+                "location_id": location_id,
+                "submitted_date": date_between(rng, date(2025, 1, 15), date(2025, 7, 10)),
+                "requested_posture": posture[idx % len(posture)],
+                "target_group": target_group if is_target else rng.choice([None, None, "settlement_watch"]),
             }
         )
 
-    return (
-        {
-            "renewal_licensees": licensees,
-            "renewal_violations": violations,
-        },
-        anchor_metadata,
-    )
-
-
-def record_counts(conn: sqlite3.Connection) -> dict[str, int]:
-    tables = [
-        "contractor_applications",
-        "contractor_bonds",
-        "contractor_insurance",
-        "contractor_violations",
-        "contractor_complaints",
-        "contractor_field_notes",
-        "contractor_correspondence",
-        "contractor_bulletins",
-        "alcohol_applications",
-        "alcohol_premises",
-        "alcohol_incidents",
-        "alcohol_settlements",
-        "alcohol_restrictions",
-        "alcohol_standard_obligations",
-        "renewal_licensees",
-        "renewal_violations",
-    ]
-    return {table: conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0] for table in tables}
-
-
-def api_summary() -> list[str]:
-    return [
-        "GET /health",
-        "GET /api/contractors/applications?batch_id=...",
-        "GET /api/contractors/bonds?name=...",
-        "GET /api/contractors/insurance?name=...",
-        "GET /api/contractors/violations?name=...",
-        "GET /api/contractors/complaints?name=...",
-        "GET /api/contractors/field-notes?name=...",
-        "GET /api/contractors/correspondence?batch_id=...",
-        "GET /api/contractors/bulletins?effective_on=YYYY-MM-DD",
-        "GET /api/alcohol/applications?review_month=YYYY-MM",
-        "GET /api/alcohol/premises?premises_id=...",
-        "GET /api/alcohol/incidents?premises_id=...",
-        "GET /api/alcohol/settlements?premises_id=...",
-        "GET /api/alcohol/restrictions?premises_id=...",
-        "GET /api/alcohol/standard-obligations?license_type=...",
-        "GET /api/renewals/licensees?release_batch=...",
-        "GET /api/renewals/violations?city=...",
-        "GET /api/search/address?address=...",
-        "GET /exports/contractor_batch_<batch_id>.csv",
-        "GET /exports/renewal_roster_<release_batch>.csv",
-    ]
-
-
-def write_manifests(conn: sqlite3.Connection, anchors: dict) -> None:
-    counts = record_counts(conn)
-    public_manifest = {
-        "environment": "Cascadia Licensing Review Portal",
-        "task_group": "task_group_019",
-        "generated_at": GENERATED_AT,
-        "seed_values": SEEDS,
-        "record_counts": counts,
-        "generated_files": [
-            "data/clrp.db",
-            "data/public_manifest.json",
-            "data/construction_manifest.json",
-        ],
-        "api_summary": api_summary(),
-        "anchor_metadata": {
-            "contractor_batches": {
-                batch_id: {
-                    "application_count": len(items),
-                    "application_ids": [item["application_id"] for item in items],
+        control_sets = [
+            ["ID_CHECK", "HOURS"],
+            ["SECURITY", "CCTV", "HOURS"],
+            ["NOISE", "PATIO"],
+            ["FOOD_SERVICE", "ID_CHECK"],
+        ]
+        for offset in range(2 if not is_target else 4):
+            active = offset == 0
+            controls = {
+                "controls": control_sets[(idx + offset) % len(control_sets)],
+                "active": active,
+                "review_required": active and (idx + offset) % 2 == 0,
+                "expires": "2026-12-31" if active else "2024-12-31",
+            }
+            settlements.append(
+                {
+                    "settlement_id": f"SET-{location_id}-{offset + 1}",
+                    "location_id": location_id,
+                    "effective_date": date_between(
+                        rng,
+                        date(2022, 1, 1) if offset else date(2024, 1, 1),
+                        date(2025, 6, 15),
+                    ),
+                    "settlement_type": rng.choice(
+                        ["restricted", "warning", "conditional approval", "historic refusal"]
+                    ),
+                    "basis_code": rng.choice(["SAME_PREMISES", "PUBLIC_SAFETY", "NOISE", "SALE_TO_MINOR"]),
+                    "controls_json": json.dumps(controls, sort_keys=True),
+                    "source_name": rng.choice(["board_order", "settlement_pdf", "legacy_registry"]),
                 }
-                for batch_id, items in anchors["contractor_batches"].items()
-            },
-            "alcohol_review_months": {
-                month: {
-                    "anchor_count": len(items),
-                    "premises_ids": [item["premises_id"] for item in items],
+            )
+
+        for offset in range(3 if is_target else 2):
+            incidents.append(
+                {
+                    "incident_id": f"INC-{location_id}-{offset + 1}",
+                    "location_id": location_id,
+                    "incident_date": date_between(rng, date(2023, 1, 1), date(2025, 7, 1)),
+                    "risk_code": rng.choice(["MINOR_SALE", "NOISE", "ASSAULT", "AFTER_HOURS", "TAX_HOLD"]),
+                    "severity": rng.choice(["low", "medium", "high"]),
+                    "status": rng.choice(["open", "closed", "referred", "dismissed"]),
+                    "source_name": rng.choice(["police_feed", "board_order", "complaint_portal", "inspection_log"]),
                 }
-                for month, items in anchors["alcohol_review_months"].items()
-            },
-            "renewal_release_batches": {
-                batch: {
-                    "anchor_count": len(items),
-                    "license_ids": [item["license_id"] for item in items],
+            )
+
+        for offset in range(2 if is_target else 1):
+            evidence.append(
+                {
+                    "evidence_id": f"EV-{location_id}-{offset + 1}",
+                    "location_id": location_id,
+                    "evidence_date": date_between(rng, date(2024, 6, 1), date(2025, 7, 5)),
+                    "evidence_code": rng.choice(
+                        ["SITE_PHOTO", "FLOOR_PLAN", "NEIGHBOR_NOTICE", "CONTROL_SIGNAGE", "POLICE_MEMO"]
+                    ),
+                    "status": rng.choice(["verified", "stale", "missing", "conflicting"]),
+                    "notes": rng.choice(
+                        ["Current packet", "Old location name", "Needs follow-up", "Verified by inspector"]
+                    ),
                 }
-                for batch, items in anchors["renewal_release_batches"].items()
-            },
-        },
+            )
+
+    idx = 0
+    for group, target in LIQUOR_TARGETS.items():
+        idx += 1
+        add_liquor_app(target["application_id"], target["location_id"], group, idx, True)
+        manifest_targets[group] = dict(target)
+
+    for n in range(1, 31):
+        idx += 1
+        add_liquor_app(f"L-DIS-{n:03d}", f"LOC-DIS-{n:03d}", None, idx, False)
+
+    while len(incidents) < 128:
+        app = rng.choice(applications)
+        n = len(incidents) + 1
+        incidents.append(
+            {
+                "incident_id": f"INC-DIS-{n:04d}",
+                "location_id": app["location_id"],
+                "incident_date": date_between(rng, date(2021, 1, 1), date(2025, 7, 1)),
+                "risk_code": rng.choice(
+                    ["MINOR_SALE", "NOISE", "ASSAULT", "AFTER_HOURS", "TAX_HOLD", "FOOD_SERVICE_GAP"]
+                ),
+                "severity": rng.choice(["low", "medium", "high"]),
+                "status": rng.choice(["open", "closed", "referred", "dismissed"]),
+                "source_name": rng.choice(["police_feed", "legacy_feed", "public_complaint", "board_order"]),
+            }
+        )
+
+    while len(evidence) < 76:
+        app = rng.choice(applications)
+        n = len(evidence) + 1
+        evidence.append(
+            {
+                "evidence_id": f"EV-DIS-{n:04d}",
+                "location_id": app["location_id"],
+                "evidence_date": date_between(rng, date(2023, 1, 1), date(2025, 7, 1)),
+                "evidence_code": rng.choice(
+                    ["SITE_PHOTO", "FLOOR_PLAN", "NEIGHBOR_NOTICE", "CONTROL_SIGNAGE", "POLICE_MEMO", "TAX_CLEARANCE"]
+                ),
+                "status": rng.choice(["verified", "stale", "missing", "conflicting"]),
+                "notes": rng.choice(
+                    ["Field import", "Applicant packet", "Conflicts with settlement order", "Current evidence"]
+                ),
+            }
+        )
+
+    return {
+        "liquor_applications": applications,
+        "liquor_settlements": settlements,
+        "liquor_incidents": incidents,
+        "liquor_site_evidence": evidence,
+        "manifest_targets": manifest_targets,
     }
-    construction_manifest = {
-        "environment": "Cascadia Licensing Review Portal",
-        "task_group": "task_group_019",
-        "generated_at": GENERATED_AT,
-        "seed_values": SEEDS,
-        "record_counts": counts,
-        "anchor_metadata": anchors,
-        "release_boundaries": {
-            "RV-2026-SPRING": "2026-04-15",
-            "RV-2026-SUMMER": "2026-07-15",
-            "RV-2026-FALL": "2026-10-15",
-        },
-        "planned_inputs": {
-            "contractor_train_batches": ["HS-2026-Q1A", "HS-2026-Q1B"],
-            "contractor_test_batches": ["HS-2026-Q2A", "HS-2026-Q2B"],
-            "alcohol_review_months": ["2026-02", "2026-03", "2026-05"],
-            "renewal_train_batch": "RV-2026-SPRING",
-            "renewal_test_batches": ["RV-2026-SUMMER", "RV-2026-FALL"],
-        },
-        "limitations": "Anchor tags identify intended review issues only; this manifest does not contain task-specific full answers.",
-    }
-    PUBLIC_MANIFEST_PATH.write_text(json.dumps(public_manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    CONSTRUCTION_MANIFEST_PATH.write_text(
-        json.dumps(construction_manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
 
 
-def generate() -> dict[str, int]:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    if DB_PATH.exists():
-        DB_PATH.unlink()
+def build_alcohol_data(rng):
+    agencies = ["City Licensing", "County Licensing", "Alcohol Renewal Unit"]
+    channels = ["grocery", "bar", "restaurant", "convenience", "event"]
+    streets = ["Oak", "Maple", "Adams", "Lincoln", "River", "Third", "Seventh", "Pearl"]
+    themes = ["late renewal", "sale to minor", "unpaid fine", "after hours", "missing posting", "tax hold", "noise"]
+    licensees = []
+    violations = []
+    manifest_targets = {}
 
-    conn = sqlite3.connect(DB_PATH)
-    try:
-        create_schema(conn)
-        contractor_rows, contractor_anchors = build_contractor_domain()
-        alcohol_rows, alcohol_anchors = build_alcohol_domain()
-        renewal_rows, renewal_anchors = build_renewal_domain()
+    for group, info in RENEWAL_TARGETS.items():
+        boundary = date.fromisoformat(info["boundary"])
+        license_numbers = []
+        non_exact_cases = []
+        non_exact_case = RENEWAL_NON_EXACT_CASES.get(group)
+        for idx in range(1, info["target_queue_size"] + 1):
+            license_no = f"{info['prefix']}-{idx:03d}"
+            license_numbers.append(license_no)
+            facility_name = f"{group.replace('_', ' ').title()} Facility {idx:02d}"
+            address = f"{200 + idx * 11} {streets[idx % len(streets)]} Ave"
+            is_non_exact_case = non_exact_case and idx == non_exact_case["current_idx"]
+            successor_to = None
+            if is_non_exact_case:
+                successor_to = non_exact_case["old_license_no"]
+            elif idx % 5 == 0:
+                successor_to = f"{info['prefix']}-OLD-{idx:03d}"
+            licensees.append(
+                {
+                    "license_no": license_no,
+                    "agency": agencies[idx % len(agencies)],
+                    "facility_name": facility_name,
+                    "address": address,
+                    "channel_type": channels[idx % len(channels)],
+                    "active": 1,
+                    "location_id": f"ALOC-{info['prefix']}-{idx:03d}",
+                    "successor_to": successor_to,
+                    "target_group": group,
+                }
+            )
 
-        for table, rows in contractor_rows.items():
-            insert_many(conn, table, rows)
-        for table, rows in alcohol_rows.items():
-            insert_many(conn, table, rows)
-        for table, rows in renewal_rows.items():
-            insert_many(conn, table, rows)
-        conn.commit()
-
-        anchors = {
-            "contractor_batches": contractor_anchors,
-            "alcohol_review_months": alcohol_anchors,
-            "renewal_release_batches": renewal_anchors,
+            if is_non_exact_case:
+                old_address = non_exact_case.get("old_address", address)
+                old_facility_name = f"{facility_name} Former Permit"
+                licensees.append(
+                    {
+                        "license_no": non_exact_case["old_license_no"],
+                        "agency": agencies[idx % len(agencies)],
+                        "facility_name": old_facility_name,
+                        "address": old_address,
+                        "channel_type": channels[idx % len(channels)],
+                        "active": 0,
+                        "location_id": f"ALOC-{info['prefix']}-{idx:03d}-OLD",
+                        "successor_to": None,
+                        "target_group": group,
+                    }
+                )
+                current_violation_ids = []
+                old_violation_ids = []
+                for profile in non_exact_case["current_exact_violations"]:
+                    violation_id = f"AV-{license_no}-{profile['suffix']}"
+                    current_violation_ids.append(violation_id)
+                    violations.append(
+                        {
+                            "violation_id": violation_id,
+                            "license_no": license_no,
+                            "facility_name": facility_name,
+                            "address": address,
+                            "violation_date": (boundary - timedelta(days=profile["days_before"])).isoformat(),
+                            "theme": profile["theme"],
+                            "severity": profile["severity"],
+                            "disposition": profile["disposition"],
+                            "fine_balance": profile["fine_balance"],
+                            "alert_flag": profile["alert_flag"],
+                            "source_name": "renewal_case_export",
+                        }
+                    )
+                for profile in non_exact_case["old_violations"]:
+                    violation_id = f"AV-{non_exact_case['old_license_no']}-{profile['suffix']}"
+                    old_violation_ids.append(violation_id)
+                    violations.append(
+                        {
+                            "violation_id": violation_id,
+                            "license_no": non_exact_case["old_license_no"],
+                            "facility_name": old_facility_name,
+                            "address": old_address,
+                            "violation_date": (boundary - timedelta(days=profile["days_before"])).isoformat(),
+                            "theme": profile["theme"],
+                            "severity": profile["severity"],
+                            "disposition": profile["disposition"],
+                            "fine_balance": profile["fine_balance"],
+                            "alert_flag": profile["alert_flag"],
+                            "source_name": "legacy_successor_feed",
+                        }
+                    )
+                non_exact_cases.append(
+                    {
+                        "current_license_no": license_no,
+                        "old_license_no": non_exact_case["old_license_no"],
+                        "current_facility_name": facility_name,
+                        "old_facility_name": old_facility_name,
+                        "current_address": address,
+                        "old_address": old_address,
+                        "boundary": info["boundary"],
+                        "match_basis": non_exact_case["match_basis"],
+                        "expected_match_confidence": non_exact_case["expected_match_confidence"],
+                        "current_exact_violation_ids": current_violation_ids,
+                        "old_or_close_violation_ids": old_violation_ids,
+                        "expected_current_only_pre_boundary_count": len(current_violation_ids),
+                        "expected_matched_pre_boundary_count": len(current_violation_ids) + len(old_violation_ids),
+                        "expected_risk_tier_after_match": "high",
+                        "expected_next_step_label_after_match": "board_review",
+                    }
+                )
+            else:
+                before_count = 2 + (idx % 3)
+                for offset in range(before_count):
+                    vdate = boundary - timedelta(days=rng.randint(3, 150))
+                    severity = rng.choice(["minor", "medium", "serious"])
+                    fine_balance = 0.0 if offset % 2 else float(rng.choice([125, 250, 500, 900]))
+                    violations.append(
+                        {
+                            "violation_id": f"AV-{license_no}-{offset + 1}",
+                            "license_no": license_no,
+                            "facility_name": facility_name,
+                            "address": address,
+                            "violation_date": vdate.isoformat(),
+                            "theme": rng.choice(themes),
+                            "severity": severity,
+                            "disposition": rng.choice(["open", "settled", "warning", "paid", "pending"]),
+                            "fine_balance": fine_balance,
+                            "alert_flag": 1 if severity == "serious" or fine_balance > 0 else 0,
+                            "source_name": "renewal_case_export",
+                        }
+                    )
+            violations.append(
+                {
+                    "violation_id": f"AV-{license_no}-LATE",
+                    "license_no": license_no,
+                    "facility_name": facility_name,
+                    "address": address,
+                    "violation_date": (boundary + timedelta(days=rng.randint(2, 45))).isoformat(),
+                    "theme": rng.choice(themes),
+                    "severity": rng.choice(["minor", "medium", "serious"]),
+                    "disposition": rng.choice(["open", "settled", "warning", "pending"]),
+                    "fine_balance": float(rng.choice([0, 100, 350])),
+                    "alert_flag": rng.choice([0, 1]),
+                    "source_name": "post_boundary_feed",
+                }
+            )
+        manifest_targets[group] = {
+            "renewal_group_tag": group,
+            "target_queue_size": info["target_queue_size"],
+            "boundary": info["boundary"],
+            "license_numbers": license_numbers,
+            "non_exact_match_cases": non_exact_cases,
         }
-        write_manifests(conn, anchors)
-        return record_counts(conn)
-    finally:
-        conn.close()
+
+    distractor_count = 58
+    for idx in range(1, distractor_count + 1):
+        license_no = f"AL-DIS-{idx:04d}"
+        facility_name = f"{rng.choice(['Metro', 'Corner', 'Harbor', 'Prairie', 'Summit'])} {rng.choice(['Market', 'Tavern', 'Cafe', 'Bottle Shop'])} {idx:03d}"
+        address = f"{500 + idx * 5} {streets[idx % len(streets)]} Ave"
+        licensees.append(
+            {
+                "license_no": license_no,
+                "agency": rng.choice(agencies),
+                "facility_name": facility_name,
+                "address": address,
+                "channel_type": rng.choice(channels),
+                "active": 0 if idx % 11 == 0 else 1,
+                "location_id": f"ALOC-DIS-{idx:04d}",
+                "successor_to": f"AL-DIS-OLD-{idx:04d}" if idx % 9 == 0 else None,
+                "target_group": rng.choice([None, None, None, "general_renewal_pool"]),
+            }
+        )
+        for offset in range(rng.randint(1, 4)):
+            violations.append(
+                {
+                    "violation_id": f"AV-DIS-{idx:04d}-{offset + 1}",
+                    "license_no": license_no,
+                    "facility_name": facility_name,
+                    "address": address if rng.random() > 0.1 else address.replace("Ave", "Avenue"),
+                    "violation_date": date_between(rng, date(2024, 1, 1), date(2025, 7, 15)),
+                    "theme": rng.choice(themes),
+                    "severity": rng.choice(["minor", "medium", "serious"]),
+                    "disposition": rng.choice(["open", "settled", "warning", "paid", "dismissed"]),
+                    "fine_balance": float(rng.choice([0, 0, 100, 250, 750])),
+                    "alert_flag": rng.choice([0, 0, 1]),
+                    "source_name": rng.choice(
+                        ["renewal_case_export", "public_feed", "legacy_feed", "post_boundary_feed"]
+                    ),
+                }
+            )
+
+    while len(violations) < 264:
+        licensee = rng.choice(licensees)
+        n = len(violations) + 1
+        violations.append(
+            {
+                "violation_id": f"AV-EXTRA-{n:04d}",
+                "license_no": licensee["license_no"],
+                "facility_name": licensee["facility_name"],
+                "address": licensee["address"],
+                "violation_date": date_between(rng, date(2023, 8, 1), date(2025, 7, 15)),
+                "theme": rng.choice(themes),
+                "severity": rng.choice(["minor", "medium", "serious"]),
+                "disposition": rng.choice(["open", "settled", "warning", "paid", "dismissed"]),
+                "fine_balance": float(rng.choice([0, 0, 125, 450, 1000])),
+                "alert_flag": rng.choice([0, 1]),
+                "source_name": rng.choice(["renewal_case_export", "public_feed", "legacy_feed"]),
+            }
+        )
+
+    return {
+        "alcohol_licensees": licensees,
+        "alcohol_violations": violations,
+        "manifest_targets": manifest_targets,
+    }
 
 
-def main() -> None:
-    counts = generate()
-    print(f"Generated {DB_PATH}")
-    for table in sorted(counts):
-        print(f"{table}: {counts[table]}")
-    print(f"Wrote {PUBLIC_MANIFEST_PATH}")
-    print(f"Wrote {CONSTRUCTION_MANIFEST_PATH}")
+def count_rows(cur):
+    counts = {}
+    for table in TABLES:
+        counts[table] = cur.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+    return counts
+
+
+def generate(data_dir=DATA_DIR):
+    rng = random.Random(SEED)
+    data_dir = Path(data_dir)
+    data_dir.mkdir(parents=True, exist_ok=True)
+    db_path = data_dir / "licensing.db"
+    manifest_path = data_dir / "manifest.json"
+
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+    create_schema(cur)
+
+    contractor = build_contractor_data(rng)
+    liquor = build_liquor_data(rng)
+    alcohol = build_alcohol_data(rng)
+
+    table_rows = {
+        "policies": build_policy_rows(),
+        "contractor_applications": contractor["contractor_applications"],
+        "contractor_bonds": contractor["contractor_bonds"],
+        "contractor_insurance": contractor["contractor_insurance"],
+        "contractor_license_history": contractor["contractor_license_history"],
+        "contractor_violations": contractor["contractor_violations"],
+        "contractor_correspondence": contractor["contractor_correspondence"],
+        "contractor_inspections": contractor["contractor_inspections"],
+        "liquor_applications": liquor["liquor_applications"],
+        "liquor_settlements": liquor["liquor_settlements"],
+        "liquor_privileges": build_privilege_rows(),
+        "liquor_incidents": liquor["liquor_incidents"],
+        "liquor_site_evidence": liquor["liquor_site_evidence"],
+        "alcohol_licensees": alcohol["alcohol_licensees"],
+        "alcohol_violations": alcohol["alcohol_violations"],
+        "renewal_rules": build_renewal_rules(),
+    }
+
+    for table in TABLES:
+        insert_many(cur, table, table_rows[table])
+
+    conn.commit()
+    counts = count_rows(cur)
+    conn.close()
+
+    target_groups = {}
+    target_groups.update(contractor["manifest_targets"])
+    target_groups.update(liquor["manifest_targets"])
+    target_groups.update(alcohol["manifest_targets"])
+
+    manifest = {
+        "seed": SEED,
+        "generated_at": "2026-07-18T00:00:00Z",
+        "database": "data/licensing.db",
+        "sql_token": "licensing-review-019",
+        "state_mode": "read_only",
+        "target_groups": target_groups,
+        "counts": counts,
+        "notes": [
+            "Generated data is shared across contractor, liquor, and alcohol-renewal workflows.",
+            "Target groups are construction metadata for task builders, not public task endpoints.",
+            "Business endpoints expose normal domain tables with realistic distractors and stale/conflicting records.",
+        ],
+    }
+    with manifest_path.open("w", encoding="utf-8") as handle:
+        json.dump(manifest, handle, indent=2, sort_keys=True)
+        handle.write("\n")
+    return manifest
 
 
 if __name__ == "__main__":
-    main()
+    result = generate()
+    print(json.dumps({"database": str(DB_PATH), "counts": result["counts"]}, sort_keys=True))

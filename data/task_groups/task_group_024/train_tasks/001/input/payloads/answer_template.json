@@ -1,53 +1,250 @@
 {
-  "task_id": "train_001",
-  "product": "Identity Platform",
-  "quarter": "2025-Q4",
-  "as_of_date": "2025-12-31",
-  "eligible_work_item_ids": [],
-  "eligible_total": 0,
-  "bucket_rows": [
-    {
-      "category": "NewFeature",
-      "count": 0,
-      "actual_percentage": 0.0,
-      "target_percentage": 0.0,
-      "gap_basis_points": 0
-    },
-    {
-      "category": "TechDebt",
-      "count": 0,
-      "actual_percentage": 0.0,
-      "target_percentage": 0.0,
-      "gap_basis_points": 0
-    },
-    {
-      "category": "Reliability",
-      "count": 0,
-      "actual_percentage": 0.0,
-      "target_percentage": 0.0,
-      "gap_basis_points": 0
-    },
-    {
-      "category": "Security",
-      "count": 0,
-      "actual_percentage": 0.0,
-      "target_percentage": 0.0,
-      "gap_basis_points": 0
-    }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "train_001 portfolio mix answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scope",
+    "included_work_item_ids",
+    "category_counts",
+    "category_percentages",
+    "gap_table",
+    "under_invested_categories",
+    "follow_up_action",
+    "exclusion_flags"
   ],
-  "under_invested_categories": [],
-  "largest_negative_gap_category": null,
-  "follow_up_actions": [
-    {
-      "category": "NewFeature|TechDebt|Reliability|Security",
-      "action": "IncreaseAllocation",
-      "owner_team_id": "TEAM-ID"
+  "properties": {
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope_id",
+        "quarter",
+        "teams",
+        "product_areas",
+        "target_scope_id",
+        "total_included"
+      ],
+      "properties": {
+        "scope_id": {
+          "const": "train_001"
+        },
+        "quarter": {
+          "const": "2025-Q4"
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "Platform Core",
+              "Identity Services"
+            ]
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Sort team names alphabetically."
+        },
+        "product_areas": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "Atlas Backend",
+              "Identity"
+            ]
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Sort product areas alphabetically."
+        },
+        "target_scope_id": {
+          "const": "train_001"
+        },
+        "total_included": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "included_work_item_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^WI-24024-[A-Z]?[0-9]{3}$"
+      },
+      "description": "Use each included work item id once. Recommended ordering is closed_at ascending, then id ascending."
+    },
+    "category_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "NewFeature",
+        "TechDebt",
+        "Reliability",
+        "Security"
+      ],
+      "properties": {
+        "NewFeature": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "TechDebt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "Reliability": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "Security": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "description": "Counts are item counts, not story points."
+    },
+    "category_percentages": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "NewFeature",
+        "TechDebt",
+        "Reliability",
+        "Security"
+      ],
+      "properties": {
+        "NewFeature": {
+          "type": "number"
+        },
+        "TechDebt": {
+          "type": "number"
+        },
+        "Reliability": {
+          "type": "number"
+        },
+        "Security": {
+          "type": "number"
+        }
+      },
+      "description": "Actual mix percentages as percentage points rounded to 1 decimal place."
+    },
+    "gap_table": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "One row per category in this order: NewFeature, TechDebt, Reliability, Security. target_pct, actual_pct, and gap_pct are percentage points rounded to 1 decimal place. gap_pct = actual_pct - target_pct.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category",
+          "target_pct",
+          "actual_pct",
+          "gap_pct"
+        ],
+        "properties": {
+          "category": {
+            "enum": [
+              "NewFeature",
+              "TechDebt",
+              "Reliability",
+              "Security"
+            ]
+          },
+          "target_pct": {
+            "type": "number"
+          },
+          "actual_pct": {
+            "type": "number"
+          },
+          "gap_pct": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "under_invested_categories": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "NewFeature",
+          "TechDebt",
+          "Reliability",
+          "Security"
+        ]
+      },
+      "description": "Categories with negative gap_pct, ordered from most negative gap to least negative gap."
+    },
+    "follow_up_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "primary_category",
+        "secondary_category",
+        "rationale_code"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "REBALANCE_CAPACITY",
+            "INVESTIGATE_DATA_QUALITY",
+            "MAINTAIN_CURRENT_MIX"
+          ]
+        },
+        "primary_category": {
+          "enum": [
+            "NewFeature",
+            "TechDebt",
+            "Reliability",
+            "Security",
+            null
+          ]
+        },
+        "secondary_category": {
+          "enum": [
+            "NewFeature",
+            "TechDebt",
+            "Reliability",
+            "Security",
+            null
+          ]
+        },
+        "rationale_code": {
+          "enum": [
+            "LARGEST_NEGATIVE_GAP",
+            "NO_NEGATIVE_GAPS",
+            "DATA_CONFLICT"
+          ]
+        }
+      }
+    },
+    "exclusion_flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "excluded_duplicate_ids",
+        "excluded_cancelled_ids",
+        "ignored_mirror_status_and_legacy_category"
+      ],
+      "properties": {
+        "excluded_duplicate_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "In-scope records excluded because they are duplicates or point at another work item."
+        },
+        "excluded_cancelled_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "In-scope records excluded because they are cancelled."
+        },
+        "ignored_mirror_status_and_legacy_category": {
+          "const": true
+        }
+      }
     }
-  ],
-  "evidence_sample_ids": {
-    "NewFeature": [],
-    "TechDebt": [],
-    "Reliability": [],
-    "Security": []
   }
 }

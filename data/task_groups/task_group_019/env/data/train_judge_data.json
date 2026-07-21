@@ -1,0 +1,2761 @@
+{
+  "train_001": {
+    "points": [
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "C-TR1-001",
+            "path": [
+              "application_decisions",
+              0,
+              "application_id"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "C-TR1-002",
+            "path": [
+              "application_decisions",
+              1,
+              "application_id"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "C-TR1-003",
+            "path": [
+              "application_decisions",
+              2,
+              "application_id"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "C-TR1-004",
+            "path": [
+              "application_decisions",
+              3,
+              "application_id"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "C-TR1-005",
+            "path": [
+              "application_decisions",
+              4,
+              "application_id"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "C-TR1-006",
+            "path": [
+              "application_decisions",
+              5,
+              "application_id"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "C-TR1-007",
+            "path": [
+              "application_decisions",
+              6,
+              "application_id"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "C-TR1-008",
+            "path": [
+              "application_decisions",
+              7,
+              "application_id"
+            ]
+          }
+        ],
+        "id": "SP001",
+        "weight": 1
+      },
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              0,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              1,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "DENY",
+            "path": [
+              "application_decisions",
+              2,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              3,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "DENY",
+            "path": [
+              "application_decisions",
+              4,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              5,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              6,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              7,
+              "determination"
+            ]
+          }
+        ],
+        "id": "SP002",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "bond_shortfall",
+              "endorsement_missing",
+              "experience_shortfall"
+            ],
+            "path": [
+              "application_decisions",
+              0,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "endorsement_pending",
+              "inspection_doc_gap",
+              "insurance_expired"
+            ],
+            "path": [
+              "application_decisions",
+              1,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "active_suspension",
+              "inspection_safety_recheck",
+              "insurance_pending"
+            ],
+            "path": [
+              "application_decisions",
+              2,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "bond_cancelled"
+            ],
+            "path": [
+              "application_decisions",
+              3,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "endorsement_pending",
+              "experience_shortfall",
+              "insurance_shortfall",
+              "open_serious_violation"
+            ],
+            "path": [
+              "application_decisions",
+              4,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "experience_shortfall"
+            ],
+            "path": [
+              "application_decisions",
+              5,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "bond_shortfall",
+              "endorsement_missing",
+              "inspection_doc_gap",
+              "open_minor_violation"
+            ],
+            "path": [
+              "application_decisions",
+              6,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "endorsement_pending",
+              "insurance_expired"
+            ],
+            "path": [
+              "application_decisions",
+              7,
+              "deficiency_codes"
+            ]
+          }
+        ],
+        "id": "SP003",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "increase_bond_amount",
+              "obtain_required_endorsement",
+              "submit_experience_evidence"
+            ],
+            "path": [
+              "application_decisions",
+              0,
+              "required_actions"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "clear_document_gap",
+              "provide_current_insurance",
+              "verify_pending_endorsement"
+            ],
+            "path": [
+              "application_decisions",
+              1,
+              "required_actions"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "board_review_suspension",
+              "complete_safety_recheck",
+              "verify_insurance_binding"
+            ],
+            "path": [
+              "application_decisions",
+              2,
+              "required_actions"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "obtain_current_bond"
+            ],
+            "path": [
+              "application_decisions",
+              3,
+              "required_actions"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "increase_insurance_amount",
+              "resolve_serious_violation",
+              "submit_experience_evidence",
+              "verify_pending_endorsement"
+            ],
+            "path": [
+              "application_decisions",
+              4,
+              "required_actions"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "submit_experience_evidence"
+            ],
+            "path": [
+              "application_decisions",
+              5,
+              "required_actions"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "clear_document_gap",
+              "increase_bond_amount",
+              "obtain_required_endorsement",
+              "resolve_minor_violation_review"
+            ],
+            "path": [
+              "application_decisions",
+              6,
+              "required_actions"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "provide_current_insurance",
+              "verify_pending_endorsement"
+            ],
+            "path": [
+              "application_decisions",
+              7,
+              "required_actions"
+            ]
+          }
+        ],
+        "id": "SP004",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              0,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              1,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "application_decisions",
+              2,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              3,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "application_decisions",
+              4,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              5,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              6,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              7,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "C-TR1-003",
+              "C-TR1-005"
+            ],
+            "path": "summary.high_risk_application_ids"
+          }
+        ],
+        "id": "SP005",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "bool",
+            "expected": true,
+            "path": [
+              "application_decisions",
+              0,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": false,
+            "path": [
+              "application_decisions",
+              1,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": false,
+            "path": [
+              "application_decisions",
+              2,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": false,
+            "path": [
+              "application_decisions",
+              3,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": true,
+            "path": [
+              "application_decisions",
+              4,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": false,
+            "path": [
+              "application_decisions",
+              5,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": true,
+            "path": [
+              "application_decisions",
+              6,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": false,
+            "path": [
+              "application_decisions",
+              7,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "C-TR1-001",
+              "C-TR1-005",
+              "C-TR1-007"
+            ],
+            "path": "summary.policy_impacted_application_ids"
+          }
+        ],
+        "id": "SP006",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "number",
+            "expected": 0,
+            "path": "summary.approve_count"
+          },
+          {
+            "comparison": "number",
+            "expected": 6,
+            "path": "summary.hold_count"
+          },
+          {
+            "comparison": "number",
+            "expected": 2,
+            "path": "summary.deny_count"
+          }
+        ],
+        "id": "SP007",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "COR-C-TR1-001-1",
+              "COR-C-TR1-002-1",
+              "COR-C-TR1-004-1",
+              "COR-C-TR1-007-1"
+            ],
+            "path": "summary.stale_or_unverified_correspondence_ids"
+          }
+        ],
+        "id": "SP008",
+        "weight": 1
+      }
+    ]
+  },
+  "train_002": {
+    "points": [
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "request_follow_up",
+            "path": "recommended_posture"
+          }
+        ],
+        "id": "SP001",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "comparison": "bool",
+            "expected": true,
+            "path": "same_premises_basis_applies"
+          }
+        ],
+        "id": "SP002",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AFTER_HOURS",
+              "ASSAULT",
+              "MINOR_SALE",
+              "SALE_TO_MINOR",
+              "SAME_PREMISES"
+            ],
+            "path": "covered_risk_codes"
+          }
+        ],
+        "id": "SP003",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "CONTROL_SIGNAGE_CONFLICTING",
+              "CONTROL_SIGNAGE_CURRENT_MISSING",
+              "OPEN_INCIDENT_FOLLOW_UP",
+              "POLICE_MEMO_CONFLICTING"
+            ],
+            "path": "verification_gap_codes"
+          }
+        ],
+        "id": "SP004",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "FOOD_SERVICE",
+              "HOURS",
+              "ID_CHECK"
+            ],
+            "path": "standard_obligation_codes"
+          }
+        ],
+        "id": "SP005",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "CCTV",
+              "HOURS",
+              "SECURITY"
+            ],
+            "path": "location_specific_control_codes"
+          }
+        ],
+        "id": "SP006",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              {
+                "check_code": "after_hours_visit",
+                "timing": "days_31_60"
+              },
+              {
+                "check_code": "control_signage_recheck",
+                "timing": "first_30_days"
+              },
+              {
+                "check_code": "id_check_observation",
+                "timing": "first_30_days"
+              },
+              {
+                "check_code": "police_memo_follow_up",
+                "timing": "first_30_days"
+              },
+              {
+                "check_code": "security_cctv_walkthrough",
+                "timing": "first_30_days"
+              }
+            ],
+            "path": "first_90_day_plan"
+          }
+        ],
+        "id": "SP007",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AFTER_HOURS_VIOLATION",
+              "CONTROL_SIGNAGE_NOT_VERIFIED",
+              "MAJOR_INCIDENT_REPORTED",
+              "REFERRED_MINOR_SALE_UNRESOLVED",
+              "SECURITY_CCTV_CONTROL_FAILURE"
+            ],
+            "path": "escalation_trigger_codes"
+          }
+        ],
+        "id": "SP008",
+        "weight": 1
+      }
+    ]
+  },
+  "train_003": {
+    "points": [
+      {
+        "checks": [
+          {
+            "comparison": "number",
+            "expected": 1,
+            "path": [
+              "queue",
+              0,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 2,
+            "path": [
+              "queue",
+              1,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 3,
+            "path": [
+              "queue",
+              2,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 4,
+            "path": [
+              "queue",
+              3,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 5,
+            "path": [
+              "queue",
+              4,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 6,
+            "path": [
+              "queue",
+              5,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 7,
+            "path": [
+              "queue",
+              6,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 8,
+            "path": [
+              "queue",
+              7,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 9,
+            "path": [
+              "queue",
+              8,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 10,
+            "path": [
+              "queue",
+              9,
+              "rank"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-007",
+            "path": [
+              "queue",
+              0,
+              "license_no"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-006",
+            "path": [
+              "queue",
+              1,
+              "license_no"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-008",
+            "path": [
+              "queue",
+              2,
+              "license_no"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-002",
+            "path": [
+              "queue",
+              3,
+              "license_no"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-005",
+            "path": [
+              "queue",
+              4,
+              "license_no"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-009",
+            "path": [
+              "queue",
+              5,
+              "license_no"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-004",
+            "path": [
+              "queue",
+              6,
+              "license_no"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-010",
+            "path": [
+              "queue",
+              7,
+              "license_no"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-003",
+            "path": [
+              "queue",
+              8,
+              "license_no"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "AL-TR3-001",
+            "path": [
+              "queue",
+              9,
+              "license_no"
+            ]
+          }
+        ],
+        "id": "SP001",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "comparison": "number",
+            "expected": 3,
+            "path": [
+              "queue",
+              0,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 3,
+            "path": [
+              "queue",
+              1,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 4,
+            "path": [
+              "queue",
+              2,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 4,
+            "path": [
+              "queue",
+              3,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 4,
+            "path": [
+              "queue",
+              4,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 2,
+            "path": [
+              "queue",
+              5,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 3,
+            "path": [
+              "queue",
+              6,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 3,
+            "path": [
+              "queue",
+              7,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 2,
+            "path": [
+              "queue",
+              8,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "number",
+            "expected": 3,
+            "path": [
+              "queue",
+              9,
+              "violation_count"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2025-04-05",
+            "path": [
+              "queue",
+              0,
+              "most_recent_violation_date"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2025-03-30",
+            "path": [
+              "queue",
+              1,
+              "most_recent_violation_date"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2025-02-21",
+            "path": [
+              "queue",
+              2,
+              "most_recent_violation_date"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2025-03-31",
+            "path": [
+              "queue",
+              3,
+              "most_recent_violation_date"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2025-03-26",
+            "path": [
+              "queue",
+              4,
+              "most_recent_violation_date"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2024-12-28",
+            "path": [
+              "queue",
+              5,
+              "most_recent_violation_date"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2024-12-25",
+            "path": [
+              "queue",
+              6,
+              "most_recent_violation_date"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2025-03-06",
+            "path": [
+              "queue",
+              7,
+              "most_recent_violation_date"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2025-02-09",
+            "path": [
+              "queue",
+              8,
+              "most_recent_violation_date"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "2024-12-24",
+            "path": [
+              "queue",
+              9,
+              "most_recent_violation_date"
+            ]
+          }
+        ],
+        "id": "SP002",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-007-1",
+              "AV-AL-TR3-007-3",
+              "AV-AL-TR3-007-2"
+            ],
+            "path": [
+              "queue",
+              0,
+              "matched_violation_ids"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-006-1",
+              "AV-AL-TR3-OLD-006-S2",
+              "AV-AL-TR3-OLD-006-S1"
+            ],
+            "path": [
+              "queue",
+              1,
+              "matched_violation_ids"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-008-1",
+              "AV-AL-TR3-008-3",
+              "AV-AL-TR3-008-2",
+              "AV-AL-TR3-008-4"
+            ],
+            "path": [
+              "queue",
+              2,
+              "matched_violation_ids"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-002-2",
+              "AV-AL-TR3-002-3",
+              "AV-AL-TR3-002-4",
+              "AV-AL-TR3-002-1"
+            ],
+            "path": [
+              "queue",
+              3,
+              "matched_violation_ids"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-005-3",
+              "AV-AL-TR3-005-4",
+              "AV-AL-TR3-005-1",
+              "AV-AL-TR3-005-2"
+            ],
+            "path": [
+              "queue",
+              4,
+              "matched_violation_ids"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-009-1",
+              "AV-AL-TR3-009-2"
+            ],
+            "path": [
+              "queue",
+              5,
+              "matched_violation_ids"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-004-1",
+              "AV-AL-TR3-004-3",
+              "AV-AL-TR3-004-2"
+            ],
+            "path": [
+              "queue",
+              6,
+              "matched_violation_ids"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-010-2",
+              "AV-AL-TR3-010-1",
+              "AV-AL-TR3-010-3"
+            ],
+            "path": [
+              "queue",
+              7,
+              "matched_violation_ids"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-003-2",
+              "AV-AL-TR3-003-1"
+            ],
+            "path": [
+              "queue",
+              8,
+              "matched_violation_ids"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-001-3",
+              "AV-AL-TR3-001-1",
+              "AV-AL-TR3-001-2"
+            ],
+            "path": [
+              "queue",
+              9,
+              "matched_violation_ids"
+            ]
+          }
+        ],
+        "id": "SP003",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "exact",
+            "path": [
+              "queue",
+              0,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "close_address",
+            "path": [
+              "queue",
+              1,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "exact",
+            "path": [
+              "queue",
+              2,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "exact",
+            "path": [
+              "queue",
+              3,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "exact",
+            "path": [
+              "queue",
+              4,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "exact",
+            "path": [
+              "queue",
+              5,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "exact",
+            "path": [
+              "queue",
+              6,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "exact",
+            "path": [
+              "queue",
+              7,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "exact",
+            "path": [
+              "queue",
+              8,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "exact",
+            "path": [
+              "queue",
+              9,
+              "match_confidence"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AL-TR3-006"
+            ],
+            "path": "summary.close_or_uncertain_match_license_numbers"
+          }
+        ],
+        "id": "SP004",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "board_review",
+            "path": [
+              "queue",
+              0,
+              "next_step_label"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "board_review",
+            "path": [
+              "queue",
+              1,
+              "next_step_label"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "board_review",
+            "path": [
+              "queue",
+              2,
+              "next_step_label"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "manual_fine_check",
+            "path": [
+              "queue",
+              3,
+              "next_step_label"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "manual_fine_check",
+            "path": [
+              "queue",
+              4,
+              "next_step_label"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "manual_fine_check",
+            "path": [
+              "queue",
+              5,
+              "next_step_label"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "manual_fine_check",
+            "path": [
+              "queue",
+              6,
+              "next_step_label"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "manual_ALERT_check",
+            "path": [
+              "queue",
+              7,
+              "next_step_label"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "manual_ALERT_check",
+            "path": [
+              "queue",
+              8,
+              "next_step_label"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "manual_ALERT_check",
+            "path": [
+              "queue",
+              9,
+              "next_step_label"
+            ]
+          }
+        ],
+        "id": "SP005",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AV-AL-TR3-001-LATE",
+              "AV-AL-TR3-002-LATE",
+              "AV-AL-TR3-003-LATE",
+              "AV-AL-TR3-004-LATE",
+              "AV-AL-TR3-005-LATE",
+              "AV-AL-TR3-006-LATE",
+              "AV-AL-TR3-007-LATE",
+              "AV-AL-TR3-008-LATE",
+              "AV-AL-TR3-009-LATE",
+              "AV-AL-TR3-010-LATE"
+            ],
+            "path": "summary.post_boundary_violation_ids_excluded"
+          }
+        ],
+        "id": "SP006",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "queue",
+              0,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "queue",
+              1,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "queue",
+              2,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "queue",
+              3,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "queue",
+              4,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "queue",
+              5,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "queue",
+              6,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "queue",
+              7,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "queue",
+              8,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "queue",
+              9,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "AL-TR3-006",
+              "AL-TR3-007",
+              "AL-TR3-008"
+            ],
+            "path": "summary.board_review_license_numbers"
+          }
+        ],
+        "id": "SP007",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "number",
+            "expected": 10,
+            "path": "summary.queue_size"
+          },
+          {
+            "comparison": "exact",
+            "expected": "2025-04-10",
+            "path": "summary.boundary_date"
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 07",
+            "path": [
+              "queue",
+              0,
+              "facility_name"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 06",
+            "path": [
+              "queue",
+              1,
+              "facility_name"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 08",
+            "path": [
+              "queue",
+              2,
+              "facility_name"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 02",
+            "path": [
+              "queue",
+              3,
+              "facility_name"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 05",
+            "path": [
+              "queue",
+              4,
+              "facility_name"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 09",
+            "path": [
+              "queue",
+              5,
+              "facility_name"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 04",
+            "path": [
+              "queue",
+              6,
+              "facility_name"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 10",
+            "path": [
+              "queue",
+              7,
+              "facility_name"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 03",
+            "path": [
+              "queue",
+              8,
+              "facility_name"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "Train 003 Facility 01",
+            "path": [
+              "queue",
+              9,
+              "facility_name"
+            ]
+          }
+        ],
+        "id": "SP008",
+        "weight": 1
+      }
+    ]
+  },
+  "train_004": {
+    "points": [
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              0,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              1,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "DENY",
+            "path": [
+              "application_decisions",
+              2,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "APPROVE",
+            "path": [
+              "application_decisions",
+              3,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              4,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "HOLD",
+            "path": [
+              "application_decisions",
+              5,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "DENY",
+            "path": [
+              "application_decisions",
+              6,
+              "determination"
+            ]
+          }
+        ],
+        "id": "SP001",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "allowed_values": [
+              "no_active_bond",
+              "bond_shortfall",
+              "insurance_not_current",
+              "insurance_expired",
+              "insurance_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "insurance_not_current"
+            ],
+            "path": [
+              "application_decisions",
+              0,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "file_active_bond",
+              "increase_bond",
+              "provide_current_insurance",
+              "renew_insurance",
+              "increase_insurance"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "provide_current_insurance"
+            ],
+            "path": [
+              "application_decisions",
+              0,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "no_active_bond",
+              "bond_shortfall",
+              "insurance_not_current",
+              "insurance_expired",
+              "insurance_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "no_active_bond"
+            ],
+            "path": [
+              "application_decisions",
+              1,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "file_active_bond",
+              "increase_bond",
+              "provide_current_insurance",
+              "renew_insurance",
+              "increase_insurance"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "file_active_bond"
+            ],
+            "path": [
+              "application_decisions",
+              1,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "no_active_bond",
+              "bond_shortfall",
+              "insurance_not_current",
+              "insurance_expired",
+              "insurance_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "insurance_shortfall"
+            ],
+            "path": [
+              "application_decisions",
+              2,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "file_active_bond",
+              "increase_bond",
+              "provide_current_insurance",
+              "renew_insurance",
+              "increase_insurance"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "increase_insurance"
+            ],
+            "path": [
+              "application_decisions",
+              2,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "no_active_bond",
+              "bond_shortfall",
+              "insurance_not_current",
+              "insurance_expired",
+              "insurance_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              3,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "file_active_bond",
+              "increase_bond",
+              "provide_current_insurance",
+              "renew_insurance",
+              "increase_insurance"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              3,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "no_active_bond",
+              "bond_shortfall",
+              "insurance_not_current",
+              "insurance_expired",
+              "insurance_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "bond_shortfall"
+            ],
+            "path": [
+              "application_decisions",
+              4,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "file_active_bond",
+              "increase_bond",
+              "provide_current_insurance",
+              "renew_insurance",
+              "increase_insurance"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "increase_bond"
+            ],
+            "path": [
+              "application_decisions",
+              4,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "no_active_bond",
+              "bond_shortfall",
+              "insurance_not_current",
+              "insurance_expired",
+              "insurance_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "insurance_expired"
+            ],
+            "path": [
+              "application_decisions",
+              5,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "file_active_bond",
+              "increase_bond",
+              "provide_current_insurance",
+              "renew_insurance",
+              "increase_insurance"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "renew_insurance"
+            ],
+            "path": [
+              "application_decisions",
+              5,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "no_active_bond",
+              "bond_shortfall",
+              "insurance_not_current",
+              "insurance_expired",
+              "insurance_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "insurance_not_current"
+            ],
+            "path": [
+              "application_decisions",
+              6,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "file_active_bond",
+              "increase_bond",
+              "provide_current_insurance",
+              "renew_insurance",
+              "increase_insurance"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "provide_current_insurance"
+            ],
+            "path": [
+              "application_decisions",
+              6,
+              "required_actions"
+            ]
+          }
+        ],
+        "id": "SP002",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "allowed_values": [
+              "endorsement_not_verified",
+              "experience_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              0,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "verify_endorsement",
+              "document_experience"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              0,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "endorsement_not_verified",
+              "experience_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "endorsement_not_verified",
+              "experience_shortfall"
+            ],
+            "path": [
+              "application_decisions",
+              1,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "verify_endorsement",
+              "document_experience"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "document_experience",
+              "verify_endorsement"
+            ],
+            "path": [
+              "application_decisions",
+              1,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "endorsement_not_verified",
+              "experience_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "endorsement_not_verified",
+              "experience_shortfall"
+            ],
+            "path": [
+              "application_decisions",
+              2,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "verify_endorsement",
+              "document_experience"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "document_experience",
+              "verify_endorsement"
+            ],
+            "path": [
+              "application_decisions",
+              2,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "endorsement_not_verified",
+              "experience_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              3,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "verify_endorsement",
+              "document_experience"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              3,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "endorsement_not_verified",
+              "experience_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "endorsement_not_verified"
+            ],
+            "path": [
+              "application_decisions",
+              4,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "verify_endorsement",
+              "document_experience"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "verify_endorsement"
+            ],
+            "path": [
+              "application_decisions",
+              4,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "endorsement_not_verified",
+              "experience_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "endorsement_not_verified"
+            ],
+            "path": [
+              "application_decisions",
+              5,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "verify_endorsement",
+              "document_experience"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "verify_endorsement"
+            ],
+            "path": [
+              "application_decisions",
+              5,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "endorsement_not_verified",
+              "experience_shortfall"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "experience_shortfall"
+            ],
+            "path": [
+              "application_decisions",
+              6,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "verify_endorsement",
+              "document_experience"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "document_experience"
+            ],
+            "path": [
+              "application_decisions",
+              6,
+              "required_actions"
+            ]
+          }
+        ],
+        "id": "SP003",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "allowed_values": [
+              "active_suspension",
+              "unresolved_serious_complaint"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              0,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "clear_suspension",
+              "resolve_complaint",
+              "board_review"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              0,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "active_suspension",
+              "unresolved_serious_complaint"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              1,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "clear_suspension",
+              "resolve_complaint",
+              "board_review"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              1,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "active_suspension",
+              "unresolved_serious_complaint"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "unresolved_serious_complaint"
+            ],
+            "path": [
+              "application_decisions",
+              2,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "clear_suspension",
+              "resolve_complaint",
+              "board_review"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "board_review",
+              "resolve_complaint"
+            ],
+            "path": [
+              "application_decisions",
+              2,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "active_suspension",
+              "unresolved_serious_complaint"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              3,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "clear_suspension",
+              "resolve_complaint",
+              "board_review"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              3,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "active_suspension",
+              "unresolved_serious_complaint"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              4,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "clear_suspension",
+              "resolve_complaint",
+              "board_review"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              4,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "active_suspension",
+              "unresolved_serious_complaint"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              5,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "clear_suspension",
+              "resolve_complaint",
+              "board_review"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [],
+            "path": [
+              "application_decisions",
+              5,
+              "required_actions"
+            ]
+          },
+          {
+            "allowed_values": [
+              "active_suspension",
+              "unresolved_serious_complaint"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "active_suspension"
+            ],
+            "path": [
+              "application_decisions",
+              6,
+              "deficiency_codes"
+            ]
+          },
+          {
+            "allowed_values": [
+              "clear_suspension",
+              "resolve_complaint",
+              "board_review"
+            ],
+            "comparison": "filtered_set_equals",
+            "expected": [
+              "board_review",
+              "clear_suspension"
+            ],
+            "path": [
+              "application_decisions",
+              6,
+              "required_actions"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "DENY",
+            "path": [
+              "application_decisions",
+              2,
+              "determination"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "DENY",
+            "path": [
+              "application_decisions",
+              6,
+              "determination"
+            ]
+          }
+        ],
+        "id": "SP004",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              0,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              1,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "application_decisions",
+              2,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "low",
+            "path": [
+              "application_decisions",
+              3,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              4,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "medium",
+            "path": [
+              "application_decisions",
+              5,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "exact",
+            "expected": "high",
+            "path": [
+              "application_decisions",
+              6,
+              "risk_tier"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "C-TR4-003",
+              "C-TR4-007"
+            ],
+            "path": "summary.high_risk_application_ids"
+          }
+        ],
+        "id": "SP005",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "bool",
+            "expected": false,
+            "path": [
+              "application_decisions",
+              0,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": true,
+            "path": [
+              "application_decisions",
+              1,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": true,
+            "path": [
+              "application_decisions",
+              2,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": false,
+            "path": [
+              "application_decisions",
+              3,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": true,
+            "path": [
+              "application_decisions",
+              4,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": true,
+            "path": [
+              "application_decisions",
+              5,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "bool",
+            "expected": false,
+            "path": [
+              "application_decisions",
+              6,
+              "policy_impacted"
+            ]
+          },
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "C-TR4-002",
+              "C-TR4-003",
+              "C-TR4-005",
+              "C-TR4-006"
+            ],
+            "path": "summary.policy_impacted_application_ids"
+          }
+        ],
+        "id": "SP006",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "number",
+            "expected": 1,
+            "path": "summary.approve_count"
+          },
+          {
+            "comparison": "number",
+            "expected": 4,
+            "path": "summary.hold_count"
+          },
+          {
+            "comparison": "number",
+            "expected": 2,
+            "path": "summary.deny_count"
+          }
+        ],
+        "id": "SP007",
+        "weight": 1
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "COR-C-TR4-002-1",
+              "COR-C-TR4-005-1",
+              "COR-DIS-0114",
+              "COR-DIS-0117"
+            ],
+            "path": "summary.stale_or_unverified_correspondence_ids"
+          }
+        ],
+        "id": "SP008",
+        "weight": 1
+      }
+    ]
+  },
+  "train_005": {
+    "points": [
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": "L-TR5-001",
+            "path": "application_id"
+          },
+          {
+            "comparison": "exact",
+            "expected": "request_follow_up",
+            "path": "recommended_posture"
+          }
+        ],
+        "id": "SP001",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "comparison": "bool",
+            "expected": true,
+            "path": "same_premises_basis_applies"
+          }
+        ],
+        "id": "SP002",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "NOISE",
+              "PATIO_BOUNDARY"
+            ],
+            "path": "covered_risk_codes"
+          }
+        ],
+        "id": "SP003",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "camera_evidence_missing",
+              "food_service_evidence_missing",
+              "floor_plan_conflicting",
+              "late_night_monitoring_needed",
+              "tax_hold_unresolved"
+            ],
+            "path": "verification_gap_codes"
+          }
+        ],
+        "id": "SP004",
+        "weight": 3
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "ID_CHECK",
+              "HOURS",
+              "FOOD_SERVICE"
+            ],
+            "path": "standard_obligation_codes"
+          }
+        ],
+        "id": "SP005",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "NOISE",
+              "PATIO"
+            ],
+            "path": "location_specific_control_codes"
+          }
+        ],
+        "id": "SP006",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "exact",
+            "expected": [
+              {
+                "check_code": "camera_export_test",
+                "timing": "first_30_days"
+              },
+              {
+                "check_code": "food_service_service_area_check",
+                "timing": "first_30_days"
+              },
+              {
+                "check_code": "late_night_closing_visit",
+                "timing": "days_31_60"
+              },
+              {
+                "check_code": "noise_patio_boundary_check",
+                "timing": "days_61_90"
+              }
+            ],
+            "path": "first_90_day_plan"
+          }
+        ],
+        "id": "SP007",
+        "weight": 2
+      },
+      {
+        "checks": [
+          {
+            "comparison": "set_equals",
+            "expected": [
+              "after_hours_service",
+              "missing_camera_coverage",
+              "footage_not_produced",
+              "food_service_not_available",
+              "noise_or_patio_breach",
+              "open_tax_hold_uncleared"
+            ],
+            "path": "escalation_trigger_codes"
+          }
+        ],
+        "id": "SP008",
+        "weight": 2
+      }
+    ]
+  }
+}

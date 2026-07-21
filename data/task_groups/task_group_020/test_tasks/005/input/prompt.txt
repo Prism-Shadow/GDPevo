@@ -1,7 +1,9 @@
-You are supporting Aster Legal Deal Desk on a buyer-side minority rollover stock purchase.
+You are counsel for Rook Mobility plc preparing a negotiation-priority matrix for Project Rook (`PRJ_ROOK`).
 
-Use the shared Aster Legal Deal Desk Web/API environment at <TASK_ENV_BASE_URL>. Work on deal `D-SOLSTICE-820` only. The deal room contains the current deal profile, active and stale documents, clause records, risk-allocation policy, approval records, and search pages for the transaction.
+Use the deal workbench at `<TASK_ENV_BASE_URL>` to review the deal record, current draft terms, M&A Committee policy thresholds, benchmarks, cap table, regulatory records, consent records, material contracts, risk estimates, documents, and negotiation notes. You may use the web UI or the documented API routes. If read-only SQL access is available, use `POST /api/query` with token `deal-workbench-readonly`.
 
-Please prepare the final structured drafting and risk-allocation JSON for the Solstice deal team, including deal terms, controlling risk-allocation sources, clause-level override positions, approval routing, and final signing posture. Return a single JSON object that matches `input/payloads/answer_template.json`.
+Prepare a JSON answer that conforms to `input/payloads/answer_template.json`.
 
-Use normalized integer U.S. dollars, decimal percentages, controlled enum values from the template, and the required list ordering. Do not include narrative memo text outside the JSON.
+Business task: prepare the committee negotiation-priority matrix for the current PRJ_ROOK draft. Use the template's categories, fields, and aggregate sections to decide which current terms require committee waiver or negotiation direction, which records are noncommittee distractors, and how to present the policy comparisons, recommendations, priority sequence, deal-certainty context, and final posture.
+
+Use integer dollars, integer shares, percent points to two decimals, and dates in `YYYY-MM-DD` format. Return only valid JSON.

@@ -1,295 +1,192 @@
 {
-  "schema_name": "custodian_production_issue_review",
+  "schema_name": "briargate_sec_custodian_issue_packet",
   "schema_version": "1.0",
-  "format": "JSON object only",
-  "required_top_level_keys_in_order": [
+  "output_rule": "Return exactly one JSON object. Do not include markdown, comments, or prose outside the JSON.",
+  "top_level_required_keys": [
     "matter_id",
-    "custodian_id",
-    "overall_status",
-    "notice_recommended",
-    "issue_findings",
-    "privilege_actions",
-    "attachment_failures",
-    "ranked_escalations"
+    "custodian_issues",
+    "unrecovered_files",
+    "privilege_defects",
+    "substantive_red_flags",
+    "metrics",
+    "recommended_actions"
   ],
   "field_definitions": {
     "matter_id": {
       "type": "string",
-      "description": "Matter identifier under review."
+      "description": "Matter identifier from the review scope."
     },
-    "custodian_id": {
-      "type": "string",
-      "description": "Custodian identifier under review."
-    },
-    "overall_status": {
-      "type": "enum",
-      "allowed_values": [
-        "ready",
-        "blocked",
-        "needs_escalation"
+    "custodian_issues": {
+      "type": "list<object>",
+      "ordering": "Sort by priority severity, then source_id ascending.",
+      "object_required_keys": [
+        "source_id",
+        "custodian",
+        "source_type",
+        "status",
+        "risk_class",
+        "event_date",
+        "category_impacts",
+        "priority",
+        "recommended_action"
       ]
     },
-    "notice_recommended": {
-      "type": "boolean",
-      "description": "Whether the review recommends escalation for possible regulator or opposing-party notice."
-    },
-    "issue_findings": {
+    "unrecovered_files": {
       "type": "list<object>",
-      "ordering": "Sort by issue_id in ascending lexicographic order.",
-      "required_object_keys_in_order": [
-        "issue_id",
-        "present",
-        "issue_type",
-        "severity",
-        "timing_class",
-        "category_ids",
-        "affected_count",
-        "recovered_count",
-        "unrecovered_count",
-        "primary_action",
-        "secondary_actions",
-        "notice_recommended"
-      ],
-      "object_fields": {
-        "issue_id": {
-          "type": "enum",
-          "allowed_values": [
-            "archive_gap",
-            "attachment_failure",
-            "date_range_gap",
-            "duplicate_alias",
-            "laptop_wipe",
-            "personal_email_gap",
-            "privilege_miscoding",
-            "privilege_overdesignation",
-            "privilege_waiver",
-            "retention_policy_gap",
-            "shared_drive_deletion",
-            "stale_review_coding",
-            "unlogged_privilege"
-          ]
-        },
-        "present": {
-          "type": "boolean"
-        },
-        "issue_type": {
-          "type": "enum",
-          "allowed_values": [
-            "collection_gap",
-            "device_wipe",
-            "processing_failure",
-            "privilege_protocol_defect",
-            "review_coding_error",
-            "source_deletion",
-            "third_party_forward",
-            "uncollected_source"
-          ]
-        },
-        "severity": {
-          "type": "enum",
-          "allowed_values": [
-            "critical",
-            "high",
-            "medium",
-            "low"
-          ]
-        },
-        "timing_class": {
-          "type": "enum",
-          "allowed_values": [
-            "post_hold_spoliation",
-            "uncollected_source",
-            "privilege_waiver",
-            "privilege_protocol_defect",
-            "coding_error",
-            "processing_exception",
-            "not_applicable"
-          ]
-        },
-        "category_ids": {
-          "type": "list<string>",
-          "ordering": "Sort category IDs ascending."
-        },
-        "affected_count": {
-          "type": "integer",
-          "units": "records_or_sources"
-        },
-        "recovered_count": {
-          "type": "integer",
-          "units": "records_or_sources"
-        },
-        "unrecovered_count": {
-          "type": "integer",
-          "units": "records_or_sources"
-        },
-        "primary_action": {
-          "type": "enum",
-          "allowed_values": [
-            "clawback_check",
-            "custodian_declaration",
-            "forensic_recovery",
-            "hold_refresh",
-            "no_action",
-            "privilege_review",
-            "regulator_notice",
-            "reprocess_qc",
-            "supplemental_collection",
-            "waiver_assessment"
-          ]
-        },
-        "secondary_actions": {
-          "type": "list<enum>",
-          "allowed_values": [
-            "clawback_check",
-            "custodian_declaration",
-            "forensic_recovery",
-            "hold_refresh",
-            "privilege_log_correction",
-            "privilege_review",
-            "produce_business_only",
-            "regulator_notice",
-            "reprocess_qc",
-            "supplemental_collection",
-            "waiver_assessment"
-          ],
-          "ordering": "Sort action enums ascending."
-        },
-        "notice_recommended": {
-          "type": "boolean"
-        }
-      }
+      "ordering": "Sort by doc_id ascending.",
+      "object_required_keys": [
+        "event_id",
+        "doc_id",
+        "file_class",
+        "recovery_status",
+        "category_impacts",
+        "priority"
+      ]
     },
-    "privilege_actions": {
-      "type": "object",
-      "required_keys_in_order": [
-        "waiver_forward",
-        "overdesignation_review",
-        "miscoding_clawback"
-      ],
-      "common_fields": {
-        "record_count": {
-          "type": "integer"
-        },
-        "category_ids": {
-          "type": "list<string>",
-          "ordering": "Sort category IDs ascending."
-        },
-        "action": {
-          "type": "enum",
-          "allowed_values": [
-            "clawback_check",
-            "privilege_review",
-            "produce_business_only",
-            "waiver_assessment"
-          ]
-        }
-      },
-      "specific_fields": {
-        "waiver_forward": {
-          "waiver_risk": "boolean",
-          "recipient_role": {
-            "type": "enum",
-            "allowed_values": [
-              "outside_banker",
-              "outside_consultant",
-              "opposing_party",
-              "vendor",
-              "unknown"
-            ]
-          }
-        },
-        "overdesignation_review": {
-          "overdesignation_flag": "boolean",
-          "privilege_status": {
-            "type": "enum",
-            "allowed_values": [
-              "business_only",
-              "counsel_communications",
-              "privileged_investigation",
-              "work_product"
-            ]
-          }
-        },
-        "miscoding_clawback": {
-          "first_pass_coding": {
-            "type": "enum",
-            "allowed_values": [
-              "non_privileged",
-              "privileged",
-              "unknown"
-            ]
-          },
-          "production_status": {
-            "type": "enum",
-            "allowed_values": [
-              "produced",
-              "withheld",
-              "redacted",
-              "not_produced"
-            ]
-          },
-          "clawback_required": "boolean"
-        }
-      }
-    },
-    "attachment_failures": {
-      "type": "object",
-      "required_keys_in_order": [
-        "total_failed",
-        "password_protected",
-        "corrupt",
-        "category_ids",
-        "primary_action"
-      ],
-      "field_types": {
-        "total_failed": "integer",
-        "password_protected": "integer",
-        "corrupt": "integer",
-        "category_ids": "list<string>",
-        "primary_action": "enum"
-      }
-    },
-    "ranked_escalations": {
+    "privilege_defects": {
       "type": "list<object>",
-      "ordering": "Sort by rank ascending; ranks must be consecutive integers starting at 1.",
-      "required_object_keys_in_order": [
+      "ordering": "Sort by priority severity, then defect_id ascending.",
+      "object_required_keys": [
+        "defect_id",
+        "defect_type",
+        "doc_count",
+        "third_party",
+        "priority",
+        "recommended_action"
+      ]
+    },
+    "substantive_red_flags": {
+      "type": "list<object>",
+      "ordering": "Sort by doc_id ascending.",
+      "object_required_keys": [
+        "doc_id",
+        "red_flag_type",
+        "category_impacts",
+        "priority",
+        "recommended_action"
+      ]
+    },
+    "metrics": {
+      "type": "object",
+      "required_keys": [
+        "sync_folder_event_id",
+        "sync_folder_deleted_count",
+        "sync_folder_recovered_count",
+        "sync_folder_unrecovered_count",
+        "sync_folder_affected_categories",
+        "unrecovered_investigation_relevant_file_count",
+        "personal_account_gap_count",
+        "privileged_forwarded_count",
+        "over_designated_count",
+        "miscoded_privileged_count"
+      ],
+      "numeric_precision": "All counts are integers."
+    },
+    "recommended_actions": {
+      "type": "list<object>",
+      "ordering": "Sort by rank ascending. Rank 1 is the most urgent action.",
+      "object_required_keys": [
         "rank",
-        "issue_id",
-        "escalation_target",
-        "primary_action"
+        "target_id",
+        "action_type",
+        "owner",
+        "priority",
+        "due_days"
       ],
-      "object_fields": {
-        "rank": {
-          "type": "integer"
-        },
-        "issue_id": {
-          "type": "enum",
-          "allowed_values_ref": "issue_findings.issue_id"
-        },
-        "escalation_target": {
-          "type": "enum",
-          "allowed_values": [
-            "case_team",
-            "client_it",
-            "client_legal",
-            "forensic_vendor",
-            "privilege_team",
-            "regulator_notice_review",
-            "review_vendor"
-          ]
-        },
-        "primary_action": {
-          "type": "enum",
-          "allowed_values_ref": "issue_findings.primary_action"
-        }
-      }
+      "numeric_precision": "rank and due_days are integers."
     }
   },
-  "normalization_rules": [
-    "Use exact enum casing shown in this template.",
-    "Use integer counts only.",
-    "Sort category_ids and secondary_actions ascending.",
-    "Sort issue_findings by issue_id ascending.",
-    "Sort ranked_escalations by rank ascending."
-  ]
+  "allowed_enums": {
+    "source_type": [
+      "laptop",
+      "desktop",
+      "network_share",
+      "personal_email",
+      "mobile_device",
+      "cloud_folder",
+      "other"
+    ],
+    "status": [
+      "collected",
+      "partial",
+      "pending",
+      "lost",
+      "uncollected",
+      "recovered",
+      "unrecovered",
+      "unknown"
+    ],
+    "risk_class": [
+      "post_hold_preservation_failure",
+      "collection_gap",
+      "recovery_gap",
+      "privilege_defect",
+      "qc_coding_defect",
+      "substantive_red_flag",
+      "informational"
+    ],
+    "file_class": [
+      "valuation_workpaper",
+      "investor_communication",
+      "custodian_export",
+      "business_record",
+      "other"
+    ],
+    "recovery_status": [
+      "recovered",
+      "unrecovered",
+      "partially_recovered"
+    ],
+    "defect_type": [
+      "third_party_waiver",
+      "over_designation",
+      "privileged_coded_nonprivileged",
+      "incomplete_log",
+      "other_privilege_defect"
+    ],
+    "red_flag_type": [
+      "valuation_back_into",
+      "unsupported_valuation_mark",
+      "valuation_workpaper_gap",
+      "other_valuation_red_flag"
+    ],
+    "priority": [
+      "critical",
+      "high",
+      "medium",
+      "low"
+    ],
+    "recommended_action": [
+      "disclose_preservation_issue_and_pursue_forensics",
+      "collect_or_certify_unavailable",
+      "document_unrecovered_files_and_notify_counsel",
+      "waiver_analysis_and_disclosure_position",
+      "downgrade_overdesignated_business_docs",
+      "privilege_recode_and_clawback_assessment",
+      "escalate_valuation_red_flags",
+      "monitor_only"
+    ],
+    "action_type": [
+      "forensic_recovery_and_sec_disclosure_review",
+      "personal_account_collection",
+      "privilege_waiver_review",
+      "privilege_recode",
+      "overdesignation_cleanup",
+      "valuation_red_flag_escalation",
+      "status_monitoring"
+    ],
+    "owner": [
+      "ediscovery_counsel",
+      "forensics_team",
+      "privilege_counsel",
+      "review_qc_lead",
+      "investigation_team"
+    ]
+  },
+  "normalization_notes": {
+    "ids": "Use stable IDs exactly as shown in the review hub.",
+    "dates": "Use ISO 8601 date strings as YYYY-MM-DD, or null when no event date is applicable.",
+    "category_impacts": "Use category code strings from the hub. Sort codes ascending within each list.",
+    "third_party": "Use a string for the third-party name or role when applicable; use null when not applicable."
+  }
 }

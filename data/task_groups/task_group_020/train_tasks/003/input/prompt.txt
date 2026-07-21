@@ -1,5 +1,13 @@
-You have access to the shared Aster Legal Deal Desk at <TASK_ENV_BASE_URL>. Use the Deal Desk pages or API to prepare a committee escalation analysis for deal D-CYPRESS-735.
+You are counsel for Verdantis Therapeutics plc preparing an M&A Committee escalation package for Project Lyra (`PRJ_LYRA`).
 
-The business request is to give the buyer-side merger committee a structured JSON packet that identifies draft terms needing escalation, quantifies the exposure where the Deal Desk supports it, and summarizes the overall routing and risk posture. Use the output shape in input/payloads/answer_template.json.
+Use the deal workbench at `<TASK_ENV_BASE_URL>` to review the deal record, current draft terms, committee policy thresholds, benchmarks, risk estimates, negotiation notes, and related diligence records. You may use the web UI or the documented API routes. If read-only SQL access is available, use `POST /api/query` with token `deal-workbench-readonly`.
 
-Return only the completed JSON object. Do not include a prose memo, Markdown, or citations outside the JSON fields.
+Prepare a JSON answer that conforms to `input/payloads/answer_template.json`.
+
+Business task:
+- Identify only the current draft terms that are out of policy or restricted for M&A Committee approval.
+- Exclude stale, in-policy, or non-committee distractor terms.
+- For each escalated term, provide the required policy comparison, quantified amounts where applicable, benchmark support where applicable, legal or business deviation, recommendation, and required conditions.
+- Provide the aggregate committee summary, including quantified exposure and routing fields.
+
+Use integer dollars, percent points to two decimals, and dates in `YYYY-MM-DD` format. Return only valid JSON.

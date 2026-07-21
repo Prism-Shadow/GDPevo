@@ -1,0 +1,27 @@
+{
+  "task_id": "train_005",
+  "matter_id": "MTR-ALLOYWORKS-GJ",
+  "environment": {
+    "base_url": "<TASK_ENV_BASE_URL>",
+    "query_api_key_header": "X-API-Key",
+    "query_api_key": "review-key-017",
+    "shared_endpoints": [
+      "GET /api/schema",
+      "GET /api/matters",
+      "GET /api/subpoena-categories",
+      "GET /api/productions",
+      "GET /api/custodian-sources",
+      "GET /api/documents/search",
+      "GET /api/privilege-log",
+      "GET /api/qc-findings",
+      "GET /api/retention-events",
+      "GET /api/remediation-actions",
+      "POST /api/query"
+    ]
+  },
+  "output_contract": {
+    "format": "JSON object only",
+    "schema_file": "input/payloads/answer_template.json",
+    "stable_ids": "Use matter, source, event, QC finding, document, action, and category identifiers exactly as they appear in the shared hub."
+  }
+}

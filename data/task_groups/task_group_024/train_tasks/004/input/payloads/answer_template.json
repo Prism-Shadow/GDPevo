@@ -1,55 +1,122 @@
 {
-  "task_id": "train_004",
-  "scope": {
-    "product": "Data Platform",
-    "quarter": "2026-Q1",
-    "as_of_date": "2026-03-31"
-  },
-  "eligible_total": 0,
-  "eligible_work_item_ids": [],
-  "category_mix": [
-    {
-      "category": "NewFeature",
-      "count": 0,
-      "actual_percentage": 0.0,
-      "target_percentage": 0.0,
-      "gap_basis_points": 0
-    },
-    {
-      "category": "TechDebt",
-      "count": 0,
-      "actual_percentage": 0.0,
-      "target_percentage": 0.0,
-      "gap_basis_points": 0
-    },
-    {
-      "category": "Reliability",
-      "count": 0,
-      "actual_percentage": 0.0,
-      "target_percentage": 0.0,
-      "gap_basis_points": 0
-    },
-    {
-      "category": "Security",
-      "count": 0,
-      "actual_percentage": 0.0,
-      "target_percentage": 0.0,
-      "gap_basis_points": 0
-    }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "train_004 Checkout Q4 2025 portfolio mix answer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scope_id",
+    "quarter",
+    "teams",
+    "product_area",
+    "included_work_item_ids",
+    "category_counts",
+    "mix_table",
+    "largest_deficit_category",
+    "recommended_action",
+    "excluded_distractor_ids"
   ],
-  "under_invested_categories": [],
-  "largest_negative_gap_category": null,
-  "follow_up_actions": [
-    {
-      "category": "NewFeature|TechDebt|Reliability|Security",
-      "action": "IncreaseAllocation",
-      "owner_team_id": "TEAM-ID"
+  "properties": {
+    "scope_id": {
+      "type": "string",
+      "const": "train_004"
+    },
+    "quarter": {
+      "type": "string",
+      "const": "2025-Q4"
+    },
+    "teams": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["Mobile Client", "Growth Experiences"]
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "List in this order: Mobile Client, Growth Experiences."
+    },
+    "product_area": {
+      "type": "string",
+      "const": "Checkout"
+    },
+    "included_work_item_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Unique included work item ids ordered by closed_at ascending, then id ascending."
+    },
+    "category_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["NewFeature", "TechDebt", "Reliability", "Security"],
+      "properties": {
+        "NewFeature": {"type": "integer"},
+        "TechDebt": {"type": "integer"},
+        "Reliability": {"type": "integer"},
+        "Security": {"type": "integer"}
+      }
+    },
+    "mix_table": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "Rows must appear in this order: NewFeature, TechDebt, Reliability, Security. Percentages are percentage points rounded to 1 decimal place.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "count", "actual_pct", "target_pct", "gap_pct"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["NewFeature", "TechDebt", "Reliability", "Security"]
+          },
+          "count": {
+            "type": "integer"
+          },
+          "actual_pct": {
+            "type": "number",
+            "description": "Actual share as percentage points, rounded to 1 decimal place."
+          },
+          "target_pct": {
+            "type": "number",
+            "description": "Target share as percentage points, rounded to 1 decimal place."
+          },
+          "gap_pct": {
+            "type": "number",
+            "description": "actual_pct minus target_pct, in percentage points, rounded to 1 decimal place."
+          }
+        }
+      }
+    },
+    "largest_deficit_category": {
+      "type": "string",
+      "enum": ["NewFeature", "TechDebt", "Reliability", "Security"]
+    },
+    "recommended_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "category", "owner_team"],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["REBALANCE_CAPACITY"]
+        },
+        "category": {
+          "type": "string",
+          "enum": ["NewFeature", "TechDebt", "Reliability", "Security"]
+        },
+        "owner_team": {
+          "type": "string",
+          "enum": ["Mobile Client", "Growth Experiences"]
+        }
+      }
+    },
+    "excluded_distractor_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Unique same-scope Q4 distractor work item ids excluded from the primary closed portfolio mix, ordered by closed_at ascending, then id ascending."
     }
-  ],
-  "evidence_sample_ids": {
-    "NewFeature": [],
-    "TechDebt": [],
-    "Reliability": [],
-    "Security": []
   }
 }

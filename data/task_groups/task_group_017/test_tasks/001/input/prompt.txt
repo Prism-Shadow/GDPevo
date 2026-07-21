@@ -1,7 +1,5 @@
-You are assisting the production team on matter M-ALD-507, Alderline Revenue Recognition Inquiry.
+Meridian Devices' outside counsel team needs a structured production gap and coding-risk report for grand jury matter `MTR-MERIDIAN-GJ`. The team is preparing for the next rolling-production update and needs a normalized summary of material gaps, affected request categories, numeric risk metrics, and remediation ownership.
 
-The client has asked for a first production gap review before the next SEC status call. Use the shared investigation API at <TASK_ENV_BASE_URL>. Inspect the matter record plus subpoena categories, production logs, collection events, privilege logs, QC events, custodian records, retention records, and document summaries as needed. Also use the task-local partner request at input/payloads/partner_request.json.
+Use only the shared Investigation Review Hub available at `<TASK_ENV_BASE_URL>` and the task-local payloads in this input directory. Do not inspect environment source files, generated data files, database files, hidden manifests, or any task answer or evaluation files. The read-only SQL endpoint, if useful, uses header `X-API-Key: review-key-017`; ordinary hub endpoints may also be used.
 
-Prepare a structured JSON review of the materially blocked or deficient subpoena categories. Focus on first-production completeness, missing sources, miscoded responsive material, privilege-log defects, overbroad withholding, whether disclosure is required, and the next remediation actions.
-
-Return only JSON. The required output contract is described in input/payloads/answer_template.json. Do not include markdown, comments, or explanatory text.
+Return only a JSON object that conforms to `input/payloads/answer_template.json`. Use stable matter, source, document, QC, privilege, and action IDs from the hub wherever applicable.

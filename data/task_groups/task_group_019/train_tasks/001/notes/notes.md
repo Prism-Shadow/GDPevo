@@ -1,147 +1,143 @@
-# train_001 Hidden Notes / train_001 隐藏说明
+# train_001 Notes
 
 ## English
 
-### Data and Lineage
+### Data and Source Lineage
 
-This task belongs to `task_group_019`, scenario `SCN_019_regulatory_licensing_eligibility_and_compliance_review`, with source examples `E001`, `E002`, and `E003`. Its direct family anchor is `E001`, the contractor eligibility review example. The shared environment is the Cascadia Licensing Review Portal (CLRP) under `task_group/task_group_019/env/`. Solver-visible materials are `input/prompt.txt`, `input/payloads/answer_template.json`, and `input/payloads/endpoint_reference.json`.
+This task belongs to `SCN_019_regulatory_licensing_eligibility_and_compliance_review`, using the contractor-eligibility workflow represented by source example `E001` and the shared task-group design in `scratch/task_group_design.md`. The shared environment data is generated in `task_group/task_group_019/env/generate_data.py` with seed `19019` and stored in `task_group/task_group_019/env/data/licensing.db`; the manifest identifies `train_001` target application ids `C-TR1-001` through `C-TR1-008`.
 
-The target batch is Harbor State contractor batch `HS-2026-Q1A`. The review cutoff is `2026-03-01`; records with later event, notice, or effective dates are out of scope for the standard answer. The task uses the shared CLRP contractor API, not local env files. Construction used `construction_manifest.json` only to confirm the intended anchor records; the answer is grounded in the public CLRP rows.
+No task-local business-data payload is added beyond `input/payloads/answer_template.json`. Solvers must use the public environment endpoints rooted at `<TASK_ENV_BASE_URL>` and may not inspect the hidden database, manifest, generator, notes, standard answer, or evaluator.
 
 ### Task Definition and Scenario Fit
 
-The solver acts as a licensing reviewer producing a formal structured eligibility result for all 12 applications in `HS-2026-Q1A`. The required business outputs are per-application `APPROVE`, `HOLD`, or `DENY` determinations, controlled reason codes, next actions, deficiency counts, and a bulletin-impact summary.
+The solver is acting as a Senior Licensing Examiner reviewing an escalated Q2 contractor application batch. The visible prompt gives the eight application ids, the environment base URL placeholder, relevant contractor endpoints, and the required JSON output schema. The expected work is to reconcile policies, application fields, bond and insurance records, prior license status, violations, correspondence, and inspection notes into application-level determinations and a batch summary.
 
-This matches the scenario because the work requires multi-source administrative licensing reconciliation: pending applications, bonds, insurance policies, violations, complaints, field notes, correspondence, and effective regulatory bulletins. The output is reviewer-ready structured decision data rather than a narrative memo.
+This matches the source contractor example because the business problem is not a single lookup: it requires multi-record reconciliation, source freshness judgment, current-policy application, risk tiering, and structured final actions for a licensing office.
 
 ### Material Map
 
-Key solver-facing CLRP resources:
+- `GET /api/policies`: contractor policy thresholds and the prior baseline used for policy-impact analysis.
+- `GET /api/contractor/applications`: target application attributes including trade, requested class, experience, endorsement status, prior license id, and submitted date.
+- `GET /api/contractor/bonds`: active, cancelled, and old bond records; only a current active bond with sufficient amount satisfies the bond requirement.
+- `GET /api/contractor/insurance`: active, pending, expired, and insufficient liability coverage records.
+- `GET /api/contractor/license-history`: prior license status; active suspension is blocking.
+- `GET /api/contractor/violations`: open serious violations block release; open minor violations require review; resolved history informs risk but is not an automatic denial.
+- `GET /api/contractor/correspondence`: stale or unverified correspondence must not override current public records.
+- `GET /api/contractor/inspections`: failed or conditional adverse findings create document or safety actions.
+- `POST /api/sql`: optional read-only querying surface over the same public tables.
 
-- `/api/contractors/applications?batch_id=HS-2026-Q1A` and `/exports/contractor_batch_HS-2026-Q1A.csv`: target application roster and application attributes.
-- `/api/contractors/bonds?name=...`: bond amount/status evidence, including shortfall and cancellation records.
-- `/api/contractors/insurance?name=...`: carrier, policy, coverage, and verification status.
-- `/api/contractors/violations?name=...`: adverse conduct and unresolved penalty evidence.
-- `/api/contractors/complaints?name=...`: context for complaints; not every complaint is a scored deficiency.
-- `/api/contractors/field-notes?name=...`: open inspector holds and clearance recommendations.
-- `/api/contractors/correspondence?batch_id=HS-2026-Q1A`: material notices and distractor correspondence.
-- `/api/contractors/bulletins?effective_on=2026-03-01`: effective bulletins through the review cutoff.
+### Solution Basis
 
-### Solution and Evaluation Basis
+The current contractor policy rows define minimum bond, insurance, experience, and endorsement expectations by trade and class. The prior contractor baseline reduces bond minimums by 10,000 and does not require the specialty endorsement baseline, which is used only to flag policy-impact cases. The standard answer applies current public records first, treats applicant-only or stale correspondence as non-overriding, and separates historical resolved issues from current blocking issues.
 
-The standard answer contains 12 `application_decisions`, `deficiency_counts`, and `bulletin_impacts`.
+Application outcomes:
 
-Decision basis:
+- `C-TR1-001`: `HOLD`; bond is 25,000 against a 30,000 Plumbing minimum, endorsement is missing, and experience is 3 against a 4-year minimum. The bond shortfall is policy impacted.
+- `C-TR1-002`: `HOLD`; endorsement is pending, the current insurance record expired on `2025-04-15`, and the conditional inspection has `DOC_GAP`.
+- `C-TR1-003`: `DENY`; prior license `CL-CTR1003` is suspended, insurance is pending, and the failed inspection requires a safety recheck.
+- `C-TR1-004`: `HOLD`; the current bond record is cancelled as of `2025-05-30`. Resolved violations do not independently block the application.
+- `C-TR1-005`: `DENY`; there is an open serious violation, insurance is short by 250,000, endorsement is pending, and experience is 1 against a 3-year minimum. The specialty endorsement issue is policy impacted.
+- `C-TR1-006`: `HOLD`; experience is 4 against a 5-year Electrical minimum. Other current financial records are sufficient.
+- `C-TR1-007`: `HOLD`; bond is 25,000 against a 30,000 Plumbing minimum, endorsement is missing, there is an open minor violation requiring review, and the failed inspection has `DOC_GAP`. The bond shortfall is policy impacted.
+- `C-TR1-008`: `HOLD`; endorsement is pending and the current insurance record expired on `2025-04-15`.
 
-- `CA-2026-0001`, `CA-2026-0008`, and `CA-2026-0011` are approved. Their resolved or out-of-scope noise does not create a material hold at the cutoff.
-- `CA-2026-0002` is held for `BOND_SHORTFALL`; Plumbing bulletin `CB-2026-008` raised the current bond minimum above the active bond amount.
-- `CA-2026-0003` is held for `INSURANCE_VERIFY`; carrier verification remains pending in the policy/correspondence evidence by the cutoff.
-- `CA-2026-0004` is held for `UNRESOLVED_PENALTY`; the unresolved penalty and AG referral require reviewer resolution before issuance.
-- `CA-2026-0005` is held for `FIELD_NOTE_HOLD`; the open inspector hold requires clearance.
-- `CA-2026-0006` is held for `BOND_CANCELLED`; the bond cancellation date is before the cutoff.
-- `CA-2026-0007` is held for `EXPERIENCE_VERIFY`; the principal has insufficient documented qualifying experience for clearance.
-- `CA-2026-0009` is held for `BOND_SHORTFALL` and `INSURANCE_VERIFY`; Roofing bulletins `CB-2026-004` and `CB-2026-005` are the controlling bulletin impacts.
-- `CA-2026-0010` is denied for `DISQUALIFYING_CONDUCT`; the adverse background status and fraudulent-registration history support denial rather than a curable hold.
-- `CA-2026-0012` is held for `UNRESOLVED_PENALTY` and `FIELD_NOTE_HOLD`; both the unresolved penalty/AG referral and the open inspector hold remain unresolved.
+High-risk applications are `C-TR1-003` and `C-TR1-005`. Policy-impacted applications are `C-TR1-001`, `C-TR1-005`, and `C-TR1-007`. Stale or unverified correspondence identifiers are `COR-C-TR1-001-1`, `COR-C-TR1-002-1`, `COR-C-TR1-004-1`, and `COR-C-TR1-007-1`.
 
-Deficiency counts are `APPROVE=3`, `HOLD=8`, and `DENY=1`. Reason-code counts are exact in `output/answer.json`. Bulletin impacts consider `CB-2026-001` through `CB-2026-011` as applicable at the cutoff. `CA-2026-0002` and `CA-2026-0009` are changed by 2026 bulletins. The bulletin rule-type deficiency counts are `BOND_MINIMUM=2`, `INSURANCE_MINIMUM=1`, `EXAM_MINIMUM=0`, and `EXPERIENCE_MINIMUM=0`.
+### Evaluation Basis
 
-The evaluator has 8 exact-match scoring points with raw weights 1, 2, or 3:
+The evaluator uses eight whole scoring points with raw weights totaling 16:
 
-- `SP001`, weight 1: exact application coverage and ordering.
-- `SP002`, weight 3: exact determination map for all 12 applications.
-- `SP003`, weight 2: exact clean approval cases.
-- `SP004`, weight 2: exact bond-related hold results and actions.
-- `SP005`, weight 2: exact insurance-verification hold results and actions.
-- `SP006`, weight 3: exact penalty, field-note, and denial cases.
-- `SP007`, weight 2: exact `deficiency_counts`.
-- `SP008`, weight 3: exact `bulletin_impacts`.
+- `SP001`, weight 1: exactly the eight target applications in ascending `application_id` order.
+- `SP002`, weight 3: correct `APPROVE`/`HOLD`/`DENY` determination for every target application.
+- `SP003`, weight 3: correct deficiency code set for each target application.
+- `SP004`, weight 2: correct required action set for each target application.
+- `SP005`, weight 2: correct risk tiers and high-risk summary set.
+- `SP006`, weight 2: correct policy-impact flags and policy-impact summary set.
+- `SP007`, weight 2: correct approve, hold, and deny summary counts.
+- `SP008`, weight 1: correct stale or unverified correspondence identifiers.
 
-Likely model pitfalls include using local env files instead of the API, overlooking batch cutoff dates, treating every historical complaint or resolved violation as a deficiency, missing correspondence/field-note overrides, treating bond cancellation like a simple shortfall, applying post-cutoff bulletins, or omitting required zero-count enum keys.
+Each point is pass/fail only; there is no within-point fractional credit. The scoring dimensions cover target coverage, determinations, deficiencies, operational actions, risk tiering, policy-change impact, batch rollup, and source-conflict handling.
+
+Likely model pitfalls include using expired or cancelled records as current, letting unverified correspondence override registry records, treating resolved violations as automatic denials, missing active suspension, ignoring insurance expiration, failing to compare current policy to the prior baseline for policy-impact flags, and returning non-controlled free text instead of the template enums.
 
 ### Transfer Design
 
-This is a train task, not a tutorial. Blind attempts and answer comparison should teach transferable experience for later contractor tasks: use the shared CLRP API, separate effective bulletin changes from ordinary defects, distinguish holds from denial, use controlled reason codes, reconcile bond and insurance records against the application roster, and avoid counting out-of-scope or non-material noise as business deficiencies. The train-derived lesson should transfer especially to contractor test tasks that require bulletin-scope counts, bond cancellation versus shortfall distinctions, field-note holds, and aggregate deficiency counts.
+This is a formal train task, not a tutorial. A fewshot skill can infer recurring contractor-review habits from the prompt and answer: inspect the shared endpoint families, prioritize current policy and public registry records over stale correspondence, evaluate bond amount and status together, evaluate insurance status and expiration together, treat active suspension and unresolved serious violations as blocking, separate resolved history from current defects, use controlled deficiency/action codes, and produce consistent application-level and summary-level outputs. These conventions are intended to transfer to the contractor test tasks and to the second contractor train task without making the test answers template copies.
 
 ### Construction Record
 
-Author: Codex task-builder subagent for `task_group_019/train_001`.
-
-Created: 2026-07-07.
-
-Updated: 2026-07-07.
-
-Major changes: Created solver prompt, endpoint payload, answer template, standard answer, exact-match evaluator, and bilingual notes for the contractor batch eligibility review task.
+- Author: task-builder-train-001 / Codex
+- Created: 2026-07-18
+- Updated: 2026-07-18
+- Major changes: Created the complete train_001 task package under `train_tasks/001/`.
 
 ## 中文
 
-### 数据来源与谱系
+### 数据与来源
 
-本任务属于 `task_group_019`，场景为 `SCN_019_regulatory_licensing_eligibility_and_compliance_review`，来源 examples 为 `E001`、`E002`、`E003`。直接业务锚点是 `E001` 的 contractor eligibility review。共享环境是 `task_group/task_group_019/env/` 下的 Cascadia Licensing Review Portal（CLRP）。求解器可见材料为 `input/prompt.txt`、`input/payloads/answer_template.json` 和 `input/payloads/endpoint_reference.json`。
+本任务属于 `SCN_019_regulatory_licensing_eligibility_and_compliance_review`，采用源示例 `E001` 中的 contractor eligibility review 工作流，并遵循 `scratch/task_group_design.md` 的任务组设计。共享环境数据由 `task_group/task_group_019/env/generate_data.py` 使用 seed `19019` 生成，存放在隐藏的 SQLite 数据库中；manifest 指定 `train_001` 的目标申请为 `C-TR1-001` 到 `C-TR1-008`。
 
-目标批次是 Harbor State contractor batch `HS-2026-Q1A`。审查截止日是 `2026-03-01`；晚于该日期的事件、通知或生效日期不进入标准答案。任务要求使用共享 CLRP contractor API，而不是本地环境文件。构造时只用 `construction_manifest.json` 确认锚点记录，最终答案依据公开 API 中可见的业务记录。
+除 `input/payloads/answer_template.json` 外，本任务没有额外的本地业务数据 payload。求解者只能使用 `<TASK_ENV_BASE_URL>` 下的公开环境端点，不能查看隐藏数据库、manifest、生成脚本、notes、标准答案或 evaluator。
 
-### 任务定义与场景适配
+### 任务定义与场景匹配
 
-求解器扮演 licensing reviewer，为 `HS-2026-Q1A` 的 12 个申请生成正式结构化资格审查结果。业务输出包括每个申请的 `APPROVE`、`HOLD` 或 `DENY` 决定、受控 reason code、下一步动作、缺陷计数和 bulletin impact 汇总。
+求解者扮演 State Contractors Licensing Board 的 Senior Licensing Examiner，审查一批 Q2 升级处理的 contractor applications。可见 prompt 提供八个申请编号、环境 base URL 占位符、相关 contractor endpoints，以及必须返回的 JSON schema。预期工作是把 policy、application、bond、insurance、license history、violations、correspondence 和 inspections 结合起来，形成每个申请的 eligibility decision 和批次 summary。
 
-该任务符合本场景，因为它要求跨多个行政许可数据源进行核对：申请记录、bond、insurance、violations、complaints、field notes、correspondence 和已生效 bulletins。输出是可评测的审查决策数据，而不是自由文本总结。
+该任务与源 contractor 示例一致，因为它不是单表查询，而是需要多来源核对、来源新旧判断、当前政策适用、风险分级和结构化行政处理动作。
 
 ### 材料地图
 
-关键 CLRP 资源如下：
+- `GET /api/policies`：contractor 政策门槛和用于 policy-impact 的 prior baseline。
+- `GET /api/contractor/applications`：目标申请的 trade、class、experience、endorsement、prior license 和 submitted date。
+- `GET /api/contractor/bonds`：active、cancelled、old bond；只有当前 active 且金额足够的 bond 满足要求。
+- `GET /api/contractor/insurance`：active、pending、expired 或金额不足的 liability coverage。
+- `GET /api/contractor/license-history`：prior license 状态；active suspension 是阻断性事实。
+- `GET /api/contractor/violations`：open serious violation 阻断放行；open minor violation 需要 review；resolved history 不自动 denial。
+- `GET /api/contractor/correspondence`：stale 或 unverified correspondence 不能覆盖当前公共记录。
+- `GET /api/contractor/inspections`：fail 或 conditional 且有不利 finding 时产生 document 或 safety action。
+- `POST /api/sql`：对同一公开表的可选只读查询入口。
 
-- `/api/contractors/applications?batch_id=HS-2026-Q1A` 和 `/exports/contractor_batch_HS-2026-Q1A.csv`：目标申请清单和基础属性。
-- `/api/contractors/bonds?name=...`：bond 金额、状态、shortfall 和 cancellation 证据。
-- `/api/contractors/insurance?name=...`：carrier、policy、coverage 和 verification status。
-- `/api/contractors/violations?name=...`：不利行为和 unresolved penalty 证据。
-- `/api/contractors/complaints?name=...`：投诉背景；并非每条投诉都是计分缺陷。
-- `/api/contractors/field-notes?name=...`：open inspector hold 和 clearance 建议。
-- `/api/contractors/correspondence?batch_id=HS-2026-Q1A`：material notice 和干扰性 correspondence。
-- `/api/contractors/bulletins?effective_on=2026-03-01`：审查截止日前已经生效的 bulletins。
+### 解答依据
 
-### 解答与评测依据
+当前 contractor policy 按 trade 和 class 定义 minimum bond、insurance、experience 和 endorsement。prior contractor baseline 将 bond minimum 降低 10,000，并且 specialty endorsement baseline 不作为当前要求；它只用于标记 policy-impact case。标准答案优先使用当前公开记录，不让 applicant-only 或 stale correspondence 覆盖 registry 记录，并区分历史已解决问题和当前阻断性问题。
 
-标准答案包含 12 条 `application_decisions`、`deficiency_counts` 和 `bulletin_impacts`。
+各申请结论：
 
-决策依据如下：
+- `C-TR1-001`：`HOLD`；Plumbing bond 25,000 低于 30,000，endorsement missing，experience 3 年低于 4 年。bond shortfall 属于 policy impacted。
+- `C-TR1-002`：`HOLD`；endorsement pending，当前 insurance 于 `2025-04-15` 过期，conditional inspection 有 `DOC_GAP`。
+- `C-TR1-003`：`DENY`；prior license `CL-CTR1003` suspended，insurance pending，failed inspection 需要 safety recheck。
+- `C-TR1-004`：`HOLD`；当前 bond 在 `2025-05-30` cancelled。resolved violations 不单独阻断申请。
+- `C-TR1-005`：`DENY`；存在 open serious violation，insurance 少 250,000，endorsement pending，experience 1 年低于 3 年。specialty endorsement 问题属于 policy impacted。
+- `C-TR1-006`：`HOLD`；Electrical experience 4 年低于 5 年，其他当前财务记录足够。
+- `C-TR1-007`：`HOLD`；Plumbing bond 25,000 低于 30,000，endorsement missing，open minor violation 需要 review，failed inspection 有 `DOC_GAP`。bond shortfall 属于 policy impacted。
+- `C-TR1-008`：`HOLD`；endorsement pending，当前 insurance 于 `2025-04-15` 过期。
 
-- `CA-2026-0001`、`CA-2026-0008`、`CA-2026-0011` 为 approve；已解决或截止日外的噪声记录不构成 material hold。
-- `CA-2026-0002` 因 `BOND_SHORTFALL` hold；Plumbing bulletin `CB-2026-008` 使当前最低 bond 要求高于 active bond amount。
-- `CA-2026-0003` 因 `INSURANCE_VERIFY` hold；截至审查日，policy/correspondence 证据中 carrier verification 仍为 pending。
-- `CA-2026-0004` 因 `UNRESOLVED_PENALTY` hold；未解决罚款和 AG referral 需要先处理。
-- `CA-2026-0005` 因 `FIELD_NOTE_HOLD` hold；open inspector hold 需要 clearance。
-- `CA-2026-0006` 因 `BOND_CANCELLED` hold；bond cancellation date 在截止日前。
-- `CA-2026-0007` 因 `EXPERIENCE_VERIFY` hold；principal 的 qualifying experience 记录不足以直接 clearance。
-- `CA-2026-0009` 因 `BOND_SHORTFALL` 和 `INSURANCE_VERIFY` hold；Roofing bulletins `CB-2026-004` 和 `CB-2026-005` 是主要 bulletin impact。
-- `CA-2026-0010` 因 `DISQUALIFYING_CONDUCT` deny；adverse background status 与 fraudulent-registration history 支持 denial，而非可补正 hold。
-- `CA-2026-0012` 因 `UNRESOLVED_PENALTY` 和 `FIELD_NOTE_HOLD` hold；罚款/AG referral 与 open inspector hold 均未解决。
+High-risk applications 是 `C-TR1-003` 和 `C-TR1-005`。Policy-impacted applications 是 `C-TR1-001`、`C-TR1-005`、`C-TR1-007`。Stale 或 unverified correspondence identifiers 是 `COR-C-TR1-001-1`、`COR-C-TR1-002-1`、`COR-C-TR1-004-1`、`COR-C-TR1-007-1`。
 
-缺陷计数为 `APPROVE=3`、`HOLD=8`、`DENY=1`。reason-code 计数以 `output/answer.json` 为准。Bulletin impact 使用截止日前适用的 `CB-2026-001` 至 `CB-2026-011`。`CA-2026-0002` 和 `CA-2026-0009` 是受 2026 bulletin 改变的申请。bulletin rule-type 缺陷计数为 `BOND_MINIMUM=2`、`INSURANCE_MINIMUM=1`、`EXAM_MINIMUM=0`、`EXPERIENCE_MINIMUM=0`。
+### 评测依据
 
-评测器包含 8 个 exact-match 计分点，原始权重均为 1、2 或 3：
+Evaluator 使用八个 whole scoring points，raw weights 总计 16：
 
-- `SP001`，权重 1：申请覆盖范围和顺序完全正确。
-- `SP002`，权重 3：12 个申请的 determination map 完全正确。
-- `SP003`，权重 2：clean approval cases 完全正确。
-- `SP004`，权重 2：bond-related hold 结果和动作完全正确。
-- `SP005`，权重 2：insurance-verification hold 结果和动作完全正确。
-- `SP006`，权重 3：penalty、field-note 和 denial cases 完全正确。
-- `SP007`，权重 2：`deficiency_counts` 完全一致。
-- `SP008`，权重 3：`bulletin_impacts` 完全一致。
+- `SP001`，weight 1：正好包含八个目标申请，并按 `application_id` 升序排列。
+- `SP002`，weight 3：每个目标申请的 `APPROVE`/`HOLD`/`DENY` 结论正确。
+- `SP003`，weight 3：每个目标申请的 deficiency code set 正确。
+- `SP004`，weight 2：每个目标申请的 required action set 正确。
+- `SP005`，weight 2：risk tier 和 high-risk summary set 正确。
+- `SP006`，weight 2：policy-impact flags 和 summary set 正确。
+- `SP007`，weight 2：approve、hold、deny summary counts 正确。
+- `SP008`，weight 1：stale 或 unverified correspondence identifiers 正确。
 
-常见失败点包括使用本地 env 文件而不是 API、忽略 batch cutoff date、把每条历史 complaint 或 resolved violation 都当作缺陷、漏掉 correspondence/field-note 对决策的影响、把 bond cancellation 当成普通 shortfall、应用 cutoff 之后的 bulletins、或遗漏受控枚举中的零计数字段。
+每个 scoring point 都是通过或不通过，不给点内部分分。评分维度覆盖目标集合、申请结论、缺陷、操作动作、风险分级、政策影响、批次统计和来源冲突处理。
+
+常见模型错误包括把 expired 或 cancelled records 当成 current，允许 unverified correspondence 覆盖 registry record，把 resolved violations 当作 automatic denial，漏掉 active suspension，忽略 insurance expiration，未用 prior baseline 判断 policy-impact，以及输出自由文本而非 template 中的受控 enum。
 
 ### 迁移设计
 
-这是 train task，不是教程。通过盲解和对照标准答案，模型应学到可迁移经验：使用共享 CLRP API，将有效 bulletin changes 与普通缺陷分开，区分 hold 与 denial，用受控 reason codes，依据申请清单核对 bond/insurance，并避免把截止日外或非 material 噪声当作业务缺陷。这些经验会迁移到后续 contractor test tasks，尤其是 bulletin-scope counts、bond cancellation 与 shortfall 区分、field-note holds 和 aggregate deficiency counts。
+这是正式 train task，不是教程。fewshot skill 可以从 prompt 和 answer 中推断 contractor review 的重复性习惯：检查共享 endpoint families，优先当前 policy 和 public registry records 而非 stale correspondence，把 bond amount 与 status 一起判断，把 insurance status 与 expiration 一起判断，把 active suspension 和 unresolved serious violation 视为阻断性事实，把 resolved history 与当前缺陷区分开，使用受控 deficiency/action codes，并保持 application-level 与 summary-level 输出一致。这些经验会迁移到 contractor test tasks 和第二个 contractor train task，但不会使 test answers 变成模板复制。
 
 ### 构造记录
 
-作者：Codex task-builder subagent for `task_group_019/train_001`。
-
-创建日期：2026-07-07。
-
-更新日期：2026-07-07。
-
-主要变更：创建 contractor batch eligibility review 的 solver prompt、endpoint payload、answer template、standard answer、exact-match evaluator 和双语 notes。
+- Author: task-builder-train-001 / Codex
+- Created: 2026-07-18
+- Updated: 2026-07-18
+- Major changes: 在 `train_tasks/001/` 下创建完整的 train_001 任务包。

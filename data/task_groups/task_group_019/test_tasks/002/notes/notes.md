@@ -2,135 +2,140 @@
 
 ## English
 
-### Data and Source Lineage
+### Data/source lineage
 
-This task belongs to `task_group_019`, scenario `SCN_019_regulatory_licensing_eligibility_and_compliance_review`, with source-example lineage from `E001`, `E002`, and especially `E003`. It uses the shared Cascadia Licensing Review Portal (CLRP) environment under `task_group/task_group_019/env/`.
+This task belongs to `SCN_019_regulatory_licensing_eligibility_and_compliance_review` and uses the renewal manual-review queue family derived from source example `E003`. It is the formal `test_002` task for `task_group_019`, anchored to the transfer conventions exposed by `train_003`.
 
-The task-builder brief is the renewal manual-review queue for release batch `RV-2026-SUMMER` with release boundary `2026-07-15`. The generated data anchors for this batch are listed in `env/data/public_manifest.json` and `env/data/construction_manifest.json`, while the actual standard answer is derived from the generated `renewal_licensees` and `renewal_violations` records.
+The regenerated environment manifest identifies the renewal boundary `2025-06-15`, target queue size `12`, and current target license numbers `AL-TE2-001` through `AL-TE2-012`. The standard answer was recalculated from `task_group/task_group_019/env/data/licensing.db`, using `alcohol_licensees`, `alcohol_violations`, and `renewal_rules`. Solver-visible access remains limited to the public endpoints named in `input/prompt.txt`; the manifest, database, generator, notes, answer, and evaluator are hidden construction materials.
 
-Solver-visible materials are:
+### Task definition and scenario fit
 
-- `input/prompt.txt`, which gives the base URL placeholder `http://localhost:<PORT>`, release batch `RV-2026-SUMMER`, and boundary date `2026-07-15`.
-- `input/payloads/answer_template.json`, which defines the required JSON schema, rank ordering, controlled enum values, summary fields, and integer/date expectations.
+The solver acts as a licensing analyst preparing a summer pre-release alcohol renewal manual-review queue. The prompt now identifies only the target license-number range, release boundary, target queue size, and environment endpoints; it no longer names the construction group tag. The expected output is a normalized JSON object matching `input/payloads/answer_template.json`.
 
-The relevant CLRP public surfaces are:
+This fits the regulatory licensing scenario because it requires current-licensee matching, date-bound violation filtering, successor or close-address handling, risk tiering, controlled next-step labels, and a memo-ready queue summary. The task cannot be solved from the prompt alone; it requires environment exploration and transfer of renewal-queue conventions from `train_003`.
 
-- `GET /api/renewals/licensees?release_batch=RV-2026-SUMMER` for the current roster.
-- `GET /exports/renewal_roster_RV-2026-SUMMER.csv` for the current roster export.
-- `GET /api/renewals/violations?city=...` for city-scoped violation history.
-- `GET /api/search/address?address=...` for address-level cross-checking.
+### Material map
 
-### Task Definition and Scenario Fit
+- `GET /api/alcohol/licensees`: current licensee roster, facility names, addresses, active flags, location ids, and successor markers.
+- `GET /api/alcohol/violations`: violation history, dates, themes, severity, disposition, fine balances, alert flags, and source names.
+- `GET /api/renewal/rules`: release-boundary policy records, including the `2025-06-15` summer release rule.
+- `POST /api/sql`: optional read-only query path if the solver environment supplies SQL credentials.
+- `input/payloads/answer_template.json`: required output shape, enum values, date format, queue length, rank ordering, and summary fields.
 
-The business task is a pre-release renewal review screen. Staff need a ranked queue of exactly 12 current summer-batch licensees whose pre-boundary violation histories require manual review. The output is not a prose memo; it is a structured queue with stable IDs, match confidence, evidence-window counts, most recent usable evidence date, a controlled next-step label, a structured top-risk summary, and a count of matched post-boundary rows that were excluded.
+### Solution and evaluation basis
 
-The task fits the source renewal-queue example because it requires joining a current roster to noisy violation history, handling exact and close name matches, preserving shared-address uncertainty, applying a release-date boundary, and emitting reviewer-ready labels.
+The gold answer uses the current target licenses `AL-TE2-001` through `AL-TE2-012`. Matched violations must have `violation_date <= 2025-06-15`. The twelve `AV-AL-TE2-*-LATE` rows are after the boundary and are excluded from counts, most recent dates, rank, risk tier, and labels.
 
-### Material Map
+The key regenerated edge case is `AL-TE2-012`. Its current license row has `successor_to = AL-TE2-OLD-012` at the same address, `332 River Ave`. The matched pre-boundary set is the current exact row `AV-AL-TE2-012-1` plus legacy successor rows `AV-AL-TE2-OLD-012-S1` and `AV-AL-TE2-OLD-012-S2`. This gives `violation_count = 3`, `most_recent_violation_date = 2025-06-10`, `match_confidence = close_address`, `risk_tier = high`, and `next_step_label = board_review`. The template already allows `close_address`, so no solver-visible schema change is needed for this non-exact successor match.
 
-`renewal_licensees` supplies the current `RV-2026-SUMMER` roster, facility names, addresses, cities, statuses, license types, and successor hints. `renewal_violations` supplies historical violation rows by facility or close alias. The roster export is a public alternative to the API. The address search endpoint is useful for checking whether an address-level hit should be used for the named current licensee or treated as shared-address manual review.
+Gold queue order:
 
-The generated summer batch includes exact matches such as `Maple Kitchen 061`, close histories such as `Signal Lounge 098 Formerly`, post-boundary drift rows after `2026-07-15`, and the shared-address/manual case `Civic House 053`.
+1. `AL-TE2-012`
+2. `AL-TE2-010`
+3. `AL-TE2-005`
+4. `AL-TE2-008`
+5. `AL-TE2-002`
+6. `AL-TE2-007`
+7. `AL-TE2-009`
+8. `AL-TE2-001`
+9. `AL-TE2-004`
+10. `AL-TE2-011`
+11. `AL-TE2-006`
+12. `AL-TE2-003`
 
-### Solution and Evaluation Basis
+The answer ranks by next-step priority, then most recent matched violation date descending, then matched count descending, then license number ascending. `board_review` applies to licenses with repeated serious matched pre-boundary violations, including successor rows. `AL-TE2-012` and `AL-TE2-010` are therefore board-review cases. `manual_fine_check` applies to material fine-balance or unpaid-fine exposure without the board trigger. `AL-TE2-003` is the remaining alert-driven lower-risk entry and uses `manual_ALERT_check`. Risk is high for board-review and material fine-exposure entries, and medium for `AL-TE2-003`.
 
-Current licensees are rows in `renewal_licensees` with `release_batch = 'RV-2026-SUMMER'`. Usable violation rows must match the current licensee by city and normalized address, then by exact facility name, supported close alias, or shared-address manual judgment. Address normalization treats `Suite B, ` as the same service address only when the name evidence supports the current licensee or when the row is deliberately retained as a shared-address manual case.
+The evaluator has seven deterministic whole-point checks with raw weights:
 
-Rows with `violation_date > 2026-07-15` are not used for ranking, `violation_count_used`, or `most_recent_date_used`. They are counted in top-level `excluded_post_boundary_count`. The matched post-boundary exclusion count across the current summer roster is `23`.
+- `SP001`, weight 3: exact queue membership and rank order.
+- `SP002`, weight 2: per-license pre-boundary matched violation counts and most recent used dates, including the successor-expanded count for `AL-TE2-012`.
+- `SP003`, weight 2: match-confidence fields and the close/uncertain summary containing `AL-TE2-012`.
+- `SP004`, weight 3: controlled next-step labels.
+- `SP005`, weight 2: exclusion of the twelve post-boundary violation IDs and no late date used.
+- `SP006`, weight 2: risk tiers and board-review summary set `AL-TE2-010`, `AL-TE2-012`.
+- `SP007`, weight 1: queue size, boundary date, and facility identity fields.
 
-The standard queue is:
+Each point is all-or-nothing. Raw weights are converted to `weight / 15`. The evaluator accepts a candidate answer path as `$1` and defaults to this task's `output/answer.json` when no path is passed.
 
-1. `LIC-RV-2026-0061` Maple Kitchen 061
-2. `LIC-RV-2026-0056` Crescent House 056
-3. `LIC-RV-2026-0055` Pier House 055
-4. `LIC-RV-2026-0089` Civic Bottle 089
-5. `LIC-RV-2026-0096` Blue Lounge 096
-6. `LIC-RV-2026-0063` Copper Kitchen 063
-7. `LIC-RV-2026-0098` Signal Lounge 098
-8. `LIC-RV-2026-0081` Urban Tap 081
-9. `LIC-RV-2026-0085` Maple Bottle 085
-10. `LIC-RV-2026-0065` Civic Kitchen 065
-11. `LIC-RV-2026-0067` Pier Kitchen 067
-12. `LIC-RV-2026-0053` Civic House 053
+Likely model pitfalls are naming or filtering by the hidden construction group tag, counting post-boundary `post_boundary_feed` rows, missing the `AL-TE2-012` successor link, treating successor rows as exact matches, leaving `AL-TE2-012` at the current-only count of one, ranking solely by most recent violation date without next-step priority, and using free-text next steps instead of the closed enum labels.
 
-The queue emphasizes board-sanction, suspension, severe conduct, high-risk minor service, fine-collection burden, close continuity, post-boundary exclusion discipline, and a shared-address/manual review case. `Civic House 053` is retained as `shared_address_manual` because the usable history includes an unhinted close-name address hit at a shared-address anchor and should not be treated as a clean exact continuity case.
+### Transfer design
 
-The evaluator has 8 exact-match scoring points with raw weights:
+`test_002` is anchored to `train_003`. The transferable knowledge is the renewal-queue discipline: enforce the release boundary, prefer exact current-license matches when adequate, use successor or close-address matching when a current target license links to legacy rows, mark non-exact matches with the allowed non-exact enum, use the closed next-step label set, preserve the ranked queue schema, and summarize excluded late records plus board-review licenses. The high-value transfer-dependent scoring points are `SP001`, `SP003`, `SP004`, `SP005`, and `SP006`. Task-specific exploration remains necessary because the boundary is later, the queue is larger, the target licensees are new, and the regenerated data makes `AL-TE2-012` a real successor-match case.
 
-- `SP001`, weight 2: exact queue membership and current roster facility names.
-- `SP002`, weight 2: ranks 1-5 in exact order.
-- `SP003`, weight 2: ranks 6-12 in exact order.
-- `SP004`, weight 2: all match-confidence enum values.
-- `SP005`, weight 2: all pre-boundary violation counts.
-- `SP006`, weight 1: all most-recent usable evidence dates.
-- `SP007`, weight 2: all next-step labels.
-- `SP008`, weight 3: `top_risk_summary` and `excluded_post_boundary_count`.
+### Construction record
 
-Likely model pitfalls include using post-boundary rows in ranking, missing close aliases, over-spreading shared-address history, ranking only the manifest anchors, ignoring high-risk distractors outside the first 12 IDs, counting rows from the wrong city, and writing narrative summaries instead of the controlled JSON schema.
-
-### Transfer Design
-
-This test transfers directly from `train_003`. The train task teaches the renewal-family conventions through answer comparison: start from the current release roster, match violations conservatively by name and address, accept close histories only with address support, avoid spreading shared-address rows, exclude post-boundary violations while counting them, rank the manual-review queue by pre-boundary risk, and use controlled enum labels. In this test, the same conventions apply to a larger summer queue with new entities, a later boundary date, more post-boundary drift, and an explicit shared-address/manual result.
-
-Transfer-dependent scoring points are `SP001`, `SP003`, `SP004`, `SP005`, `SP007`, and `SP008`. `SP002` also benefits from train-derived ranking habits but depends heavily on summer-specific evidence exploration. `SP006` is mostly data-exploration dependent.
-
-### Construction Record
-
-Author: task-builder subagent for `test_002`, GPT-5.5 xhigh.
-Created: 2026-07-07.
-Updated: 2026-07-07.
-Major changes: initial construction of prompt, answer template, standard answer, evaluator, and bilingual notes.
+- Author: task-builder-test-002; reworked by Codex main agent
+- Created: 2026-07-18
+- Updated: 2026-07-18
+- Major changes: reworked prompt to remove the construction group tag, recalculated the standard answer and evaluator against the regenerated database, and documented the `AL-TE2-012` successor match using `AV-AL-TE2-012-1`, `AV-AL-TE2-OLD-012-S1`, and `AV-AL-TE2-OLD-012-S2`.
 
 ## 中文
 
-### 数据与来源
+### 数据来源与谱系
 
-本任务属于 `task_group_019`，场景为 `SCN_019_regulatory_licensing_eligibility_and_compliance_review`，来源样例包括 `E001`、`E002`，尤其对应 `E003` 的续期人工复核队列工作。任务使用共享的 Cascadia Licensing Review Portal（CLRP）环境，环境文件位于 `task_group/task_group_019/env/`。
+本任务属于 `SCN_019_regulatory_licensing_eligibility_and_compliance_review`，使用来源样例 `E003` 抽象出的 renewal manual-review queue 工作族。它是 `task_group_019` 的正式 `test_002`，迁移锚点是 `train_003` 中体现的 renewal queue 规则与输出惯例。
 
-任务构造要求是为发布批次 `RV-2026-SUMMER`、发布边界日期 `2026-07-15` 建立续期人工复核队列。该批次的生成锚点记录在 `env/data/public_manifest.json` 和 `env/data/construction_manifest.json` 中，标准答案则依据生成数据库中的 `renewal_licensees` 和 `renewal_violations` 记录构造。
+重新生成后的环境 manifest 给出了边界日期 `2025-06-15`、目标队列大小 `12`，以及当前目标许可证 `AL-TE2-001` 到 `AL-TE2-012`。标准答案根据 `task_group/task_group_019/env/data/licensing.db` 重新计算，使用 `alcohol_licensees`、`alcohol_violations` 和 `renewal_rules` 表。求解器只能通过 `input/prompt.txt` 中列出的公开端点访问数据；manifest、数据库、生成脚本、notes、answer 和 evaluator 都是隐藏构造材料。
 
-求解者可见材料包括：
+### 任务定义与场景匹配
 
-- `input/prompt.txt`：给出基础 URL 占位符 `http://localhost:<PORT>`、发布批次 `RV-2026-SUMMER` 和边界日期 `2026-07-15`。
-- `input/payloads/answer_template.json`：定义输出 JSON 结构、排名顺序、枚举值、汇总字段以及整数和日期格式要求。
+求解器扮演 licensing analyst，在夏季 renewal release 前准备 alcohol renewal manual-review queue。当前提示只给出目标许可证范围、release boundary、队列大小和环境入口；它不再暴露构造用的 group tag。预期输出是符合 `input/payloads/answer_template.json` 的规范化 JSON。
 
-主要使用的 CLRP 公开入口包括当前续期花名册 API、该批次花名册导出、按城市查询的违规历史 API，以及地址搜索 API。
-
-### 任务定义与场景适配
-
-该任务模拟发布前续期人工复核筛选。工作人员需要从夏季批次的当前持证人中排出 12 个需要人工复核的对象。输出不是叙述性备忘录，而是结构化队列，包含稳定 ID、匹配置信度、证据窗口内的违规计数、最近可用证据日期、受控下一步标签、结构化风险摘要，以及被边界日期排除的后置违规记录数量。
-
-本任务符合源样例的续期队列场景，因为它要求把当前花名册与噪声较多的历史违规记录关联，处理精确和近似名称匹配，保留共享地址不确定性，应用发布边界日期，并输出可由审核人员直接使用的标签。
+该任务符合监管许可审查场景，因为它要求识别当前 licensee、按日期边界筛选 violation、处理 successor 或 close-address 关系、确定 risk tier、选择封闭 next-step label，并生成可供工作人员复核的 summary。提示本身不能直接给出答案；求解器必须探索环境数据，并迁移 `train_003` 中体现的 renewal queue 规则。
 
 ### 材料地图
 
-`renewal_licensees` 表提供 `RV-2026-SUMMER` 当前花名册、机构名称、地址、城市、状态、许可类型和继承提示。`renewal_violations` 表提供以机构名或近似别名记录的历史违规。花名册导出是 API 的公开替代来源。地址搜索入口用于判断地址层面的命中是否应归入当前持证人，或是否应保留为共享地址人工复核。
+- `GET /api/alcohol/licensees`：当前许可证名册、facility name、address、active 状态、location id 和 successor 标记。
+- `GET /api/alcohol/violations`：violation history、日期、theme、severity、disposition、fine balance、alert flag 和 source name。
+- `GET /api/renewal/rules`：release-boundary 政策记录，包括 `2025-06-15` summer release rule。
+- `POST /api/sql`：当求解环境提供 SQL 凭据时可用的只读查询入口。
+- `input/payloads/answer_template.json`：输出结构、枚举值、日期格式、队列长度、rank 排序和 summary 字段。
 
-夏季批次中包含精确匹配，例如 `Maple Kitchen 061`；近似历史名称，例如 `Signal Lounge 098 Formerly`；`2026-07-15` 之后的后置漂移记录；以及共享地址人工复核案例 `Civic House 053`。
+### 解法与评估依据
 
-### 解题与评价依据
+标准答案使用当前目标许可证 `AL-TE2-001` 到 `AL-TE2-012`。纳入匹配的 violation 必须满足 `violation_date <= 2025-06-15`。十二条 `AV-AL-TE2-*-LATE` 记录位于边界之后，因此不得用于 count、most recent date、rank、risk tier 或 label。
 
-当前持证人是 `renewal_licensees` 表中 `release_batch = 'RV-2026-SUMMER'` 的记录。可使用的违规记录必须先按城市和规范化地址匹配，再根据当前机构名称、受支持近似别名或共享地址人工判断进行归属。地址规范化只在名称证据支持当前持证人，或该记录被明确保留为共享地址人工案例时，才把 `Suite B, ` 视为同一服务地址。
+重新生成后的关键边界案例是 `AL-TE2-012`。它的当前许可证记录在同一地址 `332 River Ave` 上有 `successor_to = AL-TE2-OLD-012`。边界前匹配集合由当前 exact 记录 `AV-AL-TE2-012-1` 加上 legacy successor 记录 `AV-AL-TE2-OLD-012-S1` 和 `AV-AL-TE2-OLD-012-S2` 组成。因此 `violation_count = 3`，`most_recent_violation_date = 2025-06-10`，`match_confidence = close_address`，`risk_tier = high`，`next_step_label = board_review`。模板已经允许 `close_address`，因此这个非 exact successor match 不需要修改求解器可见 schema。
 
-`violation_date > 2026-07-15` 的记录不参与排序、`violation_count_used` 或 `most_recent_date_used`，但要计入顶层字段 `excluded_post_boundary_count`。夏季当前花名册中，匹配但被边界排除的后置记录总数为 `23`。
+标准队列顺序为：
 
-标准队列依次为 `LIC-RV-2026-0061`、`LIC-RV-2026-0056`、`LIC-RV-2026-0055`、`LIC-RV-2026-0089`、`LIC-RV-2026-0096`、`LIC-RV-2026-0063`、`LIC-RV-2026-0098`、`LIC-RV-2026-0081`、`LIC-RV-2026-0085`、`LIC-RV-2026-0065`、`LIC-RV-2026-0067`、`LIC-RV-2026-0053`。
+1. `AL-TE2-012`
+2. `AL-TE2-010`
+3. `AL-TE2-005`
+4. `AL-TE2-008`
+5. `AL-TE2-002`
+6. `AL-TE2-007`
+7. `AL-TE2-009`
+8. `AL-TE2-001`
+9. `AL-TE2-004`
+10. `AL-TE2-011`
+11. `AL-TE2-006`
+12. `AL-TE2-003`
 
-该队列重点覆盖董事会制裁、暂停、严重行为、高风险未成年人服务、罚款征收负担、近似名称连续性、后置记录排除，以及一个共享地址人工复核案例。`Civic House 053` 被标为 `shared_address_manual`，因为其可用历史包含共享地址锚点上的无继承提示近似名称命中，不能当成普通精确连续经营处理。
+排序先看 next-step priority，再按最新匹配 violation 日期降序、匹配数量降序、许可证号升序。`board_review` 用于存在重复 serious 边界前匹配记录的许可证，包括 successor rows。因此 `AL-TE2-012` 和 `AL-TE2-010` 是 board-review case。`manual_fine_check` 用于没有 board trigger 但存在明显 fine-balance 或 unpaid-fine 风险的条目。`AL-TE2-003` 是剩余的 alert-driven 低风险条目，因此使用 `manual_ALERT_check`。board-review 和明显 fine-exposure 条目为 high risk，`AL-TE2-003` 为 medium。
 
-评估器包含 8 个精确匹配评分点，原始权重分别为 2、2、2、2、2、1、2、3。评分内容覆盖队列成员和当前花名册名称、前五名顺序、第六到第十二名顺序、匹配置信度、违规计数、最近可用日期、下一步标签，以及风险摘要和边界排除数量。
+Evaluator 有七个确定性整点评分项，原始权重如下：
 
-常见错误包括：把边界日期之后的违规记录用于排序；漏掉近似别名；把共享地址历史扩散给不应归属的持证人；只排名 manifest 中的锚点；忽略前 12 个 ID 之外的高风险干扰记录；混入错误城市的记录；或者输出自由文本而不是受控 JSON 结构。
+- `SP001`，权重 3：队列 membership 与 rank order 完全正确。
+- `SP002`，权重 2：每个许可证的边界前 matched violation count 和 most recent used date 正确，包括 `AL-TE2-012` 的 successor-expanded count。
+- `SP003`，权重 2：match confidence 与包含 `AL-TE2-012` 的 close/uncertain summary 正确。
+- `SP004`，权重 3：封闭 next-step label 正确。
+- `SP005`，权重 2：正确排除十二条边界之后 violation ID，且没有使用 late date。
+- `SP006`，权重 2：risk tier 与 board-review summary set `AL-TE2-010`、`AL-TE2-012` 正确。
+- `SP007`，权重 1：queue size、boundary date 和 facility identity 字段正确。
+
+每个评分项都是 all-or-nothing。原始权重按 `weight / 15` 转换为分值。Evaluator 接受 `$1` 作为候选答案路径；如果未传入路径，则默认评分本任务的 `output/answer.json`。
+
+常见错误包括按隐藏 construction group tag 命名或过滤、使用 `post_boundary_feed` 的边界后记录、漏掉 `AL-TE2-012` 的 successor link、把 successor rows 误标为 exact、只把 `AL-TE2-012` 算作当前许可证的一条记录、只按最新 violation 日期排序而忽略 next-step priority、以及使用自由文本 next step 而不是封闭枚举。
 
 ### 迁移设计
 
-本测试任务直接迁移自 `train_003`。训练任务在对照答案后应让模型学到续期类任务的规则：从当前发布批次花名册出发，保守匹配名称和地址，只有地址支持时才接受近似历史，不扩散共享地址记录，排除但统计边界后的违规记录，按边界前风险排序，并使用固定枚举标签。本测试把同一规则应用到新的夏季实体、更晚的边界日期、更多后置漂移记录，以及一个明确的共享地址人工复核结果上。
-
-依赖迁移的评分点包括 `SP001`、`SP003`、`SP004`、`SP005`、`SP007` 和 `SP008`。`SP002` 也受训练中排序经验帮助，但更依赖夏季批次的具体证据探索。`SP006` 主要依赖任务内数据探索。
+`test_002` 锚定 `train_003`。需要迁移的知识包括：严格执行 release boundary；在当前许可证记录足够时优先 exact match；当当前目标许可证链接到 legacy rows 时使用 successor 或 close-address matching；用允许的非 exact enum 标记非 exact match；使用封闭 next-step label；保持 ranked queue schema；并在 summary 中列出 late exclusion 和 board-review license。高价值迁移相关评分项为 `SP001`、`SP003`、`SP004`、`SP005` 和 `SP006`。任务本身仍需要数据探索，因为边界日期更晚、队列更大、目标 licensee 全部更新，并且重新生成的数据使 `AL-TE2-012` 成为真实 successor-match case。
 
 ### 构造记录
 
-作者：`test_002` task-builder subagent，GPT-5.5 xhigh。
-创建日期：2026-07-07。
-更新日期：2026-07-07。
-主要变更：首次创建提示词、答案模板、标准答案、评估器和双语说明。
+- 作者：task-builder-test-002；由 Codex main agent 返工
+- 创建日期：2026-07-18
+- 更新日期：2026-07-18
+- 主要变更：修改 prompt 以移除 construction group tag；根据重新生成的数据库重新计算 standard answer 和 evaluator；记录 `AL-TE2-012` 使用 `AV-AL-TE2-012-1`、`AV-AL-TE2-OLD-012-S1`、`AV-AL-TE2-OLD-012-S2` 的 successor match。

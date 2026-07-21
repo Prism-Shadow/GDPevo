@@ -1,45 +1,100 @@
-# test_004 Notes - Benton County post-disposition audit queue
+# test_004 Notes - Lake County Criminal Closeout
 
-## English
+## English Review Notes
 
-Data/source lineage: This is `task_group_018` / `test_004`, based on scenario `SCN_018_court_clerk_disposition_orders_and_financial_entries` and source examples `E001`, `E002`, and `E003`. It uses the shared clerk operations environment in `task_group/task_group_018/env/data/clerk_ops.json` through the public HTTP API, plus the task-local payloads `input/payloads/benton_post_disposition_audit_packet.json` and `input/payloads/answer_template.json`. This second rework keeps the Benton post-disposition audit queue but replaces the direct-v2-easy packet with noisier stale/live conflicts, signed counsel-cost order conditions, ledger credit corrections, and release-board holds.
+### Data and Source Lineage
 
-Task definition: The solver must produce a clerk-ready JSON audit file for the Benton criminal post-disposition finance release queue dated `2026-03-06`. Solver-visible inputs are `prompt.txt`, the answer template, the local audit packet, and the shared environment at `{ENV_BASE_URL}`. The output includes one row for each in-scope Benton criminal post-disposition matter, sorted by `case_number`, with resolved status, disposition and assessment dates, conflict code, final defense representation, counsel-fee treatment, approved fee components, restitution, live ledger principal and paid credit, signed credit adjustments, corrected principal and balance, release flag, hold reason, next action, and aggregate rollups.
+This task belongs to `task_group_018`, source scenario `SCN_018_court_clerk_disposition_orders_and_financial_entries`, with source examples `E001`, `E002`, and `E003`. It is a test task in the Arkansas criminal closeout family. The closest train anchors are `train_001` and `train_004`.
 
-Scenario fit: This task remains in the same court-clerk disposition and financial-entry workflow as the source examples. It requires reconciling stale import extracts, live case records, docket state, fee schedules, counsel-cost order records, live financial obligations, task-local credit correction notices, and release-board statuses before the clerk releases a finance import batch.
+The shared Court Operations Portal contains the target Lake County records for `LC-25-0320`, `LC-25-0326`, `LC-24-0899`, and `LC-25-0331` in the generated `cases`, `charges`, `docket_entries`, `jurisdictions`, and `fee_schedules` data exposed by the public API. The task-local solver-visible payloads are `lake_hearing_notes_2025-06-18.md`, `lake_counsel_memo_and_worksheet.csv`, `lake_finance_queue_payloads.json`, and `answer_template.json`.
 
-Material map: The local packet contains seven queue rows. The target rows are `23-BEN-01003`, `24-BEN-00132`, `24-BEN-00141`, `24-BEN-01001`, and `25-BEN-01001`; `24-BEN-01002` is a compliance cross-reference and `25-BEN-01002` is a pending-disposition name check. The stale workbook explains imported amounts and includes traps such as formula-based `CR-PD-REC`. The counsel-cost bulletin and order log provide the conditions for `CR-APPT-CNSL` and `CR-PD-REC`. The post-disposition order index supplies task-local status/date evidence where live fields or stale extracts conflict. The ledger correction notices supply signed adjustments not reflected in the live ledger. The release-board notes distinguish rows that may release after finance correction from rows held for trust or charge-grid review. The environment supplies live cases, docket entries, current Benton criminal fee rows, financial obligations, attorney directory, and stale export context.
+### Task Definition and Scenario Fit
 
-Solution and evaluation basis: Fees are selected using the assessment basis date and the current live schedule where available. For Benton criminal cases before `2025-01-01`, `CR-CONV` is `150.00` and `CR-REST-ADM` is `15.00`; for dates on or after `2025-01-01`, `CR-CONV` is `165.00`, `CR-FILING` is `95.00`, `CR-PROB` is `82.50`, and `CR-REST-ADM` is `25.00`. `CR-APPT-CNSL` is added only for signed appointed-private reimbursement orders. `CR-PD-REC` is excluded for the public-defender rows because the packet has no signed recoupment order. Restitution is part of principal but not a fee code. Corrected balance due is corrected principal minus live amount paid after signed task-local credit adjustments.
+The solver acts as a Lake County Arkansas criminal clerk preparing Judge Mercer's June 18, 2025 closeout. They must reconcile courtroom notes, a counsel worksheet, finance queue rows, and portal records before producing disposition entries, exclusion decisions, counsel and source audit findings, financial postings, docket action codes, and register totals.
 
-Case-level answer basis: `23-BEN-01003` uses the order index status `probation_active`, assesses old `CR-CONV` plus signed `CR-APPT-CNSL`, reverses `30.00` of paid credit, and remains held for ledger supervisor review. `24-BEN-00132` uses the live/order status, excludes unsigned PD recoupment, adds old `CR-REST-ADM`, transfers `38.00` paid credit out, and releases after replacement. `24-BEN-00141` adds old `CR-REST-ADM`, receives the `38.00` transfer in, and releases after replacement. `24-BEN-01001` uses the 2025 schedule plus signed appointed-counsel fee and restitution, but remains held because the live charge result is still inconsistent with the case-level disposition. `25-BEN-01001` excludes unsigned PD recoupment, reverses the `82.50` ACH credit, and releases after credit reversal.
+This fits the task group because it is the same office workflow as the Arkansas train tasks: multi-case criminal disposition closeout, noisy queue data, counsel-type ambiguity, signed-order versus draft status, fee posting, docket language, and register balancing. The task is not a template copy because it adds Lake-specific count merging, a filing-date conflict, a public-defender fee waiver, and one continued matter.
 
-Evaluation basis: The evaluator has nine exact-match scoring points with raw weights summing to 23. SP001 weight 1 checks metadata, audit date, and currency. SP002 weight 2 checks target case set and row order. SP003 weight 3 checks resolved statuses, disposition dates, assessment basis dates, and source-conflict codes. SP004 weight 3 checks defense attorney, defense type, and conditional counsel-fee treatment. SP005 weight 3 checks approved fee component codes and amounts, including effective-date and counsel-cost rows. SP006 weight 3 checks restitution, corrected principal totals, and corrected balances due. SP007 weight 3 checks live ledger principal, live paid credit, signed credit adjustment, effective paid credit, and principal delta. SP008 weight 2 checks release flags, hold reasons, and next action codes. SP009 weight 3 checks aggregate counts, held-case set, financial rollups, credit-adjustment rollups, and counsel-fee totals. All money checks normalize to cents and all points are exact-match business results.
+### Material Map
 
-Transfer design: This is a test task anchored in `train_001` and `train_004`. From `train_001`, a solver can infer the Benton fee-schedule habit, restitution-as-principal convention, live ledger credit use, probation/rest-administration conditionality, and the risk of trusting stale finance imports. From `train_004`, a solver can transfer stale-export versus live-record reconciliation, representation mismatch handling, principal-before-payments convention, per-case financial deltas, and controlled release/action codes. High-value transfer-dependent scoring points are SP003 through SP009. The new task-specific difficulty is the old deferred Benton row, the same-name receipt transfer, the signed/unsigned counsel-cost distinction, an ACH reversal, two release holds, and aggregate fields that require recomputation rather than copying packet or API fields.
+`GET /api/cases` supplies official Lake case identities, DOBs, counsel types, attorney names, status, disposition dates, filing dates, source systems, and case notes. `GET /api/charges` supplies charge rows and sentencing fields, but the solver must reconcile stale or generic charge fields with the hearing notes. `GET /api/docket-entries` provides source/status hints, including the continued posture of `LC-25-0331`. `GET /api/fee-schedules` supplies the current Lake County circuit criminal court cost of `145.00`. `GET /api/search` can locate the same target objects when the solver does not know endpoint filters.
 
-Likely model pitfalls: Common failures are including the compliance or pending-disposition context rows, accepting stale `CR-PD-REC` formula rows, applying 2025 fees to 2023/2024 assessment dates, omitting `CR-APPT-CNSL` for signed appointed-private orders, forgetting the `CR-PROB` fee on the 2025 probation case, treating restitution as a fee component, using live `balance_due` instead of recomputing from corrected principal and adjusted paid credit, applying the `38.00` transfer to only one Santos case, releasing `23-BEN-01003` or `24-BEN-01001` despite their holds, or computing aggregates from live ledger fields without credit adjustments.
+The hearing notes are the best local source for courtroom outcomes: `LC-25-0320` has counts 2 and 3 merged into count 1, no-contest deferred disposition, a `250.00` fine, and a durational departure; `LC-25-0326` is nolle prosequi with court costs and a public-defender user-fee waiver; `LC-24-0899` is a bench-trial guilty finding with appointed private counsel and no departure; `LC-25-0331` is continued with no final order. The counsel memo and finance queue deliberately contain noisy user-fee, filing-date, merged-count, and source/disposition conflicts.
 
-Construction record: Created by Codex task-builder subagent on 2026-07-07 and substantially reworked on 2026-07-07 after direct v2 calibration scored `avg@2 = 1.0`. Files updated only under `task_group/task_group_018/test_tasks/004/`: prompt, answer template, Benton audit packet, standard answer, evaluator, and notes. No shared environment files, scratch files, task group metadata, seed scenario files, or other task folders were modified.
+### Solution and Evaluation Basis
 
-## 中文
+The standard answer includes `LC-24-0899`, `LC-25-0320`, and `LC-25-0326` in final closeout entries and excludes `LC-25-0331` as `continued_no_final_order` with next status date `2025-07-16`. Counsel resolves to appointed private for `LC-24-0899`, retained for `LC-25-0320`, and public defender for `LC-25-0326` and `LC-25-0331`; only the disposed public-defender case has a user-fee decision, and that line is waived by the judge. The final amounts are `1145.00` for `LC-24-0899`, `395.00` for `LC-25-0320`, `145.00` for `LC-25-0326`, and `0.00` for `LC-25-0331`. Register totals are 3 included cases, 1 excluded pending/continued matter, 3 disposition entries, 3 financial entries, `1250.00` fines, `435.00` court costs, `0.00` user fees, `0.00` assessments, and `1685.00` grand total.
 
-数据来源：本任务是 `task_group_018` 的 `test_004`，来源于场景 `SCN_018_court_clerk_disposition_orders_and_financial_entries` 以及示例 `E001`、`E002`、`E003`。任务使用共享书记员业务环境 `task_group/task_group_018/env/data/clerk_ops.json`，求解器通过公共 HTTP API 访问；任务本地材料包括 `input/payloads/benton_post_disposition_audit_packet.json` 和 `input/payloads/answer_template.json`。本次第二次返工保留 Benton 处分后审计队列，但把 direct v2 中过于容易的材料替换为更复杂的过期与实时冲突、签署辩护费用命令条件、账册抵扣修正和释放板暂停状态。
+The evaluator has eight whole-point scoring checks with raw weights `[1, 3, 2, 3, 1, 1, 3, 1]`:
 
-任务定义：求解器需要为 `2026-03-06` 的 Benton 刑事处分后财务释放队列生成书记员可用的 JSON 审计文件。可见输入包括 `prompt.txt`、答案模板、本地审计包，以及 `{ENV_BASE_URL}` 的共享环境。输出必须包含范围内的 Benton 刑事处分后事项，并按 `case_number` 排序；每行包括最终状态、处分日期和费用依据日期、冲突代码、确认后的辩护信息、辩护费用处理、批准的费用组件、赔偿金额、实时本金和已付抵扣、任务本地抵扣修正、修正本金和余额、是否释放、暂停原因、下一步动作和汇总字段。
+- `SP001`: final included case set and detailed continued exclusion record.
+- `SP002`: audit findings for counsel, filing/source, merged-count, departure, user-fee, and continued-status conflicts.
+- `SP003`: counsel-type reconciliation and conditional public-defender user-fee treatment for all target cases.
+- `SP004`: disposition outcomes, closeout actions, dates, merged counts, pleas, sentences, and pending treatment.
+- `SP005`: departure and non-departure classification.
+- `SP006`: per-case financial posting, fee inclusion/exclusion, and case totals.
+- `SP007`: docket/register action language codes, entry codes, dates, and amount due.
+- `SP008`: aggregate register counts and dollar totals.
 
-场景匹配：本任务仍属于源示例中的法院书记员处分和财务录入工作流。它要求在释放财务导入批次之前，交叉核对过期导入、实时案件记录、案卷状态、费用表、辩护费用命令、实时财务义务、任务本地抵扣修正通知和释放板状态。
+These checks cover at least six distinct outcomes: inclusion/exclusion, audit/source conflict handling, counsel and user-fee decisions, disposition/count treatment, departure classification, finance, docket action language, and aggregate totals. Each scoring point is all-or-nothing with no fractional credit inside a point. The higher weights emphasize audit/source conflict handling, final disposition treatment, and docket/register action language, which are the recurring closeout decisions most dependent on train-derived experience.
 
-材料地图：本地材料包含七个队列行。目标行是 `23-BEN-01003`、`24-BEN-00132`、`24-BEN-00141`、`24-BEN-01001` 和 `25-BEN-01001`；`24-BEN-01002` 是合规交叉参考行，`25-BEN-01002` 是等待处分的姓名核对行。过期工作簿解释导入金额，并包含公式型 `CR-PD-REC` 陷阱。辩护费用公告和命令日志提供 `CR-APPT-CNSL` 和 `CR-PD-REC` 的条件。处分后命令索引在实时字段或过期导出冲突时提供任务本地状态和日期证据。账册抵扣通知提供尚未进入实时账册的签署修正。释放板记录区分可随财务修正释放的行和因信托或指控表问题而暂停的行。共享环境提供实时案件、案卷、Benton 刑事费用表、财务义务、律师目录和过期导出背景。
+Likely pitfalls include posting separate court costs for merged counts 2 and 3 in `LC-25-0320`, treating `APD private` as public defender in `LC-24-0899`, posting the queued public-defender user fee despite the waiver in `LC-25-0326`, using the counsel worksheet filing date instead of the portal filed date, entering `LC-25-0331` from the draft queue, or copying the old departure flag on `LC-24-0899`.
 
-答案依据：费用按费用依据日期选择，并优先使用可用的实时费用表。Benton 刑事案件在 `2025-01-01` 之前使用 `CR-CONV` `150.00` 和 `CR-REST-ADM` `15.00`；在 `2025-01-01` 及以后使用 `CR-CONV` `165.00`、`CR-FILING` `95.00`、`CR-PROB` `82.50` 和 `CR-REST-ADM` `25.00`。只有存在已签署的 appointed-private reimbursement order 时才加入 `CR-APPT-CNSL`。两个公设辩护行没有签署的追偿命令，因此排除 `CR-PD-REC`。赔偿计入本金，但不是费用代码。修正余额等于修正本金减去实时已付金额再加上任务本地签署的抵扣修正后的有效已付金额。
+### Transfer Design
 
-逐案依据：`23-BEN-01003` 使用命令索引中的 `probation_active`，评估旧 `CR-CONV` 和已签署的 `CR-APPT-CNSL`，冲回 `30.00` 已付抵扣，并因信托主管复核而暂停。`24-BEN-00132` 使用实时和命令状态，排除未签署的 PD 追偿，加入旧 `CR-REST-ADM`，转出 `38.00` 已付抵扣，并在替换后释放。`24-BEN-00141` 加入旧 `CR-REST-ADM`，接收 `38.00` 转入，并在替换后释放。`24-BEN-01001` 使用 2025 费用表、已签署的 appointed counsel 费用和赔偿，但因实时指控结果仍与案件级处分冲突而暂停。`25-BEN-01001` 排除未签署的 PD 追偿，冲回 `82.50` ACH 抵扣，并在抵扣冲回后释放。
+Train anchors: `train_001` anchors conditional public-defender user-fee handling, source/queue conflict logging, signed-order discipline, docket summary codes, and register totals. `train_004` anchors appointed-private versus public-defender reconciliation, continued/pending exclusion, current jurisdictional court-cost lookup, count/outcome reconciliation from hearing notes, and aggregate register computation.
 
-评估依据：评估器包含九个精确匹配评分点，原始权重合计 23。SP001 权重 1，检查元数据、审计日期和币种。SP002 权重 2，检查目标案件集合和行顺序。SP003 权重 3，检查最终状态、处分日期、费用依据日期和来源冲突代码。SP004 权重 3，检查辩护人、辩护类型和条件性辩护费用处理。SP005 权重 3，检查批准费用组件代码和金额，包括生效日期和辩护费用行。SP006 权重 3，检查赔偿、修正本金和修正余额。SP007 权重 3，检查实时本金、实时已付抵扣、签署的抵扣修正、有效已付抵扣和本金差额。SP008 权重 2，检查释放标志、暂停原因和下一步动作代码。SP009 权重 3，检查汇总计数、暂停案件集合、财务汇总、抵扣修正汇总和辩护费用总额。所有金额规范化到美分，所有评分点都是业务结果的精确匹配。
+Transfer-dependent scoring points are `SP002`, `SP003`, `SP006`, `SP007`, and `SP008`. The solver benefits from train-derived experience by knowing that counsel labels like APD can mean appointed private rather than public defender, public-defender/user-fee lines are conditional and can be excluded or waived, pending or continued matters do not receive disposition or financial postings, current fee schedules override staging rows, and docket/register outputs use controlled action codes. Task-specific exploration remains necessary for the Lake case identifiers, the merged-count facts, the Lake `145.00` cost schedule, the filing-date conflict, and the exact register totals.
 
-迁移设计：这是测试任务，训练锚点是 `train_001` 和 `train_004`。从 `train_001` 可迁移 Benton 费用表使用习惯、赔偿计入本金约定、实时账册抵扣使用、缓刑费和赔偿管理费条件，以及不能相信过期财务导入的经验。从 `train_004` 可迁移过期导出与实时记录的核对、辩护信息不匹配处理、付款前本金约定、逐案财务差额以及受控释放/动作代码风格。高价值迁移评分点是 SP003 到 SP009。本次新增的任务特定难点包括旧 deferred Benton 行、同名收据转移、签署与未签署辩护费用区别、ACH 冲回、两个释放暂停，以及必须重新计算而不能复制材料或 API 字段的汇总字段。
+### Construction Record
 
-常见错误：常见失败包括纳入合规或等待处分的背景行；接受过期 `CR-PD-REC` 公式行；把 2025 费用套用到 2023/2024 费用依据日期；漏掉已签署 appointed-private 命令的 `CR-APPT-CNSL`；漏掉 2025 缓刑案件的 `CR-PROB`；把赔偿当作费用组件；直接使用实时 `balance_due` 而不按修正本金和调整后有效已付金额重算；只在一个 Santos 案件上处理 `38.00` 转移；在仍有暂停时释放 `23-BEN-01003` 或 `24-BEN-01001`；或用实时账册字段直接汇总而不应用抵扣修正。
+Author: Codex task-builder subagent for `test_004`.
 
-构造记录：由 Codex task-builder subagent 于 2026-07-07 创建，并在 direct v2 校准 `avg@2 = 1.0` 后于 2026-07-07 大幅返工。仅修改 `task_group/task_group_018/test_tasks/004/` 下的文件：prompt、答案模板、Benton 审计包、标准答案、评估器和 notes。未修改共享环境、scratch 文件、task group 元数据、seed scenario 文件或其他任务目录。
+Created: 2026-07-18.
+
+Updated: 2026-07-18.
+
+Major changes: created `test_tasks/004/` with solver prompt, three realistic local payloads, answer template, standard answer, deterministic evaluator, and bilingual notes. Later calibration rework adjusted rubric weights while preserving the same scoring points and standard answer.
+
+## 中文审阅说明
+
+### 数据和来源
+
+本任务属于 `task_group_018`，来源场景为 `SCN_018_court_clerk_disposition_orders_and_financial_entries`，参考示例为 `E001`、`E002` 和 `E003`。它是阿肯色刑事结案登记系列的测试任务，最直接的训练锚点是 `train_001` 和 `train_004`。
+
+共享的 Court Operations Portal 中包含 Lake County 目标案件 `LC-25-0320`、`LC-25-0326`、`LC-24-0899`、`LC-25-0331`，相关数据分布在案件、指控、案卷、辖区和费用表接口中。本任务本地可见材料包括庭审记录、律师备忘和工作表、财务队列 JSON，以及答案模板。
+
+### 任务定义和场景契合
+
+解题者扮演 Lake County 阿肯色刑事书记员，为 Mercer 法官 2025-06-18 的刑事庭次做结案。需要在庭审记录、律师工作表、财务队列和门户记录之间核对，输出处分录入、排除事项、律师和来源审计、费用、案卷动作代码以及登记簿总额。
+
+该任务符合任务组的核心工作流：多案件刑事结案、队列噪声、律师类型歧义、已签命令与草稿状态区分、费用录入、案卷语言和登记簿平衡。它不是简单套用训练题，因为新增了 Lake County 的合并罪数、立案日期冲突、公设辩护人费用豁免，以及一个继续审理事项。
+
+### 材料用途
+
+`GET /api/cases` 用于核对身份、DOB、律师类型、律师姓名、状态、处分日期、立案日期、来源系统和案件备注。`GET /api/charges` 提供指控和量刑字段，但需要与庭审记录核对。`GET /api/docket-entries` 提供状态和来源线索，尤其是 `LC-25-0331` 的继续审理状态。`GET /api/fee-schedules` 给出 Lake County 当前刑事法院成本 `145.00`。`GET /api/search` 可用于查找目标对象。
+
+庭审记录是处分结果的主要本地证据：`LC-25-0320` 的第 2、3 项并入第 1 项，作无抗辩延期处分，罚金 `250.00`，并标记为量期偏离；`LC-25-0326` 是 nolle prosequi，收普通法院成本，且公设辩护人使用费被法官豁免；`LC-24-0899` 是法官审判有罪，律师是 appointed private，且无偏离；`LC-25-0331` 继续审理，没有最终命令。律师备忘和财务队列提供故意设置的用户费、立案日期、合并罪数、来源和处分冲突。
+
+### 标准答案和评分依据
+
+标准答案将 `LC-24-0899`、`LC-25-0320` 和 `LC-25-0326` 纳入最终结案登记，并将 `LC-25-0331` 作为 `continued_no_final_order` 排除，下一次状态日期为 `2025-07-16`。律师类型分别为 appointed private、retained、public defender、public defender；唯一已处分的公设辩护人案件 `LC-25-0326` 的使用费被法官豁免。每案金额为 `1145.00`、`395.00`、`145.00` 和 `0.00`。登记簿汇总为 3 个纳入案件、1 个排除事项、3 个处分录入、3 个财务录入、罚金 `1250.00`、法院成本 `435.00`、用户费 `0.00`、评估费 `0.00`、总额 `1685.00`。
+
+评估器有 8 个整点评分项，权重为 `[1, 3, 2, 3, 1, 1, 3, 1]`，分别检查纳入和排除、审计冲突、律师和用户费、处分与合并罪数、偏离分类、每案费用、案卷动作语言和登记簿总额。评分覆盖至少六类不同业务结果，每个评分项只有全对或零分。较高权重集中在 audit/source conflict、final disposition treatment 和 docket/register action language，这些是更依赖训练经验迁移的 recurring closeout decisions。
+
+常见错误包括给 `LC-25-0320` 的合并第 2、3 项分别加法院成本；把 `LC-24-0899` 的 `APD private` 当作公设辩护人；在 `LC-25-0326` 中录入已豁免的公设辩护人费用；使用律师工作表中的错误立案日期；根据草稿队列录入 `LC-25-0331`；或照抄 `LC-24-0899` 的旧偏离标记。
+
+### 迁移设计
+
+训练锚点：`train_001` 支持迁移公设辩护人使用费的条件处理、来源和队列冲突记录、签署命令纪律、案卷摘要代码和登记簿汇总。`train_004` 支持迁移 appointed private 与 public defender 的区分、继续或待定事项排除、当前辖区法院成本查询、从庭审记录核对指控结果，以及汇总登记簿金额。
+
+依赖迁移的评分点是 `SP002`、`SP003`、`SP006`、`SP007` 和 `SP008`。训练经验应帮助解题者认识到 APD 标签可能不是公设辩护人，公设辩护人费用是有条件的并可能被排除或豁免，继续审理事项不能录入处分或财务记录，当前费用表优先于队列金额，并且案卷和登记簿输出使用受控动作代码。任务本身仍要求探索 Lake 的具体案号、合并罪数、`145.00` 法院成本、立案日期冲突和精确汇总金额。
+
+### 构造记录
+
+作者：`test_004` 的 Codex 任务构造子代理。
+
+创建日期：2026-07-18。
+
+更新日期：2026-07-18。
+
+主要变更：创建 `test_tasks/004/` 下的提示、三个真实感本地材料、答案模板、标准答案、确定性评估器和双语说明；后续 calibration rework 调整了 rubric weights，但保留相同 scoring points 和 standard answer。

@@ -5,207 +5,190 @@ from pathlib import Path
 
 
 EXPECTED = {
-    "recommendation": "ISSUE_RESTRICTED_WITH_MONITORING",
-    "successor_risk_classification": "HIGH",
-    "verification_gaps": {
-        "PENDING_INCIDENT_DISPOSITIONS": {
-            "source_ids": ["AI-2026-0008", "AI-2026-0009"],
-            "status": "REQUEST_BEFORE_FINAL",
-        },
-        "POST_REVIEW_SETTLEMENT_TIMING": {
-            "source_ids": ["AS-2026-0007"],
-            "status": "REQUEST_BEFORE_FINAL",
-        },
-        "STANDARD_CONTROL_OVERLAP": {
-            "source_ids": ["AR-2026-0013"],
-            "status": "SEPARATE_FROM_PREMISES_CONTROLS",
-        },
-        "SUCCESSOR_CONTROL_SEPARATION": {
-            "source_ids": ["PM-2026-018"],
-            "status": "REQUEST_BEFORE_FINAL",
-        },
-    },
-    "standard_obligation_codes": [
-        "BREW_PRODUCTION",
-        "BREW_SAMPLES",
-        "BREW_TRAINING",
-        "INCIDENT_REPORT",
-        "PUBLIC_RECORDS",
+    "application_id": "L-TR5-001",
+    "recommended_posture": "request_follow_up",
+    "same_premises_basis_applies": True,
+    "covered_risk_codes": ["NOISE", "PATIO_BOUNDARY"],
+    "verification_gap_codes": [
+        "camera_evidence_missing",
+        "food_service_evidence_missing",
+        "floor_plan_conflicting",
+        "late_night_monitoring_needed",
+        "tax_hold_unresolved",
     ],
-    "premises_specific_controls": {
-        "AGE_CHECK": {
-            "source_ids": ["AR-2026-0014"],
-            "check_code": "DEVICE_AUDIT",
-            "first_90_day_check": True,
-        },
-        "LATE_NIGHT_DISORDER_MONITORING": {
-            "source_ids": ["AI-2026-0008", "AI-2026-0145"],
-            "check_code": "POLICE_CALL_LOG_REVIEW",
-            "first_90_day_check": True,
-        },
-        "QUARTERLY_INSPECTION_CONDITION": {
-            "source_ids": ["AS-2026-0007"],
-            "check_code": "SITE_INSPECTION",
-            "first_90_day_check": True,
-        },
-        "SECURITY_PLAN_LAPSE_REVIEW": {
-            "source_ids": ["AI-2026-0086"],
-            "check_code": "SECURITY_LOG_REVIEW",
-            "first_90_day_check": True,
-        },
-    },
-    "record_request_codes": [
-        "AGE_VERIFICATION_DEVICE_AUDIT",
-        "BREWPUB_STANDARD_OBLIGATION_EVIDENCE",
-        "FIRST_90_DAY_INSPECTION_CALENDAR",
-        "PENDING_INCIDENT_DISPOSITION_PACKET",
-        "SUCCESSOR_OWNERSHIP_AND_SERVICE_AREA_STATEMENT",
+    "standard_obligation_codes": ["ID_CHECK", "HOURS", "FOOD_SERVICE"],
+    "location_specific_control_codes": ["NOISE", "PATIO"],
+    "first_90_day_plan": [
+        {"check_code": "camera_export_test", "timing": "first_30_days"},
+        {"check_code": "food_service_service_area_check", "timing": "first_30_days"},
+        {"check_code": "late_night_closing_visit", "timing": "days_31_60"},
+        {"check_code": "noise_patio_boundary_check", "timing": "days_61_90"},
     ],
     "escalation_trigger_codes": [
-        "AGE_CHECK_AUDIT_MISSING_OR_FAILED",
-        "FIRST_90_DAY_CHECK_MISSED",
-        "NEW_OR_CONFIRMED_HIGH_SEVERITY_INCIDENT",
-        "PENDING_INCIDENT_CONFIRMED_VIOLATION",
-        "SUCCESSOR_LINK_CONFIRMED_TO_PRIOR_LICENSEE",
+        "after_hours_service",
+        "missing_camera_coverage",
+        "footage_not_produced",
+        "food_service_not_available",
+        "noise_or_patio_breach",
+        "open_tax_hold_uncleared",
     ],
 }
 
 
-def sorted_strings(value):
-    if not isinstance(value, list):
-        return None
-    return sorted(str(item) for item in value)
-
-
-def map_by_key(items, key):
-    if not isinstance(items, list):
-        return None
-    result = {}
-    for item in items:
-        if not isinstance(item, dict) or key not in item:
-            return None
-        result[str(item[key])] = item
-    return result
-
-
-def gap_map_matches(pred):
-    gap_map = map_by_key(pred.get("verification_gaps"), "gap_code")
-    if gap_map is None or set(gap_map) != set(EXPECTED["verification_gaps"]):
-        return False
-    for code, expected in EXPECTED["verification_gaps"].items():
-        actual = gap_map[code]
-        if sorted_strings(actual.get("source_ids")) != expected["source_ids"]:
-            return False
-        if actual.get("status") != expected["status"]:
-            return False
-    return True
-
-
-def obligation_codes_match(pred):
-    items = pred.get("standard_obligations")
-    if not isinstance(items, list):
-        return False
-    codes = sorted(str(item.get("obligation_code")) for item in items if isinstance(item, dict))
-    return codes == EXPECTED["standard_obligation_codes"]
-
-
-def controls_match(pred):
-    control_map = map_by_key(pred.get("premises_specific_controls"), "control_code")
-    if control_map is None or set(control_map) != set(EXPECTED["premises_specific_controls"]):
-        return False
-    for code, expected in EXPECTED["premises_specific_controls"].items():
-        actual = control_map[code]
-        if sorted_strings(actual.get("source_ids")) != expected["source_ids"]:
-            return False
-        if actual.get("check_code") != expected["check_code"]:
-            return False
-        if actual.get("first_90_day_check") is not expected["first_90_day_check"]:
-            return False
-    return True
-
-
-def item_codes_match(pred, field, key, expected):
-    items = pred.get(field)
-    if not isinstance(items, list):
-        return False
-    codes = sorted(str(item.get(key)) for item in items if isinstance(item, dict))
-    return codes == expected
-
-
 POINTS = [
-    (
-        "recommendation",
-        2,
-        lambda p: (
-            p.get("task_id") == "train_005"
-            and p.get("review_month") == "2026-03"
-            and p.get("application_id") == "AA-2026-0018"
-            and p.get("premises_id") == "PM-2026-018"
-            and p.get("recommendation") == EXPECTED["recommendation"]
-        ),
-    ),
-    (
-        "successor_risk_classification",
-        2,
-        lambda p: p.get("successor_risk_classification") == EXPECTED["successor_risk_classification"],
-    ),
-    ("verification_gaps", 2, gap_map_matches),
-    ("standard_obligations", 2, obligation_codes_match),
-    ("premises_specific_controls", 3, controls_match),
-    (
-        "records_requests",
-        2,
-        lambda p: item_codes_match(
-            p,
-            "records_requests",
-            "request_code",
-            EXPECTED["record_request_codes"],
-        ),
-    ),
-    (
-        "escalation_triggers",
-        2,
-        lambda p: item_codes_match(
-            p,
-            "escalation_triggers",
-            "trigger_code",
-            EXPECTED["escalation_trigger_codes"],
-        ),
-    ),
+    {
+        "id": "SP001",
+        "goal": "Correct target application and recommended issuance posture.",
+        "weight": 3,
+        "check": "posture",
+    },
+    {
+        "id": "SP002",
+        "goal": "Correctly determines whether same-premises history remains applicable.",
+        "weight": 2,
+        "check": "same_premises",
+    },
+    {
+        "id": "SP003",
+        "goal": "Correctly identifies risks covered by current active controls.",
+        "weight": 2,
+        "check": "covered_risks",
+    },
+    {
+        "id": "SP004",
+        "goal": "Correctly identifies unresolved verification gaps.",
+        "weight": 3,
+        "check": "verification_gaps",
+    },
+    {
+        "id": "SP005",
+        "goal": "Correctly separates ordinary standard obligations for the license class.",
+        "weight": 2,
+        "check": "standard_obligations",
+    },
+    {
+        "id": "SP006",
+        "goal": "Correctly identifies current location-specific controls.",
+        "weight": 2,
+        "check": "location_controls",
+    },
+    {
+        "id": "SP007",
+        "goal": "Correctly provides the first-90-day monitoring plan in operational sequence.",
+        "weight": 2,
+        "check": "first_90_day_plan",
+    },
+    {
+        "id": "SP008",
+        "goal": "Correctly identifies escalation triggers for field staff.",
+        "weight": 2,
+        "check": "escalation_triggers",
+    },
 ]
 
 
-def main():
-    path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("output/answer.json")
-    total = sum(weight for _, weight, _ in POINTS)
+def load_candidate(path):
     try:
-        pred = json.loads(path.read_text(encoding="utf-8-sig"))
+        with Path(path).open("r", encoding="utf-8") as handle:
+            return json.load(handle), None
     except Exception as exc:
-        print(json.dumps({"score": 0.0, "earned_weight": 0, "total_weight": total, "error": str(exc)}))
-        return 0
+        return None, f"{type(exc).__name__}: {exc}"
 
-    earned = 0
-    checks = []
-    for name, weight, check in POINTS:
-        passed = bool(check(pred))
-        if passed:
-            earned += weight
-        checks.append({"id": name, "weight": weight, "passed": passed})
 
-    print(
-        json.dumps(
-            {
-                "score": earned / total,
-                "earned_weight": earned,
-                "total_weight": total,
-                "checks": checks,
-            },
-            indent=2,
-            sort_keys=True,
+def exact_set(candidate, field):
+    value = candidate.get(field)
+    if not isinstance(value, list):
+        return False, f"{field} is not a list"
+    if any(not isinstance(item, str) for item in value):
+        return False, f"{field} contains non-string values"
+    if len(value) != len(set(value)):
+        return False, f"{field} contains duplicate codes"
+    expected = set(EXPECTED[field])
+    actual = set(value)
+    missing = sorted(expected - actual)
+    extra = sorted(actual - expected)
+    if missing or extra:
+        return False, f"missing={missing}; extra={extra}"
+    return True, f"matched {sorted(expected)}"
+
+
+def exact_plan(candidate):
+    value = candidate.get("first_90_day_plan")
+    if not isinstance(value, list):
+        return False, "first_90_day_plan is not a list"
+    actual = []
+    for item in value:
+        if not isinstance(item, dict):
+            return False, "first_90_day_plan contains a non-object item"
+        actual.append({"check_code": item.get("check_code"), "timing": item.get("timing")})
+    if actual != EXPECTED["first_90_day_plan"]:
+        return False, f"expected ordered plan {EXPECTED['first_90_day_plan']}; got {actual}"
+    return True, "matched ordered first-90-day plan"
+
+
+def evaluate_point(point, candidate, parse_error):
+    if parse_error:
+        return False, f"candidate JSON could not be read: {parse_error}"
+    if not isinstance(candidate, dict):
+        return False, "candidate root is not a JSON object"
+
+    check = point["check"]
+    if check == "posture":
+        ok = (
+            candidate.get("application_id") == EXPECTED["application_id"]
+            and candidate.get("recommended_posture") == EXPECTED["recommended_posture"]
         )
-    )
-    return 0
+        return (
+            ok,
+            f"application_id={candidate.get('application_id')!r}; recommended_posture={candidate.get('recommended_posture')!r}",
+        )
+    if check == "same_premises":
+        ok = candidate.get("same_premises_basis_applies") is EXPECTED["same_premises_basis_applies"]
+        return ok, f"same_premises_basis_applies={candidate.get('same_premises_basis_applies')!r}"
+    if check == "covered_risks":
+        return exact_set(candidate, "covered_risk_codes")
+    if check == "verification_gaps":
+        return exact_set(candidate, "verification_gap_codes")
+    if check == "standard_obligations":
+        return exact_set(candidate, "standard_obligation_codes")
+    if check == "location_controls":
+        return exact_set(candidate, "location_specific_control_codes")
+    if check == "first_90_day_plan":
+        return exact_plan(candidate)
+    if check == "escalation_triggers":
+        return exact_set(candidate, "escalation_trigger_codes")
+    return False, f"unknown check {check}"
+
+
+def main():
+    script_dir = Path(__file__).resolve().parent
+    default_candidate = script_dir.parent / "output" / "answer.json"
+    candidate_path = Path(sys.argv[1]) if len(sys.argv) > 1 else default_candidate
+    candidate, parse_error = load_candidate(candidate_path)
+
+    total_weight = sum(point["weight"] for point in POINTS)
+    results = []
+    score = 0.0
+
+    for point in POINTS:
+        assigned = point["weight"] / total_weight
+        passed, details = evaluate_point(point, candidate, parse_error)
+        earned = assigned if passed else 0.0
+        score += earned
+        results.append(
+            {
+                "id": point["id"],
+                "goal": point["goal"],
+                "weight": point["weight"],
+                "assigned_score": round(assigned, 10),
+                "passed": bool(passed),
+                "earned_score": round(earned, 10),
+                "details": details,
+            }
+        )
+
+    print(json.dumps({"score": round(score, 10), "points": results}, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

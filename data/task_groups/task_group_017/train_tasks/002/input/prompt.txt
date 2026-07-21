@@ -1,7 +1,7 @@
-You are reviewing preservation and retention remediation for matter M-NVK-219, Novakem Environmental Grand Jury Subpoena.
+HarborStone Chemicals - retention and litigation-hold gap review
 
-Use the shared investigation API at <TASK_ENV_BASE_URL>. Inspect the matter record plus the subpoena category, production log, collection event, retention rule, destruction event, custodian, document, privilege, and QC endpoints as needed. Also use the task-local factual memo at input/payloads/hold_exception_memo.json.
+We need a structured retention and preservation gap review for matter MTR-HARBORSTONE-GJ. The matter concerns an environmental grand jury subpoena, and the response team needs to know which requested categories have true retention losses, which losses were policy-compliant before the hold, which gaps create preservation risk, and which archives are still available for remediation.
 
-Prepare a structured retention and hold remediation review. Separate pre-hold policy destruction from post-hold preservation problems, identify recoverable sources, and state the required remediation actions.
+Use the Investigation Review Hub at <TASK_ENV_BASE_URL> and the environment endpoints available there. Do not use local env files, database files, generated manifests, or setup scripts. The read-only SQL endpoint, if useful, uses header X-API-Key: review-key-017. The local payload review_scope.json provides the client-facing request context and category labels only; the event and source evidence must come from the hub.
 
-Return only JSON. The required output contract is described in input/payloads/answer_template.json. Do not include markdown, comments, or explanatory text.
+Return a single JSON object that conforms to input/payloads/answer_template.json. Keep the answer factual and normalized, with stable IDs from the hub for retention events, communication gaps, archive sources, metrics, and recommended actions.

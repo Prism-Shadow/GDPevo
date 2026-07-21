@@ -1,91 +1,139 @@
-# Test 002 Notes - M-BAY-144 Retention/Hold Remediation
+# test_002 Notes - Portola Energy Subpoena Retention Coverage Matrix
 
-## English Audit Notes
+## English
 
-Task scope: test_002 asks the solver to review matter `M-BAY-144`, the Bay & Tidewater Emissions Data Matter, for retention, preservation, and hold-remediation issues. Solver-visible files are English-only and consist of `input/prompt.txt` and `input/payloads/answer_template.json`. The prompt does not include the answer path, scoring checklist, or train-anchor guidance.
+### Data and Source Lineage
 
-Data/source lineage:
-- Source scenario: `SCN_017_white_collar_investigation_production_review`.
-- Source example family: mainly `E002` retention/subpoena/hold analysis, with transfer also from `E003` custodian/source issue review.
-- Task design brief: `scratch/task_group_design.md` defines `test_002` as a retention/hold remediation task for `M-BAY-144` with the same family schema as `train_002`.
-- Public environment data: `task_group/task_group_017/env/data/generated/*.json`, exposed through the shared API endpoints in `env/server.py`.
-- Task-local payloads: only `input/payloads/answer_template.json`; there is no task-local factual memo for this test task.
+This task belongs to `task_group_017`, scenario `SCN_017_white_collar_investigation_production_review`, with source-example lineage from `E001`, `E002`, and `E003`. It is the formal test task `test_002` described in `scratch/task_group_design.md`: a Portola Energy grand jury subpoena review focused on retention coverage for trading blotters, deal-chat exports, voicemail, archive exceptions, and surveillance reports.
 
-Important evidence and answer basis:
-- `matters`: `M-BAY-144` has subpoena date `2024-12-04`, hold date `2024-12-06`, production deadline `2025-04-15`, and regulator notice flag true.
-- `subpoena_categories`: core current categories are `B-01` emissions lab data, `B-02` Teams/EHS discussions, `B-03` executive email/VaultSeven archive, `B-04` Tidewater audit reports, and `B-05` off-site vendor boxes and personal devices. Noise categories with `BA-N...` IDs should not drive this task's formal answer.
-- `production_logs`: `PL-0023` through `PL-0027` provide the current batch status and notes for `B-01` through `B-05`.
-- `retention_rules`: `RR-0011` through `RR-0014` provide the controlling retention facts for 2020 emissions lab data, Teams channel content, executive email, and the Tidewater audit report.
-- `destruction_events`: `DE-0008` is the pre-hold 2020 lab-data destruction; `DE-0009` is the post-hold Teams channel purge.
-- `collection_events`: `CE-0019` through `CE-0023` provide collection status, quantities, source names, and missing counts for the core issue set.
+The task-builder ownership scope is `task_group/task_group_017/test_tasks/002/`. Solver-visible materials are `input/prompt.txt`, `input/payloads/review_scope.json`, and `input/payloads/answer_template.json`. The substantive evidence is expected to come from the shared Investigation Review Hub at `<TASK_ENV_BASE_URL>`, especially the matter, subpoena-category, custodian-source, retention-event, remediation-action, and optional read-only SQL query endpoints. No solver-visible task-local payload contains the answer facts.
 
-Standard-answer rationale:
-- `RC-2020-LAB`: Six units of 2020 emissions lab data were destroyed on `2023-01-27` under the three-year retention rule before the `2024-12-06` hold. This is a policy gap affecting `B-01`, not post-hold spoliation. Summary exports are the only partial recovery source.
-- `RC-TEAMS-PURGE`: Eleven Teams channels were purged on `2025-02-05`, after the hold date. This is the critical post-hold preservation issue affecting `B-02`, requiring regulator notice.
-- `RC-EMAIL-VAULTSEVEN` and `RS-EMAIL-VAULTSEVEN`: VaultSeven retains executive email despite active purge. The collection event shows 9,220 collected archive items for `B-03`; the proper classification is recoverable archive, not lost data.
-- `RC-TIDEWATER-AUDIT` and `RS-AUDIT-TIDEWATER`: The missing 2024 Tidewater audit report should exist under the five-year report rule and vendor-copy override, so it is a retained-missing source for `B-04` requiring vendor retrieval.
-- `HD-OFFSITE-VENDOR` and `HD-PERSONAL-DEVICE`: The hold notice omitted off-site vendor boxes and personal devices for `B-05`. The split defects preserve the two different action enums: hold refresh for the off-site vendor omission and supplemental collection for the personal phone omission.
+The stable matter is `MTR-PORTOLA-GJ`. The key generated environment records for this task are `RET-PORT-TRADE-2018`, `RET-PORT-CHAT-POST`, `RET-PORT-VOICE`, `RET-PORT-AUDIT-MISSING`, and `SRC-PORT-ENERGYCOMMS`.
 
-Evaluation basis:
-- The evaluator has 9 exact-match scoring points totaling 18 raw points. Weights are in `{1,2,3}` and are normalized to a `score` from 0.0 to 1.0.
-- Scored points cover complete issue/source sets; pre-hold 2020 lab destruction; post-hold Teams purge date, quantity, affected category, and action; VaultSeven archive availability and count; the missing 2024 Tidewater audit report within five-year retention/vendor copy; partial lab recovery source; off-site vendor and personal-device hold omissions; remediation action ranking; and overall disclosure/category status.
-- String-like judgments are represented as enums in `answer_template.json`: timing class, severity, primary action, defect type, recovery status, and owner queue.
-- The evaluator normalizes lists by sorting and trims scalar strings, but otherwise uses exact matches. Free-form `due_basis` text is required by the answer schema but not scored independently.
-- Self-check using `output/answer.json` returns `score: 1.0`.
+### Task Definition and Scenario Fit
 
-Transfer design:
-- Train anchor `train_002` is the primary anchor. It teaches the retention/hold schema, the distinction between pre-hold policy destruction and post-hold preservation loss, the use of retention rules plus destruction/collection events, recoverable archive handling, vendor retrieval for retained-missing audit reports, and remediation action enums.
-- Train anchor `train_005` is the secondary anchor. It reinforces source-readiness reasoning for archive sources, Teams gaps, personal-device hold omissions, and supplemental collection actions.
-- Transfer-dependent difficulty: recognizing that the same legal timing rules from `train_002` apply to different Bayport record classes; mapping current production-log categories to retention/destruction/collection records despite noise rows; and assigning action enums without a solver-visible SOP checklist.
-- Task-specific exploration difficulty: finding the correct Bayport event IDs and counts (`DE-0008`, `DE-0009`, `CE-0019` through `CE-0023`, `RR-0011` through `RR-0014`, `PL-0023` through `PL-0027`) and ignoring `BA-N...` noise categories.
+The business request asks for a structured retention coverage matrix for a DOJ Fraud Section grand jury matter involving Portola Energy trading records. The solver must classify retention events by timing against the hold date, identify communication-system gaps, recognize an available chat-attachment archive, treat a missing surveillance report as a record that should exist, compute normalized metrics, and rank remediation actions.
 
-Construction record:
-- Author: OpenAI Codex task-builder subagent.
-- Created: 2026-07-07.
-- Updated: 2026-07-07.
-- Major changes: initial formal `test_002` construction with prompt, answer template, standard answer, exact-match evaluator, and bilingual notes.
+This fits the white-collar investigation production review scenario because it requires cross-system reconstruction of subpoena category impacts, retention policies, source availability, legal-risk classes, and operational remediation. It is not a tutorial: the prompt asks for a realistic legal-operations deliverable and does not expose scoring points, answer facts, or the transfer SOP.
 
-## 中文审计说明
+### Material Map
 
-任务范围：test_002 要求解题方审查 `M-BAY-144`，即 Bay & Tidewater Emissions Data Matter，判断留存、保全和补救问题。解题可见文件仅为英文，包括 `input/prompt.txt` 和 `input/payloads/answer_template.json`。提示词不包含答案路径、评分清单或训练任务锚点说明。
+`input/prompt.txt` gives the user-facing request, requires use of `<TASK_ENV_BASE_URL>`, and prohibits use of local environment source files, manifests, database files, answers, or evaluation files.
 
-数据和来源：
-- 来源场景：`SCN_017_white_collar_investigation_production_review`。
-- 来源示例族：主要来自 `E002` 的传票、留存和保全分析，也使用 `E003` 的保管人和来源问题审查经验。
-- 任务设计说明：`scratch/task_group_design.md` 将 `test_002` 定义为 `M-BAY-144` 的留存和保全补救任务，并要求与 `train_002` 使用同一任务族结构。
-- 公共环境数据：`task_group/task_group_017/env/data/generated/*.json`，通过 `env/server.py` 中的共享 API 端点暴露。
-- 本任务本地负载：只有 `input/payloads/answer_template.json`；该测试任务没有本地事实备忘录。
+`input/payloads/review_scope.json` gives the matter identifier, endpoint inventory, API key information for the read-only SQL endpoint, and client-facing category labels for `PE-A` through `PE-I`. It does not identify which retention events or categories are affected.
 
-关键证据和答案依据：
-- `matters`：`M-BAY-144` 的传票日期为 `2024-12-04`，保全日期为 `2024-12-06`，生产截止日为 `2025-04-15`，并标记监管通知为 true。
-- `subpoena_categories`：当前核心类别是 `B-01` 排放实验室数据、`B-02` Teams/EHS 讨论、`B-03` 高管邮件和 VaultSeven 归档、`B-04` Tidewater 审计报告、`B-05` 场外供应商箱和个人设备。`BA-N...` 噪声类别不应进入正式答案。
-- `production_logs`：`PL-0023` 到 `PL-0027` 给出 `B-01` 到 `B-05` 的当前批次状态和说明。
-- `retention_rules`：`RR-0011` 到 `RR-0014` 分别对应 2020 排放实验室数据、Teams 频道内容、高管邮件和 Tidewater 审计报告的控制性留存事实。
-- `destruction_events`：`DE-0008` 是保全前的 2020 实验室数据销毁；`DE-0009` 是保全后的 Teams 频道清除。
-- `collection_events`：`CE-0019` 到 `CE-0023` 给出核心问题的收集状态、数量、来源名称和缺失数量。
+`input/payloads/answer_template.json` defines the required output JSON shape, enum choices, list ordering, stable ID conventions, and integer precision for counts, retention months, purge-window days, and action ranks.
 
-标准答案理由：
-- `RC-2020-LAB`：六个单位的 2020 排放实验室数据在 `2023-01-27` 根据三年留存规则销毁，早于 `2024-12-06` 的保全日期。这是影响 `B-01` 的政策缺口，不是保全后毁损。摘要导出是唯一的部分恢复来源。
-- `RC-TEAMS-PURGE`：11 个 Teams 频道在保全后于 `2025-02-05` 被清除。这是影响 `B-02` 的关键保全后问题，需要监管通知。
-- `RC-EMAIL-VAULTSEVEN` 和 `RS-EMAIL-VAULTSEVEN`：VaultSeven 保留高管邮件，尽管活动系统存在清除。收集事件显示 `B-03` 有 9,220 个归档项目已收集；正确分类是可恢复归档，而不是数据灭失。
-- `RC-TIDEWATER-AUDIT` 和 `RS-AUDIT-TIDEWATER`：缺失的 2024 Tidewater 审计报告应根据五年规则和供应商副本要求仍然存在，因此是 `B-04` 的应留存但缺失来源，需要供应商取回。
-- `HD-OFFSITE-VENDOR` 和 `HD-PERSONAL-DEVICE`：保全通知遗漏了 `B-05` 的场外供应商箱和个人设备。拆成两个缺陷是为了保留不同的动作枚举：场外供应商遗漏需要刷新保全通知，个人电话遗漏需要补充收集。
+The shared hub should supply these decisive facts:
 
-评估依据：
-- 评估器包含 9 个精确匹配评分点，共 18 个原始分，权重均在 `{1,2,3}` 中，并归一化为 0.0 到 1.0 的 `score`。
-- 评分点覆盖完整的问题和来源集合、保全前 2020 实验室数据销毁、保全后 Teams 清除的日期和数量及影响类别和动作、VaultSeven 归档可用性和数量、五年留存和供应商副本下缺失的 2024 Tidewater 审计报告、实验室摘要的部分恢复来源、场外供应商和个人设备保全遗漏、补救动作排序，以及整体披露和类别状态。
-- 类似字符串的判断都在 `answer_template.json` 中转换为枚举：时间分类、严重程度、主要动作、缺陷类型、恢复状态和负责队列。
-- 评估器会对列表排序并去除标量字符串首尾空格，除此之外使用精确匹配。`due_basis` 文本是答案结构要求，但不单独评分。
-- 使用 `output/answer.json` 自检返回 `score: 1.0`。
+- `RET-PORT-TRADE-2018`: 12 monthly 2018 trade blotters destroyed on 2024-11-30, before the 2025-01-09 hold, under policy section `2.7` and a 72-month retention schedule, affecting `PE-B`.
+- `RET-PORT-CHAT-POST`: 18 deal-chat exports deleted on 2025-02-04, after the 2025-01-09 hold, under policy section `6.2`, affecting `PE-D` and `PE-E`.
+- `RET-PORT-VOICE`: trader voicemail auto-purge after 120 days, with event date 2025-03-11, hold date 2025-01-09, and affected category `PE-D`.
+- `SRC-PORT-ENERGYCOMMS`: EnergyComms chat archive is available for chat attachments and affects `PE-D` and `PE-E`.
+- `RET-PORT-AUDIT-MISSING`: the 2024 surveillance report should exist under a 60-month retention rule but is missing, affecting `PE-F` and `PE-I`.
 
-迁移设计：
-- 主要训练锚点是 `train_002`。它提供留存和保全结构、保全前政策销毁与保全后灭失的区分、留存规则与销毁/收集事件的联合使用、可恢复归档的处理、仍应保留审计报告的供应商取回，以及补救动作枚举。
-- 次要训练锚点是 `train_005`。它加强归档来源、Teams 缺口、个人设备保全遗漏和补充收集动作的来源就绪性判断。
-- 依赖迁移的难点：把 `train_002` 的法律时间判断规则迁移到不同的 Bayport 记录类别；在噪声行中把当前生产日志类别映射到留存、销毁和收集记录；在没有可见 SOP 清单的情况下选择动作枚举。
-- 任务自身探索难点：找到正确的 Bayport 事件 ID 和数量（`DE-0008`、`DE-0009`、`CE-0019` 到 `CE-0023`、`RR-0011` 到 `RR-0014`、`PL-0023` 到 `PL-0027`），并忽略 `BA-N...` 噪声类别。
+### Solution and Evaluation Basis
 
-构造记录：
-- 作者：OpenAI Codex task-builder subagent。
-- 创建日期：2026-07-07。
-- 更新日期：2026-07-07。
-- 主要变更：首次构建正式 `test_002`，包括提示词、答案模板、标准答案、精确匹配评估器和双语 notes。
+The standard answer places all four retention events in `retention_events`, includes the deleted chat exports and voicemail auto-purge in `communication_gaps`, places EnergyComms in `available_archives`, and gives five prioritized actions.
+
+The key legal distinction is timing. `RET-PORT-TRADE-2018` is `policy_destroyed_pre_hold` and low risk because the destruction date predates the hold and matches the 72-month retention schedule. `RET-PORT-CHAT-POST` is a high-risk `post_hold_loss` because the deletion happened after the hold and involved 18 chat exports. `RET-PORT-VOICE` is an `auto_purged` communication gap rather than a box or document destruction event. `RET-PORT-AUDIT-MISSING` is `should_exist_missing` because the 2024 surveillance report should remain under a 60-month rule. `SRC-PORT-ENERGYCOMMS` is an available archive exception for chat attachments, so the response should collect the archive while still treating the post-hold export deletion as a preservation issue.
+
+The evaluator has eight whole-point scoring goals:
+
+- `P01_matter_and_event_coverage`, weight 1: correct matter id and complete four-event retention set.
+- `P02_trade_blotter_pre_hold_policy_classification`, weight 2: trade blotter status, risk, category, dates, policy section, 72-month period, and 12 monthly blotters.
+- `P03_chat_export_post_hold_loss`, weight 3: deal-chat post-hold loss status, categories `PE-D` and `PE-E`, 18-export volume, communication-gap entry, archive exception reference, and disclosure action.
+- `P04_voice_auto_purge_gap`, weight 2: voicemail auto-purge status, 120-day window, category `PE-D`, dates, and communication-gap entry.
+- `P05_energycomms_archive_exception`, weight 2: EnergyComms archive availability, chat-attachment scope, category set, archive-limitation field, and collection owner.
+- `P06_missing_surveillance_report`, weight 3: surveillance report missing-required-record status, 60-month retention period, category set, one-report count, and locate action.
+- `P07_metrics`, weight 2: event counts, archive count, 12 blotters, 18 exports, 120-day purge window, missing report count, and affected-category sets.
+- `P08_action_ranking`, weight 3: exact operational order for preservation disclosure, missing-report search, archive collection, voicemail documentation, and no-action policy-loss disposition.
+
+These scoring points cover more than four distinct outcomes: retention timing classification, post-hold preservation loss, communication auto-purge, archive exception implications, missing required records, numeric aggregation, and remediation ranking. Each point is deterministic and all-or-nothing. The evaluator normalizes IDs, enum casing, integer-like values, and category sets; it does not score prose.
+
+Likely model pitfalls include treating the pre-hold trade blotter destruction as spoliation, failing to connect the post-hold chat deletion to both `PE-D` and `PE-E`, omitting the EnergyComms archive because it is a source record rather than a retention event, treating the available archive as fully curing the post-hold deletion, forgetting the 120-day voicemail purge window, and ranking the low-risk pre-hold policy loss above higher-risk remediation work.
+
+### Transfer Design
+
+The intended train anchors are `train_002` and `train_005`. From `train_002`, a fewshot skill can infer the distinction between pre-hold policy destruction and post-hold preservation loss, the treatment of communication auto-purge, the handling of a missing report that should exist under a retention rule, and the use of separate `retention_events`, `communication_gaps`, `available_archives`, `metrics`, and action rows. From `train_005`, a skill can infer that archive availability changes the remediation path for deleted collaboration or communication data, and that action ranking should prioritize disclosure and recovery work over documentation or no-action dispositions.
+
+The task-specific exploration remains nontrivial because Portola uses new category codes, new event IDs, a different business domain, chat attachment archive scope rather than email or Teams archive scope, and volumes measured as monthly blotters, exports, days, and reports rather than boxes. The solver-visible prompt does not restate the hidden SOP; transfer is expected to come from comparing train inputs and answers.
+
+### Construction Record
+
+Author: Task-builder 07 / Codex.
+
+Created: 2026-07-18.
+
+Updated: 2026-07-18.
+
+Major changes: Created the complete formal `test_002` task folder with solver-visible prompt and payloads, hidden standard answer, bilingual notes, and deterministic evaluator.
+
+## Chinese
+
+### 数据来源与任务定位
+
+本任务属于 `task_group_017`，场景为 `SCN_017_white_collar_investigation_production_review`，来源示例为 `E001`、`E002` 和 `E003`。它是 `scratch/task_group_design.md` 中规划的正式测试任务 `test_002`：围绕 Portola Energy 的大陪审团传票，审查交易 blotter、deal chat 导出、voicemail、归档例外以及 surveillance report 的留存覆盖情况。
+
+本任务构建者只负责 `task_group/task_group_017/test_tasks/002/`。求解者可见材料包括 `input/prompt.txt`、`input/payloads/review_scope.json` 和 `input/payloads/answer_template.json`。实质证据应来自共享 Investigation Review Hub 的 `<TASK_ENV_BASE_URL>`，特别是 matter、subpoena category、custodian source、retention event、remediation action 以及可选只读 SQL 查询端点。任务本地可见 payload 不包含答案事实。
+
+稳定 matter id 是 `MTR-PORTOLA-GJ`。本任务使用的关键环境记录是 `RET-PORT-TRADE-2018`、`RET-PORT-CHAT-POST`、`RET-PORT-VOICE`、`RET-PORT-AUDIT-MISSING` 和 `SRC-PORT-ENERGYCOMMS`。
+
+### 任务定义与场景契合
+
+业务请求是为 Portola Energy 能源交易记录相关的 DOJ Fraud Section 大陪审团事项生成结构化 retention coverage matrix。求解者需要根据 hold 日期对 retention events 做时间分类，识别通信系统缺口，认定可用的 chat attachment archive，判断 surveillance report 属于本应存在但缺失的记录，计算规范化指标，并排序补救动作。
+
+该任务契合白领调查 production review 场景，因为它要求跨系统重建传票类别影响、保存政策、来源可用性、法律风险分类和运营补救动作。它不是教程；prompt 只提出真实的法律运营交付需求，不暴露评分点、答案事实或迁移 SOP。
+
+### 材料地图
+
+`input/prompt.txt` 提供面向求解者的业务请求，要求使用 `<TASK_ENV_BASE_URL>`，并禁止使用本地环境源码、manifest、数据库文件、答案或评估文件。
+
+`input/payloads/review_scope.json` 提供 matter 标识、端点清单、只读 SQL 端点的 API key 信息，以及 `PE-A` 到 `PE-I` 的客户请求类别标签。它不说明哪些 retention events 或 categories 受到影响。
+
+`input/payloads/answer_template.json` 定义所需 JSON 输出结构、枚举选项、列表排序、稳定 ID 约定，以及计数、保存月数、自动清除天数和动作排序的整数精度。
+
+共享 hub 应提供以下关键事实：
+
+- `RET-PORT-TRADE-2018`：12 个月度 2018 trade blotters 于 2024-11-30 销毁，早于 2025-01-09 hold，依据政策 `2.7` 和 72 个月保存计划，影响 `PE-B`。
+- `RET-PORT-CHAT-POST`：18 个 deal-chat exports 于 2025-02-04 删除，晚于 2025-01-09 hold，依据政策 `6.2`，影响 `PE-D` 和 `PE-E`。
+- `RET-PORT-VOICE`：trader voicemail 120 天自动清除，event date 为 2025-03-11，hold date 为 2025-01-09，影响 `PE-D`。
+- `SRC-PORT-ENERGYCOMMS`：EnergyComms chat archive 对 chat attachments 可用，影响 `PE-D` 和 `PE-E`。
+- `RET-PORT-AUDIT-MISSING`：2024 surveillance report 根据 60 个月保存规则应当存在但缺失，影响 `PE-F` 和 `PE-I`。
+
+### 答案与评估依据
+
+标准答案把四个 retention events 放入 `retention_events`，把已删除的 chat exports 和 voicemail auto-purge 放入 `communication_gaps`，把 EnergyComms 放入 `available_archives`，并给出五个按优先级排序的动作。
+
+核心法律判断是时间点。`RET-PORT-TRADE-2018` 是 `policy_destroyed_pre_hold` 且风险低，因为销毁日期早于 hold，并符合 72 个月保存计划。`RET-PORT-CHAT-POST` 是高风险 `post_hold_loss`，因为删除发生在 hold 之后且涉及 18 个 chat exports。`RET-PORT-VOICE` 是 `auto_purged` 通信缺口，而不是纸箱或文档销毁事件。`RET-PORT-AUDIT-MISSING` 是 `should_exist_missing`，因为 2024 surveillance report 在 60 个月规则下应当保留。`SRC-PORT-ENERGYCOMMS` 是 chat attachments 的可用归档例外，因此响应中应收集归档，同时仍把 hold 后导出删除视为 preservation issue。
+
+评估器包含八个整点评分目标：
+
+- `P01_matter_and_event_coverage`，权重 1：正确 matter id 和完整四个 retention event 集合。
+- `P02_trade_blotter_pre_hold_policy_classification`，权重 2：trade blotter 的状态、风险、类别、日期、政策条款、72 个月保存期和 12 个月度 blotters。
+- `P03_chat_export_post_hold_loss`，权重 3：deal-chat hold 后损失状态、`PE-D` 和 `PE-E` 类别、18 个 exports、communication gap 条目、归档例外引用和披露动作。
+- `P04_voice_auto_purge_gap`，权重 2：voicemail auto-purge 状态、120 天窗口、类别 `PE-D`、日期和 communication gap 条目。
+- `P05_energycomms_archive_exception`，权重 2：EnergyComms archive 可用性、chat attachment 范围、类别集合、归档限制字段和收集责任人。
+- `P06_missing_surveillance_report`，权重 3：surveillance report 为 missing required record、60 个月保存期、类别集合、1 份报告以及 locate action。
+- `P07_metrics`，权重 2：事件计数、归档数量、12 个 blotters、18 个 exports、120 天自动清除窗口、缺失报告数量和受影响类别集合。
+- `P08_action_ranking`，权重 3：preservation disclosure、missing-report search、archive collection、voicemail documentation 和 no-action policy-loss disposition 的准确运营顺序。
+
+这些评分点覆盖超过四类不同业务结果：留存时间分类、hold 后保全损失、通信自动清除、归档例外影响、应存在记录缺失、数值汇总和补救排序。每个评分点都是确定性的全得或零分。评估器会规范化 ID、枚举大小写、整数值和类别集合，不评价自由文本。
+
+常见错误包括把 hold 前的 trade blotter 销毁误认为 spoliation，未把 hold 后 chat 删除同时关联到 `PE-D` 和 `PE-E`，因为 EnergyComms 是 source record 而不是 retention event 就漏掉它，把可用归档误认为完全治愈 hold 后删除，忘记 120 天 voicemail 清除窗口，以及把低风险 hold 前政策损失排在更高风险补救工作之前。
+
+### 迁移设计
+
+本测试任务的主要训练锚点是 `train_002` 和 `train_005`。从 `train_002`，fewshot skill 可以推断 hold 前按政策销毁与 hold 后保全损失的区别、通信自动清除的处理方式、本应存在但缺失报告的留存判断，以及分别使用 `retention_events`、`communication_gaps`、`available_archives`、`metrics` 和动作行的输出约定。从 `train_005`，skill 可以推断可用归档会改变已删除协作或通信数据的补救路径，并且动作排序应优先处理披露和恢复工作，再处理记录化或 no-action 结论。
+
+本任务仍然需要任务特定探索，因为 Portola 使用新的类别代码、新的事件 ID、不同业务领域、chat attachment archive 而非 email 或 Teams archive，并且数量单位包括 monthly blotters、exports、days 和 reports，而不是 boxes。求解者可见 prompt 不复述隐藏 SOP；迁移应来自对训练输入和标准答案的比较。
+
+### 构建记录
+
+作者：Task-builder 07 / Codex。
+
+创建时间：2026-07-18。
+
+更新时间：2026-07-18。
+
+主要变更：创建完整正式 `test_002` 任务目录，包括求解者可见 prompt 和 payload、隐藏标准答案、双语 notes，以及确定性 evaluator。

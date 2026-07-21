@@ -1,365 +1,287 @@
 {
-  "schema_name": "test_004_ovl_integrated_production_readiness",
+  "template_name": "cobalt_ridge_acquisition_readiness_answer",
   "schema_version": "1.0",
-  "description": "Return one JSON object matching this contract. Do not include this schema metadata in the response.",
-  "required_top_level_keys_in_order": [
-    "task_id",
+  "output_format": "single JSON object",
+  "required_top_level_keys": [
     "matter_id",
-    "overall_status",
-    "ready_category_ids",
-    "blocked_category_ids",
-    "category_readiness",
-    "blockers",
-    "top_blockers",
-    "notice_required",
-    "actions"
+    "readiness_statuses",
+    "issue_ledger",
+    "privilege_corrections",
+    "metrics",
+    "priority_actions"
   ],
   "ordering_rules": {
-    "ready_category_ids": "Sort category IDs ascending.",
-    "blocked_category_ids": "Sort category IDs ascending.",
-    "category_readiness": "Include categories O-01 through O-10 only, sorted by category_id ascending.",
-    "blockers": "Sort by blocker_id ascending.",
-    "top_blockers": "Sort by rank ascending.",
-    "actions": "Sort by rank ascending.",
-    "source_event_ids": "Sort IDs lexicographically unless the row has a rank field.",
-    "document_ids": "Sort document IDs ascending.",
-    "category_ids": "Sort category IDs ascending.",
-    "blocker_ids": "Sort blocker IDs ascending unless the row has a rank field."
+    "readiness_statuses": "Sort by category_code ascending.",
+    "issue_ledger": "Sort by issue_id ascending.",
+    "privilege_corrections": "Sort by correction_id ascending.",
+    "priority_actions": "Sort by priority_rank ascending, with 1 as the highest priority."
   },
   "enums": {
-    "overall_status": [
-      "ready",
-      "mixed_not_ready",
-      "blocked"
-    ],
     "readiness_status": [
       "ready",
-      "blocked"
+      "not_ready_zero_claim_contradicted",
+      "not_ready_personal_source_gap",
+      "not_ready_privilege_log_incomplete",
+      "not_ready_privilege_waiver",
+      "not_ready_multiple_blockers",
+      "unknown"
     ],
-    "blocker_code": [
-      "none",
-      "uncollected_phone_chat",
-      "missing_archive",
-      "unlogged_privilege",
-      "failed_attachments",
-      "post_hold_deletion",
-      "vendor_source_reconciliation",
-      "hold_scope_reconciliation",
-      "retention_policy_reconciliation",
-      "review_coding_reconciliation",
-      "duplicate_custodian_reconciliation",
-      "privilege_overdesignation_review",
-      "external_portal_reconciliation"
+    "production_impact": [
+      "no_current_gap",
+      "underproduced",
+      "not_produced",
+      "source_missing",
+      "partial_source_missing",
+      "withheld_unlogged",
+      "privilege_waiver",
+      "multiple_impacts",
+      "unknown"
+    ],
+    "issue_type": [
+      "zero_claim_contradiction",
+      "responsive_miscoding",
+      "personal_email_gap",
+      "personal_phone_gap",
+      "privilege_log_gap",
+      "third_party_waiver",
+      "collection_gap",
+      "other"
     ],
     "severity": [
       "critical",
       "high",
       "medium",
-      "low",
-      "none"
+      "low"
     ],
-    "timing_class": [
+    "issue_status": [
+      "confirmed",
+      "open",
+      "not_collected",
+      "partial_collection",
+      "incomplete_log",
+      "waived",
+      "cleared",
+      "unknown"
+    ],
+    "source_status": [
       "not_applicable",
-      "uncollected_source",
-      "missing_archive",
-      "privilege_protocol_defect",
-      "processing_exception",
-      "post_hold_spoliation"
+      "not_collected",
+      "partial_collection",
+      "collected",
+      "unknown"
     ],
-    "action": [
-      "no_action",
+    "coding": [
+      "responsive",
+      "nonresponsive",
+      "privileged",
+      "nonprivileged",
+      "unknown",
+      "not_applicable"
+    ],
+    "produced_status": [
+      "produced",
+      "not_produced",
+      "withheld",
+      "unknown",
+      "not_applicable"
+    ],
+    "corrected_disposition": [
+      "responsive_produce",
+      "supplement_log",
+      "waiver_assessment",
       "supplemental_collection",
-      "archive_retrieval",
-      "privilege_log_supplement",
-      "reprocess_qc",
-      "regulator_notice",
-      "forensic_recovery"
+      "no_change",
+      "not_applicable"
     ],
-    "owner_queue": [
-      "legal",
-      "client_it",
-      "archive_team",
+    "privilege_correction_type": [
+      "supplement_log",
+      "waiver_assessment",
+      "privilege_recode",
+      "downgrade",
+      "no_action"
+    ],
+    "privilege_status": [
+      "incomplete_log",
+      "waived",
+      "logged",
+      "over_designated",
+      "no_issue",
+      "unknown"
+    ],
+    "action_type": [
+      "recode_and_produce",
+      "collect_personal_email",
+      "collect_signal_messages",
+      "supplement_privilege_log",
+      "waiver_assessment_and_disclosure",
+      "qc_remediation",
+      "production_readiness_hold",
+      "no_action"
+    ],
+    "owner": [
+      "review_qc",
+      "forensics",
       "privilege_team",
-      "review_vendor",
-      "litigation_support"
+      "privilege_counsel",
+      "outside_counsel",
+      "review_operations",
+      "client_it"
+    ],
+    "priority": [
+      "P0",
+      "P1",
+      "P2",
+      "P3"
     ]
   },
   "fields": {
-    "task_id": {
-      "type": "string",
-      "required_value": "test_004"
-    },
     "matter_id": {
       "type": "string",
-      "required_value": "M-OVL-730"
+      "description": "Matter identifier under review."
     },
-    "overall_status": {
-      "type": "enum",
-      "allowed_values_ref": "overall_status"
-    },
-    "ready_category_ids": {
-      "type": "list<string>",
-      "ordering": "Sort ascending."
-    },
-    "blocked_category_ids": {
-      "type": "list<string>",
-      "ordering": "Sort ascending."
-    },
-    "category_readiness": {
-      "type": "list<object>",
-      "required_object_keys_in_order": [
-        "category_id",
+    "readiness_statuses": {
+      "type": "list",
+      "description": "One object for each request category that is not production-ready or that requires readiness attention.",
+      "item_required_keys": [
+        "category_code",
         "readiness_status",
-        "blocker_code",
+        "production_impact",
+        "blocking_refs",
+        "required_actions"
+      ],
+      "item_fields": {
+        "category_code": "string request category code",
+        "readiness_status": "enum:readiness_status",
+        "production_impact": "enum:production_impact",
+        "blocking_refs": "list of hub record IDs supporting the readiness status, sorted ascending",
+        "required_actions": "list of enum:action_type values sorted by operational priority"
+      }
+    },
+    "issue_ledger": {
+      "type": "list",
+      "description": "Material non-privilege and privilege-readiness issues keyed by a stable hub record ID where available.",
+      "item_required_keys": [
+        "issue_id",
+        "issue_type",
         "severity",
-        "produced_count",
-        "withheld_privileged_count",
-        "privilege_logged_count",
-        "unlogged_privileged_count",
-        "affected_count",
-        "unrecovered_count",
-        "source_event_ids",
-        "primary_action",
-        "notice_required"
+        "issue_status",
+        "source_status",
+        "category_impacts",
+        "record_refs",
+        "document_count",
+        "withheld_count",
+        "logged_count",
+        "unlogged_count",
+        "third_party",
+        "missing_component",
+        "current_coding",
+        "produced_status",
+        "corrected_disposition",
+        "recommended_action",
+        "owner",
+        "priority"
       ],
-      "object_fields": {
-        "category_id": {
-          "type": "string",
-          "allowed_pattern": "^O-(01|02|03|04|05|06|07|08|09|10)$"
-        },
-        "readiness_status": {
-          "type": "enum",
-          "allowed_values_ref": "readiness_status"
-        },
-        "blocker_code": {
-          "type": "enum",
-          "allowed_values_ref": "blocker_code"
-        },
-        "severity": {
-          "type": "enum",
-          "allowed_values_ref": "severity"
-        },
-        "produced_count": {
-          "type": "integer"
-        },
-        "withheld_privileged_count": {
-          "type": "integer"
-        },
-        "privilege_logged_count": {
-          "type": "integer"
-        },
-        "unlogged_privileged_count": {
-          "type": "integer",
-          "calculation_note": "Use withheld_privileged_count minus privilege_logged_count for privilege-log gap categories; otherwise use 0."
-        },
-        "affected_count": {
-          "type": "integer",
-          "units": "records_or_sources"
-        },
-        "unrecovered_count": {
-          "type": "integer",
-          "units": "records_or_sources"
-        },
-        "source_event_ids": {
-          "type": "list<string>",
-          "ordering": "Sort lexicographically."
-        },
-        "primary_action": {
-          "type": "enum",
-          "allowed_values_ref": "action"
-        },
-        "notice_required": {
-          "type": "boolean"
-        }
+      "item_fields": {
+        "issue_id": "string stable issue key",
+        "issue_type": "enum:issue_type",
+        "severity": "enum:severity",
+        "issue_status": "enum:issue_status",
+        "source_status": "enum:source_status",
+        "category_impacts": "list of request category codes sorted ascending",
+        "record_refs": "list of hub record IDs supporting the issue, sorted ascending",
+        "document_count": "integer count, use 0 when not applicable",
+        "withheld_count": "integer count, use 0 when not applicable",
+        "logged_count": "integer count, use 0 when not applicable",
+        "unlogged_count": "integer count, use 0 when not applicable",
+        "third_party": "string or null",
+        "missing_component": "string or null",
+        "current_coding": "enum:coding",
+        "produced_status": "enum:produced_status",
+        "corrected_disposition": "enum:corrected_disposition",
+        "recommended_action": "enum:action_type",
+        "owner": "enum:owner",
+        "priority": "enum:priority"
       }
     },
-    "blockers": {
-      "type": "list<object>",
-      "required_object_keys_in_order": [
-        "blocker_id",
-        "category_id",
-        "blocker_code",
-        "severity",
-        "timing_class",
-        "affected_count",
-        "recovered_count",
-        "unrecovered_count",
-        "unlogged_privileged_count",
-        "source_event_ids",
-        "document_ids",
-        "primary_action",
-        "notice_required"
+    "privilege_corrections": {
+      "type": "list",
+      "description": "Privilege-specific correction package for withheld, logged, and waiver issues.",
+      "item_required_keys": [
+        "correction_id",
+        "correction_type",
+        "privilege_status",
+        "category_impacts",
+        "document_count",
+        "withheld_count",
+        "logged_count",
+        "unlogged_count",
+        "third_party",
+        "recommended_action",
+        "owner",
+        "priority"
       ],
-      "object_fields": {
-        "blocker_id": {
-          "type": "string",
-          "format": "BLK-O##-SHORT-LABEL"
-        },
-        "category_id": {
-          "type": "string"
-        },
-        "blocker_code": {
-          "type": "enum",
-          "allowed_values_ref": "blocker_code"
-        },
-        "severity": {
-          "type": "enum",
-          "allowed_values_ref": "severity"
-        },
-        "timing_class": {
-          "type": "enum",
-          "allowed_values_ref": "timing_class"
-        },
-        "affected_count": {
-          "type": "integer"
-        },
-        "recovered_count": {
-          "type": "integer"
-        },
-        "unrecovered_count": {
-          "type": "integer"
-        },
-        "unlogged_privileged_count": {
-          "type": "integer"
-        },
-        "source_event_ids": {
-          "type": "list<string>",
-          "ordering": "Sort lexicographically."
-        },
-        "document_ids": {
-          "type": "list<string>",
-          "ordering": "Sort ascending."
-        },
-        "primary_action": {
-          "type": "enum",
-          "allowed_values_ref": "action"
-        },
-        "notice_required": {
-          "type": "boolean"
-        }
+      "item_fields": {
+        "correction_id": "string stable privilege record ID",
+        "correction_type": "enum:privilege_correction_type",
+        "privilege_status": "enum:privilege_status",
+        "category_impacts": "list of request category codes sorted ascending",
+        "document_count": "integer count",
+        "withheld_count": "integer withheld documents",
+        "logged_count": "integer logged documents",
+        "unlogged_count": "integer withheld minus logged",
+        "third_party": "string or null",
+        "recommended_action": "enum:action_type",
+        "owner": "enum:owner",
+        "priority": "enum:priority"
       }
     },
-    "top_blockers": {
-      "type": "list<object>",
-      "required_object_keys_in_order": [
-        "rank",
-        "blocker_id",
-        "category_id",
-        "blocker_code",
-        "primary_action",
-        "notice_required"
-      ],
-      "object_fields": {
-        "rank": {
-          "type": "integer",
-          "description": "Starting at 1."
-        },
-        "blocker_id": {
-          "type": "string"
-        },
-        "category_id": {
-          "type": "string"
-        },
-        "blocker_code": {
-          "type": "enum",
-          "allowed_values_ref": "blocker_code"
-        },
-        "primary_action": {
-          "type": "enum",
-          "allowed_values_ref": "action"
-        },
-        "notice_required": {
-          "type": "boolean"
-        }
-      }
-    },
-    "notice_required": {
+    "metrics": {
       "type": "object",
-      "required_keys_in_order": [
-        "overall_notice_required",
-        "notice_category_ids",
-        "notice_blocker_ids",
-        "spoliation_notice_required",
-        "privilege_protocol_notice_required",
-        "collection_gap_notice_required",
-        "archive_notice_required",
-        "processing_notice_required"
+      "required_keys": [
+        "withheld_privilege_docs",
+        "logged_privilege_docs",
+        "unlogged_privilege_docs",
+        "waived_privilege_doc_count",
+        "miscoded_responsive_doc_count",
+        "personal_email_gap_source_count",
+        "personal_phone_partial_source_count",
+        "nonready_category_count",
+        "production_ready"
       ],
-      "fields": {
-        "overall_notice_required": {
-          "type": "boolean"
-        },
-        "notice_category_ids": {
-          "type": "list<string>",
-          "ordering": "Sort category IDs ascending."
-        },
-        "notice_blocker_ids": {
-          "type": "list<string>",
-          "ordering": "Sort blocker IDs ascending."
-        },
-        "spoliation_notice_required": {
-          "type": "boolean"
-        },
-        "privilege_protocol_notice_required": {
-          "type": "boolean"
-        },
-        "collection_gap_notice_required": {
-          "type": "boolean"
-        },
-        "archive_notice_required": {
-          "type": "boolean"
-        },
-        "processing_notice_required": {
-          "type": "boolean"
-        }
-      }
+      "field_types": {
+        "withheld_privilege_docs": "integer documents",
+        "logged_privilege_docs": "integer documents",
+        "unlogged_privilege_docs": "integer documents",
+        "waived_privilege_doc_count": "integer documents",
+        "miscoded_responsive_doc_count": "integer documents",
+        "personal_email_gap_source_count": "integer sources",
+        "personal_phone_partial_source_count": "integer sources",
+        "nonready_category_count": "integer request categories",
+        "production_ready": "boolean"
+      },
+      "numeric_precision": "All counts are whole integers."
     },
-    "actions": {
-      "type": "list<object>",
-      "required_object_keys_in_order": [
-        "rank",
+    "priority_actions": {
+      "type": "list",
+      "description": "Prioritized production-readiness action plan.",
+      "item_required_keys": [
         "action_id",
-        "action",
-        "category_ids",
-        "blocker_ids",
-        "owner_queue",
-        "required_before_production",
-        "notice_required"
+        "priority_rank",
+        "priority",
+        "action_type",
+        "owner",
+        "target_refs",
+        "category_impacts"
       ],
-      "object_fields": {
-        "rank": {
-          "type": "integer",
-          "description": "Starting at 1."
-        },
-        "action_id": {
-          "type": "string"
-        },
-        "action": {
-          "type": "enum",
-          "allowed_values_ref": "action"
-        },
-        "category_ids": {
-          "type": "list<string>",
-          "ordering": "Sort category IDs ascending."
-        },
-        "blocker_ids": {
-          "type": "list<string>",
-          "ordering": "Sort blocker IDs ascending."
-        },
-        "owner_queue": {
-          "type": "enum",
-          "allowed_values_ref": "owner_queue"
-        },
-        "required_before_production": {
-          "type": "boolean"
-        },
-        "notice_required": {
-          "type": "boolean"
-        }
+      "item_fields": {
+        "action_id": "string stable action key",
+        "priority_rank": "integer rank, 1 is highest priority",
+        "priority": "enum:priority",
+        "action_type": "enum:action_type",
+        "owner": "enum:owner",
+        "target_refs": "list of hub record IDs targeted by the action, sorted ascending",
+        "category_impacts": "list of request category codes sorted ascending"
       }
     }
-  },
-  "field_conventions": {
-    "blocker_code": "Select the best blocker code from the generic candidate pool; the enum intentionally contains distractors and is not a list of expected blockers."
   }
 }

@@ -1,222 +1,255 @@
 {
-  "matter_id": "M-GCF-088",
-  "custodian_id": "C-HL-033",
-  "overall_status": "needs_escalation",
-  "notice_recommended": true,
-  "issue_findings": [
+  "matter_id": "MTR-GRAYCLIFF-SEC",
+  "top_risks": [
     {
-      "issue_id": "attachment_failure",
-      "present": true,
-      "issue_type": "processing_failure",
-      "severity": "medium",
-      "timing_class": "processing_exception",
-      "category_ids": [
-        "G-06"
+      "risk_id": "RET-GRAY-SHARE-DEL",
+      "priority_rank": 1,
+      "issue_type": "post_hold_loss",
+      "risk_level": "critical",
+      "status": "open",
+      "source_status": "destroyed",
+      "production_impact": "source_lost",
+      "affected_categories": [
+        "SEC-2",
+        "SEC-3"
       ],
-      "affected_count": 23,
-      "recovered_count": 0,
-      "unrecovered_count": 23,
-      "primary_action": "reprocess_qc",
-      "secondary_actions": [
-        "forensic_recovery",
-        "supplemental_collection"
+      "source_refs": [
+        "DOC-GRAY-CASCADE-V3",
+        "DOC-GRAY-ORION-DRAFT",
+        "RET-GRAY-SHARE-DEL"
       ],
-      "notice_recommended": false
+      "document_count": 2,
+      "volume_count": 8,
+      "volume_unit": "documents",
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "recommended_action": "disclose_preservation_issue"
     },
     {
-      "issue_id": "laptop_wipe",
-      "present": true,
-      "issue_type": "device_wipe",
-      "severity": "critical",
-      "timing_class": "post_hold_spoliation",
-      "category_ids": [
-        "G-02",
-        "G-03"
+      "risk_id": "PRIV-GRAY-WINSLOW",
+      "priority_rank": 2,
+      "issue_type": "third_party_waiver",
+      "risk_level": "high",
+      "status": "protocol_noncompliant",
+      "source_status": "not_applicable",
+      "production_impact": "privilege_exposure",
+      "affected_categories": [
+        "SEC-3"
       ],
-      "affected_count": 1,
-      "recovered_count": 0,
-      "unrecovered_count": 1,
-      "primary_action": "forensic_recovery",
-      "secondary_actions": [
-        "custodian_declaration",
-        "regulator_notice"
+      "source_refs": [
+        "PRIV-GRAY-WINSLOW"
       ],
-      "notice_recommended": true
+      "document_count": 3,
+      "volume_count": 3,
+      "volume_unit": "emails",
+      "withheld_count": 3,
+      "logged_count": 3,
+      "unlogged_count": 0,
+      "third_party": "Derek Winslow",
+      "recommended_action": "waiver_assessment_and_disclosure"
     },
     {
-      "issue_id": "personal_email_gap",
-      "present": true,
-      "issue_type": "uncollected_source",
-      "severity": "high",
-      "timing_class": "uncollected_source",
-      "category_ids": [
-        "G-04"
+      "risk_id": "QC-GRAY-MISCODED-PRIV",
+      "priority_rank": 3,
+      "issue_type": "privilege_miscoding",
+      "risk_level": "high",
+      "status": "needs_recode",
+      "source_status": "not_applicable",
+      "production_impact": "privilege_exposure",
+      "affected_categories": [
+        "SEC-3"
       ],
-      "affected_count": 1,
-      "recovered_count": 0,
-      "unrecovered_count": 1,
-      "primary_action": "supplemental_collection",
-      "secondary_actions": [
-        "hold_refresh"
+      "source_refs": [
+        "PRIV-GRAY-WINSLOW",
+        "QC-GRAY-MISCODED-PRIV"
       ],
-      "notice_recommended": false
+      "document_count": 45,
+      "volume_count": 45,
+      "volume_unit": "documents",
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "recommended_action": "privilege_recode_and_log"
     },
     {
-      "issue_id": "privilege_miscoding",
-      "present": true,
-      "issue_type": "review_coding_error",
-      "severity": "high",
-      "timing_class": "coding_error",
-      "category_ids": [
-        "G-05"
+      "risk_id": "SRC-GRAY-HALE-LAPTOP",
+      "priority_rank": 4,
+      "issue_type": "post_hold_loss",
+      "risk_level": "high",
+      "status": "open",
+      "source_status": "destroyed",
+      "production_impact": "source_lost",
+      "affected_categories": [
+        "SEC-1",
+        "SEC-4"
       ],
-      "affected_count": 45,
-      "recovered_count": 0,
-      "unrecovered_count": 45,
-      "primary_action": "clawback_check",
-      "secondary_actions": [
-        "privilege_review"
+      "source_refs": [
+        "SRC-GRAY-HALE-LAPTOP"
       ],
-      "notice_recommended": false
+      "document_count": 0,
+      "volume_count": 1,
+      "volume_unit": "sources",
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "recommended_action": "disclose_preservation_issue"
     },
     {
-      "issue_id": "privilege_overdesignation",
-      "present": true,
-      "issue_type": "privilege_protocol_defect",
-      "severity": "medium",
-      "timing_class": "privilege_protocol_defect",
-      "category_ids": [
-        "G-05"
+      "risk_id": "SRC-GRAY-HALE-GMAIL",
+      "priority_rank": 5,
+      "issue_type": "personal_source_gap",
+      "risk_level": "high",
+      "status": "open",
+      "source_status": "not_collected",
+      "production_impact": "source_missing",
+      "affected_categories": [
+        "SEC-1",
+        "SEC-3"
       ],
-      "affected_count": 12,
-      "recovered_count": 0,
-      "unrecovered_count": 0,
-      "primary_action": "privilege_review",
-      "secondary_actions": [
-        "privilege_log_correction",
-        "produce_business_only"
+      "source_refs": [
+        "SRC-GRAY-HALE-GMAIL"
       ],
-      "notice_recommended": false
-    },
-    {
-      "issue_id": "privilege_waiver",
-      "present": true,
-      "issue_type": "third_party_forward",
-      "severity": "high",
-      "timing_class": "privilege_waiver",
-      "category_ids": [
-        "G-04"
-      ],
-      "affected_count": 3,
-      "recovered_count": 0,
-      "unrecovered_count": 0,
-      "primary_action": "waiver_assessment",
-      "secondary_actions": [
-        "privilege_log_correction",
-        "privilege_review"
-      ],
-      "notice_recommended": false
-    },
-    {
-      "issue_id": "shared_drive_deletion",
-      "present": true,
-      "issue_type": "source_deletion",
-      "severity": "critical",
-      "timing_class": "post_hold_spoliation",
-      "category_ids": [
-        "G-03"
-      ],
-      "affected_count": 37,
-      "recovered_count": 29,
-      "unrecovered_count": 8,
-      "primary_action": "regulator_notice",
-      "secondary_actions": [
-        "forensic_recovery"
-      ],
-      "notice_recommended": true
+      "document_count": 0,
+      "volume_count": 1,
+      "volume_unit": "sources",
+      "withheld_count": 0,
+      "logged_count": 0,
+      "unlogged_count": 0,
+      "third_party": null,
+      "recommended_action": "collect_personal_device"
     }
   ],
-  "privilege_actions": {
-    "waiver_forward": {
-      "record_count": 3,
-      "category_ids": [
-        "G-04"
+  "category_coverage": [
+    {
+      "category_code": "SEC-1",
+      "status": "preservation_loss",
+      "production_impact": "source_lost",
+      "issue_refs": [
+        "SRC-GRAY-HALE-GMAIL",
+        "SRC-GRAY-HALE-LAPTOP"
       ],
-      "action": "waiver_assessment",
-      "waiver_risk": true,
-      "recipient_role": "outside_banker"
+      "recommended_action": "disclose_preservation_issue",
+      "open_issue_count": 2
     },
-    "overdesignation_review": {
-      "record_count": 12,
-      "category_ids": [
-        "G-05"
+    {
+      "category_code": "SEC-2",
+      "status": "preservation_loss",
+      "production_impact": "source_lost",
+      "issue_refs": [
+        "RET-GRAY-SHARE-DEL"
       ],
-      "action": "privilege_review",
-      "overdesignation_flag": true,
-      "privilege_status": "business_only"
+      "recommended_action": "disclose_preservation_issue",
+      "open_issue_count": 1
     },
-    "miscoding_clawback": {
-      "record_count": 45,
-      "category_ids": [
-        "G-05"
+    {
+      "category_code": "SEC-3",
+      "status": "underproduced_privilege_corrections",
+      "production_impact": "privilege_exposure",
+      "issue_refs": [
+        "DOC-GRAY-CASCADE-V3",
+        "DOC-GRAY-ORION-DRAFT",
+        "PRIV-GRAY-WINSLOW",
+        "QC-GRAY-MISCODED-PRIV",
+        "RET-GRAY-SHARE-DEL",
+        "SRC-GRAY-HALE-GMAIL"
       ],
-      "action": "clawback_check",
-      "first_pass_coding": "non_privileged",
-      "production_status": "produced",
-      "clawback_required": true
+      "recommended_action": "waiver_assessment_and_disclosure",
+      "open_issue_count": 4
+    },
+    {
+      "category_code": "SEC-4",
+      "status": "preservation_loss",
+      "production_impact": "source_lost",
+      "issue_refs": [
+        "SRC-GRAY-HALE-LAPTOP"
+      ],
+      "recommended_action": "disclose_preservation_issue",
+      "open_issue_count": 1
     }
+  ],
+  "retained_or_available_sources": [],
+  "metrics": {
+    "top_risk_count": 5,
+    "destroyed_lab_archive_box_count": 0,
+    "post_hold_loss_event_count": 2,
+    "uncollected_personal_source_count": 1,
+    "available_archive_count": 0,
+    "miscoded_responsive_doc_count": 0,
+    "withheld_privileged_doc_count": 0,
+    "logged_privilege_doc_count": 0,
+    "unlogged_privilege_doc_count": 0,
+    "third_party_waiver_doc_count": 3,
+    "miscoded_privileged_doc_count": 45,
+    "missing_required_record_count": 0,
+    "affected_category_count": 4,
+    "categories_with_open_risk": [
+      "SEC-1",
+      "SEC-2",
+      "SEC-3",
+      "SEC-4"
+    ]
   },
-  "attachment_failures": {
-    "total_failed": 23,
-    "password_protected": 14,
-    "corrupt": 9,
-    "category_ids": [
-      "G-06"
-    ],
-    "primary_action": "reprocess_qc"
-  },
-  "ranked_escalations": [
+  "action_plan": [
     {
       "rank": 1,
-      "issue_id": "shared_drive_deletion",
-      "escalation_target": "regulator_notice_review",
-      "primary_action": "regulator_notice"
+      "action_type": "disclose_preservation_issue",
+      "owner": "outside_counsel",
+      "priority": "P0",
+      "target_refs": [
+        "RET-GRAY-SHARE-DEL",
+        "SRC-GRAY-HALE-LAPTOP"
+      ],
+      "affected_categories": [
+        "SEC-1",
+        "SEC-2",
+        "SEC-3",
+        "SEC-4"
+      ],
+      "due_days": 3
     },
     {
       "rank": 2,
-      "issue_id": "laptop_wipe",
-      "escalation_target": "forensic_vendor",
-      "primary_action": "forensic_recovery"
+      "action_type": "waiver_assessment_and_disclosure",
+      "owner": "privilege_counsel",
+      "priority": "P1",
+      "target_refs": [
+        "PRIV-GRAY-WINSLOW"
+      ],
+      "affected_categories": [
+        "SEC-3"
+      ],
+      "due_days": 3
     },
     {
       "rank": 3,
-      "issue_id": "personal_email_gap",
-      "escalation_target": "client_legal",
-      "primary_action": "supplemental_collection"
+      "action_type": "privilege_recode_and_log",
+      "owner": "review_qc",
+      "priority": "P1",
+      "target_refs": [
+        "QC-GRAY-MISCODED-PRIV"
+      ],
+      "affected_categories": [
+        "SEC-3"
+      ],
+      "due_days": 5
     },
     {
       "rank": 4,
-      "issue_id": "privilege_miscoding",
-      "escalation_target": "privilege_team",
-      "primary_action": "clawback_check"
-    },
-    {
-      "rank": 5,
-      "issue_id": "privilege_waiver",
-      "escalation_target": "privilege_team",
-      "primary_action": "waiver_assessment"
-    },
-    {
-      "rank": 6,
-      "issue_id": "attachment_failure",
-      "escalation_target": "review_vendor",
-      "primary_action": "reprocess_qc"
-    },
-    {
-      "rank": 7,
-      "issue_id": "privilege_overdesignation",
-      "escalation_target": "privilege_team",
-      "primary_action": "privilege_review"
+      "action_type": "collect_personal_device",
+      "owner": "forensics",
+      "priority": "P1",
+      "target_refs": [
+        "SRC-GRAY-HALE-GMAIL"
+      ],
+      "affected_categories": [
+        "SEC-1",
+        "SEC-3"
+      ],
+      "due_days": 7
     }
   ]
 }

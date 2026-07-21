@@ -1,3106 +1,2170 @@
 #!/usr/bin/env python3
-"""Generate deterministic shared legal-investigation fixture data."""
+"""Generate deterministic Investigation Review Hub data."""
 
 from __future__ import annotations
 
+import argparse
 import json
 import random
+import sqlite3
 from pathlib import Path
 
 
 SEED = 17017
-GENERATION_TIMESTAMP = "2026-07-07T00:00:00Z"
+SERVICE_NAME = "investigation_review_hub"
+STATE_MODE = "read_only"
+CONTAINER_DB_PATH = "/app/data/review_hub.db"
+
 BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "data" / "generated"
-MANIFEST_PATH = BASE_DIR / "manifest.json"
+DATA_DIR = BASE_DIR / "data"
+DB_PATH = DATA_DIR / "review_hub.db"
+MANIFEST_PATH = DATA_DIR / "manifest.json"
+JUDGE_DATA_PATH = DATA_DIR / "judge_data.json"
 
 ENDPOINTS = [
-    "/health",
-    "/api/matters",
-    "/api/matters/{matter_id}",
-    "/api/subpoena_categories?matter_id=...",
-    "/api/production_logs?matter_id=...",
-    "/api/collection_events?matter_id=...",
-    "/api/retention_rules?matter_id=...",
-    "/api/destruction_events?matter_id=...",
-    "/api/privilege_logs?matter_id=...",
-    "/api/qc_events?matter_id=...",
-    "/api/custodians?matter_id=...",
-    "/api/documents?matter_id=...",
-    "/api/search?matter_id=...&q=...",
+    "GET /health",
+    "GET /",
+    "GET /api/schema",
+    "GET /api/matters",
+    "GET /api/subpoena-categories",
+    "GET /api/productions",
+    "GET /api/custodian-sources",
+    "GET /api/documents/search",
+    "GET /api/privilege-log",
+    "GET /api/qc-findings",
+    "GET /api/retention-events",
+    "GET /api/remediation-actions",
+    "POST /api/query",
+    "POST /api/judge",
+    "POST /admin/reset",
 ]
 
-TARGET_COUNTS = {
-    "matters": 12,
-    "custodians": 72,
-    "subpoena_categories": 144,
-    "production_logs": 360,
-    "collection_events": 190,
-    "retention_rules": 72,
-    "destruction_events": 96,
-    "privilege_logs": 252,
-    "qc_events": 180,
-    "documents": 720,
-}
-
-
-MATTERS = [
+PRIMARY_MATTERS = [
     {
-        "matter_id": "M-CRN-041",
-        "name": "Crownpoint Neurodevices Market Integrity Inquiry",
-        "investigation_type": "white-collar defense / market manipulation",
-        "agency": "SEC Enforcement Division",
-        "subpoena_date": "2024-03-14",
-        "hold_date": "2024-03-15",
-        "production_protocol_flag": True,
-        "deadline": "2024-08-30",
-        "issue_status": "active production review",
-        "regulator_notice_flag": True,
-        "summary": (
-            "Subpoena seeks market-manipulation communications, board materials, "
-            "complaints, legal-hold and internal-investigation records, and "
-            "personal devices."
-        ),
+        "matter_id": "MTR-SENTINEL-GJ",
+        "task_id": "train_001",
+        "name": "Sentinel Motors grand jury subpoena review",
+        "agency": "DOJ Antitrust Division",
+        "investigation_type": "grand_jury_subpoena",
+        "issued_date": "2025-01-27",
+        "hold_date": "2025-01-27",
+        "lead_partner": "Rachel Kim",
+        "description": "Vehicle-safety dealer complaint and board oversight production review.",
+        "status": "active_review",
     },
     {
-        "matter_id": "M-NVK-219",
-        "name": "Novakem Environmental Grand Jury Subpoena",
-        "investigation_type": "grand jury environmental",
+        "matter_id": "MTR-HARBORSTONE-GJ",
+        "task_id": "train_002",
+        "name": "Harborstone Chemicals grand jury subpoena review",
         "agency": "DOJ Environmental Crimes Section",
-        "subpoena_date": "2024-11-22",
-        "hold_date": "2024-11-25",
-        "production_protocol_flag": True,
-        "deadline": "2025-03-14",
-        "issue_status": "active production review",
-        "regulator_notice_flag": True,
-        "summary": (
-            "Grand jury subpoena covers lab data, communications, audit reports, "
-            "equipment records, former employees, and personal devices."
-        ),
+        "investigation_type": "grand_jury_subpoena",
+        "issued_date": "2024-11-14",
+        "hold_date": "2024-11-14",
+        "lead_partner": "Devon Bell",
+        "description": "Environmental, lab, and audit-retention review for production deficiency assessment.",
+        "status": "active_review",
     },
     {
-        "matter_id": "M-GCF-088",
-        "name": "Granite Crest Fund Advisory Fee Investigation",
-        "investigation_type": "investment-adviser disclosure",
-        "agency": "SEC Asset Management Unit",
-        "subpoena_date": "2024-07-08",
-        "hold_date": "2024-07-09",
-        "production_protocol_flag": True,
-        "deadline": "2024-12-06",
-        "issue_status": "active production review",
-        "regulator_notice_flag": False,
-        "summary": (
-            "Advisory-fee matter covering custodian device records, shared-drive "
-            "materials, personal-email references, privilege-review records, and "
-            "attachment-processing records."
-        ),
+        "matter_id": "MTR-GRAYCLIFF-SEC",
+        "task_id": "train_003",
+        "name": "Graycliff Capital SEC review",
+        "agency": "SEC Enforcement",
+        "investigation_type": "sec_subpoena",
+        "issued_date": "2023-10-12",
+        "hold_date": "2023-10-12",
+        "lead_partner": "Maya Desai",
+        "description": "Valuation, privilege, and collection-gap review for fund disclosure investigation.",
+        "status": "active_review",
     },
     {
-        "matter_id": "M-RDL-304",
-        "name": "Radialon Compliance Whistleblower Production",
-        "investigation_type": "whistleblower retaliation and compliance",
-        "agency": "Department of Labor OIG",
-        "subpoena_date": "2024-05-10",
-        "hold_date": "2024-05-13",
-        "production_protocol_flag": True,
-        "deadline": "2024-09-20",
-        "issue_status": "active production review",
-        "regulator_notice_flag": True,
-        "summary": (
-            "Whistleblower production review covering complaint documents, "
-            "compliance communications, privilege-review records, and review "
-            "coding records."
-        ),
+        "matter_id": "MTR-NORTHBAY-SEC",
+        "task_id": "train_004",
+        "name": "Northbay Therapeutics SEC review",
+        "agency": "SEC Enforcement",
+        "investigation_type": "sec_subpoena",
+        "issued_date": "2024-03-18",
+        "hold_date": "2024-03-18",
+        "lead_partner": "Owen Pierce",
+        "description": "Clinical-trial risk and privilege quality-control review.",
+        "status": "active_review",
     },
     {
-        "matter_id": "M-PHN-612",
-        "name": "Phaneron Health Network Compliance Subpoena",
-        "investigation_type": "healthcare compliance",
-        "agency": "HHS OIG",
-        "subpoena_date": "2024-09-03",
-        "hold_date": "2024-09-05",
-        "production_protocol_flag": False,
-        "deadline": "2025-01-16",
-        "issue_status": "active production review",
-        "regulator_notice_flag": False,
-        "summary": (
-            "Former compliance-custodian subpoena covering personnel records, "
-            "email archives, Teams records, returned-laptop materials, and "
-            "personal cloud/text source inventories."
-        ),
+        "matter_id": "MTR-ALLOYWORKS-GJ",
+        "task_id": "train_005",
+        "name": "AlloyWorks procurement grand jury review",
+        "agency": "DOJ Antitrust Division",
+        "investigation_type": "grand_jury_subpoena",
+        "issued_date": "2024-08-20",
+        "hold_date": "2024-08-20",
+        "lead_partner": "Hannah Ruiz",
+        "description": "Bid files, personal messaging, and zero-production claim review.",
+        "status": "active_review",
     },
     {
-        "matter_id": "M-ALD-507",
-        "name": "Alderline Revenue Recognition Inquiry",
-        "investigation_type": "revenue-recognition accounting",
-        "agency": "SEC Financial Reporting and Audit Group",
-        "subpoena_date": "2024-08-12",
-        "hold_date": "2024-08-14",
-        "production_protocol_flag": True,
-        "deadline": "2024-12-18",
-        "issue_status": "active production review",
-        "regulator_notice_flag": True,
-        "summary": (
-            "Revenue-recognition subpoena covering accounting, board materials, "
-            "custodian communications, and privilege-review records across "
-            "multiple review systems."
-        ),
+        "matter_id": "MTR-MERIDIAN-GJ",
+        "task_id": "test_001",
+        "name": "Meridian Autos grand jury subpoena review",
+        "agency": "DOJ Antitrust Division",
+        "investigation_type": "grand_jury_subpoena",
+        "issued_date": "2025-03-17",
+        "hold_date": "2025-03-17",
+        "lead_partner": "Rachel Kim",
+        "description": "Dealer safety escalation, board portal, and privilege log production review.",
+        "status": "active_review",
     },
     {
-        "matter_id": "M-BAY-144",
-        "name": "Bay & Tidewater Emissions Data Matter",
-        "investigation_type": "environmental emissions",
-        "agency": "EPA Criminal Investigation Division",
-        "subpoena_date": "2024-12-04",
-        "hold_date": "2024-12-06",
-        "production_protocol_flag": True,
-        "deadline": "2025-04-15",
-        "issue_status": "active production review",
-        "regulator_notice_flag": True,
-        "summary": (
-            "Environmental subpoena covering lab records, collaboration systems, "
-            "executive email archives, vendor audit materials, and custodian "
-            "source inventories."
-        ),
-    },
-    {
-        "matter_id": "M-LYN-322",
-        "name": "Lynxion Consulting Payments Investigation",
-        "investigation_type": "books and records / consulting payments",
+        "matter_id": "MTR-PORTOLA-GJ",
+        "task_id": "test_002",
+        "name": "Portola Energy trading grand jury review",
         "agency": "DOJ Fraud Section",
-        "subpoena_date": "2024-08-20",
-        "hold_date": "2024-08-22",
-        "production_protocol_flag": True,
-        "deadline": "2025-01-24",
-        "issue_status": "active production review",
-        "regulator_notice_flag": True,
-        "summary": (
-            "Consulting-payments investigation centered on custodian C-MR-118, "
-            "reviewing device, shared-folder, personal-email, privilege, and "
-            "attachment-processing records."
-        ),
-    },
-    {
-        "matter_id": "M-OVL-730",
-        "name": "Overlook Integrated Production Readiness Review",
-        "investigation_type": "multi-issue integrated production",
-        "agency": "SEC and DOJ Joint Task Force",
-        "subpoena_date": "2025-01-08",
+        "investigation_type": "grand_jury_subpoena",
+        "issued_date": "2025-01-09",
         "hold_date": "2025-01-09",
-        "production_protocol_flag": True,
-        "deadline": "2025-05-02",
-        "issue_status": "active production review",
-        "regulator_notice_flag": False,
-        "summary": (
-            "Integrated production review with categories O-01 through O-10 across "
-            "communications, board, archive, review-platform, attachment, "
-            "shared-folder, accounting, vendor, and regulator record sources."
-        ),
+        "lead_partner": "Devon Bell",
+        "description": "Trading blotter, chat, voice, and surveillance-retention review.",
+        "status": "active_review",
     },
     {
-        "matter_id": "M-KTR-556",
-        "name": "Kestrel Therapeutics Speaker Program Review",
-        "investigation_type": "healthcare anti-kickback",
-        "agency": "DOJ Civil Division",
-        "subpoena_date": "2024-02-02",
-        "hold_date": "2024-02-05",
-        "production_protocol_flag": True,
-        "deadline": "2024-07-12",
-        "issue_status": "active production review",
-        "regulator_notice_flag": False,
-        "summary": "Noisy comparator matter with overlapping custodian aliases and stale coding notes.",
+        "matter_id": "MTR-BRIARGATE-SEC",
+        "task_id": "test_003",
+        "name": "Briargate Advisors SEC review",
+        "agency": "SEC Enforcement",
+        "investigation_type": "sec_subpoena",
+        "issued_date": "2024-02-21",
+        "hold_date": "2024-02-21",
+        "lead_partner": "Maya Desai",
+        "description": "Private-fund valuation, file loss, and privilege-waiver review.",
+        "status": "active_review",
     },
     {
-        "matter_id": "M-SIL-902",
-        "name": "Silvergate Meridian Trading Surveillance Inquiry",
-        "investigation_type": "trading surveillance",
-        "agency": "CFTC Division of Enforcement",
-        "subpoena_date": "2024-10-21",
-        "hold_date": "2024-10-22",
-        "production_protocol_flag": False,
-        "deadline": "2025-03-06",
-        "issue_status": "active production review",
-        "regulator_notice_flag": False,
-        "summary": "Noisy comparator with similar market-communications categories and obsolete policies.",
+        "matter_id": "MTR-COBALTRIDGE-GJ",
+        "task_id": "test_004",
+        "name": "Cobalt Ridge M&A grand jury review",
+        "agency": "DOJ Antitrust Division",
+        "investigation_type": "grand_jury_subpoena",
+        "issued_date": "2024-09-30",
+        "hold_date": "2024-09-30",
+        "lead_partner": "Hannah Ruiz",
+        "description": "Side-channel banker communications, personal sources, and privilege production review.",
+        "status": "active_review",
     },
     {
-        "matter_id": "M-TVL-689",
-        "name": "TruVale Procurement Controls Inquiry",
-        "investigation_type": "procurement fraud",
-        "agency": "State Attorney General",
-        "subpoena_date": "2024-06-17",
-        "hold_date": "2024-06-19",
-        "production_protocol_flag": True,
-        "deadline": "2024-11-05",
-        "issue_status": "active production review",
-        "regulator_notice_flag": False,
-        "summary": "Noisy comparator matter with overlapping tags and unrelated privilege rows.",
+        "matter_id": "MTR-VIREO-SEC",
+        "task_id": "test_005",
+        "name": "Vireo Diagnostics SEC review",
+        "agency": "SEC Enforcement",
+        "investigation_type": "sec_subpoena",
+        "issued_date": "2025-02-03",
+        "hold_date": "2025-02-03",
+        "lead_partner": "Owen Pierce",
+        "description": "Lab-results, investor complaint, personal device, archive, and privilege review.",
+        "status": "active_review",
     },
 ]
 
-MATTER_IDS = [matter["matter_id"] for matter in MATTERS]
+DISTRACTOR_MATTERS = [
+    {
+        "matter_id": "MTR-IRONPEAK-SEC",
+        "name": "IronPeak Energy SEC review",
+        "agency": "SEC Enforcement",
+        "investigation_type": "sec_subpoena",
+        "issued_date": "2024-05-10",
+        "hold_date": "2024-05-10",
+        "lead_partner": "Leah Chen",
+        "description": "Revenue-recognition and board-material production review.",
+        "status": "closed_monitoring",
+    },
+    {
+        "matter_id": "MTR-LAKEFRONT-GJ",
+        "name": "Lakefront Devices grand jury review",
+        "agency": "DOJ Antitrust Division",
+        "investigation_type": "grand_jury_subpoena",
+        "issued_date": "2025-04-02",
+        "hold_date": "2025-04-02",
+        "lead_partner": "Rachel Kim",
+        "description": "Dealer incentive, mobile-source, and privilege-log review.",
+        "status": "active_review",
+    },
+    {
+        "matter_id": "MTR-PINEVALE-SEC",
+        "name": "Pinevale Biologics SEC review",
+        "agency": "SEC Enforcement",
+        "investigation_type": "sec_subpoena",
+        "issued_date": "2024-12-12",
+        "hold_date": "2024-12-12",
+        "lead_partner": "Owen Pierce",
+        "description": "Clinical disclosure and retention exception review.",
+        "status": "active_review",
+    },
+    {
+        "matter_id": "MTR-SILVERYARD-GJ",
+        "name": "Silveryard Industrials grand jury review",
+        "agency": "DOJ Fraud Section",
+        "investigation_type": "grand_jury_subpoena",
+        "issued_date": "2023-09-19",
+        "hold_date": "2023-09-19",
+        "lead_partner": "Devon Bell",
+        "description": "Bid-channel and voice-retention review with no escalated defects.",
+        "status": "closed_monitoring",
+    },
+    {
+        "matter_id": "MTR-OAKHARBOR-SEC",
+        "name": "Oak Harbor Advisors SEC review",
+        "agency": "SEC Enforcement",
+        "investigation_type": "sec_subpoena",
+        "issued_date": "2025-01-24",
+        "hold_date": "2025-01-24",
+        "lead_partner": "Maya Desai",
+        "description": "Valuation support and outside-adviser privilege review.",
+        "status": "active_review",
+    },
+    {
+        "matter_id": "MTR-RIVERBEND-GJ",
+        "name": "Riverbend Trading grand jury review",
+        "agency": "DOJ Fraud Section",
+        "investigation_type": "grand_jury_subpoena",
+        "issued_date": "2024-07-15",
+        "hold_date": "2024-07-15",
+        "lead_partner": "Hannah Ruiz",
+        "description": "Chat-retention and surveillance archive production review.",
+        "status": "active_review",
+    },
+]
 
-
-BASE_CATEGORIES = {
-    "M-CRN-041": [
-        (
-            "CRN-01",
-            "Market-manipulation communications",
-            "2022-01-01",
-            "2024-03-14",
-            ["email", "Teams", "Bloomberg chat"],
-            ["market manipulation", "trading", "communications"],
-        ),
-        (
-            "CRN-02",
-            "Board materials concerning trading strategy",
-            "2021-07-01",
-            "2024-03-14",
-            ["board portal", "shared drive"],
-            ["board materials", "strategy"],
-        ),
-        (
-            "CRN-03",
-            "Complaints and testing-accuracy concerns",
-            "2021-01-01",
-            "2024-03-14",
-            ["email", "hotline", "QA shared drive"],
-            ["complaints", "testing accuracy"],
-        ),
-        (
-            "CRN-04",
-            "Legal hold and internal investigation records",
-            "2024-03-01",
-            "2024-06-30",
-            ["legal hold system", "email"],
-            ["legal hold", "internal investigation"],
-        ),
-        (
-            "CRN-05",
-            "Personal devices and encrypted messaging",
-            "2022-01-01",
-            "2024-03-14",
-            ["personal phone", "Signal", "WhatsApp"],
-            ["personal devices", "messaging"],
-        ),
-        (
-            "CRN-06",
-            "Counsel communications about trading inquiry",
-            "2023-09-01",
-            "2024-03-14",
-            ["email", "legal files"],
-            ["counsel communications", "privilege"],
-        ),
-    ],
-    "M-NVK-219": [
-        (
-            "N-01",
-            "Environmental lab data and raw test results",
-            "2019-01-01",
-            "2024-11-22",
-            ["LIMS", "off-site boxes"],
-            ["lab data", "emissions"],
-        ),
-        (
-            "N-02",
-            "Environmental communications",
-            "2020-01-01",
-            "2024-11-22",
-            ["email", "Teams", "voicemail"],
-            ["communications", "environment"],
-        ),
-        (
-            "N-03",
-            "Audit reports and draft findings",
-            "2019-01-01",
-            "2024-11-22",
-            ["shared drive", "vendor portal"],
-            ["audit report", "retention"],
-        ),
-        (
-            "N-04",
-            "Equipment calibration and maintenance records",
-            "2019-01-01",
-            "2024-11-22",
-            ["maintenance database"],
-            ["equipment", "calibration"],
-        ),
-        (
-            "N-05",
-            "Former employee custodial materials",
-            "2019-01-01",
-            "2024-11-22",
-            ["email archive", "off-site storage"],
-            ["former employees"],
-        ),
-        (
-            "N-06",
-            "Personal devices used for EHS communications",
-            "2020-01-01",
-            "2024-11-22",
-            ["personal phone", "SMS"],
-            ["personal devices"],
-        ),
-    ],
-    "M-GCF-088": [
-        (
-            "G-01",
-            "Advisory fee communications",
-            "2022-01-01",
-            "2024-07-08",
-            ["email", "Teams"],
-            ["fees", "communications"],
-        ),
-        (
-            "G-02",
-            "Board and investor materials",
-            "2022-01-01",
-            "2024-07-08",
-            ["board portal", "shared drive"],
-            ["investors", "board"],
-        ),
-        (
-            "G-03",
-            "Shared-drive working files",
-            "2022-01-01",
-            "2024-07-08",
-            ["shared drive"],
-            ["shared drive", "deletions"],
-        ),
-        (
-            "G-04",
-            "Personal email and external forwards",
-            "2022-01-01",
-            "2024-07-08",
-            ["Gmail", "email"],
-            ["personal email", "external forwards"],
-        ),
-        (
-            "G-05",
-            "Privilege and clawback review",
-            "2024-07-01",
-            "2024-11-30",
-            ["review platform"],
-            ["privilege", "clawback"],
-        ),
-        (
-            "G-06",
-            "Attachments and encrypted files",
-            "2022-01-01",
-            "2024-07-08",
-            ["email attachments"],
-            ["attachments", "QC"],
-        ),
-    ],
-    "M-RDL-304": [
-        (
-            "R-01",
-            "Whistleblower complaints and compliance escalations",
-            "2021-01-01",
-            "2024-05-10",
-            ["email", "hotline"],
-            ["whistleblower", "complaints"],
-        ),
-        (
-            "R-02",
-            "Compliance committee materials",
-            "2021-01-01",
-            "2024-05-10",
-            ["shared drive"],
-            ["compliance", "committee"],
-        ),
-        ("R-03", "Internal audit workpapers", "2021-01-01", "2024-05-10", ["audit share"], ["audit", "workpapers"]),
-        ("R-04", "Manager communications", "2021-01-01", "2024-05-10", ["email", "Teams"], ["communications"]),
-        (
-            "R-10",
-            "Privilege review and coding quality",
-            "2024-05-01",
-            "2024-09-20",
-            ["review platform"],
-            ["privilege", "QC"],
-        ),
-        (
-            "R-11",
-            "Counsel communications on compliance response",
-            "2023-01-01",
-            "2024-05-10",
-            ["email", "legal files"],
-            ["counsel communications", "privilege"],
-        ),
-    ],
-    "M-PHN-612": [
-        (
-            "P-01",
-            "Former compliance custodian personnel file",
-            "2020-01-01",
-            "2024-09-03",
-            ["HRIS", "personnel file"],
-            ["personnel", "former custodian"],
-        ),
-        (
-            "P-02",
-            "Compliance email including Iron archive",
-            "2019-01-01",
-            "2024-09-03",
-            ["active mailbox", "Iron archive"],
-            ["email archive"],
-        ),
-        ("P-03", "Teams compliance chats", "2020-01-01", "2024-09-03", ["Teams"], ["Teams", "purge"]),
-        ("P-04", "Returned laptop and local PST", "2020-01-01", "2024-09-03", ["laptop", "PST"], ["laptop", "PST"]),
-        (
-            "P-05",
-            "Personal cloud and text messaging",
-            "2020-01-01",
-            "2024-09-03",
-            ["iCloud", "SMS"],
-            ["personal cloud", "texts"],
-        ),
-    ],
-    "M-ALD-507": [
-        (
-            "A-01",
-            "Revenue-recognition communications",
-            "2021-01-01",
-            "2024-08-12",
-            ["email", "Teams"],
-            ["revenue recognition", "communications"],
-        ),
-        (
-            "A-02",
-            "Board packages and finance committee materials",
-            "2021-01-01",
-            "2024-08-12",
-            ["board portal", "shared drive"],
-            ["board package"],
-        ),
-        (
-            "A-03",
-            "Journal-entry override support",
-            "2021-01-01",
-            "2024-08-12",
-            ["ERP", "shared drive"],
-            ["journal entries", "override"],
-        ),
-        (
-            "A-04",
-            "Personal messages for finance executives",
-            "2021-01-01",
-            "2024-08-12",
-            ["personal phone", "Signal", "Telegram"],
-            ["personal messages"],
-        ),
-        (
-            "A-08",
-            "Prior counsel logistics",
-            "2022-01-01",
-            "2024-08-12",
-            ["email", "legal files"],
-            ["counsel logistics", "privilege"],
-        ),
-        (
-            "A-09",
-            "Complaints about revenue-recognition overrides",
-            "2021-01-01",
-            "2024-08-12",
-            ["email", "hotline"],
-            ["complaints", "override"],
-        ),
-    ],
-    "M-BAY-144": [
-        (
-            "B-01",
-            "Emissions lab data and raw results",
-            "2020-01-01",
-            "2024-12-04",
-            ["LIMS", "off-site boxes"],
-            ["lab data", "emissions"],
-        ),
-        (
-            "B-02",
-            "Teams channels and EHS discussions",
-            "2021-01-01",
-            "2024-12-04",
-            ["Teams"],
-            ["Teams", "channel records"],
-        ),
-        (
-            "B-03",
-            "Executive email and VaultSeven archive",
-            "2021-01-01",
-            "2024-12-04",
-            ["active mailbox", "VaultSeven archive"],
-            ["executive email", "archive"],
-        ),
-        (
-            "B-04",
-            "Tidewater audit reports",
-            "2021-01-01",
-            "2024-12-04",
-            ["vendor portal", "shared drive"],
-            ["audit report", "vendor copy"],
-        ),
-        (
-            "B-05",
-            "Off-site vendor boxes and personal devices",
-            "2021-01-01",
-            "2024-12-04",
-            ["off-site storage", "personal phone"],
-            ["vendor boxes", "personal devices"],
-        ),
-    ],
-    "M-LYN-322": [
-        (
-            "L-01",
-            "Consulting payment approvals",
-            "2021-01-01",
-            "2024-08-20",
-            ["email", "ERP"],
-            ["consulting payments"],
-        ),
-        (
-            "L-02",
-            "M. Rivas laptop and local files",
-            "2021-01-01",
-            "2024-08-20",
-            ["work laptop"],
-            ["laptop", "local files"],
-        ),
-        (
-            "L-03",
-            "Shared-folder payment files",
-            "2021-01-01",
-            "2024-08-20",
-            ["shared folder"],
-            ["shared folder", "file recovery"],
-        ),
-        ("L-04", "Personal Outlook references", "2021-01-01", "2024-08-20", ["personal Outlook"], ["personal email"]),
-        (
-            "L-05",
-            "Consultant communications and forwards",
-            "2021-01-01",
-            "2024-08-20",
-            ["email"],
-            ["consultant", "external forwards"],
-        ),
-        (
-            "L-06",
-            "Privilege coding and attachments",
-            "2024-08-01",
-            "2025-01-24",
-            ["review platform", "attachments"],
-            ["privilege", "attachments"],
-        ),
-    ],
-    "M-OVL-730": [
-        (
-            "O-01",
-            "Executive communications",
-            "2023-01-01",
-            "2025-01-08",
-            ["email", "Teams"],
-            ["executive", "communications"],
-        ),
-        (
-            "O-02",
-            "Board minutes and presentations",
-            "2023-01-01",
-            "2025-01-08",
-            ["board portal"],
-            ["board", "presentations"],
-        ),
-        (
-            "O-03",
-            "Phone and chat messages",
-            "2023-01-01",
-            "2025-01-08",
-            ["personal phone", "Signal"],
-            ["phone", "chat"],
-        ),
-        ("O-04", "Legacy archive mail", "2022-01-01", "2025-01-08", ["mail archive"], ["archive", "mail export"]),
-        (
-            "O-05",
-            "Privilege review universe",
-            "2024-01-01",
-            "2025-01-08",
-            ["review platform"],
-            ["privilege", "review platform"],
-        ),
-        (
-            "O-06",
-            "Encrypted attachments",
-            "2023-01-01",
-            "2025-01-08",
-            ["email attachments"],
-            ["attachments", "processing"],
-        ),
-        (
-            "O-07",
-            "Shared-folder deleted files",
-            "2023-01-01",
-            "2025-01-08",
-            ["shared folder"],
-            ["shared folder", "file recovery"],
-        ),
-        ("O-08", "Accounting exports", "2023-01-01", "2025-01-08", ["ERP"], ["accounting", "exports"]),
-        (
-            "O-09",
-            "Vendor communications",
-            "2023-01-01",
-            "2025-01-08",
-            ["vendor portal", "email"],
-            ["vendor", "communications"],
-        ),
-        (
-            "O-10",
-            "Regulator correspondence",
-            "2023-01-01",
-            "2025-01-08",
-            ["email", "matter files"],
-            ["regulator", "correspondence"],
-        ),
-    ],
+CATEGORY_CODES = {
+    "MTR-SENTINEL-GJ": [f"R{i:02d}" for i in range(1, 16)],
+    "MTR-HARBORSTONE-GJ": list("ABCDEFGHI"),
+    "MTR-GRAYCLIFF-SEC": [f"SEC-{i}" for i in range(1, 6)],
+    "MTR-NORTHBAY-SEC": [f"SEC-{c}" for c in "ABCDE"],
+    "MTR-ALLOYWORKS-GJ": list("ABCDEF"),
+    "MTR-MERIDIAN-GJ": [f"MD-{i:02d}" for i in range(1, 16)],
+    "MTR-PORTOLA-GJ": [f"PE-{c}" for c in "ABCDEFGHI"],
+    "MTR-BRIARGATE-SEC": [f"SEC-{c}" for c in "ABCDE"],
+    "MTR-COBALTRIDGE-GJ": [f"CR-{i:02d}" for i in range(1, 16)],
+    "MTR-VIREO-SEC": [f"VL-{c}" for c in "ABCDEFGHIJ"],
+    "MTR-IRONPEAK-SEC": [f"IP-{c}" for c in "ABCDEFG"],
+    "MTR-LAKEFRONT-GJ": [f"LF-{i:02d}" for i in range(1, 11)],
+    "MTR-PINEVALE-SEC": [f"PV-{c}" for c in "ABCDEF"],
+    "MTR-SILVERYARD-GJ": [f"SY-{c}" for c in "ABCDEFG"],
+    "MTR-OAKHARBOR-SEC": [f"OH-{c}" for c in "ABCDEF"],
+    "MTR-RIVERBEND-GJ": [f"RB-{c}" for c in "ABCDEFGH"],
 }
 
-NOISE_CATEGORY_LABELS = [
-    "Expense approval emails",
-    "Calendar invites and logistics",
-    "Training acknowledgments",
-    "Draft policy revisions",
-    "Sales forecast workpapers",
-    "Vendor onboarding files",
-    "Pricing committee notes",
-    "Data-room exports",
-    "Compliance certifications",
-    "Obsolete retention-policy references",
-    "Duplicate custodian aliases",
-    "Regional operations chat",
-    "Archive exception reports",
-    "Invoice exception escalations",
-    "Document-review guide notes",
-]
+SPECIAL_CATEGORY_TITLES = {
+    ("MTR-SENTINEL-GJ", "R09"): "Dealer complaints and safety escalations",
+    ("MTR-SENTINEL-GJ", "R11"): "Legal hold and privilege communications",
+    ("MTR-SENTINEL-GJ", "R15"): "Mobile messaging and personal device communications",
+    ("MTR-HARBORSTONE-GJ", "B"): "Historical lab test data",
+    ("MTR-HARBORSTONE-GJ", "D"): "Employee EHS communications",
+    ("MTR-HARBORSTONE-GJ", "E"): "Internal audits and Calverley review materials",
+    ("MTR-GRAYCLIFF-SEC", "SEC-1"): "Valuation model source communications",
+    ("MTR-GRAYCLIFF-SEC", "SEC-2"): "Shared drive valuation support files",
+    ("MTR-GRAYCLIFF-SEC", "SEC-3"): "Investor disclosure drafts",
+    ("MTR-GRAYCLIFF-SEC", "SEC-4"): "Custodian device data",
+    ("MTR-NORTHBAY-SEC", "SEC-C"): "Clinical risk and trial-update disclosures",
+    ("MTR-ALLOYWORKS-GJ", "F"): "Bid communications and competing quote support",
+    ("MTR-MERIDIAN-GJ", "MD-09"): "Dealer safety complaints and escalations",
+    ("MTR-MERIDIAN-GJ", "MD-15"): "Mobile messaging and personal devices",
+    ("MTR-PORTOLA-GJ", "PE-D"): "Deal chat and voice communications",
+    ("MTR-PORTOLA-GJ", "PE-E"): "Trading attachments and archive exports",
+    ("MTR-BRIARGATE-SEC", "SEC-A"): "Valuation communications and source files",
+    ("MTR-BRIARGATE-SEC", "SEC-C"): "Investor disclosure drafts",
+    ("MTR-COBALTRIDGE-GJ", "CR-06"): "Banker side-channel deal communications",
+    ("MTR-COBALTRIDGE-GJ", "CR-15"): "Personal communications and mobile devices",
+    ("MTR-VIREO-SEC", "VL-I"): "Investor results complaints",
+    ("MTR-VIREO-SEC", "VL-H"): "QA audit and lab-results retention",
+}
 
-SOURCE_TYPES = [
-    "email",
-    "Teams",
-    "Slack",
-    "shared drive",
-    "board portal",
-    "personal phone",
-    "archive mailbox",
-    "review platform",
-    "off-site box",
-    "laptop",
-    "vendor portal",
-]
-
-ROLES = [
-    "Chief Financial Officer",
-    "General Counsel",
-    "Compliance Manager",
-    "Controller",
-    "QA Director",
-    "Plant Manager",
-    "Investor Relations Lead",
-    "EHS Specialist",
-    "Procurement Director",
-    "Former Regional VP",
-    "Legal Operations Manager",
-    "Board Secretary",
-]
-
-FIRST_NAMES = [
-    "Avery",
-    "Blake",
-    "Casey",
-    "Devon",
-    "Elliot",
-    "Finley",
-    "Greer",
-    "Harper",
-    "Indra",
-    "Jordan",
-    "Kai",
-    "Logan",
-    "Morgan",
-    "Nico",
-    "Parker",
-    "Quinn",
-    "Riley",
-    "Sasha",
-    "Taylor",
-    "Vera",
-]
-
-LAST_NAMES = [
-    "Aldrin",
-    "Bennett",
-    "Chen",
-    "Diaz",
-    "Elliott",
-    "Farrow",
-    "Grant",
-    "Hale",
-    "Ibarra",
-    "Jensen",
-    "Kapoor",
-    "Lee",
-    "Mori",
-    "Nash",
-    "Ortiz",
-    "Patel",
-    "Quade",
-    "Rivas",
-    "Stone",
-    "Tan",
+NOISE_TITLES = [
+    "ordinary status update",
+    "collection exception note",
+    "privilege review handoff",
+    "production batch reconciliation",
+    "custodian interview follow-up",
+    "source map validation",
+    "board deck excerpt",
+    "responsive family exception",
+    "vendor load-file issue",
+    "duplicate family overlay",
 ]
 
 
-def dump_json(path: Path, payload: object) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+def create_schema(conn: sqlite3.Connection) -> None:
+    conn.executescript(
+        """
+        DROP TABLE IF EXISTS matters;
+        DROP TABLE IF EXISTS subpoena_categories;
+        DROP TABLE IF EXISTS production_stats;
+        DROP TABLE IF EXISTS custodian_sources;
+        DROP TABLE IF EXISTS review_documents;
+        DROP TABLE IF EXISTS privilege_entries;
+        DROP TABLE IF EXISTS qc_findings;
+        DROP TABLE IF EXISTS retention_events;
+        DROP TABLE IF EXISTS remediation_actions;
+
+        CREATE TABLE matters (
+            matter_id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            agency TEXT NOT NULL,
+            investigation_type TEXT NOT NULL,
+            issued_date TEXT NOT NULL,
+            hold_date TEXT NOT NULL,
+            lead_partner TEXT NOT NULL,
+            description TEXT NOT NULL,
+            status TEXT NOT NULL
+        );
+
+        CREATE TABLE subpoena_categories (
+            matter_id TEXT NOT NULL,
+            category_code TEXT NOT NULL,
+            title TEXT NOT NULL,
+            date_start TEXT,
+            date_end TEXT,
+            request_text TEXT NOT NULL,
+            topic_tags TEXT NOT NULL,
+            PRIMARY KEY (matter_id, category_code)
+        );
+
+        CREATE TABLE production_stats (
+            matter_id TEXT NOT NULL,
+            batch_id TEXT NOT NULL,
+            batch_date TEXT NOT NULL,
+            category_code TEXT NOT NULL,
+            produced_count INTEGER NOT NULL,
+            withheld_count INTEGER NOT NULL,
+            responsive_count INTEGER NOT NULL,
+            nonresponsive_count INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            zero_claim_reason TEXT,
+            notes TEXT NOT NULL,
+            PRIMARY KEY (matter_id, batch_id, category_code)
+        );
+
+        CREATE TABLE custodian_sources (
+            source_id TEXT PRIMARY KEY,
+            matter_id TEXT NOT NULL,
+            custodian_name TEXT NOT NULL,
+            role TEXT NOT NULL,
+            source_type TEXT NOT NULL,
+            source_label TEXT NOT NULL,
+            status TEXT NOT NULL,
+            event_date TEXT,
+            post_hold INTEGER NOT NULL,
+            category_impacts TEXT NOT NULL,
+            issue_tags TEXT NOT NULL,
+            notes TEXT NOT NULL
+        );
+
+        CREATE TABLE review_documents (
+            doc_id TEXT PRIMARY KEY,
+            matter_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            doc_date TEXT NOT NULL,
+            custodian_name TEXT NOT NULL,
+            source_system TEXT NOT NULL,
+            category_code TEXT NOT NULL,
+            responsiveness TEXT NOT NULL,
+            privilege_status TEXT NOT NULL,
+            produced_status TEXT NOT NULL,
+            issue_tags TEXT NOT NULL,
+            summary TEXT NOT NULL
+        );
+
+        CREATE TABLE privilege_entries (
+            entry_id TEXT PRIMARY KEY,
+            matter_id TEXT NOT NULL,
+            category_code TEXT NOT NULL,
+            custodian_name TEXT NOT NULL,
+            doc_count INTEGER NOT NULL,
+            withheld_count INTEGER NOT NULL,
+            logged_count INTEGER NOT NULL,
+            issue_type TEXT NOT NULL,
+            third_party INTEGER NOT NULL,
+            notes TEXT NOT NULL
+        );
+
+        CREATE TABLE qc_findings (
+            finding_id TEXT PRIMARY KEY,
+            matter_id TEXT NOT NULL,
+            batch_id TEXT NOT NULL,
+            issue_type TEXT NOT NULL,
+            doc_count INTEGER NOT NULL,
+            affected_category TEXT NOT NULL,
+            source_ref TEXT NOT NULL,
+            severity TEXT NOT NULL,
+            notes TEXT NOT NULL
+        );
+
+        CREATE TABLE retention_events (
+            event_id TEXT PRIMARY KEY,
+            matter_id TEXT NOT NULL,
+            record_type TEXT NOT NULL,
+            event_date TEXT NOT NULL,
+            hold_date TEXT NOT NULL,
+            policy_section TEXT NOT NULL,
+            retention_period_months INTEGER NOT NULL,
+            volume_count INTEGER NOT NULL,
+            volume_unit TEXT NOT NULL,
+            status TEXT NOT NULL,
+            affected_categories TEXT NOT NULL,
+            source_ref TEXT NOT NULL,
+            notes TEXT NOT NULL
+        );
+
+        CREATE TABLE remediation_actions (
+            action_id TEXT PRIMARY KEY,
+            matter_id TEXT NOT NULL,
+            action_type TEXT NOT NULL,
+            priority TEXT NOT NULL,
+            severity TEXT NOT NULL,
+            owner TEXT NOT NULL,
+            target_ref TEXT NOT NULL,
+            due_days INTEGER NOT NULL,
+            description TEXT NOT NULL
+        );
+
+        CREATE INDEX idx_categories_matter ON subpoena_categories(matter_id);
+        CREATE INDEX idx_production_matter_category ON production_stats(matter_id, category_code);
+        CREATE INDEX idx_sources_matter_status ON custodian_sources(matter_id, status);
+        CREATE INDEX idx_docs_matter_category ON review_documents(matter_id, category_code);
+        CREATE INDEX idx_priv_matter_issue ON privilege_entries(matter_id, issue_type);
+        CREATE INDEX idx_qc_matter_issue ON qc_findings(matter_id, issue_type);
+        CREATE INDEX idx_ret_matter_status ON retention_events(matter_id, status);
+        CREATE INDEX idx_rem_matter_priority ON remediation_actions(matter_id, priority);
+        """
+    )
 
 
-def compact_id(prefix: str, number: int) -> str:
-    return f"{prefix}-{number:03d}"
+def insert(conn: sqlite3.Connection, table: str, row: dict) -> None:
+    columns = list(row)
+    placeholders = ",".join("?" for _ in columns)
+    conn.execute(
+        f"INSERT INTO {table} ({','.join(columns)}) VALUES ({placeholders})",
+        [row[column] for column in columns],
+    )
 
 
-def add_category(
-    categories: list[dict],
-    matter_id: str,
-    category_id: str,
-    label: str,
-    start_date: str,
-    end_date: str,
-    requested_sources: list[str],
-    topic_tags: list[str],
-) -> None:
-    categories.append(
-        {
-            "matter_id": matter_id,
-            "category_id": category_id,
-            "label": label,
-            "date_range": {"start": start_date, "end": end_date},
-            "requested_sources": requested_sources,
-            "topic_tags": topic_tags,
+def as_csv(items: list[str] | tuple[str, ...] | str) -> str:
+    if isinstance(items, str):
+        return items
+    return ",".join(items)
+
+
+def track(injected: dict[str, list[str]], matter_id: str, record_id: str) -> None:
+    injected.setdefault(matter_id, []).append(record_id)
+
+
+def slug(matter_id: str) -> str:
+    return matter_id.replace("MTR-", "").replace("-", "")[:10]
+
+
+def category_title(matter_id: str, code: str) -> str:
+    if (matter_id, code) in SPECIAL_CATEGORY_TITLES:
+        return SPECIAL_CATEGORY_TITLES[(matter_id, code)]
+    return f"{code} investigation request materials"
+
+
+def generate_matters(conn: sqlite3.Connection) -> None:
+    for matter in PRIMARY_MATTERS + DISTRACTOR_MATTERS:
+        row = {
+            key: matter[key]
+            for key in (
+                "matter_id",
+                "name",
+                "agency",
+                "investigation_type",
+                "issued_date",
+                "hold_date",
+                "lead_partner",
+                "description",
+                "status",
+            )
         }
-    )
+        insert(conn, "matters", row)
 
 
-def build_categories(rng: random.Random) -> list[dict]:
-    categories: list[dict] = []
-    for matter_id, rows in BASE_CATEGORIES.items():
-        for row in rows:
-            add_category(categories, matter_id, *row)
-
-    counters = dict.fromkeys(MATTER_IDS, 1)
-    while len(categories) < TARGET_COUNTS["subpoena_categories"]:
-        matter_id = rng.choice(MATTER_IDS)
-        prefix = matter_id.split("-")[1][:2]
-        category_id = f"{prefix}-N{counters[matter_id]:03d}"
-        counters[matter_id] += 1
-        if any(row["matter_id"] == matter_id and row["category_id"] == category_id for row in categories):
-            continue
-        label = rng.choice(NOISE_CATEGORY_LABELS)
-        add_category(
-            categories,
-            matter_id,
-            category_id,
-            label,
-            f"{rng.choice([2019, 2020, 2021, 2022, 2023])}-01-01",
-            rng.choice(["2024-03-31", "2024-08-31", "2024-12-31", "2025-02-28"]),
-            rng.sample(SOURCE_TYPES, k=rng.randint(1, 3)),
-            rng.sample(
-                [
-                    "communications",
-                    "logistics",
-                    "review coding",
-                    "archive",
-                    "privilege",
-                    "retention",
-                    "obsolete policy",
-                    "duplicate alias",
-                    "vendor",
-                    "board",
-                    "complaints",
-                ],
-                k=rng.randint(2, 4),
-            ),
-        )
-    return categories
-
-
-def build_custodians(rng: random.Random) -> list[dict]:
-    fixed = [
-        (
-            "C-GW-014",
-            "M-CRN-041",
-            "G. Weller",
-            "Trading Strategy VP",
-            "active",
-            ["email", "personal phone", "Signal", "WhatsApp"],
-            ["personal phone factory reset six days after subpoena; Signal and WhatsApp unavailable"],
-        ),
-        (
-            "C-QA-027",
-            "M-CRN-041",
-            "R. Sen",
-            "Former QA Director",
-            "former",
-            ["email", "QA shared drive"],
-            ["testing-accuracy concern email miscoded non-responsive"],
-        ),
-        (
-            "C-LB-048",
-            "M-NVK-219",
-            "L. Barrow",
-            "Lab Records Manager",
-            "former",
-            ["LIMS", "off-site boxes"],
-            ["2019 lab data boxes destroyed before hold"],
-        ),
-        (
-            "C-EH-052",
-            "M-NVK-219",
-            "E. Horne",
-            "EHS Director",
-            "active",
-            ["email", "Teams", "voicemail"],
-            ["Teams before February 2022 likely lost; voicemail overwritten after 90 days"],
-        ),
-        (
-            "C-HL-033",
-            "M-GCF-088",
-            "H. Lang",
-            "Portfolio Operations Lead",
-            "active",
-            ["work laptop", "shared drive", "Gmail", "email"],
-            ["old laptop wiped after hold; personal Gmail uncollected"],
-        ),
-        (
-            "C-RW-066",
-            "M-RDL-304",
-            "N. Rowe",
-            "Compliance Hotline Manager",
-            "active",
-            ["email", "hotline"],
-            ["complaint documents miscoded outside broad category"],
-        ),
-        (
-            "C-FC-072",
-            "M-PHN-612",
-            "F. Chao",
-            "Former Compliance Custodian",
-            "former",
-            ["personnel file", "Iron archive", "Teams", "laptop", "PST"],
-            ["separated in 2022; local PST missing from returned laptop"],
-        ),
-        (
-            "C-TP-090",
-            "M-ALD-507",
-            "T. Price",
-            "Revenue Controller",
-            "active",
-            ["phone", "Signal", "Telegram", "email"],
-            ["phone encrypted and not collected after subpoena; Signal and Telegram unavailable"],
-        ),
-        (
-            "C-DI-091",
-            "M-ALD-507",
-            "D. Ibarra",
-            "Senior Revenue Accountant",
-            "active",
-            ["email", "ERP"],
-            ["complaint about revenue-recognition override miscoded non-responsive"],
-        ),
-        (
-            "C-VS-104",
-            "M-BAY-144",
-            "V. Singh",
-            "Emissions Lab Manager",
-            "active",
-            ["LIMS", "Teams", "off-site boxes"],
-            ["2020 lab data destroyed pre-hold; Teams channels purged post-hold"],
-        ),
-        (
-            "C-MR-118",
-            "M-LYN-322",
-            "M. Rivas",
-            "Consulting Payments Director",
-            "active",
-            ["laptop", "shared folder", "personal Outlook", "email"],
-            ["laptop wiped after hold; personal Outlook uncollected"],
-        ),
-        (
-            "C-OV-201",
-            "M-OVL-730",
-            "J. Ovid",
-            "Integrated Review Lead",
-            "active",
-            ["email", "board portal", "phone", "archive", "review platform"],
-            ["integrated review coordinator"],
-        ),
-    ]
-    custodians = [
-        {
-            "custodian_id": cid,
-            "matter_id": matter_id,
-            "name": name,
-            "role": role,
-            "status": status,
-            "relevant_sources": sources,
-            "known_gaps": gaps,
-        }
-        for cid, matter_id, name, role, status, sources, gaps in fixed
-    ]
-    for matter_id in MATTER_IDS:
-        if any(row["matter_id"] == matter_id for row in custodians):
-            continue
-        prefix = matter_id.split("-")[1][:2]
-        custodians.append(
-            {
-                "custodian_id": f"C-{prefix}-000",
-                "matter_id": matter_id,
-                "name": f"{rng.choice(FIRST_NAMES)} {rng.choice(LAST_NAMES)}",
-                "role": rng.choice(ROLES),
-                "status": rng.choice(["active", "former"]),
-                "relevant_sources": rng.sample(SOURCE_TYPES, k=3),
-                "known_gaps": ["noisy comparator custodian with overlapping aliases"],
-            }
-        )
-    i = 1
-    while len(custodians) < TARGET_COUNTS["custodians"]:
-        matter_id = MATTER_IDS[(len(custodians) + i) % len(MATTER_IDS)]
-        custodian_id = compact_id(f"C-{matter_id.split('-')[1][:2]}", i)
-        i += 1
-        if any(row["custodian_id"] == custodian_id for row in custodians):
-            continue
-        name = f"{rng.choice(FIRST_NAMES)} {rng.choice(LAST_NAMES)}"
-        sources = rng.sample(SOURCE_TYPES, k=rng.randint(2, 5))
-        gap = rng.choice(
-            [
-                "none noted",
-                "duplicate alias appears in review platform",
-                "stale review-guide coding from prior subpoena",
-                "archive mailbox requires validation",
-                "mobile source not in initial hold notice",
-                "obsolete retention label in collection memo",
-            ]
-        )
-        custodians.append(
-            {
-                "custodian_id": custodian_id,
-                "matter_id": matter_id,
-                "name": name,
-                "role": rng.choice(ROLES),
-                "status": rng.choice(["active", "former"]),
-                "relevant_sources": sources,
-                "known_gaps": [gap] if gap != "none noted" else [],
-            }
-        )
-    return custodians
-
-
-def first_custodian(custodians: list[dict], matter_id: str) -> str:
-    for row in custodians:
-        if row["matter_id"] == matter_id:
-            return row["custodian_id"]
-    raise KeyError(matter_id)
-
-
-def categories_by_matter(categories: list[dict]) -> dict[str, list[dict]]:
-    grouped: dict[str, list[dict]] = {}
-    for row in categories:
-        grouped.setdefault(row["matter_id"], []).append(row)
-    return grouped
-
-
-def custodians_by_matter(custodians: list[dict]) -> dict[str, list[dict]]:
-    grouped: dict[str, list[dict]] = {}
-    for row in custodians:
-        grouped.setdefault(row["matter_id"], []).append(row)
-    return grouped
-
-
-def build_production_logs(rng: random.Random, categories: list[dict]) -> list[dict]:
-    logs: list[dict] = []
-
-    def add(
-        matter_id: str,
-        category_id: str,
-        produced: int,
-        withheld: int,
-        logged: int,
-        status: str,
-        notes: str,
-        batch: str = "current",
-    ) -> None:
-        logs.append(
-            {
-                "log_id": f"PL-{len(logs) + 1:04d}",
-                "matter_id": matter_id,
-                "category_id": category_id,
-                "batch": batch,
-                "produced_count": produced,
-                "withheld_privileged_count": withheld,
-                "privilege_logged_count": logged,
-                "review_status": status,
-                "notes": notes,
-            }
-        )
-
-    add(
-        "M-CRN-041",
-        "CRN-03",
-        386,
-        74,
-        62,
-        "needs QC",
-        "Former QA director testing-accuracy email collected but miscoded non-responsive under overly narrow complaints category.",
-    )
-    add(
-        "M-CRN-041",
-        "CRN-04",
-        618,
-        4232,
-        1847,
-        "privilege log incomplete",
-        "Privilege-coded records total 4,232; logged total is 1,847, leaving 2,385 unlogged.",
-    )
-    add(
-        "M-CRN-041",
-        "CRN-06",
-        0,
-        1247,
-        0,
-        "over-designation review",
-        "Counsel-communications category has 1,247 withheld and zero produced.",
-    )
-    add(
-        "M-NVK-219", "N-01", 2140, 34, 34, "source gap", "2019 lab data has a four-box pre-hold destruction exception."
-    )
-    add(
-        "M-NVK-219",
-        "N-02",
-        5510,
-        221,
-        208,
-        "source gap",
-        "Voicemail has 90-day overwrite; Teams before February 2022 likely lost.",
-    )
-    add(
-        "M-NVK-219",
-        "N-03",
-        118,
-        17,
-        17,
-        "batch_record",
-        "Missing October 2023 environmental audit report should still exist under five-year retention.",
-    )
-    add(
-        "M-GCF-088",
-        "G-04",
-        233,
-        67,
-        59,
-        "waiver review",
-        "Three privileged emails were forwarded to outside banker; personal Gmail not collected.",
-    )
-    add(
-        "M-GCF-088",
-        "G-05",
-        1190,
-        413,
-        376,
-        "clawback review",
-        "12 business-only emails over-designated; 45 privileged documents initially coded non-privileged.",
-    )
-    add(
-        "M-GCF-088",
-        "G-06",
-        482,
-        25,
-        25,
-        "current_batch_record",
-        "Attachment processing records show 14 password-protected and 9 corrupt items.",
-    )
-    add(
-        "M-RDL-304",
-        "R-01",
-        0,
-        88,
-        71,
-        "batch_record",
-        "Zero produced for broad whistleblower/compliance category even though two complaint documents exist and were miscoded.",
-    )
-    add(
-        "M-RDL-304",
-        "R-10",
-        1440,
-        2910,
-        2102,
-        "privilege log incomplete",
-        "Withheld privileged total 2,910; logged total 2,102; unlogged gap 808.",
-    )
-    add(
-        "M-RDL-304",
-        "R-11",
-        0,
-        612,
-        0,
-        "over-designation review",
-        "Counsel communications category has all 612 responsive records withheld.",
-    )
-    add(
-        "M-PHN-612",
-        "P-01",
-        94,
-        6,
-        6,
-        "current_batch_record",
-        "Former compliance custodian personnel-file dates appear in retention records.",
-    )
-    add(
-        "M-PHN-612",
-        "P-02",
-        2012,
-        156,
-        148,
-        "archive validation",
-        "Iron archive contains older email despite active mailbox purge.",
-    )
-    add("M-PHN-612", "P-03", 775, 41, 41, "source gap", "Teams default purge created pre-2022 gap.")
-    add("M-PHN-612", "P-04", 30, 2, 2, "source gap", "Laptop return record indicates missing local PST.")
-    add(
-        "M-PHN-612",
-        "P-05",
-        0,
-        0,
-        0,
-        "hold supplement needed",
-        "Hold notice omitted personal cloud and text messaging.",
-    )
-    add(
-        "M-ALD-507",
-        "A-04",
-        0,
-        0,
-        0,
-        "current_batch_record",
-        "Current batch has no collected records for the listed mobile messaging sources.",
-    )
-    add(
-        "M-ALD-507",
-        "A-09",
-        228,
-        36,
-        31,
-        "current_batch_record",
-        "One complaint marker has conflicting review coding in QC records.",
-    )
-    add(
-        "M-ALD-507",
-        "A-02",
-        142,
-        11,
-        11,
-        "current_batch_record",
-        "Board package marker is tracked in a separate portal record.",
-    )
-    add(
-        "M-ALD-507",
-        "A-08",
-        0,
-        980,
-        0,
-        "current_batch_record",
-        "Current row has withheld records and no produced records for the counsel logistics category.",
-    )
-    add(
-        "M-ALD-507",
-        "A-01",
-        3295,
-        3640,
-        2275,
-        "current_batch_record",
-        "Privileged-coded and logged count fields differ for the current production row.",
-    )
-    add(
-        "M-BAY-144",
-        "B-01",
-        1824,
-        19,
-        19,
-        "current_batch_record",
-        "Lab-data source has a retention note in the source-event records.",
-    )
-    add(
-        "M-BAY-144",
-        "B-02",
-        910,
-        56,
-        56,
-        "current_batch_record",
-        "Teams source has an event record dated 2025-02-05/2025-02-06.",
-    )
-    add(
-        "M-BAY-144",
-        "B-03",
-        2338,
-        109,
-        109,
-        "current_batch_record",
-        "Executive email archive has a separate archive-source record.",
-    )
-    add(
-        "M-BAY-144",
-        "B-04",
-        87,
-        4,
-        4,
-        "current_batch_record",
-        "Tidewater audit material appears in retention and vendor-source records.",
-    )
-    add(
-        "M-BAY-144",
-        "B-05",
-        0,
-        0,
-        0,
-        "current_batch_record",
-        "Hold-scope records list off-site vendor boxes and personal devices.",
-    )
-    add(
-        "M-LYN-322",
-        "L-02",
-        314,
-        22,
-        20,
-        "current_batch_record",
-        "Laptop source has a collection-event record dated 2024-09-18.",
-    )
-    add(
-        "M-LYN-322",
-        "L-03",
-        770,
-        44,
-        44,
-        "current_batch_record",
-        "Shared-folder recovery counts are recorded in QC events.",
-    )
-    add(
-        "M-LYN-322",
-        "L-04",
-        0,
-        0,
-        0,
-        "current_batch_record",
-        "Personal Outlook source appears in collection-event records.",
-    )
-    add(
-        "M-LYN-322",
-        "L-05",
-        536,
-        108,
-        96,
-        "current_batch_record",
-        "Consultant-forward records are tracked in privilege-log records.",
-    )
-    add(
-        "M-LYN-322",
-        "L-06",
-        883,
-        317,
-        290,
-        "current_batch_record",
-        "Privilege review and attachment-processing counts are recorded in QC and privilege-log records.",
-    )
-    ovl_rows = [
-        ("O-01", 820, 28, 28, "current_batch_record", "Current batch count loaded from review platform."),
-        ("O-02", 116, 5, 5, "current_batch_record", "Current batch count loaded from review platform."),
-        (
-            "O-03",
-            0,
-            0,
-            0,
-            "current_batch_record",
-            "Phone and chat source counts should be reconciled with collection events.",
-        ),
-        (
-            "O-04",
-            0,
-            0,
-            0,
-            "current_batch_record",
-            "Archive-source counts should be reconciled with collection events.",
-        ),
-        (
-            "O-05",
-            450,
-            520,
-            310,
-            "current_batch_record",
-            "Privilege withheld and logged count fields differ for this row.",
-        ),
-        (
-            "O-06",
-            390,
-            18,
-            18,
-            "current_batch_record",
-            "Attachment-processing records should be reconciled with QC events.",
-        ),
-        (
-            "O-07",
-            278,
-            9,
-            9,
-            "current_batch_record",
-            "Shared-folder counts should be reconciled with source-event records.",
-        ),
-        ("O-08", 690, 12, 12, "current_batch_record", "Current batch count loaded from review platform."),
-        ("O-09", 344, 8, 8, "current_batch_record", "Current batch count loaded from review platform."),
-        ("O-10", 73, 21, 21, "current_batch_record", "Current batch count loaded from review platform."),
-    ]
-    for category_id, produced, withheld, logged, status, notes in ovl_rows:
-        add("M-OVL-730", category_id, produced, withheld, logged, status, notes)
-
-    grouped = categories_by_matter(categories)
-    while len(logs) < TARGET_COUNTS["production_logs"]:
-        matter_id = rng.choice(MATTER_IDS)
-        category = rng.choice(grouped[matter_id])
-        withheld = rng.randint(0, 180)
-        logged = max(0, withheld - rng.randint(0, min(withheld, 35)))
-        produced = rng.randint(0, 1800)
-        status = rng.choice(
-            [
-                "batch_record",
-                "in_review",
-                "source_reconciliation",
-                "review_reconciliation",
-                "coding_reconciliation",
-                "archive_reconciliation",
-                "partial_batch_record",
-            ]
-        )
-        note = rng.choice(
-            [
-                "Includes stale review coding from an earlier subpoena wave.",
-                "Internal review-guide label is narrower than subpoena category scope.",
-                "Collection exception may override production tracker completeness.",
-                "Duplicate custodian alias caused overlapping family counts.",
-                "Unrelated privilege entries remain in the same review batch.",
-                "Obsolete retention policy cited in source memo; current rule stored separately.",
-            ]
-        )
-        add(
-            matter_id,
-            category["category_id"],
-            produced,
-            withheld,
-            logged,
-            status,
-            note,
-            batch=f"noise-{len(logs) % 7 + 1}",
-        )
-    return logs
-
-
-def build_retention_rules(rng: random.Random) -> list[dict]:
-    rules: list[dict] = []
-
-    def add(matter_id: str, record_class: str, period: str, trigger: str, archive_override: str, notes: str) -> None:
-        rules.append(
-            {
-                "rule_id": f"RR-{len(rules) + 1:04d}",
-                "matter_id": matter_id,
-                "record_class": record_class,
-                "retention_period": period,
-                "trigger": trigger,
-                "archive_override": archive_override,
-                "notes": notes,
-            }
-        )
-
-    add(
-        "M-NVK-219",
-        "2019 lab data boxes",
-        "3 years",
-        "calendar year close",
-        "none",
-        "Four 2019 lab-data boxes destroyed in January 2023 before the 2024 hold.",
-    )
-    add(
-        "M-NVK-219",
-        "EHS correspondence boxes",
-        "5 years",
-        "matter close",
-        "legal hold suspends destruction",
-        "Vendor destroyed two EHS correspondence boxes on January 6, 2025 after hold.",
-    )
-    add(
-        "M-NVK-219",
-        "voicemail",
-        "90 days",
-        "message date",
-        "none",
-        "Voicemail overwritten after 90 days absent export.",
-    )
-    add(
-        "M-NVK-219",
-        "Teams chat",
-        "standard tenant purge",
-        "message date",
-        "none",
-        "Teams before February 2022 likely lost.",
-    )
-    add(
-        "M-NVK-219",
-        "executive email archive",
-        "7 years",
-        "message date",
-        "email archive overrides active-server purge",
-        "Archive retains seven years despite active-server purge.",
-    )
-    add(
-        "M-NVK-219",
-        "environmental audit reports",
-        "5 years",
-        "report final date",
-        "vendor copy required",
-        "October 2023 environmental audit should still exist.",
-    )
-    add(
-        "M-PHN-612",
-        "personnel file",
-        "5 years after separation",
-        "separation date",
-        "HR archive",
-        "Former compliance custodian separated in 2022; personnel file should exist through 2027.",
-    )
-    add(
-        "M-PHN-612",
-        "email",
-        "7 years",
-        "message date",
-        "Iron archive overrides active mailbox purge",
-        "Iron archive contains older email despite mailbox purge.",
-    )
-    add(
-        "M-PHN-612",
-        "Teams chat",
-        "tenant default purge",
-        "message date",
-        "none",
-        "Teams default purge created pre-2022 gap.",
-    )
-    add(
-        "M-PHN-612",
-        "local PST",
-        "until device return processing",
-        "return date",
-        "none",
-        "Laptop return record indicates missing local PST.",
-    )
-    add(
-        "M-BAY-144",
-        "2020 emissions lab data",
-        "3 years",
-        "calendar year close",
-        "none",
-        "Source record lists destruction under the three-year rule before the matter hold date.",
-    )
-    add(
-        "M-BAY-144",
-        "Teams channel content",
-        "litigation hold suspended",
-        "hold date",
-        "none",
-        "Source record lists 11 unavailable Teams channels with a 2025-02-05 event date.",
-    )
-    add(
-        "M-BAY-144",
-        "executive email",
-        "7 years",
-        "message date",
-        "VaultSeven archive overrides active purge",
-        "VaultSeven retains executive email.",
-    )
-    add(
-        "M-BAY-144",
-        "Tidewater audit report",
-        "5 years",
-        "report final date",
-        "vendor copy required",
-        "2024 audit report should exist under retention and vendor copy.",
-    )
-    add(
-        "M-ALD-507",
-        "board packages",
-        "7 years",
-        "meeting date",
-        "board portal copy",
-        "Missing Q2 2022 board package exists in separate board portal.",
-    )
-    add(
-        "M-ALD-507",
-        "personal messages",
-        "legal hold required",
-        "hold date",
-        "none",
-        "Hold and collection gap for C-TP-090 encrypted phone.",
-    )
-
-    record_classes = [
-        "email",
+def generate_categories(conn: sqlite3.Connection, rng: random.Random) -> None:
+    topic_pool = [
+        "pricing",
+        "dealer",
+        "safety",
+        "valuation",
+        "audit",
+        "retention",
+        "mobile",
+        "board",
+        "privilege",
+        "clinical",
+        "lab",
+        "trading",
         "chat",
-        "board materials",
-        "audit reports",
-        "expense records",
-        "device images",
-        "vendor boxes",
-        "hotline complaints",
-        "calibration logs",
-        "policy acknowledgments",
+        "bid",
+        "investor",
     ]
-    while len(rules) < TARGET_COUNTS["retention_rules"]:
-        matter_id = rng.choice(MATTER_IDS)
-        period = rng.choice(["90 days", "1 year", "3 years", "5 years", "7 years", "until matter close"])
-        add(
-            matter_id,
-            rng.choice(record_classes),
-            period,
-            rng.choice(
-                ["message date", "calendar year close", "employee separation", "report final date", "hold date"]
-            ),
-            rng.choice(
-                [
-                    "none",
-                    "archive copy",
-                    "vendor copy",
-                    "legal hold suspends destruction",
-                    "obsolete policy superseded",
-                ]
-            ),
-            rng.choice(
-                [
-                    "Current rule conflicts with an obsolete policy name in one collection note.",
-                    "Archive availability should be checked before treating purge as final loss.",
-                    "Retention timing is evaluated against hold date and subpoena lookback.",
-                    "No exception noted in current policy table.",
-                ]
-            ),
-        )
-    return rules
+    for matter_id, codes in CATEGORY_CODES.items():
+        for idx, code in enumerate(codes, start=1):
+            tags = [rng.choice(topic_pool), rng.choice(topic_pool)]
+            title = category_title(matter_id, code)
+            if "Dealer" in title or "dealer" in title:
+                tags = ["dealer", "safety", "complaint"]
+            elif "Mobile" in title or "Personal" in title or "personal" in title:
+                tags = ["mobile", "personal_sources", "collection_gap"]
+            elif "Valuation" in title or "valuation" in title:
+                tags = ["valuation", "model", "investor"]
+            elif "audit" in title.lower() or "retention" in title.lower():
+                tags = ["retention", "audit", "policy"]
+            insert(
+                conn,
+                "subpoena_categories",
+                {
+                    "matter_id": matter_id,
+                    "category_code": code,
+                    "title": title,
+                    "date_start": f"{2020 + (idx % 4)}-01-01",
+                    "date_end": f"{2025 if idx % 3 else 2024}-12-31",
+                    "request_text": (
+                        f"Produce communications, records, drafts, attachments, and source materials "
+                        f"concerning {title.lower()} for matter {matter_id}."
+                    ),
+                    "topic_tags": as_csv(sorted(set(tags))),
+                },
+            )
 
 
-def build_destruction_events(rng: random.Random) -> list[dict]:
-    events: list[dict] = []
-
-    def add(
-        matter_id: str,
-        record_class: str,
-        event_date: str,
-        quantity: int,
-        timing: str,
-        policy_basis: str,
-        recoverability: str,
-        category_ids: list[str],
-    ) -> None:
-        events.append(
-            {
-                "event_id": f"DE-{len(events) + 1:04d}",
-                "matter_id": matter_id,
-                "record_class": record_class,
-                "event_date": event_date,
-                "quantity": quantity,
-                "pre_or_post_hold": timing,
-                "policy_basis": policy_basis,
-                "recoverability": recoverability,
-                "related_category_ids": category_ids,
-            }
-        )
-
-    add(
-        "M-CRN-041",
-        "C-GW-014 personal phone",
-        "2024-03-20",
-        1,
-        "post-hold",
-        "factory reset six days after subpoena",
-        "Signal and WhatsApp unavailable; no usable device image",
-        ["CRN-05"],
-    )
-    add(
-        "M-NVK-219",
-        "2019 lab data boxes",
-        "2023-01-18",
-        4,
-        "pre-hold",
-        "three-year retention rule",
-        "not recoverable from boxes; lab summaries partly available",
-        ["N-01"],
-    )
-    add(
-        "M-NVK-219",
-        "EHS correspondence boxes",
-        "2025-01-06",
-        2,
-        "post-hold",
-        "vendor destruction despite hold",
-        "vendor index only; originals unavailable",
-        ["N-02", "N-05"],
-    )
-    add(
-        "M-GCF-088",
-        "C-HL-033 old laptop",
-        "2024-08-02",
-        1,
-        "post-hold",
-        "work laptop replaced after hold and old laptop wiped",
-        "not recoverable from device image",
-        ["G-02", "G-03"],
-    )
-    add(
-        "M-GCF-088",
-        "shared-drive files",
-        "2024-08-10",
-        37,
-        "post-hold",
-        "manual folder deletion",
-        "29 recovered; 8 unrecovered",
-        ["G-03"],
-    )
-    add(
-        "M-LYN-322",
-        "C-MR-118 laptop",
-        "2024-09-18",
-        1,
-        "post-hold",
-        "device refresh wipe after hold",
-        "not recoverable from laptop image",
-        ["L-02"],
-    )
-    add(
-        "M-LYN-322",
-        "shared-folder files",
-        "2024-09-24",
-        52,
-        "post-hold",
-        "shared-folder deletion after hold",
-        "41 recovered; 11 unrecovered",
-        ["L-03"],
-    )
-    add(
-        "M-BAY-144",
-        "2020 emissions lab data",
-        "2023-01-27",
-        6,
-        "pre-hold",
-        "three-year retention rule",
-        "summary exports only; destruction before hold",
-        ["B-01"],
-    )
-    add(
-        "M-BAY-144",
-        "Teams channels",
-        "2025-02-05",
-        11,
-        "post-hold",
-        "automated channel-retention job",
-        "channel metadata only; message bodies unavailable",
-        ["B-02"],
-    )
-    add(
-        "M-OVL-730",
-        "shared-folder deleted files",
-        "2025-02-14",
-        19,
-        "post-hold",
-        "automated cleanup after hold",
-        "partial recovery pending",
-        ["O-07"],
-    )
-
-    while len(events) < TARGET_COUNTS["destruction_events"]:
-        matter_id = rng.choice(MATTER_IDS)
-        add(
-            matter_id,
-            rng.choice(
-                [
-                    "email archive shard",
-                    "chat export",
-                    "device image",
-                    "off-site box",
-                    "shared folder",
-                    "voicemail",
-                    "old policy binder",
-                ]
-            ),
-            f"{rng.choice([2022, 2023, 2024, 2025])}-{rng.randint(1, 12):02d}-{rng.randint(1, 28):02d}",
-            rng.randint(1, 80),
-            rng.choice(["pre-hold", "post-hold", "unclear"]),
-            rng.choice(
-                [
-                    "standard purge",
-                    "obsolete retention policy",
-                    "vendor cleanup",
-                    "manual deletion",
-                    "device replacement",
-                ]
-            ),
-            rng.choice(
-                [
-                    "recoverable from archive",
-                    "partially recoverable",
-                    "not recoverable",
-                    "metadata only",
-                    "duplicate copy exists",
-                ]
-            ),
-            [f"{matter_id.split('-')[1][:2]}-N{rng.randint(1, 40):03d}"],
-        )
-    return events
-
-
-def build_privilege_logs(rng: random.Random, custodians: list[dict], categories: list[dict]) -> list[dict]:
-    logs: list[dict] = []
-
-    def add(
-        matter_id: str,
-        category_id: str,
-        custodian_id: str,
-        privilege_status: str,
-        logged_status: str,
-        waiver_risk: bool,
-        overdesignation: bool,
-        production_status: str,
-        record_count: int,
-        notes: str,
-    ) -> None:
-        logs.append(
-            {
-                "item_id": f"PV-{len(logs) + 1:04d}",
-                "matter_id": matter_id,
-                "category_id": category_id,
-                "custodian_id": custodian_id,
-                "privilege_status": privilege_status,
-                "logged_status": logged_status,
-                "waiver_risk": waiver_risk,
-                "overdesignation_flag": overdesignation,
-                "production_status": production_status,
-                "record_count": record_count,
-                "notes": notes,
-            }
-        )
-
-    add(
-        "M-CRN-041",
-        "CRN-04",
-        "C-GW-014",
-        "privileged-coded",
-        "partially logged",
-        False,
-        False,
-        "withheld",
-        4232,
-        "Privilege-coded records 4,232; 1,847 logged; 2,385 unlogged.",
-    )
-    add(
-        "M-CRN-041",
-        "CRN-06",
-        "C-GW-014",
-        "counsel communications",
-        "not logged",
-        False,
-        True,
-        "withheld",
-        1247,
-        "Counsel-communications category has zero produced and over-designation risk.",
-    )
-    add(
-        "M-GCF-088",
-        "G-04",
-        "C-HL-033",
-        "privileged forwarded externally",
-        "logged",
-        True,
-        False,
-        "withheld",
-        3,
-        "Three privileged emails forwarded to outside banker.",
-    )
-    add(
-        "M-GCF-088",
-        "G-05",
-        "C-HL-033",
-        "business-only",
-        "not logged",
-        False,
-        True,
-        "withheld",
-        12,
-        "Business-only emails over-designated as privileged.",
-    )
-    add(
-        "M-GCF-088",
-        "G-05",
-        "C-HL-033",
-        "privileged investigation",
-        "not logged",
-        False,
-        False,
-        "produced",
-        45,
-        "Privileged documents initially coded non-privileged; clawback risk.",
-    )
-    add(
-        "M-RDL-304",
-        "R-10",
-        "C-RW-066",
-        "privileged-coded",
-        "partially logged",
-        False,
-        False,
-        "withheld",
-        2910,
-        "Withheld privileged total 2,910; logged 2,102; unlogged 808.",
-    )
-    add(
-        "M-RDL-304",
-        "R-11",
-        "C-RW-066",
-        "counsel communications",
-        "not logged",
-        False,
-        True,
-        "withheld",
-        612,
-        "All responsive records withheld in counsel communications category.",
-    )
-    add(
-        "M-ALD-507",
-        "A-01",
-        "C-TP-090",
-        "privileged-coded",
-        "partially logged",
-        False,
-        False,
-        "withheld",
-        3640,
-        "Privileged-coded records 3,640; logged 2,275; unlogged 1,365.",
-    )
-    add(
-        "M-ALD-507",
-        "A-08",
-        "C-TP-090",
-        "prior counsel logistics",
-        "not logged",
-        False,
-        True,
-        "withheld",
-        980,
-        "Prior counsel logistics category has zero produced and over-designation risk.",
-    )
-    add(
-        "M-LYN-322",
-        "L-05",
-        "C-MR-118",
-        "legal-advice forwarded externally",
-        "logged",
-        True,
-        False,
-        "withheld",
-        4,
-        "Four legal-advice emails forwarded to consultant K. Sato.",
-    )
-    add(
-        "M-LYN-322",
-        "L-06",
-        "C-MR-118",
-        "business-only scheduling/logistics",
-        "not logged",
-        False,
-        True,
-        "withheld",
-        18,
-        "Business-only scheduling/logistics emails over-designated.",
-    )
-    add(
-        "M-LYN-322",
-        "L-06",
-        "C-MR-118",
-        "privileged investigation",
-        "not logged",
-        False,
-        False,
-        "produced",
-        39,
-        "Privileged investigation emails first-pass coded non-privileged.",
-    )
-    add(
-        "M-OVL-730",
-        "O-05",
-        "C-OV-201",
-        "privileged-coded",
-        "partially logged",
-        False,
-        False,
-        "withheld",
-        520,
-        "Privilege withheld and logged count fields differ for O-05.",
-    )
-
-    grouped_custodians = custodians_by_matter(custodians)
-    grouped_categories = categories_by_matter(categories)
-    while len(logs) < TARGET_COUNTS["privilege_logs"]:
-        matter_id = rng.choice(MATTER_IDS)
-        custodian_id = rng.choice(grouped_custodians[matter_id])["custodian_id"]
-        category_id = rng.choice(grouped_categories[matter_id])["category_id"]
-        status = rng.choice(
-            ["privileged-coded", "not privileged", "work product", "business-only", "counsel communications"]
-        )
-        production_status = rng.choice(["produced", "withheld", "redacted", "needs review"])
-        overdesignation = (
-            status in {"business-only", "counsel communications"}
-            and production_status == "withheld"
-            and rng.random() < 0.35
-        )
-        add(
-            matter_id,
-            category_id,
-            custodian_id,
-            status,
-            rng.choice(["logged", "not logged", "partially logged", "not required"]),
-            rng.random() < 0.08,
-            overdesignation,
-            production_status,
-            rng.randint(1, 140),
-            rng.choice(
-                [
-                    "Unrelated privilege row from overlapping review batch.",
-                    "Review note references stale privilege taxonomy.",
-                    "Forwarded thread requires waiver analysis.",
-                    "Business-only logistics thread may be over-designated.",
-                    "Logged count should be compared to withheld privilege total.",
-                ]
-            ),
-        )
-    return logs
-
-
-def build_qc_events(rng: random.Random) -> list[dict]:
-    events: list[dict] = []
-
-    def add(
-        matter_id: str,
-        custodian_id: str,
-        issue_type: str,
-        affected: int,
-        recovered: int,
-        failed: int,
-        related_docs: list[str],
-        hint: str,
-    ) -> None:
-        events.append(
-            {
-                "event_id": f"QC-{len(events) + 1:04d}",
-                "matter_id": matter_id,
-                "custodian_id": custodian_id,
-                "issue_type": issue_type,
-                "affected_count": affected,
-                "recovered_count": recovered,
-                "failed_count": failed,
-                "related_document_ids": related_docs,
-                "review_note": hint,
-            }
-        )
-
-    add(
-        "M-CRN-041",
-        "C-QA-027",
-        "miscoded complaint",
-        1,
-        1,
-        0,
-        ["DOC-CRN-TEST-ACC-001"],
-        "Compare complaint marker records with the subpoena category scope.",
-    )
-    add(
-        "M-GCF-088",
-        "C-HL-033",
-        "shared-drive deletion recovery",
-        37,
-        29,
-        8,
-        ["DOC-GCF-SHARED-001", "DOC-GCF-SHARED-008"],
-        "Collection/QC event overrides tracker completeness.",
-    )
-    add(
-        "M-GCF-088",
-        "C-HL-033",
-        "privilege miscoding",
-        45,
-        0,
-        45,
-        ["DOC-GCF-PRIV-001", "DOC-GCF-PRIV-045"],
-        "Compare privilege coding fields against production status for these documents.",
-    )
-    add(
-        "M-GCF-088",
-        "C-HL-033",
-        "attachment processing",
-        23,
-        0,
-        23,
-        ["DOC-GCF-ATT-014", "DOC-GCF-ATT-023"],
-        "Attachment processing records show 14 password-protected and 9 corrupt items.",
-    )
-    add(
-        "M-RDL-304",
-        "C-RW-066",
-        "miscoded complaint documents",
-        2,
-        2,
-        0,
-        ["DOC-RDL-COMP-001", "DOC-RDL-COMP-002"],
-        "Complaint documents belong in broad whistleblower/compliance category.",
-    )
-    add(
-        "M-RDL-304",
-        "C-RW-066",
-        "privileged coded non-privileged",
-        31,
-        0,
-        31,
-        ["DOC-RDL-PRIV-001", "DOC-RDL-PRIV-031"],
-        "Compare privilege coding fields against production status for these documents.",
-    )
-    add(
-        "M-ALD-507",
-        "C-DI-091",
-        "miscoded complaint",
-        1,
-        1,
-        0,
-        ["DOC-ALD-IBARRA-001"],
-        "D. Ibarra complaint marker has a category-scope review note.",
-    )
-    add(
-        "M-ALD-507",
-        "C-TP-090",
-        "missing board package",
-        1,
-        1,
-        0,
-        ["DOC-ALD-BOARD-Q2-2022"],
-        "Separate board portal contains the Q2 2022 board package marker.",
-    )
-    add(
-        "M-LYN-322",
-        "C-MR-118",
-        "shared-folder deletion recovery",
-        52,
-        41,
-        11,
-        ["DOC-LYN-SHARED-001", "DOC-LYN-SHARED-052"],
-        "Shared-folder recovery record shows affected, recovered, and failed counts.",
-    )
-    add(
-        "M-LYN-322",
-        "C-MR-118",
-        "privileged coded non-privileged",
-        39,
-        0,
-        39,
-        ["DOC-LYN-PRIV-001", "DOC-LYN-PRIV-039"],
-        "Privilege coding fields should be compared against production status.",
-    )
-    add(
-        "M-LYN-322",
-        "C-MR-118",
-        "attachment processing",
-        31,
-        0,
-        31,
-        ["DOC-LYN-ATT-017", "DOC-LYN-ATT-031"],
-        "Attachment processing records show 17 password-protected and 14 corrupt items.",
-    )
-    add(
-        "M-OVL-730",
-        "C-OV-201",
-        "attachment processing",
-        16,
-        0,
-        16,
-        ["DOC-OVL-ATT-001", "DOC-OVL-ATT-016"],
-        "Attachment processing records are associated with O-06.",
-    )
-    add(
-        "M-OVL-730",
-        "C-OV-201",
-        "shared-folder recovery",
-        19,
-        7,
-        12,
-        ["DOC-OVL-DEL-001", "DOC-OVL-DEL-019"],
-        "Shared-folder deletion/recovery records are associated with O-07.",
-    )
-
-    issue_types = [
-        "stale review coding",
-        "duplicate family suppression",
-        "archive validation",
-        "privilege overlay mismatch",
-        "missing attachment text",
-        "duplicate custodian alias",
-        "source exception reconciliation",
-    ]
-    while len(events) < TARGET_COUNTS["qc_events"]:
-        matter_id = rng.choice(MATTER_IDS)
-        affected = rng.randint(1, 90)
-        recovered = rng.randint(0, affected)
-        failed = affected - recovered
-        add(
-            matter_id,
-            f"C-{matter_id.split('-')[1][:2]}-{rng.randint(1, 60):03d}",
-            rng.choice(issue_types),
-            affected,
-            recovered,
-            failed,
-            [f"DOC-{matter_id.split('-')[1]}-{rng.randint(1, 720):04d}"],
-            rng.choice(
-                [
-                    "Confirm whether collection/QC notes override production tracker.",
-                    "Resolve stale coding before marking category complete.",
-                    "Check archive availability before final loss conclusion.",
-                    "Compare review guide to subpoena category scope.",
-                ]
-            ),
-        )
-    return events
-
-
-def build_collection_events(rng: random.Random, custodians: list[dict], categories: list[dict]) -> list[dict]:
-    events: list[dict] = []
-
-    def add(
-        matter_id: str,
-        custodian_id: str,
-        source_type: str,
-        source_name: str,
-        status: str,
-        event_date: str,
-        hold_relation: str,
-        collected: int,
-        missing: int,
-        reason: str,
-        category_ids: list[str],
-    ) -> None:
-        events.append(
-            {
-                "event_id": f"CE-{len(events) + 1:04d}",
-                "matter_id": matter_id,
-                "custodian_id": custodian_id,
-                "source_type": source_type,
-                "source_name": source_name,
-                "status": status,
-                "event_date": event_date,
-                "hold_relation": hold_relation,
-                "collected_count": collected,
-                "missing_count": missing,
-                "reason": reason,
-                "related_category_ids": category_ids,
-            }
-        )
-
-    add(
-        "M-CRN-041",
-        "C-GW-014",
-        "personal phone",
-        "G. Weller iPhone",
-        "unavailable",
-        "2024-03-21",
-        "post-hold",
-        0,
-        1,
-        "Factory reset six days after subpoena; Signal and WhatsApp unavailable.",
-        ["CRN-05"],
-    )
-    add(
-        "M-CRN-041",
-        "C-QA-027",
-        "email",
-        "R. Sen former QA mailbox",
-        "collected",
-        "2024-04-02",
-        "post-hold",
-        1240,
-        0,
-        "Testing-accuracy concern email collected but miscoded non-responsive.",
-        ["CRN-03"],
-    )
-    add(
-        "M-NVK-219",
-        "C-LB-048",
-        "off-site boxes",
-        "2019 lab data four boxes",
-        "destroyed before hold",
-        "2025-01-10",
-        "pre-hold destruction identified",
-        0,
-        4,
-        "Destroyed in January 2023 under three-year retention rule.",
-        ["N-01"],
-    )
-    add(
-        "M-NVK-219",
-        "C-EH-052",
-        "off-site boxes",
-        "Vendor EHS correspondence boxes",
-        "destroyed after hold",
-        "2025-01-08",
-        "post-hold",
-        0,
-        2,
-        "Vendor destroyed boxes on January 6, 2025 after hold.",
-        ["N-02", "N-05"],
-    )
-    add(
-        "M-NVK-219",
-        "C-EH-052",
-        "Teams",
-        "EHS Teams tenant",
-        "partial",
-        "2024-12-12",
-        "post-hold",
-        7840,
-        1300,
-        "Teams before February 2022 likely lost.",
-        ["N-02"],
-    )
-    add(
-        "M-NVK-219",
-        "C-EH-052",
-        "email archive",
-        "Seven-year archive",
-        "collected",
-        "2024-12-14",
-        "post-hold",
-        11320,
-        0,
-        "Email archive retains seven years despite active-server purge.",
-        ["N-02", "N-05"],
-    )
-    add(
-        "M-NVK-219",
-        "C-EH-052",
-        "vendor portal",
-        "Audit vendor portal",
-        "pending",
-        "2025-01-20",
-        "post-hold",
-        87,
-        1,
-        "Missing October 2023 environmental audit report should still exist under five-year retention.",
-        ["N-03"],
-    )
-    add(
-        "M-GCF-088",
-        "C-HL-033",
-        "work laptop",
-        "H. Lang old laptop",
-        "wiped",
-        "2024-08-02",
-        "post-hold",
-        0,
-        1,
-        "Work laptop replaced after hold; old laptop wiped.",
-        ["G-02", "G-03"],
-    )
-    add(
-        "M-GCF-088",
-        "C-HL-033",
-        "shared drive",
-        "H. Lang advisory folder",
-        "partial",
-        "2024-08-11",
-        "post-hold",
-        29,
-        8,
-        "37 shared-drive files deleted after hold; 29 recovered and 8 unrecovered.",
-        ["G-03"],
-    )
-    add(
-        "M-GCF-088",
-        "C-HL-033",
-        "personal email",
-        "H. Lang Gmail",
-        "not collected",
-        "2024-08-18",
-        "post-hold",
-        0,
-        1,
-        "Personal Gmail uncollected.",
-        ["G-04"],
-    )
-    add(
-        "M-PHN-612",
-        "C-FC-072",
-        "personnel file",
-        "F. Chao HR file",
-        "available",
-        "2024-09-18",
-        "post-hold",
-        1,
-        0,
-        "Separated in 2022; personnel file should exist through 2027.",
-        ["P-01"],
-    )
-    add(
-        "M-PHN-612",
-        "C-FC-072",
-        "email archive",
-        "Iron archive",
-        "collected",
-        "2024-09-24",
-        "post-hold",
-        8320,
-        0,
-        "Iron archive contains older email despite mailbox purge.",
-        ["P-02"],
-    )
-    add(
-        "M-PHN-612",
-        "C-FC-072",
-        "Teams",
-        "F. Chao Teams",
-        "partial",
-        "2024-09-27",
-        "post-hold",
-        1440,
-        610,
-        "Teams default purge created pre-2022 gap.",
-        ["P-03"],
-    )
-    add(
-        "M-PHN-612",
-        "C-FC-072",
-        "laptop",
-        "Returned compliance laptop",
-        "collected with gap",
-        "2024-10-02",
-        "post-hold",
-        1,
-        1,
-        "Laptop return record indicates missing local PST.",
-        ["P-04"],
-    )
-    add(
-        "M-PHN-612",
-        "C-FC-072",
-        "personal cloud/text",
-        "Personal cloud and text messages",
-        "not noticed",
-        "2024-10-04",
-        "post-hold",
-        0,
-        2,
-        "Hold notice omitted personal cloud and text messaging.",
-        ["P-05"],
-    )
-    add(
-        "M-ALD-507",
-        "C-TP-090",
-        "personal phone",
-        "T. Price encrypted phone",
-        "not collected",
-        "2024-08-24",
-        "post-hold",
-        0,
-        1,
-        "Phone encrypted and not collected after subpoena; Signal and Telegram unavailable.",
-        ["A-04"],
-    )
-    add(
-        "M-ALD-507",
-        "C-DI-091",
-        "email",
-        "D. Ibarra mailbox",
-        "collected",
-        "2024-09-01",
-        "post-hold",
-        2170,
-        0,
-        "Complaint email about revenue-recognition override collected but coded non-responsive.",
-        ["A-09"],
-    )
-    add(
-        "M-ALD-507",
-        "C-TP-090",
-        "board portal",
-        "Finance board portal",
-        "found",
-        "2024-09-18",
-        "post-hold",
-        1,
-        0,
-        "Missing Q2 2022 board package exists in separate board portal.",
-        ["A-02"],
-    )
-    add(
-        "M-BAY-144",
-        "C-VS-104",
-        "off-site boxes",
-        "2020 emissions lab data",
-        "destroyed before hold",
-        "2025-01-09",
-        "pre-hold destruction identified",
-        0,
-        6,
-        "Source record lists destruction under the three-year rule before the matter hold date.",
-        ["B-01"],
-    )
-    add(
-        "M-BAY-144",
-        "C-VS-104",
-        "Teams",
-        "EHS Teams channels",
-        "destroyed after hold",
-        "2025-02-06",
-        "post-hold",
-        0,
-        11,
-        "Source record lists 11 unavailable Teams channels with a 2025-02-05 event date.",
-        ["B-02"],
-    )
-    add(
-        "M-BAY-144",
-        "C-VS-104",
-        "email archive",
-        "VaultSeven executive archive",
-        "collected",
-        "2025-01-14",
-        "post-hold",
-        9220,
-        0,
-        "VaultSeven retains executive email despite active purge.",
-        ["B-03"],
-    )
-    add(
-        "M-BAY-144",
-        "C-VS-104",
-        "vendor portal",
-        "Tidewater audit vendor copy",
-        "pending",
-        "2025-01-22",
-        "post-hold",
-        0,
-        1,
-        "Missing 2024 Tidewater audit report should exist under five-year retention and vendor copy.",
-        ["B-04"],
-    )
-    add(
-        "M-BAY-144",
-        "C-VS-104",
-        "off-site vendor boxes",
-        "Vendor boxes and personal devices",
-        "not noticed",
-        "2025-01-28",
-        "post-hold",
-        0,
-        3,
-        "Hold notice omitted off-site vendor boxes and personal devices.",
-        ["B-05"],
-    )
-    add(
-        "M-LYN-322",
-        "C-MR-118",
-        "work laptop",
-        "M. Rivas laptop",
-        "wiped",
-        "2024-09-18",
-        "post-hold",
-        0,
-        1,
-        "Laptop wiped after hold.",
-        ["L-02"],
-    )
-    add(
-        "M-LYN-322",
-        "C-MR-118",
-        "shared folder",
-        "M. Rivas payment shared folder",
-        "partial",
-        "2024-09-25",
-        "post-hold",
-        41,
-        11,
-        "52 shared-folder files deleted; 41 recovered and 11 unrecovered.",
-        ["L-03"],
-    )
-    add(
-        "M-LYN-322",
-        "C-MR-118",
-        "personal email",
-        "M. Rivas personal Outlook",
-        "not collected",
-        "2024-10-01",
-        "post-hold",
-        0,
-        1,
-        "Personal Outlook account referenced in produced emails but uncollected.",
-        ["L-04"],
-    )
-    add(
-        "M-OVL-730",
-        "C-OV-201",
-        "phone/chat",
-        "Overlook phone and Signal",
-        "not collected",
-        "2025-02-01",
-        "post-hold",
-        0,
-        2,
-        "Phone and chat source is not present in the current collection set.",
-        ["O-03"],
-    )
-    add(
-        "M-OVL-730",
-        "C-OV-201",
-        "mail archive",
-        "Legacy archive",
-        "missing",
-        "2025-02-02",
-        "post-hold",
-        0,
-        1,
-        "Archive export is not present in the current collection set.",
-        ["O-04"],
-    )
-    add(
-        "M-OVL-730",
-        "C-OV-201",
-        "shared folder",
-        "O-07 shared-folder export",
-        "partial",
-        "2025-02-15",
-        "post-hold",
-        7,
-        12,
-        "Shared-folder source has a dated deletion/recovery event.",
-        ["O-07"],
-    )
-
-    grouped_custodians = custodians_by_matter(custodians)
-    grouped_categories = categories_by_matter(categories)
-    while len(events) < TARGET_COUNTS["collection_events"]:
-        matter_id = rng.choice(MATTER_IDS)
-        custodian = rng.choice(grouped_custodians[matter_id])
-        category = rng.choice(grouped_categories[matter_id])
-        status = rng.choice(["collected", "partial", "pending", "not collected", "source gap", "archive validation"])
-        missing = rng.randint(0, 60) if status != "collected" else 0
-        collected = rng.randint(0, 4000)
-        add(
-            matter_id,
-            custodian["custodian_id"],
-            rng.choice(SOURCE_TYPES),
-            rng.choice(
-                [
-                    "primary mailbox",
-                    "shared folder",
-                    "legacy archive",
-                    "mobile export",
-                    "off-site box",
-                    "review upload",
-                ]
-            ),
-            status,
-            f"{rng.choice([2024, 2025])}-{rng.randint(1, 12):02d}-{rng.randint(1, 28):02d}",
-            rng.choice(["pre-hold", "post-hold", "hold not applicable", "pre-hold destruction identified"]),
-            collected,
-            missing,
-            rng.choice(
-                [
-                    "Collection note references broader subpoena scope than review-guide coding.",
-                    "Archive validation pending before final source status.",
-                    "Duplicate custodian alias created overlapping source names.",
-                    "Stale review coding may understate responsive material.",
-                    "No material exception in current collection log.",
-                ]
-            ),
-            [category["category_id"]],
-        )
-    return events
-
-
-def build_documents(rng: random.Random, custodians: list[dict], categories: list[dict]) -> list[dict]:
-    docs: list[dict] = []
-
-    def add(
-        doc_id: str,
-        matter_id: str,
-        custodian_id: str,
-        category_ids: list[str],
-        title: str,
-        date: str,
-        source_type: str,
-        review_coding: str,
-        privilege_coding: str,
-        production_status: str,
-        summary: str,
-        tags: list[str],
-    ) -> None:
-        docs.append(
-            {
-                "document_id": doc_id,
-                "matter_id": matter_id,
-                "custodian_id": custodian_id,
-                "category_ids": category_ids,
-                "title": title,
-                "date": date,
-                "source_type": source_type,
-                "review_coding": review_coding,
-                "privilege_coding": privilege_coding,
-                "production_status": production_status,
-                "summary": summary,
-                "tags": tags,
-            }
-        )
-
-    add(
-        "DOC-CRN-TEST-ACC-001",
-        "M-CRN-041",
-        "C-QA-027",
-        ["CRN-03"],
-        "Former QA director email re testing accuracy concerns",
-        "2023-11-02",
-        "email",
-        "non-responsive",
-        "not privileged",
-        "not produced",
-        "Email raised testing-accuracy concerns; collected but miscoded under overly narrow complaints category.",
-        ["complaint", "testing accuracy", "miscoded"],
-    )
-    add(
-        "DOC-RDL-COMP-001",
-        "M-RDL-304",
-        "C-RW-066",
-        ["R-01"],
-        "Hotline complaint on compliance pressure",
-        "2023-10-14",
-        "email",
-        "non-responsive",
-        "not privileged",
-        "not produced",
-        "Complaint document should map to broad whistleblower/compliance category despite miscoding.",
-        ["complaint", "whistleblower", "miscoded"],
-    )
-    add(
-        "DOC-RDL-COMP-002",
-        "M-RDL-304",
-        "C-RW-066",
-        ["R-01"],
-        "Follow-up compliance escalation complaint",
-        "2023-10-18",
-        "hotline",
-        "non-responsive",
-        "not privileged",
-        "not produced",
-        "Second complaint document exists but production tracker shows zero produced for broad category.",
-        ["complaint", "compliance", "miscoded"],
-    )
-    add(
-        "DOC-ALD-IBARRA-001",
-        "M-ALD-507",
-        "C-DI-091",
-        ["A-09"],
-        "D. Ibarra revenue-recognition override complaint",
-        "2023-12-06",
-        "email",
-        "non-responsive",
-        "not privileged",
-        "not produced",
-        "D. Ibarra complaint email about revenue-recognition override was collected but coded non-responsive.",
-        ["complaint", "revenue recognition", "override", "miscoded"],
-    )
-    add(
-        "DOC-ALD-BOARD-Q2-2022",
-        "M-ALD-507",
-        "C-TP-090",
-        ["A-02"],
-        "Q2 2022 board package",
-        "2022-07-15",
-        "board portal",
-        "responsive",
-        "not privileged",
-        "not produced",
-        "Missing board package exists in a separate board portal.",
-        ["board package", "Q2 2022", "portal"],
-    )
-    add(
-        "DOC-GCF-PRIV-001",
-        "M-GCF-088",
-        "C-HL-033",
-        ["G-05"],
-        "Privileged investigation email first pass 001",
-        "2024-07-12",
-        "email",
-        "responsive",
-        "non-privileged",
-        "produced",
-        "One of 45 privileged documents initially coded non-privileged; clawback risk.",
-        ["privilege", "clawback", "miscoded"],
-    )
-    add(
-        "DOC-GCF-PRIV-045",
-        "M-GCF-088",
-        "C-HL-033",
-        ["G-05"],
-        "Privileged investigation email first pass 045",
-        "2024-07-16",
-        "email",
-        "responsive",
-        "non-privileged",
-        "produced",
-        "Endpoint marker for 45-document clawback set.",
-        ["privilege", "clawback", "miscoded"],
-    )
-    add(
-        "DOC-GCF-SHARED-001",
-        "M-GCF-088",
-        "C-HL-033",
-        ["G-03"],
-        "Recovered advisory shared-drive file 001",
-        "2024-06-04",
-        "shared drive",
-        "responsive",
-        "not privileged",
-        "produced",
-        "Recovered from 37 deleted shared-drive files.",
-        ["shared drive", "recovered"],
-    )
-    add(
-        "DOC-GCF-SHARED-008",
-        "M-GCF-088",
-        "C-HL-033",
-        ["G-03"],
-        "Unrecovered shared-drive file marker 008",
-        "2024-06-09",
-        "shared drive",
-        "unknown",
-        "unknown",
-        "not produced",
-        "Marker for 8 unrecovered shared-drive files.",
-        ["shared drive", "unrecovered"],
-    )
-    add(
-        "DOC-GCF-ATT-014",
-        "M-GCF-088",
-        "C-HL-033",
-        ["G-06"],
-        "Password-protected attachment batch marker",
-        "2024-05-21",
-        "attachment",
-        "unprocessed",
-        "unknown",
-        "not produced",
-        "14 password-protected attachments failed processing.",
-        ["attachment", "password-protected"],
-    )
-    add(
-        "DOC-GCF-ATT-023",
-        "M-GCF-088",
-        "C-HL-033",
-        ["G-06"],
-        "Corrupt attachment batch marker",
-        "2024-05-22",
-        "attachment",
-        "unprocessed",
-        "unknown",
-        "not produced",
-        "9 corrupt attachments failed processing.",
-        ["attachment", "corrupt"],
-    )
-    add(
-        "DOC-LYN-PRIV-001",
-        "M-LYN-322",
-        "C-MR-118",
-        ["L-06"],
-        "Privileged investigation email first pass 001",
-        "2024-09-01",
-        "email",
-        "responsive",
-        "non-privileged",
-        "produced",
-        "One of 39 privileged investigation emails first-pass coded non-privileged.",
-        ["privilege", "clawback", "miscoded"],
-    )
-    add(
-        "DOC-LYN-PRIV-039",
-        "M-LYN-322",
-        "C-MR-118",
-        ["L-06"],
-        "Privileged investigation email first pass 039",
-        "2024-09-04",
-        "email",
-        "responsive",
-        "non-privileged",
-        "produced",
-        "Endpoint marker for 39 privileged investigation emails miscoded non-privileged.",
-        ["privilege", "clawback", "miscoded"],
-    )
-    add(
-        "DOC-LYN-SHARED-001",
-        "M-LYN-322",
-        "C-MR-118",
-        ["L-03"],
-        "Recovered payment shared-folder file 001",
-        "2024-04-11",
-        "shared folder",
-        "responsive",
-        "not privileged",
-        "produced",
-        "Recovered from 52 shared-folder deleted files.",
-        ["shared folder", "recovered"],
-    )
-    add(
-        "DOC-LYN-SHARED-052",
-        "M-LYN-322",
-        "C-MR-118",
-        ["L-03"],
-        "Unrecovered shared-folder file marker 052",
-        "2024-04-12",
-        "shared folder",
-        "unknown",
-        "unknown",
-        "not produced",
-        "Marker for 11 unrecovered shared-folder files.",
-        ["shared folder", "unrecovered"],
-    )
-    add(
-        "DOC-LYN-ATT-017",
-        "M-LYN-322",
-        "C-MR-118",
-        ["L-06"],
-        "Password-protected attachment marker",
-        "2024-07-02",
-        "attachment",
-        "unprocessed",
-        "unknown",
-        "not produced",
-        "17 password-protected attachments failed processing.",
-        ["attachment", "password-protected"],
-    )
-    add(
-        "DOC-LYN-ATT-031",
-        "M-LYN-322",
-        "C-MR-118",
-        ["L-06"],
-        "Corrupt attachment marker",
-        "2024-07-03",
-        "attachment",
-        "unprocessed",
-        "unknown",
-        "not produced",
-        "14 corrupt attachments failed processing.",
-        ["attachment", "corrupt"],
-    )
-    add(
-        "DOC-RDL-PRIV-001",
-        "M-RDL-304",
-        "C-RW-066",
-        ["R-10"],
-        "Privileged compliance advice miscoded 001",
-        "2024-05-18",
-        "email",
-        "responsive",
-        "non-privileged",
-        "produced",
-        "One of 31 privileged records coded non-privileged.",
-        ["privilege", "miscoded", "clawback"],
-    )
-    add(
-        "DOC-RDL-PRIV-031",
-        "M-RDL-304",
-        "C-RW-066",
-        ["R-10"],
-        "Privileged compliance advice miscoded 031",
-        "2024-05-19",
-        "email",
-        "responsive",
-        "non-privileged",
-        "produced",
-        "Endpoint marker for 31 privileged records coded non-privileged.",
-        ["privilege", "miscoded", "clawback"],
-    )
-    add(
-        "DOC-OVL-ATT-001",
-        "M-OVL-730",
-        "C-OV-201",
-        ["O-06"],
-        "Overlook encrypted attachment marker 001",
-        "2024-11-06",
-        "attachment",
-        "unprocessed",
-        "unknown",
-        "not produced",
-        "O-06 attachment processing marker.",
-        ["O-06", "attachment processing", "batch_record"],
-    )
-    add(
-        "DOC-OVL-ATT-016",
-        "M-OVL-730",
-        "C-OV-201",
-        ["O-06"],
-        "Overlook encrypted attachment marker 016",
-        "2024-11-08",
-        "attachment",
-        "unprocessed",
-        "unknown",
-        "not produced",
-        "O-06 attachment processing marker.",
-        ["O-06", "attachment processing", "batch_record"],
-    )
-    add(
-        "DOC-OVL-DEL-001",
-        "M-OVL-730",
-        "C-OV-201",
-        ["O-07"],
-        "Overlook deleted shared-folder marker 001",
-        "2024-12-10",
-        "shared folder",
-        "responsive",
-        "not privileged",
-        "not produced",
-        "O-07 shared-folder recovery marker.",
-        ["O-07", "shared-folder recovery", "batch_record"],
-    )
-    add(
-        "DOC-OVL-DEL-019",
-        "M-OVL-730",
-        "C-OV-201",
-        ["O-07"],
-        "Overlook deleted shared-folder marker 019",
-        "2024-12-12",
-        "shared folder",
-        "unknown",
-        "unknown",
-        "not produced",
-        "O-07 shared-folder recovery marker.",
-        ["O-07", "shared-folder recovery", "batch_record"],
-    )
-
-    grouped_custodians = custodians_by_matter(custodians)
-    grouped_categories = categories_by_matter(categories)
-    used = {row["document_id"] for row in docs}
-    while len(docs) < TARGET_COUNTS["documents"]:
-        matter_id = rng.choice(MATTER_IDS)
-        custodian_id = rng.choice(grouped_custodians[matter_id])["custodian_id"]
-        cats = rng.sample(grouped_categories[matter_id], k=rng.randint(1, min(3, len(grouped_categories[matter_id]))))
-        num = len(docs) + 1
-        doc_id = f"DOC-{matter_id.split('-')[1]}-{num:04d}"
-        if doc_id in used:
-            continue
-        used.add(doc_id)
-        topic = rng.choice(
-            [
-                "calendar logistics",
-                "draft board deck",
-                "pricing exception",
-                "vendor invoice",
-                "archive notice",
-                "review coding note",
-                "compliance escalation",
-                "policy update",
-                "duplicate alias memo",
-                "privilege overlay report",
-            ]
-        )
-        review = rng.choice(
-            ["responsive", "non-responsive", "needs second-level review", "stale coding", "family member"]
-        )
-        privilege = rng.choice(["not privileged", "privileged", "work product", "unknown", "over-designated"])
-        production = rng.choice(["produced", "withheld", "not produced", "redacted", "pending"])
-        add(
-            doc_id,
-            matter_id,
-            custodian_id,
-            [cat["category_id"] for cat in cats],
-            f"{topic.title()} {num:04d}",
-            f"{rng.choice([2021, 2022, 2023, 2024])}-{rng.randint(1, 12):02d}-{rng.randint(1, 28):02d}",
-            rng.choice(SOURCE_TYPES),
-            review,
-            privilege,
-            production,
-            rng.choice(
-                [
-                    "Noisy document with overlapping tags across subpoena categories.",
-                    "Review coding was imported from an older guide and may be stale.",
-                    "Document appears in a duplicate custodian alias family.",
-                    "Archive source indicates active-system purge is not final loss.",
-                    "Business record overlaps with privilege-review batch.",
-                ]
-            ),
-            rng.sample(
-                [
-                    "communications",
-                    "logistics",
-                    "archive",
-                    "review coding",
-                    "privilege",
-                    "retention",
-                    "vendor",
-                    "board",
-                    "complaint",
-                    "duplicate alias",
-                    "obsolete policy",
-                ],
-                k=rng.randint(2, 4),
-            ),
-        )
-    return docs
-
-
-def generate() -> dict[str, list[dict]]:
-    rng = random.Random(SEED)
-    matters = list(MATTERS)
-    categories = build_categories(rng)
-    custodians = build_custodians(rng)
-    return {
-        "matters": matters,
-        "subpoena_categories": categories,
-        "production_logs": build_production_logs(rng, categories),
-        "collection_events": build_collection_events(rng, custodians, categories),
-        "retention_rules": build_retention_rules(rng),
-        "destruction_events": build_destruction_events(rng),
-        "privilege_logs": build_privilege_logs(rng, custodians, categories),
-        "qc_events": build_qc_events(rng),
-        "custodians": custodians,
-        "documents": build_documents(rng, custodians, categories),
+def generate_productions(conn: sqlite3.Connection, rng: random.Random) -> None:
+    zero_claims = {
+        ("MTR-ALLOYWORKS-GJ", "F"): (
+            "BATCH-ALLOY-004",
+            "No responsive bid communications located in collected custodial mail.",
+            "zero_claim_contradicted",
+        ),
+        ("MTR-COBALTRIDGE-GJ", "CR-06"): (
+            "BATCH-COBALT-003",
+            "No responsive side-channel banker communications found.",
+            "zero_claim_contradicted",
+        ),
     }
+    for matter_id, codes in CATEGORY_CODES.items():
+        matter_slug = slug(matter_id)
+        for idx, code in enumerate(codes, start=1):
+            if (matter_id, code) in zero_claims:
+                batch_id, reason, status = zero_claims[(matter_id, code)]
+                insert(
+                    conn,
+                    "production_stats",
+                    {
+                        "matter_id": matter_id,
+                        "batch_id": batch_id,
+                        "batch_date": "2025-04-11",
+                        "category_code": code,
+                        "produced_count": 0,
+                        "withheld_count": 0,
+                        "responsive_count": 0,
+                        "nonresponsive_count": rng.randint(70, 180),
+                        "status": status,
+                        "zero_claim_reason": reason,
+                        "notes": "Zero-production certification has open QC exceptions tied to miscoded documents.",
+                    },
+                )
+                continue
+            produced = rng.randint(25, 480)
+            withheld = rng.randint(0, 80)
+            responsive = produced + withheld + rng.randint(0, 25)
+            nonresponsive = rng.randint(15, 350)
+            status = rng.choice(["produced", "supplement_pending", "rolling_review", "closed"])
+            insert(
+                conn,
+                "production_stats",
+                {
+                    "matter_id": matter_id,
+                    "batch_id": f"BATCH-{matter_slug}-{idx:03d}",
+                    "batch_date": f"2025-{(idx % 9) + 1:02d}-{(idx * 3 % 27) + 1:02d}",
+                    "category_code": code,
+                    "produced_count": produced,
+                    "withheld_count": withheld,
+                    "responsive_count": responsive,
+                    "nonresponsive_count": nonresponsive,
+                    "status": status,
+                    "zero_claim_reason": "",
+                    "notes": rng.choice(
+                        [
+                            "Includes family-level deduplication adjustments.",
+                            "Counts exclude documents pending privilege re-review.",
+                            "Batch uses corrected responsiveness overlay.",
+                            "Vendor reconciliation complete with minor metadata gaps.",
+                        ]
+                    ),
+                },
+            )
+
+
+def add_source(
+    conn: sqlite3.Connection,
+    injected: dict[str, list[str]],
+    *,
+    source_id: str,
+    matter_id: str,
+    custodian_name: str,
+    role: str,
+    source_type: str,
+    source_label: str,
+    status: str,
+    event_date: str,
+    post_hold: int,
+    category_impacts: list[str] | str,
+    issue_tags: list[str] | str,
+    notes: str,
+    is_injected: bool = True,
+) -> None:
+    insert(
+        conn,
+        "custodian_sources",
+        {
+            "source_id": source_id,
+            "matter_id": matter_id,
+            "custodian_name": custodian_name,
+            "role": role,
+            "source_type": source_type,
+            "source_label": source_label,
+            "status": status,
+            "event_date": event_date,
+            "post_hold": post_hold,
+            "category_impacts": as_csv(category_impacts),
+            "issue_tags": as_csv(issue_tags),
+            "notes": notes,
+        },
+    )
+    if is_injected:
+        track(injected, matter_id, source_id)
+
+
+def generate_key_sources(conn: sqlite3.Connection, injected: dict[str, list[str]]) -> None:
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-SENT-ALDEN-PHONE",
+        matter_id="MTR-SENTINEL-GJ",
+        custodian_name="Nora Alden",
+        role="Vice President, Dealer Network",
+        source_type="personal_phone",
+        source_label="Nora Alden personal iPhone",
+        status="lost",
+        event_date="2025-02-04",
+        post_hold=1,
+        category_impacts=["R15", "R09"],
+        issue_tags=["post_subpoena_erasure", "personal_device", "collection_gap"],
+        notes="Personal iPhone erased on 2025-02-04 after subpoena issuance on 2025-01-27.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-SENT-BOARD-SP",
+        matter_id="MTR-SENTINEL-GJ",
+        custodian_name="Board Secretary Office",
+        role="Board operations",
+        source_type="sharepoint_site",
+        source_label="SharePoint board site",
+        status="not_collected",
+        event_date="2025-02-12",
+        post_hold=1,
+        category_impacts=["R07", "R08", "R09"],
+        issue_tags=["board_materials", "collection_gap"],
+        notes="Board SharePoint site was scoped but not collected in the first two rolling productions.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-HARB-IRONVAULT",
+        matter_id="MTR-HARBORSTONE-GJ",
+        custodian_name="Archive Operations",
+        role="Enterprise records",
+        source_type="email_archive",
+        source_label="IronVault archive",
+        status="available",
+        event_date="2025-01-09",
+        post_hold=1,
+        category_impacts=["D", "E"],
+        issue_tags=["archive_available", "remediation_source"],
+        notes="Email archive retains seven years and is available for EHS communications and audit materials.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-GRAY-HALE-LAPTOP",
+        matter_id="MTR-GRAYCLIFF-SEC",
+        custodian_name="Marcus Hale",
+        role="Portfolio manager",
+        source_type="laptop",
+        source_label="Marcus Hale laptop",
+        status="lost",
+        event_date="2023-12-01",
+        post_hold=1,
+        category_impacts=["SEC-1", "SEC-4"],
+        issue_tags=["post_hold_wipe", "valuation_source_gap"],
+        notes="Laptop replaced post-hold and wiped on 2023-12-01.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-GRAY-HALE-GMAIL",
+        matter_id="MTR-GRAYCLIFF-SEC",
+        custodian_name="Marcus Hale",
+        role="Portfolio manager",
+        source_type="personal_email",
+        source_label="Hale personal Gmail",
+        status="not_collected",
+        event_date="2024-01-17",
+        post_hold=1,
+        category_impacts=["SEC-1", "SEC-3"],
+        issue_tags=["personal_email", "collection_gap"],
+        notes="Personal Gmail identified in interview notes but not collected.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-ALLOY-KLINE-SIGNAL",
+        matter_id="MTR-ALLOYWORKS-GJ",
+        custodian_name="Tessa Kline",
+        role="Sales director",
+        source_type="personal_messaging",
+        source_label="Kline Signal",
+        status="not_collected",
+        event_date="2024-10-02",
+        post_hold=1,
+        category_impacts=["D", "F"],
+        issue_tags=["signal", "personal_messaging", "collection_gap"],
+        notes="Signal messages were identified in custodian interview but not collected.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-ALLOY-MORENO-SMS",
+        matter_id="MTR-ALLOYWORKS-GJ",
+        custodian_name="Luis Moreno",
+        role="Bid desk manager",
+        source_type="personal_messaging",
+        source_label="Moreno SMS",
+        status="not_collected",
+        event_date="2024-09-27",
+        post_hold=1,
+        category_impacts=["D", "F"],
+        issue_tags=["sms", "personal_messaging", "collection_gap"],
+        notes="Personal SMS source remains outside collected review corpus.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-ALLOY-TEAMS-ARCHIVE",
+        matter_id="MTR-ALLOYWORKS-GJ",
+        custodian_name="Archive Operations",
+        role="Enterprise records",
+        source_type="teams_archive",
+        source_label="Deleted pricing Teams channel archive",
+        status="available",
+        event_date="2024-12-18",
+        post_hold=1,
+        category_impacts=["D", "E"],
+        issue_tags=["archive_available", "deleted_channel"],
+        notes="Archive backup is available for deleted pricing Teams channel.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-MER-CARROW-PHONE",
+        matter_id="MTR-MERIDIAN-GJ",
+        custodian_name="Leo Carrow",
+        role="Dealer operations director",
+        source_type="personal_phone",
+        source_label="Leo Carrow phone",
+        status="lost",
+        event_date="2025-03-25",
+        post_hold=1,
+        category_impacts=["MD-15", "MD-09"],
+        issue_tags=["remote_erasure", "personal_device", "collection_gap"],
+        notes="Phone remote-erased after subpoena and hold notices were issued.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-MER-BOARD-ROOM",
+        matter_id="MTR-MERIDIAN-GJ",
+        custodian_name="Board Secretary Office",
+        role="Board operations",
+        source_type="board_portal",
+        source_label="BoardRoom portal",
+        status="not_collected",
+        event_date="2025-04-03",
+        post_hold=1,
+        category_impacts=["MD-07", "MD-08", "MD-09"],
+        issue_tags=["board_materials", "collection_gap"],
+        notes="Board portal was not included in the first collection plan.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-PORT-ENERGYCOMMS",
+        matter_id="MTR-PORTOLA-GJ",
+        custodian_name="Archive Operations",
+        role="Trading records",
+        source_type="chat_archive",
+        source_label="EnergyComms archive",
+        status="available",
+        event_date="2025-02-15",
+        post_hold=1,
+        category_impacts=["PE-D", "PE-E"],
+        issue_tags=["archive_available", "chat_attachments"],
+        notes="Archive available for deal-chat attachments.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-BRIAR-LIN-LAPTOP",
+        matter_id="MTR-BRIARGATE-SEC",
+        custodian_name="Evelyn Lin",
+        role="Managing director",
+        source_type="laptop",
+        source_label="Evelyn Lin laptop",
+        status="lost",
+        event_date="2024-04-12",
+        post_hold=1,
+        category_impacts=["SEC-A", "SEC-D"],
+        issue_tags=["post_hold_wipe", "valuation_source_gap"],
+        notes="Laptop wiped after the hold date and before forensic image capture.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-BRIAR-LIN-PMAIL",
+        matter_id="MTR-BRIARGATE-SEC",
+        custodian_name="Evelyn Lin",
+        role="Managing director",
+        source_type="personal_email",
+        source_label="Lin ProtonMail",
+        status="not_collected",
+        event_date="2024-05-01",
+        post_hold=1,
+        category_impacts=["SEC-A", "SEC-C"],
+        issue_tags=["personal_email", "collection_gap"],
+        notes="ProtonMail address appears in investor drafts but has not been collected.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-COBALT-PARK-GMAIL",
+        matter_id="MTR-COBALTRIDGE-GJ",
+        custodian_name="Rina Park",
+        role="Corporate development lead",
+        source_type="personal_email",
+        source_label="Rina Park personal Gmail",
+        status="not_collected",
+        event_date="2024-11-04",
+        post_hold=1,
+        category_impacts=["CR-06", "CR-15"],
+        issue_tags=["personal_email", "collection_gap"],
+        notes="Personal Gmail not collected despite side-channel banker references.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-COBALT-PARK-PHONE",
+        matter_id="MTR-COBALTRIDGE-GJ",
+        custodian_name="Rina Park",
+        role="Corporate development lead",
+        source_type="personal_phone",
+        source_label="Rina Park phone",
+        status="partial_collection",
+        event_date="2024-11-08",
+        post_hold=1,
+        category_impacts=["CR-15"],
+        issue_tags=["signal_missing", "partial_collection"],
+        notes="Personal phone collection excluded Signal messages.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-VIREO-CHEN-PHONE",
+        matter_id="MTR-VIREO-SEC",
+        custodian_name="Mei Chen",
+        role="Head of diagnostics",
+        source_type="personal_phone",
+        source_label="Mei Chen phone",
+        status="not_collected",
+        event_date="2025-03-02",
+        post_hold=1,
+        category_impacts=["VL-D", "VL-J"],
+        issue_tags=["personal_device", "collection_gap"],
+        notes="Personal phone was identified as used for investor and lab-result messaging but not collected.",
+    )
+    add_source(
+        conn,
+        injected,
+        source_id="SRC-VIREO-ARCHIVE",
+        matter_id="MTR-VIREO-SEC",
+        custodian_name="Archive Operations",
+        role="Enterprise records",
+        source_type="cloud_mail_archive",
+        source_label="Cloud mail archive",
+        status="available",
+        event_date="2025-03-18",
+        post_hold=1,
+        category_impacts=["VL-D", "VL-E"],
+        issue_tags=["archive_available", "purged_mail"],
+        notes="Cloud archive is available for purged custodian mail.",
+    )
+
+
+def generate_noise_sources(conn: sqlite3.Connection, rng: random.Random) -> None:
+    names = [
+        "Avery Stone",
+        "Jordan Miles",
+        "Priya Shah",
+        "Callum Reed",
+        "Elena Voss",
+        "Nora Alden",
+        "Marcus Hale",
+        "Evelyn Lin",
+        "Rina Park",
+        "Mei Chen",
+    ]
+    roles = ["Finance lead", "Sales director", "Legal operations", "Board liaison", "Product manager"]
+    source_types = ["mailbox", "network_share", "teams_export", "mobile_backup", "contract_repository"]
+    statuses = ["collected", "available", "in_review", "not_collected", "partial_collection"]
+    for matter_id, codes in CATEGORY_CODES.items():
+        matter_slug = slug(matter_id)
+        for idx in range(1, 15):
+            impacts = sorted(rng.sample(codes, k=min(len(codes), rng.randint(1, 3))))
+            status = rng.choice(statuses)
+            issue_tags = ["routine"]
+            if status in {"not_collected", "partial_collection"}:
+                issue_tags = [rng.choice(["collection_gap", "scope_exception", "metadata_gap"])]
+            add_source(
+                conn,
+                {},
+                source_id=f"SRC-{matter_slug}-{idx:03d}",
+                matter_id=matter_id,
+                custodian_name=rng.choice(names),
+                role=rng.choice(roles),
+                source_type=rng.choice(source_types),
+                source_label=f"{rng.choice(source_types).replace('_', ' ').title()} source {idx}",
+                status=status,
+                event_date=f"2025-{rng.randint(1, 5):02d}-{rng.randint(1, 27):02d}",
+                post_hold=1 if rng.random() < 0.45 else 0,
+                category_impacts=impacts,
+                issue_tags=issue_tags,
+                notes=rng.choice(
+                    [
+                        "Source map entry has minor metadata normalization issues.",
+                        "Collection status differs between custodian tracker and vendor load report.",
+                        "No production-impacting issue has been escalated yet.",
+                        "Requires matter-level filtering because similar issue labels appear across matters.",
+                    ]
+                ),
+                is_injected=False,
+            )
+
+
+def add_document(
+    conn: sqlite3.Connection,
+    injected: dict[str, list[str]],
+    *,
+    doc_id: str,
+    matter_id: str,
+    title: str,
+    doc_date: str,
+    custodian_name: str,
+    source_system: str,
+    category_code: str,
+    responsiveness: str,
+    privilege_status: str,
+    produced_status: str,
+    issue_tags: list[str] | str,
+    summary: str,
+    is_injected: bool = True,
+) -> None:
+    insert(
+        conn,
+        "review_documents",
+        {
+            "doc_id": doc_id,
+            "matter_id": matter_id,
+            "title": title,
+            "doc_date": doc_date,
+            "custodian_name": custodian_name,
+            "source_system": source_system,
+            "category_code": category_code,
+            "responsiveness": responsiveness,
+            "privilege_status": privilege_status,
+            "produced_status": produced_status,
+            "issue_tags": as_csv(issue_tags),
+            "summary": summary,
+        },
+    )
+    if is_injected:
+        track(injected, matter_id, doc_id)
+
+
+def generate_key_documents(conn: sqlite3.Connection, injected: dict[str, list[str]]) -> None:
+    docs = [
+        {
+            "doc_id": "DOC-SENT-ALDEN-DEALER-ESC",
+            "matter_id": "MTR-SENTINEL-GJ",
+            "title": "Dealer complaint escalation email",
+            "doc_date": "2024-10-18",
+            "custodian_name": "Nora Alden",
+            "source_system": "email",
+            "category_code": "R09",
+            "responsiveness": "nonresponsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "not_produced",
+            "issue_tags": ["dealer_complaint", "miscoded_nonresponsive", "safety_escalation"],
+            "summary": "Dealer complaint email is responsive to R09 but coded nonresponsive and omitted from production.",
+        },
+        {
+            "doc_id": "DOC-GRAY-CASCADE-V3",
+            "matter_id": "MTR-GRAYCLIFF-SEC",
+            "title": "Cascade valuation model v3",
+            "doc_date": "2023-09-14",
+            "custodian_name": "Marcus Hale",
+            "source_system": "shared_drive",
+            "category_code": "SEC-2",
+            "responsiveness": "responsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "unrecovered",
+            "issue_tags": ["valuation", "unrecovered_file"],
+            "summary": "Unrecovered valuation file referenced by recovered folder index.",
+        },
+        {
+            "doc_id": "DOC-GRAY-ORION-DRAFT",
+            "matter_id": "MTR-GRAYCLIFF-SEC",
+            "title": "Orion investor disclosure draft",
+            "doc_date": "2023-09-22",
+            "custodian_name": "Marcus Hale",
+            "source_system": "shared_drive",
+            "category_code": "SEC-3",
+            "responsiveness": "responsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "unrecovered",
+            "issue_tags": ["investor_disclosure", "unrecovered_file"],
+            "summary": "Unrecovered investor disclosure draft with valuation support references.",
+        },
+        {
+            "doc_id": "DOC-GRAY-ORION-BACKINTO",
+            "matter_id": "MTR-GRAYCLIFF-SEC",
+            "title": "Orion back-into valuation email",
+            "doc_date": "2023-08-18",
+            "custodian_name": "Marcus Hale",
+            "source_system": "email",
+            "category_code": "SEC-1",
+            "responsiveness": "responsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "produced",
+            "issue_tags": ["valuation_red_flag", "back_into_target"],
+            "summary": "Email says team should back into a target valuation before investor update.",
+        },
+        {
+            "doc_id": "DOC-GRAY-CASCADE-97M",
+            "matter_id": "MTR-GRAYCLIFF-SEC",
+            "title": "Cascade 97M support note",
+            "doc_date": "2023-08-21",
+            "custodian_name": "Marcus Hale",
+            "source_system": "email",
+            "category_code": "SEC-1",
+            "responsiveness": "responsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "produced",
+            "issue_tags": ["valuation_red_flag", "unsupported_metric"],
+            "summary": "Valuation note flags the 97M mark as unsupported by operating metrics.",
+        },
+        {
+            "doc_id": "DOC-NORTH-TRIAL-RISK",
+            "matter_id": "MTR-NORTHBAY-SEC",
+            "title": "Clinical-risk update email",
+            "doc_date": "2024-02-08",
+            "custodian_name": "Lena Brooks",
+            "source_system": "email",
+            "category_code": "SEC-C",
+            "responsiveness": "nonresponsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "not_produced",
+            "issue_tags": ["clinical_risk", "miscoded_nonresponsive"],
+            "summary": "Clinical-risk email is responsive to SEC-C but coded nonresponsive.",
+        },
+        {
+            "doc_id": "DOC-ALLOY-BID-EMAIL-1",
+            "matter_id": "MTR-ALLOYWORKS-GJ",
+            "title": "Bid desk price protection email",
+            "doc_date": "2024-07-19",
+            "custodian_name": "Luis Moreno",
+            "source_system": "email",
+            "category_code": "F",
+            "responsiveness": "nonresponsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "not_produced",
+            "issue_tags": ["bid_email", "miscoded_nonresponsive", "zero_claim_contradiction"],
+            "summary": "Responsive bid communication contradicts the category F zero-production claim.",
+        },
+        {
+            "doc_id": "DOC-ALLOY-BID-EMAIL-2",
+            "matter_id": "MTR-ALLOYWORKS-GJ",
+            "title": "Competing quote alignment email",
+            "doc_date": "2024-07-23",
+            "custodian_name": "Tessa Kline",
+            "source_system": "email",
+            "category_code": "F",
+            "responsiveness": "nonresponsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "not_produced",
+            "issue_tags": ["bid_email", "miscoded_nonresponsive", "zero_claim_contradiction"],
+            "summary": "Second responsive bid email coded nonresponsive and not produced.",
+        },
+        {
+            "doc_id": "DOC-MER-DEALER-SAFETY",
+            "matter_id": "MTR-MERIDIAN-GJ",
+            "title": "Dealer safety escalation email",
+            "doc_date": "2025-01-31",
+            "custodian_name": "Leo Carrow",
+            "source_system": "email",
+            "category_code": "MD-09",
+            "responsiveness": "nonresponsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "not_produced",
+            "issue_tags": ["dealer_safety", "miscoded_nonresponsive"],
+            "summary": "Dealer safety escalation is responsive to MD-09 but coded nonresponsive and not produced.",
+        },
+        {
+            "doc_id": "DOC-BRIAR-SOLARIS-MODEL",
+            "matter_id": "MTR-BRIARGATE-SEC",
+            "title": "Solaris valuation model",
+            "doc_date": "2024-01-18",
+            "custodian_name": "Evelyn Lin",
+            "source_system": "sync_folder",
+            "category_code": "SEC-B",
+            "responsiveness": "responsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "unrecovered",
+            "issue_tags": ["valuation", "unrecovered_file"],
+            "summary": "Unrecovered synchronized folder model referenced by folder index.",
+        },
+        {
+            "doc_id": "DOC-BRIAR-NOVA-WATERFALL",
+            "matter_id": "MTR-BRIARGATE-SEC",
+            "title": "Nova waterfall draft",
+            "doc_date": "2024-01-25",
+            "custodian_name": "Evelyn Lin",
+            "source_system": "sync_folder",
+            "category_code": "SEC-C",
+            "responsiveness": "responsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "unrecovered",
+            "issue_tags": ["investor_disclosure", "unrecovered_file"],
+            "summary": "Unrecovered draft supporting investor waterfall disclosures.",
+        },
+        {
+            "doc_id": "DOC-BRIAR-NOVA-BACKSOLVE",
+            "matter_id": "MTR-BRIARGATE-SEC",
+            "title": "Nova backsolve valuation email",
+            "doc_date": "2024-01-12",
+            "custodian_name": "Evelyn Lin",
+            "source_system": "email",
+            "category_code": "SEC-A",
+            "responsiveness": "responsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "produced",
+            "issue_tags": ["valuation_red_flag", "backsolve"],
+            "summary": "Email discusses backsolving the valuation to match investor distribution.",
+        },
+        {
+            "doc_id": "DOC-BRIAR-SOLARIS-OVERRIDE",
+            "matter_id": "MTR-BRIARGATE-SEC",
+            "title": "Solaris override support note",
+            "doc_date": "2024-01-15",
+            "custodian_name": "Evelyn Lin",
+            "source_system": "email",
+            "category_code": "SEC-A",
+            "responsiveness": "responsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "produced",
+            "issue_tags": ["valuation_red_flag", "unsupported_override"],
+            "summary": "Valuation note flags a management override unsupported by source metrics.",
+        },
+        {
+            "doc_id": "DOC-COBALT-BANKER-SIDE",
+            "matter_id": "MTR-COBALTRIDGE-GJ",
+            "title": "Side-channel banker email",
+            "doc_date": "2024-08-09",
+            "custodian_name": "Rina Park",
+            "source_system": "email",
+            "category_code": "CR-06",
+            "responsiveness": "nonresponsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "not_produced",
+            "issue_tags": ["banker_side_channel", "miscoded_nonresponsive", "zero_claim_contradiction"],
+            "summary": "Banker side-channel email is responsive to CR-06 but coded nonresponsive.",
+        },
+        {
+            "doc_id": "DOC-VIREO-INVESTOR-MISCODE",
+            "matter_id": "MTR-VIREO-SEC",
+            "title": "Investor results complaint email",
+            "doc_date": "2025-01-16",
+            "custodian_name": "Mei Chen",
+            "source_system": "email",
+            "category_code": "VL-I",
+            "responsiveness": "nonresponsive",
+            "privilege_status": "nonprivileged",
+            "produced_status": "not_produced",
+            "issue_tags": ["investor_complaint", "miscoded_nonresponsive"],
+            "summary": "Investor-results complaint email is responsive to VL-I but coded nonresponsive.",
+        },
+    ]
+    for doc in docs:
+        add_document(conn, injected, **doc)
+
+
+def generate_noise_documents(conn: sqlite3.Connection, rng: random.Random) -> None:
+    custodians = [
+        "Nora Alden",
+        "Marcus Hale",
+        "Lena Brooks",
+        "Tessa Kline",
+        "Leo Carrow",
+        "Evelyn Lin",
+        "Rina Park",
+        "Mei Chen",
+        "Avery Stone",
+        "Jordan Miles",
+        "Priya Shah",
+    ]
+    source_systems = ["email", "teams", "shared_drive", "contract_repository", "board_portal", "archive"]
+    tags = [
+        "routine",
+        "family_member",
+        "metadata_gap",
+        "potentially_responsive",
+        "privilege_overlay",
+        "duplicate",
+        "review_escalation",
+        "custodian_alias",
+    ]
+    for matter_id, codes in CATEGORY_CODES.items():
+        matter_slug = slug(matter_id)
+        doc_total = (
+            140 if matter_id.startswith("MTR-") and matter_id in {m["matter_id"] for m in PRIMARY_MATTERS} else 90
+        )
+        for idx in range(1, doc_total + 1):
+            code = rng.choice(codes)
+            responsiveness = rng.choices(["responsive", "nonresponsive", "needs_review"], weights=[5, 4, 1])[0]
+            privilege_status = rng.choices(["nonprivileged", "privileged", "unknown"], weights=[7, 2, 1])[0]
+            produced_status = rng.choices(["produced", "withheld", "not_produced"], weights=[7, 2, 1])[0]
+            add_document(
+                conn,
+                {},
+                doc_id=f"DOC-{matter_slug}-{idx:04d}",
+                matter_id=matter_id,
+                title=f"{category_title(matter_id, code)} - {rng.choice(NOISE_TITLES)}",
+                doc_date=f"2024-{rng.randint(1, 12):02d}-{rng.randint(1, 28):02d}",
+                custodian_name=rng.choice(custodians),
+                source_system=rng.choice(source_systems),
+                category_code=code,
+                responsiveness=responsiveness,
+                privilege_status=privilege_status,
+                produced_status=produced_status,
+                issue_tags=sorted(set(rng.sample(tags, k=rng.randint(1, 3)))),
+                summary=rng.choice(
+                    [
+                        "Routine review item with similar wording to escalated exceptions in other matters.",
+                        "Potentially responsive family member requiring matter and category filtering.",
+                        "Metadata overlay changed date fields but did not alter production status.",
+                        "Review note references a source exception that is not independently escalated.",
+                        "Document appears in a noisy search result set but is not one of the stable exception records.",
+                    ]
+                ),
+                is_injected=False,
+            )
+
+
+def add_privilege(
+    conn: sqlite3.Connection,
+    injected: dict[str, list[str]],
+    *,
+    entry_id: str,
+    matter_id: str,
+    category_code: str,
+    custodian_name: str,
+    doc_count: int,
+    withheld_count: int,
+    logged_count: int,
+    issue_type: str,
+    third_party: int,
+    notes: str,
+    is_injected: bool = True,
+) -> None:
+    insert(
+        conn,
+        "privilege_entries",
+        {
+            "entry_id": entry_id,
+            "matter_id": matter_id,
+            "category_code": category_code,
+            "custodian_name": custodian_name,
+            "doc_count": doc_count,
+            "withheld_count": withheld_count,
+            "logged_count": logged_count,
+            "issue_type": issue_type,
+            "third_party": third_party,
+            "notes": notes,
+        },
+    )
+    if is_injected:
+        track(injected, matter_id, entry_id)
+
+
+def generate_key_privilege(conn: sqlite3.Connection, injected: dict[str, list[str]]) -> None:
+    rows = [
+        (
+            "PRIV-SENT-LOG-GAP",
+            "MTR-SENTINEL-GJ",
+            "R11",
+            "Legal Department",
+            3180,
+            3180,
+            1410,
+            "incomplete_log",
+            0,
+            "Privilege log covers 1410 of 3180 withheld R11 documents.",
+        ),
+        (
+            "PRIV-GRAY-WINSLOW",
+            "MTR-GRAYCLIFF-SEC",
+            "SEC-3",
+            "Marcus Hale",
+            3,
+            3,
+            3,
+            "third_party_waiver",
+            1,
+            "Three privileged emails were forwarded to Derek Winslow.",
+        ),
+        (
+            "PRIV-GRAY-OVERDESIG",
+            "MTR-GRAYCLIFF-SEC",
+            "SEC-1",
+            "Review Team",
+            12,
+            12,
+            12,
+            "over_designated",
+            0,
+            "Twelve business-only emails are over-designated as privileged.",
+        ),
+        (
+            "PRIV-NORTH-LOG-GAP",
+            "MTR-NORTHBAY-SEC",
+            "SEC-D",
+            "Legal Department",
+            840,
+            840,
+            365,
+            "incomplete_log",
+            0,
+            "Only 365 of 840 withheld privileged documents are logged.",
+        ),
+        (
+            "PRIV-NORTH-CC-BIZ",
+            "MTR-NORTHBAY-SEC",
+            "SEC-C",
+            "Clinical Operations",
+            27,
+            27,
+            27,
+            "over_designated",
+            0,
+            "Business-only counsel-cc emails were over-designated.",
+        ),
+        (
+            "PRIV-NORTH-CONSULTANT",
+            "MTR-NORTHBAY-SEC",
+            "SEC-C",
+            "Trial Strategy Team",
+            5,
+            5,
+            5,
+            "third_party_waiver",
+            1,
+            "Legal-advice emails were forwarded to a trial consultant outside the privilege group.",
+        ),
+        (
+            "PRIV-MER-LOG-GAP",
+            "MTR-MERIDIAN-GJ",
+            "MD-11",
+            "Legal Department",
+            2260,
+            2260,
+            910,
+            "incomplete_log",
+            0,
+            "Only 910 of 2260 withheld privileged documents are logged.",
+        ),
+        (
+            "PRIV-BRIAR-ADVISER-WAIVER",
+            "MTR-BRIARGATE-SEC",
+            "SEC-C",
+            "Evelyn Lin",
+            4,
+            4,
+            4,
+            "third_party_waiver",
+            1,
+            "Four privileged emails were forwarded to an outside placement adviser.",
+        ),
+        (
+            "PRIV-BRIAR-OVERDESIG",
+            "MTR-BRIARGATE-SEC",
+            "SEC-A",
+            "Review Team",
+            15,
+            15,
+            15,
+            "over_designated",
+            0,
+            "Fifteen logistics emails were over-designated.",
+        ),
+        (
+            "PRIV-COBALT-LOG-GAP",
+            "MTR-COBALTRIDGE-GJ",
+            "CR-11",
+            "Legal Department",
+            1290,
+            1290,
+            480,
+            "incomplete_log",
+            0,
+            "Only 480 of 1290 withheld documents are logged.",
+        ),
+        (
+            "PRIV-COBALT-SELLER-WAIVER",
+            "MTR-COBALTRIDGE-GJ",
+            "CR-06",
+            "Rina Park",
+            6,
+            6,
+            6,
+            "third_party_waiver",
+            1,
+            "Six attorney-client emails were forwarded to a seller-side banker.",
+        ),
+        (
+            "PRIV-VIREO-LOG-GAP",
+            "MTR-VIREO-SEC",
+            "VL-G",
+            "Legal Department",
+            1755,
+            1755,
+            702,
+            "incomplete_log",
+            0,
+            "Only 702 of 1755 withheld documents are logged.",
+        ),
+        (
+            "PRIV-VIREO-THIRD-PARTY",
+            "MTR-VIREO-SEC",
+            "VL-I",
+            "Mei Chen",
+            3,
+            3,
+            3,
+            "third_party_waiver",
+            1,
+            "Three privileged emails were forwarded to an outside CRO.",
+        ),
+    ]
+    for row in rows:
+        add_privilege(
+            conn,
+            injected,
+            entry_id=row[0],
+            matter_id=row[1],
+            category_code=row[2],
+            custodian_name=row[3],
+            doc_count=row[4],
+            withheld_count=row[5],
+            logged_count=row[6],
+            issue_type=row[7],
+            third_party=row[8],
+            notes=row[9],
+        )
+
+
+def generate_noise_privilege(conn: sqlite3.Connection, rng: random.Random) -> None:
+    issues = ["clean", "incomplete_log", "over_designated", "third_party_waiver", "family_mismatch"]
+    custodians = ["Legal Department", "Review Team", "Avery Stone", "Jordan Miles", "Board Secretary Office"]
+    for matter_id, codes in CATEGORY_CODES.items():
+        matter_slug = slug(matter_id)
+        for idx in range(1, 9):
+            doc_count = rng.randint(8, 420)
+            withheld = rng.randint(0, doc_count)
+            issue = rng.choice(issues)
+            logged = withheld if issue != "incomplete_log" else rng.randint(0, withheld)
+            add_privilege(
+                conn,
+                {},
+                entry_id=f"PRIV-{matter_slug}-{idx:03d}",
+                matter_id=matter_id,
+                category_code=rng.choice(codes),
+                custodian_name=rng.choice(custodians),
+                doc_count=doc_count,
+                withheld_count=withheld,
+                logged_count=logged,
+                issue_type=issue,
+                third_party=1 if issue == "third_party_waiver" else 0,
+                notes=rng.choice(
+                    [
+                        "Privilege sample has ordinary review variance.",
+                        "Potential issue requires category-level context before escalation.",
+                        "Entry included to create similar labels across matters.",
+                        "Review team marked this item for follow-up but not immediate remediation.",
+                    ]
+                ),
+                is_injected=False,
+            )
+
+
+def add_qc(
+    conn: sqlite3.Connection,
+    injected: dict[str, list[str]],
+    *,
+    finding_id: str,
+    matter_id: str,
+    batch_id: str,
+    issue_type: str,
+    doc_count: int,
+    affected_category: str,
+    source_ref: str,
+    severity: str,
+    notes: str,
+    is_injected: bool = True,
+) -> None:
+    insert(
+        conn,
+        "qc_findings",
+        {
+            "finding_id": finding_id,
+            "matter_id": matter_id,
+            "batch_id": batch_id,
+            "issue_type": issue_type,
+            "doc_count": doc_count,
+            "affected_category": affected_category,
+            "source_ref": source_ref,
+            "severity": severity,
+            "notes": notes,
+        },
+    )
+    if is_injected:
+        track(injected, matter_id, finding_id)
+
+
+def generate_key_qc(conn: sqlite3.Connection, injected: dict[str, list[str]]) -> None:
+    rows = [
+        (
+            "QC-SENT-R09-NR",
+            "MTR-SENTINEL-GJ",
+            "BATCH-SENTINELGJ-009",
+            "miscoded_nonresponsive",
+            1,
+            "R09",
+            "DOC-SENT-ALDEN-DEALER-ESC",
+            "high",
+            "One complaint email miscoded nonresponsive for R09.",
+        ),
+        (
+            "QC-GRAY-MISCODED-PRIV",
+            "MTR-GRAYCLIFF-SEC",
+            "BATCH-GRAYCLIFF-002",
+            "miscoded_privilege",
+            45,
+            "SEC-3",
+            "PRIV-GRAY-WINSLOW",
+            "high",
+            "Forty-five privileged documents were initially coded non-privileged.",
+        ),
+        (
+            "QC-NORTH-MISCODED-PRIV",
+            "MTR-NORTHBAY-SEC",
+            "BATCH-NORTHBAY-003",
+            "miscoded_privilege",
+            31,
+            "SEC-D",
+            "PRIV-NORTH-LOG-GAP",
+            "medium",
+            "Privileged investigation advice docs coded non-privileged.",
+        ),
+        (
+            "QC-ALLOY-ZERO-CLAIM",
+            "MTR-ALLOYWORKS-GJ",
+            "BATCH-ALLOY-004",
+            "zero_claim_contradiction",
+            2,
+            "F",
+            "DOC-ALLOY-BID-EMAIL-1,DOC-ALLOY-BID-EMAIL-2",
+            "high",
+            "Category F zero-production claim contradicted by two responsive bid emails.",
+        ),
+        (
+            "QC-MER-MD09-NR",
+            "MTR-MERIDIAN-GJ",
+            "BATCH-MERIDIANGJ-009",
+            "miscoded_nonresponsive",
+            1,
+            "MD-09",
+            "DOC-MER-DEALER-SAFETY",
+            "high",
+            "One complaint/safety document miscoded nonresponsive.",
+        ),
+        (
+            "QC-BRIAR-MISCODED-PRIV",
+            "MTR-BRIARGATE-SEC",
+            "BATCH-BRIARGATE-002",
+            "miscoded_privilege",
+            38,
+            "SEC-C",
+            "PRIV-BRIAR-ADVISER-WAIVER",
+            "high",
+            "Thirty-eight privileged docs coded non-privileged.",
+        ),
+        (
+            "QC-COBALT-ZERO-CR06",
+            "MTR-COBALTRIDGE-GJ",
+            "BATCH-COBALT-003",
+            "zero_claim_contradiction",
+            1,
+            "CR-06",
+            "DOC-COBALT-BANKER-SIDE",
+            "high",
+            "Zero-claim for CR-06 contradicted by nonresponsive-coded banker email.",
+        ),
+        (
+            "QC-VIREO-MISCODED-PRIV",
+            "MTR-VIREO-SEC",
+            "BATCH-VIREOSEC-004",
+            "miscoded_privilege",
+            29,
+            "VL-I",
+            "PRIV-VIREO-THIRD-PARTY",
+            "medium",
+            "Privileged investigation documents coded non-privileged.",
+        ),
+    ]
+    for row in rows:
+        add_qc(
+            conn,
+            injected,
+            finding_id=row[0],
+            matter_id=row[1],
+            batch_id=row[2],
+            issue_type=row[3],
+            doc_count=row[4],
+            affected_category=row[5],
+            source_ref=row[6],
+            severity=row[7],
+            notes=row[8],
+        )
+
+
+def generate_noise_qc(conn: sqlite3.Connection, rng: random.Random) -> None:
+    issues = ["metadata_gap", "family_break", "date_normalization", "duplicate_overlay", "near_duplicate"]
+    severities = ["low", "medium", "high"]
+    for matter_id, codes in CATEGORY_CODES.items():
+        matter_slug = slug(matter_id)
+        for idx in range(1, 9):
+            add_qc(
+                conn,
+                {},
+                finding_id=f"QC-{matter_slug}-{idx:03d}",
+                matter_id=matter_id,
+                batch_id=f"BATCH-{matter_slug}-{rng.randint(1, max(len(codes), 2)):03d}",
+                issue_type=rng.choice(issues),
+                doc_count=rng.randint(1, 65),
+                affected_category=rng.choice(codes),
+                source_ref=f"DOC-{matter_slug}-{rng.randint(1, 24):04d}",
+                severity=rng.choice(severities),
+                notes=rng.choice(
+                    [
+                        "Quality-control sample is noisy but not dispositive without source comparison.",
+                        "Finding is similar to escalated records in another matter.",
+                        "Review manager requested re-sampling before escalation.",
+                        "Corrected in later overlay but retained for audit trail.",
+                    ]
+                ),
+                is_injected=False,
+            )
+
+
+def add_retention(
+    conn: sqlite3.Connection,
+    injected: dict[str, list[str]],
+    *,
+    event_id: str,
+    matter_id: str,
+    record_type: str,
+    event_date: str,
+    hold_date: str,
+    policy_section: str,
+    retention_period_months: int,
+    volume_count: int,
+    volume_unit: str,
+    status: str,
+    affected_categories: list[str] | str,
+    source_ref: str,
+    notes: str,
+    is_injected: bool = True,
+) -> None:
+    insert(
+        conn,
+        "retention_events",
+        {
+            "event_id": event_id,
+            "matter_id": matter_id,
+            "record_type": record_type,
+            "event_date": event_date,
+            "hold_date": hold_date,
+            "policy_section": policy_section,
+            "retention_period_months": retention_period_months,
+            "volume_count": volume_count,
+            "volume_unit": volume_unit,
+            "status": status,
+            "affected_categories": as_csv(affected_categories),
+            "source_ref": source_ref,
+            "notes": notes,
+        },
+    )
+    if is_injected:
+        track(injected, matter_id, event_id)
+
+
+def generate_key_retention(conn: sqlite3.Connection, injected: dict[str, list[str]]) -> None:
+    rows = [
+        (
+            "RET-HARB-LAB-2019",
+            "MTR-HARBORSTONE-GJ",
+            "lab_test_data",
+            "2023-01-18",
+            "2024-11-14",
+            "3.1",
+            48,
+            4,
+            "boxes",
+            "policy_destroyed_pre_hold",
+            "B",
+            "Warehouse ticket WH-8821",
+            "Four boxes of 2019 lab test data destroyed pre-hold under policy section 3.1.",
+        ),
+        (
+            "RET-HARB-EHS-POST",
+            "MTR-HARBORSTONE-GJ",
+            "ehs_correspondence",
+            "2025-01-06",
+            "2024-11-14",
+            "4.2",
+            60,
+            2,
+            "boxes",
+            "post_hold_loss",
+            "C,D,H",
+            "Warehouse ticket WH-9144",
+            "Two boxes destroyed after the hold date.",
+        ),
+        (
+            "RET-HARB-VOICE",
+            "MTR-HARBORSTONE-GJ",
+            "voicemail",
+            "2025-02-12",
+            "2024-11-14",
+            "7.4",
+            3,
+            90,
+            "days",
+            "auto_purged",
+            "D",
+            "Voice platform auto-delete",
+            "Voicemail auto-delete is configured for 90 days.",
+        ),
+        (
+            "RET-HARB-TEAMS",
+            "MTR-HARBORSTONE-GJ",
+            "teams_messages",
+            "2022-02-01",
+            "2024-11-14",
+            "6.3",
+            36,
+            1,
+            "system_window",
+            "system_loss",
+            "D,E",
+            "Teams active system",
+            "Teams messages before 2022-02-01 are lost from active system.",
+        ),
+        (
+            "RET-HARB-AUDIT",
+            "MTR-HARBORSTONE-GJ",
+            "calverley_audit",
+            "2023-10-31",
+            "2024-11-14",
+            "5.6",
+            60,
+            1,
+            "report",
+            "should_exist_missing",
+            "E,F,I",
+            "Calverley audit register",
+            "October 2023 Calverley audit is missing but retention requires 60 months.",
+        ),
+        (
+            "RET-GRAY-SHARE-DEL",
+            "MTR-GRAYCLIFF-SEC",
+            "shared_drive_files",
+            "2023-11-10",
+            "2023-10-12",
+            "8.2",
+            60,
+            37,
+            "files",
+            "post_hold_partial_recovery",
+            "SEC-2,SEC-3",
+            "Shared drive recovery log",
+            "Thirty-seven shared-drive files deleted after hold; 29 recovered and 8 unrecovered.",
+        ),
+        (
+            "RET-ALLOY-BOX-POST",
+            "MTR-ALLOYWORKS-GJ",
+            "offsite_bid_files",
+            "2024-10-10",
+            "2024-08-20",
+            "4.9",
+            72,
+            6,
+            "boxes",
+            "post_hold_loss",
+            "A,C,F",
+            "Off-site vendor ticket OS-441",
+            "Six off-site bid file boxes destroyed after hold.",
+        ),
+        (
+            "RET-PORT-TRADE-2018",
+            "MTR-PORTOLA-GJ",
+            "trade_blotters",
+            "2024-11-30",
+            "2025-01-09",
+            "2.7",
+            72,
+            12,
+            "monthly_blotters",
+            "policy_destroyed_pre_hold",
+            "PE-B",
+            "Trading records schedule",
+            "2018 trade blotters destroyed pre-hold per 72-month retention.",
+        ),
+        (
+            "RET-PORT-CHAT-POST",
+            "MTR-PORTOLA-GJ",
+            "deal_chat_exports",
+            "2025-02-04",
+            "2025-01-09",
+            "6.2",
+            60,
+            18,
+            "exports",
+            "post_hold_loss",
+            "PE-D,PE-E",
+            "Chat export ticket CE-190",
+            "Eighteen deal-chat exports deleted after hold.",
+        ),
+        (
+            "RET-PORT-VOICE",
+            "MTR-PORTOLA-GJ",
+            "trader_voicemail",
+            "2025-03-11",
+            "2025-01-09",
+            "7.4",
+            4,
+            120,
+            "days",
+            "auto_purged",
+            "PE-D",
+            "Voice platform auto-delete",
+            "Trader voicemail auto-purges after 120 days.",
+        ),
+        (
+            "RET-PORT-AUDIT-MISSING",
+            "MTR-PORTOLA-GJ",
+            "surveillance_report",
+            "2024-12-31",
+            "2025-01-09",
+            "5.8",
+            60,
+            1,
+            "report",
+            "should_exist_missing",
+            "PE-F,PE-I",
+            "Surveillance report index",
+            "The 2024 surveillance report should exist but is missing.",
+        ),
+        (
+            "RET-BRIAR-CLOUD-DEL",
+            "MTR-BRIARGATE-SEC",
+            "sync_folder_files",
+            "2024-03-19",
+            "2024-02-21",
+            "8.2",
+            60,
+            24,
+            "files",
+            "post_hold_partial_recovery",
+            "SEC-B,SEC-C",
+            "Cloud sync recovery log",
+            "Twenty-four synchronized folder files deleted post-hold; 17 recovered and 7 unrecovered.",
+        ),
+        (
+            "RET-VIREO-LAB-POST",
+            "MTR-VIREO-SEC",
+            "lab_results_archive",
+            "2025-03-20",
+            "2025-02-03",
+            "3.1",
+            60,
+            3,
+            "boxes",
+            "post_hold_loss",
+            "VL-B,VL-H",
+            "Archive ticket AR-662",
+            "Three lab-results archive boxes destroyed post-hold.",
+        ),
+        (
+            "RET-VIREO-AUDIT-MISSING",
+            "MTR-VIREO-SEC",
+            "qa_audit",
+            "2025-05-01",
+            "2025-02-03",
+            "5.6",
+            60,
+            1,
+            "report",
+            "should_exist_missing",
+            "VL-C,VL-H",
+            "QA audit register",
+            "The 2025 QA audit should exist but is missing.",
+        ),
+    ]
+    for row in rows:
+        add_retention(
+            conn,
+            injected,
+            event_id=row[0],
+            matter_id=row[1],
+            record_type=row[2],
+            event_date=row[3],
+            hold_date=row[4],
+            policy_section=row[5],
+            retention_period_months=row[6],
+            volume_count=row[7],
+            volume_unit=row[8],
+            status=row[9],
+            affected_categories=row[10],
+            source_ref=row[11],
+            notes=row[12],
+        )
+
+
+def generate_noise_retention(conn: sqlite3.Connection, rng: random.Random) -> None:
+    record_types = ["email_archive", "shared_drive", "voice_mail", "box_storage", "chat_export", "audit_report"]
+    statuses = ["retained", "available", "policy_destroyed_pre_hold", "system_loss", "should_exist_missing"]
+    for matter in PRIMARY_MATTERS + DISTRACTOR_MATTERS:
+        matter_id = matter["matter_id"]
+        matter_slug = slug(matter_id)
+        codes = CATEGORY_CODES[matter_id]
+        for idx in range(1, 8):
+            affected = sorted(rng.sample(codes, k=min(len(codes), rng.randint(1, 3))))
+            status = rng.choice(statuses)
+            add_retention(
+                conn,
+                {},
+                event_id=f"RET-{matter_slug}-{idx:03d}",
+                matter_id=matter_id,
+                record_type=rng.choice(record_types),
+                event_date=f"2024-{rng.randint(1, 12):02d}-{rng.randint(1, 28):02d}",
+                hold_date=matter["hold_date"],
+                policy_section=f"{rng.randint(2, 9)}.{rng.randint(1, 9)}",
+                retention_period_months=rng.choice([24, 36, 48, 60, 72, 84]),
+                volume_count=rng.randint(1, 40),
+                volume_unit=rng.choice(["files", "boxes", "exports", "mailboxes", "reports"]),
+                status=status,
+                affected_categories=affected,
+                source_ref=f"Records schedule {matter_slug}-{idx:02d}",
+                notes=rng.choice(
+                    [
+                        "Retention entry is relevant only after comparing hold date and policy period.",
+                        "Entry creates a similar label but has no unresolved production impact.",
+                        "Vendor tracker and legal hold tracker use slightly different record labels.",
+                        "Potential issue was remediated by archive collection.",
+                    ]
+                ),
+                is_injected=False,
+            )
+
+
+def generate_remediation(conn: sqlite3.Connection, rng: random.Random, injected: dict[str, list[str]]) -> None:
+    targets: list[tuple[str, str, str, str, str]] = []
+    for matter_id, record_ids in injected.items():
+        for record_id in record_ids:
+            if record_id.startswith(("SRC-", "RET-", "QC-", "PRIV-")):
+                severity = (
+                    "high"
+                    if any(token in record_id for token in ["LOG-GAP", "POST", "ZERO", "MISCODED", "PHONE", "LAPTOP"])
+                    else "medium"
+                )
+                action_type = "supplemental_collection"
+                if record_id.startswith("PRIV-"):
+                    action_type = "privilege_rework"
+                elif record_id.startswith("RET-"):
+                    action_type = "retention_exception_review"
+                elif record_id.startswith("QC-"):
+                    action_type = "qc_remediation"
+                targets.append((matter_id, record_id, action_type, severity, "open"))
+    for idx, (matter_id, target_ref, action_type, severity, _status) in enumerate(targets, start=1):
+        action_id = f"ACT-{slug(matter_id)}-{idx:03d}"
+        insert(
+            conn,
+            "remediation_actions",
+            {
+                "action_id": action_id,
+                "matter_id": matter_id,
+                "action_type": action_type,
+                "priority": "P1" if severity == "high" else "P2",
+                "severity": severity,
+                "owner": rng.choice(["Review Operations", "Legal Hold Team", "Privilege Team", "Forensics"]),
+                "target_ref": target_ref,
+                "due_days": 7 if severity == "high" else 14,
+                "description": f"Review and remediate {target_ref} before next production certification.",
+            },
+        )
+    for matter_id, codes in CATEGORY_CODES.items():
+        for idx in range(1, 4):
+            insert(
+                conn,
+                "remediation_actions",
+                {
+                    "action_id": f"ACT-{slug(matter_id)}-NOISE-{idx:02d}",
+                    "matter_id": matter_id,
+                    "action_type": rng.choice(["load_file_cleanup", "custodian_followup", "sampling_review"]),
+                    "priority": rng.choice(["P2", "P3"]),
+                    "severity": rng.choice(["low", "medium"]),
+                    "owner": rng.choice(["Review Operations", "Vendor Team", "Matter Associate"]),
+                    "target_ref": rng.choice(codes),
+                    "due_days": rng.choice([14, 21, 30]),
+                    "description": "Routine action included as realistic operational noise.",
+                },
+            )
+
+
+def table_counts(conn: sqlite3.Connection) -> dict[str, int]:
+    tables = [
+        "matters",
+        "subpoena_categories",
+        "production_stats",
+        "custodian_sources",
+        "review_documents",
+        "privilege_entries",
+        "qc_findings",
+        "retention_events",
+        "remediation_actions",
+    ]
+    return {table: conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0] for table in tables}
+
+
+def write_judge_placeholder() -> None:
+    if JUDGE_DATA_PATH.exists():
+        try:
+            existing = json.loads(JUDGE_DATA_PATH.read_text())
+            if isinstance(existing, dict) and existing.get("tasks"):
+                return
+        except json.JSONDecodeError:
+            pass
+    data = {
+        "schema_version": 1,
+        "notice": "Placeholder judge data. Task builders may replace train task points during integration.",
+        "tasks": {
+            f"train_{idx:03d}": {
+                "points": [],
+                "empty_behavior": "score_zero_until_points_are_supplied",
+            }
+            for idx in range(1, 6)
+        },
+    }
+    JUDGE_DATA_PATH.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+
+
+def write_manifest(conn: sqlite3.Connection, injected: dict[str, list[str]]) -> dict:
+    manifest = {
+        "service": SERVICE_NAME,
+        "seed": SEED,
+        "generated": "static-deterministic-seed-17017",
+        "database_path": CONTAINER_DB_PATH,
+        "state_mode": STATE_MODE,
+        "table_counts": table_counts(conn),
+        "primary_matters": [
+            {"matter_id": matter["matter_id"], "task_id": matter["task_id"]} for matter in PRIMARY_MATTERS
+        ],
+        "injected_record_ids": {matter_id: sorted(record_ids) for matter_id, record_ids in sorted(injected.items())},
+        "endpoint_inventory": ENDPOINTS,
+        "business_endpoint_list": [
+            endpoint
+            for endpoint in ENDPOINTS
+            if endpoint not in {"GET /health", "POST /api/judge", "POST /admin/reset"}
+        ],
+    }
+    MANIFEST_PATH.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    return manifest
+
+
+def generate_all() -> dict:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    if DB_PATH.exists():
+        DB_PATH.unlink()
+    rng = random.Random(SEED)
+    injected: dict[str, list[str]] = {}
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        create_schema(conn)
+        generate_matters(conn)
+        generate_categories(conn, rng)
+        generate_productions(conn, rng)
+        generate_key_sources(conn, injected)
+        generate_noise_sources(conn, rng)
+        generate_key_documents(conn, injected)
+        generate_noise_documents(conn, rng)
+        generate_key_privilege(conn, injected)
+        generate_noise_privilege(conn, rng)
+        generate_key_qc(conn, injected)
+        generate_noise_qc(conn, rng)
+        generate_key_retention(conn, injected)
+        generate_noise_retention(conn, rng)
+        generate_remediation(conn, rng, injected)
+        conn.commit()
+        manifest = write_manifest(conn, injected)
+    finally:
+        conn.close()
+    write_judge_placeholder()
+    return manifest
 
 
 def main() -> None:
-    data = generate()
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-
-    generated_files = []
-    for name, rows in data.items():
-        path = DATA_DIR / f"{name}.json"
-        dump_json(path, rows)
-        generated_files.append(str(path.relative_to(BASE_DIR)))
-
-    manifest = {
-        "random_seed": SEED,
-        "generation_timestamp": GENERATION_TIMESTAMP,
-        "generated_files": generated_files,
-        "record_counts": {name: len(rows) for name, rows in data.items()},
-        "public_endpoints": ENDPOINTS,
-        "service_start_command": "PORT=8057 ./setup.sh",
-    }
-    dump_json(MANIFEST_PATH, manifest)
-
-    print(json.dumps(manifest["record_counts"], sort_keys=True))
+    parser = argparse.ArgumentParser(description="Generate Investigation Review Hub data.")
+    parser.add_argument("--print-manifest", action="store_true", help="Print the generated manifest JSON.")
+    args = parser.parse_args()
+    manifest = generate_all()
+    if args.print_manifest:
+        print(json.dumps(manifest, indent=2, sort_keys=True))
+    else:
+        counts = ", ".join(f"{table}={count}" for table, count in manifest["table_counts"].items())
+        print(f"Generated {DB_PATH} with seed {SEED}: {counts}")
 
 
 if __name__ == "__main__":

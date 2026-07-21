@@ -1,0 +1,222 @@
+{
+  "counts": {
+    "alcohol_licensees": 91,
+    "alcohol_violations": 273,
+    "contractor_applications": 111,
+    "contractor_bonds": 222,
+    "contractor_correspondence": 127,
+    "contractor_inspections": 91,
+    "contractor_insurance": 222,
+    "contractor_license_history": 138,
+    "contractor_violations": 197,
+    "liquor_applications": 33,
+    "liquor_incidents": 128,
+    "liquor_privileges": 29,
+    "liquor_settlements": 72,
+    "liquor_site_evidence": 76,
+    "policies": 10,
+    "renewal_rules": 5
+  },
+  "database": "data/licensing.db",
+  "generated_at": "2026-07-18T00:00:00Z",
+  "notes": [
+    "Generated data is shared across contractor, liquor, and alcohol-renewal workflows.",
+    "Target groups are construction metadata for task builders, not public task endpoints.",
+    "Business endpoints expose normal domain tables with realistic distractors and stale/conflicting records."
+  ],
+  "seed": 19019,
+  "sql_token": "licensing-review-019",
+  "state_mode": "read_only",
+  "target_groups": {
+    "test_001": {
+      "contractor_application_ids": [
+        "C-TE1-001",
+        "C-TE1-002",
+        "C-TE1-003",
+        "C-TE1-004",
+        "C-TE1-005",
+        "C-TE1-006",
+        "C-TE1-007",
+        "C-TE1-008",
+        "C-TE1-009"
+      ]
+    },
+    "test_002": {
+      "boundary": "2025-06-15",
+      "license_numbers": [
+        "AL-TE2-001",
+        "AL-TE2-002",
+        "AL-TE2-003",
+        "AL-TE2-004",
+        "AL-TE2-005",
+        "AL-TE2-006",
+        "AL-TE2-007",
+        "AL-TE2-008",
+        "AL-TE2-009",
+        "AL-TE2-010",
+        "AL-TE2-011",
+        "AL-TE2-012"
+      ],
+      "non_exact_match_cases": [
+        {
+          "boundary": "2025-06-15",
+          "current_address": "332 River Ave",
+          "current_exact_violation_ids": [
+            "AV-AL-TE2-012-1"
+          ],
+          "current_facility_name": "Test 002 Facility 12",
+          "current_license_no": "AL-TE2-012",
+          "expected_current_only_pre_boundary_count": 1,
+          "expected_match_confidence": "successor",
+          "expected_matched_pre_boundary_count": 3,
+          "expected_next_step_label_after_match": "board_review",
+          "expected_risk_tier_after_match": "high",
+          "match_basis": "successor_to",
+          "old_address": "332 River Ave",
+          "old_facility_name": "Test 002 Facility 12 Former Permit",
+          "old_license_no": "AL-TE2-OLD-012",
+          "old_or_close_violation_ids": [
+            "AV-AL-TE2-OLD-012-S1",
+            "AV-AL-TE2-OLD-012-S2"
+          ]
+        }
+      ],
+      "renewal_group_tag": "test_002",
+      "target_queue_size": 12
+    },
+    "test_003": {
+      "application_id": "L-TE3-001",
+      "location_id": "LOC-TE3"
+    },
+    "test_004": {
+      "contractor_application_ids": [
+        "C-TE4-001",
+        "C-TE4-002",
+        "C-TE4-003",
+        "C-TE4-004",
+        "C-TE4-005",
+        "C-TE4-006",
+        "C-TE4-007",
+        "C-TE4-008",
+        "C-TE4-009",
+        "C-TE4-010",
+        "C-TE4-011",
+        "C-TE4-012",
+        "C-TE4-013",
+        "C-TE4-014",
+        "C-TE4-015"
+      ]
+    },
+    "test_005": {
+      "boundary": "2025-05-20",
+      "license_numbers": [
+        "AL-TE5-001",
+        "AL-TE5-002",
+        "AL-TE5-003",
+        "AL-TE5-004",
+        "AL-TE5-005",
+        "AL-TE5-006",
+        "AL-TE5-007",
+        "AL-TE5-008"
+      ],
+      "non_exact_match_cases": [
+        {
+          "boundary": "2025-05-20",
+          "current_address": "233 Lincoln Ave",
+          "current_exact_violation_ids": [
+            "AV-AL-TE5-003-1"
+          ],
+          "current_facility_name": "Test 005 Facility 03",
+          "current_license_no": "AL-TE5-003",
+          "expected_current_only_pre_boundary_count": 1,
+          "expected_match_confidence": "close_successor",
+          "expected_matched_pre_boundary_count": 3,
+          "expected_next_step_label_after_match": "board_review",
+          "expected_risk_tier_after_match": "high",
+          "match_basis": "successor_to_close_address",
+          "old_address": "233 Lincoln Avenue",
+          "old_facility_name": "Test 005 Facility 03 Former Permit",
+          "old_license_no": "AL-TE5-OLD-003",
+          "old_or_close_violation_ids": [
+            "AV-AL-TE5-OLD-003-S1",
+            "AV-AL-TE5-OLD-003-S2"
+          ]
+        }
+      ],
+      "renewal_group_tag": "test_005",
+      "target_queue_size": 8
+    },
+    "train_001": {
+      "contractor_application_ids": [
+        "C-TR1-001",
+        "C-TR1-002",
+        "C-TR1-003",
+        "C-TR1-004",
+        "C-TR1-005",
+        "C-TR1-006",
+        "C-TR1-007",
+        "C-TR1-008"
+      ]
+    },
+    "train_002": {
+      "application_id": "L-TR2-001",
+      "location_id": "LOC-TR2"
+    },
+    "train_003": {
+      "boundary": "2025-04-10",
+      "license_numbers": [
+        "AL-TR3-001",
+        "AL-TR3-002",
+        "AL-TR3-003",
+        "AL-TR3-004",
+        "AL-TR3-005",
+        "AL-TR3-006",
+        "AL-TR3-007",
+        "AL-TR3-008",
+        "AL-TR3-009",
+        "AL-TR3-010"
+      ],
+      "non_exact_match_cases": [
+        {
+          "boundary": "2025-04-10",
+          "current_address": "266 Seventh Ave",
+          "current_exact_violation_ids": [
+            "AV-AL-TR3-006-1"
+          ],
+          "current_facility_name": "Train 003 Facility 06",
+          "current_license_no": "AL-TR3-006",
+          "expected_current_only_pre_boundary_count": 1,
+          "expected_match_confidence": "successor",
+          "expected_matched_pre_boundary_count": 3,
+          "expected_next_step_label_after_match": "board_review",
+          "expected_risk_tier_after_match": "high",
+          "match_basis": "successor_to",
+          "old_address": "266 Seventh Ave",
+          "old_facility_name": "Train 003 Facility 06 Former Permit",
+          "old_license_no": "AL-TR3-OLD-006",
+          "old_or_close_violation_ids": [
+            "AV-AL-TR3-OLD-006-S1",
+            "AV-AL-TR3-OLD-006-S2"
+          ]
+        }
+      ],
+      "renewal_group_tag": "train_003",
+      "target_queue_size": 10
+    },
+    "train_004": {
+      "contractor_application_ids": [
+        "C-TR4-001",
+        "C-TR4-002",
+        "C-TR4-003",
+        "C-TR4-004",
+        "C-TR4-005",
+        "C-TR4-006",
+        "C-TR4-007"
+      ]
+    },
+    "train_005": {
+      "application_id": "L-TR5-001",
+      "location_id": "LOC-TR5"
+    }
+  }
+}

@@ -2,6 +2,6 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PREDICTION_PATH="${1:-${PREDICTION:-"${SCRIPT_DIR}/../output/answer.json"}}"
+CANDIDATE_PATH="${1:-"$SCRIPT_DIR/../output/answer.json"}"
 
-python3 "$SCRIPT_DIR/eval.py" "$PREDICTION_PATH"
+python3 "$SCRIPT_DIR/evaluator.py" "$CANDIDATE_PATH"

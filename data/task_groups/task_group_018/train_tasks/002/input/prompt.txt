@@ -1,7 +1,9 @@
-Lane County Justice Court needs a post-hearing traffic batch prepared for clerk entry.
+You are closing out the November 12, 2026 traffic violation hearings for Oregon 22nd Judicial District, Jefferson County citations OR26-TR-1188 and OR26-TR-1194.
 
-Use the shared clerk operations environment at <TASK_ENV_BASE_URL>.
+Use the Court Operations Portal at <TASK_ENV_BASE_URL> to verify the citation records, active fee schedules, payment policy, and form metadata. Relevant portal endpoints include GET /api/citations, GET /api/fee-schedules, GET /api/payment-policies, GET /api/forms, and GET /api/search.
 
-The local packet is in `input/payloads/lane_traffic_batch_packet.json`, and the required response shape is defined in `input/payloads/answer_template.json`. Prepare one JSON response for the three citations in the packet. Use the citation number as the case/account reference when the live citation record does not provide a separate case number.
+Local materials are in the payloads directory:
+- hearing_closeout_note.md
+- local_form_excerpt.md
 
-The output should be ready for financial entry review: identify the final plea and disposition values, assessed traffic components and totals, candidate charges that should not be entered, and the installment plan structure for each citation. Keep amounts in dollars to two decimals and dates in ISO `YYYY-MM-DD` format.
+Return a single JSON object matching input/payloads/answer_template.json. The closeout should record the disposition and financial entry for each citation, compute the amount due at disposition, structure the approved post-disposition payment plans, identify the local form/account-reference handling, and list unsupported or stale charges that should be excluded from the starting balance.

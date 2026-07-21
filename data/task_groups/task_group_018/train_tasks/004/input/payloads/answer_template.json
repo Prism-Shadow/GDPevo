@@ -1,172 +1,148 @@
 {
-  "schema_name": "train_004_marion_mixed_misdemeanor_update",
-  "version": "1.0",
+  "schema_name": "union_county_criminal_disposition_register",
+  "schema_version": "1.0",
+  "ordering_rules": {
+    "case_audit": "Sort by case_number ascending.",
+    "dispositions": "Sort by case_number ascending.",
+    "fee_entries": "Sort by case_number ascending.",
+    "docket_register.entries": "Sort by case_number ascending.",
+    "exclusions": "Sort by case_number ascending."
+  },
+  "field_rules": {
+    "currency": "Numbers are dollars rounded to two decimal places.",
+    "dates": "Use ISO YYYY-MM-DD. Use null where no disposition date should be entered.",
+    "dob_for_entry": "Use YYYY-MM-DD when verified; use TBD from case file when the DOB is genuinely missing and must be verified."
+  },
   "required_top_level_keys": [
-    "task_id",
-    "county",
-    "docket_date",
-    "case_rows",
-    "aggregate"
+    "case_audit",
+    "dispositions",
+    "fee_entries",
+    "docket_register",
+    "exclusions"
   ],
-  "top_level_fields": {
-    "task_id": {
-      "type": "string",
-      "description": "Use the task identifier."
-    },
-    "county": {
-      "type": "string",
-      "description": "County name."
-    },
-    "docket_date": {
-      "type": "string",
-      "format": "YYYY-MM-DD",
-      "description": "Packet docket or review date."
-    },
-    "case_rows": {
-      "type": "list",
-      "ordering": "Sort rows by case_number ascending.",
-      "description": "One row for each Marion mixed misdemeanor docket matter from the packet."
-    },
-    "aggregate": {
-      "type": "object",
-      "description": "Batch-level totals and mismatch lists."
-    }
+  "enums": {
+    "identity_action": [
+      "use_cms_dob",
+      "use_placeholder_verify",
+      "exclude_pending"
+    ],
+    "counsel_classification": [
+      "retained",
+      "public_defender",
+      "appointed_private"
+    ],
+    "audit_flag": [
+      "amended_non_lab_conviction",
+      "lab_fee_worksheet_omitted",
+      "dob_missing_verify",
+      "apd_label_not_public_defender",
+      "no_final_order_pending"
+    ],
+    "recommended_resolution": [
+      "use_hearing_notes",
+      "use_cms_identity",
+      "use_corrob_memo",
+      "verify_before_entry",
+      "exclude_pending"
+    ],
+    "entry_status": [
+      "disposed_enter",
+      "pending_exclude"
+    ],
+    "primary_outcome": [
+      "guilty_plea",
+      "no_contest_guilty",
+      "bench_trial_guilty",
+      "continued_pending"
+    ],
+    "plea": [
+      "guilty",
+      "no_contest",
+      "not_entered",
+      "not_applicable"
+    ],
+    "departure_status": [
+      "none",
+      "not_evaluated_misdemeanor",
+      "not_entered_pending"
+    ],
+    "fee_status": [
+      "post",
+      "do_not_post_pending"
+    ],
+    "register_action": [
+      "enter_disposition_and_financials",
+      "exclude_no_final_order"
+    ],
+    "docket_code": [
+      "SENTENCING_ORDER_ENTERED",
+      "CONTINUED_NO_DISPOSITION"
+    ],
+    "exclusion_reason": [
+      "continued_pending_no_final_order"
+    ]
   },
-  "case_row_required_keys": [
-    "case_number",
-    "defendant_name",
-    "resolved_status",
-    "disposition_date",
-    "disposition_class",
-    "convicted_charge_count",
-    "corrected_defense_attorney",
-    "corrected_defense_type",
-    "representation_mismatch",
-    "approved_fee_codes",
-    "current_ledger_principal",
-    "corrected_assessment_total",
-    "financial_delta",
-    "docket_action"
-  ],
-  "case_row_fields": {
-    "case_number": {
-      "type": "string"
+  "answer_shape": {
+    "case_audit": [
+      {
+        "case_number": "string",
+        "defendant_name": "string",
+        "dob_for_entry": "string",
+        "identity_action": "enum:identity_action",
+        "counsel_classification": "enum:counsel_classification",
+        "audit_flags": [
+          "enum:audit_flag"
+        ],
+        "recommended_resolution": "enum:recommended_resolution"
+      }
+    ],
+    "dispositions": [
+      {
+        "case_number": "string",
+        "entry_status": "enum:entry_status",
+        "disposition_date": "YYYY-MM-DD or null",
+        "primary_outcome": "enum:primary_outcome",
+        "plea": "enum:plea",
+        "convicted_counts": "integer",
+        "dismissed_or_amended_away_counts": "integer",
+        "departure_status": "enum:departure_status"
+      }
+    ],
+    "fee_entries": [
+      {
+        "case_number": "string",
+        "fee_status": "enum:fee_status",
+        "court_cost": "currency number",
+        "crime_lab_fee": "currency number",
+        "fine": "currency number",
+        "total_due": "currency number"
+      }
+    ],
+    "docket_register": {
+      "entries": [
+        {
+          "case_number": "string",
+          "register_action": "enum:register_action",
+          "docket_code": "enum:docket_code",
+          "entry_date": "YYYY-MM-DD or null"
+        }
+      ],
+      "totals": {
+        "disposed_case_count": "integer",
+        "excluded_pending_count": "integer",
+        "court_cost_total": "currency number",
+        "crime_lab_fee_total": "currency number",
+        "fine_total": "currency number",
+        "batch_total_due": "currency number"
+      }
     },
-    "defendant_name": {
-      "type": "string"
-    },
-    "resolved_status": {
-      "type": "enum",
-      "choices": [
-        "closed",
-        "deferred",
-        "open",
-        "probation_active",
-        "warrant"
-      ]
-    },
-    "disposition_date": {
-      "type": "string_or_null",
-      "format": "YYYY-MM-DD or null when no disposition has been entered"
-    },
-    "disposition_class": {
-      "type": "enum",
-      "choices": [
-        "convicted",
-        "deferred",
-        "dismissed",
-        "pending_no_disposition",
-        "ledger_review_only"
-      ]
-    },
-    "convicted_charge_count": {
-      "type": "integer",
-      "minimum": 0
-    },
-    "corrected_defense_attorney": {
-      "type": "string"
-    },
-    "corrected_defense_type": {
-      "type": "enum",
-      "choices": [
-        "public_defender",
-        "retained",
-        "appointed_private",
-        "unknown"
-      ]
-    },
-    "representation_mismatch": {
-      "type": "boolean",
-      "description": "True when the stale export or live case representation details do not match the resolved counsel record used for this output."
-    },
-    "approved_fee_codes": {
-      "type": "list",
-      "items": {
-        "type": "enum",
-        "choices": [
-          "CR-CONV",
-          "CR-FILING",
-          "CR-PROB",
-          "CR-REST-ADM"
-        ]
-      },
-      "ordering": "Sort fee codes alphabetically."
-    },
-    "current_ledger_principal": {
-      "type": "number",
-      "precision": 2,
-      "unit": "USD",
-      "description": "Current live ledger principal_amount before this correction; use 0.00 if no live financial obligation exists."
-    },
-    "corrected_assessment_total": {
-      "type": "number",
-      "precision": 2,
-      "unit": "USD",
-      "description": "Final approved principal before payments, including any restitution when applicable."
-    },
-    "financial_delta": {
-      "type": "number",
-      "precision": 2,
-      "unit": "USD",
-      "description": "corrected_assessment_total minus current_ledger_principal."
-    },
-    "docket_action": {
-      "type": "enum",
-      "choices": [
-        "no_update_needed",
-        "financial_adjustment",
-        "update_status_and_representation",
-        "enter_disposition_and_assess",
-        "release_to_entry"
-      ]
-    }
-  },
-  "aggregate_required_keys": [
-    "case_count",
-    "financial_adjustment_count",
-    "total_financial_delta",
-    "representation_mismatch_cases"
-  ],
-  "aggregate_fields": {
-    "case_count": {
-      "type": "integer"
-    },
-    "financial_adjustment_count": {
-      "type": "integer",
-      "description": "Count of case rows where financial_delta is not 0.00."
-    },
-    "total_financial_delta": {
-      "type": "number",
-      "precision": 2,
-      "unit": "USD"
-    },
-    "representation_mismatch_cases": {
-      "type": "list",
-      "items": {
-        "type": "string",
-        "description": "Case number"
-      },
-      "ordering": "Sort case numbers ascending."
-    }
+    "exclusions": [
+      {
+        "case_number": "string",
+        "exclusion_reason": "enum:exclusion_reason",
+        "next_status_check_date": "YYYY-MM-DD",
+        "financial_posting_allowed": "boolean"
+      }
+    ]
   }
 }

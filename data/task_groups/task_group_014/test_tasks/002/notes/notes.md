@@ -1,121 +1,47 @@
-# test_002 Notes: Peer-to-peer finalization board
+# test_002 Notes - Dupixent Expedited Appeal And Assistance
 
 ## English
 
-### Purpose
+Data/source lineage: This task belongs to `SCN_014_healthcare_payer_authorization_appeals`, using source examples `E001` through `E007`, with the closest source pattern from `E002` for drug coverage appeal and manufacturer assistance coordination. The shared generated environment is `task_group_014`, served by the Northstar payer operations SQLite-backed HTTP service. The target business record is `APPEAL-TE-002` for `task_id = test_002`. Solver-visible task-local materials are `input/prompt.txt`, `input/payloads/task_context.json`, and `input/payloads/answer_template.json`.
 
-This formal test task asks a peer-to-peer coordinator to reconcile the `test_p2p_batch` board through the shared SQL service. Solver-visible files are intentionally concise: they provide the role, business goal, SQL endpoint placeholder, target scope payload, and required JSON shape. The detailed operating logic is retained here and in the evaluator.
+Task definition: The solver acts as a pharmacy appeals coordinator preparing a structured disposition for `APPEAL-TE-002` as of `2026-06-06`. The expected JSON reports the case and appeal IDs, requested drug, appeal path, expedited flag and basis, appeal deadline, owner, documented prior therapy failures, assistance program status and missing fields, required and missing packet items, and next operational action. The solver should use the environment URL, API endpoints, and SQL query service rather than construction files or direct database access.
 
-### Data lineage
+Scenario fit: This is in the appeal, coverage exception, and assistance workflow family described in the task group design. It requires combining case status, appeal routing, prior therapy evidence, and manufacturer assistance screening without collapsing payer appeal readiness into assistance application readiness. The task mirrors real payer operations work where a coordinator can proceed with an appeal while still tracking an assistance-only financial proof gap.
 
-Target cases come from `authorization_requests.target_bucket = 'test_p2p_batch'`:
+Material map: `cases` identifies `APPEAL-TE-002` as a specialty drug coverage exception in the appeals stage, with policy `POL-DRUG-EXC-2026`, expedited urgency, and due date `2026-06-09`. `appeals` provides `APL-TE-002`, `expedited_internal`, expedited attestation `provider_attested_serious_health_risk`, deadline `2026-06-09`, owner `appeals-rx`, and notes that the appeal packet is otherwise complete while household income proof is absent for assistance. `drug_trials` supplies documented failed prior therapies: `topical tacrolimus` and `phototherapy`. `assistance_screen` supplies `Dupixent MyWay`, denial on file, missing field `household_income_proof`, and source status `pending_missing_income_proof`, which the answer schema normalizes to `eligible_missing_information`. `policies` and `policy_criteria` define the general specialty drug appeal packet components, including denial notice, member authorization, prescriber rationale, formulary failure evidence, and related assistance packet materials.
 
-- `AUTH00019`
-- `AUTH00020`
-- `AUTH00021`
-- `AUTH00022`
-- `AUTH00023`
-- `AUTH00024`
+Solution and evaluation basis: The standard answer is `case_id = APPEAL-TE-002`, `appeal_id = APL-TE-002`, `drug = Dupixent`, `appeal_path = expedited_internal`, `expedited = true`, `expedited_basis = provider_attested_serious_health_risk`, `appeal_deadline = 2026-06-09`, and `owner = appeals-rx`. Documented failures are `topical tacrolimus` and `phototherapy`. Assistance is `Dupixent MyWay`, status `eligible_missing_information`, missing `household_income_proof`. Required packet items are `denial_notice`, `member_authorization`, `prescriber_rationale`, `formulary_failure_evidence`, and `household_income_proof`; the only missing packet item is `household_income_proof`. The next action is `complete_expedited_appeal_and_request_income_proof`.
 
-The canonical answer was derived from `authorization_requests`, `auth_lines`, `p2p_sessions`, `case_review_events`, `clinical_facts`, `evidence_documents`, `coverage_criteria`, `criteria_sources`, `members`, `plans`, `providers`, `facilities`, and `service_codes`.
+The evaluator uses six whole-point scoring goals with raw weights `[1, 3, 2, 2, 2, 1]`: target appeal, drug, and owner; expedited internal path, basis, and deadline; documented failure set; assistance program, status, and missing income proof; required and missing packet sets; and next action preserving the appeal versus assistance distinction. These goals cover distinct business outcomes: identity, timeliness and route, evidence classification, assistance eligibility state, packet assembly, and operational disposition. Lists are normalized as sets for scoring. Each scoring point is all-or-zero, and the standard answer scores `1.0`.
 
-### Solution basis
+Likely model pitfalls: using the raw assistance source status `pending_missing_income_proof` instead of the answer enum; treating the missing income proof as blocking the payer appeal itself; omitting the expedited basis; adding `expedited_risk_attestation` as a missing packet item even though the appeal record already supplies the attestation; dropping one of the two documented failures; or choosing a generic request-more-information action that loses the expedited appeal distinction.
 
-Clinical criteria source selection follows the train pattern: use the highest-precedence applicable criteria rows for the case plan type and service category, falling back to `ALL` criteria rows when there is no exact plan-type criteria set. The target cases all carry `SRC003` into final rationale because no applicable CMS or state Medicaid criteria rows exist for their target service-category combinations.
+Transfer design: The primary train anchor is `train_002`, the Vraylar coverage appeal and assistance screen. Transfer-dependent scoring points are the assistance program/status/gap point, the required and missing packet set point, the documented failure set point, and the next-action point. The train task shows that solvers must separate payer appeal gates from manufacturer assistance readiness, count only documented therapy failures, map source assistance statuses into the answer-template enum, and keep packet gaps structured. Test-specific difficulty comes from a different drug, plan type, expedited attestation, deadline, and absence of document rows for this target, requiring target-specific environment exploration instead of copying the train answer.
 
-Evidence is treated as clearly supportive only when the fact value meets the required value, the linked document is current, and the confidence flag is clear. Stale, partial, conflicting, unclear, or missing facts do not support a full clinical approval.
+Construction record: Built by task-builder Builder G on 2026-07-18. Created `task_group/task_group_014/test_tasks/002/` with prompt, task context, answer template, standard answer, evaluator shell/Python scripts, and this hidden notes file. The standard answer was checked against `scratch/task_builder_assignments.md` and the generated environment records for `APPEAL-TE-002`.
 
-The finalization interpretation used for the answer is:
+## Chinese
 
-- `AUTH00019`: completed session with new information. It supports a partial overturn but not full approval because the multi-service request still has unresolved DME and stale/missing clinical support. It queues a partial-approval letter with appeal rights.
-- `AUTH00020`: completed session with no new information. Physical therapy criteria are not clearly met, so the adverse posture is upheld by MD-only finalization authority.
-- `AUTH00021`: P2P is not completed and the session outcome requests additional information, so no adverse final is issued yet.
-- `AUTH00022`: completed provider no-show with unresolved physical therapy criteria. The denial is upheld and appeal rights are queued.
-- `AUTH00023`: advanced imaging requires MD review, and the medical-director review event requested more information. The case stays pending additional information instead of receiving an adverse final.
-- `AUTH00024`: direct administrative finalization applies because the facility is outside the service area. The case is not a proper P2P reconsideration path even though a P2P row exists, and it queues an administrative denial with appeal rights.
+数据和来源脉络：本任务属于 `SCN_014_healthcare_payer_authorization_appeals`，使用来源示例 `E001` 到 `E007`，最接近的来源模式是 `E002` 中的药品覆盖申诉和厂家援助协同流程。共享生成环境是 `task_group_014`，由 Northstar 付款方运营的 SQLite 后端 HTTP 服务提供。目标业务记录为 `APPEAL-TE-002`，对应 `task_id = test_002`。解题者可见的本地材料包括 `input/prompt.txt`、`input/payloads/task_context.json` 和 `input/payloads/answer_template.json`。
 
-Final rationale codes use the selected criteria source plus a compact finalization trigger. The pending-additional-information case driven by unresolved criteria uses `criteria_not_clearly_met_more_information_needed`, and `letter_authority_reason_code` mechanically joins the letter queue, adverse authority status, and final rationale code with double underscores.
+任务定义：解题者扮演药房申诉协调员，在 `2026-06-06` 为 `APPEAL-TE-002` 准备结构化处置。期望 JSON 报告 case 和 appeal ID、申请药品、申诉路径、是否加急及加急依据、申诉截止日期、负责人、有文档支持的既往治疗失败、厂家援助项目状态和缺失字段、所需及缺失材料，以及下一步运营动作。解题者应使用环境 URL、API 端点和 SQL 查询服务，而不是构建文件或直接数据库访问。
 
-### Transfer anchors
+场景适配：本任务属于任务组设计中的申诉、覆盖例外和援助流程家族。它要求综合 case 状态、申诉路径、既往治疗证据和厂家援助筛查，同时不能把付款方申诉准备状态与援助申请准备状态混为一谈。这符合真实付款方运营工作：协调员可以继续推进申诉，同时跟踪只影响援助申请的财务证明缺口。
 
-- `train_002`: transfers clinical criteria source selection, current/clear evidence sufficiency, nurse-versus-MD adverse authority, and P2P suitability logic.
-- `train_001`: transfers administrative direct-path handling once a case has a nonclinical intake barrier such as out-of-service-area facility.
+材料映射：`cases` 表显示 `APPEAL-TE-002` 是 appeals 阶段的 specialty drug 覆盖例外，政策为 `POL-DRUG-EXC-2026`，紧急程度为 expedited，截止日为 `2026-06-09`。`appeals` 表提供 `APL-TE-002`、`expedited_internal`、加急证明 `provider_attested_serious_health_risk`、截止日 `2026-06-09`、负责人 `appeals-rx`，并说明申诉材料包除此之外完整，但援助申请缺少 household income proof。`drug_trials` 提供有文档支持且失败的既往治疗：`topical tacrolimus` 和 `phototherapy`。`assistance_screen` 提供 `Dupixent MyWay`、已有拒付、缺失字段 `household_income_proof`，以及来源状态 `pending_missing_income_proof`，答案中需要归一化为 `eligible_missing_information`。`policies` 和 `policy_criteria` 定义 specialty drug 申诉材料的一般组成，包括 denial notice、member authorization、prescriber rationale、formulary failure evidence 和相关援助材料。
 
-### Scoring goals
+答案和评估依据：标准答案为 `case_id = APPEAL-TE-002`，`appeal_id = APL-TE-002`，`drug = Dupixent`，`appeal_path = expedited_internal`，`expedited = true`，`expedited_basis = provider_attested_serious_health_risk`，`appeal_deadline = 2026-06-09`，`owner = appeals-rx`。有文档支持的失败治疗为 `topical tacrolimus` 和 `phototherapy`。援助项目为 `Dupixent MyWay`，状态为 `eligible_missing_information`，缺失 `household_income_proof`。所需材料为 `denial_notice`、`member_authorization`、`prescriber_rationale`、`formulary_failure_evidence` 和 `household_income_proof`；唯一缺失材料为 `household_income_proof`。下一步动作为 `complete_expedited_appeal_and_request_income_proof`。
 
-The evaluator uses ten exact-match structured business-result points:
+评估器使用六个整点评分目标，原始权重为 `[1, 3, 2, 2, 2, 1]`：目标申诉、药品和负责人；加急内部申诉路径、依据和截止日期；有文档支持的失败治疗集合；援助项目、状态和缺失收入证明；所需和缺失材料集合；以及保留申诉与援助区别的下一步动作。这些目标覆盖不同业务结果：身份、时效和路径、证据分类、援助资格状态、材料包组装和运营处置。列表在评分时按集合归一化。每个评分点全有或全无，标准答案得分为 `1.0`。
 
-- final board classifications by case, raw weight 1;
-- criteria source and unresolved criteria gap keys by case, raw weight 2;
-- P2P session and medical-director review-event trace by case, raw weight 3;
-- additional-information and appeal-rights notice flags plus counts, raw weight 1;
-- board metadata, finalization counts, and letter queue lists, raw weight 1;
-- administrative source trace for facility, exception, and mandatory-MD flags, raw weight 1;
-- criteria source precedence selection trace, raw weight 2;
-- final rationale code, raw weight 3;
-- finalization reason bundle, raw weight 3;
-- letter-authority reason codes, raw weight 3.
+常见错误：直接使用来源状态 `pending_missing_income_proof` 而不是答案枚举；把缺少收入证明误判为阻断付款方申诉；漏掉加急依据；由于存在加急流程而额外把 `expedited_risk_attestation` 加入缺失材料，尽管 appeal 记录已经有该证明；遗漏两个有文档支持失败治疗中的一个；或选择泛化的 request-more-information 动作，丢失加急申诉的区别。
 
-### Construction record
+迁移设计：主要训练锚点是 `train_002`，即 Vraylar 覆盖申诉和援助筛查。依赖迁移的评分点包括援助项目、状态和缺口，所需及缺失材料集合，有文档支持的失败治疗集合，以及下一步动作。训练任务显示了解题者必须分开处理付款方申诉门槛和厂家援助准备状态，只计算有文档支持的治疗失败，将来源援助状态映射到答案模板枚举，并以结构化列表保留材料缺口。测试任务的特定难点在于药品、plan type、加急证明、截止日不同，且该目标没有 document rows，需要针对目标环境探索，而不能复制训练答案。
 
-The construction-visible SQLite database was inspected directly to compute the canonical answer. Solver-visible files disclose the fixed synthetic Basic Auth credentials for `<TASK_ENV_BASE_URL>/query`, but do not include machine-specific host, port, or database-path details, hidden answer paths, numbered SOPs, scoring logic, or full rule checklists.
+构建记录：由 task-builder Builder G 于 2026-07-18 创建。已创建 `task_group/task_group_014/test_tasks/002/`，包含 prompt、task context、answer template、standard answer、eval shell/Python 脚本和本隐藏 notes 文件。标准答案已根据 `scratch/task_builder_assignments.md` 及 `APPEAL-TE-002` 的生成环境记录核对。
 
-## 中文
+## 2026-07-19 Basis-Audit Update
 
-### 目的
+English: The answer template and standard answer now use `basis_audit`, a business-grounded audit trail rather than an invented control-code layer. `source_precedence` records the source category, `precedence_record_order` records the ordered business source trail, `controlling_record_ids` records the environment records that directly control the result, and `exception_record_ids` records stale, missing, unsupported, unresolved, or route-priority records. For this task, `source_precedence` is `payer_appeal_before_manufacturer_assistance`, `precedence_record_order` is `APL-TE-002`, `TRIAL-TE-002-1`, `TRIAL-TE-002-2`, `household_income_proof`, controlling records are `APL-TE-002`, `TRIAL-TE-002-1`, `TRIAL-TE-002-2`, and exception records are `household_income_proof`; the test evaluator scores source category, precedence order, controlling records, and exception records as separate basis-audit points.
 
-这个正式测试任务要求 P2P 协调员通过共享 SQL 服务核对 `test_p2p_batch` 终结看板。面向解题者的文件刻意保持简洁：只提供角色、业务目标、SQL 端点占位符、目标范围载荷和所需 JSON 形状。详细操作逻辑保留在本说明和评估器中。
-
-### 数据来源
-
-目标病例来自 `authorization_requests.target_bucket = 'test_p2p_batch'`：
-
-- `AUTH00019`
-- `AUTH00020`
-- `AUTH00021`
-- `AUTH00022`
-- `AUTH00023`
-- `AUTH00024`
-
-标准答案由 `authorization_requests`、`auth_lines`、`p2p_sessions`、`case_review_events`、`clinical_facts`、`evidence_documents`、`coverage_criteria`、`criteria_sources`、`members`、`plans`、`providers`、`facilities` 和 `service_codes` 推导。
-
-### 解题依据
-
-临床标准来源选择沿用训练任务模式：为病例的计划类型和服务类别选择适用且优先级最高的标准行；没有精确计划类型标准时，回退到 `ALL` 标准行。目标病例的服务类别没有适用的 CMS 或州 Medicaid 标准行，因此最终理由均携带 `SRC003`。
-
-只有当事实值满足要求、关联文件为当前文件、且置信标记为 clear 时，证据才被视为明确支持。stale、partial、conflicting、unclear 或缺失事实都不能支持完整临床批准。
-
-标准答案使用的终结解释为：
-
-- `AUTH00019`：P2P 已完成且有新信息。新信息支持部分推翻，但多服务请求仍有 DME 未解决以及陈旧或缺失的临床支持，因此进入带申诉权的部分批准函队列。
-- `AUTH00020`：P2P 已完成但没有新信息。物理治疗标准未被明确满足，因此由 MD-only 终结权限维持不利决定。
-- `AUTH00021`：P2P 未完成且会话结果要求补充信息，所以暂不发出不利终结。
-- `AUTH00022`：P2P 已完成但服务提供方未参加，且物理治疗标准仍未解决。维持拒绝并发送申诉权通知。
-- `AUTH00023`：高级影像需要 MD 审核，且 medical-director 审核事件要求更多信息。因此病例保持补充信息待处理，而不是发出不利终结。
-- `AUTH00024`：因机构不在服务区域内，适用直接行政终结。即使存在 P2P 行，它也不是合适的 P2P 复议路径，并进入带申诉权的行政拒绝函队列。
-
-最终理由代码使用选定的标准来源加紧凑的终结触发因素。由于标准未明确满足而待补资料的病例使用 `criteria_not_clearly_met_more_information_needed`；`letter_authority_reason_code` 由函件队列、终结权限状态和最终理由代码用双下划线机械拼接。
-
-### 迁移锚点
-
-- `train_002`：迁移临床标准来源选择、当前且清晰的证据充分性、护士与 MD 的不利决定权限边界，以及 P2P 适用性逻辑。
-- `train_001`：迁移当病例存在非临床准入障碍时的行政直接路径处理，例如机构不在服务区域内。
-
-### 评分目标
-
-评估器使用十个精确匹配的结构化业务结果点：
-
-- 每个病例的最终看板分类，原始权重 1；
-- 每个病例的标准来源和未解决的标准缺口 key，原始权重 2；
-- 每个病例的 P2P 会话和 medical-director 审核事件追踪，原始权重 3；
-- 需要补充信息和申诉权通知的病例及计数，原始权重 1；
-- 看板元数据、终结计数和函件队列列表，原始权重 1；
-- 机构、例外和强制 MD 标记的行政来源追踪，原始权重 1；
-- 标准来源优先级选择追踪，原始权重 2；
-- 最终理由代码，原始权重 3；
-- 终结理由组合，原始权重 3；
-- 函件和权限理由代码，原始权重 3。
-
-### 构建记录
-
-构建时直接检查了 construction-visible SQLite 数据库来计算标准答案。面向解题者的文件公开访问 `<TASK_ENV_BASE_URL>/query` 所需的固定合成 Basic Auth 凭据，但不包含机器相关的主机、端口或数据库路径信息、隐藏答案路径、编号 SOP、评分逻辑或完整规则清单。
+中文：答案模板和标准答案现在使用 `basis_audit`，这是基于业务依据的审计轨迹，而不是人为 control-code 层。`source_precedence` 记录来源类别，`precedence_record_order` 记录按优先级排列的业务来源轨迹，`controlling_record_ids` 记录直接决定结果的环境记录，`exception_record_ids` 记录过期、缺失、不支持、未解决或路线优先级记录。本任务中，`source_precedence` 为 `payer_appeal_before_manufacturer_assistance`，`precedence_record_order` 为 `APL-TE-002`, `TRIAL-TE-002-1`, `TRIAL-TE-002-2`, `household_income_proof`，控制记录为 `APL-TE-002`, `TRIAL-TE-002-1`, `TRIAL-TE-002-2`，例外记录为 `household_income_proof`；the test evaluator scores source category, precedence order, controlling records, and exception records as separate basis-audit points。

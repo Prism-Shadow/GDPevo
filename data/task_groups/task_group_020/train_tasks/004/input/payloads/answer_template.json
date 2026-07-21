@@ -1,268 +1,85 @@
 {
-  "deal_id": {
-    "type": "string",
-    "description": "Aster Legal Deal Desk deal identifier reviewed."
+  "schema_name": "train_004_orion_transition_review",
+  "version": "1.0",
+  "instructions": {
+    "language": "English only",
+    "deal_id": "Use PRJ_ORION",
+    "currency": "USD integer dollars",
+    "ordering": {
+      "transition_issues": "Sort by issue_id ascending unless priority_order is requested elsewhere.",
+      "required_redlines": "Sort by redline_id ascending.",
+      "operational_risk.priority_order": "Order from highest negotiation priority to lowest."
+    },
+    "stable_issue_ids": [
+      "CUSTOMER_CONSENT_TERMINATION_RIGHT",
+      "FIELD_EMPLOYEE_CONTINUITY_PTO",
+      "GOVERNING_LAW_FORUM_FIX",
+      "IP_DOMAIN_TRANSITION_MISSING",
+      "OUTSIDE_DATE_EXTENSION_MISSING",
+      "SECTION_1060_ALLOCATION_MISSING",
+      "TRANSFER_TAX_SPLIT_MISSING",
+      "TSA_SCOPE_DURATION_FEES"
+    ],
+    "stable_redline_ids": [
+      "CUSTOMER_CONSENT_CONDITION",
+      "EMPLOYEE_CONTINUITY",
+      "GOVERNING_LAW_FORUM",
+      "IP_DOMAIN_TRANSITION",
+      "OUTSIDE_DATE_EXTENSION",
+      "SECTION_1060_ALLOCATION",
+      "TRANSFER_TAX_SPLIT",
+      "TSA_SCOPE_FEES"
+    ]
   },
-  "policy_id": {
-    "type": "string",
-    "description": "Controlling playbook or policy identifier used for the review."
+  "allowed_enums": {
+    "risk_rating": ["LOW", "MEDIUM", "HIGH"],
+    "issue_status": ["in_policy", "out_of_policy", "missing_required_term", "draft_exceeds_playbook", "draft_below_playbook"],
+    "recommended_action": ["delete", "revise", "add", "accept", "escalate", "approve", "approve_with_conditions", "reject"],
+    "redline_action": ["delete", "revise", "add"],
+    "fee_model": ["at_cost", "cost_plus_stranded_overhead", "fixed_fee", "not_applicable"],
+    "tax_allocation_method": ["buyer_sole_discretion", "seller_sole_discretion", "mutually_agreed_section_1060"],
+    "forum": ["Delaware Court of Chancery or Delaware federal court", "state court", "federal court", "other"],
+    "overall_posture": ["accept_as_drafted", "revise_before_signing", "escalate_to_business_lead", "reject"]
   },
-  "priority_issues": {
-    "type": "list[object]",
-    "description": "Material APA deviations requiring negotiation or approval. Include only issues determined to be priority issues.",
-    "ordering": "ascending by issue_id",
-    "item_schema": {
-      "issue_id": {
-        "type": "enum",
-        "allowed_values": [
-          "BASKET",
-          "CLOSING_DEADLINE",
-          "EMPLOYEE_TRANSFER",
-          "ESCROW_PERCENT",
-          "FINANCING_CONDITION",
-          "HSR_CONDITION",
-          "INDEMNITY_CAP",
-          "IP_TRANSITION",
-          "MAE",
-          "MATERIAL_CONSENTS",
-          "NWC_MECHANICS",
-          "RESTRICTIVE_COVENANT",
-          "SURVIVAL_PERIOD",
-          "TSA_SERVICE_CONTINUITY"
-        ]
-      },
-      "clause_code": {
-        "type": "enum",
-        "allowed_values": [
-          "BASKET",
-          "CAP",
-          "CLOSE",
-          "CONSENT",
-          "EMPLOYEE",
-          "ESCROW",
-          "FINANCING",
-          "HSR",
-          "IP",
-          "MAE",
-          "NONCOMPETE",
-          "NWC",
-          "SURVIVAL",
-          "TSA"
-        ]
-      },
-      "severity": {
-        "type": "enum",
-        "allowed_values": [
-          "LOW",
-          "MEDIUM",
-          "HIGH",
-          "CRITICAL"
-        ]
-      },
-      "recommended_action": {
-        "type": "enum",
-        "allowed_values": [
-          "ACCEPT",
-          "DELETE",
-          "ESCALATE_ONLY",
-          "EXTEND_AND_ESCALATE",
-          "NARROW_AND_ESCALATE",
-          "REDUCE_OR_ESCALATE",
-          "REVISE",
-          "REVISE_AND_ESCALATE"
-        ]
-      },
-      "approval_owner": {
-        "type": "enum",
-        "allowed_values": [
-          "DEAL_LEAD",
-          "EMPLOYMENT_COUNSEL",
-          "HR_COMMITTEE",
-          "IP_COUNSEL",
-          "LEGAL_RISK_COMMITTEE",
-          "OPERATIONS_COMMITTEE",
-          "SELLER_STEERING_COMMITTEE"
-        ]
-      },
-      "source_doc_ids": {
-        "type": "list[string]",
-        "description": "Document identifiers supporting the issue conclusion.",
-        "ordering": "ascending by doc_id"
+  "required_output_shape": {
+    "deal_id": "string",
+    "client_side": "string",
+    "transition_issues": [
+      {
+        "issue_id": "enum stable_issue_ids",
+        "category": "string",
+        "source_term_ids": ["string"],
+        "source_record_ids": ["string"],
+        "issue_status": "enum issue_status",
+        "risk_rating": "enum risk_rating",
+        "recommended_action": "enum recommended_action",
+        "draft_value_normalized": {},
+        "required_position_normalized": {},
+        "quantified_impact_dollars": "integer or null"
       }
-    }
-  },
-  "transition_flags": {
-    "type": "object",
-    "description": "Structured transition-term conclusions for the current draft.",
-    "schema": {
-      "employee_transfer": {
-        "type": "object",
-        "schema": {
-          "issue_present": {
-            "type": "boolean"
-          },
-          "draft_offer_percent": {
-            "type": "number",
-            "precision": 1,
-            "unit": "percent of business employees"
-          },
-          "seller_warn_or_severance_retained": {
-            "type": "boolean"
-          },
-          "required_offer_standard": {
-            "type": "enum",
-            "allowed_values": [
-              "BUYER_COMPARABLE_OFFERS_ALL_BUSINESS_EMPLOYEES",
-              "BUYER_OFFERS_SELECTED_CRITICAL_EMPLOYEES",
-              "NO_EMPLOYEE_COVENANT_REQUIRED",
-              "SELLER_RETAINS_EXCLUDED_EMPLOYEES_ONLY"
-            ]
-          },
-          "approval_required": {
-            "type": "boolean"
-          }
-        }
-      },
-      "tsa_service_continuity": {
-        "type": "object",
-        "schema": {
-          "issue_present": {
-            "type": "boolean"
-          },
-          "draft_duration_months": {
-            "type": "integer"
-          },
-          "target_duration_months": {
-            "type": "integer"
-          },
-          "fallback_duration_months": {
-            "type": "integer"
-          },
-          "required_service_codes": {
-            "type": "list[enum]",
-            "ordering": "alphabetical",
-            "allowed_values": [
-              "ERP",
-              "FINANCE",
-              "IT",
-              "PAYROLL",
-              "PROCUREMENT",
-              "QUALITY_RECORDS",
-              "REGULATORY"
-            ]
-          },
-          "approval_required": {
-            "type": "boolean"
-          }
-        }
-      },
-      "restrictive_covenants": {
-        "type": "object",
-        "schema": {
-          "issue_present": {
-            "type": "boolean"
-          },
-          "draft_non_compete_years": {
-            "type": "integer"
-          },
-          "max_non_compete_years": {
-            "type": "integer"
-          },
-          "affiliate_scope_allowed": {
-            "type": "boolean"
-          },
-          "required_scope": {
-            "type": "enum",
-            "allowed_values": [
-              "DIVESTED_LINE_EXISTING_GEOGRAPHIES",
-              "DIVESTED_LINE_WORLDWIDE",
-              "ALL_INDUSTRIAL_HAND_TOOLS",
-              "NO_RESTRICTIVE_COVENANT"
-            ]
-          },
-          "non_solicit_scope": {
-            "type": "enum",
-            "allowed_values": [
-              "DIVESTED_BUSINESS_CUSTOMERS_AND_EMPLOYEES_ONLY",
-              "ALL_ATLAS_AFFILIATES_CUSTOMERS_AND_EMPLOYEES",
-              "NO_NON_SOLICIT_LIMIT"
-            ]
-          },
-          "approval_required": {
-            "type": "boolean"
-          }
-        }
-      },
-      "ip_transition": {
-        "type": "object",
-        "schema": {
-          "issue_present": {
-            "type": "boolean"
-          },
-          "draft_trademark_phaseout_months": {
-            "type": "integer"
-          },
-          "max_trademark_phaseout_months": {
-            "type": "integer"
-          },
-          "broad_design_file_access": {
-            "type": "boolean"
-          },
-          "required_scope": {
-            "type": "enum",
-            "allowed_values": [
-              "NARROW_TRANSITIONAL_LICENSE_WITH_RETAINED_IP_BOUNDARIES",
-              "BROAD_DESIGN_FILE_ACCESS",
-              "OPEN_ENDED_TRADEMARK_USE",
-              "NO_IP_TRANSITION_RIGHTS"
-            ]
-          },
-          "approval_required": {
-            "type": "boolean"
-          }
-        }
-      },
-      "escrow_and_deadline": {
-        "type": "object",
-        "schema": {
-          "issue_present": {
-            "type": "boolean"
-          },
-          "general_escrow_percent": {
-            "type": "number",
-            "precision": 2,
-            "unit": "percent of headline value"
-          },
-          "general_escrow_amount_usd": {
-            "type": "integer",
-            "unit": "USD"
-          },
-          "target_max_escrow_percent": {
-            "type": "number",
-            "precision": 2,
-            "unit": "percent of headline value"
-          },
-          "signing_date": {
-            "type": "string",
-            "format": "YYYY-MM-DD"
-          },
-          "draft_closing_deadline": {
-            "type": "string",
-            "format": "YYYY-MM-DD"
-          },
-          "deadline_days_after_signing": {
-            "type": "integer",
-            "unit": "calendar days"
-          },
-          "minimum_deadline_days": {
-            "type": "integer",
-            "unit": "calendar days"
-          },
-          "deadline_escalation_required": {
-            "type": "boolean"
-          }
-        }
+    ],
+    "required_redlines": [
+      {
+        "redline_id": "enum stable_redline_ids",
+        "related_issue_id": "enum stable_issue_ids",
+        "redline_action": "enum redline_action",
+        "must_have_terms": {}
       }
+    ],
+    "operational_risk": {
+      "overall_risk_rating": "enum risk_rating",
+      "overall_posture": "enum overall_posture",
+      "priority_order": ["enum stable_issue_ids"],
+      "quantified_exposures": {
+        "stranded_cost_gap_dollars": "integer",
+        "field_operations_pto_liability_dollars": "integer",
+        "required_closing_consent_amount_at_risk_dollars": "integer",
+        "top_customer_annual_revenue_at_risk_dollars": "integer",
+        "transition_disruption_high_dollars": "integer"
+      },
+      "required_closing_consent_ids": ["string"],
+      "material_contract_consent_ids": ["string"],
+      "business_outcomes_protected": ["string"]
     }
   }
 }

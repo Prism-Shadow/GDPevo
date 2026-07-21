@@ -1,124 +1,106 @@
 {
-  "template_name": "train_005_wasco_compliance_review",
-  "description": "Return one JSON object with the required fields below. Use live environment records together with the local compliance packet.",
+  "task_id": "train_005",
+  "schema_version": "1.0",
+  "field_rules": {
+    "currency": "number with two decimal places, in USD",
+    "dates": "ISO 8601 YYYY-MM-DD",
+    "datetimes": "ISO 8601 local datetime YYYY-MM-DDTHH:MM:SS",
+    "petition_sort": "petitions sorted by petition_id ascending",
+    "probation_sort": "probation_referrals sorted by case_number ascending",
+    "license_sort": "license_orders sorted by case_number ascending",
+    "placeholder_sort": "placeholder_cases sorted by case_number ascending; missing_fields sorted alphabetically"
+  },
   "required_top_level_keys": [
     "task_id",
-    "county",
-    "review_order_date",
-    "records",
-    "aggregate"
+    "petitions",
+    "probation_referrals",
+    "license_orders",
+    "placeholder_cases"
   ],
-  "field_rules": {
-    "task_id": {
-      "type": "string",
-      "required_value": "train_005"
-    },
-    "county": {
-      "type": "string",
-      "required_value": "Wasco"
-    },
-    "review_order_date": {
-      "type": "date",
-      "format": "YYYY-MM-DD"
-    },
-    "records": {
-      "type": "array",
-      "ordering": "ascending by case_number",
-      "item_required_keys": [
-        "case_number",
-        "financial_status",
-        "restitution_status",
-        "community_service_status",
-        "community_service_remaining_hours",
-        "ledger_balance_before_adjustment",
-        "correction_amount",
-        "corrected_balance_due",
-        "payment_plan_action",
-        "monthly_payment_amount",
-        "installment_count",
-        "final_payment_amount",
-        "first_due_date",
-        "final_due_date",
-        "next_action",
-        "source_conflict_code"
-      ]
-    },
-    "aggregate": {
-      "type": "object",
-      "required_keys": [
-        "included_case_count",
-        "corrected_total_balance_due",
-        "return_to_court_count",
-        "post_credit_case_numbers",
-        "revised_plan_case_numbers"
-      ]
-    }
-  },
-  "record_field_types": {
-    "case_number": "string",
-    "financial_status": "enum",
-    "restitution_status": "enum",
-    "community_service_status": "enum",
-    "community_service_remaining_hours": "number with one decimal place",
-    "ledger_balance_before_adjustment": "currency number rounded to 2 decimals",
-    "correction_amount": "currency number rounded to 2 decimals; positive values reduce the live balance",
-    "corrected_balance_due": "currency number rounded to 2 decimals",
-    "payment_plan_action": "enum",
-    "monthly_payment_amount": "currency number rounded to 2 decimals, or null when no payment plan applies",
-    "installment_count": "integer; use 0 when no payment plan applies",
-    "final_payment_amount": "currency number rounded to 2 decimals, or null when no payment plan applies",
-    "first_due_date": "date in YYYY-MM-DD format, or null when no payment plan applies",
-    "final_due_date": "date in YYYY-MM-DD format, or null when no payment plan applies",
-    "next_action": "enum",
-    "source_conflict_code": "enum"
-  },
-  "enum_values": {
-    "financial_status": [
-      "paid",
-      "paid_after_credit",
-      "current",
-      "delinquent",
-      "replan_approved",
-      "pending_adjustment"
+  "enums": {
+    "petition_classification": [
+      "initial_installment",
+      "subsequent_review",
+      "deferred_payment",
+      "exempt_no_payment"
     ],
-    "restitution_status": [
-      "none",
-      "open",
-      "paid_or_disbursed"
+    "support_classification": [
+      "supportable",
+      "below_policy_minimum",
+      "above_policy_maximum",
+      "unsupported_by_budget"
     ],
-    "community_service_status": [
-      "not_ordered",
-      "complete",
-      "partial",
-      "unknown"
+    "payment_application_order": [
+      "fines_costs_only",
+      "restitution_before_fines_costs",
+      "fines_costs_before_restitution"
     ],
-    "payment_plan_action": [
-      "none",
-      "keep_existing",
-      "approve_revised_plan",
-      "send_return_to_court",
-      "post_credit_close"
+    "account_fee_treatment": [
+      "excluded_by_policy",
+      "included_by_policy",
+      "verify_before_entry"
     ],
-    "next_action": [
-      "post_receipt_close",
-      "approve_plan_and_notice",
-      "issue_return_to_court_notice",
-      "continue_monitoring",
-      "community_service_followup",
-      "no_action"
+    "schedule_interval": [
+      "monthly",
+      "deferred_single_due"
     ],
-    "source_conflict_code": [
-      "no_source_conflict",
-      "live_ledger_vs_packet_receipt",
-      "petition_changes_payment_plan",
-      "packet_service_shortfall"
+    "license_start_basis": [
+      "conviction_date",
+      "release_date",
+      "petition_date"
+    ],
+    "cc1375_status": [
+      "prepare_referral",
+      "not_ordered"
+    ],
+    "placeholder_value": [
+      "TBD from case file"
     ]
   },
-  "aggregate_field_types": {
-    "included_case_count": "integer",
-    "corrected_total_balance_due": "currency number rounded to 2 decimals",
-    "return_to_court_count": "integer",
-    "post_credit_case_numbers": "array of strings sorted ascending",
-    "revised_plan_case_numbers": "array of strings sorted ascending"
+  "petitions_item": {
+    "petition_id": "string",
+    "case_number": "string",
+    "defendant_name": "string",
+    "petition_classification": "enum: petition_classification",
+    "support_classification": "enum: support_classification",
+    "approved_monthly_amount": "currency",
+    "down_payment_amount": "currency",
+    "total_due": "currency",
+    "restitution_balance": "currency",
+    "fines_costs_balance": "currency",
+    "account_fee_amount": "currency",
+    "account_fee_treatment": "enum: account_fee_treatment",
+    "payment_application_order": "enum: payment_application_order",
+    "payment_schedule": {
+      "interval": "enum: schedule_interval",
+      "first_due_date": "date",
+      "regular_installment_amount": "currency",
+      "total_installments": "integer",
+      "final_due_date": "date",
+      "final_payment_amount": "currency",
+      "return_to_court_date": "date"
+    }
+  },
+  "probation_referrals_item": {
+    "case_number": "string",
+    "form_id": "string",
+    "cc1375_status": "enum: cc1375_status",
+    "conviction_date": "date",
+    "probation_term_months": "integer",
+    "report_datetime": "datetime or null"
+  },
+  "license_orders_item": {
+    "case_number": "string",
+    "form_id": "string",
+    "license_start_basis": "enum: license_start_basis",
+    "suspension_start_date": "date",
+    "suspension_months": "integer",
+    "suspension_end_date": "date",
+    "driver_license_number": "enum: placeholder_value"
+  },
+  "placeholder_cases_item": {
+    "case_number": "string",
+    "placeholder_value": "enum: placeholder_value",
+    "missing_fields": "array of strings"
   }
 }

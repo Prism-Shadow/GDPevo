@@ -7,13 +7,13 @@ task_group:
     - E003
   domain: Legal
   description: |
-    Train-predict benchmark for court clerk disposition, financial entry,
-    payment-plan, collateral-order, and post-disposition audit workflows.
-    The shared environment exposes court operations records, fee schedules,
-    payment policies, docket history, financial obligations, citations, and
-    stale exports across multiple counties. Tasks require reconciling hearing
-    packets with live records, applying current fee and payment rules, and
-    producing clerk-ready structured outputs.
+    A train-predict benchmark for court-clerk disposition, order, financial-entry,
+    probation-referral, license-suspension, and payment-plan workflows. The shared
+    environment is a generated Court Operations Portal with case-management,
+    citation, fee-schedule, form, docket, and payment-policy data. Train and test
+    tasks require reconciling local hearing/petition materials with the shared
+    environment while preserving official-source precedence, fee effective dates,
+    unsupported-charge exclusions, installment math, and placeholder discipline.
 
 env:
   dockerfile: env/Dockerfile
@@ -22,12 +22,12 @@ env:
   files:
     - env/Dockerfile
     - env/setup.sh
-    - env/server.py
+    - env/app.py
+    - env/generate_data.py
     - env/judge_api.py
     - env/endpoints.txt
-    - env/generate_data.py
-    - env/data/clerk_ops.json
-    - env/data/manifest.json
+    - env/generated/court_ops.db
+    - env/generated/manifest.json
 
 train_tasks:
   - task_id: train_001
@@ -35,9 +35,9 @@ train_tasks:
     prompt_txt: train_tasks/001/input/prompt.txt
     payloads:
       - train_tasks/001/input/payloads/answer_template.json
-      - train_tasks/001/input/payloads/attorney_verification_memo_2025-06-21.json
-      - train_tasks/001/input/payloads/benton_plea_minutes_2025-06-20.json
-      - train_tasks/001/input/payloads/draft_finance_import_2025-06-21.csv
+      - train_tasks/001/input/payloads/clerk_audit_memo.md
+      - train_tasks/001/input/payloads/finance_queue_extract.json
+      - train_tasks/001/input/payloads/hearing_notes.md
     notes: train_tasks/001/notes/notes.md
     output: train_tasks/001/output/
     answer_json: train_tasks/001/output/answer.json
@@ -45,31 +45,31 @@ train_tasks:
       script: train_tasks/001/eval/eval.sh
       files:
         - train_tasks/001/eval/eval.sh
-        - train_tasks/001/eval/evaluator.py
+        - train_tasks/001/eval/eval.py
       rubric:
-        - goal: Correct target metadata and case set/order.
+        - goal: "Correct audit findings for identity, counsel, fee schedule, departure, and unsigned-order conflicts."
           weight: 2
-        - goal: Correct charge-level pleas, dispositions, and verdicts.
-          weight: 3
-        - goal: Correct final case status and sentence fields.
-          weight: 3
-        - goal: Correct defense attorney, defense type, and discrepancy code.
+        - goal: "Correct identity and counsel values for all four target cases."
           weight: 2
-        - goal: Correct fee component code/amount lists and principal totals.
+        - goal: "Correct disposition status, closeout action, and disposition date decisions for all four cases."
           weight: 3
-        - goal: Correct live credits and corrected balance due per case.
+        - goal: "Correct charge outcome, sentence, fine, and departure classifications for all four cases."
+          weight: 2
+        - goal: "Correct fee item inclusion and exclusion for each case."
           weight: 3
-        - goal: Correct docket action booleans per case.
+        - goal: "Correct per-case reconciled financial totals."
           weight: 2
-        - goal: Correct register totals.
+        - goal: "Correct docket entry type and summary code for each case."
           weight: 2
-
+        - goal: "Correct criminal register aggregate counts and dollar totals."
+          weight: 2
   - task_id: train_002
     input: train_tasks/002/input/
     prompt_txt: train_tasks/002/input/prompt.txt
     payloads:
       - train_tasks/002/input/payloads/answer_template.json
-      - train_tasks/002/input/payloads/lane_traffic_batch_packet.json
+      - train_tasks/002/input/payloads/hearing_closeout_note.md
+      - train_tasks/002/input/payloads/local_form_excerpt.md
     notes: train_tasks/002/notes/notes.md
     output: train_tasks/002/output/
     answer_json: train_tasks/002/output/answer.json
@@ -77,32 +77,32 @@ train_tasks:
       script: train_tasks/002/eval/eval.sh
       files:
         - train_tasks/002/eval/eval.sh
-        - train_tasks/002/eval/evaluator.py
+        - train_tasks/002/eval/eval.py
       rubric:
-        - goal: Correct target citation set, ordering, and account references.
+        - goal: "Correctly identifies both target matters and records no-contest violation-found post-disposition closeout."
           weight: 2
-        - goal: Correct plea, disposition, and order date for all three citations.
+        - goal: "Correct current standard fine tier for OR26-TR-1188."
           weight: 2
-        - goal: Correct assessed traffic fee components for each citation.
+        - goal: "Correct current standard fine tier for OR26-TR-1194."
+          weight: 2
+        - goal: "Applies the Jefferson County surcharge once per citation and calculates amount due totals."
+          weight: 2
+        - goal: "Records approved post-disposition extended payment-plan terms for both citations."
+          weight: 2
+        - goal: "Computes full installment count, final partial payment, total installments, and final due date."
           weight: 3
-        - goal: Correct citation assessed totals and batch assessed total.
-          weight: 3
-        - goal: Correct excluded candidate fee or charge codes.
+        - goal: "Uses the 22nd Judicial District form label, labels, and citation number as account reference."
           weight: 2
-        - goal: Correct payment plan status, monthly amounts, and first due dates.
+        - goal: "Excludes stale schedule amounts and unsupported late, collection, DMV, returned-check, account, and traffic-school charges."
           weight: 2
-        - goal: Correct installment counts, final payment amounts, total payment counts, and final due dates.
-          weight: 3
-        - goal: Correct batch-level payment-plan aggregate fields.
-          weight: 1
-
   - task_id: train_003
     input: train_tasks/003/input/
     prompt_txt: train_tasks/003/input/prompt.txt
     payloads:
       - train_tasks/003/input/payloads/answer_template.json
-      - train_tasks/003/input/payloads/hearing_packet.json
-      - train_tasks/003/input/payloads/stale_order_extract.csv
+      - train_tasks/003/input/payloads/form_field_excerpt.json
+      - train_tasks/003/input/payloads/payment_petition_budget.json
+      - train_tasks/003/input/payloads/sentencing_intake_facts.json
     notes: train_tasks/003/notes/notes.md
     output: train_tasks/003/output/
     answer_json: train_tasks/003/output/answer.json
@@ -110,33 +110,33 @@ train_tasks:
       script: train_tasks/003/eval/eval.sh
       files:
         - train_tasks/003/eval/eval.sh
-        - train_tasks/003/eval/evaluator.py
+        - train_tasks/003/eval/eval.py
       rubric:
-        - goal: Correct target defendant set, ordering, names, and conviction posture.
+        - goal: "Correct case memo identity, conviction, sentence, and required post-sentencing work flags."
           weight: 2
-        - goal: Correct charge-level outcomes and unsupported DUI-104 exclusion treatment.
+        - goal: "Correct CC-1375 probation referral form fields and reporting instruction."
           weight: 2
-        - goal: Correct Darla Nguyen probation, license, and treatment collateral order fields.
-          weight: 3
-        - goal: Correct Hannah Foster probation, license, and treatment collateral order fields.
-          weight: 3
-        - goal: Correct use of the required placeholder for missing identity/contact/order fields.
+        - goal: "Correct CC-1379 license suspension fields tied to the DUI conviction date."
           weight: 2
-        - goal: Correct Darla Nguyen fee-code selection, principal, paid amount, and current balance.
+        - goal: "Correct initial installment order classification and supported balance components."
+          weight: 3
+        - goal: "Correct installment schedule math including final partial payment and final due date."
+          weight: 3
+        - goal: "Correct budget review, policy band, and support classification for the selected installment."
           weight: 2
-        - goal: Correct Hannah Foster fee-code selection, principal, paid amount, and current balance.
-          weight: 3
-        - goal: Correct installment plan basis, monthly amount, counts, first dates, final dates, and final payments for both defendants.
-          weight: 3
-        - goal: Correct packet totals and follow-up action codes.
+        - goal: "Correct placeholder discipline for missing identifiers, contacts, and office details."
+          weight: 2
+        - goal: "Correct exclusion of unsupported financial items and restitution from the balance."
           weight: 1
-
+        - goal: "Correct return-to-court date, time, and nonpayment trigger."
+          weight: 1
   - task_id: train_004
     input: train_tasks/004/input/
     prompt_txt: train_tasks/004/input/prompt.txt
     payloads:
       - train_tasks/004/input/payloads/answer_template.json
-      - train_tasks/004/input/payloads/marion_mixed_misdemeanor_packet.json
+      - train_tasks/004/input/payloads/finance_memo_and_worksheet.csv
+      - train_tasks/004/input/payloads/union_county_hearing_notes.md
     notes: train_tasks/004/notes/notes.md
     output: train_tasks/004/output/
     answer_json: train_tasks/004/output/answer.json
@@ -144,33 +144,31 @@ train_tasks:
       script: train_tasks/004/eval/eval.sh
       files:
         - train_tasks/004/eval/eval.sh
-        - train_tasks/004/eval/evaluator.py
+        - train_tasks/004/eval/eval.py
       rubric:
-        - goal: Correct target Marion misdemeanor docket case set in ascending case-number order.
+        - goal: "Correct disposed target set and pending exclusion set."
           weight: 2
-        - goal: Correct resolved status and disposition date for each target case.
+        - goal: "Correct audit resolutions for DOB, counsel, lab-fee omission, amendment, and pending status conflicts."
+          weight: 2
+        - goal: "Correct disposition outcomes, pleas, dates, count treatment, and departure statuses for all target cases."
           weight: 3
-        - goal: Correct disposition class and convicted charge count for each target case.
-          weight: 2
-        - goal: Correct resolved counsel, defense type, and representation mismatch flag.
-          weight: 2
-        - goal: Correct approved fee-code set for each case, excluding unsupported or unpronounced fees.
+        - goal: "Correct court-cost and crime-lab fee postings per case, including lab fee only on the controlled-substance conviction."
           weight: 3
-        - goal: Correct current live principal and corrected approved principal to cents for each case.
-          weight: 3
-        - goal: Correct per-case financial deltas and aggregate count of cases needing financial adjustment.
-          weight: 3
-        - goal: Correct docket action code for each case.
+        - goal: "Correct fine and total-due amounts per case, including no financial posting for the continued matter."
           weight: 2
-        - goal: Correct case count, total financial delta, and representation mismatch case list.
+        - goal: "Correct docket/register action and docket code for each case."
           weight: 2
-
+        - goal: "Correct aggregate register totals for disposed cases, excluded cases, court costs, lab fees, fines, and batch total."
+          weight: 2
+        - goal: "Correct detailed exclusion record for UC-25-0238 with next status date and no financial posting."
+          weight: 1
   - task_id: train_005
     input: train_tasks/005/input/
     prompt_txt: train_tasks/005/input/prompt.txt
     payloads:
       - train_tasks/005/input/payloads/answer_template.json
-      - train_tasks/005/input/payloads/wasco_compliance_packet.json
+      - train_tasks/005/input/payloads/petition_summaries.json
+      - train_tasks/005/input/payloads/sentencing_probation_notes.json
     notes: train_tasks/005/notes/notes.md
     output: train_tasks/005/output/
     answer_json: train_tasks/005/output/answer.json
@@ -178,24 +176,24 @@ train_tasks:
       script: train_tasks/005/eval/eval.sh
       files:
         - train_tasks/005/eval/eval.sh
-        - train_tasks/005/eval/evaluator.py
+        - train_tasks/005/eval/eval.py
       rubric:
-        - goal: Correct included Wasco review matters, ordering, county, task id, and review date.
+        - goal: "Correctly identifies both target petitions, links them to the correct cases, and classifies both as initial installment petitions."
           weight: 2
-        - goal: Correct source-conflict and packet-exception codes for every included case.
+        - goal: "Selects supportable Gloucester monthly payment terms with no down payment for both petitions."
           weight: 2
-        - goal: Correct live ledger balances, packet credits, corrected balances, and aggregate corrected balance.
+        - goal: "Handles balances and Marcus Hill restitution priority correctly."
           weight: 3
-        - goal: Correct revised ability-to-pay plan for the approved DUI petition.
+        - goal: "Excludes account-management fees under Gloucester policy for both petitions."
+          weight: 2
+        - goal: "Computes complete payment schedule counts, final payment amounts, final due dates, and return dates for both petitions."
           weight: 3
-        - goal: Correct remaining-plan treatment for the open restitution case and active warrant-calendar plan.
+        - goal: "Prepares the correct CC-1375 probation referral status and probation dates for both cases."
           weight: 2
-        - goal: Correct restitution status across no-restitution, open-restitution, and disbursed-restitution matters.
+        - goal: "Prepares the correct CC-1379 license suspension dates and durations for both cases."
           weight: 2
-        - goal: Correct community-service completion status and remaining hours for the affected cases.
+        - goal: "Uses case-file placeholders for missing identifiers and contact/location fields without inventing values."
           weight: 2
-        - goal: Correct financial status, next-action routing, return-to-court count, and receipt-credit closeout set.
-          weight: 3
 
 test_tasks:
   - task_id: test_001
@@ -203,7 +201,8 @@ test_tasks:
     prompt_txt: test_tasks/001/input/prompt.txt
     payloads:
       - test_tasks/001/input/payloads/answer_template.json
-      - test_tasks/001/input/payloads/columbia_criminal_register_packet.json
+      - test_tasks/001/input/payloads/madison_hearing_notes_2025-07-14.txt
+      - test_tasks/001/input/payloads/madison_old_fee_worksheet.csv
     notes: test_tasks/001/notes/notes.md
     output: test_tasks/001/output/
     answer_json: test_tasks/001/output/answer.json
@@ -211,35 +210,31 @@ test_tasks:
       script: test_tasks/001/eval/eval.sh
       files:
         - test_tasks/001/eval/eval.sh
-        - test_tasks/001/eval/evaluator.py
+        - test_tasks/001/eval/eval.py
       rubric:
-        - goal: Correct metadata, six target cases, defendant names, and row order.
+        - goal: "Correct final case set and pending/draft matter exclusion."
           weight: 1
-        - goal: Correct case posture, disposition dates, charge-result codes, and probation months.
+        - goal: "Correct audit resolutions for DOB, criminal-history, and counsel/source conflicts."
           weight: 2
-        - goal: "Correct defense verification convention: verified defense type and representation source."
+        - goal: "Correct charge dispositions, pleas, sentences, counsel types, and criminal-history scores."
           weight: 3
-        - goal: Correct verified-defense source on carry-forward and prior-order rows.
+        - goal: "Correct per-case financial entries using mandatory Madison court costs and ordered fines."
           weight: 3
-        - goal: Correct disposition source precedence for each register row.
+        - goal: "Correctly treats stale worksheet fees, unsupported fee lines, pending draft amounts, and waived fine."
+          weight: 3
+        - goal: "Correct docket entries to post, including entry codes and no pending matter entry."
           weight: 1
-        - goal: Correct scheduled-fee-only components and restitution-as-principal assessment.
+        - goal: "Correct sentencing register aggregate totals."
+          weight: 3
+        - goal: "Correct controlled source-basis summary."
           weight: 1
-        - goal: Correct live-ledger before/after principal, delta, and ledger action.
-          weight: 1
-        - goal: Correct stable aggregate counts, restitution total, live-ledger before total, and new-assessment count.
-          weight: 1
-        - goal: Correct aggregate recomputation audit for stable row-derived totals and row sets.
-          weight: 1
-        - goal: Correct reduced source and financial summaries for train-anchored audit row sets.
-          weight: 2
-
   - task_id: test_002
     input: test_tasks/002/input/
     prompt_txt: test_tasks/002/input/prompt.txt
     payloads:
       - test_tasks/002/input/payloads/answer_template.json
-      - test_tasks/002/input/payloads/jefferson_afternoon_traffic_packet.json
+      - test_tasks/002/input/payloads/clatsop_hearing_closeout_memo.md
+      - test_tasks/002/input/payloads/clatsop_payment_form_excerpt.md
     notes: test_tasks/002/notes/notes.md
     output: test_tasks/002/output/
     answer_json: test_tasks/002/output/answer.json
@@ -247,34 +242,34 @@ test_tasks:
       script: test_tasks/002/eval/eval.sh
       files:
         - test_tasks/002/eval/eval.sh
-        - test_tasks/002/eval/evaluator.py
+        - test_tasks/002/eval/eval.py
       rubric:
-        - goal: Correct target citations, row order, account references, defendant names, county, and batch id.
+        - goal: "Correctly identifies the three target matters and records their dispositions."
+          weight: 1
+        - goal: "Correct current standard fine tier for OR27-TR-2201."
+          weight: 1
+        - goal: "Correct current standard fine tier for OR27-TR-2208."
+          weight: 1
+        - goal: "Keeps the dismissed high-speed matter out of fines, surcharge, and payment planning."
+          weight: 1
+        - goal: "Applies Clatsop surcharge once per payable citation and calculates batch financial totals."
+          weight: 1
+        - goal: "Records approved post-disposition extended payment-plan terms for both payable citations."
+          weight: 1
+        - goal: "Computes installment counts, final remainder amounts, final due dates, and total scheduled installments."
           weight: 2
-        - goal: Correct source-resolution decisions, final plea/disposition posture, order dates, assessment statuses, and decision flags.
+        - goal: "Uses the 27th Judicial District form metadata and citation numbers as account references."
           weight: 3
-        - goal: Correct violation code, violation source, and speed tier decisions, including amended and no-assessment rows.
+        - goal: "Excludes unsupported, stale, enhancement, and no-trigger charges from the starting balances."
           weight: 3
-        - goal: Correct effective fee schedule buckets, assessed components, schedule effective starts, and per-entry assessed totals.
-          weight: 3
-        - goal: Correct excluded candidate fee or charge codes and unsupported-policy-code count.
-          weight: 2
-        - goal: Correct payment-plan action, defect code, monthly amount, first due date, and first-due basis.
-          weight: 3
-        - goal: Correct installment counts, final payment amounts, total payment counts, and final due dates.
-          weight: 2
-        - goal: Correct monetary batch totals across prior/current schedules, fee categories, and entered plan principal.
-          weight: 2
-        - goal: Correct operational batch totals for assessment counts, exceptions, exclusions, plan defects, fee-schedule buckets, and post-disposition starts.
-          weight: 2
-
   - task_id: test_003
     input: test_tasks/003/input/
     prompt_txt: test_tasks/003/input/prompt.txt
     payloads:
       - test_tasks/003/input/payloads/answer_template.json
-      - test_tasks/003/input/payloads/middlesex_dui_packet.json
-      - test_tasks/003/input/payloads/stale_collateral_extract.csv
+      - test_tasks/003/input/payloads/appeal_sentencing_intake.json
+      - test_tasks/003/input/payloads/form_packet_excerpt.json
+      - test_tasks/003/input/payloads/payment_petition_and_budget.json
     notes: test_tasks/003/notes/notes.md
     output: test_tasks/003/output/
     answer_json: test_tasks/003/output/answer.json
@@ -282,33 +277,32 @@ test_tasks:
       script: test_tasks/003/eval/eval.sh
       files:
         - test_tasks/003/eval/eval.sh
-        - test_tasks/003/eval/evaluator.py
+        - test_tasks/003/eval/eval.py
       rubric:
-        - goal: Correct packet scope, defendant ordering, names, conviction postures, order dates, and charge outcomes.
+        - goal: "Correct case memo identity, appeal posture, sentence totals, and required work flags."
           weight: 1
-        - goal: Correct packet-vs-live source precedence and stale collateral extract rejection.
-          weight: 2
-        - goal: Correct identity fields and official case-file placeholder audit.
-          weight: 2
-        - goal: Correct collateral orders and rejected license-start candidate sources.
+        - goal: "Correct CC-1375 probation referral fields and report date-time."
+          weight: 1
+        - goal: "Correct CC-1379 license suspension fields tied to the DUI conviction date."
+          weight: 1
+        - goal: "Correct initial installment policy classification and supported balance components."
+          weight: 1
+        - goal: "Correct payment schedule math including final partial payment, final due date, and return-to-court setting."
           weight: 3
-        - goal: Correct ledger-versus-schedule financial source and amount fields.
-          weight: 2
-        - goal: Correct assessed fees and unsupported fee or charge exclusions.
-          weight: 2
-        - goal: Correct payment-plan authority, original-principal math, and rejected monthly candidates.
+        - goal: "Correct budget review, policy band, and support classification for the selected monthly amount."
+          weight: 1
+        - goal: "Correct placeholder discipline for missing identifiers, contacts, and probation-office details."
           weight: 3
-        - goal: Correct return-to-court routing and follow-up actions.
-          weight: 2
-        - goal: Correct packet-level aggregate recomputation from final rows.
-          weight: 2
-
+        - goal: "Correct exclusion of unsupported account-management fee and restitution from the order balance."
+          weight: 1
   - task_id: test_004
     input: test_tasks/004/input/
     prompt_txt: test_tasks/004/input/prompt.txt
     payloads:
       - test_tasks/004/input/payloads/answer_template.json
-      - test_tasks/004/input/payloads/benton_post_disposition_audit_packet.json
+      - test_tasks/004/input/payloads/lake_counsel_memo_and_worksheet.csv
+      - test_tasks/004/input/payloads/lake_finance_queue_payloads.json
+      - test_tasks/004/input/payloads/lake_hearing_notes_2025-06-18.md
     notes: test_tasks/004/notes/notes.md
     output: test_tasks/004/output/
     answer_json: test_tasks/004/output/answer.json
@@ -316,33 +310,31 @@ test_tasks:
       script: test_tasks/004/eval/eval.sh
       files:
         - test_tasks/004/eval/eval.sh
-        - test_tasks/004/eval/evaluator.py
+        - test_tasks/004/eval/eval.py
       rubric:
-        - goal: Correct task metadata, audit date, and currency.
+        - goal: "Correct final included case set and continued/pending exclusion record."
           weight: 1
-        - goal: Correct target Benton post-disposition criminal case set in ascending case-number order.
+        - goal: "Correct audit findings for counsel, filing/source, merged-count, departure, user-fee, and continued-status conflicts."
+          weight: 3
+        - goal: "Correct counsel-type reconciliation and conditional public-defender user-fee treatment for all target cases."
           weight: 2
-        - goal: Correct statuses, disposition dates, assessment basis dates, and source-conflict codes.
+        - goal: "Correct disposition outcomes, closeout actions, dates, count merging, pleas, sentences, and pending treatment."
           weight: 3
-        - goal: Correct defense attorney, defense type, and conditional counsel-fee treatment.
+        - goal: "Correct departure and non-departure classification for every target case."
+          weight: 1
+        - goal: "Correct per-case financial posting, fee inclusion/exclusion, and case totals."
+          weight: 1
+        - goal: "Correct docket/register action language codes, entry codes, dates, and amount due for each case."
           weight: 3
-        - goal: Correct approved fee component codes and amounts, including effective-date and counsel-cost rows.
-          weight: 3
-        - goal: Correct restitution amounts, corrected principal totals, and corrected balances due.
-          weight: 3
-        - goal: Correct live ledger principal, live paid credit, credit adjustment, effective paid credit, and principal delta.
-          weight: 3
-        - goal: Correct release-to-entry flags, hold reasons, and next action codes.
-          weight: 2
-        - goal: Correct aggregate counts, held-case set, financial rollups, credit-adjustment rollups, and counsel-fee totals.
-          weight: 3
-
+        - goal: "Correct aggregate Lake County register counts and dollar totals."
+          weight: 1
   - task_id: test_005
     input: test_tasks/005/input/
     prompt_txt: test_tasks/005/input/prompt.txt
     payloads:
       - test_tasks/005/input/payloads/answer_template.json
-      - test_tasks/005/input/payloads/monthly_financial_exception_packet.json
+      - test_tasks/005/input/payloads/petition_summaries.json
+      - test_tasks/005/input/payloads/sentencing_probation_notes.json
     notes: test_tasks/005/notes/notes.md
     output: test_tasks/005/output/
     answer_json: test_tasks/005/output/answer.json
@@ -350,21 +342,23 @@ test_tasks:
       script: test_tasks/005/eval/eval.sh
       files:
         - test_tasks/005/eval/eval.sh
-        - test_tasks/005/eval/evaluator.py
+        - test_tasks/005/eval/eval.py
       rubric:
-        - goal: Correct register identifiers, included/excluded case sets, and final register rank order.
-          weight: 1
-        - goal: Correct basic row priority buckets, row classifications, and action codes.
-          weight: 1
-        - goal: Correct candidate-level June actionability, scope reason, exclusion basis, and source family audit.
+        - goal: "Correct Hampton packet metadata and target petition/case identity set."
           weight: 2
-        - goal: Correct source precedence, live/local/stale source audit, and neutral reconciliation family codes.
+        - goal: "Correctly routes Owen Reeves as a second/default-review petition requiring judge or supervisor review."
           weight: 3
-        - goal: Correct live ledger facts, amount basis, correction components, correction amounts, and corrected balances.
+        - goal: "Correctly treats Owen Reeves with no account fee and restitution priority."
+          weight: 3
+        - goal: "Correctly treats Camila Ortiz as a first petition with the Hampton account fee included."
+          weight: 3
+        - goal: "Correct support classifications, approved monthly amounts, and no down payments for both petitions."
           weight: 2
-        - goal: Correct new-plan, existing-schedule, and return-to-court plan bases with installment math and exposure audit.
+        - goal: "Correct payment schedule dates, installment counts, final payments, and return-to-court dates for both petitions."
           weight: 3
-        - goal: Correct no-plan credit closeout and collateral-only zero-exposure handling.
+        - goal: "Correct CC-1375 probation referral status, terms, and reporting datetimes while keeping probation separate from payment."
           weight: 2
-        - goal: Correct aggregate counts, monetary totals, row-audit counts, and recomputed case-number sets.
-          weight: 3
+        - goal: "Correct Hampton CC-1379 license orders with conviction-date starts, durations, end dates, and no invented license numbers."
+          weight: 2
+        - goal: "Uses case-file placeholders for all missing identifiers and contact/location fields without inventing values."
+          weight: 2
