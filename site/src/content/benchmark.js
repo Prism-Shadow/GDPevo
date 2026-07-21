@@ -37,10 +37,10 @@ const v1LeaderboardRuns = [
     thinking: "xhigh",
     method: "skill-creator",
     modes: {
-      base: { acc: 46.72, std: 5.13, lift: 0, rounds: 14.91, tokens: 735.3, cost: 1.137 },
-      fewshot: { acc: 64.91, std: 6.36, lift: 18.19, rounds: 11.58, tokens: 451.7, cost: 0.805 },
-      self: { acc: 54.99, std: 8.73, lift: 8.27, rounds: 9.71, tokens: 344.3, cost: 0.771 },
-      "reflect-3": { acc: 57.45, std: 7.62, lift: 10.73, rounds: 10.83, tokens: 399.4, cost: 0.844 }
+      base: { acc: 46.72, std: 5.13, lift: 0, rounds: 14.91, roundsStd: 2.57, tokens: 735.3, tokensStd: 204.6, cost: 1.137, costStd: 0.2137 },
+      fewshot: { acc: 64.91, std: 6.36, lift: 18.19, liftStd: 9.83, rounds: 11.58, roundsStd: 1.75, tokens: 451.7, tokensStd: 107.1, cost: 0.805, costStd: 0.1225 },
+      self: { acc: 54.99, std: 8.73, lift: 8.27, liftStd: 10.73, rounds: 9.71, roundsStd: 1.27, tokens: 344.3, tokensStd: 60.1, cost: 0.771, costStd: 0.1157 },
+      "reflect-3": { acc: 57.45, std: 7.62, lift: 10.73, liftStd: 10.53, rounds: 10.83, roundsStd: 1.97, tokens: 399.4, tokensStd: 97.4, cost: 0.844, costStd: 0.1551 }
     }
   },
   {
@@ -49,10 +49,10 @@ const v1LeaderboardRuns = [
     thinking: "xhigh",
     method: "skill-creator",
     modes: {
-      base: { acc: 49.11, std: 5.25, lift: 0, rounds: 14.62, tokens: 385.8, cost: 0.607 },
-      fewshot: { acc: 70.9, std: 6.38, lift: 21.79, rounds: 11.1, tokens: 347.3, cost: 0.549 },
-      self: { acc: 57.37, std: 6.79, lift: 8.26, rounds: 11.78, tokens: 433.9, cost: 0.61 },
-      "reflect-3": { acc: 62.72, std: 6.68, lift: 13.62, rounds: 12.15, tokens: 433.4, cost: 0.605 }
+      base: { acc: 49.11, std: 5.25, lift: 0, rounds: 14.62, roundsStd: 2.08, tokens: 385.8, tokensStd: 72.1, cost: 0.607, costStd: 0.0839 },
+      fewshot: { acc: 70.9, std: 6.38, lift: 21.79, liftStd: 9.77, rounds: 11.1, roundsStd: 1.75, tokens: 347.3, tokensStd: 72.4, cost: 0.549, costStd: 0.0798 },
+      self: { acc: 57.37, std: 6.79, lift: 8.26, liftStd: 9.45, rounds: 11.78, roundsStd: 1.52, tokens: 433.9, tokensStd: 78.1, cost: 0.61, costStd: 0.0958 },
+      "reflect-3": { acc: 62.72, std: 6.68, lift: 13.62, liftStd: 8.32, rounds: 12.15, roundsStd: 1.58, tokens: 433.4, tokensStd: 73.1, cost: 0.605, costStd: 0.0843 }
     }
   },
   {
@@ -61,10 +61,10 @@ const v1LeaderboardRuns = [
     thinking: "high",
     method: "agent-training",
     modes: {
-      base: { acc: 50.4, std: 6.99, lift: 0, rounds: 15.16, tokens: 379.3, cost: 0.752 },
-      fewshot: { acc: 71.47, std: 4.93, lift: 21.07, rounds: 13.48, tokens: 385.5, cost: 0.814 },
-      self: { acc: 58.39, std: 5.74, lift: 7.99, rounds: 12.51, tokens: 341.8, cost: 0.707 },
-      "reflect-3": { acc: 59.82, std: 7.31, lift: 9.41, rounds: 14.37, tokens: 394.8, cost: 0.767 }
+      base: { acc: 50.4, std: 6.99, lift: 0, rounds: 15.16, roundsStd: 2.12, tokens: 379.3, tokensStd: 74.7, cost: 0.752, costStd: 0.1158 },
+      fewshot: { acc: 71.47, std: 4.93, lift: 21.07, liftStd: 10.51, rounds: 13.48, roundsStd: 1.89, tokens: 385.5, tokensStd: 68.6, cost: 0.814, costStd: 0.1229 },
+      self: { acc: 58.39, std: 5.74, lift: 7.99, liftStd: 10.26, rounds: 12.51, roundsStd: 2.75, tokens: 341.8, tokensStd: 115.1, cost: 0.707, costStd: 0.1462 },
+      "reflect-3": { acc: 59.82, std: 7.31, lift: 9.41, liftStd: 11.54, rounds: 14.37, roundsStd: 3.08, tokens: 394.8, tokensStd: 123.9, cost: 0.767, costStd: 0.1468 }
     }
   },
   {
@@ -73,10 +73,10 @@ const v1LeaderboardRuns = [
     thinking: "max",
     method: "skill-creator",
     modes: {
-      base: { acc: 47.73, std: 5.21, lift: 0, rounds: 17.57, tokens: 633.3, cost: 0.388 },
-      fewshot: { acc: 69.55, std: 8.85, lift: 21.83, rounds: 15.49, tokens: 606.3, cost: 0.34 },
-      self: { acc: 55.91, std: 7.84, lift: 8.18, rounds: 15.98, tokens: 634.8, cost: 0.348 },
-      "reflect-3": { acc: 63.35, std: 7.51, lift: 15.62, rounds: 15.36, tokens: 572.6, cost: 0.324 }
+      base: { acc: 47.73, std: 5.21, lift: 0, rounds: 17.57, roundsStd: 2.29, tokens: 633.3, tokensStd: 129.0, cost: 0.388, costStd: 0.0753 },
+      fewshot: { acc: 69.55, std: 8.85, lift: 21.83, liftStd: 11.61, rounds: 15.49, roundsStd: 2.53, tokens: 606.3, tokensStd: 125.9, cost: 0.34, costStd: 0.0741 },
+      self: { acc: 55.91, std: 7.84, lift: 8.18, liftStd: 10.29, rounds: 15.98, roundsStd: 2.39, tokens: 634.8, tokensStd: 110.1, cost: 0.348, costStd: 0.0493 },
+      "reflect-3": { acc: 63.35, std: 7.51, lift: 15.62, liftStd: 10.83, rounds: 15.36, roundsStd: 2.35, tokens: 572.6, tokensStd: 114.1, cost: 0.324, costStd: 0.0572 }
     }
   },
   {
@@ -85,10 +85,10 @@ const v1LeaderboardRuns = [
     thinking: "enabled",
     method: "skill-creator",
     modes: {
-      base: { acc: 25.14, std: 12.15, lift: 0, rounds: 46.24, tokens: 1226.7, cost: 0.338 },
-      fewshot: { acc: 30.48, std: 13.22, lift: 5.34, rounds: 37.87, tokens: 977, cost: 0.288 },
-      self: { acc: 29.16, std: 14.18, lift: 4.02, rounds: 32.67, tokens: 821.6, cost: 0.25 },
-      "reflect-3": { acc: 32.68, std: 14.25, lift: 7.54, rounds: 31.68, tokens: 950.5, cost: 0.28 }
+      base: { acc: 25.14, std: 12.15, lift: 0, rounds: 46.24, roundsStd: 15.25, tokens: 1226.7, tokensStd: 648.3, cost: 0.338, costStd: 0.1462 },
+      fewshot: { acc: 30.48, std: 13.22, lift: 5.34, liftStd: 21.38, rounds: 37.87, roundsStd: 12.98, tokens: 977, tokensStd: 439.8, cost: 0.288, costStd: 0.1098 },
+      self: { acc: 29.16, std: 14.18, lift: 4.02, liftStd: 17.68, rounds: 32.67, roundsStd: 11.26, tokens: 821.6, tokensStd: 429.0, cost: 0.25, costStd: 0.1094 },
+      "reflect-3": { acc: 32.68, std: 14.25, lift: 7.54, liftStd: 20.58, rounds: 31.68, roundsStd: 10.70, tokens: 950.5, tokensStd: 503.8, cost: 0.28, costStd: 0.1221 }
     }
   },
   {
@@ -97,10 +97,10 @@ const v1LeaderboardRuns = [
     thinking: "max",
     method: "skill-creator",
     modes: {
-      base: { acc: 46.06, std: 6.9, lift: 0, rounds: 13.22, tokens: 503.4, cost: 0.031 },
-      fewshot: { acc: 54.8, std: 9.65, lift: 8.74, rounds: 11.46, tokens: 439.9, cost: 0.032 },
-      self: { acc: 48.69, std: 8.75, lift: 2.63, rounds: 10.53, tokens: 405.7, cost: 0.032 },
-      "reflect-3": { acc: 49.22, std: 8.67, lift: 3.16, rounds: 10.26, tokens: 383.8, cost: 0.031 }
+      base: { acc: 46.06, std: 6.9, lift: 0, rounds: 13.22, roundsStd: 1.95, tokens: 503.4, tokensStd: 95.8, cost: 0.031, costStd: 0.0032 },
+      fewshot: { acc: 54.8, std: 9.65, lift: 8.74, liftStd: 13.17, rounds: 11.46, roundsStd: 2.40, tokens: 439.9, tokensStd: 107.0, cost: 0.032, costStd: 0.0044 },
+      self: { acc: 48.69, std: 8.75, lift: 2.63, liftStd: 11.19, rounds: 10.53, roundsStd: 1.71, tokens: 405.7, tokensStd: 77.5, cost: 0.032, costStd: 0.0034 },
+      "reflect-3": { acc: 49.22, std: 8.67, lift: 3.16, liftStd: 12.24, rounds: 10.26, roundsStd: 1.68, tokens: 383.8, tokensStd: 76.3, cost: 0.031, costStd: 0.0034 }
     }
   }
 ];
@@ -116,6 +116,7 @@ function createLeaderboardRows(version, runs) {
       thinking: run.thinking,
       method: run.method,
       mode,
+      baseAcc: run.modes.base.acc,
       ...run.modes[mode]
     }))
   );

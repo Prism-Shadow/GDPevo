@@ -2052,7 +2052,7 @@ body.blog .h3-spaced-sm { margin-top: 1.2rem; }
 }
 .blog-leaderboard table {
   width: 100%;
-  min-width: 79rem;
+  min-width: 91rem;
   border-collapse: collapse;
   table-layout: auto;
   color: var(--body);
@@ -2103,13 +2103,13 @@ body.blog .h3-spaced-sm { margin-top: 1.2rem; }
   text-align: left;
 }
 .blog-leaderboard .metric-column {
-  width: 6rem;
-  min-width: 6rem;
+  width: 7.4rem;
+  min-width: 7.4rem;
   text-align: center;
 }
-.blog-leaderboard .metric-column.is-active {
-  width: 16rem;
-  min-width: 16rem;
+.blog-leaderboard .metric-column.metric-acc {
+  width: 21rem;
+  min-width: 21rem;
 }
 .blog-leaderboard thead .metric-column { padding: 0; }
 .blog-leaderboard thead .metric-column button {
@@ -2129,20 +2129,11 @@ body.blog .h3-spaced-sm { margin-top: 1.2rem; }
   text-transform: inherit;
   white-space: nowrap;
 }
-.blog-leaderboard thead .metric-column.is-active button {
-  display: grid;
-  grid-template-columns: minmax(8rem, 1fr) 4.6rem;
-  gap: 0.48rem;
-}
 .blog-leaderboard .metric-heading {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.32rem;
-}
-.blog-leaderboard thead .metric-column.is-active .metric-heading {
-  grid-column: 2;
-  justify-self: stretch;
 }
 .blog-leaderboard thead .metric-column button:hover { color: var(--accent); }
 .blog-leaderboard thead .metric-column.is-active button { color: var(--accent); }
@@ -2213,21 +2204,34 @@ body.blog .h3-spaced-sm { margin-top: 1.2rem; }
 .blog-leaderboard .rank-2 { background: #edf0f5; color: #5c6475; }
 .blog-leaderboard .rank-3 { background: #f9e8db; color: #a54f1d; }
 .blog-leaderboard .metric-value {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.28rem;
   color: var(--ink);
   font-family: var(--mono);
   font-size: 0.7rem;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+.blog-leaderboard .metric-value small,
+.blog-leaderboard .metric-readout small {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.61rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
 .leaderboard-measure {
   display: grid;
-  grid-template-columns: minmax(8rem, 1fr) 4.6rem;
-  gap: 0.48rem;
+  grid-template-columns: minmax(8rem, 1fr) 8.7rem;
+  gap: 0.62rem;
   align-items: center;
 }
 .leaderboard-track {
+  position: relative;
   height: 0.78rem;
-  overflow: hidden;
   border-radius: 5px;
   background: #edf3f0;
 }
@@ -2237,7 +2241,27 @@ body.blog .h3-spaced-sm { margin-top: 1.2rem; }
   height: 100%;
   border-radius: 5px;
 }
-.leaderboard-measure b {
+.leaderboard-base-marker {
+  position: absolute;
+  z-index: 2;
+  top: -0.28rem;
+  bottom: -0.28rem;
+  left: var(--base-w);
+  width: 0;
+  border-left: 2px dashed #344054;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, .82));
+  pointer-events: none;
+  transform: translateX(-1px);
+}
+.leaderboard-measure .metric-readout {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.3rem;
+  min-width: 0;
+  white-space: nowrap;
+}
+.leaderboard-measure .metric-readout b {
   color: var(--ink);
   font-family: var(--mono);
   font-size: 0.71rem;
@@ -2246,16 +2270,26 @@ body.blog .h3-spaced-sm { margin-top: 1.2rem; }
   text-align: center;
   white-space: nowrap;
 }
+.blog-benchmark-legend i.base-marker-legend {
+  gap: 0.18rem;
+}
+.blog-benchmark-legend .base-marker-legend b {
+  width: 2px;
+  height: 0.9rem;
+  border-radius: 0;
+  border-left: 2px dashed #344054;
+  background: transparent;
+}
 .blog-leaderboard .mode-base .leaderboard-track span { background: linear-gradient(90deg, #d5dae8, #c4cade); }
 .blog-leaderboard .mode-fewshot .leaderboard-track span { background: linear-gradient(90deg, var(--fewshot-2), var(--fewshot)); }
 .blog-leaderboard .mode-self .leaderboard-track span { background: linear-gradient(90deg, #e6b567, var(--amber)); }
 .blog-leaderboard .mode-reflect-3 .leaderboard-track span { background: linear-gradient(90deg, var(--reflect-2), var(--reflect)); }
 .blog-leaderboard .mode-fewshot .mode-column code,
-.blog-leaderboard .mode-fewshot .leaderboard-measure b { color: var(--fewshot-ink); }
+.blog-leaderboard .mode-fewshot .leaderboard-measure .metric-readout b { color: var(--fewshot-ink); }
 .blog-leaderboard .mode-self .mode-column code,
-.blog-leaderboard .mode-self .leaderboard-measure b { color: #8a550b; }
+.blog-leaderboard .mode-self .leaderboard-measure .metric-readout b { color: #8a550b; }
 .blog-leaderboard .mode-reflect-3 .mode-column code,
-.blog-leaderboard .mode-reflect-3 .leaderboard-measure b { color: var(--reflect-ink); }
+.blog-leaderboard .mode-reflect-3 .leaderboard-measure .metric-readout b { color: var(--reflect-ink); }
 .blog-leaderboard .mode-fewshot .mode-column code i { background: var(--fewshot); }
 .blog-leaderboard .mode-self .mode-column code i { background: var(--amber); }
 .blog-leaderboard .mode-reflect-3 .mode-column code i { background: var(--reflect); }
@@ -2425,6 +2459,11 @@ body.blog .h3-spaced-sm { margin-top: 1.2rem; }
   box-shadow: 0 4px 14px rgba(83, 212, 157, .18);
 }
 [data-theme="dark"] .leaderboard-track { background: var(--track); }
+[data-theme="dark"] .leaderboard-base-marker,
+[data-theme="dark"] .blog-benchmark-legend .base-marker-legend b {
+  border-left-color: #f0f3fa;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, .85));
+}
 [data-theme="dark"] .blog-leaderboard tbody tr:hover { background: rgba(90, 213, 160, .05); }
 [data-theme="dark"] .blog-share-btn {
   color: var(--accent-ink);
@@ -2453,7 +2492,7 @@ body.blog .h3-spaced-sm { margin-top: 1.2rem; }
 [data-theme="dark"] .blog-benchmark-bar.mode-base .blog-benchmark-track span { background: linear-gradient(90deg, #3a4151, #454d60); }
 [data-theme="dark"] .blog-leaderboard .mode-base .leaderboard-track span { background: linear-gradient(90deg, #3a4151, #454d60); }
 [data-theme="dark"] .blog-leaderboard .mode-self .mode-column code,
-[data-theme="dark"] .blog-leaderboard .mode-self .leaderboard-measure b { color: #f1c577; }
+[data-theme="dark"] .blog-leaderboard .mode-self .leaderboard-measure .metric-readout b { color: #f1c577; }
 [data-theme="dark"] .hc { border-left-color: rgba(0, 0, 0, .35); }
 [data-theme="dark"] .radar-controls,
 [data-theme="dark"] .radar-active { background: var(--surface-2); }

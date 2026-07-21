@@ -37,32 +37,41 @@ const benchmarkMetrics = [
     key: "acc",
     label: { en: "ACC", zh: "准确率" },
     direction: "desc",
-    max: 100,
-    display: (value) => `${value.toFixed(2)}%`
+    stdKey: "std",
+    display: (value) => `${value.toFixed(2)}%`,
+    displayStd: (value) => `±${value.toFixed(2)}%`
   },
   {
     key: "lift",
     label: { en: "LIFT", zh: "准确率提升" },
     direction: "desc",
-    display: (value) => (value === 0 ? "—" : `+${value.toFixed(2)} pp`)
+    stdKey: "liftStd",
+    display: (value) => (value === 0 ? "—" : `+${value.toFixed(2)} pp`),
+    displayStd: (value) => `±${value.toFixed(2)} pp`
   },
   {
     key: "cost",
     label: { en: "COST", zh: "费用" },
     direction: "asc",
-    display: (value) => `$${value < 0.1 ? value.toFixed(3) : value.toFixed(2)}`
+    stdKey: "costStd",
+    display: (value) => `$${value < 0.1 ? value.toFixed(3) : value.toFixed(2)}`,
+    displayStd: (value) => `±$${value < 0.01 ? value.toFixed(3) : value.toFixed(2)}`
   },
   {
     key: "rounds",
     label: { en: "ROUNDS", zh: "轮次" },
     direction: "asc",
-    display: (value) => value.toFixed(2)
+    stdKey: "roundsStd",
+    display: (value) => value.toFixed(2),
+    displayStd: (value) => `±${value.toFixed(2)}`
   },
   {
     key: "tokens",
     label: { en: "TOKENS", zh: "令牌数" },
     direction: "asc",
-    display: (value) => `${value.toFixed(1)}k`
+    stdKey: "tokensStd",
+    display: (value) => `${value.toFixed(1)}k`,
+    displayStd: (value) => `±${value.toFixed(1)}k`
   }
 ];
 
@@ -75,6 +84,25 @@ function compareRows(left, right, sort) {
   const valueDelta = left[sort.key] - right[sort.key];
   if (valueDelta !== 0) return sort.direction === "asc" ? valueDelta : -valueDelta;
   return `${left.model}-${left.mode}`.localeCompare(`${right.model}-${right.mode}`);
+}
+
+function MetricReadout({ metric, row, strong = false }) {
+  const value = metric.display(row[metric.key]);
+  const std = row[metric.stdKey];
+  const content = (
+    <>
+      {strong ? <b>{value}</b> : <span>{value}</span>}
+      {Number.isFinite(std) && row[metric.key] !== 0 ? (
+        <small>({metric.displayStd(std)})</small>
+      ) : null}
+    </>
+  );
+
+  return strong ? (
+    <span className="metric-readout">{content}</span>
+  ) : (
+    <span className="metric-value">{content}</span>
+  );
 }
 
 function SummaryBenchmarkFigure({ className = "", modeLabels = {}, caption = blogBenchmark.caption }) {
@@ -161,12 +189,6 @@ function LeaderboardBenchmarkFigure({ className = "", modeLabels = {}, caption =
   const dataset = leaderboardDataset;
   const versionRows = dataset.rows;
   const activeMetric = benchmarkMetrics.find((metric) => metric.key === sort.key) ?? benchmarkMetrics[0];
-  const activeMax = activeMetric.max
-    ?? Math.max(...versionRows.map((row) => Math.abs(row[activeMetric.key])), 1);
-  const orderedMetrics = [
-    activeMetric,
-    ...benchmarkMetrics.filter((metric) => metric.key !== activeMetric.key)
-  ];
   const modeLabel = (mode) => modeLabels[mode] ?? mode;
   const rows = useMemo(
     () => [...versionRows].sort((left, right) => compareRows(left, right, sort)),
@@ -208,6 +230,10 @@ function LeaderboardBenchmarkFigure({ className = "", modeLabels = {}, caption =
                 {modeLabel(mode)}
               </i>
             ))}
+            <i className="base-marker-legend">
+              <b aria-hidden="true" />
+              <Lang en="base ACC" zh="base 准确率" />
+            </i>
           </span>
         </div>
       </figcaption>
@@ -227,11 +253,11 @@ function LeaderboardBenchmarkFigure({ className = "", modeLabels = {}, caption =
               <th className="method-column" scope="col">
                 <Lang en="Evolution method" zh="进化方法" />
               </th>
-              {orderedMetrics.map((metric) => {
+              {benchmarkMetrics.map((metric) => {
                 const isActive = metric.key === activeMetric.key;
                 return (
                   <th
-                    className={["metric-column", isActive ? "is-active" : ""].filter(Boolean).join(" ")}
+                    className={["metric-column", `metric-${metric.key}`, isActive ? "is-active" : ""].filter(Boolean).join(" ")}
                     scope="col"
                     key={metric.key}
                     aria-sort={isActive ? (sort.direction === "asc" ? "ascending" : "descending") : "none"}
@@ -269,22 +295,31 @@ function LeaderboardBenchmarkFigure({ className = "", modeLabels = {}, caption =
                 <td className="method-column">
                   {row.mode === "base" ? "-" : methodLabels[row.method]}
                 </td>
-                {orderedMetrics.map((metric) => {
+                {benchmarkMetrics.map((metric) => {
                   const isActive = metric.key === activeMetric.key;
+                  const isAcc = metric.key === "acc";
                   return (
                     <td
-                      className={["metric-column", isActive ? "is-active" : ""].filter(Boolean).join(" ")}
+                      className={["metric-column", `metric-${metric.key}`, isActive ? "is-active" : ""].filter(Boolean).join(" ")}
                       key={metric.key}
                     >
-                      {isActive ? (
+                      {isAcc ? (
                         <div className="leaderboard-measure">
-                          <div className="leaderboard-track" aria-hidden="true">
-                            <span style={{ "--w": `${(Math.abs(row[metric.key]) / activeMax) * 100}%` }} />
+                          <div
+                            className="leaderboard-track"
+                            aria-label={`ACC ${row.acc.toFixed(2)}%; base ACC ${row.baseAcc.toFixed(2)}%`}
+                          >
+                            <span style={{ "--w": `${row.acc}%` }} />
+                            <i
+                              className="leaderboard-base-marker"
+                              style={{ "--base-w": `${row.baseAcc}%` }}
+                              title={`base ACC ${row.baseAcc.toFixed(2)}%`}
+                            />
                           </div>
-                          <b>{metric.display(row[metric.key])}</b>
+                          <MetricReadout metric={metric} row={row} strong />
                         </div>
                       ) : (
-                        <span className="metric-value">{metric.display(row[metric.key])}</span>
+                        <MetricReadout metric={metric} row={row} />
                       )}
                     </td>
                   );
