@@ -221,6 +221,12 @@ function LeaderboardBenchmarkFigure({ className = "", modeLabels = {}, caption =
               />
             </em>
           </span>
+          <small className="blog-benchmark-bar-note">
+            <Lang
+              en="If evolution raises ACC, dark is base and light is the gain; otherwise, light is evolved ACC and the hollow dashed segment is the gap to base."
+              zh="若进化后 ACC 提升，深色段为 base、浅色段为增量；否则，浅色段为进化后 ACC，空心虚线段为与 base 的差距。"
+            />
+          </small>
         </div>
         <div className="blog-benchmark-actions">
           <span className="blog-benchmark-legend" aria-label="Chart legend">
@@ -230,10 +236,6 @@ function LeaderboardBenchmarkFigure({ className = "", modeLabels = {}, caption =
                 {modeLabel(mode)}
               </i>
             ))}
-            <i className="base-marker-legend">
-              <b aria-hidden="true" />
-              <Lang en="base ACC" zh="base 准确率" />
-            </i>
           </span>
         </div>
       </figcaption>
@@ -306,15 +308,39 @@ function LeaderboardBenchmarkFigure({ className = "", modeLabels = {}, caption =
                       {isAcc ? (
                         <div className="leaderboard-measure">
                           <div
-                            className="leaderboard-track"
+                            className={[
+                              "leaderboard-track",
+                              row.mode === "base"
+                                ? "is-base"
+                                : row.acc >= row.baseAcc
+                                  ? "is-gain"
+                                  : "is-loss"
+                            ].join(" ")}
                             aria-label={`ACC ${row.acc.toFixed(2)}%; base ACC ${row.baseAcc.toFixed(2)}%`}
                           >
-                            <span style={{ "--w": `${row.acc}%` }} />
-                            <i
-                              className="leaderboard-base-marker"
-                              style={{ "--base-w": `${row.baseAcc}%` }}
-                              title={`base ACC ${row.baseAcc.toFixed(2)}%`}
-                            />
+                            {row.mode === "base" ? (
+                              <span className="leaderboard-base-fill" style={{ "--w": `${row.acc}%` }} />
+                            ) : (
+                              <>
+                                <span className="leaderboard-evolved-fill" style={{ "--w": `${row.acc}%` }} />
+                                {row.acc >= row.baseAcc ? (
+                                  <span
+                                    className="leaderboard-base-fill"
+                                    style={{ "--w": `${row.baseAcc}%` }}
+                                    title={`base ACC ${row.baseAcc.toFixed(2)}%`}
+                                  />
+                                ) : (
+                                  <span
+                                    className="leaderboard-base-overhang"
+                                    style={{
+                                      "--start": `${row.acc}%`,
+                                      "--w": `${row.baseAcc - row.acc}%`
+                                    }}
+                                    title={`base ACC ${row.baseAcc.toFixed(2)}%`}
+                                  />
+                                )}
+                              </>
+                            )}
                           </div>
                           <MetricReadout metric={metric} row={row} strong />
                         </div>
