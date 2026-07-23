@@ -1,0 +1,41 @@
+id: deepseek_v4_max_preview
+status: blocked_until_provider_is_resolved
+harness: codex
+
+generator:
+  model: null
+  model_provider: null
+  reasoning_effort: null
+
+solver:
+  model: null
+  model_provider: null
+  reasoning_effort: null
+
+provider:
+  kind: custom_codex_provider
+  base_url: null
+  wire_api: responses
+  env_key: null
+  auth: null
+
+resolution_required:
+  - exact_preview_model_id
+  - responses_compatible_base_url
+  - codex_model_provider_id
+  - api_key_environment_variable
+  - codex_supported_reasoning_setting
+  - observed_model_identity_method
+  - token_and_cost_rate_card
+
+pricing:
+  status: unresolved
+  basis: null
+  uncached_input_usd_per_million: null
+  cached_input_usd_per_million: null
+  output_usd_per_million: null
+
+notes:
+  - Do not substitute the existing Claude Code Anthropic-compatible DeepSeek configuration.
+  - Do not write model_reasoning_effort=max unless the installed Codex version explicitly supports it.
+  - Resolve every null into the sanitized run manifest before formal execution.

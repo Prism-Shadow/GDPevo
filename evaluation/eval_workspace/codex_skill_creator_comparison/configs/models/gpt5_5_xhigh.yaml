@@ -1,0 +1,25 @@
+id: gpt5_5_xhigh
+status: ready
+harness: codex
+
+generator:
+  model: gpt-5.5
+  model_provider: openai
+  reasoning_effort: xhigh
+
+solver:
+  model: gpt-5.5
+  model_provider: openai
+  reasoning_effort: xhigh
+
+provider:
+  kind: built_in_openai
+  wire_api: responses
+  auth: codex_auth_json
+
+pricing:
+  status: configured_from_existing_codex_workspace
+  basis: standard_api_text_token_equivalent
+  uncached_input_usd_per_million: 5.00
+  cached_input_usd_per_million: 0.50
+  output_usd_per_million: 30.00
