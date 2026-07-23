@@ -201,6 +201,14 @@ train_answers/           # matching standard answer.json files
 environment_access.md
 ```
 
+Resolve source paths from the selected task group's `task_group.yaml`; do not
+infer them from directory names. Normalize each train input into
+`train_tasks/<task_id>/input/` and its declared standard answer into
+`train_answers/<task_id>/answer.json`. Thus a source such as
+`train_tasks/001/input/` with `task_id: train_001` is staged as
+`train_tasks/train_001/input/`. Reject a missing, duplicate, or unexpected task
+ID before the first formal slot.
+
 Do not stage test material, notes, evaluators, environment source, previous
 runs, or another creator.
 
@@ -238,6 +246,12 @@ runs/<model_profile>/fewshot/<creator>/<test_id>/attempt_<nn>/
 
 Stage only the current test `input/`, `environment_access.md`, and the complete
 matching generated package as read-only `skill/`.
+
+Resolve the test input and evaluator paths from `task_group.yaml`. Stage the
+declared input as `/work/input/`, keep the declared `task_id` as the canonical
+run/report key, and execute the declared evaluator only from orchestrator
+context after the agent container stops. Never infer task identity from the
+source directory name.
 
 Solver `attempt_<nn>` must use that creator's `fewshot_attempt_<nn>`. Verify the
 package digest before staging. Do not expose train material, creator bundles,
