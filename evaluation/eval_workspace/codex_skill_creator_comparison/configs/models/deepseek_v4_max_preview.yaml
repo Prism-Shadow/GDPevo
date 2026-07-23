@@ -35,7 +35,7 @@ pricing:
   cached_input_usd_per_million: null
   output_usd_per_million: null
 
-preflight:
+startup_check:
   require_codex_executable: true
   require_responses_api: true
   require_streaming_tool_call_probe: true
@@ -45,4 +45,4 @@ preflight:
 notes:
   - Do not substitute the existing Claude Code Anthropic-compatible DeepSeek configuration.
   - Do not write model_reasoning_effort=max unless the installed Codex version explicitly supports it.
-  - Resolve every null into the sanitized run manifest; mark only that resolved manifest ready after a successful isolated smoke run.
+  - Resolve every null into the sanitized run manifest; mark the profile ready only after a successful isolated startup check.
