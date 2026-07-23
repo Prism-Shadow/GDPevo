@@ -92,10 +92,16 @@ restarting the profile from a clean main-orchestrator session.
 
 ## Docker Isolation
 
-Mount only the current staged attempt directory as `/work`. Never mount the
-full task group, evaluation workspace, repository, host home, host
+Mount one attempt-owned writable directory as `/work`, then overlay every
+agent-visible input at its exact `/work` destination with a separate read-only
+bind mount. The writable root is only for declared agent outputs. Never mount
+the full task group, evaluation workspace, repository, host home, host
 `CODEX_HOME`, notes, evaluators, source test answers, previous runs, or another
 creator bundle.
+
+Set `PYTHONDONTWRITEBYTECODE=1` in every generator and solver container. Do not
+rely on file permissions alone: Docker `:ro` mounts must enforce input
+immutability even though the agent runs with bypassed sandbox approval.
 
 Read `GDPEVO_AGENT_IMAGE` directly from the current workspace's `.env`. Inspect
 only that reference and resolve it to one immutable local image ID. If it is
@@ -144,6 +150,7 @@ Use the selected profile for both generator and solver:
 install -d -m 700 /tmp/gdpevo-agent-home /tmp/gdpevo-codex-home
 HOME=/tmp/gdpevo-agent-home \
 CODEX_HOME=/tmp/gdpevo-codex-home \
+PYTHONDONTWRITEBYTECODE=1 \
 codex exec \
   -C /work \
   -m "<resolved_model_id>" \
@@ -201,6 +208,16 @@ train_answers/           # matching standard answer.json files
 environment_access.md
 ```
 
+Mount `creator/`, `creator_contract.md`, `train_tasks/`, `train_answers/`, and
+`environment_access.md` separately with `:ro`. Only `/work/skill/` and
+`/work/contamination_report.txt` may be created or changed. Hash every mounted
+input tree or file immediately before container start and immediately after
+container stop. Use `sorted_relative_file_sha256_v1` plus
+`git_executable_bit_v1` for directories and SHA-256 of exact bytes for
+individual files. Any change is an orchestration infrastructure failure;
+preserve the physical attempt, stop the profile, and fix the staging
+implementation before a clean restart.
+
 Resolve source paths from the selected task group's `task_group.yaml`; do not
 infer them from directory names. Normalize each train input into
 `train_tasks/<task_id>/input/` and its declared standard answer into
@@ -216,10 +233,16 @@ Use the fixed generation prompt. The process writes `skill/SKILL.md` and any
 supporting files under `skill/`. After it exits:
 
 1. Preserve the matching primary trace and usage metadata.
-2. Check for contamination and symbolic links.
-3. Validate `SKILL.md` and referenced local files without editing them.
-4. Calculate package content and executable-bit digests.
-5. For a valid package, copy the complete package without modification to:
+2. Run `tools/codex_trace_metrics.py` on that primary trace and require complete
+   cumulative token, turn, and tool-call metrics.
+3. Merge its `portability_warnings` into generation metadata. A creator tool
+   dependency failure is an observed portability result, not permission to
+   install a package or edit the creator.
+4. Verify every read-only input hash is unchanged.
+5. Check for contamination and symbolic links.
+6. Validate `SKILL.md` and referenced local files without editing them.
+7. Calculate package content and executable-bit digests.
+8. For a valid package, copy the complete package without modification to:
 
    ```text
    skills/<model_profile>/fewshot/<creator>/fewshot_attempt_<nn>/
@@ -246,6 +269,12 @@ runs/<model_profile>/fewshot/<creator>/<test_id>/attempt_<nn>/
 
 Stage only the current test `input/`, `environment_access.md`, and the complete
 matching generated package as read-only `skill/`.
+
+Mount `input/`, `environment_access.md`, and, for few-shot, `skill/` separately
+with `:ro`. Only `/work/answer.json` and
+`/work/contamination_report.txt` may be created or changed. Hash all mounted
+inputs before and after the attempt with the same directory/file algorithms
+used for generation; a change is orchestration infrastructure failure.
 
 Resolve the test input and evaluator paths from `task_group.yaml`. Stage the
 declared input as `/work/input/`, keep the declared `task_id` as the canonical
@@ -315,8 +344,25 @@ Delete the temporary extraction directory after selecting the trace. Do not use
 databases, or stdout as the formal trace.
 
 Populate token, cost, turn, tool-call, and observed-model fields from the copied
-primary trace. Remove the stopped agent container only after output, trace, and
-metadata are complete.
+primary trace only by invoking:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 \
+python3 tools/codex_trace_metrics.py "$PRIMARY_TRACE"
+```
+
+Do not copy, wrap, generalize, or independently reimplement this parser in a
+temporary helper. It deliberately selects the final
+`event_msg.payload.info.total_token_usage`, never `last_token_usage` and never a
+recursively discovered usage object. Require non-null cumulative token fields,
+`assistant_turns`, and `tool_calls`; recompute cost only from those cumulative
+fields. Record the parser path, SHA-256, `usage_source`, and self-test result in
+the run manifest. A parser failure or incomplete metrics is orchestration
+infrastructure failure and stops the profile rather than producing partial
+formal metadata.
+
+Remove the stopped agent container only after output, trace, and metadata are
+complete.
 
 Never inspect host `$HOME/.codex/sessions` or any previous experiment trace to
 learn or infer the trace schema. Trace discovery and parsing must use only the

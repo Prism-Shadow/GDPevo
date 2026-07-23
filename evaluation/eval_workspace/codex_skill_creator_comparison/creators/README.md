@@ -110,10 +110,12 @@ not imply official OpenCode maintenance or endorsement.
 ## Runtime Staging
 
 For a generation run, copy the selected `upstream/` directory to `/work/creator/`
-without changing its contents. Stage the common `COMMON_CONTRACT.md` as
-`/work/creator_contract.md`. The generator reads both, with the common contract
-controlling experiment boundaries and the upstream bundle controlling creator
-strategy.
+without changing its contents and bind-mount that staged copy with `:ro`. Stage
+the common `COMMON_CONTRACT.md` as a separate read-only
+`/work/creator_contract.md`. Set `PYTHONDONTWRITEBYTECODE=1`, and verify the
+creator content and executable-bit hashes before and after the container. The
+generator reads both, with the common contract controlling experiment
+boundaries and the upstream bundle controlling creator strategy.
 
 No creator-specific adapter prompt is allowed unless it is reviewed, frozen,
 hashed, and reported as an additional experimental artifact.

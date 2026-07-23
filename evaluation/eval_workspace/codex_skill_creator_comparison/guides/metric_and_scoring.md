@@ -112,18 +112,35 @@ Generation usage is reported separately from solver efficiency.
 
 ## Trace Accounting
 
-Use the final session-cumulative usage snapshot from the matching Codex primary
-trace. Do not sum cumulative token events. If a provider exposes non-cumulative
-per-response usage, document that mode and count one final record per stable
-response ID.
+For Codex primary traces, invoke `tools/codex_trace_metrics.py`; temporary
+helpers must not reimplement trace accounting. The fixed tool selects only the
+last `event_msg` whose payload is `token_count`, then reads exactly:
 
-Count assistant/model responses by stable response ID. Count solver-initiated
-`function_call` and `custom_tool_call` items; do not count tool results.
+```text
+payload.info.total_token_usage
+```
+
+Never use `payload.info.last_token_usage`, never recursively search for a usage
+dictionary, and never sum cumulative token events.
+
+Count assistant turns from `response_item` records with
+`payload.type=message` and `payload.role=assistant`, de-duplicating stable IDs
+when present and counting ID-less records individually. Only when no such
+records exist may `event_msg.agent_message` be used as the fallback. Count
+`function_call` and `custom_tool_call` records by stable call ID, counting
+ID-less calls individually; do not count tool results.
+
+The fixed parser also reports creator dependency failures visible in the trace,
+such as `ModuleNotFoundError` under `/work/creator/`, as
+`portability_warnings`. Do not install a missing dependency or turn the warning
+into an infrastructure retry when the agent can still produce a logical result.
 
 If the trace is missing or ambiguous due to orchestration, classify the
 physical execution as infrastructure failure, preserve it under
 `scratch/infrastructure_failures/`, and rerun the same logical slot with a new
-UUID. Do not estimate trace-derived fields.
+UUID. A matched trace with missing cumulative usage, assistant turns, or tool
+calls is also infrastructure failure and stops the profile. Do not estimate
+trace-derived fields.
 
 ## Cost
 

@@ -39,7 +39,9 @@ A small helper authored under `scratch/` from the current guides may automate
 staging and execution. Do not search for, read, copy, or adapt a runner from
 another workspace or previous experiment. Record its hash and freeze its bytes
 before the first formal slot. A later helper change requires an infrastructure
-restart, not an in-place resume.
+restart, not an in-place resume. The helper must invoke
+`tools/codex_trace_metrics.py`; it must not contain another trace-metrics
+implementation.
 
 ## 2. Prepare Docker
 
@@ -53,7 +55,13 @@ the image.
 
 Use the host UID:GID for every agent container. Use a clean container-local
 `HOME` and `CODEX_HOME`, minimum read-only authentication bootstrap, and the
-same sanitized provider/proxy setup for every creator and solver.
+same sanitized provider/proxy setup for every creator and solver. Set
+`PYTHONDONTWRITEBYTECODE=1` for every agent.
+
+Run `PYTHONDONTWRITEBYTECODE=1 python3
+tools/codex_trace_metrics.py --self-test` before writing the run manifest.
+Record the tool hash and passing result. This deterministic check is ordinary
+runtime validation; it is not a model invocation or scored slot.
 
 Start task environments and networks according to `env.state_mode`. Use
 `TASK_ENV_ENABLE_JUDGE=0`. Verify health from the same network before launching
@@ -120,6 +128,13 @@ Stage only:
 - `environment_access.md` containing only the base URL, required credentials,
   and allowed business endpoint names.
 
+Bind-mount each of those five input groups separately with `:ro` over the
+attempt-owned writable `/work`. Hash each staged input before and after the
+container. Only `skill/` and `contamination_report.txt` are writable generation
+outputs. Use `sorted_relative_file_sha256_v1` and
+`git_executable_bit_v1` for directory inputs and SHA-256 of exact bytes for
+individual file inputs.
+
 Source directory names need not equal task IDs. For example,
 `train_tasks/001/input/` declared as `task_id: train_001` must become
 `train_tasks/train_001/input/` in `/work`.
@@ -131,11 +146,14 @@ creator, or judge access.
 After exit:
 
 1. Extract and uniquely match the primary trace.
-2. Record tokens, cost, turns, tool calls, duration, model identity, and status.
-3. Check contamination and symbolic links.
-4. Validate the package without editing it.
-5. Calculate content and executable-bit digests.
-6. Copy a valid complete package without modification to:
+2. Invoke `tools/codex_trace_metrics.py` and record its cumulative token, turn,
+   tool-call, model, source, and portability-warning fields. Never parse
+   `last_token_usage`.
+3. Verify every staged input hash is unchanged.
+4. Check contamination and symbolic links.
+5. Validate the package without editing it.
+6. Calculate content and executable-bit digests.
+7. Copy a valid complete package without modification to:
 
    ```text
    skills/<model_profile>/fewshot/<creator>/fewshot_attempt_<nn>/
@@ -161,7 +179,8 @@ Stage only the current test `input/` and `environment_access.md`. Use the Base
 Test Solver prompt. Resolve the source input and evaluator from the selected
 entry in `task_group.yaml`, stage its input as `/work/input/`, and keep its
 declared `task_id` as the canonical run key. There is one shared base branch,
-not one base per creator.
+not one base per creator. Mount both inputs with `:ro`; only `answer.json` and
+`contamination_report.txt` are writable.
 
 ### Few-Shot Creators
 
@@ -178,6 +197,9 @@ matching package as read-only `skill/`. Verify:
 solver attempt_<nn> -> same creator's fewshot_attempt_<nn>
 ```
 
+Mount all three inputs separately with `:ro`, hash them before and after the
+attempt, and keep only `answer.json` and `contamination_report.txt` writable.
+
 If that package is invalid or missing, record the solver slot as
 `not_runnable`; do not substitute another skill or base. Continue base and
 other runnable creator branches in the fixed order.
@@ -189,11 +211,14 @@ environment source, reports, traces, or judge instructions.
 After exit:
 
 1. Preserve and uniquely match the primary trace.
-2. Check contamination.
-3. Call the task evaluator from orchestrator context.
-4. Write `answer.json`, `score.yaml`, and `run_metadata.yaml`.
-5. Populate trace-derived usage and model identity.
-6. Remove the agent container and temporary trace extraction directory.
+2. Invoke `tools/codex_trace_metrics.py` and require complete cumulative
+   metrics.
+3. Verify every staged input hash is unchanged.
+4. Check contamination.
+5. Call the task evaluator from orchestrator context.
+6. Write `answer.json`, `score.yaml`, and `run_metadata.yaml`.
+7. Populate trace-derived usage and model identity.
+8. Remove the agent container and temporary trace extraction directory.
 
 ## 6. Failure Handling
 
