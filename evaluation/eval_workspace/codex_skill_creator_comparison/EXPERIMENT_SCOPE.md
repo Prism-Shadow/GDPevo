@@ -12,6 +12,11 @@ Infer the task group from the exactly one directory under `task_group/`. Load
 the harness, modes, creator set, attempt counts, prompts, limits, and reporting
 rules from `configs/experiment.yaml`. Do not accept per-run overrides.
 
+Machine runtime inputs such as the approved agent image, exact auth bootstrap
+file, owner label, and uniform proxy are resolved from the current workspace's
+uncommitted `.env`. They are fixed infrastructure, not experimental factors.
+They must not be inferred from previous experiments.
+
 ## Fixed Factors
 
 Within one model-profile report, keep fixed:
@@ -20,7 +25,8 @@ Within one model-profile report, keep fixed:
 - The resolved model, provider, and reasoning configuration.
 - The task group, five train examples, and five test tasks.
 - Task environment, endpoint exposure, evaluators, prompts, and timeouts.
-- Docker isolation, authentication method, agent image, and task image.
+- Docker isolation, authentication method, explicitly supplied immutable agent
+  image, and task image.
 - Attempt counts and fixed round-robin execution order.
 
 ## Experimental Factor

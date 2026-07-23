@@ -23,6 +23,11 @@ Accept only `model_profile` and require exactly one directory under
 
 Verify:
 
+- The orchestrator has not read or searched outside the source boundary defined
+  in `CODEX_ORCHESTRATOR.md`.
+- The current workspace has a resolved uncommitted `.env` with an approved
+  immutable `GDPEVO_AGENT_IMAGE`, exact auth bootstrap path, owner, task port,
+  and uniform proxy policy.
 - Generator and solver both use Codex and the same resolved profile.
 - Provider, authentication, reasoning, and pricing fields are resolved.
 - All four creator manifests and bundles pass hash and license checks.
@@ -30,14 +35,21 @@ Verify:
   standard answers, and evaluators.
 - No formal output already occupies the selected model-profile paths.
 
-A small helper under `scratch/` may automate staging and execution, but the
-experiment does not require building or freezing a separate runner before it
-starts.
+A small helper authored under `scratch/` from the current guides may automate
+staging and execution. Do not search for, read, copy, or adapt a runner from
+another workspace or previous experiment. Record its hash and freeze its bytes
+before the first formal slot. A later helper change requires an infrastructure
+restart, not an in-place resume.
 
 ## 2. Prepare Docker
 
 Build the task image once and use its immutable image ID throughout the profile.
-Resolve and record the agent image ID, Codex CLI version, and host UID:GID.
+Resolve only the explicitly configured local `GDPEVO_AGENT_IMAGE`; record its
+supplied reference, immutable image ID, Codex CLI version, and host UID:GID. Do
+not list old experiment images or select a fallback. In a disposable container,
+confirm `/work` is empty and no authentication file, Codex runtime home or
+session, task material, generated skill, or previous run output is baked into
+the image.
 
 Use the host UID:GID for every agent container. Use a clean container-local
 `HOME` and `CODEX_HOME`, minimum read-only authentication bootstrap, and the

@@ -55,6 +55,34 @@ setup. Apply them uniformly to every agent under the selected profile and record
 sanitized values in run metadata; do not hard-code them in this reusable
 workspace.
 
+## Machine Runtime Inputs
+
+`model_profile` is the only experimental run parameter. Before starting the
+orchestrator, resolve these machine inputs in an uncommitted `.env` copied from
+`.env.example`:
+
+```text
+GDPEVO_RUN_OWNER
+GDPEVO_AGENT_IMAGE
+GDPEVO_CODEX_AUTH_JSON
+GDPEVO_DOCKER_PROXY_URL
+TASK_ENV_BIND
+TASK_ENV_PORT
+GDPEVO_ENV_BASE_URL
+```
+
+`GDPEVO_AGENT_IMAGE` must be an explicitly approved, task-agnostic, immutable
+local image ID or digest containing Codex. Do not search old experiment images
+for a candidate, use a task-specific image by inference, pull a moving tag, or
+build a replacement during a formal profile. Resolve and record its immutable
+image ID once.
+
+`GDPEVO_CODEX_AUTH_JSON` must name the one exact bootstrap credential file.
+Never search or inspect the rest of the host Codex home. If
+`GDPEVO_DOCKER_PROXY_URL` is non-empty, apply it uniformly to both cases of
+`HTTP_PROXY`, `HTTPS_PROXY`, and `ALL_PROXY`. Runtime inputs are not prompt
+variables and raw secrets must not be recorded.
+
 ## Directories
 
 | Path | Purpose |
@@ -158,7 +186,11 @@ Do not reduce attempt counts in a formal report.
 - The selected model profile must resolve without placeholders.
 - The same model profile is used for generation and solving.
 - The task group must contain 5 train tasks and 5 test tasks.
+- All required machine runtime inputs must be explicit and contain no
+  placeholders.
 - A formal run never downloads or updates a creator bundle.
+- The orchestrator never reads another workspace, historical runner, report, or
+  host session trace.
 - Secrets never enter `/work`, generated skills, traces, or reports.
 - The DeepSeek profile remains blocked until its exact model, provider,
   Responses-compatible endpoint, authentication, reasoning setting, and pricing

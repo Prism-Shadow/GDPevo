@@ -8,6 +8,40 @@ and aggregate reports. It must not solve train or test tasks itself.
 Every generation and solver attempt runs as a separate Codex process in Docker
 with a clean container-local `CODEX_HOME`.
 
+## Orchestrator Source Boundary
+
+Resolve the current workspace root once and keep all orchestration source,
+staging, metadata, and reports beneath it. The main orchestrator may use only:
+
+- Files inside the current workspace.
+- The exact auth file named by `GDPEVO_CODEX_AUTH_JSON`, read-only.
+- The explicitly configured machine runtime values, without printing secrets.
+- Docker metadata and operations for the configured agent image, the task image
+  built from this workspace, and containers/networks created for this run.
+- Installed command-line tools only for their executable behavior, version, and
+  help output.
+
+The orchestrator must not search, list, read, copy, import, or summarize:
+
+- Parent, sibling, or historical evaluation workspaces.
+- Previous runner, orchestrator, helper, report, trace, skill, or attempt files.
+- Host `$HOME/.codex` content other than the exact configured auth file,
+  including sessions, history, logs, databases, config, plugins, skills, and
+  caches.
+- Docker images, containers, networks, or logs belonging to another task or
+  experiment.
+
+Unrestricted host filesystem access is not permission to use historical
+material. Do not run broad searches under `/home`, a parent `test/` directory,
+or the Docker image catalog to find implementation examples.
+
+Any temporary helper must be authored under `scratch/` from the current
+workspace guides and standard tool documentation only. Do not copy or adapt an
+external runner. A source-boundary violation is an orchestration infrastructure
+failure, not a creator result: preserve a concise incident record, stop the
+profile, clean run-owned resources, and restart with a new main-orchestrator
+session.
+
 ## Resolve One Profile
 
 Accept only `model_profile`. Require exactly one task-group directory and load
@@ -15,12 +49,20 @@ all four creators from `configs/experiment.yaml`.
 
 Before formal attempts, verify:
 
+- An uncommitted `.env` exists in the current workspace and every required
+  machine input is resolved without placeholders.
 - Generator and solver resolve to the same model profile.
 - Required provider, authentication, and reasoning values are present.
 - Each creator manifest is pinned and matches its complete upstream bundle.
 - The task group has the expected 5-train/5-test structure.
-- The selected agent image contains the required Codex executable and its
-  container-local authentication passes `codex login status`.
+- `GDPEVO_AGENT_IMAGE` resolves locally to the approved immutable agent image,
+  contains the required Codex executable, and uses the same resolved image ID
+  throughout the profile.
+- A disposable inspection of that image confirms `/work` is empty and no
+  authentication file, Codex runtime home or session, task material, generated
+  skill, or previous run output is baked into it.
+- The exact `GDPEVO_CODEX_AUTH_JSON` bootstrap passes container-local
+  `codex login status`.
 - The task image is reachable and healthy from the agent network.
 
 These are runtime setup checks, not a separate model run. The first model
@@ -33,15 +75,20 @@ scratch/run_manifest/<model_profile>.yaml
 ```
 
 Record the resolved model/provider/reasoning values, task-group ID, Codex
-version, agent and task image IDs, resolved agent UID:GID, creator revisions and
-bundle hashes, prompt template IDs and hashes, common-contract hash, attempt
-counts, fixed execution order, runtime-setup results, and sanitized
-proxy/endpoint information. Do not record secrets.
+version, configured agent-image reference and resolved image ID, task image ID,
+resolved agent UID:GID, creator revisions and bundle hashes, prompt template IDs
+and hashes, common-contract hash, attempt counts, fixed execution order,
+runtime-setup results, and sanitized proxy/endpoint information. Do not record
+secrets or the host auth path.
 
 Use only this run manifest for the resolved profile.
 
-Temporary helper scripts may be written under `scratch/`. They do not need to be
-committed before execution.
+Temporary helper scripts may be written under `scratch/` from these guides. They
+do not need to be committed before execution, but their hash must be recorded in
+the run manifest and they must not be copied from another workspace. Freeze
+their bytes before the first formal slot. A later helper change is an
+infrastructure change and requires preserving the incident evidence and
+restarting the profile from a clean main-orchestrator session.
 
 ## Docker Isolation
 
@@ -49,6 +96,13 @@ Mount only the current staged attempt directory as `/work`. Never mount the
 full task group, evaluation workspace, repository, host home, host
 `CODEX_HOME`, notes, evaluators, source test answers, previous runs, or another
 creator bundle.
+
+Read `GDPEVO_AGENT_IMAGE` directly from the current workspace's `.env`. Inspect
+only that reference and resolve it to one immutable local image ID. If it is
+missing locally, contains a placeholder, or is not approved as task-agnostic,
+block the run. Do not list images to find an alternative, pull a replacement,
+reuse an image because its name resembles another experiment, or change the
+image during the profile.
 
 Resolve the execution user once:
 
@@ -67,15 +121,22 @@ HOME=/tmp/gdpevo-agent-home
 CODEX_HOME=/tmp/gdpevo-codex-home
 ```
 
-If authentication is required, mount only the active `auth.json` read-only at a
-dedicated bootstrap path, copy it with mode `0600` into the container-local
-home, and run `codex login status`. Do not copy the host config, sessions,
-database, logs, plugins, skills, caches, or history.
+If authentication is required, mount only the exact
+`GDPEVO_CODEX_AUTH_JSON` file read-only at a dedicated bootstrap path, copy it
+with mode `0600` into the container-local home, and run `codex login status`.
+Do not derive a host `CODEX_HOME`, scan for credentials, or copy the host config,
+sessions, database, logs, plugins, skills, caches, or history.
 
 For custom providers, create only the minimum container-local configuration
 from the selected profile. Pass keys through the declared environment variable.
 Provider and proxy settings are runtime setup; apply them identically to every
 agent in the profile and record only sanitized values.
+
+If `GDPEVO_DOCKER_PROXY_URL` is non-empty, pass that exact value as uppercase
+and lowercase `HTTP_PROXY`, `HTTPS_PROXY`, and `ALL_PROXY` to every agent
+container. Set uppercase and lowercase `NO_PROXY` uniformly for `task-env`,
+`localhost`, `127.0.0.1`, and `::1`. Do not silently inherit, translate, or
+substitute a different proxy protocol or address.
 
 Use the selected profile for both generator and solver:
 
@@ -242,6 +303,10 @@ databases, or stdout as the formal trace.
 Populate token, cost, turn, tool-call, and observed-model fields from the copied
 primary trace. Remove the stopped agent container only after output, trace, and
 metadata are complete.
+
+Never inspect host `$HOME/.codex/sessions` or any previous experiment trace to
+learn or infer the trace schema. Trace discovery and parsing must use only the
+current named attempt container and the current workspace guides.
 
 ## Failures And Cleanup
 
