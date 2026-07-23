@@ -203,9 +203,9 @@ average the five task values. Apply this independently to:
 - assistant turns
 - tool calls
 
-Count only selected formal solver processes. Exclude startup checks,
-infrastructure replacements, generation, environment checks, evaluators, and
-orchestrator work.
+Count only selected formal solver processes. Exclude infrastructure
+replacements, generation, environment checks, evaluators, and orchestrator
+work.
 
 For each creator, separately average its three generation attempts for usage,
 duration, package size, and file count. Also report:

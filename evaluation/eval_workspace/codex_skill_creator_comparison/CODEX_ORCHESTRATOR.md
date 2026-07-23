@@ -19,8 +19,12 @@ Before formal attempts, verify:
 - Required provider, authentication, and reasoning values are present.
 - Each creator manifest is pinned and matches its complete upstream bundle.
 - The task group has the expected 5-train/5-test structure.
-- The startup check in `README.md` passes with the selected agent and task
-  images.
+- The selected agent image contains the required Codex executable and its
+  container-local authentication passes `codex login status`.
+- The task image is reachable and healthy from the agent network.
+
+These are runtime setup checks, not a separate model run. The first model
+invocation is the formal `codex/attempt_01` generation slot.
 
 Write one sanitized record:
 
@@ -31,7 +35,7 @@ scratch/run_manifest/<model_profile>.yaml
 Record the resolved model/provider/reasoning values, task-group ID, Codex
 version, agent and task image IDs, resolved agent UID:GID, creator revisions and
 bundle hashes, prompt/common-contract hashes, attempt counts, fixed execution
-order, startup-check result, and sanitized proxy/endpoint information. Do not
+order, runtime-setup results, and sanitized proxy/endpoint information. Do not
 record secrets.
 
 Use only this run manifest for the resolved profile.

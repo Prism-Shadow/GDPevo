@@ -66,7 +66,7 @@ workspace.
 | `skills/` | Generated skills by model profile and creator |
 | `runs/` | Base and creator-specific solver attempts |
 | `original_traces/` | Selected primary Codex session traces |
-| `scratch/` | Temporary staging, startup checks, failures, and helper scripts |
+| `scratch/` | Temporary staging, infrastructure failures, and helper scripts |
 | `report/` | Per-model reports and optional side-by-side summaries |
 
 Canonical paths:
@@ -104,20 +104,21 @@ Read these files in order:
 10. `guides/metric_and_scoring.md`
 11. `guides/report_format.md`
 
-## Startup Check
+## Runtime Setup
 
-Before the first formal attempt, perform one short non-scored check using the
-same selected model and frozen agent image. Verify:
+Before the first formal attempt, perform the same ordinary setup checks used by
+the other evaluation workspaces:
 
-- Container-local authentication.
-- Actual model identity and reasoning configuration.
-- One real streamed model response and harmless tool call.
-- Task-environment health from the agent network.
-- One matchable primary Codex trace.
+- Resolve the selected profile without placeholders.
+- Resolve and record the immutable agent and task image IDs.
+- Verify container-local authentication with `codex login status`.
+- Verify task-environment health from the agent network.
 
-Store this evidence under `scratch/smoke/<model_profile>/`. Do not repeat a
-passed startup check unless the model configuration, agent image, task image, or
-runtime authentication changes. The check is not a scored branch.
+These checks do not launch a separate model process or require a separate
+trace. After they pass, start the first formal generation slot:
+`codex/attempt_01`. If a formal attempt later encounters a verified
+infrastructure failure, preserve and replace it according to the normal failure
+policy.
 
 ## Execution Order
 
