@@ -1,99 +1,214 @@
-# Atlas Commerce Operations — Analytical Task Skill
+# Atlas Commerce Operations — Analytical & Transactional Skill
 
 ## Purpose
 
-Resolve analytical requests against the Atlas Commerce Operations database. Each task arrives as a natural-language prompt, a business-scope payload, and an answer-template JSON schema; the required output is a single `answer.json` file that conforms exactly to the template.
+Complete a self-contained operational data task against the Atlas Commerce Operations
+workplace. Each task provides a natural-language prompt, a business-request payload with
+scope/definitions/rules, and an answer-template JSON that enforces the output schema.
+Produce exactly one `answer.json` that matches the template with no extra keys or
+narrative.
 
----
+## Input layout (every task)
 
-## Environment & Authentication
+```
+input/
+  prompt.txt                  — natural-language task brief + constraints
+  payloads/
+    answer_template.json       — exact output schema (required keys, types, enums, ordering)
+    <request>.json             — business scope, definitions, rollups, policies, rules
+```
 
-The workplace service is available at `<TASK_ENV_BASE_URL>`. If an `environment_access.md` file is present at the workspace root, its `base_url` overrides `<TASK_ENV_BASE_URL>` and its `credentials` block provides the runtime `Authorization` header. Use these credentials for every API call.
+Read **all three files** before touching the database.
 
-### Available Endpoints
+## Workplace API
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/api/schema` | Database table and column catalog |
-| GET | `/api/data-dictionary` | Field semantics, value domains, and relationship context |
-| POST | `/api/sql` | Read-only analytical SQL queries |
-| POST | `/api/sql/transaction` | Controlled write operations (mutations) |
-| GET | `/api/correction-audit` | Audit trail for completed corrections |
+| Endpoint                    | Method | Purpose                                      |
+|-----------------------------|--------|----------------------------------------------|
+| `/api/schema`               | GET    | Full DDL for every table + every index       |
+| `/api/data-dictionary`      | GET    | Column-by-column descriptions and conventions |
+| `/api/sql`                  | POST   | Read-only SQL (`SELECT` / `WITH … SELECT`)   |
+| `/api/sql/transaction`      | POST   | Write via `statements[]` + `expected_total_changes` |
+| `/api/correction-audit`     | GET    | Read correction-audit records                |
 
-**Important:** Unless the task explicitly instructs otherwise, all work is read-only — use only `/api/schema`, `/api/data-dictionary`, and `/api/sql`.
+- **Base URL**: read from `environment_access.md` (overrides any `<TASK_ENV_BASE_URL>` placeholder).
+- **Auth**: `Authorization: Bearer <token>` from `environment_access.md`.
+- **POST /api/sql** body: `{"sql": "<SQL>", "params": [<scalar…>]}`.
+  Use parameterised queries — never interpolate values into SQL text.
+- **POST /api/sql/transaction** body:
+  `{"statements": [{"sql": "<SQL>", "params": [<scalar…>]}], "expected_total_changes": <int>}`.
+  `expected_total_changes` is the total rows the transaction must modify (insert + update + delete);
+  the endpoint rejects the commit if the actual count differs.
 
----
+## Step-by-step method
 
-## Input File Layout
+### 1. Absorb the business ask
 
-Every task instance provides exactly three input files inside `input/`:
+1. Read `prompt.txt` — extract the task type (analytical vs correction), deadlines/cutoffs,
+   and any procedural constraints ("do not change data", "apply only the minimal correction").
+2. Read the `<request>.json` payload — capture:
+   - **Scope**: date windows, account populations, regions, tiers, segments, campaigns,
+     warehouse IDs, import-batch IDs.
+   - **Definitions**: what makes an entity eligible, complete, on-time, breached,
+     a candidate, severe, etc. These are business-logic predicates.
+   - **Rollups / rankings**: aggregation levels, sort orders, tiebreaks, result-size limits.
+   - **Policy / status rules**: tiered classifications ordered from strictest to most
+     permissive (evaluate in order, the first match wins).
+   - **Rounding / precision**: which final values to round and to how many decimal places.
+3. Read `answer_template.json` — every `required` key must appear in the output.
+   Respect `type`, `enum`, `pattern`, `multipleOf`, `minItems`/`maxItems`, `uniqueItems`,
+   `additionalProperties: false`, and any `x-list-ordering` annotations.
 
-| File | Role |
-|------|------|
-| `prompt.txt` | Natural-language task description, business context, and procedural instructions. May reference placeholders like `<TASK_ENV_BASE_URL>`. |
-| `payloads/<request>.json` | Structured business scope: population/cohort rules, date/time cutoffs, business definitions, formulas, sort/ranking policies, tiered classification rules, rounding directives, and the list of required output fields. |
-| `payloads/answer_template.json` | JSON Schema for the output. Defines required keys, types, minima/maxima, `enum` constraints, `pattern` regexes, `minItems`/`maxItems`, precision hints (`multipleOf`, `x-precision`, `decimal_places`), and array ordering rules. |
+### 2. Understand the schema
 
-Read all three files before writing any query. The `answer_template.json` is the authoritative contract — the output must satisfy every constraint in it.
+1. Call `GET /api/schema` and `GET /api/data-dictionary`. Map every entity in the
+   business scope to concrete tables and columns.
+2. Internalise these conventions (they apply to every table):
 
----
+| Convention           | Rule                                                                 |
+|----------------------|----------------------------------------------------------------------|
+| Timestamps           | ISO-8601 UTC text ending in `Z`                                      |
+| Dates                | `YYYY-MM-DD` text                                                    |
+| Money (minor)        | Stored in the smallest currency unit (cents); divide to get major units |
+| FX rates             | `fx_rates.usd_per_unit` — multiply the minor→major converted value   |
+| Integer booleans     | `0` = false, `1` = true                                              |
+| Canonical fields     | Use `canonical_*` columns for analytics; `raw_*` columns are source values |
+| Production filtering | `accounts.is_internal = 0 AND accounts.is_test = 0`                  |
+| Effective dedup      | `ROW_NUMBER() OVER (PARTITION BY source_system, external_event_id ORDER BY ingested_at DESC) = 1` |
+| Stable identifiers   | Primary-key columns (`*_id`, `*_row_id`) are the authoritative row identity |
 
-## Workflow
+### 3. Query the data
 
-### Phase 1 — Understand the Schema
+#### Read-only analytical SQL
 
-1. Call `GET /api/schema` to list every table and column.
-2. Call `GET /api/data-dictionary` to learn what each column means, which values are canonical vs. raw, and how tables join.
-3. Re-read the business-scope payload and map its terminology (e.g., "eligible production order," "effective settled refund," "canonical status") to actual tables and columns.
+- **Start with CTEs** that define the eligible population using the request scope.
+- **Filter early** — apply time windows, account population, region, and segment
+  filters in the innermost CTEs so every downstream step works on the smallest set.
+- **Dedup correctly** — every imported table (`carrier_scans`, `refund_attempts`,
+  `payment_events`, `case_events`, `order_events`, `warehouse_task_events`,
+  `inventory_movements`) needs the effective-dedup pattern. The dedup column tuple is
+  always `(source_system, external_event_id)` with `MAX(ingested_at)` picking the
+  winning row.
+- **Use canonical fields** for business logic. Raw fields are source-system values
+  that may contradict the canonical truth. The exception is task 003-style
+  contradiction detection: compare `raw_status` against `canonical_status` to find
+  mismatched rows.
+- **Time windows**: when the request says *inclusive* of both boundaries, use
+  `>= start AND <= end`. When it says a cutoff, use `<= cutoff`.
+- **Money in SQL**: convert minor to major by dividing (e.g. `amount_minor / 100.0`).
+  For cross-currency conversions join `fx_rates` on `service_date = rate_date` (or
+  `event_at` date) and the row's currency, then multiply:
+  `(amount_minor / 100.0) * fx.usd_per_unit`.
+- **Aggregate with GROUP BY**, then compute rates as fractions in the outer query.
+  Round only the final reported numbers, not intermediate values.
 
-### Phase 2 — Query & Compute
+#### Transactional SQL (correction tasks only)
 
-4. Write and submit analytical queries to `POST /api/sql`. Queries are read-only.
-5. Apply business definitions exactly as stated:
-   - **Cutoff timestamps** are exact ISO-8601 boundaries; records exactly at the cutoff are evaluated per the request's boundary rule (exclusive or inclusive).
-   - **"Effective"** records are the final, settled, non-superseded versions of a business event. Prefer the canonical or effective view over raw source rows unless the request explicitly asks for raw values.
-   - **Rates and ratios** — compute numerator and denominator in full precision first; round only the final reported value to the decimal places specified in the template (usually 2 or 4).
-   - **Money** — if a currency policy exists (e.g., FX conversion via `fx_rates.usd_per_unit` on the service date), apply it before comparison; display net amounts with the stated decimal precision.
-6. For **tiered classification** (status/risk labels like `HEALTHY`/`WATCH`/`CRITICAL`), evaluate conditions in the order given. The first matching tier wins. Fallback rules (e.g., "otherwise" / "neither X nor Y applies") are exhaustive — every possible outcome must map to one tier.
+A correction task has these signature elements in the request payload:
+- `approved_correction` block with `reason_code`, `actor`, `audit_id`, `correction_key`,
+  `corrected_at`
+- `correction_status_rule` defining `APPLIED` / `NOT_APPLIED`
 
-### Phase 3 — Handle Corrections (Transactional Tasks Only)
+**Correction procedure:**
 
-If the task requires a data correction:
+1. **Find the contradiction**: query the raw vs canonical fields to identify exactly
+   one row where they disagree.
+2. **Plan the UPDATE**: the correction changes only the canonical field to match the
+   source truth. The SQL is a single `UPDATE` statement with a `WHERE` clause that
+   pins the exact row by its primary key. Set the `corrected_at` and
+   `correction_reason` columns as well.
+3. **Plan the INSERT**: insert one row into `correction_audit` with all the fields
+   from the request's `approved_correction` block plus the actual entity/field/values.
+   Required audit columns: `audit_id`, `correction_key`, `entity_type`, `entity_id`,
+   `source_row_id`, `field_name`, `old_value`, `new_value`, `reason_code`,
+   `corrected_at`, `actor`.
+4. **Submit the transaction**: `POST /api/sql/transaction` with both statements and
+   `expected_total_changes` set to the sum of rows each statement should affect
+   (typically 1 for the UPDATE + 1 for the INSERT = 2). The endpoint atomically
+   commits or rejects.
+5. **Verify**: `POST /api/sql` a post-correction query to confirm the canonical
+   value is now correct, AND `GET /api/correction-audit` to confirm the audit row
+   is present.
+6. **Report** `APPLIED` only when the transaction succeeded (no error response),
+   exactly one business row and one audit row were committed, and the post-change
+   query confirms the new value. Otherwise report `NOT_APPLIED`.
 
-7. Identify the single row and field to correct. The contradiction is between a **raw** source value and the corresponding **canonical** value — one is wrong.
-8. Build the transaction payload and submit it to `POST /api/sql/transaction`. The approved correction scope (field, reason code, actor, audit id, correction key, timestamp) is provided in the request payload.
-9. After the transaction commits, query `GET /api/correction-audit` to confirm the audit record was written.
-10. Re-run the relevant read query to confirm the canonical value now matches expectations.
-11. Report `APPLIED` only when exactly one business row and one audit row committed **and** the post-change query confirms the expected value. Otherwise report `NOT_APPLIED` with the results actually observed.
+### 4. Compute the answer
 
-### Phase 4 — Assemble & Validate
+Translate each business definition into a concrete predicate:
 
-12. Collect every computed value into a JSON object whose keys are exactly the `required` fields from the answer template.
-13. Enforce **ordering rules** for every array field:
-    - Sort by the primary attribute in the stated direction (ascending or descending).
-    - Resolve ties with the stated tie-break attribute(s) in their stated direction.
-    - If all tie-breaks are exhausted and values are still equal, fall back to the natural identifier (e.g., `order_id`, `task_id`, `account_id`) ascending.
-14. Enforce **precision constraints**: integers must be whole numbers; `number` fields with `multipleOf`/`decimal_places` must match the stated precision.
-15. Do **not** include commentary, narrative, extra keys, or fields absent from the required list. The output must have `"additionalProperties": false` semantics — even if the template doesn't declare it explicitly, treat it as if it does.
+| Definition pattern              | SQL / processing approach                                  |
+|---------------------------------|------------------------------------------------------------|
+| Count of distinct eligible X    | `COUNT(DISTINCT x_id)` after filtering                     |
+| X is complete when …            | Per-entity condition aggregated across child rows; use `HAVING` or a CASE/BOOL_AND pattern |
+| X is on-time when …             | Compare delivered timestamps to promised timestamps        |
+| Rate = A ÷ B                    | Compute A and B as integers, divide, cast to REAL, round   |
+| Severe exception condition      | Apply the 24-hour threshold rule after determining completeness/on-time status |
+| Rank / top-N                    | `ORDER BY … LIMIT N` with explicit tiebreak columns        |
+| Tiered classification           | Evaluate conditions top-to-bottom; first match wins        |
+| Median                          | For even counts average the two central values; use `ORDER BY … LIMIT 1 OFFSET …` or window functions |
 
-### Phase 5 — Write Output
+- **Round only final reported rates** to the specified decimal places (use `ROUND(value, decimals)`).
+- **Sort arrays** exactly as specified (ascending IDs, or rank-order with tiebreaks).
+- **Validate** every output value against the template's `type`, `pattern`, `enum`,
+  `minimum`, `maximum`, `multipleOf`, `minItems`, `maxItems`.
 
-16. Write the validated JSON object to `answer.json` at the workspace root. Use compact or pretty-printed JSON as long as it is valid and conformant.
-17. Do a final schema-pass: confirm every `required` key is present, every array length matches `minItems`/`maxItems`, every string matches `pattern`, every number respects `minimum`/`maximum`, and every enum value is from the allowed set.
+### 5. Write the output
 
----
+Write a single JSON object to `answer.json` in the working directory:
+- Every key from the template's `required` array must be present.
+- No extra keys beyond what the template declares (`additionalProperties: false`).
+- Numbers must satisfy any `multipleOf` constraint.
+- Strings must match any `pattern` regex.
+- Arrays must be within `minItems`/`maxItems` bounds, contain `uniqueItems`, and
+  be in the declared order.
+- The file must be valid JSON with no trailing text, commentary, or explanation.
 
-## Conventions & Pitfalls
+## Task-type quick reference
 
-| Principle | Guidance |
-|-----------|----------|
-| **Canonical over raw** | When a business entity has both a raw source column and a canonical column, the canonical column is the truth for analytical purposes unless the request explicitly asks for raw. |
-| **Effective records only** | Filter out voided, cancelled, superseded, or test records. Look for `effective`/`status`/`is_test`/`is_void` discriminator columns in the data dictionary. |
-| **Production populations** | Unless stated otherwise, scope to production (non-test, non-internal) entities. The data dictionary indicates which columns differentiate production from internal rows. |
-| **Time boundaries** | Use the exact UTC timestamps from the request. "Inclusive" means `>= start AND <= end`; "exclusive" means `> start AND < end`. |
-| **Incomplete entities in rates** | If a definition says an incomplete entity remains in the denominator, include it. If it says "effectively delivered by cutoff," only count those delivered. |
-| **Rounding** | Round only final reported values, never intermediate quantities. Use standard rounding (half-up or half-even — whichever the underlying engine provides) to the stated decimal places. |
-| **Empty arrays** | If `minItems` is absent or 0, an empty array is valid. If `minItems` requires items but none qualify, double-check the population filter before reporting zero — the template may intend a non-empty result. |
-| **Enum values** | Use exactly the strings listed in the answer template's `enum` arrays. Case, spelling, and underscores must match. |
-| **Array uniqueness** | When `uniqueItems: true` is set, deduplicate by the natural item identity before sorting. |
-| **Transaction safety** | Never mutate a row unless the task explicitly authorizes a correction. All default work is read-only. |
+### Analytical / Scorecard (most common)
+
+- Read-only; never call `/api/sql/transaction`.
+- The request payload defines cohorts, metrics, rollups, and status rules.
+- Compute every metric from the database; do not infer or estimate.
+- Typical output: counts, rates, ranked lists, status labels.
+
+### Reconciliation / Exposure
+
+- Involves money: minor-unit conversion and FX rates.
+- Leakage / candidate detection: compare values across related rows (e.g., refunds vs
+  order gross) and apply multi-condition candidate rules.
+- Reason ranking: aggregate by reason code, sort by net amount, apply tiebreaks.
+
+### Carrier Quality / Correction
+
+- Find exactly one raw-vs-canonical contradiction.
+- Execute a minimal UPDATE + audit INSERT via `/api/sql/transaction`.
+- Verify the correction post-commit.
+- Report pre- and post-correction backlog counts.
+
+### Warehouse Productivity
+
+- Time-windowed task creation with a later state cutoff.
+- Employee-level metrics: units per productive hour, completion rates.
+- Team-level and facility-level aggregations with tiered status.
+
+### Support Health
+
+- Case lifecycle analysis with SLA thresholds per priority.
+- Active-time clock: time from open to first response, time from open to resolution.
+- Breach detection: compare active time against priority-specific thresholds.
+- Worst-account ranking by multi-column sort.
+
+## Guardrails
+
+- **Never skip the schema/dictionary calls** — tables and columns are stable but the
+  specific set available may vary. Always introspect before querying.
+- **Always use effective dedup** on imported tables or you will double-count rows
+  that were re-ingested.
+- **Always filter production accounts** (`is_internal = 0 AND is_test = 0`) unless
+  the request explicitly says otherwise.
+- **Always use canonical fields** for business logic; raw fields are for contradiction
+  detection only.
+- **Never change data** on analytical tasks — use only `POST /api/sql`.
+- **Respect the answer template exactly** — an extra field, a missing required field,
+  a value outside an enum, or a number with wrong precision invalidates the answer.

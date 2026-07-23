@@ -1,145 +1,251 @@
-# Atlas Commerce Operations — Analytical & Correction Skill
+# Atlas Commerce Operations — Analytical Task Runner
 
-## When to use
+## Purpose
 
-Invoke this skill whenever the task involves querying or correcting data in the **Atlas Commerce Operations** database through its authenticated REST API. The task will arrive with a `prompt.txt` describing the business ask, a request payload (`.json`) scoping the work and defining business rules, and an `answer_template.json` specifying the exact output schema.
+Execute structured business-analytics tasks against the Atlas Commerce Operations
+database. Each task supplies a natural-language prompt, a request payload with
+business scope and definitions, and an output contract; this skill produces the
+correct `answer.json`.
 
-Do **not** use this skill if the task references a different database or API surface.
+---
 
-## Environment setup
+## Phase 1 — Connect
 
-Read `environment_access.md` from the working directory. It contains:
+Read the file `environment_access.md` (at the workspace root or the nearest
+ancestor directory).  It contains three mandatory fields:
 
-- `base_url` — the root URL for all API calls (e.g. `http://task-env:9022/`)
-- `credentials` — an `Authorization` header to include on every request
+| Field | Use |
+|---|---|
+| `base_url` | Root URL for every API call.  This value **overrides** any other base-URL reference found in task inputs (`<TASK_ENV_BASE_URL>`, `localhost`, `127.0.0.1`, `env/setup.sh`, `TASK_ENV_BASE_URL`). |
+| `credentials.Authorization` | Exact `Authorization` header value — send it verbatim. |
+| `allowed_endpoints` | Restrict all HTTP calls to the endpoints listed here.  Do **not** call any other endpoint even if documented elsewhere. |
 
-Use `curl` with `-H "Authorization: Bearer <token>"` for every API call. Pipe through `jq` for JSON processing. Construct full endpoint URLs by appending the path to `base_url`.
+If `environment_access.md` is missing or any of the three fields is absent, stop
+immediately and report the gap — do not proceed.
 
-## Available endpoints
+---
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/api/schema` | Returns the database schema — table names, column names, types, relationships |
-| GET | `/api/data-dictionary` | Returns field-level descriptions, enumerations, business meanings |
-| POST | `/api/sql` | Submit a read-only SQL `SELECT` query. Body: `{"sql": "<query>"}`. Returns result rows as JSON. |
-| POST | `/api/sql/transaction` | Submit a controlled write (UPDATE/INSERT). Body: `{"sql": "<statement>"}`. Returns affected row count and audit info. Use ONLY when the task explicitly authorizes a data correction. |
-| GET | `/api/correction-audit` | Returns audit-trail records for past corrections. Used to verify that a transaction committed correctly. |
+## Phase 2 — Orient
 
-## Phase 1 — Understand the task scope
+Read these three inputs **in order** for the task at hand:
 
-Read three input files in the task directory:
+1. **`prompt.txt`** — Natural-language instructions.  It names the business
+   owner, the review type, and the deliverable (`answer.json`).  It also tells
+   you whether the task is read-only or may include a data correction.
 
-1. **`prompt.txt`** — The business narrative. Identifies the stakeholder, the operation type (analytical vs. correction), and which payload files to consult. It also tells you where to write the answer.
+2. **The request payload** — Referenced inside `prompt.txt` (e.g.
+   `input/payloads/<name>_request.json`).  This file contains:
+   - **Scope**: cohort membership, time windows, cutoffs, account/region filters.
+   - **Business definitions**: what "complete", "on-time", "severe", "leakage",
+     "breach", etc. mean for this task.
+   - **Metric formulas**: how rates, medians, rankings, and rollups are computed.
+   - **Policy rules**: status/risk classification thresholds and their precedence.
 
-2. **The request payload** (named in `prompt.txt`, e.g. `input/payloads/fulfillment_request.json`) — Contains:
-   - Population scope and filters (date windows, cohorts, regions, tiers, cutoff timestamps)
-   - Business definitions (how to classify rows, compute metrics, identify exceptions)
-   - Ranking and ordering rules
-   - Status/risk classification tier tables with explicit thresholds
-   - Rounding and unit conventions
+3. **`input/payloads/answer_template.json`** — The JSON Schema that the final
+   output must conform to.  It defines required fields, types, constraints
+   (`minimum`, `maximum`, `multipleOf`, `pattern`, `enum`, `minItems`,
+   `maxItems`), and any array ordering rules.
 
-3. **`answer_template.json`** (e.g. `input/payloads/answer_template.json`) — The exact JSON Schema for the output. Every `required` field must appear. `additionalProperties: false` means no extra keys. Pay attention to `type`, `enum`, `pattern`, `minimum`/`maximum`, `multipleOf`, array `minItems`/`maxItems`/`uniqueItems`, and ordering descriptions.
+---
 
-Before writing any SQL, identify:
-- Is this read-only (analytical) or does it require a correction (transactional)?
-- What is the population filter? (date ranges, account tiers, regions, statuses, campaign IDs)
-- What are the computed metrics and their formulas?
-- What are the ranking/sorting rules?
-- What are the status/risk classification bands and their thresholds?
+## Phase 3 — Explore the data model
 
-## Phase 2 — Explore the schema
+Call the two read-only discovery endpoints to understand the database:
 
-Issue two discovery calls before writing domain queries:
-
-```bash
-curl -s -H "Authorization: Bearer <token>" "<base_url>/api/schema" | jq .
-curl -s -H "Authorization: Bearer <token>" "<base_url>/api/data-dictionary" | jq .
+```
+GET {base_url}/api/schema
+Authorization: {credentials.Authorization}
 ```
 
-From the schema, identify:
-- Which tables hold the relevant business entities (orders, shipments, refunds, carrier scans, warehouse tasks, support cases, accounts, etc.)
-- Join keys between tables
-- Column types relevant to filtering (timestamps, enums, amounts)
+Returns table names and column names with data types.  Use this to identify
+which tables and columns hold the entities referenced in the request payload
+(orders, shipments, refunds, scans, tasks, cases, etc.).
 
-From the data dictionary, identify:
-- Enumeration values for status columns
-- The meaning of timestamp columns (created_at vs. updated_at vs. effective dates)
-- Currency and unit conventions
-- Identifier patterns (order IDs, shipment IDs, case IDs)
-
-## Phase 3 — Query the data
-
-Construct SQL queries that implement the task's business definitions directly:
-
-- **Filtering**: Translate scope conditions into `WHERE` clauses. Treat cutoff timestamps as exact UTC boundaries. Use inclusive/exclusive as specified.
-- **Joins**: Follow the schema relationships. When a definition requires related rows (e.g. "every shipment for an order"), join and aggregate.
-- **Aggregation**: Use `COUNT`, `SUM`, `AVG`, `GROUP BY` as needed. When computing rates, compute both numerator and denominator before dividing — do not average pre-computed rates.
-- **Ordering**: Apply the exact ordering rules in the request. For tie-breaking, use the secondary (and tertiary) sort keys exactly as specified.
-- **Edge cases**: Handle NULLs explicitly. An order with no shipments is incomplete, not an error. A case with no response uses elapsed time at the cutoff. A reverse-sorted array is still sorted.
-
-Submit queries one at a time via:
-
-```bash
-curl -s -H "Authorization: Bearer <token>" -H "Content-Type: application/json" \
-  -d '{"sql": "<query>"}' "<base_url>/api/sql" | jq .
+```
+GET {base_url}/api/data-dictionary
+Authorization: {credentials.Authorization}
 ```
 
-Iterate: start with a broad population count, then refine. Verify intermediate counts add up (complete + incomplete = total, etc.).
+Returns human-readable descriptions of tables and columns — domain semantics,
+enumeration meanings, relationship hints.  Use this to disambiguate columns
+whose purpose is not obvious from the schema alone (status codes, flag columns,
+timestamp meanings, foreign-key relationships).
 
-## Phase 4 — Apply business logic
+---
 
-Compute derived values from query results using `jq` or direct calculation:
+## Phase 4 — Query with SQL
 
-- **Rates and ratios**: Compute from the raw counts. Round only at the final step, to the specified precision. Use `round($n * 10000) / 10000` for 4 decimal places, or `* 100 / 100` for 2 decimal places.
-- **Rankings**: Sort programmatically using the request's ordering rules. The data may already be ordered by SQL, but verify. For "first N" or "worst N", apply the sort direction (ascending/descending) and ties as specified.
-- **Status/risk classification**: Evaluate tier conditions in order. The first matching tier wins. Use the exact thresholds from the request. Do not invert comparisons — "below X" means `< X`, not `<= X`, unless the request says "at or below".
-- **Exception/leakage/candidate identification**: Apply the multi-condition definitions exactly. A candidate matches if *any* condition is true. Order the output IDs as specified (usually ascending).
-- **Median**: For an odd count, pick the center value after sorting. For an even count, average the two central values.
+Submit analytical queries to the read-only SQL endpoint:
 
-## Phase 5 — Data correction (transactional tasks only)
-
-When the task requires a correction:
-
-1. **Identify the contradiction**: Query the raw data to find the row where a source/canonical field mismatch exists. The request will describe the contradiction pattern. Only one row should match — if more or fewer, the preconditions are not met.
-
-2. **Plan the correction**: Determine the exact column, old value, and new canonical value. The request provides the correction metadata (reason_code, actor, audit_id, correction_key, corrected_at).
-
-3. **Execute the transaction**:
-   ```bash
-   curl -s -H "Authorization: Bearer <token>" -H "Content-Type: application/json" \
-     -d '{"sql": "UPDATE <table> SET <column> = '\''<new_value>'\'' WHERE <id_column> = '\''<row_id>'\''"}' \
-     "<base_url>/api/sql/transaction" | jq .
-   ```
-   Record `affected_business_rows` and `audit_rows` from the response.
-
-4. **Verify the correction**: Re-query the corrected row to confirm the new canonical value is persisted. Query the audit endpoint to confirm the audit record matches the request metadata.
-
-5. **Report status**: `APPLIED` only if exactly one business row and one audit row committed AND the post-change query confirms the corrected value. Otherwise `NOT_APPLIED`.
-
-## Phase 6 — Produce the output
-
-Write the answer as a single JSON object to the output file named in `prompt.txt` (usually `answer.json`):
-
-- Include every `required` field from the answer template.
-- Use the exact types, formats, and constraints from the template schema.
-- Arrays must be in the specified order. Integer fields must be whole numbers (no decimals). Number fields must use the specified precision.
-- Enum fields must use exact values (case-sensitive).
-- IDs must match the pattern in the template (e.g. `^ORD-[0-9]{6}$`).
-- No commentary, no extra fields, no markdown wrapping — just the JSON object.
-
-Validate the output against the template before writing:
-
-```bash
-# Check required fields are all present
-jq '...' answer.json
 ```
+POST {base_url}/api/sql
+Authorization: {credentials.Authorization}
+Content-Type: application/json
+
+{
+  "sql": "<SELECT or WITH statement>",
+  "params": []
+}
+```
+
+### Query construction rules
+
+- **Use the exact column and table names** from `/api/schema`.
+- **Apply the scope from the request payload** first: time-window boundaries
+  (treat them as exact UTC, inclusive where stated), account tiers, regions,
+  campaign/warehouse IDs.
+- **Follow the business definitions literally.**  If a definition says "an order
+  is complete only when every shipment is DELIVERED by the cutoff", implement
+  that exact logic — do not simplify or approximate.
+- **Use the cutoff timestamp as-is.**  If the request says `as_of_cutoff` or
+  `state_cutoff_at`, filter state at or before that instant.
+- **For ranking/ordering**: implement every tie-break in the request payload.
+  The first ordering key dominates, the last is the final tie-break.
+- **For medians on even-length sets**: average the two central values.
+- **Currency**: when the request specifies a currency policy, join `fx_rates` on
+  `service_date` and source currency, convert each row, then aggregate.
+- **Transaction time vs. business time**: distinguish creation timestamps from
+  effective/service dates — the request payload tells you which one to use.
+
+### Iterative refinement
+
+Start with a broad query that counts the population.  Verify the count is
+non-zero and plausible.  Then progressively add joins, filters, and aggregations
+for each output field.  Run counts at each stage to catch join explosions or
+filter mistakes.
+
+---
+
+## Phase 5 — Compute results
+
+Derive every output field **strictly from SQL query results + the business
+rules**.  Do not guess, assume, or use external knowledge.
+
+### Rates and rounding
+
+- Compute rates from their unrounded numerators and denominators **first**.
+- Round **only** at the end, to the decimal places specified in the request
+  payload (or implied by the answer template's `multipleOf` or `precision`
+  constraints).
+- If a rate is a fraction of a whole population, the incomplete/breach members
+  remain in the denominator.
+
+### Status and risk classification
+
+- Evaluate each condition's rule in the order given by the request payload.
+- The first matching condition wins — do not check later conditions once a match
+  is found.
+- A catch-all / "otherwise" / "all other outcomes" clause must be treated as the
+  fallback when no earlier condition matches.
+
+### Arrays and rankings
+
+- When the answer template says `uniqueItems: true`, deduplicate.
+- When the payload says "top N" or "worst N" with a sort order, sort by the
+  first key descending/ascending as specified, then by each successive
+  tie-break.
+- When the template specifies `minItems`/`maxItems`, return exactly that many
+  items (unless the population is smaller — then the template constraints would
+  fail; verify your query covers the full population).
+
+### Timestamps and durations
+
+- Compare timestamps in UTC.
+- When computing elapsed time in hours, use fractional hours (e.g.
+  `EXTRACT(EPOCH FROM ...) / 3600.0`).
+- A missing timestamp (e.g. no shipment promise, no response time) means the
+  condition that depends on it cannot be satisfied — treat it as false/absent
+  unless the payload explicitly says otherwise.
+
+---
+
+## Phase 6 — Write the answer
+
+Produce exactly one JSON object that satisfies every constraint in the answer
+template:
+
+- All `required` fields present.
+- No fields beyond those declared (unless `additionalProperties` is `true`).
+- Every `type` matches.  Numbers use JSON number literals (no strings).
+- Array ordering matches the template and payload rules.
+- String patterns (e.g. `^ORD-[0-9]{6}$`) are satisfied.
+
+Write the result to `answer.json` with **no surrounding text, commentary, or
+markdown fences**.  The file must be parseable as a standalone JSON document.
+
+---
+
+## Phase 7 — Data correction (only when requested)
+
+When and only when the prompt and request payload call for a data correction:
+
+### Identify the correction target
+
+The request payload names a single contradiction or error.  Query the raw data
+to find the exact row and column that needs changing, and confirm the canonical
+value the payload prescribes.
+
+### Apply the correction
+
+```
+POST {base_url}/api/sql/transaction
+Authorization: {credentials.Authorization}
+Content-Type: application/json
+
+{
+  "statements": [
+    {
+      "sql": "<single UPDATE statement>",
+      "params": []
+    }
+  ],
+  "expected_total_changes": <exact integer>
+}
+```
+
+- `expected_total_changes` is **not** a guess — compute the exact number of
+  rows the UPDATE will affect (business rows) plus any audit rows the system
+  inserts (typically 1 audit row per changed business row).  The transaction
+  will reject if this number is wrong.
+- Use only the approved values from the request payload: `reason_code`, `actor`,
+  `audit_id`, `correction_key`, `corrected_at`.
+- The UPDATE must target **only** the identified row and column.  Never change
+  raw source values, identity fields, or unrelated rows.
+
+### Verify
+
+Call a post-correction SELECT through `POST /api/sql` to confirm the canonical
+value now matches the approved new value.  Also call:
+
+```
+GET {base_url}/api/correction-audit
+Authorization: {credentials.Authorization}
+```
+
+to retrieve the audit record the system created.  Confirm it matches every
+detail in the correction_target and approved_correction.
+
+### Report APPLIED vs NOT_APPLIED
+
+- `APPLIED`: exactly one business row committed, one audit row committed, and
+  the post-change query confirms the corrected value.
+- `NOT_APPLIED`: any other outcome — wrong number of affected rows, value
+  mismatch, transaction rejected, or unexpected state.
+
+Include the full audit record and backlog analysis in the answer.
+
+---
 
 ## Common pitfalls
 
-- **Rounding too early**: Compute rates from raw integers, round only the final reported value.
-- **Denominator confusion**: When the rate denominator is "all eligible X" and the numerator is a subset, incomplete items stay in the denominator — do not exclude them.
-- **Timestamp cutoff precision**: "At or before the cutoff" means `<=`. "Strictly before" means `<`. "More than 24 hours after" means `> cutoff + 24h`.
-- **Sorting arrays**: When IDs must be "sorted ascending", sort them. When objects must be ordered by one key descending then another ascending, implement the multi-key sort exactly.
-- **Correction preconditions**: If the data doesn't match the expected contradiction (e.g. zero rows or multiple rows found), report `NOT_APPLIED` with the observed state — do not attempt the correction.
-- **Even-count median**: Average the two central values, don't pick one.
-- **NULL handling**: A NULL promised_delivery_at means "no promise" — the order cannot be late (but can still be incomplete).
+| Pitfall | Prevention |
+|---|---|
+| Using `localhost` or a different base URL | Always read `base_url` from `environment_access.md` |
+| Omitting the Authorization header | Send it on every request |
+| Counting rows instead of distinct business entities | Check whether the template asks for "distinct orders" vs "rows" |
+| Rounding intermediate values | Round only the final reported number |
+| Forgetting the denominator includes incomplete items | Re-read the rate formula in the request payload |
+| Silent join explosions inflating counts | Spot-check a few entity IDs end-to-end |
+| Wrong `expected_total_changes` | Count business rows + 1 audit row per business row; verify with a dry-run SELECT |
+| Changing more than the minimal canonical field | The request scope is always `MINIMAL_CANONICAL_FIELD_ONLY` |
+| Extra text around answer.json | Write the JSON object and nothing else |

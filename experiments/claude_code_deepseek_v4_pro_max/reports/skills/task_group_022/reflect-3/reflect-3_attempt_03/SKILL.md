@@ -1,143 +1,120 @@
-# Atlas Commerce Operations — Analytical Skill
+# Atlas Commerce Operations — Analytical Task Skill
 
-Use this skill whenever you must answer a structured business question against the Atlas Commerce Operations workplace database. The service exposes an authenticated HTTP API; all interactions are read-only unless a controlled correction is explicitly requested.
+## Purpose
+Solve operational analytics and data-correction tasks against the Atlas Commerce Operations database. Each task provides a business-request payload and an answer template; produce a JSON answer conforming exactly to the template.
 
----
+## Workflow
 
-## 1. Service Endpoints
+### Phase 1: Orient
+1. **Read the schema** (`GET /api/schema`). Identify all tables that participate in the task. Note primary keys, foreign keys, and check constraints — they encode domain invariants.
+2. **Read the data dictionary** (`GET /api/data-dictionary`). Note field-level conventions: timestamp format (ISO-8601 UTC), monetary minor units, boolean encoding (0/1 integers), and dedup indexes.
+3. **Read the task prompt** and the **business-request payload**. Extract: cohort/scope rules, date windows, cutoff timestamps, business definitions, rollup instructions, rounding rules, and status-tier conditions.
+4. **Read the answer template**. Every `required` field must appear; every `additionalProperties: false` constraint means no extra fields. Match `type`, `enum`, `pattern`, `minimum`/`maximum`, `multipleOf`, and `minItems`/`maxItems` exactly.
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/api/schema` | Table DDL and indexes |
-| GET | `/api/data-dictionary` | Column descriptions and conventions |
-| POST | `/api/sql` | Read-only analytical SQL (field: `"sql"`) |
-| POST | `/api/sql/transaction` | Controlled DML with audit trail |
-| GET | `/api/correction-audit` | Public correction audit records |
+### Phase 2: Scope the cohort
+- **Production accounts**: `is_internal = 0 AND is_test = 0`.
+- **Date windows**: boundary is inclusive unless stated otherwise. Timestamp comparisons use ISO-8601 lexical order (`<=` / `>=`).
+- **Cohort membership**: derive from join paths through the schema (accounts → orders → shipments → carrier_scans, etc.).
+- **Distinct counts**: use `COUNT(DISTINCT …)` for orders, shipments, cases, and refunds unless the template explicitly asks for row counts.
 
-Authenticate every request with the `Authorization: Bearer <token>` header and `Content-Type: application/json`.
-
----
-
-## 2. Schema Discovery (Always First)
-
-Before writing any query, fetch the schema and data dictionary:
-
-```
-GET /api/schema        → tables, columns, foreign keys, indexes
-GET /api/data-dictionary → column descriptions, conventions, domain values
-```
-
-The dictionary documents conventions:
-- **Timestamps**: ISO-8601 UTC ending in `Z`.
-- **Money**: `*_minor` columns hold the smallest currency unit (e.g., cents). Use `fx_rates.usd_per_unit` at the transaction's `service_date` for USD conversion.
-- **Source rows**: `raw_*` columns preserve upstream values; `canonical_*` columns hold the normalised operational value.
-
----
-
-## 3. SQL Patterns
-
-### 3.1 Field name
-The read-only SQL endpoint expects `{"sql": "<statement>"}` — the key is `"sql"`, not `"query"`.
-
-### 3.2 Avoid large IN-subqueries
-The SQL endpoint silently truncates result sets when an `IN (<subquery>)` list grows large. **Always rewrite eligibility filters as JOINs:**
+### Phase 3: Deduplicate event tables
+Tables with import retries carry a dedup index on `(source_system, external_event_id, ingested_at)`. Always dedup before using the rows:
 
 ```sql
--- ❌ may silently truncate
-SELECT ... FROM shipments
-WHERE order_id IN (SELECT order_id FROM orders WHERE campaign_id = 'CMP-...')
-
--- ✅ safe
-SELECT ... FROM shipments s
-JOIN orders o ON s.order_id = o.order_id
-WHERE o.campaign_id = 'CMP-...'
-```
-
-### 3.3 Selecting the effective (latest) row per group
-Every append-only event table (`carrier_scans`, `warehouse_task_events`, `case_events`, `refund_attempts`, `payment_events`) may contain import retries. The **effective row** for a business event is the one with the latest `ingested_at` among rows sharing the same `(source_system, external_event_id)`.
-
-Use a **correlated subquery** to pick one effective row per group without hitting row limits:
-
-```sql
-SELECT cs.canonical_status, cs.canonical_event_at
-FROM carrier_scans cs
-WHERE cs.scan_row_id = (
-  SELECT cs2.scan_row_id FROM carrier_scans cs2
-  WHERE cs2.shipment_id = cs.shipment_id
-  ORDER BY cs2.canonical_event_at DESC, cs2.scan_row_id DESC
-  LIMIT 1
+WITH dedup AS (
+    SELECT *,
+           ROW_NUMBER() OVER (
+               PARTITION BY source_system, external_event_id
+               ORDER BY ingested_at DESC
+           ) AS rn
+    FROM <table>
+    WHERE <cohort-filter>
 )
+SELECT … FROM dedup WHERE rn = 1
 ```
 
-When ordering for "effective final" status, use the composite order that matches the table's effective index (typically `<parent>, <event_at> DESC, <row_id> DESC`).
+Affected tables: `carrier_scans`, `refund_attempts`, `payment_events`, `warehouse_task_events`, `case_events`, `order_events`, `inventory_movements`.
 
-### 3.4 Aggregation when row limits are a concern
-Prefer `GROUP BY` with `MAX()` for getting the latest timestamp per group — the engine returns one row per group, avoiding the truncation that fetching every row can cause. Then join back for the full row if needed.
+### Phase 4: Determine effective state
+For append-only event tables, the *effective* value is the latest by event timestamp:
 
----
+```sql
+SELECT …
+FROM   <table>
+WHERE  corrected_at IS NULL                    -- exclude superseded corrections
+  AND  <event_timestamp> = (
+       SELECT MAX(<event_timestamp>)
+       FROM   <table> AS t2
+       WHERE  t2.<entity_id> = <table>.<entity_id>
+         AND  t2.corrected_at IS NULL
+       )
+```
 
-## 4. Business Data Concepts
+**Tiebreak rule**: when multiple rows share the same maximum event timestamp with different statuses, prefer the more advanced operational status. For carrier scans the precedence order is:
+`DELIVERED > OUT_FOR_DELIVERY > AT_HUB > IN_TRANSIT > PICKED_UP > LABEL_CREATED`.
+Implement this with `ORDER BY CASE canonical_status WHEN 'DELIVERED' THEN 0 … END` and take the first row.
 
-### 4.1 Production accounts
-A production account satisfies `is_internal = 0 AND is_test = 0`. Check both flags.
+### Phase 5: Compute derived metrics
+Translate each business definition from the request payload into code:
 
-### 4.2 Effective carrier status
-The operational delivery status of a shipment is the `canonical_status` of the **latest scan** (by `canonical_event_at`, ties broken by `scan_row_id DESC`). Do **not** rely on `shipments.current_status` — it is a convenience snapshot that may lag the append-only event history.
+- **Rates**: numerator / denominator; denominator is typically the full eligible cohort (not just the subset that could qualify).
+- **Rounding**: round only final reported values. Use `Decimal(str(val)).quantize(Decimal('0.0001'), rounding=ROUND_HALF_UP)` for 4-decimal precision, `Decimal('0.01')` for 2-decimal. Do not round intermediate values used for ranking or further computation.
+- **Ranking with tiebreaks**: rank by the *unrounded* primary metric, then by the stated tiebreak columns. Example: "worst regions by rate ascending, then region ascending" → `ORDER BY unrounded_rate ASC, region ASC`.
+- **Monetary conversion**: `amount_minor` is in the smallest unit of the row's currency (cents for USD/EUR/GBP/AUD/CAD). Convert to USD via `(amount_minor / 100.0) * fx_rates.usd_per_unit` using the rate for the transaction's `service_date` and the row's currency. For cross-currency comparisons, convert both sides to USD at the refund/service-date rate.
 
-### 4.3 Effective refund / payment rows
-Deduplicate by `(source_system, external_event_id)` → latest `ingested_at`. A logical refund is identified by `refund_id`; each `refund_id` maps to exactly one effective row.
+### Phase 6: Classify according to business rules
+Status tiers are usually evaluated in order — the first matching condition wins. Translate the JSON rule arrays into cascading if/elif/else blocks. Pay attention to:
+- Whether conditions use strict or non-strict inequalities (`>=` vs `>`).
+- Whether "below" means `<` and "at least" means `>=`.
+- Whether an `otherwise` / fallback tier exists.
 
-### 4.4 Reversals
-A reversal of a settled refund appears as a `refund_attempts` row with `status = 'REVERSED'` whose `linked_refund_id` points to the settled `refund_id` being reversed.
+### Phase 7: Handle corrections (when requested)
+A correction task provides an `approved_correction` block with audit metadata.
 
-### 4.5 Currency conversion
-- Every monetary `*_minor` field is in the smallest unit of the row's `currency`.
-- Convert to USD: `(amount_minor / 100.0) × fx_rates.usd_per_unit` at the transaction's `service_date`.
-- When comparing an order's gross value against refunds, convert the order gross at the refund's `service_date` FX rate.
+1. Identify the target row and field from the raw/canonical contradiction.
+2. Build the UPDATE statement for the single business row.
+3. Build the INSERT statement for `correction_audit` using the provided `audit_id`, `correction_key`, `reason_code`, `actor`, and `corrected_at`.
+4. Call the transaction endpoint with both statements and `expected_total_changes` set to the number of rows both statements will change together.
+5. **Check the result**: query the corrected row and the audit table. Report `APPLIED` only when exactly one business row AND one audit row committed AND a post-change query confirms the corrected canonical value. Report `NOT_APPLIED` for every other outcome — include the actual `affected_business_rows`, `audit_rows`, and observed backlog analysis.
 
-### 4.6 Warehouse task productivity
-- Use `warehouse_task_events` where `event_type = 'COMPLETED'` for `units` and `productive_minutes`.
-- `units_per_hour = (total_completed_units / total_productive_minutes) × 60`.
-- A "rework" task is identified by `current_status = 'REWORK'` or the presence of a `REWORK` event.
+### Phase 8: Validate the answer
+Before finalizing, verify:
+- The output is a single JSON object matching the template schema exactly.
+- All `required` fields are present; no extra fields.
+- All `enum` values match; all `pattern` constraints hold.
+- Array fields are sorted as specified.
+- Counts sum correctly (e.g., `effectively_complete + incomplete = eligible_production_order_count`).
+- Rates are within [0, 1] and rounded as specified.
 
-### 4.7 Support-case active time
-"Active time" is total elapsed time minus periods the case spent `WAITING_CUSTOMER`. Compute it from the ordered `case_events`:
-- Start a clock on `OPENED` or `CUSTOMER_REPLIED`.
-- Pause the clock on `WAITING_CUSTOMER`.
-- Stop the clock on `RESOLVED` or use the analysis cutoff for unresolved cases.
-- `REOPENED` restarts the clock.
+## Common patterns by domain
 
----
+### Fulfillment scorecards
+- Effective delivery status comes from the latest `carrier_scans.canonical_event_at` per shipment, with `DELIVERED` tiebreak.
+- An order is complete when **every** shipment is effectively `DELIVERED`. An order is on-time when every shipment's delivery scan is `<=` its `promised_delivery_at`.
+- **Severe exception**: incomplete with cutoff > latest-promise + 24h, or complete with any delivery > promise + 24h.
+- Regional rollups use `warehouses.region` from the order's assigned warehouse.
 
-## 5. Answer Construction
+### Refund reconciliation
+- Eligible refunds: `status = 'SETTLED'` within the service-date window.
+- Reversals: rows with `status = 'REVERSED'` whose `linked_refund_id` points to an eligible settled refund. Subtract reversal USD from the linked refund's reason-code bucket.
+- **Leakage candidate**: net refund USD > order gross USD (both at the refund's service-date rate), **or** ≥ 2 unreversed settled refunds with the same `reason_code` on the same order.
+- Reason ranking: by net USD descending, then reason code ascending.
 
-1. Read the business request payload carefully — every definition, threshold, and rounding rule matters.
-2. Locate the answer template and enforce **every constraint**: `required` fields, `additionalProperties: false`, `type`, `minimum`/`maximum`, `multipleOf`, `pattern`, `minItems`/`maxItems`, `uniqueItems`, and `enum`.
-3. Round **only the final reported values** as specified (e.g., 4 decimal places for rates, 2 for USD). Use unrounded values for intermediate comparisons and rankings.
-4. Sort array elements exactly as the request specifies. When a ranking has ties, apply every tiebreaker in order.
-5. Write the answer as a single JSON object with no commentary outside the JSON.
+### Warehouse productivity
+- `work_class = 'PRODUCTION'` tasks created in the window.
+- **Completed units**: sum `warehouse_task_events.units` from `event_type = 'COMPLETED'` rows of tasks with `current_status = 'COMPLETED'`.
+- **Rework**: `current_status = 'REWORK'`.
+- **Units per hour**: `(total_completed_units / total_productive_minutes) * 60` per employee.
+- **Delayed high-priority**: `priority IN ('HIGH','URGENT')`, `due_at < cutoff`, `current_status != 'COMPLETED'`.
 
----
+### Support health
+- **Clock basis**: active time starts at `opened_at`. First-response time is elapsed hours until the first `AGENT_RESPONDED` event. Resolution time is elapsed hours until `RESOLVED` event or cutoff for active cases.
+- **Breach**: active hours exceeds the priority's SLA threshold.
+- **Severe active case**: `current_status IN ('OPEN','REOPENED')`, `priority IN ('URGENT','HIGH')`, and active resolution time exceeds the priority's resolution threshold.
+- **Median**: for even count, average the two central values. Round to 2 decimal places.
 
-## 6. Correction Workflow (When a Controlled DML Is Requested)
-
-1. Identify the exact row and field that needs correction by comparing `raw_*` values against their `canonical_*` counterparts.
-2. Use `POST /api/sql/transaction` to apply the minimal change atomically with its audit record.
-3. Verify the correction with a post-change query.
-4. Report `APPLIED` only when the transaction commits exactly one business-row change and one audit row, **and** a follow-up query confirms the corrected value.
-5. Otherwise report `NOT_APPLIED` with the actual observed results.
-
----
-
-## 7. Process Checklist
-
-For every new analytical task:
-
-1. **[ ]** Fetch `/api/schema` and `/api/data-dictionary`.
-2. **[ ]** Read every word of the business request payload and the answer template.
-3. **[ ]** Map business definitions to specific column values (e.g., "DELIVERED", "SETTLED", "PRODUCTION").
-4. **[ ]** Write eligibility queries using JOINs, not large IN-subqueries.
-5. **[ ]** Deduplicate event tables with correlated subqueries.
-6. **[ ]** Compute intermediate values with full precision; round only final outputs.
-7. **[ ]** Validate the answer against the template's JSON Schema before submitting.
-8. **[ ]** For corrections: apply → verify → report `APPLIED` or `NOT_APPLIED`.
+## Data quality conventions
+- **`corrected_at IS NULL`**: exclude rows superseded by a canonical correction when determining effective state. The correction itself creates a new row; use the uncorrected originals to identify the pre-correction state.
+- **`is_internal = 0 AND is_test = 0`**: production-only filter applied to `accounts`.
+- **Timestamps**: all stored in ISO-8601 UTC (`…Z`). Dates are `YYYY-MM-DD`. Comparisons use string lexical order.
+- **Monetary minor fields**: integer in the smallest unit. For FX, divide by 100 (or the currency's minor-unit factor) before multiplying by `usd_per_unit`.
