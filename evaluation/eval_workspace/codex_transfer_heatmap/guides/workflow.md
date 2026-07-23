@@ -78,6 +78,26 @@ The main agent may inspect `task_groups/*/env/` and evaluators to verify the
 environment contract, stage allowed materials, and score results. Solver
 processes must not enter, list, read, or mount any `env/` source files.
 
+For each target task group, build `environment_access.md` from the verified
+runtime contract. Include the container-visible base URL, required credentials,
+and every allowed endpoint. List GET endpoints as `METHOD /path` lines without
+business descriptions. For every POST endpoint, also include its content type,
+required authentication headers, required and optional JSON fields with value
+types, and one minimal request example using placeholders. The POST contract
+must use the actual field names and credential location; it must not expose
+business rules, hidden values, expected answers, evaluator behavior, or
+task-specific query results.
+
+Use this shape for POST entries:
+
+```text
+POST /path
+Content-Type: application/json
+Required headers: <header name and runtime value, or none>
+JSON body: {"field": "<string>", "optional_field": ["<value>"]}
+Example: curl ...
+```
+
 ## 3. Check Source Skills
 
 Confirm the required existing skills are present:
@@ -108,8 +128,9 @@ runs/<mode>/<source_task_group_id>__to__<target_task_group_id>/test_001/attempt_
 Each attempt directory should contain only:
 
 - The current target test task `input/`.
-- `environment_access.md`, containing only the target task group's container-visible
-  environment entrypoint.
+- `environment_access.md`, containing the target task group's container-visible
+  environment entrypoint, credentials, allowed endpoints, and POST request
+  contracts defined above.
 - The complete skill package directory matching the current source task group,
   mode, and attempt number, staged as `skill/` with `skill/SKILL.md` as its
   entry file.

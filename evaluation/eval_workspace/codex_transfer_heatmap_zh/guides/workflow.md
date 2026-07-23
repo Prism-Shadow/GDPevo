@@ -69,6 +69,24 @@ GDPEVO_TASK_GROUP_010_ENV_BASE_URL=http://host.docker.internal:<TG010_PORT>/
 主 agent 可以检查 `task_groups/*/env/` 和 evaluator，用于确认环境契约、staging
 材料和评分。solver 进程不允许进入、列出、读取或挂载任何 `env/` 源文件。
 
+主 agent 必须根据已经核对的运行时接口，为每个 target task group 生成
+`environment_access.md`。其中包含容器可访问 base URL、必要凭据和全部允许的
+endpoint。GET endpoint 只按 `METHOD /path` 列出，不附业务介绍。每个 POST
+endpoint 还要写明 content type、必要鉴权 header、必填和可选 JSON 字段及值
+类型，并提供一条使用占位值的最小请求示例。POST 格式必须使用实际字段名和
+正确的凭据位置，不得暴露业务规则、隐藏值、标准答案、evaluator 行为或
+task-specific 查询结果。
+
+POST endpoint 使用以下格式：
+
+```text
+POST /path
+Content-Type: application/json
+必要 headers：<header 名称和运行时值，或无>
+JSON body：{"field": "<string>", "optional_field": ["<value>"]}
+示例：curl ...
+```
+
 ## 3. Check Source Skills
 
 确认下列既有 skills 已经存在：
@@ -97,7 +115,8 @@ runs/<mode>/<source_task_group_id>__to__<target_task_group_id>/test_001/attempt_
 每个 attempt 目录只放：
 
 - 当前 target test task 的 `input/`。
-- `environment_access.md`，只含 target task group 的容器可访问环境入口。
+- `environment_access.md`，包含 target task group 的容器可访问环境入口、凭据、
+  允许 endpoint 和上述 POST 请求格式。
 - 当前 source task group、mode 和 attempt 编号对应的完整 skill 目录包，以
   `skill/` staging，入口文件为 `skill/SKILL.md`。
 

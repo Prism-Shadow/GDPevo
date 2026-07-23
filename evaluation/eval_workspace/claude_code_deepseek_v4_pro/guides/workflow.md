@@ -92,10 +92,29 @@ They may use only the container-visible environment entrypoint staged by the mai
 
 Read endpoint names from `task_group/env/endpoints.txt`. Each staged
 `environment_access.md` must include the base URL, required credentials, and
-all endpoints allowed for that run as `METHOD /path` lines without endpoint
-descriptions. Include business endpoints for skill generation and test solving;
-add `/api/judge` only for reflect skill generation; never include `/health` or
-reset/reseed endpoints in execution-agent inputs.
+all endpoints allowed for that run. List GET endpoints as `METHOD /path` lines
+without business descriptions. For every allowed POST endpoint, inspect the
+verified runtime contract and also include its content type, required
+authentication headers, required and optional JSON fields with their value
+types, and one minimal request example using placeholders. Include only the
+mechanical request contract: do not expose business rules, hidden values,
+expected answers, evaluator behavior, or task-specific query results. Include
+business endpoints for skill generation and test solving; add `/api/judge` only
+for reflect skill generation; never include `/health` or reset/reseed endpoints
+in execution-agent inputs.
+
+Use this shape for non-judge POST entries in `environment_access.md`:
+
+```text
+POST /path
+Content-Type: application/json
+Required headers: <header name and runtime value, or none>
+JSON body: {"field": "<string>", "optional_field": ["<value>"]}
+Example: curl ...
+```
+
+The example must be directly runnable after replacing placeholders and must
+match the actual endpoint fields and authentication placement.
 
 The judge endpoint is train-only and valid only during reflect skill generation
 on train tasks. It must not be staged to test solvers or written into generated
@@ -184,7 +203,9 @@ reflect-3
 For each attempt directory, stage only:
 
 - The current test task `input/`.
-- `environment_access.md` with the container-visible URL, credentials when needed, and the allowed endpoint names; it overrides stale local-env references in official task inputs.
+- `environment_access.md` with the container-visible URL, credentials when
+  needed, allowed endpoint names, and the POST request contracts defined above;
+  it overrides stale local-env references in official task inputs.
 - The complete matching skill package directory as `skill/` for non-base modes.
 
 Do not copy whole test task directories for solver attempts. Do not stage
