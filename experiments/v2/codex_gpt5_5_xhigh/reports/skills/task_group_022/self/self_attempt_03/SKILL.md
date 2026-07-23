@@ -1,136 +1,100 @@
 ---
-name: atlas-commerce-ops-analysis
-description: Solve Atlas Commerce Operations workplace tasks that provide prompt/payload files, strict JSON answer templates, and an authenticated local API for schema discovery, SQL analysis, controlled canonical corrections, and audit verification. Use for cutoff-based scorecards, refund reconciliation, carrier scan quality corrections, warehouse productivity reviews, support health/SLA reviews, and similar operational analytics that must write exactly one answer.json.
+name: atlas-ops-request-analysis
+description: Analyze Atlas Commerce Operations workplace requests and produce exact JSON answers from prompt, request payload, schema, data dictionary, SQL query endpoints, and optional controlled correction endpoints. Use when a task asks Codex to compute operational scorecards, reconciliations, SLA/health reviews, cutoff-based state, ranked exceptions, or apply an approved minimal canonical data correction with audit evidence against the Atlas workplace service.
 ---
 
-# Atlas Commerce Ops Analysis
+# Atlas Ops Request Analysis
 
-## Core Workflow
+Use this skill for Atlas Commerce Operations tasks that provide a prompt, one or more request payloads, an answer template, and an authenticated workplace service. Produce the requested `answer.json` exactly; include no narrative in the answer file.
 
-1. Read the task prompt, every request payload, and the answer template before querying data.
-2. Read the task's environment access file for the base URL, bearer token, and allowed endpoints. Use only those endpoints.
-3. Fetch `/api/schema` and `/api/data-dictionary`; rely on them over memory for table names, fields, timestamp conventions, and source-row semantics.
-4. Treat the answer template as the contract. Preserve required keys, nesting, enum values, array sizes, sorting rules, numeric precision, and `additionalProperties: false` constraints.
-5. Build SQL from the request's business definitions, not from output field names alone. Keep request-specific IDs, dates, thresholds, statuses, and final values out of reusable notes.
-6. Validate every count/rate/list with at least one independent query or decomposition before writing `answer.json`.
-7. Write exactly one JSON object to the requested output path with no commentary.
+## Required Inputs
 
-## API Usage
+1. Read the task prompt first.
+2. Read every file under `input/payloads/`, including the business request payload and `answer_template.json`.
+3. Read `environment_access.md` only to obtain the allowed base URL, endpoints, headers, and transaction limits.
+4. Treat all request timestamps as exact UTC business cutoffs or windows. Do not substitute the current date.
+5. Use the answer template as the output contract, even when it uses nonstandard schema spellings such as `additional_properties`, `min_items`, or `decimal_places`.
 
-Use JSON-wrapped SQL:
+## Service Access
 
-```bash
-curl -sS \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"sql":"select 1 as ok"}' \
-  "$BASE_URL/api/sql"
-```
+- Fetch `/api/schema` and `/api/data-dictionary` before writing analysis SQL.
+- Use `POST /api/sql` for read-only analysis. Send only `SELECT` or `WITH` queries unless the task explicitly requests a correction.
+- Use `/api/correction-audit` only to inspect existing or post-change audit evidence.
+- Never use undocumented network targets, credentials, or endpoints.
+- Prefer parameterized SQL through the documented `params` field. Keep exploratory queries narrow and ordered.
 
-The SQL endpoint returns `columns`, `rows`, `row_count`, and `truncated`. If a broad CTE query is rejected, split it into smaller scoped queries that expose the same intermediate facts.
+## Analysis Workflow
 
-Use `/api/sql` for read-only analysis. Use `/api/sql/transaction` only when the prompt explicitly requests a controlled data correction, and only for the approved minimal canonical update plus its audit insert. Confirm the transaction endpoint's expected request shape in the active environment before sending a mutating request.
+1. Translate the request payload into explicit cohort predicates, metric definitions, ranking rules, rounding rules, and status/risk policies.
+2. Inspect schema and dictionary names instead of guessing table or column names. Confirm join keys, state/status columns, effective/canonical fields, timestamp meanings, logical IDs, source-row IDs, and production/test flags.
+3. Build the result with CTEs:
+   - `params` for request constants.
+   - cohort CTEs for eligible business entities.
+   - state-at-cutoff CTEs for records whose effective timestamp is at or before the cutoff.
+   - metric CTEs for counts, rates, rankings, and exception lists.
+4. Count distinct business entities at the grain named by the request: orders, shipments, tasks, cases, accounts, logical refunds, reversals, employees, or teams.
+5. Preserve missing related records when the definition makes absence meaningful. Use left joins for cases such as orders with no physical shipment, unresponded support cases, active unresolved cases, or tasks not completed by cutoff.
+6. Validate intermediate row counts and sample IDs before trusting aggregate output. Check for accidental row multiplication after joins.
+7. Compute status and risk classes from unrounded rates. Round only final reported numbers to the precision required by the template or request.
+8. Sort every output list by the request's exact order. For ties, apply every stated tie-breaker before any final rounding.
 
-## Data Rules
+## Common Business Patterns
 
-- All stored timestamps are ISO-8601 UTC text ending in `Z`; compare exact cutoff windows in UTC unless the request says otherwise.
-- Calendar dates are `YYYY-MM-DD`; FX rates are keyed by service date and currency, with `usd_per_unit` expressing USD per one currency unit.
-- Minor monetary fields use the smallest unit of the row currency. Convert minor units to currency units before multiplying by `usd_per_unit`; round only final displayed money to the template precision.
-- Master/header tables such as orders, shipments, warehouse tasks, and support cases can contain lagging current-status snapshots. For point-in-time metrics, prefer deduped event or scan histories at the cutoff when available.
-- Source event tables can contain import retries. Build effective CTEs by partitioning on `(source_system, external_event_id)` and keeping the latest `ingested_at`, with the stable row id as a deterministic tie-breaker.
+### Fulfillment and Shipment Cutoffs
 
-Example effective-source pattern:
+- Use eligible production orders from the requested campaign, warehouse, region, or active window.
+- Treat an order as complete only if it has at least one relevant physical shipment and all relevant physical shipments are effectively delivered by the cutoff.
+- Treat an order as on time only if it is complete and every relevant shipment was delivered no later than its promised delivery timestamp.
+- For severe exceptions, compare lateness against the request threshold using the latest shipment promise for incomplete orders and each actual delivery timestamp for completed orders.
+- Rank warehouse or regional rollups by the unrounded rate, then by the stated stable label.
 
-```sql
-with effective_events as (
-  select *
-  from (
-    select e.*,
-           row_number() over (
-             partition by source_system, external_event_id
-             order by ingested_at desc, event_id desc
-           ) as rn
-    from order_events e
-  )
-  where rn = 1
-)
-```
+### Refund Reconciliation
 
-Adjust the tie-break id to the table, such as `scan_row_id`, `refund_row_id`, `task_event_id`, or `case_event_id`.
+- Scope to production accounts and account attributes from the request, then to effective settled logical refunds in the service-date window.
+- Use one logical refund grain for refund counts; use distinct linked reversal grain for reversal counts.
+- Convert refund and reversal amounts to USD with the daily FX rate for each row's service date and currency.
+- Net reversals against their linked logical refund before computing exposure, reason totals, and leakage candidates.
+- For gross-order comparisons, value the order gross in USD at the settled refund service-date rate specified by the request.
+- Normalize reason codes before ranking or identifying duplicate unreversed reasons. Rank reasons by effective net USD descending, then code ascending unless the request says otherwise.
 
-## Analytical Patterns
+### Warehouse Productivity
 
-For cohort construction:
+- Use task creation windows and state cutoffs exactly as stated. Honor inclusive and exclusive boundary wording.
+- Completion rate denominator is eligible production tasks, not only completed tasks.
+- Rework rate denominator is also eligible production tasks unless the request overrides it.
+- Units per hour is completed units divided by productive minutes attached to those completed units, multiplied by 60.
+- Rank employees by units per hour descending, then employee ID ascending. Rank teams by completion rate ascending, then team ID ascending unless instructed otherwise.
+- A delayed high-priority task must satisfy both the priority/due rule and the not-completed-by-cutoff rule.
 
-- Join to account or warehouse master data when the request says production accounts, account tier/segment/region, warehouse, facility, or warehouse region.
-- Exclude internal/test accounts when the scope says production accounts or production customers.
-- Use inclusive boundaries when the request says inclusive; otherwise preserve strict comparisons such as "strictly before cutoff."
-- Keep incomplete, open, unresolved, unreversed, or delayed records in denominators when the request says they remain eligible.
+### Support Health and SLA Reviews
 
-For rates, ranks, and lists:
+- Scope accounts by production status, segment, region, or tier before selecting eligible cases.
+- Apply case-opened windows exactly, then evaluate case state at the cutoff.
+- Open-at-cutoff includes cases in open or reopened active states; reopened is a subset of open-at-cutoff.
+- First-response breaches use active time to first agent response. If no response exists by cutoff, use active elapsed time at the cutoff.
+- Resolution breaches use active time to resolution for resolved cases and active elapsed time at cutoff for active cases.
+- Severe active cases must satisfy the active-state, priority, and resolution-threshold conditions simultaneously.
+- Compute medians over the eligible resolved-at-cutoff population; for even counts average the two central active-time values.
 
-- Compute rates from unrounded numerator/denominator values.
-- Round only the final reported value to the requested number of decimal places.
-- Apply sort order exactly, including tie-breaks such as stable identifier ascending.
-- Return required list sizes exactly. Use distinct business identifiers and sort arrays as specified.
-- When deriving a status/risk enum, evaluate the request's rules in priority order and use the denominator specified by the request.
+## Controlled Corrections
 
-For "effective final status" at a cutoff:
+Only mutate data when the prompt and request payload explicitly ask for an approved correction.
 
-- Deduplicate source rows first.
-- Filter events/scans to `event_at` or canonical event timestamp at or before the cutoff.
-- Pick the latest event per entity using event timestamp descending and stable row id descending.
-- For delivered/completed/resolved timing, use the relevant terminal event timestamp from the deduped history, not a later header snapshot.
+1. Identify the exact contradiction from visible raw/canonical evidence and the request scope.
+2. Restrict the target to the approved minimal canonical field. Do not change raw source values, source identity fields, unrelated rows, or derived business IDs.
+3. Capture pre-correction metrics and the target's old canonical value with read-only SQL.
+4. Build a guarded transaction containing:
+   - one `UPDATE` constrained by source-row ID, business entity ID, old value, scope fields, and any batch/cutoff criteria needed to guarantee one business row;
+   - one correction-audit `INSERT` using the request's approved audit fields.
+5. Set `expected_total_changes` to the exact business-row plus audit-row count required by the success rule.
+6. After the transaction, verify affected business rows, audit rows, the corrected canonical value, and post-correction metrics through read-only SQL or `/api/correction-audit`.
+7. Report `APPLIED` only when every success condition is met. Otherwise report `NOT_APPLIED` with the actually observed mutation and verification results.
 
-## Domain Patterns
+## Output Discipline
 
-Fulfillment scorecards:
-
-- Build eligible orders from campaign/account/warehouse scope.
-- Treat an order as complete only when it has at least one physical shipment and every associated shipment is effectively delivered by the cutoff.
-- Treat on-time completion as requiring every associated shipment's delivered timestamp to be no later than that shipment's promise.
-- For severe exceptions, compare delivered or cutoff timing to shipment promises exactly as the request defines, including any grace period.
-
-Refund reconciliation:
-
-- Deduplicate refund attempts by source identity before classification.
-- Count distinct eligible orders and distinct logical refunds according to the request's effective-settled definition.
-- Link reversals through `linked_refund_id`; subtract linked reversal USD from the logical refund's settled USD for net exposure.
-- Rank reasons by effective net USD and the request's tie-breaker.
-- Compare net refund USD to the order gross converted at the refund service-date FX rate specified by the request.
-
-Carrier quality corrections:
-
-- Scope contradiction discovery by import batch, warehouse/facility, cutoff, and production shipment rules from the request.
-- Compare raw source status with canonical status only to find the single approved contradiction; never change raw source values, source identity fields, unrelated rows, or broad status snapshots unless explicitly approved.
-- Before mutation, record the target row id, business entity id, field name, old value, new value, reason code, actor, correction key, audit id, and corrected timestamp from the request.
-- Mutate only the minimal canonical field and canonical correction metadata, and insert exactly one audit record in the same controlled transaction.
-- After mutation, query both the business row and `/api/correction-audit`. Report `APPLIED` only if the request's success rule is satisfied; otherwise report `NOT_APPLIED` with observed counts.
-
-Warehouse productivity:
-
-- Scope eligible tasks by warehouse, production work class, creation window, and cutoff.
-- Compute completed units and productive minutes from deduped task events, not just planned units.
-- Compute units per hour as completed production units divided by productive minutes times 60; handle zero productive minutes explicitly.
-- Count rework from the request's task or event definition, then divide by all eligible production tasks for rework rate.
-- For delayed high-priority work, apply exact priority set, due-time comparison, and cutoff-completion state from the request.
-- Rank employees and teams using unrounded metrics and stable identifier tie-breaks.
-
-Support health and SLA reviews:
-
-- Scope cases through accounts when the request names production customers, segment, tier, or regions.
-- Deduplicate case events before deriving first response, active/open state, resolved state, reopened state, and active-clock durations.
-- Compute active-at-cutoff from event history at the cutoff. Treat reopened as the requested subset of active cases.
-- For active-time clocks, sum only intervals where the support clock is active, and stop at first agent response, resolution, or cutoff as the metric requires. Exclude waiting-on-customer intervals when the event history provides `WAITING_CUSTOMER` and `CUSTOMER_REPLIED` transitions.
-- For unresolved cases, use active elapsed time at the cutoff for response or resolution breach checks.
-- For medians, sort numeric active-resolution hours and average the two central values for even counts before final rounding.
-
-## Output Validation
-
-Before writing `answer.json`:
-
-- Confirm the JSON contains every required key and no extra keys.
-- Confirm numbers use the required precision and are JSON numbers, not strings.
-- Confirm arrays meet `minItems`/`maxItems`, uniqueness, pattern, and ordering rules.
-- Confirm enum strings exactly match the template.
-- Confirm all IDs are stable business IDs from the database, not row numbers or labels invented from context.
+- Write exactly one JSON object to `answer.json`.
+- Include only keys allowed by `answer_template.json`, with all required keys present.
+- Match identifier formats and enum values exactly.
+- Keep arrays unique when required and sorted by the requested order.
+- Use JSON numbers, not strings, for numeric values. Round monetary and rate values to the required numeric precision.
+- Validate the final file against the answer template structurally before finishing; at minimum check required keys, forbidden extra keys, enum membership, array sizes, uniqueness, and numeric rounding.

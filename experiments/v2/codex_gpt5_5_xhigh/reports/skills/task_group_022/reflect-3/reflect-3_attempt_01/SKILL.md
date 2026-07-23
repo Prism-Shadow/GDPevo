@@ -1,68 +1,51 @@
 ---
-name: atlas-commerce-ops-analysis
-description: Analyze Atlas Commerce Operations request payloads against operational database records and produce strict JSON answers. Use for fulfillment, refund, carrier quality, warehouse productivity, support health, cutoff-state analytics, FX/netting reconciliation, event-history SLA calculations, and controlled canonical-correction tasks where Codex must derive metrics from schema, data dictionary, request facts, and output templates.
+name: atlas-ops-analytics
+description: Solve Atlas Commerce Operations analytical and controlled-correction tasks that provide a prompt, request payload, JSON answer contract, schema/data dictionary access, and SQL-style workplace data. Use for fulfillment, refund, carrier-scan, warehouse productivity, support health, or similar operational scorecards requiring exact JSON output, event-derived state at a cutoff, imported-row deduplication, FX conversion, risk classification, ranked exceptions, or approved canonical data corrections.
 ---
 
-# Atlas Commerce Ops Analysis
+# Atlas Ops Analytics
 
 ## Core Workflow
 
-1. Read the prompt, request payload, and answer template before querying data.
-2. Extract exact cohort filters, UTC windows, cutoff timestamps, inclusivity rules, status rules, rounding precision, array ordering, and tie-breakers.
-3. Inspect schema and field descriptions, then map each requested metric to source tables and stable identifiers.
-4. Build small validation queries first: cohort count, status distribution, event types, duplicate-source counts, and one or two row-level examples.
-5. Prefer history/event tables for cutoff-consistent state. Treat denormalized `current_status` fields as snapshots that may lag unless the request explicitly says to use them.
-6. Produce the final object only after independent checks confirm counts, rates, sorted arrays, and status classifications.
+1. Read the prompt, request payload, and answer template before querying data. Treat the payload as the business contract and the template as the output contract.
+2. Inspect the schema and data dictionary supplied by the task. Prefer canonical fields for analytics; use raw fields only for source-reconciliation checks.
+3. Build the cohort first, then calculate metrics from that cohort. Apply production filters from account flags when the request says production accounts, production orders, production shipments, or production customers.
+4. Use UTC timestamp boundaries exactly as stated. Respect inclusive, exclusive, and "strictly before" language.
+5. Deduplicate imported event or attempt rows before aggregation when source identity fields can repeat. Use `(source_system, external_event_id)` with latest `ingested_at`, then stable row id as a tie-breaker, unless the business entity has a stronger logical id such as `refund_id`.
+6. Derive state at a cutoff from effective event history when event tables and snapshot columns disagree or when the request says "effective", "at cutoff", "active at cutoff", or "completed by cutoff".
+7. Calculate rankings and classifications from unrounded values. Round only final reported numbers to the requested precision.
+8. Validate the final object against the answer template: exact fields only, required array lengths, stable sort order, numeric precision, and no narrative.
 
-## Data Handling Rules
+## Cohorts And State
 
-- Apply production exclusions when the request says production accounts or production population: exclude accounts where `is_internal = 1` or `is_test = 1`. For warehouse work, also honor `work_class = 'PRODUCTION'`.
-- For imported append-only rows, de-duplicate retries by `(source_system, external_event_id)`, keeping the row with the latest `ingested_at`, then the greatest stable row id as a tie-breaker.
-- For final state at a cutoff, filter events at or before the cutoff, then rank by event timestamp and stable event id. Use exact UTC boundaries; use `<` for “strictly before” and inclusive comparisons only when requested.
-- Use numeric timestamp arithmetic for hour/day thresholds. Do not compare formatted date strings after applying date functions.
-- Round only final reported values. Keep intermediate ratios, money, and rates unrounded for ordering and status-rule evaluation.
-- Return arrays in the requested deterministic order. Use secondary tie-breakers exactly as stated, usually stable id ascending.
+- Production account data: exclude `is_internal = 1` and `is_test = 1` unless the request defines production differently.
+- Campaign/order cohorts: join through the campaign or account dimensions requested, then apply the campaign or opened/created window exactly.
+- Shipment state: for "effective final carrier status", use the latest canonical carrier scan at or before the cutoff, ordered by event timestamp then stable scan row id. Shipment completion usually requires every associated shipment in the cohort to have final `DELIVERED` status by the cutoff.
+- Warehouse task state: use deduped `warehouse_task_events` at or before the state cutoff. `COMPLETED` events establish completed tasks, completed units, productive minutes, and delayed-task exclusions. `REWORK` events establish rework tasks.
+- Support case state: use deduped lifecycle events at or before the cutoff for active/resolved state when available. Treat `OPENED`, `OPEN`, `CUSTOMER_REPLIED`, and `WAITING_CUSTOMER` as open state labels, `REOPENED` as reopened, and `RESOLVED` as resolved.
 
-## Common Metric Patterns
+## Business Calculations
 
-### Fulfillment And Carrier State
+- Rates: keep incomplete or unresolved entities in denominators when the request says the denominator is the eligible population.
+- Exceptions: create boolean flags per entity, then aggregate counts and sorted id lists from those flags. Preserve "more than", "at least", and threshold strictness exactly.
+- Worst/best lists: compute per-group unrounded metrics, sort by the requested primary metric and tie-breakers, then round only displayed values.
+- Money: convert minor units to major units before applying FX. Use the row's service date and currency. For refunds, dedupe settled logical refunds by `refund_id`, subtract linked reversal rows, normalize reason codes, and compare net order refund value after reversals to the order gross value using the request's FX basis.
+- Medians: sort the resolved values; for an even count, average the two middle values; round the final median only.
+- Risk/status labels: evaluate rules in priority order and use unrounded rates and amounts.
 
-- An order with no physical shipment is incomplete.
-- A shipped order is complete only when every physical shipment has effective final canonical carrier status `DELIVERED` by the cutoff.
-- On-time completion requires every delivered shipment to have delivery time no later than its own promise.
-- Severe delay checks use numeric elapsed time against the request threshold; incomplete shipments with no relevant promise should not satisfy promise-based delay rules.
-- For carrier quality corrections, identify the single raw/canonical contradiction in scope. Correct only the approved canonical field, preserve raw/source identity fields, insert the audit record, then verify affected business rows, audit rows, corrected value, and post-correction rollups before reporting `APPLIED`; otherwise report the actually observed `NOT_APPLIED` state.
+## Controlled Corrections
 
-### Refund Reconciliation
+Only mutate data when the prompt explicitly requests an approved correction.
 
-- Count logical refunds by stable `refund_id`, not physical retry rows.
-- Convert money from minor units to major units, then join FX on the row’s service date and row currency.
-- Compute net refund exposure as settled refund USD less in-scope linked reversal USD. Count linked reversal rows according to the request scope even when they are reported separately from settled logical refunds.
-- Rank refund reasons by unrounded effective net USD descending, then normalized reason code ascending.
-- For leakage review, evaluate net order refund USD after reversals against order gross USD valued at the relevant refund service-date FX rate, and separately flag orders with repeated unreversed settled logical refunds sharing the same normalized reason code.
-
-### Warehouse Productivity
-
-- Scope eligible tasks by warehouse, production work class, and created window.
-- Determine completed tasks, rework state, and delayed high-priority tasks from de-duplicated task events as of the state cutoff.
-- Completed production units and productive minutes should come from completed work events attached to eligible tasks.
-- Employee productivity is total completed units divided by total productive minutes, multiplied by 60; order employees by the unrounded rate, then employee id.
-- Lowest-performing teams rank by completion rate ascending, then team id.
-
-### Support Health
-
-- Scope support cases through account attributes and the case opened window; apply production exclusions.
-- De-duplicate case events before computing lifecycle state or clocks.
-- Model active case state from the event history at cutoff. `OPEN` and `REOPENED` are active states; customer replies and escalations generally leave the case active until a later resolved or waiting event changes state.
-- First-response active time runs from opened event to first agent response. If no agent response exists, use active elapsed time at the cutoff.
-- Resolution active time runs from opened event to resolution for resolved cases, or to the cutoff for active cases.
-- Subtract customer-wait pauses from active clocks: pause from `WAITING_CUSTOMER` until the next `CUSTOMER_REPLIED`, or until the measurement endpoint if no reply occurs first.
-- Severe active cases are active at cutoff, priority `URGENT` or `HIGH`, and beyond the priority resolution-active-time threshold.
-- Median resolved active hours uses resolved eligible cases only; for an even count, average the two central unrounded values, then round the final median.
+1. Identify the single scoped contradiction from raw versus canonical fields using the request's batch, entity, warehouse, and cutoff.
+2. Capture pre-correction metrics before mutating.
+3. Apply the minimal guarded update to canonical fields and correction metadata only. Do not alter raw source values, event timestamps, source-system identifiers, or unrelated rows.
+4. Insert exactly one correction audit row using the approved audit identifiers. Use the source entity type from the import batch when available; use the affected business id as `entity_id` and the corrected source row id as `source_row_id`.
+5. Verify the mutation by reading back the corrected value, audit row, and post-correction metric. Report an applied status only when the requested success rule is satisfied.
 
 ## Output Discipline
 
-- Shape the answer exactly to the provided template: required keys only, correct scalar types, no commentary, and no extra fields.
-- Use stable business identifiers exactly as stored.
-- For status classifications, evaluate rules in priority order and leave all denominators exactly as specified.
-- Before finalizing, run a quick schema check mentally or with a JSON validator if available: required fields present, arrays sorted, unique ids unique, numeric precision correct, and enum values exact.
+- Write the final answer as one JSON object matching the template.
+- Use stable ascending order for id arrays unless another order is explicitly requested.
+- Use requested tie-breakers for ranked arrays; do not rely on database default ordering.
+- Do not include commentary, provenance notes, query text, or intermediate values in the answer.

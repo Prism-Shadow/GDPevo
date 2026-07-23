@@ -1,86 +1,99 @@
 ---
-name: skill
-description: Analyze scoped Atlas Commerce Operations requests that require database-backed operational metrics, cutoff-based state reconstruction, reconciliation, or controlled canonical corrections. Use when the user provides a request payload, answer schema/template, and authenticated Atlas Commerce schema/query services for fulfillment, refunds, carrier quality, warehouse productivity, support health, or similar operational scorecards.
+name: atlas-ops-analytics
+description: Analyze Atlas Commerce Operations workplace tasks that require strict JSON answers from operational database records, including cutoff-based fulfillment, refunds, carrier corrections with audit records, warehouse productivity, and support-health reviews. Use when a task provides a prompt, JSON request payload, answer template, and environment access for Atlas-style schema/data-dictionary/query services or controlled correction transactions.
 ---
 
-# Atlas Commerce Operations Analysis
+# Atlas Ops Analytics
 
 ## Core Workflow
 
-1. Read the prompt, request payload, and answer template before querying data. Treat the template as the output contract: exact keys only, correct scalar types, arrays ordered exactly as specified, and no commentary in machine-consumed answers.
-2. Load the provided schema and data dictionary. Identify each table's row grain, source identity fields, timestamp columns, status columns, and relationship keys before writing SQL.
-3. Translate every request phrase into explicit filters: account segment/tier/region, production exclusions, campaign or warehouse scope, service-date windows, opened/created windows, cutoff timestamps, inclusive versus strict boundaries, and required tie-breakers.
-4. Prefer append-only event/source tables for cutoff state and metrics. Treat denormalized `current_status` columns as convenience snapshots that may lag unless the request explicitly makes them authoritative.
-5. Round only final reported values. Use unrounded values for rankings and status-policy thresholds.
+1. Read the prompt, request payload, and answer template before querying data.
+2. Treat the answer template as the output contract. Produce exactly the required keys, value types, rounding, and array ordering. Do not add commentary or extra fields.
+3. Read schema and data-dictionary context from the task-provided environment access. Use the dictionary to identify source rows, canonical fields, snapshot fields, flags, and relationship keys.
+4. Build the cohort first. Keep cohort filters separate from metric logic so denominators are auditable.
+5. Query only the rows needed for the cohort and related events. If a response is paginated or marked truncated, fetch all pages before computing.
+6. Deduplicate imported source events before metrics. For tables with `source_system`, `external_event_id`, and `ingested_at`, keep the latest ingestion per `(source_system, external_event_id)`, using the stable row id as a tie-breaker.
+7. Compute final metrics locally or in SQL, but keep intermediate counts for validation: cohort count, event count before and after dedupe, final-state counts, breach counts, and array lengths.
+8. Round only final reported values. Use exact decimal arithmetic for money and final ratios when possible.
+9. Generate the final JSON programmatically from computed objects. Do not hand-copy long sorted arrays.
 
-## Effective Rows
+## Boundaries And Time
 
-Many Atlas source tables contain retried imports. Build an "effective rows" layer before computing metrics:
+- Treat all timestamps as UTC unless the request explicitly says otherwise.
+- Apply inclusive or exclusive boundaries exactly as stated in the request. If a request says an end timestamp is inclusive, use `<=`; if it says a due time is strictly before a cutoff, use `<`.
+- Use business event timestamps for cutoff state unless the request explicitly says to use ingestion time or snapshot state.
+- Exclude `accounts.is_internal = 1` and `accounts.is_test = 1` whenever the request describes production accounts, production orders, or production customer populations.
+- Prefer append-only event history for cutoff state. Use snapshot columns such as `current_status` as cross-checks, not as the primary source, unless the request specifically defines the snapshot as authoritative.
 
-- Deduplicate source rows by `(source_system, external_event_id)`.
-- Keep the row with the latest `ingested_at`; break ties with the stable row identifier for that table.
-- For final state at a cutoff, choose the latest effective event at or before the cutoff by event timestamp, then stable row identifier.
-- Apply this pattern to carrier scans, refund attempts, warehouse task events, support case events, order events, and other source-imported facts.
+## Query Discipline
 
-If a large all-in-one SQL statement is rejected or hard to validate, decompose it into smaller CTEs or page source rows into a local in-memory calculation. Always check whether query responses are truncated and paginate with deterministic ordering when needed.
+- Avoid relying on default query limits. Add deterministic ordering and page with offset or keyset pagination until all rows are retrieved.
+- Check `truncated` or equivalent response flags after every query that can return many rows.
+- Keep raw and canonical columns distinct. Raw fields preserve source values; canonical fields drive operational analytics and approved corrections.
+- Preserve stable ordering requirements exactly: sort IDs ascending; sort ranked objects by the specified metric before rounded display value, then by the stated tie-breaker.
 
-## Production Scope
+## Fulfillment And Carrier Events
 
-When a request says production accounts, production orders, or production shipments, exclude internal and test accounts by joining through the account owning the record. Preserve the request's other population filters, such as account tier, segment, region, campaign, warehouse, or work class.
-
-## Fulfillment Scorecards
-
-For campaign fulfillment metrics:
-
-- Select eligible orders by campaign ID and the campaign's active window, then apply production-account exclusions.
-- An order is complete only if it has at least one physical shipment and every shipment's final effective carrier status at the cutoff is `DELIVERED`.
-- On-time completion requires every delivered shipment's delivery event time to be no later than that shipment's promise.
-- Incomplete orders remain in the denominator for completion-rate metrics.
-- Severe exceptions usually combine incomplete orders past their latest shipment promise plus a grace period with completed orders containing shipment deliveries beyond the allowed lateness threshold.
-- Region rollups use the order's assigned warehouse region unless the request says otherwise.
+- For fulfillment cohorts, join orders to campaigns, accounts, warehouses, shipments, and carrier scans as required by the request.
+- Define physical shipment membership from `shipments`, not carrier scans alone. An order with no physical shipment is incomplete when the request says so.
+- Deduplicate carrier scans by source event before deriving shipment state.
+- For final carrier status at a cutoff, use the latest effective canonical carrier scan at or before the cutoff for each shipment.
+- For delivered timing, use the delivered canonical scan timestamp associated with the effective delivered event, then compare it to the shipment promise.
+- For order-level completion, require every associated physical shipment to satisfy the delivery rule. Keep incomplete orders in rate denominators unless the request says otherwise.
+- For severe exception logic, separate incomplete-late rules from completed-late rules. Apply late-delivered-shipment rules only to orders that meet the request's completion definition.
 
 ## Refund Reconciliation
 
-For refund settlement requests:
+- Deduplicate refund attempts by source event before identifying logical refunds.
+- Treat settled logical refunds as distinct `refund_id` values after dedupe unless the request defines a different logical key.
+- Restrict settled refund population by the requested account scope and service-date window.
+- Count distinct eligible orders from orders with at least one effective settled logical refund.
+- Count linked reversals in the requested close window for the scoped production account population. Subtract those reversal amounts from net refund exposure, even when a reversal links to a non-settled row; do not invent reason attribution when the linked settled refund is outside the reason population.
+- Convert monetary minor units to major units, then to USD with the daily FX rate for each refund or reversal service date and row currency.
+- For reason rankings, rank by unrounded effective net USD, then the normalized reason code ascending. Attribute reversal offsets to the linked settled refund reason only when the link is inside the settled-reason population.
+- For leakage checks, compare order-level net refund USD after reversals to order gross USD using the FX date specified by the request. Check repeated unreversed settled refunds by normalized reason per order.
+- Apply risk policies from the request after computing candidate rates and net exposure.
 
-- Build effective refund rows first, then count settled logical refunds at the `refund_id` grain.
-- Scope settled refunds by the request's account population and refund service-date window.
-- Count effective linked reversals from `REVERSED` refund rows in the same account/date scope; subtract reversal USD value from settlement exposure.
-- Convert monetary minor units with the FX rate for each refund or reversal service date and row currency.
-- For gross-overage leakage checks, convert the order gross using the settled refund service date and the order currency.
-- Attribute reason-code rankings by effective net USD, subtracting reversals from the appropriate reason when a linkage resolves; otherwise use the reversal row's normalized reason code.
-- For repeated-refund leakage, count unreversed logical refund IDs, not duplicate imported source rows.
+## Controlled Corrections
 
-## Carrier Quality Corrections
-
-For controlled carrier correction requests:
-
-- Identify the single raw/canonical contradiction inside the requested batch, warehouse, entity population, and cutoff. Compare exact canonical status meaning, not loose substring matches.
-- Compute pre-correction backlog from scoped shipments whose final effective carrier status at the cutoff is not `DELIVERED`.
-- Apply only the approved canonical field change. Do not alter raw source values, source identity fields, unrelated rows, or shipment snapshots unless explicitly approved.
-- Insert the required audit record in the same controlled transaction as the business-row update.
-- Report `APPLIED` only after verifying exactly one business row changed, exactly one audit row was inserted, and a post-change query confirms the corrected canonical value. Otherwise report `NOT_APPLIED` with observed row counts and observed post-change metrics.
+- Perform correction work only when the request explicitly asks for it and provides an approved correction policy.
+- Identify the single source-row contradiction from raw/canonical fields and verify the current old value before mutation.
+- Compute all pre-correction analysis from the unmodified state before applying the transaction.
+- Use a guarded transaction for the minimal approved canonical field update and the audit insert. Guard the update with stable row id, entity id, raw value, and old canonical value.
+- Do not change raw source fields, source identity fields, unrelated rows, or unrelated canonical fields.
+- Verify the transaction result, the post-change canonical value, and the audit record. Report `APPLIED` only when the requested success rule is satisfied; otherwise report `NOT_APPLIED` with observed results.
+- Compute post-correction analysis from a fresh read after the transaction.
 
 ## Warehouse Productivity
 
-For warehouse production reviews:
-
-- Scope tasks by warehouse, `PRODUCTION` work class, and the exact created-at window.
-- Use effective task events at or before the state cutoff for completion, units, productive minutes, rework, and delayed-work determinations.
-- Completed production units come from completed task events, not planned units.
-- Employee productivity is total completed units divided by total productive minutes attached to completed units, multiplied by 60.
-- Delayed high-priority tasks are `HIGH` or `URGENT` tasks with `due_at` strictly before the cutoff and no completed event by the cutoff.
-- Team completion rates use assigned employee team membership and completed eligible task count divided by eligible task count; rank by unrounded rate, then team ID.
+- Build the task cohort from `warehouse_tasks` using warehouse, work class, and task-created boundaries from the request.
+- Deduplicate `warehouse_task_events` before using event counts, task state, units, or productive minutes.
+- Derive task state at the cutoff from the latest deduped task event at or before the cutoff.
+- Count completed tasks from final cutoff state when computing completion rate and team completion ranking.
+- Sum completed production units and productive minutes from deduped `COMPLETED` events attached to eligible production tasks.
+- Compute employee units per hour as completed units divided by completed-event productive minutes, multiplied by 60. Rank by unrounded units per hour descending, then employee id ascending.
+- Count rework tasks according to the request's state definition, typically final cutoff state `REWORK` unless the request says any rework event qualifies.
+- Identify delayed high-priority tasks from eligible HIGH or URGENT tasks with `due_at` strictly before the cutoff and not completed by the cutoff.
+- Rank teams by unrounded completion rate ascending, then team id ascending.
 
 ## Support Health
 
-For support-health reviews:
+- Build the account scope from production account flags, segment, and region before selecting cases.
+- Deduplicate case events by source event before deriving state or clocks.
+- Derive cutoff case state from deduped event history when lifecycle events are available. Treat header status as a cross-check unless the request says it is authoritative.
+- Treat support active time as time while the case is actively awaiting support work. Pause the active clock during customer-waiting periods and resume on customer reply, reopen, or another active-state event.
+- Stop active-time accumulation at resolution for resolved cases. For active cases, carry active time forward to the cutoff.
+- Use the request's priority-specific thresholds for first response and resolution active-time breaches.
+- Treat first response as the first explicit agent response event unless the request or data dictionary defines a broader response event set.
+- Define severe active cases from active open/reopened cases at the cutoff, requested high-severity priorities, and active resolution-threshold breach.
+- Rank worst accounts by severe active case count descending, active-clock breach count descending, then account id ascending.
+- Compute medians from unrounded active resolution hours, averaging the two central values for even counts, then round the final reported median.
 
-- Scope cases by production account filters and opened-at window.
-- Reconstruct case state from effective case events at or before the cutoff. Treat `OPEN`, `OPENED`, `REOPENED`, `ASSIGNED`, `AGENT_RESPONDED`, `CUSTOMER_REPLIED`, and `ESCALATED` histories as active unless a later event pauses or resolves the case; treat `REOPENED` as the reopened active subset when it is the current effective state.
-- Compute support active time as elapsed time while the case is support-active. Pause the clock during `WAITING_CUSTOMER`; resume on `CUSTOMER_REPLIED`, `OPEN`, or `REOPENED`; stop on `RESOLVED`.
-- First-response breaches use active time to the first agent response; unresponded cases use active elapsed time at the cutoff.
-- Resolution breaches use active time to resolution for resolved cases and active elapsed time at the cutoff for active cases.
-- Severe active cases are active at the cutoff, priority `URGENT` or `HIGH`, and beyond the priority resolution active-time threshold.
-- Worst-account rankings should include all eligible accounts as candidates and apply the request's ordered tie-breakers.
-- Median active resolution hours uses resolved eligible cases only; for an even count, average the two central unrounded active-time values before final rounding.
+## Validation Checklist
+
+- Confirm every required output field is populated and no extra key exists.
+- Confirm denominators match the stated cohort and include incomplete or active cases when required.
+- Confirm array lengths, uniqueness, and sort order match the template.
+- Confirm final rounded values are rounded only after sorting and risk classification.
+- Confirm mutation answers include fresh post-change verification and audit values.
+- Avoid persisting scratch candidates, answer values, or analysis transcripts inside the skill package.

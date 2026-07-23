@@ -1,131 +1,168 @@
 ---
-name: atlas-commerce-ops
-description: Use for Atlas Commerce Operations workplace tasks that require reading local prompt and payload JSON files, using environment_access.md to query the authenticated Atlas service, computing cutoff-based operations metrics or reconciliations with SQL, optionally applying an approved audited canonical correction, and writing answer.json exactly matching the supplied answer_template.json.
+name: atlas-commerce-operations
+description: Use when solving Atlas Commerce Operations workplace tasks that provide a prompt, request payload JSON, and answer_template.json, and require authenticated schema/data-dictionary/SQL API use to produce exact answer.json metrics, reconciliations, support/warehouse/fulfillment scorecards, or approved canonical corrections with correction_audit records.
 ---
 
 # Atlas Commerce Operations
 
-## Core Workflow
+## Required Workflow
 
-1. Read `prompt.txt` and every file in `input/payloads/` before querying. Treat the request payload as the business contract and `answer_template.json` as the output contract.
-2. Read `environment_access.md` for the base URL, authorization header, and allowed endpoints. Do not use other network locations or hard-code credentials.
-3. Fetch `GET /api/schema` and `GET /api/data-dictionary` before writing substantive SQL. The service is SQLite-style: timestamps are ISO-8601 UTC text, dates are `YYYY-MM-DD`, integer booleans use `0`/`1`, and monetary minor amounts must be converted through `fx_rates`.
-4. Use `POST /api/sql` for read-only analysis. Use `POST /api/sql/transaction` only when the task explicitly requests an approved correction.
-5. Build the result from queries and request rules, then write only `answer.json`. The JSON must contain exactly the required fields, no commentary, no extra keys, arrays in the requested order, and final rounding only.
+1. Read the task prompt and every file under `input/payloads/` before querying data.
+2. Treat `answer_template.json` as the output contract: preserve required keys, value types, array ordering rules, rounding precision, enum policies, and `additionalProperties: false`.
+3. Read `environment_access.md` for the base URL, token, and allowed endpoints. Fetch `/api/schema` and `/api/data-dictionary` at the start of each task; table availability and field meanings are part of the runtime contract.
+4. Use `POST /api/sql` for read-only analysis. Use `POST /api/sql/transaction` only when the prompt explicitly requests an approved correction.
+5. Compute from the database each time. Do not reuse answer values from examples or prior runs.
+6. Write only the final JSON object to `answer.json`; include no markdown, explanation, comments, or extra fields.
 
-Useful shell pattern:
+Useful API pattern:
 
 ```bash
-BASE_URL=$(awk -F= '/^GDPEVO_ENV_BASE_URL=/{print $2}' environment_access.md)
-AUTH_VALUE=$(awk -F': ' '/^Authorization:/{print $2}' environment_access.md)
-
-curl -sS -H "Authorization: $AUTH_VALUE" "${BASE_URL%/}/api/schema"
-curl -sS -H "Authorization: $AUTH_VALUE" "${BASE_URL%/}/api/data-dictionary"
-
-SQL='SELECT COUNT(*) AS n FROM orders'
-jq -nc --arg sql "$SQL" '{sql:$sql}' |
-  curl -sS -H "Authorization: $AUTH_VALUE" -H 'Content-Type: application/json' \
-    -X POST "${BASE_URL%/}/api/sql" -d @-
+curl -sS \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sql":"WITH ... SELECT ...","params":[]}' \
+  "$BASE_URL/api/sql"
 ```
 
-The SQL response shape is `columns`, `rows`, `row_count`, and `truncated`; keep queries narrow enough that `truncated` is false for answer-bearing detail.
+Prefer parameterized SQL through the `params` array for user/payload values.
 
-## Query Principles
+## Database Orientation
 
-- Prefer event history over denormalized `current_status` when the request says "at cutoff", "by cutoff", or gives an as-of timestamp.
-- Apply production scope explicitly. For production accounts/customers/orders, join `accounts` and require `is_internal = 0` and `is_test = 0`. For warehouse work, require `warehouse_tasks.work_class = 'PRODUCTION'` when requested.
-- Honor exact boundaries from the request. Use `BETWEEN` only for inclusive windows; use `<` for "strictly before"; use `<=` for "by/no later than cutoff".
-- Keep unrounded values for ranking and status classification. Round only the final reported number of decimal places.
-- Sort identifier arrays in the requested order, usually ascending. For ranked outputs, apply all specified tie-breakers before limiting.
-- Treat source identity fields (`source_system`, `external_event_id`, raw source values, source row IDs) as immutable.
+Core tables:
 
-Many imported tables can contain retried source rows. Build an effective-row CTE before aggregation when a table has `source_system`, `external_event_id`, and `ingested_at`:
+- `accounts`: production filtering and account scope (`segment`, `tier`, `region`, `is_internal`, `is_test`).
+- `campaigns`, `orders`, `order_lines`, `shipments`, `carrier_scans`: fulfillment, delivery, and carrier-status analysis.
+- `refund_attempts`, `payment_events`, `fx_rates`: refund/reversal settlement and USD conversion.
+- `warehouse_tasks`, `warehouse_task_events`, `employees`, `warehouses`: facility productivity and task state.
+- `support_cases`, `case_events`: support SLA and lifecycle analysis.
+- `correction_audit`: append-only audit records for controlled canonical corrections.
+
+Stored timestamps are ISO-8601 UTC text ending in `Z`; direct string comparison is valid for same-format timestamps. Use exact boundary language from the request: inclusive windows use `>=` and `<=`; strict "before cutoff" uses `<`. Calendar service dates are `YYYY-MM-DD`.
+
+For production populations, join to `accounts` when the entity has an account path and exclude internal or test accounts unless the request says otherwise:
 
 ```sql
-WITH effective_rows AS (
-  SELECT *
-  FROM (
-    SELECT t.*,
-           ROW_NUMBER() OVER (
-             PARTITION BY source_system, external_event_id
-             ORDER BY ingested_at DESC, <stable_primary_key> DESC
-           ) AS rn
-    FROM <imported_table> AS t
-  )
-  WHERE rn = 1
-)
+a.is_internal = 0 AND a.is_test = 0
 ```
 
-For cutoff state from append-only events, first filter effective events to `event_at <= :cutoff`, then take the last event per business entity ordered by event time and stable event ID.
+For append-only or imported source rows with retry identity (`source_system`, `external_event_id`, `ingested_at`), deduplicate retries unless the request asks for raw imports. Keep the latest `ingested_at` for each source identity. For historical state at a cutoff, filter events at or before the cutoff, then pick the last effective event by event timestamp plus stable row id. Avoid using denormalized `current_status` for a historical cutoff when event history is available.
 
-## Domain Patterns
+## Shared Calculation Rules
 
-### Fulfillment and Shipments
-
-- Eligible campaign orders usually join `orders`, `accounts`, `campaigns`, `shipments`, `carrier_scans`, and `warehouses`.
-- Verify a campaign's active window from `campaigns`; use the request's campaign and creation-window policy.
-- An order is complete only if it has at least one shipment and every associated shipment has an effective delivered carrier state by the cutoff.
-- A complete order is on time only if every shipment was delivered no later than its own `promised_delivery_at`.
-- Severe late/incomplete logic is order-level: completed orders severe if any shipment delivery is more than the request's grace period after promise; incomplete orders severe only when the cutoff is beyond the latest shipment promise plus the grace period.
-- Regional rates use the order's assigned warehouse region and keep incomplete orders in the denominator unless the request says otherwise.
-
-### Refund Reconciliation
-
-- Scope production accounts by `accounts.tier`, production flags, and the service-date window in the request.
-- Deduplicate source retries first, then identify the latest effective attempt for each logical `refund_id`.
-- Count effective settled logical refunds from latest logical refunds whose status is settled and that are not reversal rows.
-- Treat rows with `linked_refund_id` as linked reversals; count effective linked reversals separately and subtract their USD value from the linked refund/order exposure.
-- Convert money as `(amount_minor / 100.0) * fx_rates.usd_per_unit` using the refund or reversal `service_date` and row currency. When comparing to order gross, convert `orders.gross_amount_minor` using the same service date as the settled refund candidate.
-- Normalize reason codes with `UPPER(TRIM(reason_code))`. Rank reasons by effective net refund USD descending, then normalized reason ascending.
-- Leakage candidates are distinct orders satisfying any request rule, commonly net refund USD greater than order gross USD or multiple unreversed settled logical refunds with the same normalized reason.
-
-### Warehouse Productivity
-
-- Eligible tasks come from `warehouse_tasks` filtered by warehouse, created window, and `work_class = 'PRODUCTION'` when requested.
-- Determine completion by effective `warehouse_task_events` with `event_type = 'COMPLETED'` at or before the state cutoff, not by future events.
-- Sum completed units and productive minutes from completed task events attached to eligible completed tasks.
-- Employee productivity is `total_completed_units / total_productive_minutes * 60`; exclude zero-minute employees from rate ranking unless the request specifies a zero-rate fallback.
-- Rework task count is distinct eligible tasks with an effective `REWORK` event at or before cutoff, or the request's explicit rework definition.
-- Delayed high-priority tasks are high/urgent tasks with `due_at` strictly before cutoff and no completed event by cutoff.
-- Team completion rates use eligible tasks as denominator and the same completion definition as the facility rate.
-
-### Support Health
-
-- Scope cases by `support_cases.opened_at`, production account flags, account segment, and account regions.
-- Reconstruct case state at cutoff from effective `case_events` when possible. Active-at-cutoff cases are those whose latest state is open or reopened according to the request policy.
-- First response breach: compute active support time from opening until the first `AGENT_RESPONDED`; if there is no response by cutoff, compute active elapsed time through cutoff.
-- Resolution breach: for resolved cases, compute active support time from opening to resolution; for active cases, compute active elapsed time through cutoff.
-- Support active time pauses while the case is waiting on the customer and resumes on customer reply or reopen events. Use ordered events to build active intervals; clamp every interval to the cutoff.
-- Severe active cases are active at cutoff, priority urgent/high, and beyond the request's active-time resolution threshold.
-- Median active resolution hours uses resolved eligible cases at cutoff; for an even count, average the two central values before final rounding.
-
-SQLite median pattern:
+- Build SQL with CTEs and inspect intermediate counts before composing the final answer.
+- Count distinct business entities at the grain named by the template: orders, logical refunds, linked reversals, tasks, cases, accounts, or shipments.
+- Sort using unrounded values, then round only the final reported numeric fields.
+- Use `ROUND(value, n)` for final display, but keep raw values in ordering CTEs.
+- For rates, keep incomplete or breached entities in the denominator exactly as the request defines.
+- For policy classifications, evaluate rules in the order given by the payload and use strict comparisons where the text says "below" or "greater than".
+- For median values in SQLite, sort the metric and average the two center rows for even counts:
 
 ```sql
 WITH ranked AS (
   SELECT value,
          ROW_NUMBER() OVER (ORDER BY value) AS rn,
-         COUNT(*) OVER () AS cnt
-  FROM values_to_rank
+         COUNT(*) OVER () AS n
+  FROM metric_values
 )
-SELECT AVG(value) AS median_value
-FROM ranked
-WHERE rn IN ((cnt + 1) / 2, (cnt + 2) / 2);
+SELECT AVG(value) FROM ranked
+WHERE rn IN ((n + 1) / 2, (n + 2) / 2);
 ```
 
-### Carrier Quality Corrections
+## Fulfillment Scorecards
 
-- Use corrections only for tasks that explicitly request them. Start with read-only queries that identify exactly one target row and capture the pre-change value.
-- For carrier batches, cohort membership commonly means shipments with an effective scan in the named `import_batch_id` at or before the cutoff. Backlog is based on the effective final carrier status not being delivered.
-- Find raw/canonical contradictions by deriving the expected canonical status from the raw status or dominant raw-to-canonical mapping, then locate the single row whose canonical value conflicts.
-- Preserve raw values, source identity, timestamps, and unrelated business rows. Update only the approved canonical field and correction metadata explicitly allowed by the request.
-- Insert exactly one `correction_audit` row using the request's audit fields. Use a guarded `WHERE` clause that includes the target primary key and old value so the update cannot affect an unexpected row.
-- After transaction commit, verify row counts, the corrected canonical value, backlog before/after counts, and the audit record via `GET /api/correction-audit` or a read-only SQL query.
-- Report `APPLIED` only if the task's success rule is satisfied; otherwise report `NOT_APPLIED` with observed counts and state.
+Use these patterns for campaign/order fulfillment tasks:
 
-## Final Answer Assembly
+- Cohort: production orders matching the requested campaign and created inside the campaign/request active window. Join `campaigns`, `orders`, `accounts`, `warehouses`, `shipments`, and `carrier_scans` as needed.
+- Physical shipments: rows in `shipments`; an order with no shipment is incomplete.
+- Shipment state by cutoff: use effective carrier scans at or before the cutoff, usually the latest canonical carrier scan per shipment by `canonical_event_at` and `scan_row_id`.
+- Complete order: the order has at least one shipment and every associated shipment is effectively `DELIVERED` by the cutoff.
+- On-time complete order: every associated shipment is delivered no later than that shipment's `promised_delivery_at`.
+- Severe exception: follow the request text exactly. Common forms are incomplete orders where the cutoff is more than 24 hours after the latest shipment promise, or completed orders with any shipment delivered more than 24 hours after its promise.
+- Regional rollups: group by `warehouses.region`; rank worst regions by unrounded rate ascending, then region ascending.
+- Exception ID arrays: return distinct order ids sorted ascending.
 
-- Validate required fields and `additionalProperties`/`additional_properties` manually against `answer_template.json`.
-- Emit JSON numbers, not strings, for numeric fields. Use the requested precision: counts as integers, money commonly two decimals, rates commonly four decimals, hours commonly two decimals.
-- Re-run a compact verification query for every count, rate denominator, ranked list, and mutation/audit count before writing `answer.json`.
-- Do not copy prior training answers or task-local example values into a new answer. Recompute from the live environment and the current request payload every time.
+Check denominators by verifying:
+
+```text
+eligible_count = complete_count + incomplete_count
+```
+
+## Refund Reconciliations
+
+Use these patterns for settlement/refund close tasks:
+
+- Scope orders through `orders` and `accounts`; apply production, tier, segment, region, and service-date filters from the payload.
+- Treat `refund_attempts.refund_id` as the logical refund id. Count distinct logical refunds after applying the effective settlement policy.
+- Effective settled refunds are rows/logical refunds with settled status in the requested service-date window. Linked reversals are refund rows with reversal status and `linked_refund_id` pointing to the original logical refund.
+- Convert money row by row with `fx_rates` on the row `service_date` and `currency`: `amount_minor / 100.0 * usd_per_unit`.
+- Net refund USD is settled refund USD minus effective linked reversal USD.
+- Reason-code rankings use net USD by normalized `reason_code`, ordered by net USD descending then reason code ascending.
+- Leakage candidates commonly include orders where net refund USD exceeds order gross USD at the comparison FX rate, or where the order has repeated unreversed settled logical refunds with the same normalized reason code. Apply the exact candidate definition and output ordering from the request.
+
+Validate that reversal counts and net dollars are at the same logical grain used in the request; do not double-count retry attempts.
+
+## Carrier Quality Corrections
+
+Use this workflow only for prompts that explicitly authorize a correction:
+
+1. Read the approved correction block from the payload (`audit_id`, `correction_key`, `corrected_at`, `actor`, `reason_code`, and scope).
+2. Identify the single target contradiction using the requested batch, warehouse, cutoff, and raw/canonical status policy. Preserve raw source values and source identity fields.
+3. Compute the requested pre-correction metric before mutating data.
+4. Submit one transaction containing a guarded business-row update and one `correction_audit` insert. Set `expected_total_changes` to the exact total requested by the success rule.
+5. Guard the update by primary key, old canonical value, and any scope fields needed to prevent accidental broad changes.
+6. Insert the audit record with the request-provided audit metadata, the business entity id, source row id, corrected field name, old value, and new value.
+7. Re-query the corrected row, `/api/correction-audit`, and the requested post-correction metric.
+8. Report `APPLIED` only when the success rule is fully satisfied; otherwise report `NOT_APPLIED` with the observed counts.
+
+Typical carrier-scan update shape:
+
+```sql
+UPDATE carrier_scans
+SET canonical_status = ?,
+    corrected_at = ?,
+    correction_reason = ?
+WHERE scan_row_id = ?
+  AND canonical_status = ?;
+```
+
+Use the transaction endpoint, not separate mutation calls, so the audit row and business change commit together.
+
+## Warehouse Productivity
+
+Use these patterns for facility production reviews:
+
+- Eligible tasks: `warehouse_tasks` in the requested warehouse, `work_class = 'PRODUCTION'`, and `created_at` within the requested window.
+- Completion at cutoff: a task is completed by cutoff when it has an effective `COMPLETED` event at or before the cutoff, or the request explicitly permits a status snapshot.
+- Completed units and productive minutes come from completed `warehouse_task_events` at or before the cutoff.
+- Employee units per hour: sum completed units divided by sum productive minutes, multiplied by 60. Rank by raw rate descending, then `employee_id` ascending.
+- Rework task count: count distinct eligible tasks with an effective `REWORK` event or request-defined rework state by cutoff.
+- Delayed high-priority tasks: priority in the requested high-priority set, `due_at` strictly before the state cutoff, and not completed by the cutoff.
+- Lowest-performing team: join employees by `assigned_employee_id`, compute completion rate by `team_id`, rank by completion rate ascending then team id ascending.
+- Facility status: evaluate the request's completion-rate and rework-rate thresholds in order.
+
+Cross-check that completed task count never exceeds eligible task count and that completed units only come from eligible tasks.
+
+## Support Health
+
+Use these patterns for support SLA reviews:
+
+- Eligible cases: `support_cases` joined to `accounts`; apply production account filters plus requested segment, regions, and opened window.
+- Case state at cutoff: derive from effective `case_events` at or before the cutoff. Open/active states commonly include `OPEN` and `REOPENED`; resolved cases stop at `RESOLVED`.
+- Support active clock: accumulate intervals when the case is active for support work. `OPENED`, `OPEN`, `REOPENED`, and `CUSTOMER_REPLIED` start or resume active time; `WAITING_CUSTOMER` pauses it; `RESOLVED` stops it. `AGENT_RESPONDED`, `ASSIGNED`, and `ESCALATED` usually do not pause the resolution clock unless the request says otherwise.
+- First-response breach: compare active time from opening to first `AGENT_RESPONDED`; for unresponded cases, use active elapsed time at the cutoff.
+- Resolution breach: compare active time to `RESOLVED`; for active cases, use active elapsed time at the cutoff.
+- Severe active case: active at cutoff, priority in the requested severe set, and beyond the priority resolution-active-time threshold.
+- Worst accounts: aggregate severe active cases and active-clock breaches by account; order exactly as the payload specifies.
+- Resolved-case median: compute median active resolution hours across eligible cases resolved at or before the cutoff, then round for output.
+- Risk: divide rates by eligible case count unless the payload names a different denominator; apply strict "below" thresholds.
+
+Inspect a few case timelines with `GROUP_CONCAT(event_type || '@' || event_at, ' | ')` when SLA counts look surprising.
+
+## Final Validation
+
+Before finishing:
+
+- Re-read `answer_template.json` and compare every required field, type, enum, numeric precision, and array uniqueness/order rule.
+- Run at least one independent SQL cross-check for each high-risk value: denominators, top/worst rankings, exception lists, and post-correction verification.
+- Parse the final file as JSON, for example `jq empty answer.json`.
+- Ensure analytical prompts made no mutations. For correction prompts, ensure only approved canonical fields and `correction_audit` changed.

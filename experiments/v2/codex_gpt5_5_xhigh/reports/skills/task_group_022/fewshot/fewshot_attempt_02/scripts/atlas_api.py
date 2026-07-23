@@ -1,84 +1,139 @@
 #!/usr/bin/env python3
-"""Small CLI for the Atlas Commerce Operations task API."""
+"""Small CLI for the Atlas Commerce Operations HTTP API."""
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
-from pathlib import Path
 
 
-def load_env(path: Path) -> tuple[str, str]:
-    base_url = None
-    auth = None
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if line.startswith("GDPEVO_ENV_BASE_URL="):
-            base_url = line.split("=", 1)[1].strip()
-        elif line.startswith("Authorization:"):
-            auth = line.split(":", 1)[1].strip()
-    if not base_url or not auth:
-        raise SystemExit(f"could not find base URL and Authorization in {path}")
-    return base_url.rstrip("/"), auth
+def first_env(*names: str) -> str | None:
+    for name in names:
+        value = os.environ.get(name)
+        if value:
+            return value
+    return None
 
 
-def request_json(base_url: str, auth: str, method: str, path: str, payload: object | None = None) -> object:
-    data = None
-    headers = {"Authorization": auth}
-    if payload is not None:
-        data = json.dumps(payload).encode("utf-8")
+def base_url(value: str | None) -> str:
+    value = value or first_env("GDPEVO_ENV_BASE_URL", "TASK_ENV_BASE_URL", "ATLAS_BASE_URL")
+    if not value:
+        raise SystemExit("Set GDPEVO_ENV_BASE_URL, TASK_ENV_BASE_URL, or ATLAS_BASE_URL.")
+    return value.rstrip("/")
+
+
+def auth_token(value: str | None) -> str:
+    value = value or first_env("ATLAS_AUTH_TOKEN", "GDPEVO_AUTH_TOKEN", "TASK_ENV_AUTH_TOKEN")
+    if not value:
+        raise SystemExit("Set ATLAS_AUTH_TOKEN, GDPEVO_AUTH_TOKEN, or TASK_ENV_AUTH_TOKEN.")
+    return value
+
+
+def call_api(args: argparse.Namespace, method: str, path: str, body: object | None = None) -> object:
+    url = base_url(args.base_url) + path
+    data = None if body is None else json.dumps(body).encode("utf-8")
+    headers = {"Authorization": f"Bearer {auth_token(args.token)}"}
+    if body is not None:
         headers["Content-Type"] = "application/json"
-    req = urllib.request.Request(base_url + path, data=data, headers=headers, method=method)
+    request = urllib.request.Request(url, data=data, method=method, headers=headers)
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            body = resp.read().decode("utf-8")
+        with urllib.request.urlopen(request, timeout=args.timeout) as response:
+            raw = response.read().decode("utf-8")
     except urllib.error.HTTPError as exc:
-        body = exc.read().decode("utf-8", errors="replace")
-        raise SystemExit(f"HTTP {exc.code}: {body}") from exc
-    return json.loads(body)
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise SystemExit(f"HTTP {exc.code} from {url}: {detail}") from exc
+    return json.loads(raw) if raw else None
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Call the Atlas Commerce Operations API")
-    parser.add_argument("--env", default="environment_access.md", help="path to environment_access.md")
-    sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("schema")
-    sub.add_parser("dictionary")
-    sub.add_parser("audit")
-    sql = sub.add_parser("sql")
-    sql.add_argument("query")
-    sql_file = sub.add_parser("sql-file")
-    sql_file.add_argument("path")
-    tx_file = sub.add_parser("transaction-file")
-    tx_file.add_argument("path")
-    args = parser.parse_args()
+def read_text_arg(value: str | None, file_path: str | None) -> str:
+    if value is not None:
+        return value
+    if file_path:
+        with open(file_path, "r", encoding="utf-8") as handle:
+            return handle.read()
+    return sys.stdin.read()
 
-    base_url, auth = load_env(Path(args.env))
 
-    if args.command == "schema":
-        result = request_json(base_url, auth, "GET", "/api/schema")
-    elif args.command == "dictionary":
-        result = request_json(base_url, auth, "GET", "/api/data-dictionary")
-    elif args.command == "audit":
-        result = request_json(base_url, auth, "GET", "/api/correction-audit")
-    elif args.command == "sql":
-        result = request_json(base_url, auth, "POST", "/api/sql", {"sql": args.query})
-    elif args.command == "sql-file":
-        query = Path(args.path).read_text(encoding="utf-8")
-        result = request_json(base_url, auth, "POST", "/api/sql", {"sql": query})
-    elif args.command == "transaction-file":
-        payload = json.loads(Path(args.path).read_text(encoding="utf-8"))
-        result = request_json(base_url, auth, "POST", "/api/sql/transaction", payload)
+def print_json(value: object, raw: bool = False) -> None:
+    if raw:
+        print(json.dumps(value, separators=(",", ":")))
     else:
-        parser.error("unknown command")
+        print(json.dumps(value, indent=2, sort_keys=False))
 
-    json.dump(result, sys.stdout, indent=2, sort_keys=False)
-    sys.stdout.write("\n")
-    return 0
+
+def cmd_schema(args: argparse.Namespace) -> None:
+    print_json(call_api(args, "GET", "/api/schema"), args.raw)
+
+
+def cmd_dictionary(args: argparse.Namespace) -> None:
+    print_json(call_api(args, "GET", "/api/data-dictionary"), args.raw)
+
+
+def cmd_audit(args: argparse.Namespace) -> None:
+    query = {}
+    for key in ("entity_type", "entity_id", "source_row_id", "limit"):
+        value = getattr(args, key)
+        if value is not None:
+            query[key] = value
+    path = "/api/correction-audit"
+    if query:
+        path += "?" + urllib.parse.urlencode(query)
+    print_json(call_api(args, "GET", path), args.raw)
+
+
+def cmd_sql(args: argparse.Namespace) -> None:
+    sql = read_text_arg(args.sql, args.file).strip()
+    params = json.loads(args.params) if args.params else []
+    print_json(call_api(args, "POST", "/api/sql", {"sql": sql, "params": params}), args.raw)
+
+
+def cmd_transaction(args: argparse.Namespace) -> None:
+    payload = json.loads(read_text_arg(None, args.file))
+    print_json(call_api(args, "POST", "/api/sql/transaction", payload), args.raw)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--base-url")
+    parser.add_argument("--token")
+    parser.add_argument("--timeout", type=float, default=30.0)
+    parser.add_argument("--raw", action="store_true", help="Print compact JSON.")
+    subparsers = parser.add_subparsers(required=True)
+
+    schema = subparsers.add_parser("schema")
+    schema.set_defaults(func=cmd_schema)
+
+    dictionary = subparsers.add_parser("dictionary")
+    dictionary.set_defaults(func=cmd_dictionary)
+
+    audit = subparsers.add_parser("audit")
+    audit.add_argument("--entity-type")
+    audit.add_argument("--entity-id")
+    audit.add_argument("--source-row-id")
+    audit.add_argument("--limit", type=int)
+    audit.set_defaults(func=cmd_audit)
+
+    sql = subparsers.add_parser("sql")
+    sql.add_argument("--sql", help="SQL string. If omitted, read SQL from stdin.")
+    sql.add_argument("--file", help="File containing SQL. Ignored when --sql is set.")
+    sql.add_argument("--params", help="JSON array of SQL parameters.")
+    sql.set_defaults(func=cmd_sql)
+
+    transaction = subparsers.add_parser("transaction")
+    transaction.add_argument("--file", help="JSON transaction payload. If omitted, read stdin.")
+    transaction.set_defaults(func=cmd_transaction)
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
+    args.func(args)
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

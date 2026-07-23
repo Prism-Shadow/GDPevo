@@ -1,69 +1,79 @@
 ---
 name: atlas-commerce-ops
-description: Use for Atlas Commerce Operations workplace tasks that require authenticated schema/data-dictionary lookup, read-only SQL analysis, cutoff-based operational metrics, exact JSON answers from templates, or explicitly approved canonical data corrections with audit records. Applies to fulfillment, refunds, carrier quality, warehouse productivity, support health, and related Atlas Commerce database analysis requests.
+description: Solve Atlas Commerce Operations workplace tasks that require authenticated schema/data-dictionary discovery, SQL analysis, strict JSON answers, and controlled canonical data corrections with audit records. Use when a prompt references an Atlas/GDPEVO workplace service, TASK_ENV_BASE_URL or GDPEVO_ENV_BASE_URL, /api/schema, /api/sql, /api/sql/transaction, answer_template.json, fulfillment, refunds, carrier quality, warehouse productivity, support health, or correction-audit workflows.
 ---
 
 # Atlas Commerce Ops
 
-Use this skill when a task references the Atlas Commerce Operations workplace, `<TASK_ENV_BASE_URL>`, `environment_access.md`, or the Atlas order/warehouse/refund/carrier/support schema.
+## Core Workflow
 
-## Required Workflow
+1. Read the prompt, every request payload, and the answer template before querying data.
+2. Read the provided environment access file or user-provided connection details. Do not infer credentials from placeholders.
+3. Query `/api/schema` and `/api/data-dictionary` fresh for the current environment. Treat the live metadata as authoritative.
+4. Translate the request into exact cohorts, cutoff logic, status rules, rounding rules, and output ordering before writing SQL.
+5. Use `POST /api/sql` only for `SELECT` or `WITH` analysis queries. Use `POST /api/sql/transaction` only when the request explicitly asks for a controlled correction.
+6. Build results from the live database every time. Do not reuse example counts, IDs, statuses, or answer values.
+7. Validate the final JSON against the supplied answer template and write only the JSON object requested by the user.
 
-1. Read the user prompt, every file under `input/payloads/`, and especially `answer_template.json` plus the business request payload.
-2. If the task environment is needed, read `environment_access.md` for the base URL and `Authorization` header. Do not get credentials from anywhere else.
-3. Fetch `GET /api/schema` and `GET /api/data-dictionary` before writing SQL. The dictionary defines UTC timestamp, money, source-row, and snapshot conventions.
-4. Use `POST /api/sql` for read-only analysis. Do not mutate workplace data unless the request explicitly asks for a controlled correction and includes an approved correction/audit policy.
-5. Treat request timestamps and dates as exact boundaries. Honor the payload's inclusive/exclusive wording; otherwise use the boundary text in the prompt.
-6. Build the answer object to match `answer_template.json` exactly: required fields only, no commentary, correct ordering for arrays, final-only rounding.
-7. Save the JSON result to the requested `answer.json`.
+## API Helpers
 
-## API Helper
+Use bundled scripts when they reduce copy/paste mistakes:
 
-The bundled helper can reduce curl boilerplate:
+- `scripts/atlas_api.py`: call `schema`, `dictionary`, `audit`, `sql`, or `transaction`.
+- `scripts/validate_answer.py`: check a produced answer JSON against the request's answer template.
+
+Set `GDPEVO_ENV_BASE_URL` or `ATLAS_BASE_URL` to the service base URL, and set `ATLAS_AUTH_TOKEN` or `GDPEVO_AUTH_TOKEN` to the bearer token. Do not hardcode credentials in saved files.
+
+Example read-only query:
 
 ```bash
-python3 skill/scripts/atlas_api.py schema
-python3 skill/scripts/atlas_api.py dictionary
-python3 skill/scripts/atlas_api.py sql 'select count(*) as n from orders'
-python3 skill/scripts/atlas_api.py sql-file query.sql
+python skill/scripts/atlas_api.py sql --sql "SELECT COUNT(*) AS n FROM orders"
 ```
 
-The helper reads `environment_access.md` by default and prints the API JSON response. For correction tasks, prefer explicit curl or a reviewed JSON request to the transaction endpoint; only use the helper's `transaction-file` command after pre-checking the exact transaction payload.
+Example validation:
 
-## Data Rules
+```bash
+python skill/scripts/validate_answer.py input/payloads/answer_template.json answer.json
+```
 
-- Production account scope means `accounts.is_internal = 0` and `accounts.is_test = 0` unless the request defines a different population.
-- Header `current_status` fields are convenience snapshots and can be later than the requested cutoff. For state at a cutoff, reconstruct from de-duplicated append-only events up to that cutoff.
-- Imported event/source tables may contain retries. De-duplicate rows by `(source_system, external_event_id)`, keeping the row with the latest `ingested_at`; use a stable row id as a tie-break if needed.
-- For logical refunds, after source de-duplication count distinct `refund_id` values, not raw rows.
-- Monetary `*_minor` values are in the smallest unit of the row currency. Convert with `fx_rates.usd_per_unit` for the row's service date or requested comparison date, divide by 100, and round only the final reported money value.
-- Rank using unrounded metrics, then round reported values to the template precision.
-- Sort ID arrays exactly as the template or request states, commonly ascending by the stable ID.
+## Query Discipline
 
-## Task Patterns
+- Keep SQL in CTEs so cohort membership, effective rows, rollups, and final formatting are inspectable.
+- Confirm denominators separately from metric queries.
+- Inspect distinct status, event type, priority, currency, and reason-code values before assuming enum contents.
+- Use ISO-8601 UTC text comparisons directly only when both sides use the same stored UTC format.
+- Apply inclusive and exclusive boundaries exactly as written. If the request says a date range is inclusive, include both endpoints.
+- Round only final reported metrics unless the request says intermediate rounding is required.
+- Order ranked output by unrounded metric values first, then apply the stated tie breakers.
+- Return arrays in the stated order; use ascending identifier order when the template or request requires sorted IDs.
 
-Read `references/query-patterns.md` when implementing one of these task types:
+## Atlas Data Patterns
 
-- **Fulfillment scorecards**: campaign/window eligibility, latest order state at cutoff, shipment completion from latest effective carrier scan, on-time and severe-exception classification.
-- **Refund reconciliation**: production account filtering, de-duplicated settled refunds, linked reversals, FX conversion, leakage candidates, and reason ranking.
-- **Carrier quality correction**: identify exactly one raw/canonical contradiction, calculate pre/post backlog, apply only approved canonical-field mutation, insert one audit row, and verify before returning `APPLIED`.
-- **Warehouse productivity**: production task cohort, de-duplicated warehouse task events, completed units, units per hour, delayed high-priority tasks, team completion rate, and status policy.
-- **Support health**: eligible support case scope, state at cutoff from case events, support active-time clocks, SLA breaches, severe active cases, median resolved active time, and risk policy.
+- Treat production account filters as excluding internal and test accounts when the request refers to production accounts or production customers.
+- Prefer append-only event tables for time-at-cutoff questions when the request defines effective status from events. Use denormalized `current_status` fields only when the request allows snapshot status.
+- For imported source rows that can recur on retries, deduplicate by the source identity described in the dictionary, usually `(source_system, external_event_id)`, keeping the latest `ingested_at` and a stable row-id tie breaker.
+- For money, convert minor-unit fields to major currency units before FX conversion, join daily FX by row service date or requested valuation date, and round final displayed money to the requested decimals.
+- For fulfillment, evaluate eligible orders against campaign/account/warehouse scope, then determine completion from physical shipments and effective carrier delivery state at the cutoff.
+- For refunds, distinguish logical refund IDs from retry rows, subtract effective linked reversals, rank normalized reasons by effective net amount, and test leakage candidates at the order level.
+- For warehouse productivity, scope eligible tasks by warehouse, production work class, and created window; derive completion, units, productive minutes, rework, delay, employee, and team metrics at the requested cutoff.
+- For support health, scope eligible cases through accounts and opened-window criteria, reconstruct active state and response/resolution timing from case events, and use cutoff elapsed active time for unresolved obligations.
 
-## Correction Safety
+## Controlled Corrections
 
-For any mutation request:
+Use mutations only when the request explicitly asks for a correction.
 
-- First prove the target row, old value, new value, and allowed field from read-only SQL.
-- Confirm the request permits mutation and supplies the audit metadata.
-- The transaction must update only the approved canonical field on exactly one business row and insert exactly one `correction_audit` row.
-- Preserve raw/source identity fields and unrelated rows.
-- After the transaction, re-query the target value and audit view. Return `APPLIED` only when the request's success rule is fully satisfied; otherwise return `NOT_APPLIED` with observed counts.
+1. Identify the single approved target row and canonical field with read-only SQL.
+2. Preserve raw source fields, source identity fields, and unrelated rows.
+3. Check existing audit rows for the target correction key and source row before mutating.
+4. Submit one transaction containing a guarded `UPDATE` and one `correction_audit` `INSERT`.
+5. Set `expected_total_changes` to the exact number of intended changed rows.
+6. Guard the update by row id, old value, and relevant scope fields so repeated or wrong-scope runs do not modify extra rows.
+7. Verify affected business rows, inserted audit rows, post-change canonical value, and any requested pre/post metric delta.
+8. Report the template's success status only if the request's success rule is satisfied; otherwise report the template's failure status with the actual observed result.
 
-## Output Checks
+## Output Rules
 
-Before finalizing:
-
-- Re-run small reconciliation queries for eligible counts, component counts, rates, and list sizes.
-- Validate the answer shape against `answer_template.json` when possible.
-- Ensure no explanatory text is written outside `answer.json`.
+- Match the answer template exactly, including required fields, nested object shapes, enum values, arrays, and `additionalProperties` or `additional_properties` restrictions.
+- Emit JSON numbers for numeric metrics, not strings.
+- Use `null` only if the template permits it.
+- Do not include markdown, comments, SQL, explanation, or extra fields in the answer file.
