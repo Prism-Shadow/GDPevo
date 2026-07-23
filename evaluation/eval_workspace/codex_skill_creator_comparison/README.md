@@ -90,6 +90,7 @@ variables and raw secrets must not be recorded.
 | `configs/` | Fixed experiment and model profiles |
 | `creators/` | Pinned creator bundles, manifests, and the common contract |
 | `guides/` | Workflow, prompts, metrics, and report format |
+| `tools/` | Fixed task-agnostic trace-accounting utilities |
 | `task_group/` | The single official task group under evaluation |
 | `skills/` | Generated skills by model profile and creator |
 | `runs/` | Base and creator-specific solver attempts |
@@ -130,7 +131,8 @@ Read these files in order:
 8. `guides/skill_creators.md`
 9. `guides/agent_prompts.md`
 10. `guides/metric_and_scoring.md`
-11. `guides/report_format.md`
+11. `tools/codex_trace_metrics.py`
+12. `guides/report_format.md`
 
 ## Runtime Setup
 
@@ -141,6 +143,10 @@ the other evaluation workspaces:
 - Resolve and record the immutable agent and task image IDs.
 - Verify container-local authentication with `codex login status`.
 - Verify task-environment health from the agent network.
+- Run `PYTHONDONTWRITEBYTECODE=1 python3
+  tools/codex_trace_metrics.py --self-test` and record its file hash and passing
+  status in the run manifest. Helpers must call this tool for primary-trace
+  metrics rather than reimplementing trace parsing.
 
 These checks do not launch a separate model process or require a separate
 trace. After they pass, start the first formal generation slot:

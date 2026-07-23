@@ -57,7 +57,9 @@ creator bundle. A generator must not inspect another attempt's output.
 ## Upstream Preservation
 
 The creator's upstream directory is an experimental input. Verify and record
-its immutable revision and content hashes before staging. Do not:
+its immutable revision and content hashes before staging. Mount the staged copy
+read-only and verify its content and executable-bit hashes again after the
+generation container stops. Do not:
 
 - Edit upstream creator files in place.
 - Drop referenced scripts, references, agents, templates, or assets.
@@ -69,6 +71,12 @@ If an upstream creator expects an interactive or native-harness workflow that
 conflicts with the portable one-pass contract, the common contract wins. Record
 the incompatibility in generation metadata; do not privately patch that creator
 for the current attempt.
+
+If a bundled creator tool fails because a dependency is unavailable in the
+fixed agent image, the generator may continue using the readable creator
+instructions, but the trace-derived warning must be recorded in
+`portability_warnings`. Do not install the dependency, change the image, or
+special-case that creator during a profile.
 
 ## Generated Skill Contract
 
