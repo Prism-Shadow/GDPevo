@@ -1,0 +1,68 @@
+experiment_id: codex_skill_creator_comparison
+harness: codex
+generator_harness: codex
+solver_harness: codex
+one_task_group_at_a_time: true
+
+model_profiles:
+  - gpt5_5_xhigh
+  - deepseek_v4_max_preview
+
+formal_run_interface:
+  required_runtime_parameters:
+    - model_profile
+  selected_model_profile_must_be_listed: true
+  task_group_selection: exactly_one_staged_directory
+  skill_creator_selection: fixed_all_configured
+  mode_selection: fixed_all_configured
+  harness_selection: fixed_from_config
+  attempt_selection: fixed_from_config
+  allow_creator_filter: false
+  allow_mode_filter: false
+  allow_multi_model_run: false
+  allow_runtime_overrides: false
+
+modes:
+  - base
+  - fewshot
+
+skill_creators:
+  - codex
+  - cc
+  - deepagents
+  - opencode
+
+attempts:
+  skill_generation_per_creator: 3
+  solver_per_test_branch: 3
+  test_tasks: 5
+
+execution_policy:
+  generator_wall_timeout_seconds: 3600
+  solver_wall_timeout_seconds: 3600
+  model_output_token_limit: codex_profile_default
+  agent_turn_limit: unlimited
+  tool_call_limit: unlimited
+  agent_container_uid_gid: "0:0"
+  retry_policy: infrastructure_only
+  generation_schedule: seeded_randomized_interleave
+  solver_schedule: seeded_randomized_interleave_including_shared_base
+  schedule_seed_required: true
+  identical_within_model_profile: true
+
+base_policy:
+  shared_within_model_profile: true
+  repeat_per_creator: false
+
+fewshot_policy:
+  train_tasks: 5
+  include_train_inputs: true
+  include_train_standard_answers: true
+  creator_execution: portable_one_pass
+  generated_skill_post_edit: forbidden
+
+reporting:
+  primary_metric: acc@3
+  dispersion: population_std@3
+  compare_creators_within_model_profile: true
+  cross_model_output: side_by_side_only
