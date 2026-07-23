@@ -1,10 +1,9 @@
 # Evaluation Workflow
 
-This guide describes one complete model-profile run for one task group. Codex
-is both the isolated skill-generation harness and the isolated test-solver
-harness. The main Codex orchestrator stages materials, starts environments,
-launches isolated processes, scores outputs, preserves traces, and aggregates
-reports; it must not solve test tasks itself.
+This workflow runs one model profile for one task group. Codex is both the
+isolated skill-generation harness and isolated test-solver harness. The main
+orchestrator stages files, launches Docker processes, calls evaluators,
+preserves traces, and aggregates reports; it does not solve tasks.
 
 The scored branches are:
 
@@ -16,314 +15,218 @@ fewshot/deepagents
 fewshot/opencode
 ```
 
-Read `CODEX_ORCHESTRATOR.md` before launching any agent process.
+## 1. Resolve The Run
 
-## 1. Select And Resolve One Model Profile
-
-Accept exactly one runtime parameter, `model_profile`, and verify it is listed in
-`configs/experiment.yaml`. Reject raw model/provider values and every task-group,
-creator, mode, harness, attempt, limit, schedule, or multi-model override.
-Discover exactly one staged task-group directory; its ID is not a launch
-parameter.
-
-Select exactly one profile from `configs/models/`. Write the closed resolved
-profile artifact and the sanitized run manifest required by
-`CODEX_ORCHESTRATOR.md` under:
-
-```text
-scratch/run_manifest/<model_profile>.resolved_profile.yaml
-scratch/run_manifest/<model_profile>.yaml
-```
+Accept only `model_profile` and require exactly one directory under
+`task_group/`. Load the selected profile and all fixed values from
+`configs/experiment.yaml`.
 
 Verify:
 
-- Generator and solver both use Codex.
-- The resolved manifest records `model_profile` as the only accepted runtime
-  parameter and records no override fields.
-- Generator and solver use the same resolved model and reasoning settings.
-- Provider, endpoint, authentication, and pricing are complete.
-- The profile status is not blocked.
-- The installed Codex version accepts the resolved configuration.
-- A smoke prompt can stream, call a harmless tool, and leave one matchable
-  primary session trace.
-- Every execution-policy value is resolved and enforceable by the runner.
-- Common-input hashes, the schedule seed, and the expanded randomized order are
-  frozen in the run manifest.
+- Generator and solver both use Codex and the same resolved profile.
+- Provider, authentication, reasoning, and pricing fields are resolved.
+- All four creator manifests and bundles pass hash and license checks.
+- The task group contains 5 train tasks, 5 test tasks, environment files,
+  standard answers, and evaluators.
+- No formal output already occupies the selected model-profile paths.
 
-Do not run the two model profiles in one mixed pool. Complete and audit one
-profile before starting the other. Cross-model output is a later side-by-side
-aggregation of independently finalized reports.
-
-## 2. Verify Creator Inputs
-
-All creators listed in `configs/experiment.yaml` are mandatory. Reject a formal
-run if the caller requests a subset or if any configured creator is absent. For
-each configured creator, verify:
+Run the short startup check from `README.md`, then write:
 
 ```text
-creators/<creator>/manifest.yaml
-creators/<creator>/upstream/SKILL.md
+scratch/run_manifest/<model_profile>.yaml
 ```
 
-The manifest status must be pinned/ready, revision fields must be immutable, and
-recorded hashes must match the whole bundle. Check that every local file linked
-from the upstream `SKILL.md` exists. Reject symbolic links and calculate bundle
-digests exactly as specified in `creators/README.md`.
+Record one sanitized manifest as described in `CODEX_ORCHESTRATOR.md`. A small
+helper under `scratch/` may automate staging and execution, but the experiment
+does not require building or freezing a separate runner before it starts.
 
-Copy no creator into another creator directory. Formal generation staging uses
-one creator bundle at a time.
+## 2. Prepare Docker
 
-## 3. Prepare The Task Group
+Build the task image once and use its immutable image ID throughout the profile.
+Resolve and record the agent image ID, Codex CLI version, and host UID:GID.
 
-The task group must be located at:
+Use the host UID:GID for every agent container. Use a clean container-local
+`HOME` and `CODEX_HOME`, minimum read-only authentication bootstrap, and the
+same sanitized provider/proxy setup for every creator and solver.
+
+Start task environments and networks according to `env.state_mode`. Use
+`TASK_ENV_ENABLE_JUDGE=0`. Verify health from the same network before launching
+agents.
+
+## 3. Fixed Execution Order
+
+Generation order is:
 
 ```text
-task_group/<task_group_id>/
+codex/attempt_01
+cc/attempt_01
+deepagents/attempt_01
+opencode/attempt_01
+codex/attempt_02
+cc/attempt_02
+deepagents/attempt_02
+opencode/attempt_02
+codex/attempt_03
+cc/attempt_03
+deepagents/attempt_03
+opencode/attempt_03
 ```
 
-Confirm exactly one task group is present and that it contains:
-
-- 5 train tasks.
-- 5 test tasks.
-- Official `input/` for every task.
-- Standard train and test answers retained outside agent staging.
-- `eval/eval.sh` for each task.
-- `env/Dockerfile`, `env.state_mode`, and environment endpoint declarations.
-
-Do not modify task-group files.
-
-## 4. Start And Verify The Task Environment
-
-Load `.env` for owner naming and the container-visible environment URL. Build
-the task environment and create owner/task/model/stage-scoped Docker networks
-and containers as specified in `CODEX_ORCHESTRATOR.md`.
-
-All formal generation and solving stages use `TASK_ENV_ENABLE_JUDGE=0`. This
-workspace has no reflect mode. Do not stage `GDPEVO_JUDGE_PATH` or a judge
-endpoint to any execution agent.
-
-Read allowed business endpoints from `task_group/env/endpoints.txt`. Each
-staged `environment_access.md` contains:
-
-- The container-visible base URL.
-- Required runtime credentials when the task defines them.
-- Allowed endpoints as `METHOD /path` lines without descriptive hints.
-
-Do not expose `/health`, reset/reseed endpoints, or judge endpoints to execution
-agents. Verify health from a disposable orchestration container on the same
-network, then record the sanitized result under:
+After all 12 generation slots are terminal, run solver slots in:
 
 ```text
-scratch/environment/<model_profile>/
+attempt_01 -> test_001..test_005 -> base,codex,cc,deepagents,opencode
+attempt_02 -> test_001..test_005 -> base,codex,cc,deepagents,opencode
+attempt_03 -> test_001..test_005 -> base,codex,cc,deepagents,opencode
 ```
 
-Before formal execution, generate the seeded orders required by
-`configs/experiment.yaml`. Interleave all 12 creator-generation logical attempts,
-and separately interleave the 15 shared-base plus 60 creator-specific solver
-logical attempts. Record both complete orders before observing any output or
-score. Run generation first, then follow the fixed 75-entry solver order;
-creator entries lacking a valid package are marked not runnable. Infrastructure
-replacements stay adjacent to their failed logical attempt and are explicitly
-marked.
+This is deterministic and interleaves creators without a random schedule or
+seed. Do not change the order after observing outputs or scores.
 
-## 5. Generate Three Skills Per Creator
+## 4. Generate Skills
 
-Follow the frozen 12-entry generation schedule. For each creator and attempt,
-create an immutable physical run under the logical attempt:
+For each creator and attempt, stage:
 
 ```text
-scratch/skill_generation/<model_profile>/<creator>/attempt_<nn>/physical_runs/<agent_run_id>/
+scratch/skill_generation/<model_profile>/<creator>/attempt_<nn>/
 ```
 
-Stage only the paths listed in `CODEX_ORCHESTRATOR.md`. Normalize train-answer
-staging as:
+Stage only:
 
-```text
-train_answers/train_001/answer.json
-...
-train_answers/train_005/answer.json
-```
+- The selected upstream bundle as `creator/`.
+- `creators/COMMON_CONTRACT.md` as `creator_contract.md`.
+- Complete official inputs for `train_001` through `train_005`.
+- Matching standard answers as
+  `train_answers/train_<nnn>/answer.json`.
+- `environment_access.md` containing only the base URL, required credentials,
+  and allowed business endpoint names.
 
-Use the exact Fewshot Skill Generation prompt. Every generation process uses a
-new opaque `agent_run_id` and a clean container-local `CODEX_HOME`.
+Run the fixed Fewshot Skill Generation prompt with a new opaque UUID. Do not
+stage test material, notes, evaluators, environment source, old output, another
+creator, or judge access.
 
-After the process exits, keep all artifacts in the physical-run directory until
-selection:
+After exit:
 
-1. Extract and uniquely match the primary Codex trace into `audit/`.
-2. Run read-only package validation; reject symbolic links and save
-   `validation.yaml`.
-3. Calculate the package digest and record size, file count, duration,
-   portability warnings, common-contract friction, token/cost/turn/tool-call
-   fields, and validation/contamination status in generation metadata.
-4. Clean up the stopped container and write the cleanup record after the audit
-   artifacts are complete.
-5. Only if the package, trace, metadata, contamination, and cleanup checks are
-   valid, copy the complete package through a temporary sibling and atomic rename
-   to:
+1. Extract and uniquely match the primary trace.
+2. Record tokens, cost, turns, tool calls, duration, model identity, and status.
+3. Check contamination and symbolic links.
+4. Validate the package without editing it.
+5. Calculate content and executable-bit digests.
+6. Copy a valid complete package without modification to:
 
    ```text
    skills/<model_profile>/fewshot/<creator>/fewshot_attempt_<nn>/
    ```
 
-6. Copy the selected trace to its canonical `original_traces/` path and then
-   write `selected_run.yaml` at the logical `attempt_<nn>/` root.
+No package, invalid `SKILL.md`, or refusal to finish the one-pass contract is a
+logical creator result. Preserve it and do not retry it for quality.
 
-Do not repair invalid packages. A verified infrastructure failure may be rerun
-in a new physical directory while retaining evidence. A logical creator failure
-or invalid package leaves the logical attempt unselected and makes that creator
-branch incomplete; never substitute a hand-authored skill.
+Do not begin solver execution until all 12 generation slots are either valid,
+logical failures, or resolved infrastructure failures.
 
-## 6. Run The Frozen Solver Schedule
+## 5. Run Solvers
 
-Follow the precomputed 75-entry order. Across it, shared base has 5 test tasks x
-3 attempts and each creator has 5 test tasks x 3 attempts. Do not create a base
-copy per creator.
+### Base
 
-Base physical run:
+For each test and attempt:
 
 ```text
-runs/<model_profile>/base/<test_id>/attempt_<nn>/physical_runs/<agent_run_id>/
+runs/<model_profile>/base/<test_id>/attempt_<nn>/
 ```
 
-Stage only the current test `input/` and `environment_access.md`; no creator or
-skill is staged. Use the exact Base Test Solver prompt.
+Stage only the current test `input/` and `environment_access.md`. Use the Base
+Test Solver prompt. There is one shared base branch, not one base per creator.
 
-Few-shot physical run:
+### Few-Shot Creators
+
+For each creator, test, and attempt:
 
 ```text
-runs/<model_profile>/fewshot/<creator>/<test_id>/attempt_<nn>/physical_runs/<agent_run_id>/
+runs/<model_profile>/fewshot/<creator>/<test_id>/attempt_<nn>/
 ```
 
 Stage only the current test `input/`, `environment_access.md`, and the complete
-matching generated package as `skill/`. The creator key in orchestrator metadata,
-logical run path, skill path, and attempt mapping must agree. It is deliberately
-absent from the agent prompt and prompt-visible run ID. Mark a schedule entry not
-runnable when its matching logical generation attempt has no selected package.
-
-Every solver must not see train inputs/answers, an upstream creator bundle or
-contract, another skill/attempt, test answers, notes, evaluators, environment
-source, reports, traces, or judge instructions.
-
-After the solver exits:
-
-1. Keep its output and extracted trace in the immutable physical-run directory.
-2. Check contamination, then call the evaluator from orchestrator context.
-3. Write `score.yaml` and `run_metadata.yaml`; for few-shot, recompute and verify
-   the selected package digest.
-4. Uniquely match and verify the primary trace and trace-derived metadata.
-5. Remove the stopped container and write the cleanup record after artifacts are
-   complete.
-6. Only when output, score, trace, metadata, contamination, and cleanup status
-   are valid, copy the selected trace to canonical `original_traces/` and
-   atomically write `selected_run.yaml` at the logical `attempt_<nn>/` root.
-
-A logical failure in base makes the model-profile report incomplete. A logical
-failure in a creator entry makes that creator branch incomplete. Only verified
-infrastructure failures receive replacement physical runs.
-
-## 7. Logical Attempt IDs And Physical Run IDs
-
-Logical IDs are descriptive orchestration metadata and are never shown to the
-execution agent.
-
-Generation logical ID:
+matching package as read-only `skill/`. Verify:
 
 ```text
-<task_group_id>__<model_profile>__skill_generation__fewshot__<creator>__attempt_<nn>__<timestamp>
+solver attempt_<nn> -> same creator's fewshot_attempt_<nn>
 ```
 
-Base solver logical ID:
+If that package is invalid or missing, record the solver slot as
+`not_runnable`; do not substitute another skill or base. Continue base and
+other runnable creator branches in the fixed order.
 
-```text
-<task_group_id>__<model_profile>__base__<test_id>__attempt_<nn>__<timestamp>
-```
+Every solver receives a new opaque UUID and the fixed prompt. It must not see
+train material, creator bundles, other skills, answers, notes, evaluators,
+environment source, reports, traces, or judge instructions.
 
-Few-shot solver logical ID:
+After exit:
 
-```text
-<task_group_id>__<model_profile>__fewshot__<creator>__<test_id>__attempt_<nn>__<timestamp>
-```
+1. Preserve and uniquely match the primary trace.
+2. Check contamination.
+3. Call the task evaluator from orchestrator context.
+4. Write `answer.json`, `score.yaml`, and `run_metadata.yaml`.
+5. Populate trace-derived usage and model identity.
+6. Remove the agent container and temporary trace extraction directory.
 
-Every physical run receives a fresh opaque UUID `agent_run_id`. Only that opaque
-UUID appears in the fixed prompt and is used to match the primary trace. Both the
-logical ID and opaque UUID appear in run metadata. Failed physical runs remain
-under `physical_runs/<agent_run_id>/`; never overwrite them. The logical
-`attempt_<nn>/selected_run.yaml` points to the sole physical run included in
-aggregation. A skill/solver mapping uses the logical attempt number, never the
-number of infrastructure replacements.
+## 6. Failure Handling
 
-Minimum `selected_run.yaml` shape:
+An infrastructure failure is a provider/network outage, container startup
+failure, task-environment failure, or trace extraction/matching failure caused
+by orchestration.
 
-```yaml
-logical_attempt_id: <descriptive logical id>
-status: selected
-selected_agent_run_id: <opaque UUID>
-physical_run: physical_runs/<opaque UUID>
-selected_at: <RFC3339 timestamp>
-output_sha256: <answer.json SHA-256 or generated-package digest>
-trace_sha256: <selected rollout JSONL SHA-256>
-cleanup_record_sha256: <sha256>
-```
+Before retrying the same logical slot:
 
-Write this file atomically only after all selection checks pass. An incomplete
-logical attempt has no `selected_run.yaml`; preserve its failure state and reason
-in the physical-run metadata and formal report.
+1. Move its failed artifacts under
+   `scratch/infrastructure_failures/<model_profile>/<logical_slot>/<uuid>/`.
+2. Recreate the formal attempt directory from clean allowed inputs.
+3. Use a new opaque UUID.
+4. Keep creator, prompt, model, attempt number, evidence, and timeout unchanged.
 
-## 8. Contamination Handling
+Agent timeout, invalid output, refusal, or agent-originated forbidden access is
+a logical result. Do not retry it merely to obtain a valid skill or answer.
 
-If an execution agent accesses, lists, or reports seeing forbidden material:
+If the orchestrator staged forbidden material, preserve the failed evidence,
+fix only the staging defect, and retry with a new UUID. Never patch a creator or
+generated skill during a formal profile.
 
-1. Stop using the result.
-2. Preserve the attempt and trace for audit.
-3. Write the reason in `contamination_report.txt` or attempt metadata.
-4. Do not score or aggregate it.
-5. Determine whether the orchestrator accidentally exposed the material or the
-   agent crossed a correctly enforced boundary.
-6. For a verified staging/isolation leak, fix only that infrastructure defect and
-   rerun in a new `physical_runs/<agent_run_id>/` directory with a new opaque
-   UUID. Write `selected_run.yaml` only after the replacement is complete.
-7. For agent-originated access with correct staging, do not rerun; record a
-   logical failure and mark the affected branch incomplete.
+## 7. Traces And Ownership
 
-Do not change the creator bundle, common contract, model profile, or task prompt
-as part of a contamination retry.
+Copy exactly one matching primary Codex trace into the canonical
+`original_traces/` path. When discovery requires a sessions subtree, use the
+streaming `docker cp ... - | tar -x` pattern from
+`CODEX_ORCHESTRATOR.md` so host files remain owned by the workspace user.
 
-## 9. Aggregate One Model Profile
+Do not use `sudo find`, copy a complete runtime home, or retain credentials,
+plugins, caches, databases, logs, or stdout as formal traces.
 
-Before aggregation, classify completeness:
+## 8. Score And Report
 
-- Base is complete only with 15 selected valid scores; otherwise record base as
-  incomplete and keep base accuracy, dispersion, and all lifts null.
-- A creator is complete only with 3 selected valid generation records and 15
-  selected valid few-shot scores; otherwise report that creator as incomplete.
-- Every included physical run has matching trace and metadata records.
-- Each creator keeps one immutable revision/hash across the full profile.
+Base is complete with 15 valid scores. A creator branch is complete with 3 valid
+generation packages and 15 matching valid solver scores.
 
-Write:
+Always write:
 
 ```text
 report/<model_profile>/<task_group_id>.yaml
 ```
 
-Always write the report, including explicit incomplete branches. Compute base and
-each complete creator branch independently, then compute:
+Represent incomplete branches explicitly. Compute each branch independently,
+then report creator lift over the one shared base and pairwise creator
+differences when the required branches are complete.
 
-- Each complete creator's lift when the shared base is also complete.
-- Pairwise differences only when both creator branches are complete.
-- Generation and solver efficiency per creator.
-- Validation and portability observations.
+Generation usage remains separate from solver efficiency. Do not include the
+startup check, infrastructure replacements, environment checks, evaluators, or
+orchestrator work in scored efficiency.
 
-## 10. Cross-Model Side-By-Side Report
+## 9. Cross-Model Summary
 
-This is post-hoc aggregation, not a multi-model formal invocation. Only after two
-separate model-profile invocations are finalized, with incomplete branches
-explicitly represented when necessary, write:
+After two separate model-profile reports are final, an optional side-by-side
+summary may be written to:
 
 ```text
 report/comparison/<task_group_id>.yaml
 ```
 
-Copy resolved model/provider identities and show creator results side by side.
-Do not pool scores across models or present a causal model ranking when provider
-and reasoning semantics differ.
+Do not pool attempts or claim provider/reasoning differences are caused only by
+the model.

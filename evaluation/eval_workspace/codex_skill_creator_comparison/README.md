@@ -1,23 +1,22 @@
 # Codex Skill-Creator Comparison Workspace
 
-This workspace compares four skill-creator recipes while keeping the evaluation
+This workspace compares four skill-creator recipes while keeping the Codex
 harness, model profile, task group, few-shot evidence, solver prompt, task
 environment, evaluators, and attempt counts fixed.
 
-It supports two model profiles from one shared workflow:
+One formal invocation runs one model profile:
 
 ```text
 gpt5_5_xhigh
 deepseek_v4_max_preview
 ```
 
-One formal invocation accepts exactly one runtime parameter: `model_profile`.
-It must be one of the two IDs above. The task group is inferred from the exactly
-one directory staged under `task_group/`. Harness, modes, all four creators,
-attempt counts, prompts, limits, scheduling, scoring, and reporting are fixed by
-`configs/experiment.yaml` and cannot be overridden at launch.
+The only runtime parameter is `model_profile`. The task group is inferred from
+the exactly one directory under `task_group/`. Harness, modes, all four
+creators, attempt counts, prompts, limits, scoring, and reporting come from
+`configs/experiment.yaml` and are not launch-time options.
 
-For each model profile, run exactly five scored branches:
+For the selected model profile, run these five scored branches:
 
 ```text
 base
@@ -27,65 +26,53 @@ fewshot/deepagents
 fewshot/opencode
 ```
 
-`base` is shared within a model profile. Do not duplicate or rerun it once per
-creator. The four creator branches differ only in the creator bundle used by
-the few-shot skill-generation process.
-
-This workspace evaluates one task group at a time. Do not modify the task group
-under evaluation. If it is invalid, record the risk and return it to an earlier
-data stage.
+`base` is one shared control. The four few-shot branches differ only in the
+pinned creator bundle staged during skill generation.
 
 ## Experiment Question
 
-For a fixed Codex harness and a fixed model profile, how does replacing only the
-skill-creator recipe change the quality and efficiency of the generated
-few-shot skill and the downstream solver score?
+For a fixed Codex harness and model profile, how does changing only the
+skill-creator recipe affect the generated skill and downstream solver score?
 
-The primary experiment is a portable one-pass comparison. Each creator runs in
-one isolated Codex generation process. Creator-side human review, subagent
-benchmarks, activation-description optimization, installation, and iterative
-eval loops are outside this experiment. This keeps the generation boundary and
-compute shape comparable across creator recipes.
-
-Creator names remain outside agent-visible prompts and paths. Within one model
-profile, creator runs use the same common contract, prompt, execution limits,
-retry policy, and seeded interleaved schedule; only the pinned creator bundle
-changes.
+This is a portable one-pass comparison. Each creator runs once per generation
+attempt inside an isolated Codex process. Interactive review, creator-side
+subagents, external eval loops, installation, and post-generation editing are
+outside the experiment.
 
 ## Formal Run Interface
 
-The only valid formal invocation shape is:
+Use exactly:
 
 ```text
 model_profile: <gpt5_5_xhigh|deepseek_v4_max_preview>
 ```
 
-Do not accept a task-group selector, model string, creator filter, mode filter,
-attempt override, or a request to run both profiles in one formal invocation.
-Every invocation discovers the one staged task group, resolves the selected
-profile, and runs the complete fixed branch set shown above. A cross-model file
-is only a later side-by-side aggregation of two separately invoked reports.
-Provider/authentication values used to resolve a profile are preflight setup,
-not launch parameters; freeze them before the formal schedule starts.
+Do not add a task-group selector, raw model string, creator filter, mode filter,
+attempt override, or second model profile. Run the two profiles separately.
+
+Provider credentials, endpoint values, and proxy settings are machine runtime
+setup. Apply them uniformly to every agent under the selected profile and record
+sanitized values in run metadata; do not hard-code them in this reusable
+workspace.
 
 ## Directories
 
 | Path | Purpose |
 | --- | --- |
-| `configs/` | Experiment scope and model profiles |
-| `creators/` | Pinned upstream creator bundles, manifests, and the common adaptation contract |
-| `guides/` | Workflow, creator rules, fixed prompts, metrics, and report format |
+| `configs/` | Fixed experiment and model profiles |
+| `creators/` | Pinned creator bundles, manifests, and the common contract |
+| `guides/` | Workflow, prompts, metrics, and report format |
 | `task_group/` | The single official task group under evaluation |
-| `skills/` | Generated skills organized by model profile and creator |
-| `runs/` | Shared base and creator-specific few-shot solver attempts |
-| `original_traces/` | Copied primary Codex session JSONL files |
-| `scratch/` | Staging, runtime manifests, temporary checks, and aggregation scripts |
-| `report/` | Per-model reports and optional cross-model side-by-side summaries |
+| `skills/` | Generated skills by model profile and creator |
+| `runs/` | Base and creator-specific solver attempts |
+| `original_traces/` | Selected primary Codex session traces |
+| `scratch/` | Temporary staging, startup checks, failures, and helper scripts |
+| `report/` | Per-model reports and optional side-by-side summaries |
 
-Canonical artifact paths are:
+Canonical paths:
 
 ```text
-skills/<model_profile>/fewshot/<creator>/fewshot_attempt_<nn>/SKILL.md
+skills/<model_profile>/fewshot/<creator>/fewshot_attempt_<nn>/
 
 runs/<model_profile>/base/<test_id>/attempt_<nn>/
 runs/<model_profile>/fewshot/<creator>/<test_id>/attempt_<nn>/
@@ -95,13 +82,11 @@ original_traces/<model_profile>/base/<test_id>/attempt_<nn>/
 original_traces/<model_profile>/fewshot/<creator>/<test_id>/attempt_<nn>/
 
 report/<model_profile>/<task_group_id>.yaml
-report/comparison/<task_group_id>.yaml
 ```
 
-Each logical generation or solver attempt stores immutable physical runs under
-`attempt_<nn>/physical_runs/<opaque_agent_run_id>/`. A `selected_run.yaml`
-pointer identifies the sole physical run used in aggregation; failed
-infrastructure runs are retained rather than overwritten.
+Infrastructure failures are retained under `scratch/infrastructure_failures/`
+before the same logical slot is retried with a new opaque UUID. Formal paths
+contain only the selected run for each slot.
 
 ## Read First
 
@@ -119,43 +104,61 @@ Read these files in order:
 10. `guides/metric_and_scoring.md`
 11. `guides/report_format.md`
 
-## Launch Prompt
+## Startup Check
 
-Run one model profile at a time. No other experiment option belongs in the
-launch prompt:
+Before the first formal attempt, perform one short non-scored check using the
+same selected model and frozen agent image. Verify:
+
+- Container-local authentication.
+- Actual model identity and reasoning configuration.
+- One real streamed model response and harmless tool call.
+- Task-environment health from the agent network.
+- One matchable primary Codex trace.
+
+Store this evidence under `scratch/smoke/<model_profile>/`. Do not repeat a
+passed startup check unless the model configuration, agent image, task image, or
+runtime authentication changes. The check is not a scored branch.
+
+## Execution Order
+
+Use this fixed round-robin order.
+
+Generation:
 
 ```text
-Please run the formal evaluation in this workspace.
-Model profile: <gpt5_5_xhigh|deepseek_v4_max_preview>.
+attempt_01: codex, cc, deepagents, opencode
+attempt_02: codex, cc, deepagents, opencode
+attempt_03: codex, cc, deepagents, opencode
 ```
 
-The orchestrator must reject extra runtime overrides rather than interpreting
-them. To obtain both model results, invoke the workspace twice, once per profile,
-then aggregate the two finalized reports without rerunning either experiment.
+Solver runs use the same fixed branch order within each attempt and test:
 
-## Important Preconditions
+```text
+base, fewshot/codex, fewshot/cc, fewshot/deepagents, fewshot/opencode
+```
 
-- Every creator manifest must have a pinned immutable revision and verified
-  bundle hash before formal runs.
-- All four configured creators are mandatory; a subset is not a formal run.
-- Every creator bundle must have `SKILL.md` at its bundle root.
-- The selected model profile must have no unresolved values.
-- The DeepSeek profile remains intentionally blocked until its exact model ID,
-  Codex custom provider, Responses-compatible endpoint, authentication, and
-  reasoning setting are confirmed.
-- A formal run never downloads or updates creator bundles.
-- Secrets belong only in ignored `.env` or minimum runtime bootstrap files;
-  never commit them or stage them under `/work`.
+Skip only a few-shot slot whose matching generated skill is invalid or missing,
+and record it as `not_runnable`. Do not reorder work in response to scores.
 
 ## Attempt Counts
 
 For one task group and one model profile:
 
-- Shared base: 5 test tasks x 3 solver attempts = 15 solver runs.
-- Each creator: 3 skill-generation runs and 5 test tasks x 3 solver attempts.
-- Four creators: 12 skill-generation runs and 60 few-shot solver runs.
-- Planned total: 87 selected logical agent runs per model profile. Verified
-  infrastructure replacements may increase the retained physical-run count.
+- Shared base: 5 test tasks x 3 solver attempts = 15 runs.
+- Four creators: 4 x 3 skill-generation attempts = 12 runs.
+- Four creator branches: 4 x 5 test tasks x 3 solver attempts = 60 runs.
+- Planned total: 87 logical agent runs.
 
-Do not reduce attempt counts for a formal report. Smaller smoke tests must be
-marked `smoke_test` and must not be published as `acc@3` results.
+Do not reduce attempt counts in a formal report.
+
+## Preconditions
+
+- All four creator manifests must be pinned, complete, and hash-verified.
+- The selected model profile must resolve without placeholders.
+- The same model profile is used for generation and solving.
+- The task group must contain 5 train tasks and 5 test tasks.
+- A formal run never downloads or updates a creator bundle.
+- Secrets never enter `/work`, generated skills, traces, or reports.
+- The DeepSeek profile remains blocked until its exact model, provider,
+  Responses-compatible endpoint, authentication, reasoning setting, and pricing
+  are resolved.

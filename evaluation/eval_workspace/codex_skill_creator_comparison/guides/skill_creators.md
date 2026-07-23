@@ -90,8 +90,8 @@ After validation, calculate the complete generated-package digest with the same
 `sorted_relative_file_sha256_v1` algorithm defined in `creators/README.md`.
 Also calculate its Git-stable executable-bit digest with
 `git_executable_bit_v1`. Record both in generation metadata and solver metadata.
-Recompute both immediately before and after every solver run; a mismatch
-invalidates the run rather than permitting a repair.
+Verify both immediately before solver staging, then mount the package read-only.
+A mismatch invalidates the run rather than permitting a repair.
 
 ## Solver Exposure
 

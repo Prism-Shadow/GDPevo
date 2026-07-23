@@ -79,9 +79,9 @@ LC_ALL=C find . -type f -print0 \
 Record the leading digest as `file_modes_sha256` and the algorithm as
 `git_executable_bit_v1`. Bundle copies must preserve executable classification,
 and both the content digest and file-mode digest must match before every formal
-staging. Formal agent containers use the fixed UID:GID recorded in
-`configs/experiment.yaml`, so runtime access semantics do not drift across
-creators.
+staging. Resolve the host UID:GID once at profile start, record it in the run
+manifest, and use it for every formal agent container so access semantics do not
+drift across creators.
 
 When the source repository keeps its license outside the creator subdirectory,
 store an unchanged copy as `creators/<creator>/UPSTREAM_LICENSE.txt`; do not add

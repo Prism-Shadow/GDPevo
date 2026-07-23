@@ -1,24 +1,21 @@
 # Metric And Scoring
 
-The primary metrics are `acc@3` and population `std@3`, calculated separately
-for the shared base and each creator-specific few-shot branch.
-
-## Scored Branch Identity
-
-A branch is identified by:
+Calculate `acc@3` and population `std@3` separately for:
 
 ```text
 <model_profile>/base
-<model_profile>/fewshot/<creator>
+<model_profile>/fewshot/codex
+<model_profile>/fewshot/cc
+<model_profile>/fewshot/deepagents
+<model_profile>/fewshot/opencode
 ```
 
-Never merge creators into one `fewshot` score. Never create creator-specific
-copies of base.
+Never merge creators into one few-shot score or create creator-specific copies
+of base.
 
-## Single Solver Run
+## Solver Attempt Metadata
 
-A valid solver run is one clean-context Codex process solving exactly one test
-task under one branch. It produces:
+Each valid solver attempt produces:
 
 ```text
 answer.json
@@ -26,187 +23,139 @@ score.yaml
 run_metadata.yaml
 ```
 
-Recommended metadata:
+Record at least:
 
 ```yaml
-logical_attempt_id: <descriptive id kept outside the agent prompt>
-agent_run_id: <opaque UUID shown in the prompt>
-model_profile: <model profile id>
+agent_run_id: <opaque UUID>
+model_profile: <profile id>
 condition: <base|fewshot>
 skill_creator: <none|codex|cc|deepagents|opencode>
 task_id: <test id>
-attempt: <int>
-generator_harness: codex
+attempt: <1|2|3>
+generator_harness: <codex|null>
 solver_harness: codex
-generator_model: <resolved model id or null for base>
-solver_model: <resolved model id>
-generator_reasoning_effort: <resolved value or null for base>
-solver_reasoning_effort: <resolved value>
-generator_provider_id: <resolved provider id or null for base>
-solver_provider_id: <resolved provider id>
-observed_model_identity: <trace/provider identity or null>
-model_identity_match_status: <matched|missing|changed>
-skill_dir: <matching generated package or null>
-skill_integrity:
-  content_sha256_expected: <generation-record digest or null>
-  content_sha256_before: <sha256 or null>
-  content_sha256_after: <sha256 or null>
-  file_modes_digest_algorithm: git_executable_bit_v1
-  file_modes_sha256_expected: <generation-record digest or null>
-  file_modes_sha256_before: <sha256 or null>
-  file_modes_sha256_after: <sha256 or null>
+generator_model: <resolved model|null>
+solver_model: <resolved model>
+reasoning_effort: <resolved value>
+provider_id: <resolved provider>
+observed_model_identity: <identity|null>
+skill_dir: <matching package|null>
+skill_bundle_sha256: <sha256|null>
 duration_seconds: <float>
 timeout_status: <not_timed_out|timed_out>
-agent_container_uid_gid: "0:0"
-staged_input_integrity:
-  frozen_manifest_match_before: <bool>
-  frozen_manifest_match_after: <bool>
-  sanitized_environment_access_sha256: <sha256>
-  environment_access_hmac_sha256: <hmac>
-
-trace:
-  copied_trace_file: <path under original_traces/ or null>
-  session_id: <id or null>
-  match_status: <matched|missing|ambiguous>
-  missing_reason: <string or null>
-
-token_usage:
-  source: codex_session_trace
-  input_tokens: <int or null>
-  cached_input_tokens: <int or null>
-  output_tokens: <int or null>
-  reasoning_output_tokens: <int or null>
-  total_tokens: <int or null>
-
-cost_usd: <float or null>
-turn_count:
-  source: codex_session_trace
-  assistant_turns: <int or null>
-tool_call_count:
-  source: codex_session_trace
-  calls: <int or null>
+trace_file: <canonical rollout path|null>
+trace_match_status: <matched|missing|ambiguous>
+input_tokens: <int|null>
+cached_input_tokens: <int|null>
+output_tokens: <int|null>
+reasoning_output_tokens: <int|null>
+total_tokens: <int|null>
+cost_usd: <float|null>
+assistant_turns: <int|null>
+tool_calls: <int|null>
+status: <valid|logical_failure|infrastructure_failure|contaminated|not_runnable>
 ```
 
-If a trace cannot be matched uniquely, leave all trace-derived fields `null`
-and preserve the physical run as an excluded infrastructure failure. Do not
-estimate them manually or include that physical run in formal aggregation. A
-replacement must use a new directory and opaque `agent_run_id`.
+For few-shot, the recorded package digest must match its generation record.
 
-## Generation Run
+## Generation Attempt Metadata
 
-Each creator has three independent generation records:
+Store one record under:
 
 ```text
-scratch/skill_generation/<model_profile>/<creator>/attempt_<nn>/physical_runs/<agent_run_id>/evolve_metadata.yaml
+scratch/skill_generation/<model_profile>/<creator>/attempt_<nn>/evolve_metadata.yaml
 ```
 
-Recommended fields:
+Record at least:
 
 ```yaml
-logical_attempt_id: <descriptive id kept outside the agent prompt>
-agent_run_id: <opaque UUID shown in the prompt>
-model_profile: <model profile id>
-condition: fewshot
+agent_run_id: <opaque UUID>
+model_profile: <profile id>
 skill_creator: <creator id>
-attempt: <int>
+attempt: <1|2|3>
 generator_harness: codex
-generator_model: <resolved model id>
-generator_reasoning_effort: <resolved value>
-generator_provider_id: <resolved provider id>
-observed_model_identity: <trace/provider identity or null>
-model_identity_match_status: <matched|missing|changed>
+generator_model: <resolved model>
+reasoning_effort: <resolved value>
+provider_id: <resolved provider>
+observed_model_identity: <identity|null>
+creator_revision: <immutable revision>
+creator_bundle_sha256: <sha256>
+skill_dir: <canonical package|null>
+skill_bundle_sha256: <sha256|null>
+skill_file_modes_sha256: <sha256|null>
+validation_status: <valid|invalid|missing|contaminated>
+file_count: <int|null>
+bytes: <int|null>
+portability_warnings: []
 duration_seconds: <float>
 timeout_status: <not_timed_out|timed_out>
-agent_container_uid_gid: "0:0"
-staged_input_integrity:
-  frozen_manifest_match_before: <bool>
-  frozen_manifest_match_after: <bool>
-  sanitized_environment_access_sha256: <sha256>
-  environment_access_hmac_sha256: <hmac>
-
-creator_source:
-  revision: <immutable revision>
-  skill_md_sha256: <sha256>
-  bundle_sha256: <sha256>
-  file_modes_digest_algorithm: git_executable_bit_v1
-  file_modes_sha256: <sha256>
-
-output:
-  skill_dir: <canonical generated package path or null>
-  skill_bundle_sha256: <sha256 or null>
-  digest_algorithm: sorted_relative_file_sha256_v1
-  file_modes_digest_algorithm: git_executable_bit_v1
-  file_modes_sha256: <sha256 or null>
-  entrypoint_present: <bool>
-  validation_status: <valid|invalid|missing|contaminated>
-  file_count: <int or null>
-  bytes: <int or null>
-  portability_warnings: []
-
-trace:
-  copied_trace_file: <path or null>
-  session_id: <id or null>
-  match_status: <matched|missing|ambiguous>
-
-token_usage:
-  source: codex_session_trace
-  input_tokens: <int or null>
-  cached_input_tokens: <int or null>
-  output_tokens: <int or null>
-  reasoning_output_tokens: <int or null>
-  total_tokens: <int or null>
-
-cost_usd: <float or null>
-assistant_turns: <int or null>
-tool_calls: <int or null>
+trace_file: <canonical rollout path|null>
+trace_match_status: <matched|missing|ambiguous>
+input_tokens: <int|null>
+cached_input_tokens: <int|null>
+output_tokens: <int|null>
+reasoning_output_tokens: <int|null>
+total_tokens: <int|null>
+cost_usd: <float|null>
+assistant_turns: <int|null>
+tool_calls: <int|null>
+status: <valid|logical_failure|infrastructure_failure|contaminated>
 ```
 
-Generation usage is reported separately from solver efficiency. Do not add it
-to solver token, turn, or tool-call averages.
+Generation usage is reported separately from solver efficiency.
 
-## Codex Token And Cost Accounting
+## Trace Accounting
 
-For the normal Codex session-cumulative token event, use only the final
-cumulative usage snapshot for the entire isolated session. Never sum cumulative
-snapshots across trace events or responses. If a verified Codex/provider variant
-instead exposes non-cumulative per-response usage, record that accounting mode
-and sum exactly one final usage record per stable response ID. Never mix the two
-accounting modes. Response-ID deduplication for turns and tool calls does not
-justify summing session-cumulative token snapshots.
+Use the final session-cumulative usage snapshot from the matching Codex primary
+trace. Do not sum cumulative token events. If a provider exposes non-cumulative
+per-response usage, document that mode and count one final record per stable
+response ID.
 
-In Codex traces, `cached_input_tokens` is a subset of `input_tokens`, and
-`reasoning_output_tokens` is a subset of `output_tokens`. Therefore:
+Count assistant/model responses by stable response ID. Count solver-initiated
+`function_call` and `custom_tool_call` items; do not count tool results.
+
+If the trace is missing or ambiguous due to orchestration, classify the
+physical execution as infrastructure failure, preserve it under
+`scratch/infrastructure_failures/`, and rerun the same logical slot with a new
+UUID. Do not estimate trace-derived fields.
+
+## Cost
+
+For normal Codex traces:
 
 ```text
 uncached_input_tokens = max(input_tokens - cached_input_tokens, 0)
 
 cost_usd =
-  (uncached_input_tokens * profile.uncached_input_usd_per_million
-   + cached_input_tokens * profile.cached_input_usd_per_million
-   + output_tokens * profile.output_usd_per_million) / 1_000_000
+  (uncached_input_tokens * uncached_input_rate
+   + cached_input_tokens * cached_input_rate
+   + output_tokens * output_rate) / 1_000_000
 ```
 
-Do not charge reasoning output a second time. Keep `input_tokens` as the gross
-input value in metadata and reports; `total_tokens = input_tokens +
-output_tokens`, because cached and reasoning buckets are subsets. A model profile may calculate cost only
-after preflight confirms that its provider trace uses these bucket semantics and
-its rate card is resolved; otherwise keep `cost_usd` null with a reason.
+`cached_input_tokens` is a subset of `input_tokens`, and reasoning output is a
+subset of output. Do not charge either twice. Use:
+
+```text
+total_tokens = input_tokens + output_tokens
+```
+
+If provider semantics or pricing are unresolved, leave cost null and record the
+reason.
 
 ## Score Normalization
 
-Normalize evaluator results to `[0, 1]`. Prefer an explicit normalized score;
-otherwise use a documented `earned / maximum` field. If normalization cannot be
-determined, fail the attempt instead of guessing.
+Normalize evaluator output to `[0, 1]`. Prefer an explicit normalized score;
+otherwise use a documented `earned / maximum` field. Do not guess.
 
 ## acc@3
 
-For one test task in one branch:
+For one test task:
 
 ```text
 task acc@3 = (score_01 + score_02 + score_03) / 3
 ```
 
-Overall branch accuracy:
+For one branch:
 
 ```text
 overall acc@3 = mean(test_001 acc@3, ..., test_005 acc@3)
@@ -214,109 +163,71 @@ overall acc@3 = mean(test_001 acc@3, ..., test_005 acc@3)
 
 ## population std@3
 
-For one test task with mean `m`:
+For one task with mean `m`:
 
 ```text
 task std@3 = sqrt(((s1-m)^2 + (s2-m)^2 + (s3-m)^2) / 3)
 ```
 
-Overall branch dispersion:
+For one branch:
 
 ```text
 overall std@3 = mean(test_001 std@3, ..., test_005 std@3)
 ```
 
-## Shared-Base Lift
+## Creator Comparisons
 
-For creator `c` within one model profile:
+Creator lift uses the one shared base:
 
 ```text
 lift(c) = fewshot_acc@3(c) - shared_base_acc@3
 ```
 
-All four creator lifts must reference the exact same base value and base attempt
-set.
-
-## Pairwise Creator Difference
-
-For creators `a` and `b`:
+Pairwise difference:
 
 ```text
 delta(a,b) = fewshot_acc@3(a) - fewshot_acc@3(b)
 ```
 
-Report all six unordered creator pairs. Compute the difference for each test task
-first, then average the five task differences. Preserve all five task-level
-differences under the corresponding pair in the formal report. If either branch
-is incomplete, mark the pair unavailable and leave its delta fields null.
+Report all six unordered creator pairs. Preserve task-level differences. If a
+required branch is incomplete, mark the comparison unavailable rather than
+filling missing values with zero.
 
-## Solver Efficiency
+## Efficiency
 
-For each task, average its three attempts, then average the five task values.
-Apply that shape independently to:
+For solver efficiency, average three attempts for each test task and then
+average the five task values. Apply this independently to:
 
-- gross input tokens
-- cached input tokens
-- output tokens
-- reasoning output tokens
-- USD cost
-- assistant/model-response turns
+- input, cached input, output, and reasoning output tokens
+- cost
+- assistant turns
 - tool calls
 
-Count only the formal test solver process. Exclude generation, environment
-checks, evaluators, retries that were replaced, and orchestrator work.
+Count only selected formal solver processes. Exclude startup checks,
+infrastructure replacements, generation, environment checks, evaluators, and
+orchestrator work.
 
-For Codex traces, count assistant/model responses by stable response/message ID
-and count solver-initiated `function_call` and `custom_tool_call` items. Do not
-count tool results.
-
-## Generation Efficiency And Reliability
-
-For each creator, report the arithmetic average across three generation
-attempts for all token, cost, turn, tool-call, duration, package-size, and
-file-count fields when present.
-
-Also report:
+For each creator, separately average its three generation attempts for usage,
+duration, package size, and file count. Also report:
 
 ```text
 valid_generation_rate = valid packages / 3
 ```
 
-Formal downstream `acc@3` requires three valid generated packages and their
-matching solver attempts. Do not assign an arbitrary score of zero to a missing
-skill and do not silently substitute base. If a creator cannot produce three
-valid packages under the fixed contract, mark the branch incomplete and report
-the creator failure rather than publishing a misleading `acc@3`.
+## Completeness And Failures
 
-## Failures And Retries
+Base requires 15 valid solver scores. A creator branch requires 3 valid packages
+and 15 matching valid solver scores. Missing packages are not scored as zero and
+are never replaced with base.
 
-Infrastructure failures include unavailable provider/network, container start
-failure, or missing trace caused by orchestration. Preserve evidence and rerun
-the same logical attempt with a new physical directory and opaque agent run ID
-after fixing only the infrastructure defect. The fixed external wall timeout is
-not an infrastructure defect when the agent simply exhausts it.
+Logical creator failures include missing/invalid packages, refusal to follow the
+one-pass contract, agent timeout, or agent-originated boundary violations.
+Logical solver failures include missing/unparseable answers, agent timeout, or
+agent-originated boundary violations. Preserve them and do not retry for
+quality.
 
-Logical creator failures include no package, invalid entrypoint, agent-originated
-forbidden access despite correct staging/isolation, or refusal to complete the
-common one-pass contract. Preserve and report them. Do not fix the upstream
-creator or generated skill during the experiment.
+Retry only verified infrastructure failures while keeping the logical slot
+unchanged. Evaluator execution may be retried only against byte-identical solver
+output.
 
-Logical solver failures include missing/unparseable `answer.json`, exhausting
-the fixed timeout, or other failure by the solver process. Preserve the failed
-record, do not retry it merely to obtain a valid answer, and mark the branch
-incomplete.
-An incomplete base leaves base metrics and all lifts null, but it does not erase
-otherwise complete creator scores or creator-to-creator deltas.
-An evaluator crash or non-normalizable evaluator output may be retried only when
-the solver output is unchanged and the failure is verified as infrastructure.
-
-Contaminated attempts never enter scores or aggregation. Only contamination
-caused by a verified staging/isolation defect receives a replacement, using a
-clean directory and new opaque `agent_run_id`. Agent-originated boundary
-violations are logical failures and are not retried.
-
-## Model Separation
-
-Compute every metric within one resolved model profile. A comparison report may
-place model profiles side by side but must not pool their attempts, pricing, or
-token buckets.
+Compute all metrics within one model profile. Never pool profiles.

@@ -43,11 +43,10 @@ execution_policy:
   model_output_token_limit: codex_profile_default
   agent_turn_limit: unlimited
   tool_call_limit: unlimited
-  agent_container_uid_gid: "0:0"
+  agent_container_uid_gid: resolve_from_orchestrator_host_user
   retry_policy: infrastructure_only
-  generation_schedule: seeded_randomized_interleave
-  solver_schedule: seeded_randomized_interleave_including_shared_base
-  schedule_seed_required: true
+  generation_schedule: fixed_round_robin_by_attempt
+  solver_schedule: fixed_attempt_test_branch_round_robin
   identical_within_model_profile: true
 
 base_policy:
