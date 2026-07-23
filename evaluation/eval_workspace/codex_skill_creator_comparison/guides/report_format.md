@@ -30,7 +30,6 @@ runtime:
   task_image_id: <image id>
   codex_version: <version>
   agent_uid_gid: <uid:gid>
-  startup_check: <passed|failed>
 
 base:
   status: <complete|incomplete>

@@ -30,15 +30,9 @@ Verify:
   standard answers, and evaluators.
 - No formal output already occupies the selected model-profile paths.
 
-Run the short startup check from `README.md`, then write:
-
-```text
-scratch/run_manifest/<model_profile>.yaml
-```
-
-Record one sanitized manifest as described in `CODEX_ORCHESTRATOR.md`. A small
-helper under `scratch/` may automate staging and execution, but the experiment
-does not require building or freezing a separate runner before it starts.
+A small helper under `scratch/` may automate staging and execution, but the
+experiment does not require building or freezing a separate runner before it
+starts.
 
 ## 2. Prepare Docker
 
@@ -52,6 +46,16 @@ same sanitized provider/proxy setup for every creator and solver.
 Start task environments and networks according to `env.state_mode`. Use
 `TASK_ENV_ENABLE_JUDGE=0`. Verify health from the same network before launching
 agents.
+
+After the ordinary executable, authentication, image, and environment checks
+pass, write:
+
+```text
+scratch/run_manifest/<model_profile>.yaml
+```
+
+Record one sanitized manifest as described in `CODEX_ORCHESTRATOR.md`, then
+proceed directly to the first formal generation slot.
 
 ## 3. Fixed Execution Order
 
@@ -215,9 +219,9 @@ Represent incomplete branches explicitly. Compute each branch independently,
 then report creator lift over the one shared base and pairwise creator
 differences when the required branches are complete.
 
-Generation usage remains separate from solver efficiency. Do not include the
-startup check, infrastructure replacements, environment checks, evaluators, or
-orchestrator work in scored efficiency.
+Generation usage remains separate from solver efficiency. Do not include
+infrastructure replacements, environment checks, evaluators, or orchestrator
+work in scored efficiency.
 
 ## 9. Cross-Model Summary
 
