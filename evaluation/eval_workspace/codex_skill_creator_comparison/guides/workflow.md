@@ -111,11 +111,18 @@ Stage only:
 
 - The selected upstream bundle as `creator/`.
 - `creators/COMMON_CONTRACT.md` as `creator_contract.md`.
-- Complete official inputs for `train_001` through `train_005`.
+- Complete official inputs for `train_001` through `train_005`, resolving each
+  source path from `task_group.yaml` and staging it under
+  `train_tasks/<task_id>/input/`.
 - Matching standard answers as
-  `train_answers/train_<nnn>/answer.json`.
+  `train_answers/<task_id>/answer.json`, using each task's declared
+  `answer_json` path.
 - `environment_access.md` containing only the base URL, required credentials,
   and allowed business endpoint names.
+
+Source directory names need not equal task IDs. For example,
+`train_tasks/001/input/` declared as `task_id: train_001` must become
+`train_tasks/train_001/input/` in `/work`.
 
 Run the fixed Fewshot Skill Generation prompt with a new opaque UUID. Do not
 stage test material, notes, evaluators, environment source, old output, another
@@ -151,7 +158,10 @@ runs/<model_profile>/base/<test_id>/attempt_<nn>/
 ```
 
 Stage only the current test `input/` and `environment_access.md`. Use the Base
-Test Solver prompt. There is one shared base branch, not one base per creator.
+Test Solver prompt. Resolve the source input and evaluator from the selected
+entry in `task_group.yaml`, stage its input as `/work/input/`, and keep its
+declared `task_id` as the canonical run key. There is one shared base branch,
+not one base per creator.
 
 ### Few-Shot Creators
 
