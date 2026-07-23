@@ -32,6 +32,9 @@ condition: <base|fewshot>
 skill_creator: <none|codex|cc|deepagents|opencode>
 task_id: <test id>
 attempt: <1|2|3>
+prompt_template_id: <base_test_solver|fewshot_test_solver>
+prompt_template_sha256: <sha256>
+rendered_prompt_sha256: <sha256>
 generator_harness: <codex|null>
 solver_harness: codex
 generator_model: <resolved model|null>
@@ -73,6 +76,9 @@ agent_run_id: <opaque UUID>
 model_profile: <profile id>
 skill_creator: <creator id>
 attempt: <1|2|3>
+prompt_template_id: fewshot_skill_generation
+prompt_template_sha256: <sha256>
+rendered_prompt_sha256: <sha256>
 generator_harness: codex
 generator_model: <resolved model>
 reasoning_effort: <resolved value>

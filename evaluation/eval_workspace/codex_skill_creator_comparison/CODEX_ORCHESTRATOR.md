@@ -34,9 +34,9 @@ scratch/run_manifest/<model_profile>.yaml
 
 Record the resolved model/provider/reasoning values, task-group ID, Codex
 version, agent and task image IDs, resolved agent UID:GID, creator revisions and
-bundle hashes, prompt/common-contract hashes, attempt counts, fixed execution
-order, runtime-setup results, and sanitized proxy/endpoint information. Do not
-record secrets.
+bundle hashes, prompt template IDs and hashes, common-contract hash, attempt
+counts, fixed execution order, runtime-setup results, and sanitized
+proxy/endpoint information. Do not record secrets.
 
 Use only this run manifest for the resolved profile.
 
@@ -86,6 +86,7 @@ CODEX_HOME=/tmp/gdpevo-codex-home \
 codex exec \
   -C /work \
   -m "<resolved_model_id>" \
+  -c 'model_provider="<resolved_provider_id>"' \
   -c 'model_reasoning_effort="<resolved_effort>"' \
   --dangerously-bypass-approvals-and-sandbox \
   --json \
@@ -198,9 +199,16 @@ placeholders. Do not append creator-specific hints, answers, notes, rubric
 details, or external paths.
 
 Each process receives a fresh opaque UUID. Keep descriptive creator, task, and
-attempt labels only in orchestrator metadata. The generation prompt bytes must
-be identical across creators apart from the UUID and model-profile placeholder;
-the staged creator bundle is the only creator-specific input.
+attempt labels only in orchestrator metadata. Within one model profile, the
+rendered generation prompt must be identical across creators apart from the
+fresh UUID; the model-profile value is the same, and the staged creator bundle
+is the only creator-specific input.
+
+Follow the rendering and canonical hashing contract in
+`guides/agent_prompts.md`. Record `prompt_template_id`,
+`prompt_template_sha256`, and `rendered_prompt_sha256` in every generation and
+solver attempt's metadata. Use the template hash, not the rendered hash, when
+checking prompt equality across creators.
 
 ## Trace Preservation
 
