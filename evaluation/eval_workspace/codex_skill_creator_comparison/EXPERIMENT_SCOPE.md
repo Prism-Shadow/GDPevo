@@ -131,9 +131,11 @@ scratch/infrastructure_failures/<model_profile>/<logical_slot>/<agent_run_id>/
 Then create a clean formal attempt directory and use a new opaque UUID. Do not
 change its creator, prompt, model, evidence, or timeout.
 
-No package, invalid output, timeout consumed by the agent, refusal to follow the
-common contract, or agent-originated boundary violation is a logical result and
-is not retried merely to obtain success.
+A missing or invalid canonical package, missing or unparseable canonical
+answer, timeout consumed by the agent, refusal to follow the common contract,
+or agent-originated boundary violation is a logical result and is not retried
+merely to obtain success. An unrelated file created inside the isolated
+attempt-owned `/work` is not invalid output by itself.
 
 ## Model Separation
 

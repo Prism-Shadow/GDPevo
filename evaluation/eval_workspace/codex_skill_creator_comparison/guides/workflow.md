@@ -130,8 +130,12 @@ Stage only:
 
 Bind-mount each of those five input groups separately with `:ro` over the
 attempt-owned writable `/work`. Hash each staged input before and after the
-container. Only `skill/` and `contamination_report.txt` are writable generation
-outputs. Use `sorted_relative_file_sha256_v1` and
+container. `skill/` is the only canonical generation artifact copied
+downstream, and `contamination_report.txt` is the contamination control output.
+Other files created inside the isolated attempt-owned `/work` are
+attempt-local intermediates: preserve them with that physical attempt, but do
+not validate, score, or copy them downstream, and do not change the generation
+status merely because they exist. Use `sorted_relative_file_sha256_v1` and
 `git_executable_bit_v1` for directory inputs and SHA-256 of exact bytes for
 individual file inputs.
 
@@ -179,8 +183,12 @@ Stage only the current test `input/` and `environment_access.md`. Use the Base
 Test Solver prompt. Resolve the source input and evaluator from the selected
 entry in `task_group.yaml`, stage its input as `/work/input/`, and keep its
 declared `task_id` as the canonical run key. There is one shared base branch,
-not one base per creator. Mount both inputs with `:ro`; only `answer.json` and
-`contamination_report.txt` are writable.
+not one base per creator. Mount both inputs with `:ro`. `answer.json` is the
+only canonical solver artifact passed to the evaluator, and
+`contamination_report.txt` is the contamination control output. Other files
+inside the isolated attempt-owned `/work` are attempt-local intermediates:
+preserve them with that physical attempt, but do not pass them to the evaluator
+or another attempt, and do not change solver status merely because they exist.
 
 ### Few-Shot Creators
 
@@ -197,8 +205,10 @@ matching package as read-only `skill/`. Verify:
 solver attempt_<nn> -> same creator's fewshot_attempt_<nn>
 ```
 
-Mount all three inputs separately with `:ro`, hash them before and after the
-attempt, and keep only `answer.json` and `contamination_report.txt` writable.
+Mount all three inputs separately with `:ro` and hash them before and after the
+attempt. Apply the same canonical-output rule as Base: only `answer.json` is
+evaluated; unrelated attempt-local intermediate files are isolated, are not
+propagated, and do not invalidate the solver result.
 
 If that package is invalid or missing, record the solver slot as
 `not_runnable`; do not substitute another skill or base. Continue base and
@@ -215,7 +225,8 @@ After exit:
    metrics.
 3. Verify every staged input hash is unchanged.
 4. Check contamination.
-5. Call the task evaluator from orchestrator context.
+5. Require a parseable `answer.json` and call the task evaluator from
+   orchestrator context using only that file.
 6. Write `answer.json`, `score.yaml`, and `run_metadata.yaml`.
 7. Populate trace-derived usage and model identity.
 8. Remove the agent container and temporary trace extraction directory.
