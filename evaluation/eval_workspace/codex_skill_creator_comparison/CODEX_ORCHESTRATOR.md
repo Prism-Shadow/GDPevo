@@ -209,10 +209,15 @@ environment_access.md
 ```
 
 Mount `creator/`, `creator_contract.md`, `train_tasks/`, `train_answers/`, and
-`environment_access.md` separately with `:ro`. Only `/work/skill/` and
-`/work/contamination_report.txt` may be created or changed. Hash every mounted
-input tree or file immediately before container start and immediately after
-container stop. Use `sorted_relative_file_sha256_v1` plus
+`environment_access.md` separately with `:ro`. `/work/skill/` is the only
+canonical generation artifact copied downstream, and
+`/work/contamination_report.txt` is the contamination control output. Other
+files created inside the isolated attempt-owned `/work` are attempt-local
+intermediates: preserve them with that physical attempt, but do not validate,
+score, or copy them downstream, and do not change generation status merely
+because they exist. Hash every mounted input tree or file immediately before
+container start and immediately after container stop. Use
+`sorted_relative_file_sha256_v1` plus
 `git_executable_bit_v1` for directories and SHA-256 of exact bytes for
 individual files. Any change is an orchestration infrastructure failure;
 preserve the physical attempt, stop the profile, and fix the staging
@@ -271,10 +276,14 @@ Stage only the current test `input/`, `environment_access.md`, and the complete
 matching generated package as read-only `skill/`.
 
 Mount `input/`, `environment_access.md`, and, for few-shot, `skill/` separately
-with `:ro`. Only `/work/answer.json` and
-`/work/contamination_report.txt` may be created or changed. Hash all mounted
-inputs before and after the attempt with the same directory/file algorithms
-used for generation; a change is orchestration infrastructure failure.
+with `:ro`. `/work/answer.json` is the only canonical solver artifact passed
+to the evaluator, and `/work/contamination_report.txt` is the contamination
+control output. Other files inside the isolated attempt-owned `/work` are
+attempt-local intermediates: preserve them with that physical attempt, but do
+not pass them to the evaluator or another attempt, and do not change solver
+status merely because they exist. Hash all mounted inputs before and after the
+attempt with the same directory/file algorithms used for generation; a change
+is orchestration infrastructure failure.
 
 Resolve the test input and evaluator paths from `task_group.yaml`. Stage the
 declared input as `/work/input/`, keep the declared `task_id` as the canonical
@@ -288,7 +297,8 @@ other skills, answers, notes, evaluators, environment source, reports, traces,
 or judge instructions.
 
 After the solver exits, preserve its primary trace and metadata, check
-contamination, call the official evaluator from orchestrator context, and write:
+contamination, require a parseable `/work/answer.json`, call the official
+evaluator from orchestrator context using only that file, and write:
 
 ```text
 answer.json
