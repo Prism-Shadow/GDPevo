@@ -237,6 +237,13 @@ An infrastructure failure is a provider/network outage, container startup
 failure, task-environment failure, or trace extraction/matching failure caused
 by orchestration.
 
+A top-level Codex `--json` `turn.failed` event accompanied by a provider or
+protocol error and a nonzero agent-process exit is a provider infrastructure
+failure when the run did not time out and produced no completed logical
+artifact. Apply this rule only to the outer Codex event: an HTTP error printed
+by an agent command or returned by a task API that the agent called is not, by
+itself, provider infrastructure.
+
 Before retrying the same logical slot:
 
 1. Move its failed artifacts under

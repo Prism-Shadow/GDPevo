@@ -170,6 +170,23 @@ reason.
 Normalize evaluator output to `[0, 1]`. Prefer an explicit normalized score;
 otherwise use a documented `earned / maximum` field. Do not guess.
 
+Use the evaluator's documented field meanings. Prefer `normalized_score`,
+`score_fraction`, or `total_score`; use `score` directly when the evaluator
+defines it as normalized or it is verified to equal `earned / total` within
+the evaluator's documented rounding precision. Otherwise compute a documented
+ratio such as `earned / total`, `raw_score / raw_total`, `points / max_score`,
+or `score / max_score` when `score` is defined as raw. Do not require
+`max_score` specifically, and do not divide an already normalized `score` a
+second time. When multiple documented representations coexist, require them to
+agree within the evaluator's documented rounding precision.
+
+If the canonical evaluator can score a byte-identical saved `answer.json` but
+an orchestration helper rejects that evaluator's valid output schema, classify
+the physical evaluation as infrastructure failure. Preserve it as an
+orchestration incident and correct the scorer under the helper-freeze and
+restart rules. Rerun the evaluator only against the same byte-identical answer;
+do not rerun the solver for quality.
+
 ## acc@3
 
 For one test task:
