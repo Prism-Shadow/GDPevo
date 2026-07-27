@@ -10,7 +10,9 @@
 
 每个实验都运行了三次，括号里面的数字代表标准差，其余默认代表均值。准确率用 `acc` 表示。`rounds` 表示 solver 每次 attempt 的平均模型响应轮次，`tool calls` 表示 solver 每次 attempt 的平均工具调用次数。费用以美元计；准确率提升和费用变化均相对 `base` 计算。
 
-已发布评测对比四种 mode：
+主要发布评测对比四种 mode。另有一组独立的
+[skill creator 对比实验](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/)，
+固定 Codex harness 与 GPT-5.5 xhigh，只改变 few-shot skill 所使用的 creator。
 
 - **base**：直接运行测试任务，不经过任何进化步骤。
 - **self**：只基于训练输入和环境，自行进化工作策略，不使用训练答案。
@@ -31,6 +33,7 @@
 逐任务报告见：
 
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
+- [`experiments/codex_skill_creator_comparison_gpt5_5_xhigh/`](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/) —— 固定 Codex harness 与 GPT-5.5 xhigh，对比四种 few-shot skill creator
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
 - [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
 - [`experiments/claude_code_deepseek_v4_pro_max/`](experiments/claude_code_deepseek_v4_pro_max/)

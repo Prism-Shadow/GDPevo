@@ -2,7 +2,7 @@
 
 语言：[English](README.md) | [中文](README.zh.md)
 
-本目录包含已发布的 GDPevo 评测结果和报告产物。已发布评测将无状态基线（`base`）与三种进化模式进行对比：`fewshot`、`self` 和 `reflect-3`。它可以用于观察智能体自进化、更新机制和端到端记忆系统的效果。
+本目录包含已发布的 GDPevo 评测结果和报告产物。主要发布评测将无状态基线（`base`）与三种进化模式进行对比：`fewshot`、`self` 和 `reflect-3`。独立的 skill creator 对比实验固定 Codex harness 与 GPT-5.5 xhigh，只改变 few-shot skill 使用的 creator。这些结果可以用于观察智能体自进化、更新机制和端到端记忆系统的效果。
 
 ## 内容
 
@@ -10,6 +10,7 @@
 | --- | --- |
 | `EXPERIMENT_BOARD.md` | 四个主模型的展示看板与结构化报告覆盖范围 |
 | `codex_gpt5_5_xhigh/` | 已发布的 Codex GPT-5.5 xhigh 评估运行 |
+| `codex_skill_creator_comparison_gpt5_5_xhigh/` | 已发布的 Codex GPT-5.5 xhigh 对比 Codex、CC、DeepAgents 与 OpenCode skill creator 的实验 |
 | `claude_code_opus_4_8_xhigh/` | 已发布的 Claude Code Opus 4.8 xhigh 评估运行 |
 | `claude_code_glm_5_2_max/` | 已发布的 Claude Code GLM-5.2 max 评估运行 |
 | `claude_code_deepseek_v4_pro_max/` | 已发布的 Claude Code DeepSeek V4 Pro Preview max 评估运行 |
