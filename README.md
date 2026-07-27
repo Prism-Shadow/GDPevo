@@ -10,7 +10,10 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 Each experiment is run 3 times. Values in parentheses are standard deviations; all other values are means. Accuracy is reported as `acc`. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt. Cost is reported in USD; lift and cost change are relative to `base`.
 
-The released runs compare four modes:
+The primary released runs compare four modes. A separate controlled
+[skill-creator comparison](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/)
+holds the Codex harness and GPT-5.5 xhigh fixed while varying the creator used
+for the few-shot skill.
 
 - **base**: run the test tasks directly, without any evolution step.
 - **self**: evolve its own working strategy from train inputs and the environment, without train answers.
@@ -31,6 +34,7 @@ See the full experiment board in [`experiments/EXPERIMENT_BOARD.md`](experiments
 Per-task reports are under:
 
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
+- [`experiments/codex_skill_creator_comparison_gpt5_5_xhigh/`](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/) — controlled comparison of four few-shot skill creators with the Codex harness and GPT-5.5 xhigh
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
 - [`experiments/panofy_claude_opus_4_6_high/`](experiments/panofy_claude_opus_4_6_high/)
 - [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
