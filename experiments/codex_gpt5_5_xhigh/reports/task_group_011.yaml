@@ -2,6 +2,88 @@ task_group_id: task_group_011
 scenario_id: SCN_011_bank_branch_credit_risk_lending_committee
 model: gpt-5.5, xhigh
 harness: codex
+evolve:
+  pricing:
+    basis: "standard_api_text_token_equivalent"
+    uncached_input_usd_per_million: 5
+    cached_input_usd_per_million: 0.5
+    output_usd_per_million: 30
+  conditions:
+    fewshot:
+      attempts:
+        attempt_01:
+          input_tokens: 1213189
+          cached_input_tokens: 1133952
+          output_tokens: 17893
+          total_tokens: 1231082
+          cost_usd: 1.499951
+        attempt_02:
+          input_tokens: 846938
+          cached_input_tokens: 770816
+          output_tokens: 18919
+          total_tokens: 865857
+          cost_usd: 1.333588
+        attempt_03:
+          input_tokens: 1096241
+          cached_input_tokens: 1005952
+          output_tokens: 17618
+          total_tokens: 1113859
+          cost_usd: 1.482961
+      summary:
+        input_tokens_avg_3: 1052122.6666666667
+        cached_input_tokens_avg_3: 970240
+        output_tokens_avg_3: 18143.3333333333
+        cost_usd_avg_3: 1.4388333333
+    self:
+      attempts:
+        attempt_01:
+          input_tokens: 600881
+          cached_input_tokens: 540288
+          output_tokens: 12729
+          total_tokens: 613610
+          cost_usd: 0.954979
+        attempt_02:
+          input_tokens: 863773
+          cached_input_tokens: 781440
+          output_tokens: 14159
+          total_tokens: 877932
+          cost_usd: 1.227155
+        attempt_03:
+          input_tokens: 503415
+          cached_input_tokens: 447360
+          output_tokens: 11591
+          total_tokens: 515006
+          cost_usd: 0.851685
+      summary:
+        input_tokens_avg_3: 656023
+        cached_input_tokens_avg_3: 589696
+        output_tokens_avg_3: 12826.3333333333
+        cost_usd_avg_3: 1.011273
+    reflect-3:
+      attempts:
+        attempt_01:
+          input_tokens: 1813704
+          cached_input_tokens: 1725056
+          output_tokens: 33626
+          total_tokens: 1847330
+          cost_usd: 2.314548
+        attempt_02:
+          input_tokens: 2249534
+          cached_input_tokens: 2134912
+          output_tokens: 48761
+          total_tokens: 2298295
+          cost_usd: 3.103396
+        attempt_03:
+          input_tokens: 2427510
+          cached_input_tokens: 2310528
+          output_tokens: 48832
+          total_tokens: 2476342
+          cost_usd: 3.205134
+      summary:
+        input_tokens_avg_3: 2163582.6666666665
+        cached_input_tokens_avg_3: 2056832
+        output_tokens_avg_3: 43739.6666666667
+        cost_usd_avg_3: 2.8743593333
 conditions:
   base:
     overall_acc_at_3: 0.5168
