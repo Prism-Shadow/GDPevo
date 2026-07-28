@@ -244,6 +244,12 @@ artifact. Apply this rule only to the outer Codex event: an HTTP error printed
 by an agent command or returned by a task API that the agent called is not, by
 itself, provider infrastructure.
 
+Conversely, once a parseable canonical artifact has been preserved and, for a
+solver run, successfully scored by the canonical evaluator, a later outer
+`turn.failed` event or nonzero agent-process exit must not change that logical
+result to `logical_failure`. Preserve the outer failure evidence in the audit
+files and keep the attempt `valid`.
+
 Before retrying the same logical slot:
 
 1. Move its failed artifacts under

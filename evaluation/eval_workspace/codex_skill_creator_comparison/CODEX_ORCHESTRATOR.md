@@ -21,10 +21,23 @@ staging, metadata, and reports beneath it. The main orchestrator may use only:
 - Installed command-line tools only for their executable behavior, version, and
   help output.
 
+The main orchestrator may inspect the full current task group when needed to
+resolve declared source paths, build or check the task environment, stage
+allowed files, invoke declared evaluators, and audit current-run artifacts.
+This host-side access does not expand agent-visible input. The generation and
+solver information boundary is enforced by the fixed prompts and exact Docker
+mounts below: never copy task-local notes, undeclared answers, evaluator or
+rubric content, environment source, or unrelated artifacts into an agent prompt
+or staged `/work`.
+
 The orchestrator must not search, list, read, copy, import, or summarize:
 
 - Parent, sibling, or historical evaluation workspaces.
-- Previous runner, orchestrator, helper, report, trace, skill, or attempt files.
+- Runner, orchestrator, helper, report, trace, skill, or attempt files that
+  predate this run or belong to another workspace, task group, or model
+  profile. An explicit experiment-owner-approved resume or recovery policy may
+  name current-workspace, current-profile artifacts that may be audited; it
+  does not permit using external or historical implementations as examples.
 - Host `$HOME/.codex` content other than the exact configured auth file,
   including sessions, history, logs, databases, config, plugins, skills, and
   caches.
