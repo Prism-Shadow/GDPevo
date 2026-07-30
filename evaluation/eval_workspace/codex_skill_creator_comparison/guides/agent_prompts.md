@@ -10,9 +10,9 @@ Use these stable template IDs:
 
 | Template ID | Run |
 | --- | --- |
-| `fewshot_skill_generation` | All four creator generation branches |
+| `fewshot_skill_generation` | All five creator generation branches |
 | `base_test_solver` | Shared base solver |
-| `fewshot_test_solver` | All four creator solver branches |
+| `fewshot_test_solver` | All five creator solver branches |
 
 Every template has exactly two allowed placeholders:
 
@@ -132,7 +132,7 @@ may be included in `RENDERED_PROMPT`.
 Generate each `<opaque_uuid>` independently. It must contain no creator, model,
 task, condition, or attempt label. The descriptive logical attempt ID and creator
 identity remain outside `/work` in orchestrator metadata. Within one model
-profile, use byte-identical few-shot prompt text for all four creators except for
+profile, use byte-identical few-shot prompt text for all five creators except for
 the fresh opaque UUID.
 
 Reject an unknown template ID, unexpected placeholder, modified template, extra

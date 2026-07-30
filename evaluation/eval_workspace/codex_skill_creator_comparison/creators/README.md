@@ -1,12 +1,13 @@
 # Creator Bundles
 
-Formal runs use four pinned creator bundles:
+Formal runs use five pinned creator bundles:
 
 ```text
 codex
 cc
 deepagents
 opencode
+naive
 ```
 
 Each creator directory has this shape:
@@ -14,15 +15,18 @@ Each creator directory has this shape:
 ```text
 creators/<creator>/
 ├── manifest.yaml
-├── UPSTREAM_LICENSE.txt      # when the source license is outside the bundle root
+├── UPSTREAM_LICENSE.txt      # externally sourced bundle, when needed
+├── PROJECT_LICENSE.txt       # internally authored bundle, when applicable
 └── upstream/
     ├── SKILL.md
     └── ... creator-linked scripts, references, agents, or assets
 ```
 
-`upstream/` must contain a complete immutable copy of the creator bundle. Do not
-copy only `SKILL.md` when it references other files. Do not install or update a
-creator during a formal experiment.
+`upstream/` must contain the complete immutable agent-visible creator bundle.
+For externally sourced conditions, do not copy only `SKILL.md` when it
+references other files. The `naive` control is intentionally complete with one
+minimal `SKILL.md`. Do not install or update a creator during a formal
+experiment.
 
 The committed `.gitkeep` files are scaffolding only. Remove the matching
 `.gitkeep` when populating an upstream bundle; it must not be included in the
@@ -30,11 +34,12 @@ formal creator digest or staged to a generator.
 
 Before formal runs, update each manifest with:
 
-- Exact source URI.
+- Exact source URI or declared project-authored source kind.
 - Immutable commit, release, or content-addressed revision.
 - SHA-256 for `SKILL.md`, a deterministic whole-bundle digest, and the file-mode
   digest.
-- License identifier, license-file path and hash, and retrieval date.
+- License identifier, license-file path and hash, and retrieval or authorship
+  date.
 - Verification that every referenced local file exists.
 
 Use the following digest definition for every creator bundle. Formal bundles
@@ -101,6 +106,9 @@ keeping the redistributed source accompanied by its license notice.
   ship an official skill-creator bundle, so the manifest records
   `official_implementation: false` rather than presenting it as an
   OpenCode-maintained implementation.
+- `naive`: an internally authored prompt-only control containing only the fixed
+  minimal instruction in `upstream/SKILL.md`. It is not presented as an
+  implementation from Codex, Claude Code, Deep Agents, or OpenCode.
 
 The manifests are the source of truth for exact repository paths, immutable
 commits or releases, retrieval dates, licenses, and bundle hashes. The stable

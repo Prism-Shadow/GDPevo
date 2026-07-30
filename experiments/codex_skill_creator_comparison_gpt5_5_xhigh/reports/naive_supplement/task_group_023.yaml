@@ -1,0 +1,567 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+parent_experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_023
+model_profile: gpt5_5_xhigh
+harness: codex
+status: complete
+model:
+  generator_model: gpt-5.5
+  solver_model: gpt-5.5
+  reasoning_effort: xhigh
+  provider_id: openai
+  observed_identity: gpt-5.5
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:938634cbb9492667defb4cede16ecaafca991be76786d27c36aba3d9de0d2d26
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/gpt5_5_xhigh/task_group_023.yaml
+  report_sha256: 71520101130ec935f49d1f66b1886dfa06f897f863bba2954551ce15bdd86751
+  status: complete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:938634cbb9492667defb4cede16ecaafca991be76786d27c36aba3d9de0d2d26
+execution:
+  started_at: '2026-07-28T10:34:16Z'
+  completed_at: '2026-07-28T11:30:57Z'
+  run_manifest: scratch/run_manifest/gpt5_5_xhigh.yaml
+  run_manifest_sha256: 97be433bb33c386ea3f0a07f5235f0620945f16e7c9aca6f7dc15e4170e3260c
+  run_plan_sha256: d302876c01c2e0ed1c5da069d5a4f421265efdf7bb00ebae80016b0206d1f14e
+  helper_sha256: 29d5daa1ec2273b6645776b4832fc10c60e2291310bcc15ad7fdc472b55cb946
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  generation_trace_root: original_traces/gpt5_5_xhigh/skill_generation/naive
+  solver_trace_root: original_traces/gpt5_5_xhigh/fewshot/naive
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        logical_slot: naive/attempt_01
+        agent_run_id: bf37b8ba-e9a8-4803-815a-bb75fe7a59a8
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 663b3002d1f5810ecea8f2cbab9f000dee2161f7aa9055b0bb3e3251f8ea280e
+        staged_input_sha256:
+          creator: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          creator_contract: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+          train_tasks: 7f342f56c14a823a36a28625b9249ed9c569a9651b2628cdd705b685e4bf836d
+          train_answers: 4dc1022704fd05c0fcfd17301696d4f856e704c5c8db768246fee0466ef5f2e6
+        returncode: 0
+        started_at: '2026-07-28T10:34:20Z'
+        completed_at: '2026-07-28T10:44:33Z'
+        duration_seconds: 612.866
+        trace_dir: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01
+        primary_trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01/codex_stdout.jsonl
+        metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+          was found'
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: d6b46b65ee21114e282119e57b0d260ebd89840a1a777377deb9f9dc1d4916ef
+        file_count: 3
+        bytes: 37794
+        portability_warnings: []
+      attempt_02:
+        logical_slot: naive/attempt_02
+        agent_run_id: b09cb13c-6266-4af4-a259-46ae53fde70e
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 9f2ccb8fa41b78a5e53ddead76f8c6eeefc152a71a59d0d771c5adcbc2644961
+        staged_input_sha256:
+          creator: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          creator_contract: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+          train_tasks: 7f342f56c14a823a36a28625b9249ed9c569a9651b2628cdd705b685e4bf836d
+          train_answers: 4dc1022704fd05c0fcfd17301696d4f856e704c5c8db768246fee0466ef5f2e6
+        returncode: 0
+        started_at: '2026-07-28T10:34:20Z'
+        completed_at: '2026-07-28T10:41:50Z'
+        duration_seconds: 450.142
+        trace_dir: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02
+        primary_trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02/codex_stdout.jsonl
+        metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+          was found'
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_02
+        skill_bundle_sha256: 94ad0575702b8528cdd9aa9a62bc210e35438b7ca77f13e73e8e1690db9ea9cc
+        file_count: 1
+        bytes: 22410
+        portability_warnings: []
+      attempt_03:
+        logical_slot: naive/attempt_03
+        agent_run_id: 2fe17543-e587-436e-906d-f3c6562ead00
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 038041b262580bab40fe1e9a5d540fc4666607b0a23dfedd20184d6298bf1ef1
+        staged_input_sha256:
+          creator: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          creator_contract: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+          train_tasks: 7f342f56c14a823a36a28625b9249ed9c569a9651b2628cdd705b685e4bf836d
+          train_answers: 4dc1022704fd05c0fcfd17301696d4f856e704c5c8db768246fee0466ef5f2e6
+        returncode: 0
+        started_at: '2026-07-28T10:34:20Z'
+        completed_at: '2026-07-28T10:41:42Z'
+        duration_seconds: 442.297
+        trace_dir: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03
+        primary_trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03/codex_stdout.jsonl
+        metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+          was found'
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: d68aa5c0796d80e3853ff26ba3c4145e1fad6923531852040a8560700dcb06c8
+        file_count: 3
+        bytes: 31389
+        portability_warnings: []
+    valid_generation_rate: 1.0
+  overall_acc_at_3: 0.700584795318054
+  overall_std_at_3: 0.13934833324254597
+  lift_over_shared_base: 0.20584795321457777
+  efficiency:
+    input_tokens_avg_3: null
+    cached_input_tokens_avg_3: null
+    output_tokens_avg_3: null
+    reasoning_output_tokens_avg_3: null
+    cost_usd_avg_3: null
+    rounds_avg_3: null
+    tool_calls_avg_3: null
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.47619047619047616
+      - 0.8571428571428571
+      - 0.47619047619047616
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_001/attempt_01
+          task_id: test_001
+          attempt: 1
+          agent_run_id: 355181ea-1320-4cba-8969-5edb7dff14db
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 2c51d8175f8a3e8e33556630d64b081bdc99ae6944380d9a8527e7a87c91e906
+          staged_input_sha256:
+            input: 96da466b2caf6e8db0da47f6850752268f66ccc11811b60445391b67b7df6e41
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d6b46b65ee21114e282119e57b0d260ebd89840a1a777377deb9f9dc1d4916ef
+          returncode: 0
+          started_at: '2026-07-28T10:44:33Z'
+          completed_at: '2026-07-28T10:58:08Z'
+          duration_seconds: 815.055
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.47619047619047616
+        attempt_02:
+          logical_slot: naive/test_001/attempt_02
+          task_id: test_001
+          attempt: 2
+          agent_run_id: 3aee1a71-fda0-4307-ace7-0f1ac6ed751a
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: c146bc715f25749fb8c4734d67d39af397d6e1155e7e187ccda69178e9da9c32
+          staged_input_sha256:
+            input: 96da466b2caf6e8db0da47f6850752268f66ccc11811b60445391b67b7df6e41
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: 94ad0575702b8528cdd9aa9a62bc210e35438b7ca77f13e73e8e1690db9ea9cc
+          returncode: 0
+          started_at: '2026-07-28T11:01:28Z'
+          completed_at: '2026-07-28T11:14:01Z'
+          duration_seconds: 752.958
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.8571428571428571
+        attempt_03:
+          logical_slot: naive/test_001/attempt_03
+          task_id: test_001
+          attempt: 3
+          agent_run_id: ca360c9b-42f8-4c48-ab18-0208b97d761e
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 2044c989c833a83dd644f92185227c4569fda1461dfb468199e03e7314b3509c
+          staged_input_sha256:
+            input: 96da466b2caf6e8db0da47f6850752268f66ccc11811b60445391b67b7df6e41
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d68aa5c0796d80e3853ff26ba3c4145e1fad6923531852040a8560700dcb06c8
+          returncode: 0
+          started_at: '2026-07-28T11:18:36Z'
+          completed_at: '2026-07-28T11:30:04Z'
+          duration_seconds: 688.241
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.47619047619047616
+      acc_at_3: 0.6031746031746031
+      std_at_3: 0.17958267458705968
+      input_tokens_avg_3: null
+      cached_input_tokens_avg_3: null
+      output_tokens_avg_3: null
+      reasoning_output_tokens_avg_3: null
+      cost_usd_avg_3: null
+      rounds_avg_3: null
+      tool_calls_avg_3: null
+    test_002:
+      status: complete
+      scores:
+      - 0.571428571429
+      - 0.857142857143
+      - 0.857142857143
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_002/attempt_01
+          task_id: test_002
+          attempt: 1
+          agent_run_id: 609ed494-728f-444b-94cc-597502d291df
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 8ec877864016cea11a45890f049dc59c934ea09dc152dbbb0182d9b7d88f5cde
+          staged_input_sha256:
+            input: 3b15a392fd518f570d1bf4d0afff1e1e23dff1b9cecbd3d3d7c518460159231f
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d6b46b65ee21114e282119e57b0d260ebd89840a1a777377deb9f9dc1d4916ef
+          returncode: 0
+          started_at: '2026-07-28T10:44:33Z'
+          completed_at: '2026-07-28T11:01:28Z'
+          duration_seconds: 1015.001
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.571428571429
+        attempt_02:
+          logical_slot: naive/test_002/attempt_02
+          task_id: test_002
+          attempt: 2
+          agent_run_id: c485e361-b66c-4e44-a71c-48a16af8394d
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: cf8d4710d04ae33e7ae774fd1e3cc9c838da32cf01178ccfce4b8cc39bf787d3
+          staged_input_sha256:
+            input: 3b15a392fd518f570d1bf4d0afff1e1e23dff1b9cecbd3d3d7c518460159231f
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: 94ad0575702b8528cdd9aa9a62bc210e35438b7ca77f13e73e8e1690db9ea9cc
+          returncode: 0
+          started_at: '2026-07-28T11:01:28Z'
+          completed_at: '2026-07-28T11:18:36Z'
+          duration_seconds: 1027.842
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.857142857143
+        attempt_03:
+          logical_slot: naive/test_002/attempt_03
+          task_id: test_002
+          attempt: 3
+          agent_run_id: 765b0e9d-e3da-4ba7-af69-c9810077a274
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 0fa3e581665ab3a069a01281c918d0331a7ac8228677edc7e6c1213134b5ce79
+          staged_input_sha256:
+            input: 3b15a392fd518f570d1bf4d0afff1e1e23dff1b9cecbd3d3d7c518460159231f
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d68aa5c0796d80e3853ff26ba3c4145e1fad6923531852040a8560700dcb06c8
+          returncode: 0
+          started_at: '2026-07-28T11:18:36Z'
+          completed_at: '2026-07-28T11:29:54Z'
+          duration_seconds: 678.1
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.857142857143
+      acc_at_3: 0.761904761905
+      std_at_3: 0.13468700594016003
+      input_tokens_avg_3: null
+      cached_input_tokens_avg_3: null
+      output_tokens_avg_3: null
+      reasoning_output_tokens_avg_3: null
+      cost_usd_avg_3: null
+      rounds_avg_3: null
+      tool_calls_avg_3: null
+    test_003:
+      status: complete
+      scores:
+      - 0.473684210527
+      - 0.894736842106
+      - 0.473684210527
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_003/attempt_01
+          task_id: test_003
+          attempt: 1
+          agent_run_id: 55abbdc3-0e89-4f3d-8339-8b95c66e45d1
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 3b1459ce27a1cd506b2a2f04c063050357aee79ac9622875a16e19ae3f83e783
+          staged_input_sha256:
+            input: 7e81d6f76a939cd02ebc57b9f7236cba7ef9c6569400ca5a483aec896b972623
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d6b46b65ee21114e282119e57b0d260ebd89840a1a777377deb9f9dc1d4916ef
+          returncode: 0
+          started_at: '2026-07-28T10:44:33Z'
+          completed_at: '2026-07-28T10:53:43Z'
+          duration_seconds: 550.426
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.473684210527
+        attempt_02:
+          logical_slot: naive/test_003/attempt_02
+          task_id: test_003
+          attempt: 2
+          agent_run_id: 03d0dbb6-36cc-4470-a3a2-e8045785afd4
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 37c22b2fd2fa4253ca5ca1cd9d8376b584eb8862fccd18ed0dec6debd505ab48
+          staged_input_sha256:
+            input: 7e81d6f76a939cd02ebc57b9f7236cba7ef9c6569400ca5a483aec896b972623
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: 94ad0575702b8528cdd9aa9a62bc210e35438b7ca77f13e73e8e1690db9ea9cc
+          returncode: 0
+          started_at: '2026-07-28T11:01:28Z'
+          completed_at: '2026-07-28T11:09:29Z'
+          duration_seconds: 480.8
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.894736842106
+        attempt_03:
+          logical_slot: naive/test_003/attempt_03
+          task_id: test_003
+          attempt: 3
+          agent_run_id: bcaa3cc5-6722-4805-83c4-1862dbf432c6
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 880e10c9f566ca060339a0f9bb835c532306b078e90fa198c48a2313078d4292
+          staged_input_sha256:
+            input: 7e81d6f76a939cd02ebc57b9f7236cba7ef9c6569400ca5a483aec896b972623
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d68aa5c0796d80e3853ff26ba3c4145e1fad6923531852040a8560700dcb06c8
+          returncode: 0
+          started_at: '2026-07-28T11:18:36Z'
+          completed_at: '2026-07-28T11:27:13Z'
+          duration_seconds: 517.228
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.473684210527
+      acc_at_3: 0.61403508772
+      std_at_3: 0.19848611401730132
+      input_tokens_avg_3: null
+      cached_input_tokens_avg_3: null
+      output_tokens_avg_3: null
+      reasoning_output_tokens_avg_3: null
+      cost_usd_avg_3: null
+      rounds_avg_3: null
+      tool_calls_avg_3: null
+    test_004:
+      status: complete
+      scores:
+      - 0.5714285714
+      - 0.7142857143
+      - 0.8571428571
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_004/attempt_01
+          task_id: test_004
+          attempt: 1
+          agent_run_id: 6be14d83-d46a-4d63-9989-34646fc8253d
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: d797963db10a6d5d5eff5291e1a50ea85190110e6de1120c9651fbcb03ed723b
+          staged_input_sha256:
+            input: a704e0d1c861190d80976424f27314f543de686578050762c8e0137a86517467
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d6b46b65ee21114e282119e57b0d260ebd89840a1a777377deb9f9dc1d4916ef
+          returncode: 0
+          started_at: '2026-07-28T10:44:33Z'
+          completed_at: '2026-07-28T10:58:00Z'
+          duration_seconds: 807.463
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.5714285714
+        attempt_02:
+          logical_slot: naive/test_004/attempt_02
+          task_id: test_004
+          attempt: 2
+          agent_run_id: f17de0a6-8789-4f4c-b5d2-1187a7982d36
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 7701e7a7abd4b5f478f05fcfc0acaf9561931b690ed9c16b71dbd6b1f30bc7aa
+          staged_input_sha256:
+            input: a704e0d1c861190d80976424f27314f543de686578050762c8e0137a86517467
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: 94ad0575702b8528cdd9aa9a62bc210e35438b7ca77f13e73e8e1690db9ea9cc
+          returncode: 0
+          started_at: '2026-07-28T11:01:28Z'
+          completed_at: '2026-07-28T11:15:46Z'
+          duration_seconds: 858.022
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.7142857143
+        attempt_03:
+          logical_slot: naive/test_004/attempt_03
+          task_id: test_004
+          attempt: 3
+          agent_run_id: 32f53747-70dd-4e54-9e92-eda9005cef3b
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 6991af2e73a6fd934eddddb45aa268e419e8ac512813bf06e7b8f65d11776afb
+          staged_input_sha256:
+            input: a704e0d1c861190d80976424f27314f543de686578050762c8e0137a86517467
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d68aa5c0796d80e3853ff26ba3c4145e1fad6923531852040a8560700dcb06c8
+          returncode: 0
+          started_at: '2026-07-28T11:18:36Z'
+          completed_at: '2026-07-28T11:28:30Z'
+          duration_seconds: 593.754
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.8571428571
+      acc_at_3: 0.7142857142666666
+      std_at_3: 0.11664236869812875
+      input_tokens_avg_3: null
+      cached_input_tokens_avg_3: null
+      output_tokens_avg_3: null
+      reasoning_output_tokens_avg_3: null
+      cost_usd_avg_3: null
+      rounds_avg_3: null
+      tool_calls_avg_3: null
+    test_005:
+      status: complete
+      scores:
+      - 0.714285714286
+      - 0.857142857143
+      - 0.857142857143
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_005/attempt_01
+          task_id: test_005
+          attempt: 1
+          agent_run_id: 25c18734-e603-4ab3-9882-c15508fa8ad7
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 78b924218b1603cdc9574d4dfedd04c7747b53ed141a8504d7b70ff0f3e20cbb
+          staged_input_sha256:
+            input: c0b5e5ba8e032dd59046e3191c45333f31479e9a04a0e60e1ab9f73779df97d3
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d6b46b65ee21114e282119e57b0d260ebd89840a1a777377deb9f9dc1d4916ef
+          returncode: 0
+          started_at: '2026-07-28T10:44:33Z'
+          completed_at: '2026-07-28T10:57:46Z'
+          duration_seconds: 792.692
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.714285714286
+        attempt_02:
+          logical_slot: naive/test_005/attempt_02
+          task_id: test_005
+          attempt: 2
+          agent_run_id: 993d70a2-1134-4b90-8543-ac5c3f75ed72
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 4f682515d88ea426c52a77d4177dbd6eee60abb879eefb8f2be86cf2f38f5197
+          staged_input_sha256:
+            input: c0b5e5ba8e032dd59046e3191c45333f31479e9a04a0e60e1ab9f73779df97d3
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: 94ad0575702b8528cdd9aa9a62bc210e35438b7ca77f13e73e8e1690db9ea9cc
+          returncode: 0
+          started_at: '2026-07-28T11:01:28Z'
+          completed_at: '2026-07-28T11:16:20Z'
+          duration_seconds: 892.264
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.857142857143
+        attempt_03:
+          logical_slot: naive/test_005/attempt_03
+          task_id: test_005
+          attempt: 3
+          agent_run_id: bb9b1639-5767-423b-b959-04efa43c4e2e
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 09872f2c87d98a13e07e7427238e03c838fda91066965850791506602b7ba102
+          staged_input_sha256:
+            input: c0b5e5ba8e032dd59046e3191c45333f31479e9a04a0e60e1ab9f73779df97d3
+            environment_access: aec0535136e7ee4d6655bfd7086546bc2f770cac65f85248de0d6f1c384424e9
+            skill: d68aa5c0796d80e3853ff26ba3c4145e1fad6923531852040a8560700dcb06c8
+          returncode: 0
+          started_at: '2026-07-28T11:18:36Z'
+          completed_at: '2026-07-28T11:30:56Z'
+          duration_seconds: 739.488
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/codex_stdout.jsonl
+          metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          status: complete
+          incomplete_reason: null
+          score: 0.857142857143
+      acc_at_3: 0.8095238095239999
+      std_at_3: 0.06734350297008004
+      input_tokens_avg_3: null
+      cached_input_tokens_avg_3: null
+      output_tokens_avg_3: null
+      reasoning_output_tokens_avg_3: null
+      cost_usd_avg_3: null
+      rounds_avg_3: null
+      tool_calls_avg_3: null
+infrastructure_replacements: []
+notes:
+- type: creator_file_mode_audit
+  manifest_file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  local_executable_bit_audit_sha256: ad695dec81b427caa1c0cb078de025451ea241578f2c159285ab027ef8ef202a

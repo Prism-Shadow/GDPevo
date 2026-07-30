@@ -1,6 +1,6 @@
 # Codex Skill-Creator Comparison Workspace
 
-This workspace compares four skill-creator recipes while keeping the Codex
+This workspace compares five skill-creator recipes while keeping the Codex
 harness, model profile, task group, few-shot evidence, solver prompt, task
 environment, evaluators, and attempt counts fixed.
 
@@ -12,11 +12,11 @@ deepseek_v4_max_preview
 ```
 
 The only runtime parameter is `model_profile`. The task group is inferred from
-the exactly one directory under `task_group/`. Harness, modes, all four
+the exactly one directory under `task_group/`. Harness, modes, all five
 creators, attempt counts, prompts, limits, scoring, and reporting come from
 `configs/experiment.yaml` and are not launch-time options.
 
-For the selected model profile, run these five scored branches:
+For the selected model profile, run these six scored branches:
 
 ```text
 base
@@ -24,9 +24,10 @@ fewshot/codex
 fewshot/cc
 fewshot/deepagents
 fewshot/opencode
+fewshot/naive
 ```
 
-`base` is one shared control. The four few-shot branches differ only in the
+`base` is one shared control. The five few-shot branches differ only in the
 pinned creator bundle staged during skill generation.
 
 ## Experiment Question
@@ -161,15 +162,15 @@ Use this fixed round-robin order.
 Generation:
 
 ```text
-attempt_01: codex, cc, deepagents, opencode
-attempt_02: codex, cc, deepagents, opencode
-attempt_03: codex, cc, deepagents, opencode
+attempt_01: codex, cc, deepagents, opencode, naive
+attempt_02: codex, cc, deepagents, opencode, naive
+attempt_03: codex, cc, deepagents, opencode, naive
 ```
 
 Solver runs use the same fixed branch order within each attempt and test:
 
 ```text
-base, fewshot/codex, fewshot/cc, fewshot/deepagents, fewshot/opencode
+base, fewshot/codex, fewshot/cc, fewshot/deepagents, fewshot/opencode, fewshot/naive
 ```
 
 Skip only a few-shot slot whose matching generated skill is invalid or missing,
@@ -180,15 +181,15 @@ and record it as `not_runnable`. Do not reorder work in response to scores.
 For one task group and one model profile:
 
 - Shared base: 5 test tasks x 3 solver attempts = 15 runs.
-- Four creators: 4 x 3 skill-generation attempts = 12 runs.
-- Four creator branches: 4 x 5 test tasks x 3 solver attempts = 60 runs.
-- Planned total: 87 logical agent runs.
+- Five creators: 5 x 3 skill-generation attempts = 15 runs.
+- Five creator branches: 5 x 5 test tasks x 3 solver attempts = 75 runs.
+- Planned total: 105 logical agent runs.
 
 Do not reduce attempt counts in a formal report.
 
 ## Preconditions
 
-- All four creator manifests must be pinned, complete, and hash-verified.
+- All five creator manifests must be pinned, complete, and hash-verified.
 - The selected model profile must resolve without placeholders.
 - The same model profile is used for generation and solving.
 - The task group must contain 5 train tasks and 5 test tasks.

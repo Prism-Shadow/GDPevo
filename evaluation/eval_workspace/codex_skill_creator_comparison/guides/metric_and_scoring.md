@@ -8,6 +8,7 @@ Calculate `acc@3` and population `std@3` separately for:
 <model_profile>/fewshot/cc
 <model_profile>/fewshot/deepagents
 <model_profile>/fewshot/opencode
+<model_profile>/fewshot/naive
 ```
 
 Never merge creators into one few-shot score or create creator-specific copies
@@ -29,7 +30,7 @@ Record at least:
 agent_run_id: <opaque UUID>
 model_profile: <profile id>
 condition: <base|fewshot>
-skill_creator: <none|codex|cc|deepagents|opencode>
+skill_creator: <none|codex|cc|deepagents|opencode|naive>
 task_id: <test id>
 attempt: <1|2|3>
 prompt_template_id: <base_test_solver|fewshot_test_solver>
@@ -229,7 +230,7 @@ Pairwise difference:
 delta(a,b) = fewshot_acc@3(a) - fewshot_acc@3(b)
 ```
 
-Report all six unordered creator pairs. Preserve task-level differences. If a
+Report all ten unordered creator pairs. Preserve task-level differences. If a
 required branch is incomplete, mark the comparison unavailable rather than
 filling missing values with zero.
 

@@ -102,6 +102,7 @@ fewshot:
     cc: <same independently populated shape>
     deepagents: <same independently populated shape>
     opencode: <same independently populated shape>
+    naive: <same independently populated shape>
 
 creator_pairwise_deltas:
   codex_minus_cc:
@@ -118,6 +119,10 @@ creator_pairwise_deltas:
   cc_minus_deepagents: <same independently populated shape>
   cc_minus_opencode: <same independently populated shape>
   deepagents_minus_opencode: <same independently populated shape>
+  codex_minus_naive: <same independently populated shape>
+  cc_minus_naive: <same independently populated shape>
+  deepagents_minus_naive: <same independently populated shape>
+  opencode_minus_naive: <same independently populated shape>
 
 infrastructure_replacements: []
 notes: []
@@ -130,7 +135,7 @@ report. Do not use YAML anchors or aliases.
 
 - Preserve all three raw scores for every test task and branch.
 - Use population standard deviation.
-- Always expand all four creators and five task mappings, including incomplete
+- Always expand all five creators and five task mappings, including incomplete
   branches.
 - Use `null` only for unavailable values; never fabricate zero.
 - Every creator lift references the same shared base attempt set.
@@ -167,6 +172,7 @@ profiles:
       cc: {status: <complete|incomplete>, acc_at_3: <float|null>, lift: <float|null>}
       deepagents: {status: <complete|incomplete>, acc_at_3: <float|null>, lift: <float|null>}
       opencode: {status: <complete|incomplete>, acc_at_3: <float|null>, lift: <float|null>}
+      naive: {status: <complete|incomplete>, acc_at_3: <float|null>, lift: <float|null>}
   deepseek_v4_max_preview:
     report: ../deepseek_v4_max_preview/<task_group_id>.yaml
     status: <complete|incomplete>
@@ -176,6 +182,7 @@ profiles:
       cc: {status: <complete|incomplete>, acc_at_3: <float|null>, lift: <float|null>}
       deepagents: {status: <complete|incomplete>, acc_at_3: <float|null>, lift: <float|null>}
       opencode: {status: <complete|incomplete>, acc_at_3: <float|null>, lift: <float|null>}
+      naive: {status: <complete|incomplete>, acc_at_3: <float|null>, lift: <float|null>}
 ```
 
 Do not pool profile attempts or pricing.

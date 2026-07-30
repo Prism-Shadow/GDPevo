@@ -1,6 +1,6 @@
 # Skill-Creator Conditions
 
-This workspace has one shared `base` and four creator-specific `fewshot`
+This workspace has one shared `base` and five creator-specific `fewshot`
 branches for each model profile.
 
 ## Shared Base
@@ -16,7 +16,7 @@ test answers, notes, evaluator files, environment source, previous runs, or
 judge instructions.
 
 Run base exactly once per model profile. Reuse that same aggregated base in all
-four within-profile creator comparisons.
+five within-profile creator comparisons.
 
 ## Common Fewshot Evidence
 
@@ -27,7 +27,7 @@ Every creator generation attempt sees exactly:
 - The container-visible task-environment entrypoint and the same allowed
   business endpoint names.
 - The same `creators/COMMON_CONTRACT.md` staged as `creator_contract.md`.
-- Exactly one pinned upstream creator bundle staged as `creator/`.
+- Exactly one pinned creator bundle staged as `creator/`.
 
 The generator must not see test tasks or answers, notes, evaluator files,
 environment source, prior runs, another creator bundle, or judge instructions.
@@ -41,7 +41,13 @@ codex
 cc
 deepagents
 opencode
+naive
 ```
+
+`naive` is an internally authored, prompt-only control rather than an upstream
+product implementation. Its agent-visible bundle is exactly one minimal
+`SKILL.md`; it receives the same evidence, common contract, fixed generation
+prompt, runtime, and limits as the other branches.
 
 For each branch, generate three independent packages:
 
@@ -54,12 +60,14 @@ skills/<model_profile>/fewshot/<creator>/fewshot_attempt_03/SKILL.md
 Each attempt starts from a new isolated runtime context and the same immutable
 creator bundle. A generator must not inspect another attempt's output.
 
-## Upstream Preservation
+## Creator-Bundle Preservation
 
-The creator's upstream directory is an experimental input. Verify and record
-its immutable revision and content hashes before staging. Mount the staged copy
-read-only and verify its content and executable-bit hashes again after the
-generation container stops. Do not:
+The creator's `upstream/` directory is an experimental input. For the four
+externally sourced branches it is a pinned upstream bundle. For `naive` it is
+the frozen project-authored prompt-only control. Verify and record its immutable
+revision and content hashes before staging. Mount the staged copy read-only and
+verify its content and executable-bit hashes again after the generation
+container stops. Do not:
 
 - Edit upstream creator files in place.
 - Drop referenced scripts, references, agents, templates, or assets.
@@ -116,6 +124,7 @@ fewshot/codex/attempt_02      -> codex skill attempt_02
 fewshot/cc/attempt_02         -> cc skill attempt_02
 fewshot/deepagents/attempt_02 -> deepagents skill attempt_02
 fewshot/opencode/attempt_02   -> opencode skill attempt_02
+fewshot/naive/attempt_02      -> naive skill attempt_02
 ```
 
 Never use one creator's generated skill in another creator's branch.

@@ -16,7 +16,7 @@ mechanisms, and end-to-end agent memory systems.
 | --- | --- |
 | `EXPERIMENT_BOARD.md` | Primary four-model display board and structured-report coverage |
 | `codex_gpt5_5_xhigh/` | Released Codex GPT-5.5 xhigh evaluation run |
-| `codex_skill_creator_comparison_gpt5_5_xhigh/` | Released Codex GPT-5.5 xhigh comparison of Codex, CC, DeepAgents, and OpenCode skill creators |
+| `codex_skill_creator_comparison_gpt5_5_xhigh/` | Released Codex GPT-5.5 xhigh comparison of Codex, CC, DeepAgents, OpenCode, and a minimal naive skill creator |
 | `claude_code_opus_4_8_xhigh/` | Released Claude Code Opus 4.8 xhigh evaluation run |
 | `claude_code_glm_5_2_max/` | Released Claude Code GLM-5.2 max evaluation run |
 | `claude_code_deepseek_v4_pro_max/` | Released Claude Code DeepSeek V4 Pro Preview max evaluation run |

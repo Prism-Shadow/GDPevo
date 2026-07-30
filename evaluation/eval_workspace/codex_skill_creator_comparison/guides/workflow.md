@@ -13,6 +13,7 @@ fewshot/codex
 fewshot/cc
 fewshot/deepagents
 fewshot/opencode
+fewshot/naive
 ```
 
 ## 1. Resolve The Run
@@ -30,7 +31,7 @@ Verify:
   and uniform proxy policy.
 - Generator and solver both use Codex and the same resolved profile.
 - Provider, authentication, reasoning, and pricing fields are resolved.
-- All four creator manifests and bundles pass hash and license checks.
+- All five creator manifests and bundles pass hash and license checks.
 - The task group contains 5 train tasks, 5 test tasks, environment files,
   standard answers, and evaluators.
 - No formal output already occupies the selected model-profile paths.
@@ -46,6 +47,10 @@ implementation.
 ## 2. Prepare Docker
 
 Build the task image once and use its immutable image ID throughout the profile.
+Keep that task image available until the profile's final report is accepted.
+Do not remove its tag or image ID after an incomplete result, hard block,
+interruption, or organizer exit; leave final image cleanup to the experiment
+owner.
 Resolve only the explicitly configured local `GDPEVO_AGENT_IMAGE`; record its
 supplied reference, immutable image ID, Codex CLI version, and host UID:GID. Do
 not list old experiment images or select a fallback. In a disposable container,
@@ -86,22 +91,25 @@ codex/attempt_01
 cc/attempt_01
 deepagents/attempt_01
 opencode/attempt_01
+naive/attempt_01
 codex/attempt_02
 cc/attempt_02
 deepagents/attempt_02
 opencode/attempt_02
+naive/attempt_02
 codex/attempt_03
 cc/attempt_03
 deepagents/attempt_03
 opencode/attempt_03
+naive/attempt_03
 ```
 
-After all 12 generation slots are terminal, run solver slots in:
+After all 15 generation slots are terminal, run solver slots in:
 
 ```text
-attempt_01 -> test_001..test_005 -> base,codex,cc,deepagents,opencode
-attempt_02 -> test_001..test_005 -> base,codex,cc,deepagents,opencode
-attempt_03 -> test_001..test_005 -> base,codex,cc,deepagents,opencode
+attempt_01 -> test_001..test_005 -> base,codex,cc,deepagents,opencode,naive
+attempt_02 -> test_001..test_005 -> base,codex,cc,deepagents,opencode,naive
+attempt_03 -> test_001..test_005 -> base,codex,cc,deepagents,opencode,naive
 ```
 
 This is deterministic and interleaves creators without a random schedule or
@@ -166,7 +174,7 @@ After exit:
 No package, invalid `SKILL.md`, or refusal to finish the one-pass contract is a
 logical creator result. Preserve it and do not retry it for quality.
 
-Do not begin solver execution until all 12 generation slots are either valid,
+Do not begin solver execution until all 15 generation slots are either valid,
 logical failures, or resolved infrastructure failures.
 
 ## 5. Run Solvers

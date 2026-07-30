@@ -58,7 +58,7 @@ session.
 ## Resolve One Profile
 
 Accept only `model_profile`. Require exactly one task-group directory and load
-all four creators from `configs/experiment.yaml`.
+all five creators from `configs/experiment.yaml`.
 
 Before formal attempts, verify:
 

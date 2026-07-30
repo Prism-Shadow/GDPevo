@@ -34,7 +34,7 @@ See the full experiment board in [`experiments/EXPERIMENT_BOARD.md`](experiments
 Per-task reports are under:
 
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
-- [`experiments/codex_skill_creator_comparison_gpt5_5_xhigh/`](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/) — controlled comparison of four few-shot skill creators with the Codex harness and GPT-5.5 xhigh
+- [`experiments/codex_skill_creator_comparison_gpt5_5_xhigh/`](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/) — controlled comparison of five few-shot skill creators, including a minimal naive control, with the Codex harness and GPT-5.5 xhigh
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
 - [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
 - [`experiments/claude_code_deepseek_v4_pro_max/`](experiments/claude_code_deepseek_v4_pro_max/)

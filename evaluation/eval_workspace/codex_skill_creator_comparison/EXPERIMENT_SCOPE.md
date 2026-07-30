@@ -38,6 +38,7 @@ codex
 cc
 deepagents
 opencode
+naive
 ```
 
 Each generation attempt receives the same train inputs, train answers, common
@@ -55,9 +56,10 @@ fewshot/codex
 fewshot/cc
 fewshot/deepagents
 fewshot/opencode
+fewshot/naive
 ```
 
-`base` has no creator and no generated skill. It is shared by all four
+`base` has no creator and no generated skill. It is shared by all five
 within-profile comparisons.
 
 ## Portable One-Pass Policy
@@ -73,7 +75,7 @@ It must not:
 - Start review servers or install the generated skill.
 - Revise the generated package after the isolated process ends.
 
-The unchanged `creators/COMMON_CONTRACT.md` applies equally to all four bundles.
+The unchanged `creators/COMMON_CONTRACT.md` applies equally to all five bundles.
 If a creator's native workflow conflicts with that contract, record the
 friction as an experiment observation; do not patch only that creator.
 
@@ -103,16 +105,16 @@ invalid or missing.
 Run generation round by round:
 
 ```text
-codex/01, cc/01, deepagents/01, opencode/01
-codex/02, cc/02, deepagents/02, opencode/02
-codex/03, cc/03, deepagents/03, opencode/03
+codex/01, cc/01, deepagents/01, opencode/01, naive/01
+codex/02, cc/02, deepagents/02, opencode/02, naive/02
+codex/03, cc/03, deepagents/03, opencode/03, naive/03
 ```
 
-After all 12 generation slots reach a terminal state, run solver slots in fixed
+After all 15 generation slots reach a terminal state, run solver slots in fixed
 `attempt -> test -> branch` order. Within each test and attempt, use:
 
 ```text
-base, codex, cc, deepagents, opencode
+base, codex, cc, deepagents, opencode, naive
 ```
 
 A missing creator package makes only its matching few-shot solver slot

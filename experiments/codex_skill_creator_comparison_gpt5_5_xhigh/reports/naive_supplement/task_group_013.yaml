@@ -1,0 +1,3342 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+parent_experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_013
+model_profile: gpt5_5_xhigh
+harness: codex
+status: complete
+model:
+  generator_model: gpt-5.5
+  solver_model: gpt-5.5
+  reasoning_effort: xhigh
+  provider_id: openai
+  observed_identity: gpt-5.5
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:cabbb230543d69e624f3c46f9db382d8075bd71484e097411b746ab8c1256434
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/gpt5_5_xhigh/task_group_013.yaml
+  report_sha256: 3cf768006a9ffaa9dbda957c96dddc0b1c842937ede9b73aeee87bd0acd19a35
+  status: complete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:cabbb230543d69e624f3c46f9db382d8075bd71484e097411b746ab8c1256434
+execution:
+  started_at: '2026-07-28T10:32:50Z'
+  completed_at: '2026-07-28T11:00:54Z'
+  run_manifest: scratch/run_manifest/gpt5_5_xhigh.yaml
+  run_manifest_sha256: 591a9b576f979cee46d68ad10c22d33e80a5e66242acba5c0b503ae46c9dc4d8
+  run_plan_sha256: d302876c01c2e0ed1c5da069d5a4f421265efdf7bb00ebae80016b0206d1f14e
+  helper_sha256: 915ceb302deb1c045bbc5e124b9b1cea6ba4d19cc56da589361ae1643a01c306
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  generation_trace_root: original_traces/gpt5_5_xhigh/skill_generation/naive
+  solver_trace_root: original_traces/gpt5_5_xhigh/fewshot/naive
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        input_tokens: 1851904
+        cached_input_tokens: 1722112
+        output_tokens: 17081
+        reasoning_output_tokens: 8163
+        total_tokens: 1868985
+        cost_usd: 2.022446
+        duration_seconds: 450.789
+        assistant_turns: 23
+        tool_calls: 48
+        observed_model_identity: gpt-5.5
+        portability_warnings: []
+        agent_run_id: 69e382ad-53ee-43a0-b28b-aa9da29cbdc9
+        logical_slot: naive/attempt_01
+        started_at: '2026-07-28T10:32:51Z'
+        completed_at: '2026-07-28T10:40:22Z'
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: eacf5c26572d8902726c6fbad3083f9742fb3e7aa3df634d09b751d8d51e20e4
+        trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01/primary.jsonl
+        input_hashes:
+          creator: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          creator_contract: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+          train_001_input: 4780305cbb99d1bc3baf807c5103cc0b4010e88fceef2e84b393119062f8cc64
+          train_001_answer: 4f403540378b74096a49789581d2964e724fe159dec73eea144eb65fc91ee000
+          train_002_input: 4b91546d758a1fdd8c369a058744ad6bccd4609d88a511ef0fe661ce523408ed
+          train_002_answer: 09fe28a9d9a2a9563d33df62f26def4c90faeee729c973dbf75ecc1cdc7bbd4b
+          train_003_input: abfc676a1a8a78ce5875b25418c7771c4a0a29331c6708759c0cabae9cbf470c
+          train_003_answer: d5f3f8f60f7f54d4d40bd05b4ad6bd69a52851f3f3e2d5c2abbe95b98c1d0222
+          train_004_input: 49e985b3aada1d12402b2a2e53823352811ffafca62d27c977ca2f6beef88fab
+          train_004_answer: f2256637609df8b880a625be70df3615fe8ecc07d13873138fafc072a2c0f8e5
+          train_005_input: 9951415b095b939b3a18e8fae6ff58e1fcef2cbe2d8b19d9940eaaffb5001347
+          train_005_answer: a5387f1e75fc684d3711e863e12919076408a833d8d22f990d44a60614a6cce5
+        returncode: 0
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: b291e4fb870f5658095de0434a165ca1f54820b54bb3333e3aa7994b2840c4bc
+        file_count: 1
+        bytes: 17397
+      attempt_02:
+        input_tokens: 1656539
+        cached_input_tokens: 1529856
+        output_tokens: 21470
+        reasoning_output_tokens: 10792
+        total_tokens: 1678009
+        cost_usd: 2.042443
+        duration_seconds: 535.972
+        assistant_turns: 25
+        tool_calls: 74
+        observed_model_identity: gpt-5.5
+        portability_warnings: []
+        agent_run_id: 7881f149-beb7-453a-ae9b-e92714dcccc6
+        logical_slot: naive/attempt_02
+        started_at: '2026-07-28T10:32:51Z'
+        completed_at: '2026-07-28T10:41:47Z'
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 906597b81f12405687183824e52802af914fb7a4bd6240865c065f2d1a305f3c
+        trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02/primary.jsonl
+        input_hashes:
+          creator: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          creator_contract: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+          train_001_input: 4780305cbb99d1bc3baf807c5103cc0b4010e88fceef2e84b393119062f8cc64
+          train_001_answer: 4f403540378b74096a49789581d2964e724fe159dec73eea144eb65fc91ee000
+          train_002_input: 4b91546d758a1fdd8c369a058744ad6bccd4609d88a511ef0fe661ce523408ed
+          train_002_answer: 09fe28a9d9a2a9563d33df62f26def4c90faeee729c973dbf75ecc1cdc7bbd4b
+          train_003_input: abfc676a1a8a78ce5875b25418c7771c4a0a29331c6708759c0cabae9cbf470c
+          train_003_answer: d5f3f8f60f7f54d4d40bd05b4ad6bd69a52851f3f3e2d5c2abbe95b98c1d0222
+          train_004_input: 49e985b3aada1d12402b2a2e53823352811ffafca62d27c977ca2f6beef88fab
+          train_004_answer: f2256637609df8b880a625be70df3615fe8ecc07d13873138fafc072a2c0f8e5
+          train_005_input: 9951415b095b939b3a18e8fae6ff58e1fcef2cbe2d8b19d9940eaaffb5001347
+          train_005_answer: a5387f1e75fc684d3711e863e12919076408a833d8d22f990d44a60614a6cce5
+        returncode: 0
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_02
+        skill_bundle_sha256: 2c5b251dfdb6cec0a7fe895aaff4f1690fdd298170f5354f0688099134b08e82
+        file_count: 1
+        bytes: 15528
+      attempt_03:
+        input_tokens: 2177970
+        cached_input_tokens: 2050944
+        output_tokens: 25396
+        reasoning_output_tokens: 12909
+        total_tokens: 2203366
+        cost_usd: 2.422482
+        duration_seconds: 612.61
+        assistant_turns: 28
+        tool_calls: 74
+        observed_model_identity: gpt-5.5
+        portability_warnings:
+        - creator_tool_dependency_missing:yaml
+        agent_run_id: 7f44a6e2-51a9-4a3b-89b0-3ec14aa09c6a
+        logical_slot: naive/attempt_03
+        started_at: '2026-07-28T10:32:51Z'
+        completed_at: '2026-07-28T10:43:04Z'
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 89507129edc46280ca48ee63ccced0376c20fc79fa8eb8bae96434dd22724939
+        trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03/primary.jsonl
+        input_hashes:
+          creator: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          creator_contract: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+          train_001_input: 4780305cbb99d1bc3baf807c5103cc0b4010e88fceef2e84b393119062f8cc64
+          train_001_answer: 4f403540378b74096a49789581d2964e724fe159dec73eea144eb65fc91ee000
+          train_002_input: 4b91546d758a1fdd8c369a058744ad6bccd4609d88a511ef0fe661ce523408ed
+          train_002_answer: 09fe28a9d9a2a9563d33df62f26def4c90faeee729c973dbf75ecc1cdc7bbd4b
+          train_003_input: abfc676a1a8a78ce5875b25418c7771c4a0a29331c6708759c0cabae9cbf470c
+          train_003_answer: d5f3f8f60f7f54d4d40bd05b4ad6bd69a52851f3f3e2d5c2abbe95b98c1d0222
+          train_004_input: 49e985b3aada1d12402b2a2e53823352811ffafca62d27c977ca2f6beef88fab
+          train_004_answer: f2256637609df8b880a625be70df3615fe8ecc07d13873138fafc072a2c0f8e5
+          train_005_input: 9951415b095b939b3a18e8fae6ff58e1fcef2cbe2d8b19d9940eaaffb5001347
+          train_005_answer: a5387f1e75fc684d3711e863e12919076408a833d8d22f990d44a60614a6cce5
+        returncode: 0
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: f936ab5913b4fd3de80a54083115bc48c2c10416b8a25266631e92bd8839de08
+        file_count: 2
+        bytes: 18710
+    valid_generation_rate: 1.0
+  overall_acc_at_3: 0.6468907563009524
+  overall_std_at_3: 0.1233936002758913
+  lift_over_shared_base: 0.18156318082666667
+  efficiency:
+    input_tokens_avg_3: 469378.4
+    cached_input_tokens_avg_3: 411997.86666666664
+    output_tokens_avg_3: 15065.266666666666
+    reasoning_output_tokens_avg_3: 9904.8
+    cost_usd_avg_3: 0.9448595999999999
+    rounds_avg_3: 11.533333333333333
+    tool_calls_avg_3: 29.533333333333335
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.2352941176
+      - 0.3529411765
+      - 0.5294117647
+      acc_at_3: 0.37254901960000003
+      std_at_3: 0.12087086281699073
+      input_tokens_avg_3: 256362.66666666666
+      cached_input_tokens_avg_3: 219904.0
+      output_tokens_avg_3: 11210.333333333334
+      reasoning_output_tokens_avg_3: 7666.0
+      cost_usd_avg_3: 0.6285553333333334
+      rounds_avg_3: 11.0
+      tool_calls_avg_3: 20.333333333333332
+      attempts:
+        attempt_01:
+          input_tokens: 330308
+          cached_input_tokens: 295808
+          output_tokens: 12387
+          reasoning_output_tokens: 8008
+          total_tokens: 342695
+          cost_usd: 0.692014
+          duration_seconds: 274.255
+          assistant_turns: 14
+          tool_calls: 24
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: 1ff5a287-00b4-47b5-93b3-68011e43b290
+          logical_slot: naive/test_001/attempt_01
+          task_id: test_001
+          attempt: 1
+          skill_attempt: 1
+          started_at: '2026-07-28T10:43:04Z'
+          completed_at: '2026-07-28T10:47:38Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: e76e40467c034b65d884fc9d0ebd1e803c683451ed621651f1713a4b0da7abf2
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/primary.jsonl
+          input_hashes:
+            input: 120a01be309c506cf181d7e9b2ad145aa3b385e3ba420b37383359acd9b6fb55
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: b291e4fb870f5658095de0434a165ca1f54820b54bb3333e3aa7994b2840c4bc
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: invalid
+                    P008: invalid
+                    P009: valid
+                    P010: valid
+                    P011: invalid
+                    P012: invalid
+                    P013: invalid
+                  got:
+                    P007: invalid
+                    P008: invalid
+                    P009: valid
+                    P010: valid
+                    P011: invalid
+                    P012: invalid
+                    P013: invalid
+                earned_score: 0.11764705882352941
+                goal: Correct primary insurance status for all target patients.
+                id: SP001
+                passed: true
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: valid
+                    P008: valid
+                    P009: invalid
+                    P010: invalid
+                    P011: valid
+                    P012: valid
+                    P013: invalid
+                  got:
+                    P007: valid
+                    P008: valid
+                    P009: invalid
+                    P010: invalid
+                    P011: valid
+                    P012: invalid
+                    P013: invalid
+                earned_score: 0.0
+                goal: Correct prescription benefit status for all target patients.
+                id: SP002
+                passed: false
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: in_network
+                    P008: out_of_network
+                    P009: in_network
+                    P010: in_network
+                    P011: out_of_network
+                    P012: in_network
+                    P013: out_of_network
+                  got:
+                    P007: in_network
+                    P008: out_of_network
+                    P009: in_network
+                    P010: in_network
+                    P011: out_of_network
+                    P012: in_network
+                    P013: out_of_network
+                earned_score: 0.11764705882352941
+                goal: Correct preferred-pharmacy network status for all target patients.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: medium
+                    P008: medium
+                    P009: low
+                    P010: high
+                    P011: low
+                    P012: high
+                    P013: high
+                  got:
+                    P007: high
+                    P008: high
+                    P009: low
+                    P010: high
+                    P011: low
+                    P012: high
+                    P013: high
+                earned_score: 0.0
+                goal: Correct lifestyle risk classification for all target patients.
+                id: SP004
+                passed: false
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: high
+                    P008: medium
+                    P009: medium
+                    P010: high
+                    P011: high
+                    P012: high
+                    P013: high
+                  got:
+                    P007: high
+                    P008: high
+                    P009: high
+                    P010: high
+                    P011: high
+                    P012: high
+                    P013: high
+                earned_score: 0.0
+                goal: Correct overall risk classification for all target patients.
+                id: SP005
+                passed: false
+                weight: 2
+              - assigned_score: 0.17647058823529413
+                details:
+                  expected:
+                    P007: rejected
+                    P008: rejected
+                    P009: hold
+                    P010: clinical_review
+                    P011: rejected
+                    P012: rejected
+                    P013: rejected
+                  got:
+                    P007: rejected
+                    P008: rejected
+                    P009: clinical_review
+                    P010: clinical_review
+                    P011: rejected
+                    P012: rejected
+                    P013: rejected
+                earned_score: 0.0
+                goal: Correct final registration status for all target patients.
+                id: SP006
+                passed: false
+                weight: 3
+              - assigned_score: 0.17647058823529413
+                details:
+                  expected:
+                    P007:
+                    - coverage_out_of_network
+                    - overall_risk_high
+                    P008:
+                    - coverage_expired
+                    - pharmacy_out_of_network
+                    P009:
+                    - pbm_invalid
+                    P010:
+                    - overall_risk_high
+                    - pbm_invalid
+                    P011:
+                    - coverage_expired
+                    - overall_risk_high
+                    - pharmacy_out_of_network
+                    - preferred_contact_unavailable
+                    P012:
+                    - coverage_pending
+                    - excluded_service_line
+                    - overall_risk_high
+                    P013:
+                    - excluded_service_line
+                    - missing_address
+                    - overall_risk_high
+                    - pbm_policy_mismatch
+                    - pharmacy_out_of_network
+                  got:
+                    P007:
+                    - coverage_out_of_network
+                    - overall_risk_high
+                    P008:
+                    - coverage_expired
+                    - overall_risk_high
+                    - pharmacy_out_of_network
+                    P009:
+                    - overall_risk_high
+                    - pbm_invalid
+                    P010:
+                    - overall_risk_high
+                    - pbm_invalid
+                    - preferred_contact_unavailable
+                    P011:
+                    - coverage_expired
+                    - overall_risk_high
+                    - pharmacy_out_of_network
+                    - preferred_contact_unavailable
+                    P012:
+                    - coverage_pending
+                    - excluded_service_line
+                    - overall_risk_high
+                    - pbm_policy_mismatch
+                    P013:
+                    - excluded_service_line
+                    - missing_address
+                    - overall_risk_high
+                    - pbm_policy_mismatch
+                    - pharmacy_out_of_network
+                earned_score: 0.0
+                goal: Correct blocked reason-code set for every target patient.
+                id: SP007
+                passed: false
+                weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  expected:
+                    counts_by_lifestyle_risk:
+                      high: 3
+                      low: 2
+                      medium: 2
+                    counts_by_overall_risk:
+                      high: 5
+                      low: 0
+                      medium: 2
+                    counts_by_registration_status:
+                      approved: 0
+                      clinical_review: 1
+                      hold: 1
+                      rejected: 5
+                    total_patients: 7
+                  got:
+                    counts_by_lifestyle_risk:
+                      high: 5
+                      low: 2
+                      medium: 0
+                    counts_by_overall_risk:
+                      high: 7
+                      low: 0
+                      medium: 0
+                    counts_by_registration_status:
+                      approved: 0
+                      clinical_review: 2
+                      hold: 0
+                      rejected: 5
+                    total_patients: 7
+                earned_score: 0.0
+                goal: Correct cohort summary counts by final status and risk.
+                id: SP008
+                passed: false
+                weight: 1
+              score: 0.2352941176
+            score: 0.2352941176
+          score: 0.2352941176
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/answer.json
+        attempt_02:
+          input_tokens: 194439
+          cached_input_tokens: 162816
+          output_tokens: 10667
+          reasoning_output_tokens: 7638
+          total_tokens: 205106
+          cost_usd: 0.559533
+          duration_seconds: 241.494
+          assistant_turns: 9
+          tool_calls: 19
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: 0d971857-1f0a-4afc-a7d6-4a294951587f
+          logical_slot: naive/test_001/attempt_02
+          task_id: test_001
+          attempt: 2
+          skill_attempt: 2
+          started_at: '2026-07-28T10:43:04Z'
+          completed_at: '2026-07-28T10:47:06Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 41e9c984b450702e5755aa3fcc7bc5295a449107e862b325a0bf0aa58afeddcf
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/primary.jsonl
+          input_hashes:
+            input: 120a01be309c506cf181d7e9b2ad145aa3b385e3ba420b37383359acd9b6fb55
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: 2c5b251dfdb6cec0a7fe895aaff4f1690fdd298170f5354f0688099134b08e82
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: invalid
+                    P008: invalid
+                    P009: valid
+                    P010: valid
+                    P011: invalid
+                    P012: invalid
+                    P013: invalid
+                  got:
+                    P007: invalid
+                    P008: invalid
+                    P009: valid
+                    P010: valid
+                    P011: invalid
+                    P012: invalid
+                    P013: invalid
+                earned_score: 0.11764705882352941
+                goal: Correct primary insurance status for all target patients.
+                id: SP001
+                passed: true
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: valid
+                    P008: valid
+                    P009: invalid
+                    P010: invalid
+                    P011: valid
+                    P012: valid
+                    P013: invalid
+                  got:
+                    P007: valid
+                    P008: valid
+                    P009: invalid
+                    P010: invalid
+                    P011: valid
+                    P012: valid
+                    P013: invalid
+                earned_score: 0.11764705882352941
+                goal: Correct prescription benefit status for all target patients.
+                id: SP002
+                passed: true
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: in_network
+                    P008: out_of_network
+                    P009: in_network
+                    P010: in_network
+                    P011: out_of_network
+                    P012: in_network
+                    P013: out_of_network
+                  got:
+                    P007: in_network
+                    P008: out_of_network
+                    P009: in_network
+                    P010: in_network
+                    P011: out_of_network
+                    P012: in_network
+                    P013: out_of_network
+                earned_score: 0.11764705882352941
+                goal: Correct preferred-pharmacy network status for all target patients.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: medium
+                    P008: medium
+                    P009: low
+                    P010: high
+                    P011: low
+                    P012: high
+                    P013: high
+                  got:
+                    P007: high
+                    P008: high
+                    P009: medium
+                    P010: high
+                    P011: medium
+                    P012: high
+                    P013: high
+                earned_score: 0.0
+                goal: Correct lifestyle risk classification for all target patients.
+                id: SP004
+                passed: false
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: high
+                    P008: medium
+                    P009: medium
+                    P010: high
+                    P011: high
+                    P012: high
+                    P013: high
+                  got:
+                    P007: high
+                    P008: high
+                    P009: high
+                    P010: high
+                    P011: high
+                    P012: high
+                    P013: high
+                earned_score: 0.0
+                goal: Correct overall risk classification for all target patients.
+                id: SP005
+                passed: false
+                weight: 2
+              - assigned_score: 0.17647058823529413
+                details:
+                  expected:
+                    P007: rejected
+                    P008: rejected
+                    P009: hold
+                    P010: clinical_review
+                    P011: rejected
+                    P012: rejected
+                    P013: rejected
+                  got:
+                    P007: rejected
+                    P008: rejected
+                    P009: clinical_review
+                    P010: clinical_review
+                    P011: rejected
+                    P012: rejected
+                    P013: rejected
+                earned_score: 0.0
+                goal: Correct final registration status for all target patients.
+                id: SP006
+                passed: false
+                weight: 3
+              - assigned_score: 0.17647058823529413
+                details:
+                  expected:
+                    P007:
+                    - coverage_out_of_network
+                    - overall_risk_high
+                    P008:
+                    - coverage_expired
+                    - pharmacy_out_of_network
+                    P009:
+                    - pbm_invalid
+                    P010:
+                    - overall_risk_high
+                    - pbm_invalid
+                    P011:
+                    - coverage_expired
+                    - overall_risk_high
+                    - pharmacy_out_of_network
+                    - preferred_contact_unavailable
+                    P012:
+                    - coverage_pending
+                    - excluded_service_line
+                    - overall_risk_high
+                    P013:
+                    - excluded_service_line
+                    - missing_address
+                    - overall_risk_high
+                    - pbm_policy_mismatch
+                    - pharmacy_out_of_network
+                  got:
+                    P007:
+                    - coverage_out_of_network
+                    - overall_risk_high
+                    P008:
+                    - coverage_expired
+                    - overall_risk_high
+                    - pharmacy_out_of_network
+                    P009:
+                    - overall_risk_high
+                    - pbm_invalid
+                    P010:
+                    - overall_risk_high
+                    - pbm_invalid
+                    - preferred_contact_unavailable
+                    P011:
+                    - coverage_expired
+                    - overall_risk_high
+                    - pharmacy_out_of_network
+                    - preferred_contact_unavailable
+                    P012:
+                    - coverage_pending
+                    - excluded_service_line
+                    - overall_risk_high
+                    P013:
+                    - excluded_service_line
+                    - missing_address
+                    - overall_risk_high
+                    - pbm_policy_mismatch
+                    - pharmacy_out_of_network
+                earned_score: 0.0
+                goal: Correct blocked reason-code set for every target patient.
+                id: SP007
+                passed: false
+                weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  expected:
+                    counts_by_lifestyle_risk:
+                      high: 3
+                      low: 2
+                      medium: 2
+                    counts_by_overall_risk:
+                      high: 5
+                      low: 0
+                      medium: 2
+                    counts_by_registration_status:
+                      approved: 0
+                      clinical_review: 1
+                      hold: 1
+                      rejected: 5
+                    total_patients: 7
+                  got:
+                    counts_by_lifestyle_risk:
+                      high: 5
+                      low: 0
+                      medium: 2
+                    counts_by_overall_risk:
+                      high: 7
+                      low: 0
+                      medium: 0
+                    counts_by_registration_status:
+                      approved: 0
+                      clinical_review: 2
+                      hold: 0
+                      rejected: 5
+                    total_patients: 7
+                earned_score: 0.0
+                goal: Correct cohort summary counts by final status and risk.
+                id: SP008
+                passed: false
+                weight: 1
+              score: 0.3529411765
+            score: 0.3529411765
+          score: 0.3529411765
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/answer.json
+        attempt_03:
+          input_tokens: 244341
+          cached_input_tokens: 201088
+          output_tokens: 10577
+          reasoning_output_tokens: 7352
+          total_tokens: 254918
+          cost_usd: 0.634119
+          duration_seconds: 236.533
+          assistant_turns: 10
+          tool_calls: 18
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: 893098c4-2a08-4550-91ab-424f8660301f
+          logical_slot: naive/test_001/attempt_03
+          task_id: test_001
+          attempt: 3
+          skill_attempt: 3
+          started_at: '2026-07-28T10:49:35Z'
+          completed_at: '2026-07-28T10:53:32Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 12d0aaf670b1428f3be1ec12a263f82629319432a2c4611c291cd4b9063db0d2
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/primary.jsonl
+          input_hashes:
+            input: 120a01be309c506cf181d7e9b2ad145aa3b385e3ba420b37383359acd9b6fb55
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: f936ab5913b4fd3de80a54083115bc48c2c10416b8a25266631e92bd8839de08
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: invalid
+                    P008: invalid
+                    P009: valid
+                    P010: valid
+                    P011: invalid
+                    P012: invalid
+                    P013: invalid
+                  got:
+                    P007: invalid
+                    P008: invalid
+                    P009: valid
+                    P010: valid
+                    P011: invalid
+                    P012: invalid
+                    P013: invalid
+                earned_score: 0.11764705882352941
+                goal: Correct primary insurance status for all target patients.
+                id: SP001
+                passed: true
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: valid
+                    P008: valid
+                    P009: invalid
+                    P010: invalid
+                    P011: valid
+                    P012: valid
+                    P013: invalid
+                  got:
+                    P007: valid
+                    P008: valid
+                    P009: invalid
+                    P010: invalid
+                    P011: valid
+                    P012: valid
+                    P013: invalid
+                earned_score: 0.11764705882352941
+                goal: Correct prescription benefit status for all target patients.
+                id: SP002
+                passed: true
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: in_network
+                    P008: out_of_network
+                    P009: in_network
+                    P010: in_network
+                    P011: out_of_network
+                    P012: in_network
+                    P013: out_of_network
+                  got:
+                    P007: in_network
+                    P008: out_of_network
+                    P009: in_network
+                    P010: in_network
+                    P011: out_of_network
+                    P012: in_network
+                    P013: out_of_network
+                earned_score: 0.11764705882352941
+                goal: Correct preferred-pharmacy network status for all target patients.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: medium
+                    P008: medium
+                    P009: low
+                    P010: high
+                    P011: low
+                    P012: high
+                    P013: high
+                  got:
+                    P007: high
+                    P008: high
+                    P009: low
+                    P010: high
+                    P011: low
+                    P012: high
+                    P013: high
+                earned_score: 0.0
+                goal: Correct lifestyle risk classification for all target patients.
+                id: SP004
+                passed: false
+                weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  expected:
+                    P007: high
+                    P008: medium
+                    P009: medium
+                    P010: high
+                    P011: high
+                    P012: high
+                    P013: high
+                  got:
+                    P007: high
+                    P008: high
+                    P009: medium
+                    P010: high
+                    P011: high
+                    P012: high
+                    P013: high
+                earned_score: 0.0
+                goal: Correct overall risk classification for all target patients.
+                id: SP005
+                passed: false
+                weight: 2
+              - assigned_score: 0.17647058823529413
+                details:
+                  expected:
+                    P007: rejected
+                    P008: rejected
+                    P009: hold
+                    P010: clinical_review
+                    P011: rejected
+                    P012: rejected
+                    P013: rejected
+                  got:
+                    P007: rejected
+                    P008: rejected
+                    P009: hold
+                    P010: clinical_review
+                    P011: rejected
+                    P012: rejected
+                    P013: rejected
+                earned_score: 0.17647058823529413
+                goal: Correct final registration status for all target patients.
+                id: SP006
+                passed: true
+                weight: 3
+              - assigned_score: 0.17647058823529413
+                details:
+                  expected:
+                    P007:
+                    - coverage_out_of_network
+                    - overall_risk_high
+                    P008:
+                    - coverage_expired
+                    - pharmacy_out_of_network
+                    P009:
+                    - pbm_invalid
+                    P010:
+                    - overall_risk_high
+                    - pbm_invalid
+                    P011:
+                    - coverage_expired
+                    - overall_risk_high
+                    - pharmacy_out_of_network
+                    - preferred_contact_unavailable
+                    P012:
+                    - coverage_pending
+                    - excluded_service_line
+                    - overall_risk_high
+                    P013:
+                    - excluded_service_line
+                    - missing_address
+                    - overall_risk_high
+                    - pbm_policy_mismatch
+                    - pharmacy_out_of_network
+                  got:
+                    P007:
+                    - coverage_out_of_network
+                    - overall_risk_high
+                    P008:
+                    - coverage_expired
+                    - overall_risk_high
+                    - pharmacy_out_of_network
+                    P009:
+                    - pbm_invalid
+                    P010:
+                    - overall_risk_high
+                    - pbm_invalid
+                    - preferred_contact_unavailable
+                    P011:
+                    - coverage_expired
+                    - overall_risk_high
+                    - pharmacy_out_of_network
+                    - preferred_contact_unavailable
+                    P012:
+                    - coverage_pending
+                    - excluded_service_line
+                    - overall_risk_high
+                    P013:
+                    - excluded_service_line
+                    - missing_address
+                    - overall_risk_high
+                    - pbm_policy_mismatch
+                    - pharmacy_out_of_network
+                earned_score: 0.0
+                goal: Correct blocked reason-code set for every target patient.
+                id: SP007
+                passed: false
+                weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  expected:
+                    counts_by_lifestyle_risk:
+                      high: 3
+                      low: 2
+                      medium: 2
+                    counts_by_overall_risk:
+                      high: 5
+                      low: 0
+                      medium: 2
+                    counts_by_registration_status:
+                      approved: 0
+                      clinical_review: 1
+                      hold: 1
+                      rejected: 5
+                    total_patients: 7
+                  got:
+                    counts_by_lifestyle_risk:
+                      high: 5
+                      low: 2
+                      medium: 0
+                    counts_by_overall_risk:
+                      high: 6
+                      low: 0
+                      medium: 1
+                    counts_by_registration_status:
+                      approved: 0
+                      clinical_review: 1
+                      hold: 1
+                      rejected: 5
+                    total_patients: 7
+                earned_score: 0.0
+                goal: Correct cohort summary counts by final status and risk.
+                id: SP008
+                passed: false
+                weight: 1
+              score: 0.5294117647
+            score: 0.5294117647
+          score: 0.5294117647
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/answer.json
+    test_002:
+      status: complete
+      scores:
+      - 0.6111111111
+      - 0.7777777778
+      - 0.6111111111
+      acc_at_3: 0.6666666666666666
+      std_at_3: 0.07856742014755208
+      input_tokens_avg_3: 489790.3333333333
+      cached_input_tokens_avg_3: 419498.6666666667
+      output_tokens_avg_3: 17361.666666666668
+      reasoning_output_tokens_avg_3: 12322.666666666666
+      cost_usd_avg_3: 1.0820576666666668
+      rounds_avg_3: 11.0
+      tool_calls_avg_3: 32.0
+      attempts:
+        attempt_01:
+          input_tokens: 619067
+          cached_input_tokens: 547840
+          output_tokens: 18299
+          reasoning_output_tokens: 12906
+          total_tokens: 637366
+          cost_usd: 1.179025
+          duration_seconds: 390.996
+          assistant_turns: 12
+          tool_calls: 34
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: c176ecc3-b929-42f3-8488-b7d9bcec86b7
+          logical_slot: naive/test_002/attempt_01
+          task_id: test_002
+          attempt: 1
+          skill_attempt: 1
+          started_at: '2026-07-28T10:43:04Z'
+          completed_at: '2026-07-28T10:49:35Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 4bd2cf00451880554e7c4f60e0fa98d18163fbfe66cb04ba1ccfa2077fc45116
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/primary.jsonl
+          input_hashes:
+            input: e53be8d358af161c30ee21176d4c7c29d892600e3b070dd4b9b938e229f58084
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: b291e4fb870f5658095de0434a165ca1f54820b54bb3333e3aa7994b2840c4bc
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.16666666666666666
+                details:
+                  actual:
+                    REF0017:
+                    - J44.9
+                    - - icd_chapter_mismatch
+                      - narrative_mismatch
+                    - J00-J99
+                    - M00-M99/S00-T88
+                    REF0020:
+                    - J44.9
+                    - - icd_chapter_mismatch
+                      - narrative_mismatch
+                    - J00-J99
+                    - M00-M99/S00-T88
+                  expected_referrals:
+                  - REF0017
+                  - REF0018
+                  - REF0020
+                earned_score: 0.0
+                goal: Correct ICD chapter, narrative, or laterality discrepancy referrals.
+                id: SP001
+                passed: false
+                weight: 3
+              - assigned_score: 0.1111111111111111
+                details:
+                  actual:
+                  - (('REF0021', 'REF0023'), 'P059', 'REF0021', 'consolidate_to_primary')
+                  expected:
+                  - (('REF0021', 'REF0023'), 'P059', 'REF0021', 'consolidate_to_primary')
+                earned_score: 0.1111111111111111
+                goal: Correct duplicate referral grouping and consolidation recommendation.
+                id: SP002
+                passed: true
+                weight: 2
+              - assigned_score: 0.1111111111111111
+                details:
+                  actual:
+                  - ('DUP-INS-ORTHO', ('REF0019', 'REF0020'), ('P057', 'P058'), 'verify_distinct_patient_policy_id')
+                  expected:
+                  - ('DUP-INS-ORTHO', ('REF0019', 'REF0020'), ('P057', 'P058'), 'verify_distinct_patient_policy_id')
+                earned_score: 0.1111111111111111
+                goal: Correct shared insurance anomaly set excluding same-patient
+                  duplicate sharing.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.1111111111111111
+                details:
+                  missing_imaging:
+                  - REF0017
+                  - REF0021
+                  - REF0023
+                  missing_records:
+                  - REF0018
+                  - REF0021
+                  - REF0023
+                earned_score: 0.1111111111111111
+                goal: Correct missing-records and missing-imaging blocker sets.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.1111111111111111
+                details:
+                  actual:
+                    REF0018: denied
+                    REF0021: pending
+                    REF0023: pending
+                  expected:
+                    REF0018: denied
+                    REF0021: pending
+                    REF0023: pending
+                earned_score: 0.1111111111111111
+                goal: Correct authorization blocker set and statuses.
+                id: SP005
+                passed: true
+                weight: 2
+              - assigned_score: 0.16666666666666666
+                details:
+                  actual:
+                  - REF0016
+                  expected:
+                  - REF0016
+                earned_score: 0.16666666666666666
+                goal: Correct ready-to-schedule referral set.
+                id: SP006
+                passed: true
+                weight: 3
+              - assigned_score: 0.16666666666666666
+                details:
+                  actions_ok: false
+                  issue_codes_ok: false
+                  priorities_ok: false
+                  statuses_ok: false
+                earned_score: 0.0
+                goal: Correct readiness statuses, priority tiers, issue codes, and
+                  action codes for follow-up referrals.
+                id: SP007
+                passed: false
+                weight: 3
+              - assigned_score: 0.05555555555555555
+                details:
+                  issue_counts_ok: false
+                  readiness_counts_ok: false
+                  simple_counts_ok: true
+                  urgency_counts_ok: true
+                  urgency_status_counts_ok: false
+                earned_score: 0.0
+                goal: Correct summary counts by urgency, readiness status, and issue
+                  type.
+                id: SP008
+                passed: false
+                weight: 1
+              score: 0.6111111111
+            score: 0.6111111111
+          score: 0.6111111111
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/answer.json
+        attempt_02:
+          input_tokens: 347957
+          cached_input_tokens: 283392
+          output_tokens: 13641
+          reasoning_output_tokens: 8753
+          total_tokens: 361598
+          cost_usd: 0.873751
+          duration_seconds: 293.702
+          assistant_turns: 10
+          tool_calls: 29
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: 828efbe8-7e25-4348-a7b3-7c6a619d42e7
+          logical_slot: naive/test_002/attempt_02
+          task_id: test_002
+          attempt: 2
+          skill_attempt: 2
+          started_at: '2026-07-28T10:47:06Z'
+          completed_at: '2026-07-28T10:51:59Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: f42349a36c6450621fe95c2fdf408df38b934dd59a1fb375ea092582095da476
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/primary.jsonl
+          input_hashes:
+            input: e53be8d358af161c30ee21176d4c7c29d892600e3b070dd4b9b938e229f58084
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: 2c5b251dfdb6cec0a7fe895aaff4f1690fdd298170f5354f0688099134b08e82
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.16666666666666666
+                details:
+                  actual:
+                    REF0017:
+                    - J44.9
+                    - - icd_chapter_mismatch
+                      - narrative_mismatch
+                    - J00-J99
+                    - M00-M99
+                    REF0018:
+                    - S83.512A
+                    - - icd_chapter_mismatch
+                    - S00-T88
+                    - M00-M99
+                    REF0020:
+                    - J44.9
+                    - - icd_chapter_mismatch
+                      - narrative_mismatch
+                    - J00-J99
+                    - M00-M99
+                  expected_referrals:
+                  - REF0017
+                  - REF0018
+                  - REF0020
+                earned_score: 0.16666666666666666
+                goal: Correct ICD chapter, narrative, or laterality discrepancy referrals.
+                id: SP001
+                passed: true
+                weight: 3
+              - assigned_score: 0.1111111111111111
+                details:
+                  actual:
+                  - (('REF0021', 'REF0023'), 'P059', 'REF0021', 'consolidate_to_primary')
+                  expected:
+                  - (('REF0021', 'REF0023'), 'P059', 'REF0021', 'consolidate_to_primary')
+                earned_score: 0.1111111111111111
+                goal: Correct duplicate referral grouping and consolidation recommendation.
+                id: SP002
+                passed: true
+                weight: 2
+              - assigned_score: 0.1111111111111111
+                details:
+                  actual:
+                  - ('DUP-INS-ORTHO', ('REF0019', 'REF0020'), ('P057', 'P058'), 'verify_distinct_patient_policy_id')
+                  expected:
+                  - ('DUP-INS-ORTHO', ('REF0019', 'REF0020'), ('P057', 'P058'), 'verify_distinct_patient_policy_id')
+                earned_score: 0.1111111111111111
+                goal: Correct shared insurance anomaly set excluding same-patient
+                  duplicate sharing.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.1111111111111111
+                details:
+                  missing_imaging:
+                  - REF0017
+                  - REF0021
+                  - REF0023
+                  missing_records:
+                  - REF0018
+                  - REF0021
+                  - REF0023
+                earned_score: 0.1111111111111111
+                goal: Correct missing-records and missing-imaging blocker sets.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.1111111111111111
+                details:
+                  actual:
+                    REF0018: denied
+                    REF0021: pending
+                    REF0023: pending
+                  expected:
+                    REF0018: denied
+                    REF0021: pending
+                    REF0023: pending
+                earned_score: 0.1111111111111111
+                goal: Correct authorization blocker set and statuses.
+                id: SP005
+                passed: true
+                weight: 2
+              - assigned_score: 0.16666666666666666
+                details:
+                  actual:
+                  - REF0016
+                  expected:
+                  - REF0016
+                earned_score: 0.16666666666666666
+                goal: Correct ready-to-schedule referral set.
+                id: SP006
+                passed: true
+                weight: 3
+              - assigned_score: 0.16666666666666666
+                details:
+                  actions_ok: true
+                  issue_codes_ok: true
+                  priorities_ok: false
+                  statuses_ok: false
+                earned_score: 0.0
+                goal: Correct readiness statuses, priority tiers, issue codes, and
+                  action codes for follow-up referrals.
+                id: SP007
+                passed: false
+                weight: 3
+              - assigned_score: 0.05555555555555555
+                details:
+                  issue_counts_ok: true
+                  readiness_counts_ok: false
+                  simple_counts_ok: true
+                  urgency_counts_ok: true
+                  urgency_status_counts_ok: false
+                earned_score: 0.0
+                goal: Correct summary counts by urgency, readiness status, and issue
+                  type.
+                id: SP008
+                passed: false
+                weight: 1
+              score: 0.7777777778
+            score: 0.7777777778
+          score: 0.7777777778
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/answer.json
+        attempt_03:
+          input_tokens: 502347
+          cached_input_tokens: 427264
+          output_tokens: 20145
+          reasoning_output_tokens: 15309
+          total_tokens: 522492
+          cost_usd: 1.193397
+          duration_seconds: 404.788
+          assistant_turns: 11
+          tool_calls: 33
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: a3af093c-f005-4173-b725-cbcd7ab13dee
+          logical_slot: naive/test_002/attempt_03
+          task_id: test_002
+          attempt: 3
+          skill_attempt: 3
+          started_at: '2026-07-28T10:50:25Z'
+          completed_at: '2026-07-28T10:57:10Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: b64656258906e985947ebb1f8166e1d085c6797f0d92ebd182ef6082c87d3afe
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/primary.jsonl
+          input_hashes:
+            input: e53be8d358af161c30ee21176d4c7c29d892600e3b070dd4b9b938e229f58084
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: f936ab5913b4fd3de80a54083115bc48c2c10416b8a25266631e92bd8839de08
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.16666666666666666
+                details:
+                  actual:
+                    REF0017:
+                    - J44.9
+                    - - icd_chapter_mismatch
+                      - narrative_mismatch
+                    - J00-J99
+                    - M00-M99
+                    REF0020:
+                    - J44.9
+                    - - icd_chapter_mismatch
+                      - narrative_mismatch
+                    - J00-J99
+                    - M00-M99
+                  expected_referrals:
+                  - REF0017
+                  - REF0018
+                  - REF0020
+                earned_score: 0.0
+                goal: Correct ICD chapter, narrative, or laterality discrepancy referrals.
+                id: SP001
+                passed: false
+                weight: 3
+              - assigned_score: 0.1111111111111111
+                details:
+                  actual:
+                  - (('REF0021', 'REF0023'), 'P059', 'REF0021', 'consolidate_to_primary')
+                  expected:
+                  - (('REF0021', 'REF0023'), 'P059', 'REF0021', 'consolidate_to_primary')
+                earned_score: 0.1111111111111111
+                goal: Correct duplicate referral grouping and consolidation recommendation.
+                id: SP002
+                passed: true
+                weight: 2
+              - assigned_score: 0.1111111111111111
+                details:
+                  actual:
+                  - ('DUP-INS-ORTHO', ('REF0019', 'REF0020'), ('P057', 'P058'), 'verify_distinct_patient_policy_id')
+                  expected:
+                  - ('DUP-INS-ORTHO', ('REF0019', 'REF0020'), ('P057', 'P058'), 'verify_distinct_patient_policy_id')
+                earned_score: 0.1111111111111111
+                goal: Correct shared insurance anomaly set excluding same-patient
+                  duplicate sharing.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.1111111111111111
+                details:
+                  missing_imaging:
+                  - REF0017
+                  - REF0021
+                  - REF0023
+                  missing_records:
+                  - REF0018
+                  - REF0021
+                  - REF0023
+                earned_score: 0.1111111111111111
+                goal: Correct missing-records and missing-imaging blocker sets.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.1111111111111111
+                details:
+                  actual:
+                    REF0018: denied
+                    REF0021: pending
+                    REF0023: pending
+                  expected:
+                    REF0018: denied
+                    REF0021: pending
+                    REF0023: pending
+                earned_score: 0.1111111111111111
+                goal: Correct authorization blocker set and statuses.
+                id: SP005
+                passed: true
+                weight: 2
+              - assigned_score: 0.16666666666666666
+                details:
+                  actual:
+                  - REF0016
+                  expected:
+                  - REF0016
+                earned_score: 0.16666666666666666
+                goal: Correct ready-to-schedule referral set.
+                id: SP006
+                passed: true
+                weight: 3
+              - assigned_score: 0.16666666666666666
+                details:
+                  actions_ok: false
+                  issue_codes_ok: false
+                  priorities_ok: false
+                  statuses_ok: false
+                earned_score: 0.0
+                goal: Correct readiness statuses, priority tiers, issue codes, and
+                  action codes for follow-up referrals.
+                id: SP007
+                passed: false
+                weight: 3
+              - assigned_score: 0.05555555555555555
+                details:
+                  issue_counts_ok: false
+                  readiness_counts_ok: false
+                  simple_counts_ok: true
+                  urgency_counts_ok: true
+                  urgency_status_counts_ok: false
+                earned_score: 0.0
+                goal: Correct summary counts by urgency, readiness status, and issue
+                  type.
+                id: SP008
+                passed: false
+                weight: 1
+              score: 0.6111111111
+            score: 0.6111111111
+          score: 0.6111111111
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/answer.json
+    test_003:
+      status: complete
+      scores:
+      - 1.0
+      - 1.0
+      - 1.0
+      acc_at_3: 1.0
+      std_at_3: 0.0
+      input_tokens_avg_3: 344741.6666666667
+      cached_input_tokens_avg_3: 295936.0
+      output_tokens_avg_3: 10147.333333333334
+      reasoning_output_tokens_avg_3: 4907.0
+      cost_usd_avg_3: 0.6964163333333332
+      rounds_avg_3: 9.666666666666666
+      tool_calls_avg_3: 22.333333333333332
+      attempts:
+        attempt_01:
+          input_tokens: 417298
+          cached_input_tokens: 359936
+          output_tokens: 10649
+          reasoning_output_tokens: 4853
+          total_tokens: 427947
+          cost_usd: 0.786248
+          duration_seconds: 246.556
+          assistant_turns: 12
+          tool_calls: 28
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: 37027b7d-811c-4919-9597-739a0974a3e6
+          logical_slot: naive/test_003/attempt_01
+          task_id: test_003
+          attempt: 1
+          skill_attempt: 1
+          started_at: '2026-07-28T10:43:04Z'
+          completed_at: '2026-07-28T10:47:11Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: ab91a2a76f50b8bf0856a8d5193c7768cbb6c8e9946ecedbcfd868fc239fbe01
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/primary.jsonl
+          input_hashes:
+            input: f891ce138bee010290f5577d405f917b3f28952f12cefa45e97ff91420d4375c
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: b291e4fb870f5658095de0434a165ca1f54820b54bb3333e3aa7994b2840c4bc
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: true
+              details:
+                batch_id_match: true
+              points:
+              - assigned_score: 0.1875
+                earned_score: 0.1875
+                goal: Correct packet completeness status for all transfer patients.
+                id: SP001
+                passed: true
+                weight: 3
+              - assigned_score: 0.1875
+                earned_score: 0.1875
+                goal: Correct stale-document detection for freshness-limited packet
+                  items.
+                id: SP002
+                passed: true
+                weight: 3
+              - assigned_score: 0.125
+                earned_score: 0.125
+                goal: Correct missing required-document sets for all transfer patients.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.125
+                earned_score: 0.125
+                goal: Correct requested-start feasibility using packet readiness and
+                  chair capacity.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.1875
+                earned_score: 0.1875
+                goal: Correct final intake decision for each transfer patient.
+                id: SP005
+                passed: true
+                weight: 3
+              - assigned_score: 0.125
+                earned_score: 0.125
+                goal: Correct next-contact owner and route for each non-accepted patient.
+                id: SP006
+                passed: true
+                weight: 2
+              - assigned_score: 0.0625
+                earned_score: 0.0625
+                goal: Correct cohort summary counts.
+                id: SP007
+                passed: true
+                weight: 1
+              score: 1.0
+            score: 1.0
+          score: 1.0
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/answer.json
+        attempt_02:
+          input_tokens: 201501
+          cached_input_tokens: 167936
+          output_tokens: 8630
+          reasoning_output_tokens: 4545
+          total_tokens: 210131
+          cost_usd: 0.510693
+          duration_seconds: 194.543
+          assistant_turns: 8
+          tool_calls: 15
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: 4d83e9eb-5dcb-44a8-8a0c-6bca20a38257
+          logical_slot: naive/test_003/attempt_02
+          task_id: test_003
+          attempt: 2
+          skill_attempt: 2
+          started_at: '2026-07-28T10:47:11Z'
+          completed_at: '2026-07-28T10:50:25Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 79751c191ad6185de220b2baafed4e64401b4525c94e62c0742ce6d3a6e841f1
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/primary.jsonl
+          input_hashes:
+            input: f891ce138bee010290f5577d405f917b3f28952f12cefa45e97ff91420d4375c
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: 2c5b251dfdb6cec0a7fe895aaff4f1690fdd298170f5354f0688099134b08e82
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: true
+              details:
+                batch_id_match: true
+              points:
+              - assigned_score: 0.1875
+                earned_score: 0.1875
+                goal: Correct packet completeness status for all transfer patients.
+                id: SP001
+                passed: true
+                weight: 3
+              - assigned_score: 0.1875
+                earned_score: 0.1875
+                goal: Correct stale-document detection for freshness-limited packet
+                  items.
+                id: SP002
+                passed: true
+                weight: 3
+              - assigned_score: 0.125
+                earned_score: 0.125
+                goal: Correct missing required-document sets for all transfer patients.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.125
+                earned_score: 0.125
+                goal: Correct requested-start feasibility using packet readiness and
+                  chair capacity.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.1875
+                earned_score: 0.1875
+                goal: Correct final intake decision for each transfer patient.
+                id: SP005
+                passed: true
+                weight: 3
+              - assigned_score: 0.125
+                earned_score: 0.125
+                goal: Correct next-contact owner and route for each non-accepted patient.
+                id: SP006
+                passed: true
+                weight: 2
+              - assigned_score: 0.0625
+                earned_score: 0.0625
+                goal: Correct cohort summary counts.
+                id: SP007
+                passed: true
+                weight: 1
+              score: 1.0
+            score: 1.0
+          score: 1.0
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/answer.json
+        attempt_03:
+          input_tokens: 415426
+          cached_input_tokens: 359936
+          output_tokens: 11163
+          reasoning_output_tokens: 5323
+          total_tokens: 426589
+          cost_usd: 0.792308
+          duration_seconds: 271.05
+          assistant_turns: 9
+          tool_calls: 24
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: fdb12a47-9915-4078-bc16-93dd53a458fe
+          logical_slot: naive/test_003/attempt_03
+          task_id: test_003
+          attempt: 3
+          skill_attempt: 3
+          started_at: '2026-07-28T10:51:16Z'
+          completed_at: '2026-07-28T10:55:47Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 030ee8d365afb5d9a6aad175610e32495c51bde478de4a935881ba5b300f397c
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/primary.jsonl
+          input_hashes:
+            input: f891ce138bee010290f5577d405f917b3f28952f12cefa45e97ff91420d4375c
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: f936ab5913b4fd3de80a54083115bc48c2c10416b8a25266631e92bd8839de08
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: true
+              details:
+                batch_id_match: true
+              points:
+              - assigned_score: 0.1875
+                earned_score: 0.1875
+                goal: Correct packet completeness status for all transfer patients.
+                id: SP001
+                passed: true
+                weight: 3
+              - assigned_score: 0.1875
+                earned_score: 0.1875
+                goal: Correct stale-document detection for freshness-limited packet
+                  items.
+                id: SP002
+                passed: true
+                weight: 3
+              - assigned_score: 0.125
+                earned_score: 0.125
+                goal: Correct missing required-document sets for all transfer patients.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.125
+                earned_score: 0.125
+                goal: Correct requested-start feasibility using packet readiness and
+                  chair capacity.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.1875
+                earned_score: 0.1875
+                goal: Correct final intake decision for each transfer patient.
+                id: SP005
+                passed: true
+                weight: 3
+              - assigned_score: 0.125
+                earned_score: 0.125
+                goal: Correct next-contact owner and route for each non-accepted patient.
+                id: SP006
+                passed: true
+                weight: 2
+              - assigned_score: 0.0625
+                earned_score: 0.0625
+                goal: Correct cohort summary counts.
+                id: SP007
+                passed: true
+                weight: 1
+              score: 1.0
+            score: 1.0
+          score: 1.0
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/answer.json
+    test_004:
+      status: complete
+      scores:
+      - 0.49999999999999994
+      - 0.49999999999999994
+      - 0.7857142857142856
+      acc_at_3: 0.5952380952380952
+      std_at_3: 0.13468700594029473
+      input_tokens_avg_3: 507657.3333333333
+      cached_input_tokens_avg_3: 447914.6666666667
+      output_tokens_avg_3: 18070.0
+      reasoning_output_tokens_avg_3: 12084.666666666666
+      cost_usd_avg_3: 1.0647706666666668
+      rounds_avg_3: 11.666666666666666
+      tool_calls_avg_3: 32.0
+      attempts:
+        attempt_01:
+          input_tokens: 742735
+          cached_input_tokens: 671360
+          output_tokens: 17911
+          reasoning_output_tokens: 11063
+          total_tokens: 760646
+          cost_usd: 1.229885
+          duration_seconds: 379.643
+          assistant_turns: 13
+          tool_calls: 36
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: f0282481-0558-4aca-b1c3-b5e52a72dab2
+          logical_slot: naive/test_004/attempt_01
+          task_id: test_004
+          attempt: 1
+          skill_attempt: 1
+          started_at: '2026-07-28T10:43:04Z'
+          completed_at: '2026-07-28T10:49:24Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: e5843d553ddfef0e96ca2c9aa8ea8ae2d25689cba3a4dc980a8303e38c658d39
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/primary.jsonl
+          input_hashes:
+            input: 01bd3de76d1a5669fb1f7142ed9005d758ffbf12ad28cee7167fa25ce64751f3
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: b291e4fb870f5658095de0434a165ca1f54820b54bb3333e3aa7994b2840c4bc
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.21428571428571427
+                details:
+                  actual_eligible:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  actual_ids:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  - P047
+                  - P062
+                  - P101
+                  expected_eligible:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  expected_ids:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  - P047
+                  - P062
+                  - P101
+                earned_score: 0.21428571428571427
+                goal: Correct candidate coverage and eligible/ineligible sets for
+                  RENAL-DM-2026B.
+                id: SP001
+                passed: true
+                weight: 3
+              - assigned_score: 0.21428571428571427
+                details:
+                  mismatches:
+                  - actual_reasons:
+                    - consent_declined
+                    - wrong_target_condition
+                    actual_status: reject
+                    expected_reasons:
+                    - consent_declined
+                    - missing_active_renal_diabetes_diagnosis
+                    - wrong_target_condition
+                    expected_status: reject
+                    patient_id: P101
+                earned_score: 0.0
+                goal: Correct enrollment status and normalized reason-code sets for
+                  every candidate.
+                id: SP002
+                passed: false
+                weight: 3
+              - assigned_score: 0.14285714285714285
+                details:
+                  field: follow_up_cadence
+                  mismatches: []
+                earned_score: 0.14285714285714285
+                goal: Correct follow-up cadence for each candidate.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.14285714285714285
+                details:
+                  field: renal_missing_chart_artifacts
+                  mismatches:
+                  - actual:
+                    - program_consent
+                    expected: []
+                    patient_id: P035
+                  - actual:
+                    - program_consent
+                    - renal_labs
+                    - vitals
+                    expected:
+                    - renal_labs
+                    - vitals
+                    patient_id: P038
+                earned_score: 0.0
+                goal: Correct renal-specific missing chart artifact set for each candidate.
+                id: SP004
+                passed: false
+                weight: 2
+              - assigned_score: 0.07142857142857142
+                details:
+                  field: outreach_channel
+                  mismatches:
+                  - actual: none
+                    expected: phone
+                    patient_id: P047
+                  - actual: none
+                    expected: email
+                    patient_id: P062
+                  - actual: none
+                    expected: phone
+                    patient_id: P101
+                earned_score: 0.0
+                goal: Correct outreach channel for each candidate.
+                id: SP005
+                passed: false
+                weight: 1
+              - assigned_score: 0.14285714285714285
+                details:
+                  mismatches: []
+                earned_score: 0.14285714285714285
+                goal: Correct monitoring package type, component set, and first check-in
+                  timing.
+                id: SP006
+                passed: true
+                weight: 2
+              - assigned_score: 0.07142857142857142
+                details:
+                  actual:
+                    eligible_count: 7
+                    follow_up_counts:
+                      biweekly: 0
+                      deferred: 5
+                      monthly: 1
+                      none: 3
+                      weekly: 1
+                    ineligible_count: 3
+                    monitoring_package_counts:
+                      deferred: 5
+                      high_touch_renal_dm: 1
+                      not_applicable: 3
+                      standard_renal_dm: 1
+                    outreach_counts:
+                      email: 1
+                      none: 3
+                      phone: 4
+                      portal: 1
+                      sms: 1
+                    status_counts:
+                      enroll: 2
+                      hold: 5
+                      reject: 3
+                    total_candidates: 10
+                  expected:
+                    eligible_count: 7
+                    follow_up_counts:
+                      biweekly: 0
+                      deferred: 5
+                      monthly: 1
+                      none: 3
+                      weekly: 1
+                    ineligible_count: 3
+                    monitoring_package_counts:
+                      deferred: 5
+                      high_touch_renal_dm: 1
+                      not_applicable: 3
+                      standard_renal_dm: 1
+                    outreach_counts:
+                      email: 2
+                      none: 0
+                      phone: 6
+                      portal: 1
+                      sms: 1
+                    status_counts:
+                      enroll: 2
+                      hold: 5
+                      reject: 3
+                    total_candidates: 10
+                earned_score: 0.0
+                goal: Correct cohort summary counts across status, cadence, outreach,
+                  and package categories.
+                id: SP007
+                passed: false
+                weight: 1
+              score: 0.49999999999999994
+            score: 0.49999999999999994
+          score: 0.49999999999999994
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/answer.json
+        attempt_02:
+          input_tokens: 386602
+          cached_input_tokens: 332928
+          output_tokens: 21045
+          reasoning_output_tokens: 14607
+          total_tokens: 407647
+          cost_usd: 1.066184
+          duration_seconds: 453.455
+          assistant_turns: 11
+          tool_calls: 33
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: c6df012b-42a8-4bf8-acd6-5149678981ff
+          logical_slot: naive/test_004/attempt_02
+          task_id: test_004
+          attempt: 2
+          skill_attempt: 2
+          started_at: '2026-07-28T10:47:38Z'
+          completed_at: '2026-07-28T10:55:12Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: a489527a61db0e93ffd311070469642b5bbac36dd4cb27de0904bc90dd107071
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/primary.jsonl
+          input_hashes:
+            input: 01bd3de76d1a5669fb1f7142ed9005d758ffbf12ad28cee7167fa25ce64751f3
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: 2c5b251dfdb6cec0a7fe895aaff4f1690fdd298170f5354f0688099134b08e82
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.21428571428571427
+                details:
+                  actual_eligible:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  actual_ids:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  - P047
+                  - P062
+                  - P101
+                  expected_eligible:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  expected_ids:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  - P047
+                  - P062
+                  - P101
+                earned_score: 0.21428571428571427
+                goal: Correct candidate coverage and eligible/ineligible sets for
+                  RENAL-DM-2026B.
+                id: SP001
+                passed: true
+                weight: 3
+              - assigned_score: 0.21428571428571427
+                details:
+                  mismatches:
+                  - actual_reasons:
+                    - consent_declined
+                    - wrong_target_condition
+                    actual_status: reject
+                    expected_reasons:
+                    - consent_declined
+                    - missing_active_renal_diabetes_diagnosis
+                    - wrong_target_condition
+                    expected_status: reject
+                    patient_id: P101
+                earned_score: 0.0
+                goal: Correct enrollment status and normalized reason-code sets for
+                  every candidate.
+                id: SP002
+                passed: false
+                weight: 3
+              - assigned_score: 0.14285714285714285
+                details:
+                  field: follow_up_cadence
+                  mismatches: []
+                earned_score: 0.14285714285714285
+                goal: Correct follow-up cadence for each candidate.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.14285714285714285
+                details:
+                  field: renal_missing_chart_artifacts
+                  mismatches:
+                  - actual:
+                    - program_consent
+                    expected: []
+                    patient_id: P035
+                  - actual:
+                    - program_consent
+                    - renal_labs
+                    - vitals
+                    expected:
+                    - renal_labs
+                    - vitals
+                    patient_id: P038
+                earned_score: 0.0
+                goal: Correct renal-specific missing chart artifact set for each candidate.
+                id: SP004
+                passed: false
+                weight: 2
+              - assigned_score: 0.07142857142857142
+                details:
+                  field: outreach_channel
+                  mismatches:
+                  - actual: none
+                    expected: phone
+                    patient_id: P047
+                  - actual: none
+                    expected: email
+                    patient_id: P062
+                  - actual: none
+                    expected: phone
+                    patient_id: P101
+                earned_score: 0.0
+                goal: Correct outreach channel for each candidate.
+                id: SP005
+                passed: false
+                weight: 1
+              - assigned_score: 0.14285714285714285
+                details:
+                  mismatches: []
+                earned_score: 0.14285714285714285
+                goal: Correct monitoring package type, component set, and first check-in
+                  timing.
+                id: SP006
+                passed: true
+                weight: 2
+              - assigned_score: 0.07142857142857142
+                details:
+                  actual:
+                    eligible_count: 7
+                    follow_up_counts:
+                      biweekly: 0
+                      deferred: 5
+                      monthly: 1
+                      none: 3
+                      weekly: 1
+                    ineligible_count: 3
+                    monitoring_package_counts:
+                      deferred: 5
+                      high_touch_renal_dm: 1
+                      not_applicable: 3
+                      standard_renal_dm: 1
+                    outreach_counts:
+                      email: 1
+                      none: 3
+                      phone: 4
+                      portal: 1
+                      sms: 1
+                    status_counts:
+                      enroll: 2
+                      hold: 5
+                      reject: 3
+                    total_candidates: 10
+                  expected:
+                    eligible_count: 7
+                    follow_up_counts:
+                      biweekly: 0
+                      deferred: 5
+                      monthly: 1
+                      none: 3
+                      weekly: 1
+                    ineligible_count: 3
+                    monitoring_package_counts:
+                      deferred: 5
+                      high_touch_renal_dm: 1
+                      not_applicable: 3
+                      standard_renal_dm: 1
+                    outreach_counts:
+                      email: 2
+                      none: 0
+                      phone: 6
+                      portal: 1
+                      sms: 1
+                    status_counts:
+                      enroll: 2
+                      hold: 5
+                      reject: 3
+                    total_candidates: 10
+                earned_score: 0.0
+                goal: Correct cohort summary counts across status, cadence, outreach,
+                  and package categories.
+                id: SP007
+                passed: false
+                weight: 1
+              score: 0.49999999999999994
+            score: 0.49999999999999994
+          score: 0.49999999999999994
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/answer.json
+        attempt_03:
+          input_tokens: 393635
+          cached_input_tokens: 339456
+          output_tokens: 15254
+          reasoning_output_tokens: 10584
+          total_tokens: 408889
+          cost_usd: 0.898243
+          duration_seconds: 358.048
+          assistant_turns: 11
+          tool_calls: 27
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: a0543d16-dc96-420e-aee2-472e3737e4e4
+          logical_slot: naive/test_004/attempt_03
+          task_id: test_004
+          attempt: 3
+          skill_attempt: 3
+          started_at: '2026-07-28T10:51:59Z'
+          completed_at: '2026-07-28T10:57:58Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 216bf7587360be9b839118b89d5bcc8852bde437f24a5490ca1e3f9729a2e5d0
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/primary.jsonl
+          input_hashes:
+            input: 01bd3de76d1a5669fb1f7142ed9005d758ffbf12ad28cee7167fa25ce64751f3
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: f936ab5913b4fd3de80a54083115bc48c2c10416b8a25266631e92bd8839de08
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.21428571428571427
+                details:
+                  actual_eligible:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  actual_ids:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  - P047
+                  - P062
+                  - P101
+                  expected_eligible:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  expected_ids:
+                  - P033
+                  - P034
+                  - P035
+                  - P036
+                  - P037
+                  - P038
+                  - P039
+                  - P047
+                  - P062
+                  - P101
+                earned_score: 0.21428571428571427
+                goal: Correct candidate coverage and eligible/ineligible sets for
+                  RENAL-DM-2026B.
+                id: SP001
+                passed: true
+                weight: 3
+              - assigned_score: 0.21428571428571427
+                details:
+                  mismatches:
+                  - actual_reasons:
+                    - consent_declined
+                    - wrong_target_condition
+                    actual_status: reject
+                    expected_reasons:
+                    - consent_declined
+                    - missing_active_renal_diabetes_diagnosis
+                    - wrong_target_condition
+                    expected_status: reject
+                    patient_id: P101
+                earned_score: 0.0
+                goal: Correct enrollment status and normalized reason-code sets for
+                  every candidate.
+                id: SP002
+                passed: false
+                weight: 3
+              - assigned_score: 0.14285714285714285
+                details:
+                  field: follow_up_cadence
+                  mismatches: []
+                earned_score: 0.14285714285714285
+                goal: Correct follow-up cadence for each candidate.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.14285714285714285
+                details:
+                  field: renal_missing_chart_artifacts
+                  mismatches: []
+                earned_score: 0.14285714285714285
+                goal: Correct renal-specific missing chart artifact set for each candidate.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.07142857142857142
+                details:
+                  field: outreach_channel
+                  mismatches: []
+                earned_score: 0.07142857142857142
+                goal: Correct outreach channel for each candidate.
+                id: SP005
+                passed: true
+                weight: 1
+              - assigned_score: 0.14285714285714285
+                details:
+                  mismatches: []
+                earned_score: 0.14285714285714285
+                goal: Correct monitoring package type, component set, and first check-in
+                  timing.
+                id: SP006
+                passed: true
+                weight: 2
+              - assigned_score: 0.07142857142857142
+                details:
+                  actual:
+                    eligible_count: 7
+                    follow_up_counts:
+                      biweekly: 0
+                      deferred: 5
+                      monthly: 1
+                      none: 3
+                      weekly: 1
+                    ineligible_count: 3
+                    monitoring_package_counts:
+                      deferred: 5
+                      high_touch_renal_dm: 1
+                      not_applicable: 3
+                      standard_renal_dm: 1
+                    outreach_counts:
+                      email: 2
+                      none: 0
+                      phone: 6
+                      portal: 1
+                      sms: 1
+                    status_counts:
+                      enroll: 2
+                      hold: 5
+                      reject: 3
+                    total_candidates: 10
+                  expected:
+                    eligible_count: 7
+                    follow_up_counts:
+                      biweekly: 0
+                      deferred: 5
+                      monthly: 1
+                      none: 3
+                      weekly: 1
+                    ineligible_count: 3
+                    monitoring_package_counts:
+                      deferred: 5
+                      high_touch_renal_dm: 1
+                      not_applicable: 3
+                      standard_renal_dm: 1
+                    outreach_counts:
+                      email: 2
+                      none: 0
+                      phone: 6
+                      portal: 1
+                      sms: 1
+                    status_counts:
+                      enroll: 2
+                      hold: 5
+                      reject: 3
+                    total_candidates: 10
+                earned_score: 0.07142857142857142
+                goal: Correct cohort summary counts across status, cadence, outreach,
+                  and package categories.
+                id: SP007
+                passed: true
+                weight: 1
+              score: 0.7857142857142856
+            score: 0.7857142857142856
+          score: 0.7857142857142856
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/answer.json
+    test_005:
+      status: complete
+      scores:
+      - 0.4
+      - 0.4
+      - 1.0
+      acc_at_3: 0.6
+      std_at_3: 0.282842712474619
+      input_tokens_avg_3: 748340.0
+      cached_input_tokens_avg_3: 676736.0
+      output_tokens_avg_3: 18537.0
+      reasoning_output_tokens_avg_3: 12543.666666666666
+      cost_usd_avg_3: 1.2524980000000001
+      rounds_avg_3: 14.333333333333334
+      tool_calls_avg_3: 41.0
+      attempts:
+        attempt_01:
+          input_tokens: 897843
+          cached_input_tokens: 824448
+          output_tokens: 21453
+          reasoning_output_tokens: 13721
+          total_tokens: 919296
+          cost_usd: 1.422789
+          duration_seconds: 492.061
+          assistant_turns: 19
+          tool_calls: 51
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: 03e7626b-e2a0-439b-b2e5-9a0852aa9b84
+          logical_slot: naive/test_005/attempt_01
+          task_id: test_005
+          attempt: 1
+          skill_attempt: 1
+          started_at: '2026-07-28T10:43:04Z'
+          completed_at: '2026-07-28T10:51:16Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 378078bba828d21e4e6bf966ffa7737d91bb1a154ba0a7a163355ab144b2de6e
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/primary.jsonl
+          input_hashes:
+            input: 202758c4d436f2f1ba4281f981e12eb33d966f835b6b8e967e576a89a8cdb130
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: b291e4fb870f5658095de0434a165ca1f54820b54bb3333e3aa7994b2840c4bc
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.2
+                details:
+                  actual:
+                    REF0024:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P061
+                      readiness_status: under_review
+                    REF0025:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P062
+                      readiness_status: under_review
+                    REF0026:
+                      blocker_codes:
+                      - authorization_blocked
+                      - records_missing
+                      patient_id: P063
+                      readiness_status: blocked
+                    REF0027:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P064
+                      readiness_status: under_review
+                    REF0028:
+                      blocker_codes: []
+                      patient_id: P065
+                      readiness_status: ready
+                    REF0029:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      - scheduled_before_clearance
+                      patient_id: P066
+                      readiness_status: blocked
+                  expected:
+                    REF0024:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P061
+                      readiness_status: under_review
+                    REF0025:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P062
+                      readiness_status: under_review
+                    REF0026:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      patient_id: P063
+                      readiness_status: blocked
+                    REF0027:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P064
+                      readiness_status: under_review
+                    REF0028:
+                      blocker_codes: []
+                      patient_id: P065
+                      readiness_status: ready
+                    REF0029:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      - scheduled_before_clearance
+                      patient_id: P066
+                      readiness_status: blocked
+                earned_score: 0.0
+                goal: Correct scheduling readiness status and blocker code set for
+                  all CARD-JUL-03 referrals.
+                id: SP001
+                passed: false
+                weight: 3
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                  - REF0024
+                  - REF0025
+                  - REF0027
+                  - REF0029
+                  expected:
+                  - REF0024
+                  - REF0025
+                  - REF0026
+                  - REF0027
+                  - REF0029
+                earned_score: 0.0
+                goal: Correct clinical/code discrepancy referral set.
+                id: SP002
+                passed: false
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    authorization:
+                    - REF0026
+                    - REF0029
+                    imaging: []
+                    records:
+                    - REF0026
+                    - REF0029
+                  expected:
+                    authorization:
+                    - REF0026
+                    - REF0029
+                    imaging: []
+                    records:
+                    - REF0026
+                    - REF0029
+                earned_score: 0.13333333333333333
+                goal: Correct authorization, records, and imaging blocker sets.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    cleared_duplicate_review_referrals:
+                    - REF0027
+                    - REF0028
+                    duplicate_groups: []
+                  expected:
+                    cleared_duplicate_review_referrals:
+                    - REF0027
+                    - REF0028
+                    duplicate_groups: []
+                earned_score: 0.13333333333333333
+                goal: Correct duplicate handling, including clearing false duplicate-review
+                  flags.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    REF0028:
+                      artifacts_to_create:
+                      - active_problems
+                      - allergies
+                      - consent
+                      - demographics
+                      - medications
+                      - vitals
+                      chart_action: update_chart
+                      patient_id: P065
+                  expected:
+                    REF0028:
+                      artifacts_to_create:
+                      - active_problems
+                      - allergies
+                      - consent
+                      - demographics
+                      - medications
+                      - vitals
+                      chart_action: update_chart
+                      patient_id: P065
+                earned_score: 0.13333333333333333
+                goal: Correct chart activation gaps for ready referrals.
+                id: SP005
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    REF0024:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0025:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0026:
+                      reason_codes:
+                      - authorization_pending
+                      - records_missing
+                      template_type: auth_records_request
+                    REF0027:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0029:
+                      reason_codes:
+                      - appointment_already_scheduled
+                      template_type: appointment_hold_notice
+                  expected:
+                    REF0024:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0025:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0026:
+                      reason_codes:
+                      - authorization_pending
+                      - clinical_reason_mismatch
+                      - records_missing
+                      template_type: auth_records_request
+                    REF0027:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0029:
+                      reason_codes:
+                      - appointment_already_scheduled
+                      - authorization_denied
+                      - records_missing
+                      - wrong_service_family
+                      template_type: appointment_hold_notice
+                earned_score: 0.0
+                goal: Correct correspondence template type and reason codes for every
+                  non-ready referral.
+                id: SP006
+                passed: false
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                  - priority_tier: tier_1_immediate
+                    rank: 1
+                    referral_id: REF0024
+                  - priority_tier: tier_2_short_term
+                    rank: 2
+                    referral_id: REF0029
+                  - priority_tier: tier_2_short_term
+                    rank: 3
+                    referral_id: REF0026
+                  - priority_tier: tier_2_short_term
+                    rank: 4
+                    referral_id: REF0025
+                  - priority_tier: tier_2_short_term
+                    rank: 5
+                    referral_id: REF0027
+                  expected:
+                  - priority_tier: tier_1_immediate
+                    rank: 1
+                    referral_id: REF0024
+                  - priority_tier: tier_2_short_term
+                    rank: 2
+                    referral_id: REF0025
+                  - priority_tier: tier_2_short_term
+                    rank: 3
+                    referral_id: REF0026
+                  - priority_tier: tier_2_short_term
+                    rank: 4
+                    referral_id: REF0027
+                  - priority_tier: tier_2_short_term
+                    rank: 5
+                    referral_id: REF0029
+                earned_score: 0.0
+                goal: Correct priority ordering and tier assignment for the non-ready
+                  action queue.
+                id: SP007
+                passed: false
+                weight: 2
+              score: 0.4
+            score: 0.4
+          score: 0.4
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/answer.json
+        attempt_02:
+          input_tokens: 572767
+          cached_input_tokens: 505344
+          output_tokens: 13393
+          reasoning_output_tokens: 9318
+          total_tokens: 586160
+          cost_usd: 0.991577
+          duration_seconds: 293.326
+          assistant_turns: 10
+          tool_calls: 33
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: 36ddd93d-b938-4cd4-9360-00b2796d6df2
+          logical_slot: naive/test_005/attempt_02
+          task_id: test_005
+          attempt: 2
+          skill_attempt: 2
+          started_at: '2026-07-28T10:49:24Z'
+          completed_at: '2026-07-28T10:54:17Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 2059773ebe923f4b7da80c8693e73f37b99832ebb34ac568a2f435e720df523d
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/primary.jsonl
+          input_hashes:
+            input: 202758c4d436f2f1ba4281f981e12eb33d966f835b6b8e967e576a89a8cdb130
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: 2c5b251dfdb6cec0a7fe895aaff4f1690fdd298170f5354f0688099134b08e82
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: false
+              points:
+              - assigned_score: 0.2
+                details:
+                  actual:
+                    REF0024:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P061
+                      readiness_status: under_review
+                    REF0025:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P062
+                      readiness_status: under_review
+                    REF0026:
+                      blocker_codes:
+                      - authorization_blocked
+                      - records_missing
+                      patient_id: P063
+                      readiness_status: blocked
+                    REF0027:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P064
+                      readiness_status: under_review
+                    REF0028:
+                      blocker_codes: []
+                      patient_id: P065
+                      readiness_status: ready
+                    REF0029:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      - scheduled_before_clearance
+                      patient_id: P066
+                      readiness_status: blocked
+                  expected:
+                    REF0024:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P061
+                      readiness_status: under_review
+                    REF0025:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P062
+                      readiness_status: under_review
+                    REF0026:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      patient_id: P063
+                      readiness_status: blocked
+                    REF0027:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P064
+                      readiness_status: under_review
+                    REF0028:
+                      blocker_codes: []
+                      patient_id: P065
+                      readiness_status: ready
+                    REF0029:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      - scheduled_before_clearance
+                      patient_id: P066
+                      readiness_status: blocked
+                earned_score: 0.0
+                goal: Correct scheduling readiness status and blocker code set for
+                  all CARD-JUL-03 referrals.
+                id: SP001
+                passed: false
+                weight: 3
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                  - REF0024
+                  - REF0025
+                  - REF0027
+                  - REF0029
+                  expected:
+                  - REF0024
+                  - REF0025
+                  - REF0026
+                  - REF0027
+                  - REF0029
+                earned_score: 0.0
+                goal: Correct clinical/code discrepancy referral set.
+                id: SP002
+                passed: false
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    authorization:
+                    - REF0026
+                    - REF0029
+                    imaging: []
+                    records:
+                    - REF0026
+                    - REF0029
+                  expected:
+                    authorization:
+                    - REF0026
+                    - REF0029
+                    imaging: []
+                    records:
+                    - REF0026
+                    - REF0029
+                earned_score: 0.13333333333333333
+                goal: Correct authorization, records, and imaging blocker sets.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    cleared_duplicate_review_referrals:
+                    - REF0027
+                    - REF0028
+                    duplicate_groups: []
+                  expected:
+                    cleared_duplicate_review_referrals:
+                    - REF0027
+                    - REF0028
+                    duplicate_groups: []
+                earned_score: 0.13333333333333333
+                goal: Correct duplicate handling, including clearing false duplicate-review
+                  flags.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    REF0028:
+                      artifacts_to_create:
+                      - active_problems
+                      - allergies
+                      - consent
+                      - demographics
+                      - medications
+                      - vitals
+                      chart_action: update_chart
+                      patient_id: P065
+                  expected:
+                    REF0028:
+                      artifacts_to_create:
+                      - active_problems
+                      - allergies
+                      - consent
+                      - demographics
+                      - medications
+                      - vitals
+                      chart_action: update_chart
+                      patient_id: P065
+                earned_score: 0.13333333333333333
+                goal: Correct chart activation gaps for ready referrals.
+                id: SP005
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    REF0024:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0025:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0026:
+                      reason_codes:
+                      - authorization_pending
+                      - records_missing
+                      template_type: auth_records_request
+                    REF0027:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0029:
+                      reason_codes:
+                      - appointment_already_scheduled
+                      - authorization_denied
+                      - records_missing
+                      - wrong_service_family
+                      template_type: appointment_hold_notice
+                  expected:
+                    REF0024:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0025:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0026:
+                      reason_codes:
+                      - authorization_pending
+                      - clinical_reason_mismatch
+                      - records_missing
+                      template_type: auth_records_request
+                    REF0027:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0029:
+                      reason_codes:
+                      - appointment_already_scheduled
+                      - authorization_denied
+                      - records_missing
+                      - wrong_service_family
+                      template_type: appointment_hold_notice
+                earned_score: 0.0
+                goal: Correct correspondence template type and reason codes for every
+                  non-ready referral.
+                id: SP006
+                passed: false
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                  - priority_tier: tier_1_immediate
+                    rank: 1
+                    referral_id: REF0024
+                  - priority_tier: tier_2_short_term
+                    rank: 2
+                    referral_id: REF0029
+                  - priority_tier: tier_2_short_term
+                    rank: 3
+                    referral_id: REF0026
+                  - priority_tier: tier_2_short_term
+                    rank: 4
+                    referral_id: REF0025
+                  - priority_tier: tier_2_short_term
+                    rank: 5
+                    referral_id: REF0027
+                  expected:
+                  - priority_tier: tier_1_immediate
+                    rank: 1
+                    referral_id: REF0024
+                  - priority_tier: tier_2_short_term
+                    rank: 2
+                    referral_id: REF0025
+                  - priority_tier: tier_2_short_term
+                    rank: 3
+                    referral_id: REF0026
+                  - priority_tier: tier_2_short_term
+                    rank: 4
+                    referral_id: REF0027
+                  - priority_tier: tier_2_short_term
+                    rank: 5
+                    referral_id: REF0029
+                earned_score: 0.0
+                goal: Correct priority ordering and tier assignment for the non-ready
+                  action queue.
+                id: SP007
+                passed: false
+                weight: 2
+              score: 0.4
+            score: 0.4
+          score: 0.4
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/answer.json
+        attempt_03:
+          input_tokens: 774410
+          cached_input_tokens: 700416
+          output_tokens: 20765
+          reasoning_output_tokens: 14592
+          total_tokens: 795175
+          cost_usd: 1.343128
+          duration_seconds: 441.753
+          assistant_turns: 14
+          tool_calls: 39
+          observed_model_identity: gpt-5.5
+          portability_warnings: []
+          agent_run_id: 3c1f64d4-a0fd-422c-8989-42d3acc27abd
+          logical_slot: naive/test_005/attempt_03
+          task_id: test_005
+          attempt: 3
+          skill_attempt: 3
+          started_at: '2026-07-28T10:53:32Z'
+          completed_at: '2026-07-28T11:00:54Z'
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: a7636366944d4a8425e6d1c9d2a7082c4f834024955bd1398e0ff8cd3a5a6534
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/primary.jsonl
+          input_hashes:
+            input: 202758c4d436f2f1ba4281f981e12eb33d966f835b6b8e967e576a89a8cdb130
+            environment_access: d092e1bfb8b9062179482c966054ed39169dc302c99f7e8eaea998fecd76d4ab
+            skill: f936ab5913b4fd3de80a54083115bc48c2c10416b8a25266631e92bd8839de08
+          returncode: 0
+          evaluator:
+            status: complete
+            raw:
+              correct: true
+              points:
+              - assigned_score: 0.2
+                details:
+                  actual:
+                    REF0024:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P061
+                      readiness_status: under_review
+                    REF0025:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P062
+                      readiness_status: under_review
+                    REF0026:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      patient_id: P063
+                      readiness_status: blocked
+                    REF0027:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P064
+                      readiness_status: under_review
+                    REF0028:
+                      blocker_codes: []
+                      patient_id: P065
+                      readiness_status: ready
+                    REF0029:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      - scheduled_before_clearance
+                      patient_id: P066
+                      readiness_status: blocked
+                  expected:
+                    REF0024:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P061
+                      readiness_status: under_review
+                    REF0025:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P062
+                      readiness_status: under_review
+                    REF0026:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      patient_id: P063
+                      readiness_status: blocked
+                    REF0027:
+                      blocker_codes:
+                      - clinical_code_discrepancy
+                      patient_id: P064
+                      readiness_status: under_review
+                    REF0028:
+                      blocker_codes: []
+                      patient_id: P065
+                      readiness_status: ready
+                    REF0029:
+                      blocker_codes:
+                      - authorization_blocked
+                      - clinical_code_discrepancy
+                      - records_missing
+                      - scheduled_before_clearance
+                      patient_id: P066
+                      readiness_status: blocked
+                earned_score: 0.2
+                goal: Correct scheduling readiness status and blocker code set for
+                  all CARD-JUL-03 referrals.
+                id: SP001
+                passed: true
+                weight: 3
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                  - REF0024
+                  - REF0025
+                  - REF0026
+                  - REF0027
+                  - REF0029
+                  expected:
+                  - REF0024
+                  - REF0025
+                  - REF0026
+                  - REF0027
+                  - REF0029
+                earned_score: 0.13333333333333333
+                goal: Correct clinical/code discrepancy referral set.
+                id: SP002
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    authorization:
+                    - REF0026
+                    - REF0029
+                    imaging: []
+                    records:
+                    - REF0026
+                    - REF0029
+                  expected:
+                    authorization:
+                    - REF0026
+                    - REF0029
+                    imaging: []
+                    records:
+                    - REF0026
+                    - REF0029
+                earned_score: 0.13333333333333333
+                goal: Correct authorization, records, and imaging blocker sets.
+                id: SP003
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    cleared_duplicate_review_referrals:
+                    - REF0027
+                    - REF0028
+                    duplicate_groups: []
+                  expected:
+                    cleared_duplicate_review_referrals:
+                    - REF0027
+                    - REF0028
+                    duplicate_groups: []
+                earned_score: 0.13333333333333333
+                goal: Correct duplicate handling, including clearing false duplicate-review
+                  flags.
+                id: SP004
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    REF0028:
+                      artifacts_to_create:
+                      - active_problems
+                      - allergies
+                      - consent
+                      - demographics
+                      - medications
+                      - vitals
+                      chart_action: update_chart
+                      patient_id: P065
+                  expected:
+                    REF0028:
+                      artifacts_to_create:
+                      - active_problems
+                      - allergies
+                      - consent
+                      - demographics
+                      - medications
+                      - vitals
+                      chart_action: update_chart
+                      patient_id: P065
+                earned_score: 0.13333333333333333
+                goal: Correct chart activation gaps for ready referrals.
+                id: SP005
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                    REF0024:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0025:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0026:
+                      reason_codes:
+                      - authorization_pending
+                      - clinical_reason_mismatch
+                      - records_missing
+                      template_type: auth_records_request
+                    REF0027:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0029:
+                      reason_codes:
+                      - appointment_already_scheduled
+                      - authorization_denied
+                      - records_missing
+                      - wrong_service_family
+                      template_type: appointment_hold_notice
+                  expected:
+                    REF0024:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0025:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0026:
+                      reason_codes:
+                      - authorization_pending
+                      - clinical_reason_mismatch
+                      - records_missing
+                      template_type: auth_records_request
+                    REF0027:
+                      reason_codes:
+                      - wrong_service_family
+                      template_type: clinical_code_clarification
+                    REF0029:
+                      reason_codes:
+                      - appointment_already_scheduled
+                      - authorization_denied
+                      - records_missing
+                      - wrong_service_family
+                      template_type: appointment_hold_notice
+                earned_score: 0.13333333333333333
+                goal: Correct correspondence template type and reason codes for every
+                  non-ready referral.
+                id: SP006
+                passed: true
+                weight: 2
+              - assigned_score: 0.13333333333333333
+                details:
+                  actual:
+                  - priority_tier: tier_1_immediate
+                    rank: 1
+                    referral_id: REF0024
+                  - priority_tier: tier_2_short_term
+                    rank: 2
+                    referral_id: REF0025
+                  - priority_tier: tier_2_short_term
+                    rank: 3
+                    referral_id: REF0026
+                  - priority_tier: tier_2_short_term
+                    rank: 4
+                    referral_id: REF0027
+                  - priority_tier: tier_2_short_term
+                    rank: 5
+                    referral_id: REF0029
+                  expected:
+                  - priority_tier: tier_1_immediate
+                    rank: 1
+                    referral_id: REF0024
+                  - priority_tier: tier_2_short_term
+                    rank: 2
+                    referral_id: REF0025
+                  - priority_tier: tier_2_short_term
+                    rank: 3
+                    referral_id: REF0026
+                  - priority_tier: tier_2_short_term
+                    rank: 4
+                    referral_id: REF0027
+                  - priority_tier: tier_2_short_term
+                    rank: 5
+                    referral_id: REF0029
+                earned_score: 0.13333333333333333
+                goal: Correct priority ordering and tier assignment for the non-ready
+                  action queue.
+                id: SP007
+                passed: true
+                weight: 2
+              score: 1.0
+            score: 1.0
+          score: 1.0
+          status: complete
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/answer.json
+infrastructure_replacements: []
+notes: []

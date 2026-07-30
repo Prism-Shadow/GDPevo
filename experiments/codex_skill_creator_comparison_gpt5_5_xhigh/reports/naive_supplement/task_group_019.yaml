@@ -1,0 +1,1236 @@
+experiment_id: codex_skill_creator_comparison_naive_bounded_logical_retry_v2
+task_group_id: task_group_019
+model_profile: gpt5_5_xhigh
+harness: codex
+status: complete
+bounded_retry_label: bounded_logical_retry_v2/logical_retry_02
+bounded_retry_metric_label: bounded_retry_v2_overall_acc_at_3
+strict_original:
+  status: incomplete
+  naive_status: incomplete
+  incomplete_reason: one or more generation or solver slots did not complete
+  supplement_report: report/gpt5_5_xhigh/task_group_019.naive_supplement.yaml
+  supplement_report_sha256: bf7d45f6e14931ca625d50c372492e8c3d13b585aa8a3b73ddd610fbb880a856
+  combined_report: report/gpt5_5_xhigh/task_group_019.yaml
+  combined_report_sha256: 5d211134e8620e5fdd10dcd31d7e989b6267c758ffcde912708122465ffa3890
+  run_manifest: scratch/run_manifest/gpt5_5_xhigh.yaml
+  run_manifest_sha256: 6a9f2fcd9ea4653707d1c68d14afda2fd1bd8673509509edcf75581757cfa266
+bounded_logical_retry_v1:
+  status: incomplete
+  incomplete_reason: bounded retry generation exhausted the infrastructure replacement
+    budget before producing a valid skill; solver slots were not run
+  bounded_retry_label: bounded_logical_retry_v1/logical_retry_01
+  generation_status: infrastructure_failure_budget_exhausted
+  solver_slots_status: not_started_generation_infrastructure_budget_exhausted
+  report: supplemental/bounded_logical_retry_v1/report/task_group_019.bounded_logical_retry_v1.yaml
+  report_sha256: 9245d0f9cc0190bea33684a25727050585b6f5fdc995e6d7a373fc9b6fef9e36
+  run_manifest: scratch/bounded_logical_retry_v1/run_manifest.yaml
+  run_manifest_sha256: 096db8f3e64311e3d09fe375ffac2d197d7c7d36450c82ced00c488b5392581f
+  finalization_audit: scratch/bounded_logical_retry_v1/finalization_audit.yaml
+  finalization_audit_sha256: 20594989b0fed0777bbe098ed033dbd5677ebbd9afddb11e0370dee18c043424
+model:
+  generator_model: gpt-5.5
+  solver_model: gpt-5.5
+  reasoning_effort: xhigh
+  provider_id: openai
+  observed_identity: gpt-5.5
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:738edaa8437fa5cdcb2661a7148af790e3ba79cb2fac2434bd358faee5e236ea
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+  max_agent_concurrency: 6
+  max_infrastructure_replacements_per_logical_slot: 3
+  max_physical_attempts_per_logical_slot: 4
+  per_physical_run_independent_network: true
+  explicit_subnet_pool: 10.180.19.0/24..10.220.19.0/24
+execution:
+  started_at: '2026-07-29T08:47:16Z'
+  completed_at: '2026-07-29T09:35:15Z'
+  run_manifest: scratch/bounded_logical_retry_v2/run_manifest.yaml
+  run_manifest_sha256: ae0f4eff6dea0fd8589d389b2533c6685dc5af0fcf34684b7f6b97d9ecae2155
+  retry_plan: scratch/bounded_logical_retry_v2/retry_plan.yaml
+  retry_plan_sha256: 792553f08448f792610496cee127927de5497d7e273f2f70b32f8dc388fd8ae3
+  helper: scratch/bounded_logical_retry_v2/bounded_retry_helper.py
+  helper_sha256: 9980110aae050a9948ba786e9145dac5694781c47a4226c203addef44b15cf69
+  readonly_audit: scratch/bounded_logical_retry_v2/readonly_audit.yaml
+  readonly_audit_sha256: 912ab754440fc767e6091f4fbf67d4b4da0f3204d09770fef4a44a59d36ce5ed
+  readonly_hash_snapshot: scratch/bounded_logical_retry_v2/readonly_hash_snapshot.yaml
+  readonly_hash_snapshot_sha256: 79dbf486b33042c7f38e6885bd4e353386348ae35763febd38c723a2cdb070cc
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  generation_trace_root: supplemental/bounded_logical_retry_v2/original_traces/generation
+  solver_trace_root: supplemental/bounded_logical_retry_v2/original_traces/solvers
+  physical_environments:
+  - logical_slot: bounded_logical_retry_v2/logical_retry_02/generation
+    agent_run_id: afce1f89-3250-4a76-a24c-9c35933eb215
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_generation_afce1f89
+    network_subnet: 10.180.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_generation_afce1f89
+    task_container_id: 82719a7ced37126e9aaa59cd68835f55f519d6ae47d6e0f8c5b936ce0c73eec4
+    started_at: '2026-07-29T08:47:16Z'
+  - logical_slot: bounded_logical_retry_v2/logical_retry_02/test_005
+    agent_run_id: 297cde08-f6dd-47ca-ab3d-23833d4e8cb1
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_005_297cde08
+    network_subnet: 10.181.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_005_297cde08
+    task_container_id: e22d48560e1bcb516b91e54dd48bf1e60f834391ddc333b35bc549a89a127325
+    started_at: '2026-07-29T09:10:27Z'
+  - logical_slot: bounded_logical_retry_v2/logical_retry_02/test_004
+    agent_run_id: 3ad26857-c8cd-4406-8051-d13a1d403ca3
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_004_3ad26857
+    network_subnet: 10.183.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_004_3ad26857
+    task_container_id: e1258badaaec2843667a81ec91ee8d3fdd2482f80aca8a54c20101aece66a957
+    started_at: '2026-07-29T09:10:27Z'
+  - logical_slot: bounded_logical_retry_v2/logical_retry_02/test_001
+    agent_run_id: c42ad1b5-e6fe-4966-84c7-1e0a40f4375e
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_001_c42ad1b5
+    network_subnet: 10.182.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_001_c42ad1b5
+    task_container_id: 54e295f4fc666c07493c4dad9d2c086e4a0af07cbeed9952cd9bd6ec28ff7ebd
+    started_at: '2026-07-29T09:10:27Z'
+  - logical_slot: bounded_logical_retry_v2/logical_retry_02/test_003
+    agent_run_id: 778f1c02-899f-4e47-bd65-35cb4bc8ec92
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_003_778f1c02
+    network_subnet: 10.184.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_003_778f1c02
+    task_container_id: c30a2faf80ea6589f1492a6cfdfeb5e20e6de3f558b022ba94903339271feff7
+    started_at: '2026-07-29T09:10:27Z'
+  - logical_slot: bounded_logical_retry_v2/logical_retry_02/test_002
+    agent_run_id: 209f6c10-b61a-408b-87b9-dad5a3d6df2e
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_002_209f6c10
+    network_subnet: 10.185.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_002_209f6c10
+    task_container_id: 516a0748291654209223ecfb08238e165c3057a2e71881c5ef5f2ae323bb1b26
+    started_at: '2026-07-29T09:10:27Z'
+  - logical_slot: bounded_logical_retry_v2/logical_retry_02/test_002
+    agent_run_id: 54ef62ea-80a5-452e-b71b-000a0fa5cb77
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_002_54ef62ea
+    network_subnet: 10.186.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_002_54ef62ea
+    task_container_id: 03871829acbc2366c0643de84243ec87130a17712a60df1ba1b9403d7622cf49
+    started_at: '2026-07-29T09:18:53Z'
+  - logical_slot: bounded_logical_retry_v2/logical_retry_02/test_002
+    agent_run_id: 9aa1efa6-d918-4560-bf29-98fcb82e903b
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_002_9aa1efa6
+    network_subnet: 10.187.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_002_9aa1efa6
+    task_container_id: 5cc0b4e49bdc3fa0d8bedc8bea87396a72bb860b71a1e36926376a9b6ee7c04d
+    started_at: '2026-07-29T09:28:04Z'
+source:
+  revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+  skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+  bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+  file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+bounded_retry:
+  retry_id: logical_retry_02
+  replaces_original_attempt: 1
+  generation:
+    status: valid
+    reason: null
+    retry_id: logical_retry_02
+    replaces_original_logical_slot: naive/attempt_01
+    logical_slot: bounded_logical_retry_v2/logical_retry_02/generation
+    agent_run_id: afce1f89-3250-4a76-a24c-9c35933eb215
+    physical_attempt_index: 1
+    replacement_index: 0
+    run_dir: supplemental/bounded_logical_retry_v2/runs/generation/afce1f89-3250-4a76-a24c-9c35933eb215
+    prompt_template_id: fewshot_skill_generation
+    prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+    rendered_prompt_sha256: 0e79a1f5130e2310d41b782bb37e487a7d24516705426fee7242df937e07c65e
+    staged_hashes:
+      creator_bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+      creator_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+      train_tasks_sha256: 99303f9d22df9f620e53fa2663165dc0f3cee464f3d5aa896c4add334da4d5c6
+      train_answers_sha256: 170330c6df0051b99cdcdcfda0db275058eadd5493fd11da8b5b7beb0da11cc7
+      environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+    validation:
+      frontmatter_has_name: true
+      frontmatter_has_description: true
+      missing_direct_references: []
+      boundary_marker_mentions: []
+    container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_generation_afce1f89
+    started_at: '2026-07-29T08:47:21Z'
+    completed_at: '2026-07-29T09:10:26Z'
+    exit_code: 0
+    timed_out: false
+    stdout: supplemental/bounded_logical_retry_v2/runs/generation/afce1f89-3250-4a76-a24c-9c35933eb215/codex_stdout.jsonl
+    stderr: supplemental/bounded_logical_retry_v2/runs/generation/afce1f89-3250-4a76-a24c-9c35933eb215/codex_stderr.txt
+    trace: supplemental/bounded_logical_retry_v2/original_traces/generation/afce1f89-3250-4a76-a24c-9c35933eb215/primary_trace.jsonl
+    trace_source: codex_home_session
+    metrics:
+      assistant_turn_source: response_item.message.role=assistant
+      assistant_turns: 26
+      cached_input_tokens: 1039104
+      input_tokens: 1239339
+      observed_model_identity: gpt-5.5
+      output_tokens: 26879
+      portability_warnings:
+      - creator_tool_dependency_missing:yaml
+      reasoning_output_tokens: 14280
+      tool_calls: 81
+      total_tokens: 1266218
+      usage_source: final_token_count.info.total_token_usage
+    physical_environment:
+      network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_generation_afce1f89
+      network_subnet: 10.180.19.0/24
+      task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_generation_afce1f89
+      task_container_id: 82719a7ced37126e9aaa59cd68835f55f519d6ae47d6e0f8c5b936ce0c73eec4
+    skill_dir: supplemental/bounded_logical_retry_v2/skills/logical_retry_02
+    skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+  solvers:
+    test_005:
+      status: complete
+      reason: null
+      retry_id: logical_retry_02
+      task_id: test_005
+      replaces_original_attempt: 1
+      logical_slot: bounded_logical_retry_v2/logical_retry_02/test_005
+      agent_run_id: 297cde08-f6dd-47ca-ab3d-23833d4e8cb1
+      physical_attempt_index: 1
+      replacement_index: 0
+      run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_005/297cde08-f6dd-47ca-ab3d-23833d4e8cb1
+      prompt_template_id: fewshot_test_solver
+      prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+      rendered_prompt_sha256: fe25f12c2c3c316181735f91eeff24e3b9a1b9814e153058eb9a13c57dfb6135
+      staged_hashes:
+        input_sha256: 6f68f4b843bc57bc2c83ca23c07e4fa4a1ae82d9f1e4e49d55c924171b405392
+        environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+        skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+      score: 0.357143
+      answer_sha256: 7f0eebc108f52eec485c476e9985c423a5024956b8cecccd137acf2ef55d78a7
+      container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_005_297cde08
+      started_at: '2026-07-29T09:10:31Z'
+      completed_at: '2026-07-29T09:16:01Z'
+      exit_code: 0
+      timed_out: false
+      stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_005/297cde08-f6dd-47ca-ab3d-23833d4e8cb1/codex_stdout.jsonl
+      stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_005/297cde08-f6dd-47ca-ab3d-23833d4e8cb1/codex_stderr.txt
+      trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_005/297cde08-f6dd-47ca-ab3d-23833d4e8cb1/primary_trace.jsonl
+      trace_source: codex_home_session
+      metrics:
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 12
+        cached_input_tokens: 385536
+        input_tokens: 441977
+        observed_model_identity: gpt-5.5
+        output_tokens: 10878
+        portability_warnings: []
+        reasoning_output_tokens: 6992
+        tool_calls: 23
+        total_tokens: 452855
+        usage_source: final_token_count.info.total_token_usage
+      physical_environment:
+        network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_005_297cde08
+        network_subnet: 10.181.19.0/24
+        task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_005_297cde08
+        task_container_id: e22d48560e1bcb516b91e54dd48bf1e60f834391ddc333b35bc549a89a127325
+    test_003:
+      status: complete
+      reason: null
+      retry_id: logical_retry_02
+      task_id: test_003
+      replaces_original_attempt: 1
+      logical_slot: bounded_logical_retry_v2/logical_retry_02/test_003
+      agent_run_id: 778f1c02-899f-4e47-bd65-35cb4bc8ec92
+      physical_attempt_index: 1
+      replacement_index: 0
+      run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_003/778f1c02-899f-4e47-bd65-35cb4bc8ec92
+      prompt_template_id: fewshot_test_solver
+      prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+      rendered_prompt_sha256: fa717619552cde20c48bce7abea45c0d13616738be15eb1679101d55db5b7bed
+      staged_hashes:
+        input_sha256: 7c05025b34c531729dada0782f7ebba0ca4c8bb8085f5c0caecec1f48872ca3b
+        environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+        skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+      score: 0.6666666667
+      answer_sha256: b67bdd73b1839f9c5c75f1f9c399262db2c96c942b5320df4d2c08ccb2276cec
+      container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_003_778f1c02
+      started_at: '2026-07-29T09:10:31Z'
+      completed_at: '2026-07-29T09:16:41Z'
+      exit_code: 0
+      timed_out: false
+      stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_003/778f1c02-899f-4e47-bd65-35cb4bc8ec92/codex_stdout.jsonl
+      stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_003/778f1c02-899f-4e47-bd65-35cb4bc8ec92/codex_stderr.txt
+      trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_003/778f1c02-899f-4e47-bd65-35cb4bc8ec92/primary_trace.jsonl
+      trace_source: codex_home_session
+      metrics:
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 12
+        cached_input_tokens: 266112
+        input_tokens: 333463
+        observed_model_identity: gpt-5.5
+        output_tokens: 13543
+        portability_warnings: []
+        reasoning_output_tokens: 9497
+        tool_calls: 28
+        total_tokens: 347006
+        usage_source: final_token_count.info.total_token_usage
+      physical_environment:
+        network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_003_778f1c02
+        network_subnet: 10.184.19.0/24
+        task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_003_778f1c02
+        task_container_id: c30a2faf80ea6589f1492a6cfdfeb5e20e6de3f558b022ba94903339271feff7
+    test_004:
+      status: complete
+      reason: null
+      retry_id: logical_retry_02
+      task_id: test_004
+      replaces_original_attempt: 1
+      logical_slot: bounded_logical_retry_v2/logical_retry_02/test_004
+      agent_run_id: 3ad26857-c8cd-4406-8051-d13a1d403ca3
+      physical_attempt_index: 1
+      replacement_index: 0
+      run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_004/3ad26857-c8cd-4406-8051-d13a1d403ca3
+      prompt_template_id: fewshot_test_solver
+      prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+      rendered_prompt_sha256: ed5ab0d59e0f829785305d0b2d83c8bbc77831e24ed1d92913a62c339e68e1e6
+      staged_hashes:
+        input_sha256: fb4d56aa5ae5c2a7b16912de2fbbe1308c4148ea7365f7468751d702b271cb4c
+        environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+        skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+      score: 0.7272727273
+      answer_sha256: 13461e024dc48a103592bca0177a6e6ab9b63673928d27d91f1a697f9191af35
+      container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_004_3ad26857
+      started_at: '2026-07-29T09:10:31Z'
+      completed_at: '2026-07-29T09:26:51Z'
+      exit_code: 0
+      timed_out: false
+      stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_004/3ad26857-c8cd-4406-8051-d13a1d403ca3/codex_stdout.jsonl
+      stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_004/3ad26857-c8cd-4406-8051-d13a1d403ca3/codex_stderr.txt
+      trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_004/3ad26857-c8cd-4406-8051-d13a1d403ca3/primary_trace.jsonl
+      trace_source: codex_home_session
+      metrics:
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 11
+        cached_input_tokens: 268416
+        input_tokens: 311836
+        observed_model_identity: gpt-5.5
+        output_tokens: 20763
+        portability_warnings: []
+        reasoning_output_tokens: 13538
+        tool_calls: 28
+        total_tokens: 332599
+        usage_source: final_token_count.info.total_token_usage
+      physical_environment:
+        network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_004_3ad26857
+        network_subnet: 10.183.19.0/24
+        task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_004_3ad26857
+        task_container_id: e1258badaaec2843667a81ec91ee8d3fdd2482f80aca8a54c20101aece66a957
+    test_001:
+      status: complete
+      reason: null
+      retry_id: logical_retry_02
+      task_id: test_001
+      replaces_original_attempt: 1
+      logical_slot: bounded_logical_retry_v2/logical_retry_02/test_001
+      agent_run_id: c42ad1b5-e6fe-4966-84c7-1e0a40f4375e
+      physical_attempt_index: 1
+      replacement_index: 0
+      run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_001/c42ad1b5-e6fe-4966-84c7-1e0a40f4375e
+      prompt_template_id: fewshot_test_solver
+      prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+      rendered_prompt_sha256: 7888ac9d69ce0237ea8e128fd2d24daefb8b2e2ac081beabfaa12473ea3ed02f
+      staged_hashes:
+        input_sha256: 12bc882467f38490a6bbdc9c3dec99a009dbc9651ffaea61e9c86b3a3d5f62b0
+        environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+        skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+      score: 0.0625
+      answer_sha256: a289724f8d3312054e673af66ece65e2e58ae2658883199d0ba207abf13b888b
+      container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_001_c42ad1b5
+      started_at: '2026-07-29T09:10:31Z'
+      completed_at: '2026-07-29T09:31:11Z'
+      exit_code: 0
+      timed_out: false
+      stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_001/c42ad1b5-e6fe-4966-84c7-1e0a40f4375e/codex_stdout.jsonl
+      stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_001/c42ad1b5-e6fe-4966-84c7-1e0a40f4375e/codex_stderr.txt
+      trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_001/c42ad1b5-e6fe-4966-84c7-1e0a40f4375e/primary_trace.jsonl
+      trace_source: codex_home_session
+      metrics:
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 14
+        cached_input_tokens: 370560
+        input_tokens: 454267
+        observed_model_identity: gpt-5.5
+        output_tokens: 15764
+        portability_warnings: []
+        reasoning_output_tokens: 9785
+        tool_calls: 40
+        total_tokens: 470031
+        usage_source: final_token_count.info.total_token_usage
+      physical_environment:
+        network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_001_c42ad1b5
+        network_subnet: 10.182.19.0/24
+        task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_001_c42ad1b5
+        task_container_id: 54e295f4fc666c07493c4dad9d2c086e4a0af07cbeed9952cd9bd6ec28ff7ebd
+    test_002:
+      status: complete
+      reason: null
+      retry_id: logical_retry_02
+      task_id: test_002
+      replaces_original_attempt: 1
+      logical_slot: bounded_logical_retry_v2/logical_retry_02/test_002
+      agent_run_id: 9aa1efa6-d918-4560-bf29-98fcb82e903b
+      physical_attempt_index: 3
+      replacement_index: 2
+      run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_002/9aa1efa6-d918-4560-bf29-98fcb82e903b
+      prompt_template_id: fewshot_test_solver
+      prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+      rendered_prompt_sha256: c4c51c67a7da53b5bdf84c8343f2e9f970f0a04688c9962dcc22451af86ca584
+      staged_hashes:
+        input_sha256: 562315db818a6f4f1dc725cc80bd65ace47b58957650659ae7e4d9dee0d6f89b
+        environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+        skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+      score: 0.333333
+      answer_sha256: cd47c2eec1f35425d7e1a26ffda2c13626df72c4fd768afa86480ef5e28e123a
+      container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_002_9aa1efa6
+      started_at: '2026-07-29T09:28:09Z'
+      completed_at: '2026-07-29T09:35:14Z'
+      exit_code: 0
+      timed_out: false
+      stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_002/9aa1efa6-d918-4560-bf29-98fcb82e903b/codex_stdout.jsonl
+      stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_002/9aa1efa6-d918-4560-bf29-98fcb82e903b/codex_stderr.txt
+      trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_002/9aa1efa6-d918-4560-bf29-98fcb82e903b/primary_trace.jsonl
+      trace_source: codex_home_session
+      metrics:
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 9
+        cached_input_tokens: 269056
+        input_tokens: 377969
+        observed_model_identity: gpt-5.5
+        output_tokens: 13596
+        portability_warnings: []
+        reasoning_output_tokens: 9375
+        tool_calls: 25
+        total_tokens: 391565
+        usage_source: final_token_count.info.total_token_usage
+      physical_environment:
+        network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_002_9aa1efa6
+        network_subnet: 10.187.19.0/24
+        task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_002_9aa1efa6
+        task_container_id: 5cc0b4e49bdc3fa0d8bedc8bea87396a72bb860b71a1e36926376a9b6ee7c04d
+  skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+bounded_retry_complete_naive:
+  status: complete
+  incomplete_reason: null
+  overall_acc_at_3: 0.5027621420933334
+  overall_std_at_3: 0.1476880376731724
+  lift_over_shared_base: 0.06677131918666668
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.0625
+      - 0.25
+      - 0.25
+      acc_at_3: 0.1875
+      std_at_3: 0.08838834764831845
+      attempt_01:
+        source: bounded_logical_retry_v2
+        record:
+          status: complete
+          reason: null
+          retry_id: logical_retry_02
+          task_id: test_001
+          replaces_original_attempt: 1
+          logical_slot: bounded_logical_retry_v2/logical_retry_02/test_001
+          agent_run_id: c42ad1b5-e6fe-4966-84c7-1e0a40f4375e
+          physical_attempt_index: 1
+          replacement_index: 0
+          run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_001/c42ad1b5-e6fe-4966-84c7-1e0a40f4375e
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 7888ac9d69ce0237ea8e128fd2d24daefb8b2e2ac081beabfaa12473ea3ed02f
+          staged_hashes:
+            input_sha256: 12bc882467f38490a6bbdc9c3dec99a009dbc9651ffaea61e9c86b3a3d5f62b0
+            environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+            skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+          score: 0.0625
+          answer_sha256: a289724f8d3312054e673af66ece65e2e58ae2658883199d0ba207abf13b888b
+          container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_001_c42ad1b5
+          started_at: '2026-07-29T09:10:31Z'
+          completed_at: '2026-07-29T09:31:11Z'
+          exit_code: 0
+          timed_out: false
+          stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_001/c42ad1b5-e6fe-4966-84c7-1e0a40f4375e/codex_stdout.jsonl
+          stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_001/c42ad1b5-e6fe-4966-84c7-1e0a40f4375e/codex_stderr.txt
+          trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_001/c42ad1b5-e6fe-4966-84c7-1e0a40f4375e/primary_trace.jsonl
+          trace_source: codex_home_session
+          metrics:
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 14
+            cached_input_tokens: 370560
+            input_tokens: 454267
+            observed_model_identity: gpt-5.5
+            output_tokens: 15764
+            portability_warnings: []
+            reasoning_output_tokens: 9785
+            tool_calls: 40
+            total_tokens: 470031
+            usage_source: final_token_count.info.total_token_usage
+          physical_environment:
+            network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_001_c42ad1b5
+            network_subnet: 10.182.19.0/24
+            task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_001_c42ad1b5
+            task_container_id: 54e295f4fc666c07493c4dad9d2c086e4a0af07cbeed9952cd9bd6ec28ff7ebd
+      attempt_02:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_001
+        attempt: 2
+        skill_attempt: 2
+        logical_slot: naive/test_001/attempt_02
+        agent_run_id: a7a3c58d-d98a-4b4c-b845-73d6065c3ad6
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: df8588a21ce52debc35c4200251823f46a6a6ed965aeed7643e722cac48022e0
+        staged_hashes:
+          input_sha256: 12bc882467f38490a6bbdc9c3dec99a009dbc9651ffaea61e9c86b3a3d5f62b0
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: 2e8ab27fb724c46db19f7517da6804583af63fe4d5f80b2c2280071b1dd4c6af
+        score: 0.25
+        answer_sha256: 24a0b62c9d8e6ddbd61047387f5a482f8b49d911fc6846b98a27f8e0d0199606
+        container_name: liuzh_gpt55_naive_728_019_naive_test_001_attempt_02_a7a3c58d
+        started_at: '2026-07-28T11:00:16Z'
+        completed_at: '2026-07-28T11:07:41Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 24
+          cached_input_tokens: 693504
+          input_tokens: 760346
+          observed_model_identity: gpt-5.5
+          output_tokens: 18876
+          portability_warnings: []
+          reasoning_output_tokens: 11782
+          tool_calls: 50
+          total_tokens: 779222
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/evaluator_stderr.txt
+      attempt_03:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_001
+        attempt: 3
+        skill_attempt: 3
+        logical_slot: naive/test_001/attempt_03
+        agent_run_id: 687a6be4-f878-4810-ac96-1b18d575d833
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: 346021fbd230ddff80e8cb73bddfbe5bf1103b4a05b9626e718806cbb7f0d2d2
+        staged_hashes:
+          input_sha256: 12bc882467f38490a6bbdc9c3dec99a009dbc9651ffaea61e9c86b3a3d5f62b0
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: dba475e7194fcfc1ea45a8b9a07937431a4beebb9151f7bbe4f6ffd1411a495d
+        score: 0.25
+        answer_sha256: 5c640b6c0863c5999f0673bfd36e02fdcf0366b5b6899396126c8b207862383f
+        container_name: liuzh_gpt55_naive_728_019_naive_test_001_attempt_03_687a6be4
+        started_at: '2026-07-28T11:08:22Z'
+        completed_at: '2026-07-28T11:18:10Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 12
+          cached_input_tokens: 315520
+          input_tokens: 364835
+          observed_model_identity: gpt-5.5
+          output_tokens: 21864
+          portability_warnings: []
+          reasoning_output_tokens: 16956
+          tool_calls: 28
+          total_tokens: 386699
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/evaluator_stderr.txt
+      efficiency:
+        attempts_with_trace_metrics: 3
+        input_tokens: 1579448
+        cached_input_tokens: 1379584
+        output_tokens: 56504
+        reasoning_output_tokens: 38523
+        total_tokens: 1635952
+        assistant_turns: 50
+        tool_calls: 118
+    test_002:
+      status: complete
+      scores:
+      - 0.333333
+      - 0.333333
+      - 0.466667
+      acc_at_3: 0.3777776666666666
+      std_at_3: 0.06285425037515142
+      attempt_01:
+        source: bounded_logical_retry_v2
+        record:
+          status: complete
+          reason: null
+          retry_id: logical_retry_02
+          task_id: test_002
+          replaces_original_attempt: 1
+          logical_slot: bounded_logical_retry_v2/logical_retry_02/test_002
+          agent_run_id: 9aa1efa6-d918-4560-bf29-98fcb82e903b
+          physical_attempt_index: 3
+          replacement_index: 2
+          run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_002/9aa1efa6-d918-4560-bf29-98fcb82e903b
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: c4c51c67a7da53b5bdf84c8343f2e9f970f0a04688c9962dcc22451af86ca584
+          staged_hashes:
+            input_sha256: 562315db818a6f4f1dc725cc80bd65ace47b58957650659ae7e4d9dee0d6f89b
+            environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+            skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+          score: 0.333333
+          answer_sha256: cd47c2eec1f35425d7e1a26ffda2c13626df72c4fd768afa86480ef5e28e123a
+          container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_002_9aa1efa6
+          started_at: '2026-07-29T09:28:09Z'
+          completed_at: '2026-07-29T09:35:14Z'
+          exit_code: 0
+          timed_out: false
+          stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_002/9aa1efa6-d918-4560-bf29-98fcb82e903b/codex_stdout.jsonl
+          stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_002/9aa1efa6-d918-4560-bf29-98fcb82e903b/codex_stderr.txt
+          trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_002/9aa1efa6-d918-4560-bf29-98fcb82e903b/primary_trace.jsonl
+          trace_source: codex_home_session
+          metrics:
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 9
+            cached_input_tokens: 269056
+            input_tokens: 377969
+            observed_model_identity: gpt-5.5
+            output_tokens: 13596
+            portability_warnings: []
+            reasoning_output_tokens: 9375
+            tool_calls: 25
+            total_tokens: 391565
+            usage_source: final_token_count.info.total_token_usage
+          physical_environment:
+            network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_002_9aa1efa6
+            network_subnet: 10.187.19.0/24
+            task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_002_9aa1efa6
+            task_container_id: 5cc0b4e49bdc3fa0d8bedc8bea87396a72bb860b71a1e36926376a9b6ee7c04d
+      attempt_02:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_002
+        attempt: 2
+        skill_attempt: 2
+        logical_slot: naive/test_002/attempt_02
+        agent_run_id: 077c581d-5b3c-467c-a312-ee5798ee79c1
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: 432c37351873bd3f21ed4483c642460e257c1d0eb8658bc4df2fc5c7a1d81b70
+        staged_hashes:
+          input_sha256: 562315db818a6f4f1dc725cc80bd65ace47b58957650659ae7e4d9dee0d6f89b
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: 2e8ab27fb724c46db19f7517da6804583af63fe4d5f80b2c2280071b1dd4c6af
+        score: 0.333333
+        answer_sha256: ab752ef611ee1e7db8ccb1e526580216db442d1e4f78fda9468b3d7d37691abb
+        container_name: liuzh_gpt55_naive_728_019_naive_test_002_attempt_02_077c581d
+        started_at: '2026-07-28T11:00:16Z'
+        completed_at: '2026-07-28T11:06:50Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 14
+          cached_input_tokens: 492544
+          input_tokens: 544293
+          observed_model_identity: gpt-5.5
+          output_tokens: 15704
+          portability_warnings: []
+          reasoning_output_tokens: 10179
+          tool_calls: 33
+          total_tokens: 559997
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/evaluator_stderr.txt
+      attempt_03:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_002
+        attempt: 3
+        skill_attempt: 3
+        logical_slot: naive/test_002/attempt_03
+        agent_run_id: db78e0f4-38d0-45e2-9df7-6ec7f08110e5
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: 7922db86e09c61f0ed7d1444f40f3812bd8599e3b5b0bf8c3ec52a3b32c0851e
+        staged_hashes:
+          input_sha256: 562315db818a6f4f1dc725cc80bd65ace47b58957650659ae7e4d9dee0d6f89b
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: dba475e7194fcfc1ea45a8b9a07937431a4beebb9151f7bbe4f6ffd1411a495d
+        score: 0.466667
+        answer_sha256: 6eb01c268d9e80b53138f852a52245e924f03036ffcc2bac4f518d4fd6e282ea
+        container_name: liuzh_gpt55_naive_728_019_naive_test_002_attempt_03_db78e0f4
+        started_at: '2026-07-28T11:08:22Z'
+        completed_at: '2026-07-28T11:18:10Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 13
+          cached_input_tokens: 531328
+          input_tokens: 594513
+          observed_model_identity: gpt-5.5
+          output_tokens: 13506
+          portability_warnings: []
+          reasoning_output_tokens: 8649
+          tool_calls: 23
+          total_tokens: 608019
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/evaluator_stderr.txt
+      efficiency:
+        attempts_with_trace_metrics: 3
+        input_tokens: 1516775
+        cached_input_tokens: 1292928
+        output_tokens: 42806
+        reasoning_output_tokens: 28203
+        total_tokens: 1559581
+        assistant_turns: 36
+        tool_calls: 81
+    test_003:
+      status: complete
+      scores:
+      - 0.6666666667
+      - 0.7777777778
+      - 0.7777777778
+      acc_at_3: 0.7407407407666667
+      std_at_3: 0.052378280082654605
+      attempt_01:
+        source: bounded_logical_retry_v2
+        record:
+          status: complete
+          reason: null
+          retry_id: logical_retry_02
+          task_id: test_003
+          replaces_original_attempt: 1
+          logical_slot: bounded_logical_retry_v2/logical_retry_02/test_003
+          agent_run_id: 778f1c02-899f-4e47-bd65-35cb4bc8ec92
+          physical_attempt_index: 1
+          replacement_index: 0
+          run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_003/778f1c02-899f-4e47-bd65-35cb4bc8ec92
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: fa717619552cde20c48bce7abea45c0d13616738be15eb1679101d55db5b7bed
+          staged_hashes:
+            input_sha256: 7c05025b34c531729dada0782f7ebba0ca4c8bb8085f5c0caecec1f48872ca3b
+            environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+            skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+          score: 0.6666666667
+          answer_sha256: b67bdd73b1839f9c5c75f1f9c399262db2c96c942b5320df4d2c08ccb2276cec
+          container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_003_778f1c02
+          started_at: '2026-07-29T09:10:31Z'
+          completed_at: '2026-07-29T09:16:41Z'
+          exit_code: 0
+          timed_out: false
+          stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_003/778f1c02-899f-4e47-bd65-35cb4bc8ec92/codex_stdout.jsonl
+          stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_003/778f1c02-899f-4e47-bd65-35cb4bc8ec92/codex_stderr.txt
+          trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_003/778f1c02-899f-4e47-bd65-35cb4bc8ec92/primary_trace.jsonl
+          trace_source: codex_home_session
+          metrics:
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 12
+            cached_input_tokens: 266112
+            input_tokens: 333463
+            observed_model_identity: gpt-5.5
+            output_tokens: 13543
+            portability_warnings: []
+            reasoning_output_tokens: 9497
+            tool_calls: 28
+            total_tokens: 347006
+            usage_source: final_token_count.info.total_token_usage
+          physical_environment:
+            network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_003_778f1c02
+            network_subnet: 10.184.19.0/24
+            task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_003_778f1c02
+            task_container_id: c30a2faf80ea6589f1492a6cfdfeb5e20e6de3f558b022ba94903339271feff7
+      attempt_02:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_003
+        attempt: 2
+        skill_attempt: 2
+        logical_slot: naive/test_003/attempt_02
+        agent_run_id: 28e06ffe-b524-4fbe-bfca-570e1332e773
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: 3ac7c2c7f3b3e22a4db40cc6976cef130e6ae60a500fbad5d671cae87c3795e4
+        staged_hashes:
+          input_sha256: 7c05025b34c531729dada0782f7ebba0ca4c8bb8085f5c0caecec1f48872ca3b
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: 2e8ab27fb724c46db19f7517da6804583af63fe4d5f80b2c2280071b1dd4c6af
+        score: 0.7777777778
+        answer_sha256: 0e71a90a93fbd59eb41b1914e73bbf4bc835c01395f2fecb76e15db4e62d9f7d
+        container_name: liuzh_gpt55_naive_728_019_naive_test_003_attempt_02_28e06ffe
+        started_at: '2026-07-28T11:00:16Z'
+        completed_at: '2026-07-28T11:04:43Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 12
+          cached_input_tokens: 341888
+          input_tokens: 392655
+          observed_model_identity: gpt-5.5
+          output_tokens: 11801
+          portability_warnings: []
+          reasoning_output_tokens: 8082
+          tool_calls: 35
+          total_tokens: 404456
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/evaluator_stderr.txt
+      attempt_03:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_003
+        attempt: 3
+        skill_attempt: 3
+        logical_slot: naive/test_003/attempt_03
+        agent_run_id: d914806b-11e8-48d8-8dc1-eade9a87f594
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: 54efd34df12dee4b28875f37e03519b8d9036758476090985233bc32e4fc4845
+        staged_hashes:
+          input_sha256: 7c05025b34c531729dada0782f7ebba0ca4c8bb8085f5c0caecec1f48872ca3b
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: dba475e7194fcfc1ea45a8b9a07937431a4beebb9151f7bbe4f6ffd1411a495d
+        score: 0.7777777778
+        answer_sha256: 6a035ea8c618646e22714cf459f6f8d50be810885b1101a1c59775d8b8e55e72
+        container_name: liuzh_gpt55_naive_728_019_naive_test_003_attempt_03_d914806b
+        started_at: '2026-07-28T11:08:22Z'
+        completed_at: '2026-07-28T11:13:27Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 10
+          cached_input_tokens: 214400
+          input_tokens: 260515
+          observed_model_identity: gpt-5.5
+          output_tokens: 11820
+          portability_warnings: []
+          reasoning_output_tokens: 9504
+          tool_calls: 21
+          total_tokens: 272335
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/evaluator_stderr.txt
+      efficiency:
+        attempts_with_trace_metrics: 3
+        input_tokens: 986633
+        cached_input_tokens: 822400
+        output_tokens: 37164
+        reasoning_output_tokens: 27083
+        total_tokens: 1023797
+        assistant_turns: 34
+        tool_calls: 84
+    test_004:
+      status: complete
+      scores:
+      - 0.7272727273
+      - 0.8636363636
+      - 0.3181818182
+      acc_at_3: 0.6363636363666667
+      std_at_3: 0.2317736142375773
+      attempt_01:
+        source: bounded_logical_retry_v2
+        record:
+          status: complete
+          reason: null
+          retry_id: logical_retry_02
+          task_id: test_004
+          replaces_original_attempt: 1
+          logical_slot: bounded_logical_retry_v2/logical_retry_02/test_004
+          agent_run_id: 3ad26857-c8cd-4406-8051-d13a1d403ca3
+          physical_attempt_index: 1
+          replacement_index: 0
+          run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_004/3ad26857-c8cd-4406-8051-d13a1d403ca3
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: ed5ab0d59e0f829785305d0b2d83c8bbc77831e24ed1d92913a62c339e68e1e6
+          staged_hashes:
+            input_sha256: fb4d56aa5ae5c2a7b16912de2fbbe1308c4148ea7365f7468751d702b271cb4c
+            environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+            skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+          score: 0.7272727273
+          answer_sha256: 13461e024dc48a103592bca0177a6e6ab9b63673928d27d91f1a697f9191af35
+          container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_004_3ad26857
+          started_at: '2026-07-29T09:10:31Z'
+          completed_at: '2026-07-29T09:26:51Z'
+          exit_code: 0
+          timed_out: false
+          stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_004/3ad26857-c8cd-4406-8051-d13a1d403ca3/codex_stdout.jsonl
+          stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_004/3ad26857-c8cd-4406-8051-d13a1d403ca3/codex_stderr.txt
+          trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_004/3ad26857-c8cd-4406-8051-d13a1d403ca3/primary_trace.jsonl
+          trace_source: codex_home_session
+          metrics:
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 11
+            cached_input_tokens: 268416
+            input_tokens: 311836
+            observed_model_identity: gpt-5.5
+            output_tokens: 20763
+            portability_warnings: []
+            reasoning_output_tokens: 13538
+            tool_calls: 28
+            total_tokens: 332599
+            usage_source: final_token_count.info.total_token_usage
+          physical_environment:
+            network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_004_3ad26857
+            network_subnet: 10.183.19.0/24
+            task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_004_3ad26857
+            task_container_id: e1258badaaec2843667a81ec91ee8d3fdd2482f80aca8a54c20101aece66a957
+      attempt_02:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_004
+        attempt: 2
+        skill_attempt: 2
+        logical_slot: naive/test_004/attempt_02
+        agent_run_id: 96745d46-2849-48be-9f9a-cce2d2eca3c7
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: 0fc1d08397ace329b8dc8c87db2497669a1bc9c5adf3023ad28dc9c5c9c44009
+        staged_hashes:
+          input_sha256: fb4d56aa5ae5c2a7b16912de2fbbe1308c4148ea7365f7468751d702b271cb4c
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: 2e8ab27fb724c46db19f7517da6804583af63fe4d5f80b2c2280071b1dd4c6af
+        score: 0.8636363636
+        answer_sha256: de4acd4093ea12671ad6e473a0055c2a20228126828321e84c2410884df14f9e
+        container_name: liuzh_gpt55_naive_728_019_naive_test_004_attempt_02_96745d46
+        started_at: '2026-07-28T11:00:16Z'
+        completed_at: '2026-07-28T11:08:21Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 16
+          cached_input_tokens: 375040
+          input_tokens: 427390
+          observed_model_identity: gpt-5.5
+          output_tokens: 23847
+          portability_warnings: []
+          reasoning_output_tokens: 16720
+          tool_calls: 36
+          total_tokens: 451237
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/evaluator_stderr.txt
+      attempt_03:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_004
+        attempt: 3
+        skill_attempt: 3
+        logical_slot: naive/test_004/attempt_03
+        agent_run_id: 0afb70a2-3fdb-44f2-a6f0-25eb3eff38e0
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: 15a7d32ec5658f4a90b81cb27d9b06690e70500975dd7db5b130d8d29fd8793e
+        staged_hashes:
+          input_sha256: fb4d56aa5ae5c2a7b16912de2fbbe1308c4148ea7365f7468751d702b271cb4c
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: dba475e7194fcfc1ea45a8b9a07937431a4beebb9151f7bbe4f6ffd1411a495d
+        score: 0.3181818182
+        answer_sha256: 83e5b396d4990f4c8a3f0ab3055273d6cec8d48129eece4d2f9bdef5f90d6900
+        container_name: liuzh_gpt55_naive_728_019_naive_test_004_attempt_03_0afb70a2
+        started_at: '2026-07-28T11:08:22Z'
+        completed_at: '2026-07-28T11:17:34Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 11
+          cached_input_tokens: 449280
+          input_tokens: 526240
+          observed_model_identity: gpt-5.5
+          output_tokens: 20632
+          portability_warnings: []
+          reasoning_output_tokens: 15357
+          tool_calls: 19
+          total_tokens: 546872
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/evaluator_stderr.txt
+      efficiency:
+        attempts_with_trace_metrics: 3
+        input_tokens: 1265466
+        cached_input_tokens: 1092736
+        output_tokens: 65242
+        reasoning_output_tokens: 45615
+        total_tokens: 1330708
+        assistant_turns: 38
+        tool_calls: 83
+    test_005:
+      status: complete
+      scores:
+      - 0.357143
+      - 0.357143
+      - 1.0
+      acc_at_3: 0.5714286666666667
+      std_at_3: 0.30304569602216025
+      attempt_01:
+        source: bounded_logical_retry_v2
+        record:
+          status: complete
+          reason: null
+          retry_id: logical_retry_02
+          task_id: test_005
+          replaces_original_attempt: 1
+          logical_slot: bounded_logical_retry_v2/logical_retry_02/test_005
+          agent_run_id: 297cde08-f6dd-47ca-ab3d-23833d4e8cb1
+          physical_attempt_index: 1
+          replacement_index: 0
+          run_dir: supplemental/bounded_logical_retry_v2/runs/solvers/test_005/297cde08-f6dd-47ca-ab3d-23833d4e8cb1
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: fe25f12c2c3c316181735f91eeff24e3b9a1b9814e153058eb9a13c57dfb6135
+          staged_hashes:
+            input_sha256: 6f68f4b843bc57bc2c83ca23c07e4fa4a1ae82d9f1e4e49d55c924171b405392
+            environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+            skill_bundle_sha256: 5851f8bc9028fee5051dbcedae94be17b7322840d2929bd414023c0cf3f7e8ed
+          score: 0.357143
+          answer_sha256: 7f0eebc108f52eec485c476e9985c423a5024956b8cecccd137acf2ef55d78a7
+          container_name: liuzh_gpt55_naive_728_019_bounded_retry_bounded_logical_retry_v2_logical_retry_02_test_005_297cde08
+          started_at: '2026-07-29T09:10:31Z'
+          completed_at: '2026-07-29T09:16:01Z'
+          exit_code: 0
+          timed_out: false
+          stdout: supplemental/bounded_logical_retry_v2/runs/solvers/test_005/297cde08-f6dd-47ca-ab3d-23833d4e8cb1/codex_stdout.jsonl
+          stderr: supplemental/bounded_logical_retry_v2/runs/solvers/test_005/297cde08-f6dd-47ca-ab3d-23833d4e8cb1/codex_stderr.txt
+          trace: supplemental/bounded_logical_retry_v2/original_traces/solvers/test_005/297cde08-f6dd-47ca-ab3d-23833d4e8cb1/primary_trace.jsonl
+          trace_source: codex_home_session
+          metrics:
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 12
+            cached_input_tokens: 385536
+            input_tokens: 441977
+            observed_model_identity: gpt-5.5
+            output_tokens: 10878
+            portability_warnings: []
+            reasoning_output_tokens: 6992
+            tool_calls: 23
+            total_tokens: 452855
+            usage_source: final_token_count.info.total_token_usage
+          physical_environment:
+            network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_005_297cde08
+            network_subnet: 10.181.19.0/24
+            task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_005_297cde08
+            task_container_id: e22d48560e1bcb516b91e54dd48bf1e60f834391ddc333b35bc549a89a127325
+      attempt_02:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_005
+        attempt: 2
+        skill_attempt: 2
+        logical_slot: naive/test_005/attempt_02
+        agent_run_id: eb2cddb3-64c5-485c-a627-4b14add712df
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: 47e008ef7459be80ace3fcd38ff56a69295fc47decc33a4f7f27321acda52c9e
+        staged_hashes:
+          input_sha256: 6f68f4b843bc57bc2c83ca23c07e4fa4a1ae82d9f1e4e49d55c924171b405392
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: 2e8ab27fb724c46db19f7517da6804583af63fe4d5f80b2c2280071b1dd4c6af
+        score: 0.357143
+        answer_sha256: 90da5a5f1774601a1273c23be31940056ed03d2e37e2623f35091dfb60874b68
+        container_name: liuzh_gpt55_naive_728_019_naive_test_005_attempt_02_eb2cddb3
+        started_at: '2026-07-28T11:00:16Z'
+        completed_at: '2026-07-28T11:04:58Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 15
+          cached_input_tokens: 410240
+          input_tokens: 461519
+          observed_model_identity: gpt-5.5
+          output_tokens: 12127
+          portability_warnings: []
+          reasoning_output_tokens: 7255
+          tool_calls: 38
+          total_tokens: 473646
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/evaluator_stderr.txt
+      attempt_03:
+        source: strict_original_readonly
+        metadata_path: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/run_metadata.yaml
+        status: complete
+        reason: null
+        task_id: test_005
+        attempt: 3
+        skill_attempt: 3
+        logical_slot: naive/test_005/attempt_03
+        agent_run_id: ed4037b0-5827-4374-984d-eb3776196148
+        run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: fd715e71e5d8f1bffae40696b7df533fc6f9d3f31cff5e9126932a523e6c8791
+        staged_hashes:
+          input_sha256: 6f68f4b843bc57bc2c83ca23c07e4fa4a1ae82d9f1e4e49d55c924171b405392
+          environment_access_sha256: e26764e6d042484432e6168b3fe5325c08fee24135ab833c803c86119d867322
+          skill_bundle_sha256: dba475e7194fcfc1ea45a8b9a07937431a4beebb9151f7bbe4f6ffd1411a495d
+        score: 1.0
+        answer_sha256: 4ce7f7e8d72a61cf14482a301f5e09006bf188bbc0c1b66fcd9d0a40c2105156
+        container_name: liuzh_gpt55_naive_728_019_naive_test_005_attempt_03_ed4037b0
+        started_at: '2026-07-28T11:08:22Z'
+        completed_at: '2026-07-28T11:13:56Z'
+        exit_code: 0
+        timed_out: false
+        stdout: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/codex_stdout.jsonl
+        stderr: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/codex_stderr.txt
+        trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/primary_trace.jsonl
+        trace_source: codex_home_session
+        metrics:
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 9
+          cached_input_tokens: 281984
+          input_tokens: 334430
+          observed_model_identity: gpt-5.5
+          output_tokens: 8946
+          portability_warnings: []
+          reasoning_output_tokens: 5490
+          tool_calls: 22
+          total_tokens: 343376
+          usage_source: final_token_count.info.total_token_usage
+        evaluator:
+          stdout: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/evaluator_stdout.json
+          stderr: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/evaluator_stderr.txt
+      efficiency:
+        attempts_with_trace_metrics: 3
+        input_tokens: 1237926
+        cached_input_tokens: 1077760
+        output_tokens: 31951
+        reasoning_output_tokens: 19737
+        total_tokens: 1269877
+        assistant_turns: 36
+        tool_calls: 83
+  efficiency_new_retry_runs_only:
+    attempts_with_trace_metrics: 6
+    input_tokens: 3158851
+    cached_input_tokens: 2598784
+    output_tokens: 101423
+    reasoning_output_tokens: 63467
+    total_tokens: 3260274
+    assistant_turns: 84
+    tool_calls: 225
+infrastructure_replacements:
+- logical_slot: bounded_logical_retry_v2/logical_retry_02/test_002
+  agent_run_id: 209f6c10-b61a-408b-87b9-dad5a3d6df2e
+  classification: infrastructure_failure
+  reason: provider/proxy request timed out with reconnect exhaustion and no stdout
+    progress for at least 120 seconds
+  physical_attempt_index: 1
+  replacement_index: 0
+  max_replacement_index: 3
+  archived_at: '2026-07-29T09:18:52Z'
+  archived_path: scratch/bounded_logical_retry_v2/infrastructure_failures/bounded_logical_retry_v2__logical_retry_02__test_002/209f6c10-b61a-408b-87b9-dad5a3d6df2e
+  physical_environment:
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_002_209f6c10
+    network_subnet: 10.185.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_002_209f6c10
+    task_container_id: 516a0748291654209223ecfb08238e165c3057a2e71881c5ef5f2ae323bb1b26
+  helper_sha256_at_failure: 9980110aae050a9948ba786e9145dac5694781c47a4226c203addef44b15cf69
+  retry_plan_sha256: 792553f08448f792610496cee127927de5497d7e273f2f70b32f8dc388fd8ae3
+- logical_slot: bounded_logical_retry_v2/logical_retry_02/test_002
+  agent_run_id: 54ef62ea-80a5-452e-b71b-000a0fa5cb77
+  classification: infrastructure_failure
+  reason: provider/proxy request timed out with reconnect exhaustion and no stdout
+    progress for at least 120 seconds
+  physical_attempt_index: 2
+  replacement_index: 1
+  max_replacement_index: 3
+  archived_at: '2026-07-29T09:28:04Z'
+  archived_path: scratch/bounded_logical_retry_v2/infrastructure_failures/bounded_logical_retry_v2__logical_retry_02__test_002/54ef62ea-80a5-452e-b71b-000a0fa5cb77
+  physical_environment:
+    network_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_net_bounded_logical_retry_v2_logical_retry_02_test_002_54ef62ea
+    network_subnet: 10.186.19.0/24
+    task_container_name: liuzh_gpt55_naive_728_019_bounded_retry_v2_task_env_bounded_logical_retry_v2_logical_retry_02_test_002_54ef62ea
+    task_container_id: 03871829acbc2366c0643de84243ec87130a17712a60df1ba1b9403d7622cf49
+  helper_sha256_at_failure: 9980110aae050a9948ba786e9145dac5694781c47a4226c203addef44b15cf69
+  retry_plan_sha256: 792553f08448f792610496cee127927de5497d7e273f2f70b32f8dc388fd8ae3
+notes:
+- This report is an independently labelled bounded logical retry v2 supplement.
+- It must not be interpreted as the original strict experiment result.
+- Original strict outputs and bounded_logical_retry_v1 outputs remain read-only and
+  unchanged.

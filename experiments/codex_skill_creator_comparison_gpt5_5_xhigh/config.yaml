@@ -12,11 +12,29 @@ skill_creators:
   - cc
   - deepagents
   - opencode
+  - naive
 generation_attempts_per_creator: 3
 test_tasks_per_task_group: 5
 solver_attempts_per_test: 3
 data_root: ../../data/task_groups
 reports_root: reports
+naive_supplement_reports_root: reports/naive_supplement
+report_layers:
+  original:
+    conditions:
+      - base
+      - codex
+      - cc
+      - deepagents
+      - opencode
+    status: complete
+  naive_supplement:
+    conditions:
+      - naive
+    status: complete
+    strict_complete_task_groups: 23
+    bounded_recovery:
+      task_group_019: bounded_logical_retry_v2
 task_groups:
   - task_group_001
   - task_group_002
