@@ -8,12 +8,10 @@
 
 | 路径 | 用途 |
 | --- | --- |
-| `EXPERIMENT_BOARD.md` | 已发布评估结果的汇总表 |
+| `EXPERIMENT_BOARD.md` | 四个主模型的展示看板与结构化报告覆盖范围 |
 | `codex_gpt5_5_xhigh/` | 已发布的 Codex GPT-5.5 xhigh 评估运行 |
 | `claude_code_opus_4_8_xhigh/` | 已发布的 Claude Code Opus 4.8 xhigh 评估运行 |
-| `panofy_claude_opus_4_6_high/` | 已发布的 Panofy Claude Opus 4.6 high 评估运行 |
 | `claude_code_glm_5_2_max/` | 已发布的 Claude Code GLM-5.2 max 评估运行 |
-| `claude_code_kimi2_6_enabled/` | 已发布的 Claude Code Kimi K2.6 enabled 评估运行 |
 | `claude_code_deepseek_v4_pro_max/` | 已发布的 Claude Code DeepSeek V4 Pro Preview max 评估运行 |
 
 每个已发布实验目录都包含 `config.yaml`、结构化 report YAML 文件，以及这些 reports 引用的生成 artifacts（如果有）。
