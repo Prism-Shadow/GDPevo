@@ -1,7 +1,7 @@
 # Evaluation Workflow
 
 This file explains how the main evaluation agent should run one complete Claude
-Code evaluation for DeepSeek V4 Pro through the DeepSeek Anthropic API.
+Code evaluation for DeepSeek V4 Pro Preview through the DeepSeek Anthropic API.
 
 The evaluation runs the task environment in stage- or attempt-scoped Docker
 networks reachable only by the assigned agent containers, across four conditions:
@@ -14,7 +14,7 @@ reflect-3
 ```
 
 Before starting, confirm the active Claude Code session is configured for the
-DeepSeek V4 Pro run:
+DeepSeek V4 Pro Preview run:
 
 ```text
 ANTHROPIC_BASE_URL=https://api.deepseek.com/anthropic

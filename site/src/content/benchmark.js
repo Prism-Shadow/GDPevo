@@ -92,7 +92,7 @@ const v1LeaderboardRuns = [
     }
   },
   {
-    model: "DeepSeek V4 Pro",
+    model: "DeepSeek V4 Pro Preview",
     harness: "Claude Code",
     thinking: "max",
     method: "skill-creator",
@@ -195,7 +195,7 @@ export const radarRuns = [
   },
   {
     id: "claude-deepseek-v4-pro",
-    model: "DeepSeek V4 Pro",
+    model: "DeepSeek V4 Pro Preview",
     harness: "Claude Code",
     thinking: "max",
     method: "skill-creator",

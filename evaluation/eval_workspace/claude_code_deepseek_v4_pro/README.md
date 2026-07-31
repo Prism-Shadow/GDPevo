@@ -1,10 +1,10 @@
-# DeepSeek V4 Pro Claude Code Evaluation Workspace
+# DeepSeek V4 Pro Preview Claude Code Evaluation Workspace
 
 This workspace is the evaluation entrypoint. You are the main evaluation agent for this stage. Your goal is to formally evaluate one task group that has already passed quality review, using `acc`, population `std`, solver efficiency metrics, and separately reported evolve token/cost metrics across four conditions: `base`, `fewshot`, `self`, and `reflect-3`.
 
 This workspace evaluates one task group at a time. Do not modify the task group under evaluation. If you find that the task group itself is invalid, record the risk in the report and send the data back to an earlier stage.
 
-This workspace is for Claude Code running DeepSeek V4 Pro through the DeepSeek
+This workspace is for Claude Code running DeepSeek V4 Pro Preview through the DeepSeek
 Anthropic-compatible endpoint. Before starting any evaluation, confirm Claude
 Code is configured with:
 
@@ -77,8 +77,8 @@ explicitly switches the execution mode. Do not reduce the attempt count, merge
 multiple test tasks into one solver run, or solve test tasks directly as the
 orchestrator.
 
-Every Dockerized Claude Code subprocess must use DeepSeek V4 Pro via the
-DeepSeek Anthropic API, Claude Code effort `max`, DeepSeek V4 Pro for
+Every Dockerized Claude Code subprocess must use DeepSeek V4 Pro Preview via the
+DeepSeek Anthropic API, Claude Code effort `max`, DeepSeek V4 Pro Preview for
 Haiku/subagent defaults, and bypass permissions. Record those observed settings in `scratch/`.
 
 1. Confirm that `task_group/` contains exactly one task group:

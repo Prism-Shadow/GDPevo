@@ -407,11 +407,11 @@ The Kimi token columns are the three usage buckets exposed by the Claude Code ru
 
 ---
 
-## Claude Code (DeepSeek V4 Pro, max)
+## Claude Code (DeepSeek V4 Pro Preview, max)
 
-In the released Claude Code DeepSeek V4 Pro max run, the three evolution modes improve accuracy by +4.84 pp on average and change token cost by +0.48% on average across the 12 task groups. Individually, `fewshot`, `self`, and `reflect-3` improve accuracy by +8.74 pp, +2.63 pp, and +3.16 pp, respectively.
+In the released Claude Code DeepSeek V4 Pro Preview max run, the three evolution modes improve accuracy by +4.84 pp on average and change token cost by +0.48% on average across the 12 task groups. Individually, `fewshot`, `self`, and `reflect-3` improve accuracy by +8.74 pp, +2.63 pp, and +3.16 pp, respectively.
 
-For the released `deepseek-v4-pro, max` run, this board uses the DeepSeek V4 Pro API prices:
+For the released `deepseek-v4-pro, max` run, this board uses the DeepSeek V4 Pro Preview API prices:
 
 | Token type | Price |
 | --- | ---: |

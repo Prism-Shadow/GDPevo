@@ -1,8 +1,8 @@
 # Skill Modes
 
 This evaluation compares four conditions over the same task group, test tasks,
-DeepSeek V4 Pro model configuration, Claude Code `max` effort setting,
-DeepSeek V4 Pro as the default model for Haiku and spawned processes, task
+DeepSeek V4 Pro Preview model configuration, Claude Code `max` effort setting,
+DeepSeek V4 Pro Preview as the default model for Haiku and spawned processes, task
 environment, and evaluators:
 
 ```text

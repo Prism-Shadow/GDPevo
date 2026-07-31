@@ -393,11 +393,11 @@ Kimi 的 token 列是 Claude Code 运行元数据中暴露的三类 usage 桶：
 
 ---
 
-## Claude Code（DeepSeek V4 Pro，max）
+## Claude Code（DeepSeek V4 Pro Preview，max）
 
-在已发布的 Claude Code DeepSeek V4 Pro max 运行中，三个进化模式在 12 个 task group 上平均带来 +4.84 个百分点 的准确率提升，token 成本平均变化 +0.48%。其中 `fewshot`、`self` 和 `reflect-3` 的准确率提升分别为 +8.74 个百分点、+2.63 个百分点 和 +3.16 个百分点。
+在已发布的 Claude Code DeepSeek V4 Pro Preview max 运行中，三个进化模式在 12 个 task group 上平均带来 +4.84 个百分点 的准确率提升，token 成本平均变化 +0.48%。其中 `fewshot`、`self` 和 `reflect-3` 的准确率提升分别为 +8.74 个百分点、+2.63 个百分点 和 +3.16 个百分点。
 
-对于已发布的 `deepseek-v4-pro, max` 运行，本看板使用 DeepSeek V4 Pro API 价格：
+对于已发布的 `deepseek-v4-pro, max` 运行，本看板使用 DeepSeek V4 Pro Preview API 价格：
 
 | Token 类型 | 价格 |
 | --- | ---: |
