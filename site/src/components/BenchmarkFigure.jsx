@@ -214,6 +214,7 @@ function LeaderboardBenchmarkFigure({ className = "", modeLabels = {}, caption =
           </strong>
           <span>
             <Lang {...caption} />
+            {" "}
             <em className="blog-benchmark-range">
               <Lang
                 en={`task groups ${dataset.taskRange}`}
