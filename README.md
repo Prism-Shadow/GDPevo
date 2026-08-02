@@ -10,10 +10,10 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 Each experiment is run 3 times. Values in parentheses are standard deviations; all other values are means. Accuracy is reported as `acc`. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt. Cost is reported in USD; lift and cost change are relative to `base`.
 
-The primary released runs compare four modes. A separate controlled
-[skill-creator comparison](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/)
-holds the Codex harness and GPT-5.5 xhigh fixed while varying the creator used
-for the few-shot skill.
+The primary released runs compare four modes. Separate controlled
+skill-creator comparisons hold the Codex harness and solver model fixed while
+varying the creator used for the few-shot skill: [GPT-5.5 xhigh](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/)
+and [DeepSeek V4 Pro Preview max](experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/).
 
 - **base**: run the test tasks directly, without any evolution step.
 - **self**: evolve its own working strategy from train inputs and the environment, without train answers.

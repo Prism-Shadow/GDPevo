@@ -1,0 +1,804 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+recovery_layer: bounded_logical_retry_v2
+recovery_label: logical_retry_02
+task_group_id: task_group_004
+model_profile: deepseek_v4_max_preview
+harness: codex
+status: complete
+model:
+  generator_model: deepseek-ai/DeepSeek-V4-Pro
+  solver_model: deepseek-ai/DeepSeek-V4-Pro
+  reasoning_effort: max
+  provider_id: siliconflow_bridge
+  observed_identity: deepseek-ai/DeepSeek-V4-Pro
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:e53b2652b38996113e34f49ec7dd4b90c318cf6e618b2d6d3b1be4f1f3a75b6b
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/deepseek_v4_max_preview/task_group_004.yaml
+  report_sha256: 2055bb22fbee3be88c8e70c53186fa61a7ccf497c55cdd6c541d3a82d648f7ea
+  status: complete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:e53b2652b38996113e34f49ec7dd4b90c318cf6e618b2d6d3b1be4f1f3a75b6b
+first_pass:
+  report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+  report_sha256_at_prepaid_gate: b38f62b44f85af652598b34e6d7a8940e650c6c3f4808a1b99d4bf9d1600b417
+  report_sha256_at_recovery_report: b38f62b44f85af652598b34e6d7a8940e650c6c3f4808a1b99d4bf9d1600b417
+  status: incomplete
+  naive_status: incomplete
+  combined_report: report/deepseek_v4_max_preview/task_group_004.yaml
+  combined_report_sha256: 5b013255ba9b020cf81e0847d1e572258b66c30049ee440112ebc72e0428c243
+  run_manifest: scratch/run_manifest/deepseek_v4_max_preview.yaml
+  run_manifest_sha256: 2fee9e908c6c51dd8244a8319409e94d581ef47679a89be0bd115cc9d6e7674b
+  consumed_artifact_inventory: supplemental/bounded_logical_retry_v2/prepaid_gate/first_pass_v1_hash_inventory.yaml
+v1_recovery:
+  report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+  report_sha256_at_prepaid_gate: 71db1074d37c645ddf2c3fb1598dac0e7f27a77b5875d0dcfb0386c32c95adc3
+  report_sha256_at_recovery_report: 71db1074d37c645ddf2c3fb1598dac0e7f27a77b5875d0dcfb0386c32c95adc3
+  status: incomplete
+  naive_status: incomplete
+  run_manifest: scratch/bounded_logical_retry_v1/run_manifest/deepseek_v4_max_preview.yaml
+  run_manifest_sha256: d55107885cb283f9ceac92b039efffb673066ae625fc892d8cc49f07811aa4b3
+  recovery_layer: bounded_logical_retry_v1
+  recovery_label: logical_retry_01
+execution:
+  started_at: '2026-07-30T03:00:53Z'
+  completed_at: '2026-07-30T03:52:24Z'
+  run_manifest: scratch/bounded_logical_retry_v2/run_manifest/deepseek_v4_max_preview.yaml
+  run_manifest_sha256: a6441ccab5a8cd92fdc0ed84f2d087775039c29bf24341ad093afd39ec038e98
+  recovery_helper: scratch/bounded_logical_retry_v2/recovery_orchestrator.py
+  recovery_helper_sha256: 231c7b1e1961ae5e49da0576a95813ccf4d6ea4698042058c89ab03593e631b4
+  base_helper: scratch/naive_orchestrator.py
+  base_helper_sha256: 2ec03f43a6d0a6763a99c1f5045c63b9b1856105a57fc9fe43f2ad966dcbb229
+  run_plan: configs/run_plan.yaml
+  run_plan_sha256: 9282a11d6858c26e482db004e120269ad6b01b6601114de0f74e6f48133d2577
+  prepaid_exact_slot_plan: supplemental/bounded_logical_retry_v2/prepaid_gate/exact_slot_plan.yaml
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  global_count_events:
+  - at: '2026-07-30T03:00:55Z'
+    wave: wave_1_v2_invalid_solver_slots
+    live_global_model_agent_count: 21
+    global_limit: 60
+recovery_request:
+- wave: 1
+  description: recover only the two solver slots that remain invalid after bounded_logical_retry_v1
+  max_parallel_model_calls: 2
+  slots:
+  - logical_slot: naive/test_004/attempt_03
+    slot_kind: solver
+    first_pass_status: invalid_output
+    v1_status: invalid_output
+    v1_reason: missing_answer_json
+    skill_source: first-pass valid naive/attempt_03 skill
+    recovery_label: logical_retry_02
+    physical_execution_limit: 3
+  - logical_slot: naive/test_005/attempt_02
+    slot_kind: solver
+    first_pass_status: not_runnable
+    v1_status: invalid_output
+    v1_reason: timed_out_without_answer_json
+    skill_source: v1 recovered valid naive/attempt_02 logical_retry_01 skill
+    recovery_label: logical_retry_02
+    physical_execution_limit: 3
+prior_invalid_slots:
+  naive/test_004/attempt_03:
+    first_pass_status: invalid_output
+    v1_status: invalid_output
+    v1_record:
+      logical_slot: naive/test_004/attempt_03
+      slot_kind: solver
+      task_id: test_004
+      attempt: attempt_03
+      skill_attempt: attempt_03
+      first_pass_status: invalid_output
+      recovery_layer: bounded_logical_retry_v1
+      recovery_label: logical_retry_01
+      status: invalid_output
+      agent_run_id: d2c76062-ece7-40a5-b24e-961a28eb57b5
+      physical_uuid: 56fa3d5c-c14f-4c98-9467-6c3616e8a336
+      started_at: '2026-07-29T18:00:04Z'
+      completed_at: '2026-07-29T18:24:28Z'
+      duration_seconds: 1463.921992
+      exit_code: 0
+      timed_out: false
+      trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/logical_retry_01/physical_01_56fa3d5c-c14f-4c98-9467-6c3616e8a336
+      primary_trace: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/logical_retry_01/physical_01_56fa3d5c-c14f-4c98-9467-6c3616e8a336/codex_home/sessions/2026/07/29/rollout-2026-07-29T18-00-06-019faf08-a248-7963-9875-9e0f3b879258.jsonl
+      prompt_template_id: fewshot_test_solver
+      prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+      rendered_prompt_sha256: 07c8d0557b8c3728d96f779a1b16869644b7119ac17d464b2791bd47727e4bb3
+      input_hashes:
+        model_catalog_sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+        test_input_tree_sha256: 822d1e4f383d0d9390516356ce1b968677e71dd0b5a190868204c502a5e78a8f
+        environment_access_sha256: d7542303dcbff6871de3863045cba4c5708c183207bc59aa87f066bbfe7a3171
+        skill_bundle_sha256: 27ba2546c6292ac856977be182d1141820311543a11572093e439b08d76c1434
+      skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+      skill_bundle_sha256: 27ba2546c6292ac856977be182d1141820311543a11572093e439b08d76c1434
+      answer_sha256: null
+      score: null
+      score_status: missing_answer_json
+      evaluator_output: null
+      input_tokens: 1225316
+      cached_input_tokens: 1169408
+      output_tokens: 57090
+      reasoning_output_tokens: 35026
+      total_tokens: 1282406
+      cost_usd: null
+      assistant_turns: 38
+      tool_calls: 63
+      portability_warnings: []
+      observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+      provenance:
+        source_layer: recovery
+        first_pass_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+        first_pass_report_sha256: b38f62b44f85af652598b34e6d7a8940e650c6c3f4808a1b99d4bf9d1600b417
+        logical_retry: logical_retry_01
+  naive/test_005/attempt_02:
+    first_pass_status: not_runnable
+    v1_status: invalid_output
+    v1_record:
+      logical_slot: naive/test_005/attempt_02
+      slot_kind: solver
+      task_id: test_005
+      attempt: attempt_02
+      skill_attempt: attempt_02
+      first_pass_status: not_runnable
+      recovery_layer: bounded_logical_retry_v1
+      recovery_label: logical_retry_01
+      status: invalid_output
+      agent_run_id: 178949d4-3e2b-4171-bc78-15a3ca59f8f1
+      physical_uuid: 55280d90-5b83-4e92-8b93-d6fe81590299
+      started_at: '2026-07-29T16:59:49Z'
+      completed_at: '2026-07-29T18:00:03Z'
+      duration_seconds: 3614.017368
+      exit_code: null
+      timed_out: true
+      trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/logical_retry_01/physical_01_55280d90-5b83-4e92-8b93-d6fe81590299
+      primary_trace: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/logical_retry_01/physical_01_55280d90-5b83-4e92-8b93-d6fe81590299/codex_home/sessions/2026/07/29/rollout-2026-07-29T16-59-53-019faed1-80a1-7012-872c-2526bcac8ea3.jsonl
+      prompt_template_id: fewshot_test_solver
+      prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+      rendered_prompt_sha256: 47170ba0ee21e2c315c7087a0813e7e40cb07b71e366f1cb42f16cce161e5a8b
+      input_hashes:
+        model_catalog_sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+        test_input_tree_sha256: 51cfbc058dede6e56c41d73c134b8f2ee323d5c30769c91920520369b6ca67ab
+        environment_access_sha256: d7542303dcbff6871de3863045cba4c5708c183207bc59aa87f066bbfe7a3171
+        skill_bundle_sha256: 0811c00dc4adcadc37f0e72c0ecd6329f8ff54ab7767fc226ca22a02b00a5094
+      skill_dir: supplemental/bounded_logical_retry_v1/skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02/logical_retry_01
+      skill_bundle_sha256: 0811c00dc4adcadc37f0e72c0ecd6329f8ff54ab7767fc226ca22a02b00a5094
+      answer_sha256: null
+      score: null
+      score_status: timeout_after_model_launch
+      evaluator_output: null
+      input_tokens: 1367706
+      cached_input_tokens: 1308160
+      output_tokens: 132647
+      reasoning_output_tokens: 107884
+      total_tokens: 1500353
+      cost_usd: null
+      assistant_turns: 34
+      tool_calls: 45
+      portability_warnings: []
+      observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+      provenance:
+        source_layer: recovery
+        first_pass_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+        first_pass_report_sha256: b38f62b44f85af652598b34e6d7a8940e650c6c3f4808a1b99d4bf9d1600b417
+        logical_retry: logical_retry_01
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        status: valid
+        invalid_reason: null
+        agent_run_id: a14ca02b-2ce5-45f3-9b79-f31f077139db
+        physical_id: 8c7080a896e8437f85aa8ea175b5eb7a
+        started_at: '2026-07-29T11:44:28Z'
+        completed_at: '2026-07-29T12:13:23Z'
+        duration_seconds: 1735.57791
+        exit_code: 0
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_01
+        primary_trace: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_01/codex_home/sessions/2026/07/29/rollout-2026-07-29T11-44-30-019fadb0-c315-7b42-91e7-07bc1f3c21fc.jsonl
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 611f24024744550baea0d31d7452111dd3afd8ade94e5a94ef3ae32f92028b80
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: a5c0cd4105e9a24d3411c565b8eaa87b40f6b47356136b1b652dbc5bfb4b5688
+        input_tokens: 828484
+        cached_input_tokens: 777728
+        output_tokens: 65266
+        reasoning_output_tokens: 47269
+        total_tokens: 893750
+        cost_usd: null
+        assistant_turns: 23
+        tool_calls: 55
+        file_count: 1
+        bytes: 19600
+        portability_warnings: []
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        logical_slot: naive/attempt_01
+        provenance:
+          source_layer: first_pass
+          first_pass_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+          first_pass_report_sha256: b38f62b44f85af652598b34e6d7a8940e650c6c3f4808a1b99d4bf9d1600b417
+      attempt_02:
+        logical_slot: naive/attempt_02
+        slot_kind: generation
+        first_pass_status: invalid
+        first_pass_invalid_reason: missing_skill_md
+        recovery_layer: bounded_logical_retry_v1
+        recovery_label: logical_retry_01
+        status: valid
+        invalid_reason: null
+        agent_run_id: e768a94e-e76d-4b9f-ba60-8908476028eb
+        physical_uuid: bb83fc10-c438-404e-8a99-04dafd7c6bab
+        started_at: '2026-07-29T16:43:23Z'
+        completed_at: '2026-07-29T16:59:48Z'
+        duration_seconds: 984.871932
+        exit_code: 0
+        timed_out: false
+        trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_02/logical_retry_01/physical_01_bb83fc10-c438-404e-8a99-04dafd7c6bab
+        primary_trace: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_02/logical_retry_01/physical_01_bb83fc10-c438-404e-8a99-04dafd7c6bab/codex_home/sessions/2026/07/29/rollout-2026-07-29T16-43-25-019faec2-6cfc-7942-97aa-0d63a8f073a0.jsonl
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 3bffa27a5856827f81bb8516c8a6380bbd246b1ae51ce44c31f3359391a45304
+        input_hashes:
+          model_catalog_sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+          creator_bundle_tree_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          train_tasks_tree_sha256: 9eba5d0df9ae6358406730e342e5ca6c88dd5913e3192956dbb25d78cfce66b5
+          train_answers_tree_sha256: 1bdf2651315711b80ab52394c9f3868ad713ad24d45ef4a0959dc25ff79e4cb9
+          environment_access_sha256: d7542303dcbff6871de3863045cba4c5708c183207bc59aa87f066bbfe7a3171
+        skill_dir: supplemental/bounded_logical_retry_v1/skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02/logical_retry_01
+        skill_bundle_sha256: 0811c00dc4adcadc37f0e72c0ecd6329f8ff54ab7767fc226ca22a02b00a5094
+        input_tokens: 1210855
+        cached_input_tokens: 1156352
+        output_tokens: 37476
+        reasoning_output_tokens: 11332
+        total_tokens: 1248331
+        cost_usd: null
+        assistant_turns: 31
+        tool_calls: 70
+        file_count: 3
+        bytes: 29738
+        portability_warnings: []
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        provenance:
+          source_layer: bounded_logical_retry_v1
+          first_pass_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+          first_pass_report_sha256: b38f62b44f85af652598b34e6d7a8940e650c6c3f4808a1b99d4bf9d1600b417
+          logical_retry: logical_retry_01
+          recovery_layer: bounded_logical_retry_v1
+      attempt_03:
+        status: valid
+        invalid_reason: null
+        agent_run_id: 95717d25-81ba-4a2b-9eec-bcea9b4fb884
+        physical_id: 72468324b64241ce91752d2db4247fa8
+        started_at: '2026-07-29T12:22:51Z'
+        completed_at: '2026-07-29T12:34:24Z'
+        duration_seconds: 692.886613
+        exit_code: 0
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_03
+        primary_trace: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_03/codex_home/sessions/2026/07/29/rollout-2026-07-29T12-22-53-019fadd3-e87c-70b0-a684-31996e5dc599.jsonl
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 293140a2e9f4c363c3ddba6fc8f4b50fe94788cf5e2ce4e51805b61a71790167
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: 27ba2546c6292ac856977be182d1141820311543a11572093e439b08d76c1434
+        input_tokens: 600222
+        cached_input_tokens: 562944
+        output_tokens: 26903
+        reasoning_output_tokens: 8882
+        total_tokens: 627125
+        cost_usd: null
+        assistant_turns: 20
+        tool_calls: 29
+        file_count: 6
+        bytes: 26630
+        portability_warnings: []
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        logical_slot: naive/attempt_03
+        provenance:
+          source_layer: first_pass
+          first_pass_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+          first_pass_report_sha256: b38f62b44f85af652598b34e6d7a8940e650c6c3f4808a1b99d4bf9d1600b417
+    valid_generation_rate: 1.0
+  overall_acc_at_3: 0.338527
+  overall_std_at_3: 0.187728
+  lift_over_shared_base: 0.167902
+  efficiency:
+    input_tokens_avg_3: 914064.4
+    cached_input_tokens_avg_3: 859033.6
+    output_tokens_avg_3: 50242.2
+    reasoning_output_tokens_avg_3: 33859.066667
+    cost_usd_avg_3: null
+    rounds_avg_3: 22.333333
+    tool_calls_avg_3: 34.8
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.318182
+      - 0.045455
+      - 0.318182
+      acc_at_3: 0.227273
+      std_at_3: 0.128565
+      input_tokens_avg_3: 1179997.0
+      cached_input_tokens_avg_3: 1110698.666667
+      output_tokens_avg_3: 59669.666667
+      reasoning_output_tokens_avg_3: 42273.333333
+      cost_usd_avg_3: null
+      rounds_avg_3: 22.0
+      tool_calls_avg_3: 37.666667
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.318182
+          run_dir: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01
+          answer_sha256: a21e016ec92f1fb1f1d049b8fad6622074f714fc77f3133368ece6e331bdff1c
+          source_layer: first_pass
+          recovery_label: null
+        attempt_02:
+          status: complete
+          score: 0.045455
+          run_dir: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01
+          trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01/physical_01_1824b283-3398-4565-9bb8-0520873b9fce
+          answer_sha256: ebc8c9bc9b23adff839d43058c4f8510f428147bb20c531273173fa1dea1848d
+          source_layer: bounded_logical_retry_v1
+          recovery_label: logical_retry_01
+        attempt_03:
+          status: complete
+          score: 0.318182
+          run_dir: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03
+          answer_sha256: fe6e9cde9fa109bcea46c10d12c666a59d4da2283484220f513eb8aba6c936ad
+          source_layer: first_pass
+          recovery_label: null
+    test_002:
+      status: complete
+      scores:
+      - 0.625
+      - 0.4375
+      - 0.1875
+      acc_at_3: 0.416667
+      std_at_3: 0.179215
+      input_tokens_avg_3: 261734.666667
+      cached_input_tokens_avg_3: 232874.666667
+      output_tokens_avg_3: 21768.333333
+      reasoning_output_tokens_avg_3: 15137.333333
+      cost_usd_avg_3: null
+      rounds_avg_3: 11.333333
+      tool_calls_avg_3: 19.666667
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.625
+          run_dir: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01
+          answer_sha256: 4a912581f498bac3d1120e93e87e762f44a9efb52cdd64a2c7428d01bdac16fa
+          source_layer: first_pass
+          recovery_label: null
+        attempt_02:
+          status: complete
+          score: 0.4375
+          run_dir: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_01
+          trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_01/physical_01_59384d5b-7ed2-4166-98e6-b3f51bdc7723
+          answer_sha256: 9c2c56732db84769feb1bfae782c1708f04d95f5a1d5c2326b4ef994d6aa98c3
+          source_layer: bounded_logical_retry_v1
+          recovery_label: logical_retry_01
+        attempt_03:
+          status: complete
+          score: 0.1875
+          run_dir: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03
+          answer_sha256: 610fb00d4fa5d6cf6f205005e3ffc29fc25d194380be325d025d17e92edfab11
+          source_layer: first_pass
+          recovery_label: null
+    test_003:
+      status: complete
+      scores:
+      - 1.0
+      - 0.294118
+      - 0.588235
+      acc_at_3: 0.627451
+      std_at_3: 0.289506
+      input_tokens_avg_3: 567038.333333
+      cached_input_tokens_avg_3: 507392.0
+      output_tokens_avg_3: 25104.333333
+      reasoning_output_tokens_avg_3: 13752.333333
+      cost_usd_avg_3: null
+      rounds_avg_3: 13.333333
+      tool_calls_avg_3: 24.666667
+      attempts:
+        attempt_01:
+          status: complete
+          score: 1.0
+          run_dir: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01
+          answer_sha256: 5976f3a9d8ef5a48cbcbb1e93c25e90aa167e58e04d15f52c5aec1aac4e933ca
+          source_layer: first_pass
+          recovery_label: null
+        attempt_02:
+          status: complete
+          score: 0.294118
+          run_dir: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_01
+          trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_01/physical_01_9a88eb5c-68c5-4014-b799-2b321d3cd15c
+          answer_sha256: 5dea92dec8b6b2fbe47db3a438f069471e3658d4406acfe5db5550b79b254d8e
+          source_layer: bounded_logical_retry_v1
+          recovery_label: logical_retry_01
+        attempt_03:
+          status: complete
+          score: 0.588235
+          run_dir: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03
+          answer_sha256: cf2176d06603cc93ad530a70824c437e9080971258c6b8027a109a5c61eb3031
+          source_layer: first_pass
+          recovery_label: null
+    test_004:
+      status: complete
+      scores:
+      - 0.428571
+      - 0.0
+      - 0.142857
+      acc_at_3: 0.190476
+      std_at_3: 0.178174
+      input_tokens_avg_3: 1204873.0
+      cached_input_tokens_avg_3: 1150464.0
+      output_tokens_avg_3: 54561.666667
+      reasoning_output_tokens_avg_3: 31226.666667
+      cost_usd_avg_3: null
+      rounds_avg_3: 32.333333
+      tool_calls_avg_3: 47.0
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.42857142857142855
+          run_dir: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01
+          answer_sha256: c027709ea54fcbc90f7c01847aeba6954e44a1aa517b00f03525c074d876cb09
+          source_layer: first_pass
+          recovery_label: null
+        attempt_02:
+          status: complete
+          score: 0.0
+          run_dir: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_01
+          trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_01/physical_01_19e11101-1a18-4a89-8ad6-e5d97b288c59
+          answer_sha256: f10dde86b287c2cd55c4338bfdc0ab2c3384b6fca15e903b36adf24b37dbba25
+          source_layer: bounded_logical_retry_v1
+          recovery_label: logical_retry_01
+        attempt_03:
+          status: complete
+          score: 0.14285714285714285
+          run_dir: null
+          trace_dir: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/logical_retry_02/physical_01_fafe169e-dd9e-4ed7-a4f7-c8873a111ec5
+          answer_sha256: 82ba43c57aa53544e4f14962c4526c8de6ab818316e4c03c8dc542c15f194cd6
+          source_layer: bounded_logical_retry_v2
+          recovery_label: logical_retry_02
+    test_005:
+      status: complete
+      scores:
+      - 0.346154
+      - 0.0
+      - 0.346154
+      acc_at_3: 0.230769
+      std_at_3: 0.163179
+      input_tokens_avg_3: 1356679.0
+      cached_input_tokens_avg_3: 1293738.666667
+      output_tokens_avg_3: 90107.0
+      reasoning_output_tokens_avg_3: 66905.666667
+      cost_usd_avg_3: null
+      rounds_avg_3: 32.666667
+      tool_calls_avg_3: 45.0
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.346154
+          run_dir: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01
+          answer_sha256: bf2db154ed9656e15f9cf687eef93771c721cc4103b7d64aa0304e1a486ae8cd
+          source_layer: first_pass
+          recovery_label: null
+        attempt_02:
+          status: complete
+          score: 0.0
+          run_dir: null
+          trace_dir: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/logical_retry_02/physical_01_8cd71075-6c8b-4bcd-963c-abf2bd25358d
+          answer_sha256: 0a8f843c036cb8519f4ee9e775f0f4baa9c8758320cddc8b3a47a8be4c8d8aad
+          source_layer: bounded_logical_retry_v2
+          recovery_label: logical_retry_02
+        attempt_03:
+          status: complete
+          score: 0.346154
+          run_dir: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/logical_retry_01
+          trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/logical_retry_01/physical_01_d549d3ea-762f-4f40-a8c5-2bf9b7e232a6
+          answer_sha256: 3dbf7e8759f935d6fc2fbb53edd0483f5f7e6b47e1c348942d53a4efc042412e
+          source_layer: bounded_logical_retry_v1
+          recovery_label: logical_retry_01
+recovered_slots:
+  generation: {}
+  solver:
+    test_001: {}
+    test_002: {}
+    test_003: {}
+    test_004:
+      attempt_03:
+        logical_slot: naive/test_004/attempt_03
+        slot_kind: solver
+        task_id: test_004
+        attempt: attempt_03
+        skill_attempt: attempt_03
+        first_pass_status: invalid_output
+        v1_status: invalid_output
+        v1_reason: missing_answer_json
+        recovery_layer: bounded_logical_retry_v2
+        recovery_label: logical_retry_02
+        status: complete
+        agent_run_id: b2c7b1e1-002d-4d3f-8802-ec73d7ae872b
+        physical_uuid: fafe169e-dd9e-4ed7-a4f7-c8873a111ec5
+        started_at: '2026-07-30T03:00:55Z'
+        completed_at: '2026-07-30T03:37:41Z'
+        duration_seconds: 2206.587011
+        exit_code: 0
+        timed_out: false
+        trace_dir: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/logical_retry_02/physical_01_fafe169e-dd9e-4ed7-a4f7-c8873a111ec5
+        primary_trace: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/logical_retry_02/physical_01_fafe169e-dd9e-4ed7-a4f7-c8873a111ec5/codex_home/sessions/2026/07/30/rollout-2026-07-30T03-00-57-019fb0f7-ccb0-7740-969d-aea5a149dd81.jsonl
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: 178d89ffec5204590d93fd59c063d1e7f191171e7c89ead4ae87b2b1b45c9a48
+        input_hashes:
+          model_catalog_sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+          test_input_tree_sha256: 822d1e4f383d0d9390516356ce1b968677e71dd0b5a190868204c502a5e78a8f
+          environment_access_sha256: d7542303dcbff6871de3863045cba4c5708c183207bc59aa87f066bbfe7a3171
+          skill_bundle_sha256: 27ba2546c6292ac856977be182d1141820311543a11572093e439b08d76c1434
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: 27ba2546c6292ac856977be182d1141820311543a11572093e439b08d76c1434
+        answer_sha256: 82ba43c57aa53544e4f14962c4526c8de6ab818316e4c03c8dc542c15f194cd6
+        score: 0.14285714285714285
+        score_status: complete
+        evaluator_output:
+          checks:
+            actions_and_reasons: false
+            cohort_checks: false
+            complete_model_policy_code_set: false
+            model_policy_code_core: false
+            probabilities_and_risk_levels: false
+            row_and_feature_counts: true
+            tenure_and_deployment: false
+            top6_order: false
+            validation_accuracy: true
+          earned_weight: 3
+          score: 0.14285714285714285
+          total_weight: 21
+        input_tokens: 2229350
+        cached_input_tokens: 2151424
+        output_tokens: 87282
+        reasoning_output_tokens: 56331
+        total_tokens: 2316632
+        cost_usd: null
+        assistant_turns: 48
+        tool_calls: 70
+        portability_warnings: []
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        provenance:
+          source_layer: bounded_logical_retry_v2
+          first_pass_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+          first_pass_report_sha256: b38f62b44f85af652598b34e6d7a8940e650c6c3f4808a1b99d4bf9d1600b417
+          v1_report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+          v1_report_sha256: 71db1074d37c645ddf2c3fb1598dac0e7f27a77b5875d0dcfb0386c32c95adc3
+          logical_retry: logical_retry_02
+    test_005:
+      attempt_02:
+        logical_slot: naive/test_005/attempt_02
+        slot_kind: solver
+        task_id: test_005
+        attempt: attempt_02
+        skill_attempt: attempt_02
+        first_pass_status: not_runnable
+        v1_status: invalid_output
+        v1_reason: timed_out_without_answer_json
+        recovery_layer: bounded_logical_retry_v2
+        recovery_label: logical_retry_02
+        status: complete
+        agent_run_id: 27165a9b-cc5b-4e9e-b965-b139a1b7dba5
+        physical_uuid: 8cd71075-6c8b-4bcd-963c-abf2bd25358d
+        started_at: '2026-07-30T03:00:55Z'
+        completed_at: '2026-07-30T03:52:23Z'
+        duration_seconds: 3088.228236
+        exit_code: 0
+        timed_out: false
+        trace_dir: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/logical_retry_02/physical_01_8cd71075-6c8b-4bcd-963c-abf2bd25358d
+        primary_trace: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/logical_retry_02/physical_01_8cd71075-6c8b-4bcd-963c-abf2bd25358d/codex_home/sessions/2026/07/30/rollout-2026-07-30T03-00-57-019fb0f7-ccad-7a41-b763-7f3f16b18f00.jsonl
+        prompt_template_id: fewshot_test_solver
+        prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+        rendered_prompt_sha256: aabc54f47424060a81908dcb0bebd4f3bf31aae36263f2acdf967e1d3573fe20
+        input_hashes:
+          model_catalog_sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+          test_input_tree_sha256: 51cfbc058dede6e56c41d73c134b8f2ee323d5c30769c91920520369b6ca67ab
+          environment_access_sha256: d7542303dcbff6871de3863045cba4c5708c183207bc59aa87f066bbfe7a3171
+          skill_bundle_sha256: 0811c00dc4adcadc37f0e72c0ecd6329f8ff54ab7767fc226ca22a02b00a5094
+        skill_dir: supplemental/bounded_logical_retry_v1/skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02/logical_retry_01
+        skill_bundle_sha256: 0811c00dc4adcadc37f0e72c0ecd6329f8ff54ab7767fc226ca22a02b00a5094
+        answer_sha256: 0a8f843c036cb8519f4ee9e775f0f4baa9c8758320cddc8b3a47a8be4c8d8aad
+        score: 0.0
+        score_status: complete
+        evaluator_output:
+          checks:
+          - name: ordered_watchlist_account_ids
+            passed: false
+            weight: 3
+          - name: risk_scores_levels_and_actions
+            passed: false
+            weight: 3
+          - name: current_arr_and_overdue_balances
+            passed: false
+            weight: 2
+          - name: pipeline_and_net_exposure_per_account
+            passed: false
+            weight: 2
+          - name: reason_code_sets
+            passed: false
+            weight: 2
+          - name: next_touch_due_dates_and_action_map
+            passed: false
+            weight: 2
+          - name: finance_pipeline_summary_totals
+            passed: false
+            weight: 3
+          - name: retention_policy_code_core
+            passed: false
+            weight: 3
+          - name: board_policy_codes
+            passed: false
+            weight: 3
+          - name: complete_policy_code_set
+            passed: false
+            weight: 3
+          earned_weight: 0
+          score: 0.0
+          total_weight: 26
+        input_tokens: 1852064
+        cached_input_tokens: 1785856
+        output_tokens: 121190
+        reasoning_output_tokens: 95670
+        total_tokens: 1973254
+        cost_usd: null
+        assistant_turns: 43
+        tool_calls: 57
+        portability_warnings: []
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        provenance:
+          source_layer: bounded_logical_retry_v2
+          first_pass_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+          first_pass_report_sha256: b38f62b44f85af652598b34e6d7a8940e650c6c3f4808a1b99d4bf9d1600b417
+          v1_report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+          v1_report_sha256: 71db1074d37c645ddf2c3fb1598dac0e7f27a77b5875d0dcfb0386c32c95adc3
+          logical_retry: logical_retry_02
+slot_provenance:
+  generation:
+    attempt_01:
+      effective_source_layer: first_pass
+      first_pass_status: valid
+      v1_status: valid
+      recovery_label: null
+      source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+    attempt_02:
+      effective_source_layer: bounded_logical_retry_v1
+      first_pass_status: invalid
+      v1_status: valid
+      recovery_label: logical_retry_01
+      source_report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+    attempt_03:
+      effective_source_layer: first_pass
+      first_pass_status: valid
+      v1_status: valid
+      recovery_label: null
+      source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+  solver:
+    test_001:
+      attempt_01:
+        effective_source_layer: first_pass
+        first_pass_status: complete
+        v1_status: complete
+        recovery_label: null
+        source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+      attempt_02:
+        effective_source_layer: bounded_logical_retry_v1
+        first_pass_status: not_runnable
+        v1_status: complete
+        recovery_label: logical_retry_01
+        source_report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+      attempt_03:
+        effective_source_layer: first_pass
+        first_pass_status: complete
+        v1_status: complete
+        recovery_label: null
+        source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+    test_002:
+      attempt_01:
+        effective_source_layer: first_pass
+        first_pass_status: complete
+        v1_status: complete
+        recovery_label: null
+        source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+      attempt_02:
+        effective_source_layer: bounded_logical_retry_v1
+        first_pass_status: not_runnable
+        v1_status: complete
+        recovery_label: logical_retry_01
+        source_report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+      attempt_03:
+        effective_source_layer: first_pass
+        first_pass_status: complete
+        v1_status: complete
+        recovery_label: null
+        source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+    test_003:
+      attempt_01:
+        effective_source_layer: first_pass
+        first_pass_status: complete
+        v1_status: complete
+        recovery_label: null
+        source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+      attempt_02:
+        effective_source_layer: bounded_logical_retry_v1
+        first_pass_status: not_runnable
+        v1_status: complete
+        recovery_label: logical_retry_01
+        source_report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+      attempt_03:
+        effective_source_layer: first_pass
+        first_pass_status: complete
+        v1_status: complete
+        recovery_label: null
+        source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+    test_004:
+      attempt_01:
+        effective_source_layer: first_pass
+        first_pass_status: complete
+        v1_status: complete
+        recovery_label: null
+        source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+      attempt_02:
+        effective_source_layer: bounded_logical_retry_v1
+        first_pass_status: not_runnable
+        v1_status: complete
+        recovery_label: logical_retry_01
+        source_report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+      attempt_03:
+        effective_source_layer: bounded_logical_retry_v2
+        first_pass_status: invalid_output
+        v1_status: invalid_output
+        recovery_label: logical_retry_02
+        source_report: supplemental/bounded_logical_retry_v2/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+    test_005:
+      attempt_01:
+        effective_source_layer: first_pass
+        first_pass_status: complete
+        v1_status: complete
+        recovery_label: null
+        source_report: report/deepseek_v4_max_preview/task_group_004.naive_supplement.yaml
+      attempt_02:
+        effective_source_layer: bounded_logical_retry_v2
+        first_pass_status: not_runnable
+        v1_status: invalid_output
+        recovery_label: logical_retry_02
+        source_report: supplemental/bounded_logical_retry_v2/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+      attempt_03:
+        effective_source_layer: bounded_logical_retry_v1
+        first_pass_status: invalid_output
+        v1_status: complete
+        recovery_label: logical_retry_01
+        source_report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_004.naive_recovery.yaml
+infrastructure_replacements: []
+notes: []

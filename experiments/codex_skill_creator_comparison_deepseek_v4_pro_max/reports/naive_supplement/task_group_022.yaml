@@ -1,0 +1,1303 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+parent_experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_022
+model_profile: deepseek_v4_max_preview
+harness: codex
+recovery_layer: bounded_logical_retry_v2
+logical_retry: logical_retry_02
+status: complete
+model:
+  generator_model: deepseek-ai/DeepSeek-V4-Pro
+  solver_model: deepseek-ai/DeepSeek-V4-Pro
+  reasoning_effort: max
+  provider_id: siliconflow_bridge
+  observed_identity: deepseek-ai/DeepSeek-V4-Pro
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:cf95ef4276552b6cdfbbed754d5f43640ba60e6b56bf6b34534a4e7fc999a3ea
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/deepseek_v4_max_preview/task_group_022.yaml
+  report_sha256: 89241002bd3fda384ff90426a464e28cfd73f17eafcf1c6dffcd1465ff51510d
+  status: incomplete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:cf95ef4276552b6cdfbbed754d5f43640ba60e6b56bf6b34534a4e7fc999a3ea
+  combined_merge_ready: false
+first_pass:
+  report: report/deepseek_v4_max_preview/task_group_022.naive_supplement.yaml
+  report_sha256: 3960d1164f04d9a77ba972eaa621bdee82235ce401e751e00ff51f89cb147811
+  status: incomplete
+  preserved_without_overwrite: true
+execution:
+  started_at: '2026-07-30T08:00:15.916523Z'
+  completed_at: '2026-07-30T08:39:26.631549Z'
+  run_manifest: scratch/bounded_logical_retry_v2/logical_retry_02/run_manifest/deepseek_v4_max_preview.logical_retry_02.yaml
+  run_manifest_sha256: 9dabc1a492c6a545069afbbf7b8f66890d4835c47fd10530b52ccb14b458f2f2
+  run_plan_sha256: 9282a11d6858c26e482db004e120269ad6b01b6601114de0f74e6f48133d2577
+  helper_sha256: f1d9aefd36bd9b9e50e3ed89707411414b043efd52e306f1f8b98d20e0cef399
+  base_helper_sha256: d9b0f61113072b4cb9e5e5a97ad90509452bf56addf01aa661b4057c6084a48c
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  pre_recovery_hash_inventory: supplemental/bounded_logical_retry_v2/logical_retry_02/preflight/pre_recovery_hash_inventory.logical_retry_02.yaml
+  pre_recovery_hash_inventory_sha256: de3d7806b552865045f1bbfdb5f4098c88cf94aefad2214558354719bb9f0122
+  exact_slot_plan: supplemental/bounded_logical_retry_v2/logical_retry_02/preflight/exact_slot_plan.logical_retry_02.yaml
+  exact_slot_plan_sha256: 0ae97bd4b452c58a24d32f4687fb2b686cd56deb9270ddb5918d1c1c674f77f0
+  generation_trace_root: original_traces/deepseek_v4_max_preview/skill_generation/naive
+  solver_trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive
+  recovery_solver_trace_root: supplemental/bounded_logical_retry_v2/logical_retry_02/original_traces/deepseek_v4_max_preview/fewshot/naive
+  v1_report: supplemental/bounded_logical_retry_v1/logical_retry_01/report/deepseek_v4_max_preview/task_group_022.naive_recovery.logical_retry_01.yaml
+  v1_report_sha256: 5acafdc78196ef7a0f40563c21573d8b4d0534825889c2dc608f2fd555350307
+  v1_helper_sha256: 647650619a121801edfe53f7eb1a2fabdfa5f76a9c5aaff43d98ab2b3345f51e
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        logical_slot: naive/attempt_01
+        status: valid
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: 57d24d68ed46634c0993751f83b435c5f281eadd671db6bf690d4c6b602b1839
+        file_count: 4
+        bytes: 30420
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_01
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 45
+        cached_input_tokens: 2135808
+        input_tokens: 2207558
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        output_tokens: 41179
+        portability_warnings: []
+        reasoning_output_tokens: 17303
+        tool_calls: 83
+        total_tokens: 2248737
+        usage_source: final_token_count.info.total_token_usage
+        provenance:
+          source: first_pass_untouched
+      attempt_02:
+        logical_slot: naive/attempt_02
+        status: valid
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+        skill_bundle_sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+        file_count: 1
+        bytes: 11925
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_02
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 20
+        cached_input_tokens: 612608
+        input_tokens: 662180
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        output_tokens: 26586
+        portability_warnings: []
+        reasoning_output_tokens: 8265
+        tool_calls: 32
+        total_tokens: 688766
+        usage_source: final_token_count.info.total_token_usage
+        provenance:
+          source: first_pass_untouched
+      attempt_03:
+        logical_slot: naive/attempt_03
+        status: valid
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: f29d9ffa5eccc928fba63a4fe73676203f13adee50d39acf37b0ee23b4ff49ef
+        file_count: 1
+        bytes: 10536
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_03
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 14
+        cached_input_tokens: 372992
+        input_tokens: 420210
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        output_tokens: 13540
+        portability_warnings: []
+        reasoning_output_tokens: 6290
+        tool_calls: 37
+        total_tokens: 433750
+        usage_source: final_token_count.info.total_token_usage
+        provenance:
+          source: first_pass_untouched
+    valid_generation_rate: 1.0
+  overall_acc_at_3: 0.3919160646716347
+  overall_std_at_3: 0.08414419708875319
+  lift_over_shared_base: null
+  efficiency:
+    input_tokens_avg_3: 3092030.9333333336
+    cached_input_tokens_avg_3: 2997742.933333333
+    output_tokens_avg_3: 65133.0
+    reasoning_output_tokens_avg_3: 34588.4
+    cost_usd_avg_3: null
+    rounds_avg_3: 46.66666666666667
+    tool_calls_avg_3: 60.4
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.166666666667
+      - 0.055555555556
+      - 0.055555555556
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_001/attempt_01
+          recovery_layer: bounded_logical_retry_v1
+          logical_retry: logical_retry_01
+          physical_uuid: 8a3a54dd-da1f-4f62-a239-5cc268099ff9
+          agent_run_id: 8a3a54dd-da1f-4f62-a239-5cc268099ff9
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: b54039b2ca0ac61a569a5d83e8caebb8293fa33169912bfa0278969091a0fec4
+          status: complete
+          started_at: '2026-07-30T02:58:42.942188Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          skill_bundle_sha256: 57d24d68ed46634c0993751f83b435c5f281eadd671db6bf690d4c6b602b1839
+          first_pass_status: agent_failed
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01
+          input_hashes:
+            model_catalog:
+              path: configs/models/deepseek_v4_pro_catalog.json
+              sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+            environment_access:
+              path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+              sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+            test_input_dir:
+              path: task_group/task_group_022/test_tasks/001/input
+              sha256: cabe05313e6fd84f4f498314d5a7a44a84ccabed9974f605210079e18fe7274b
+            skill_dir:
+              path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+              sha256: 57d24d68ed46634c0993751f83b435c5f281eadd671db6bf690d4c6b602b1839
+            evaluator:
+              path: task_group/task_group_022/test_tasks/001/eval/eval.sh
+              sha256: e210d8b3f764aa938a8cb1dbc1133fb2bf7365765cbdf9ab1f9387cdb8bdf7f8
+          physical_executions:
+          - physical_ordinal: 1
+            physical_uuid: 8a3a54dd-da1f-4f62-a239-5cc268099ff9
+            agent_run_id: 8a3a54dd-da1f-4f62-a239-5cc268099ff9
+            started_at: '2026-07-30T02:58:42.942188Z'
+            status: complete
+            work_dir: scratch/bounded_logical_retry_v1/logical_retry_01/attempts/solver/test_001/attempt_01/logical_retry_01/8a3a54dd-da1f-4f62-a239-5cc268099ff9/work
+            prompt_template_id: fewshot_test_solver
+            prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+            rendered_prompt_sha256: b54039b2ca0ac61a569a5d83e8caebb8293fa33169912bfa0278969091a0fec4
+            input_hashes:
+              model_catalog:
+                path: configs/models/deepseek_v4_pro_catalog.json
+                sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+              environment_access:
+                path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+                sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+              test_input_dir:
+                path: task_group/task_group_022/test_tasks/001/input
+                sha256: cabe05313e6fd84f4f498314d5a7a44a84ccabed9974f605210079e18fe7274b
+              skill_dir:
+                path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+                sha256: 57d24d68ed46634c0993751f83b435c5f281eadd671db6bf690d4c6b602b1839
+              evaluator:
+                path: task_group/task_group_022/test_tasks/001/eval/eval.sh
+                sha256: e210d8b3f764aa938a8cb1dbc1133fb2bf7365765cbdf9ab1f9387cdb8bdf7f8
+            network_subnet: 10.202.51.0/24
+            exit_code: 0
+            timed_out: false
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 50
+            cached_input_tokens: 3052288
+            input_tokens: 3148223
+            observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+            output_tokens: 67081
+            portability_warnings: []
+            reasoning_output_tokens: 28660
+            tool_calls: 62
+            total_tokens: 3215304
+            usage_source: final_token_count.info.total_token_usage
+            trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/logical_retry_01/8a3a54dd-da1f-4f62-a239-5cc268099ff9
+            completed_at: '2026-07-30T03:30:42.088162Z'
+          network_subnet: 10.202.51.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 50
+          cached_input_tokens: 3052288
+          input_tokens: 3148223
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 67081
+          portability_warnings: []
+          reasoning_output_tokens: 28660
+          tool_calls: 62
+          total_tokens: 3215304
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/logical_retry_01/8a3a54dd-da1f-4f62-a239-5cc268099ff9
+          score: 0.166666666667
+          answer: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/logical_retry_01/answer.json
+          answer_sha256: de37900b15c755f6fc5299ebc17be0a6676a16b061904887ebcceb0e88ade049
+          score_file: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/logical_retry_01/score.yaml
+          score_file_sha256: 9a3e494b081e587989a5e8d76277a871f1f92a029399ff12419ef51619dd5dd4
+          evaluator_output_sha256: 96b840289ad51750f9c5ca705940eea482a5c20ee42411b3c650c7d57f9aefdf
+          completed_at: '2026-07-30T03:30:42.088162Z'
+          provenance:
+            source: recovery
+            recovery_layer: bounded_logical_retry_v1
+            logical_retry: logical_retry_01
+            first_pass_status: agent_failed
+        attempt_02:
+          logical_slot: naive/test_001/attempt_02
+          recovery_layer: bounded_logical_retry_v1
+          logical_retry: logical_retry_01
+          physical_uuid: 0f9b6994-c5de-4c6a-a632-afc1a32e0e7a
+          agent_run_id: 0f9b6994-c5de-4c6a-a632-afc1a32e0e7a
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 7fd6efd174137d2ac98f7bd68091ad1909e0432c454e21b53a18b47d8deb1b28
+          status: complete
+          started_at: '2026-07-30T02:58:42.942546Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+          first_pass_status: agent_failed
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02
+          input_hashes:
+            model_catalog:
+              path: configs/models/deepseek_v4_pro_catalog.json
+              sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+            environment_access:
+              path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+              sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+            test_input_dir:
+              path: task_group/task_group_022/test_tasks/001/input
+              sha256: cabe05313e6fd84f4f498314d5a7a44a84ccabed9974f605210079e18fe7274b
+            skill_dir:
+              path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+              sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+            evaluator:
+              path: task_group/task_group_022/test_tasks/001/eval/eval.sh
+              sha256: e210d8b3f764aa938a8cb1dbc1133fb2bf7365765cbdf9ab1f9387cdb8bdf7f8
+          physical_executions:
+          - physical_ordinal: 1
+            physical_uuid: 0f9b6994-c5de-4c6a-a632-afc1a32e0e7a
+            agent_run_id: 0f9b6994-c5de-4c6a-a632-afc1a32e0e7a
+            started_at: '2026-07-30T02:58:42.942546Z'
+            status: complete
+            work_dir: scratch/bounded_logical_retry_v1/logical_retry_01/attempts/solver/test_001/attempt_02/logical_retry_01/0f9b6994-c5de-4c6a-a632-afc1a32e0e7a/work
+            prompt_template_id: fewshot_test_solver
+            prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+            rendered_prompt_sha256: 7fd6efd174137d2ac98f7bd68091ad1909e0432c454e21b53a18b47d8deb1b28
+            input_hashes:
+              model_catalog:
+                path: configs/models/deepseek_v4_pro_catalog.json
+                sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+              environment_access:
+                path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+                sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+              test_input_dir:
+                path: task_group/task_group_022/test_tasks/001/input
+                sha256: cabe05313e6fd84f4f498314d5a7a44a84ccabed9974f605210079e18fe7274b
+              skill_dir:
+                path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+                sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+              evaluator:
+                path: task_group/task_group_022/test_tasks/001/eval/eval.sh
+                sha256: e210d8b3f764aa938a8cb1dbc1133fb2bf7365765cbdf9ab1f9387cdb8bdf7f8
+            network_subnet: 10.202.71.0/24
+            exit_code: 0
+            timed_out: false
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 25
+            cached_input_tokens: 870912
+            input_tokens: 926470
+            observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+            output_tokens: 40694
+            portability_warnings: []
+            reasoning_output_tokens: 18116
+            tool_calls: 36
+            total_tokens: 967164
+            usage_source: final_token_count.info.total_token_usage
+            trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01/0f9b6994-c5de-4c6a-a632-afc1a32e0e7a
+            completed_at: '2026-07-30T03:15:57.097931Z'
+          network_subnet: 10.202.71.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 25
+          cached_input_tokens: 870912
+          input_tokens: 926470
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 40694
+          portability_warnings: []
+          reasoning_output_tokens: 18116
+          tool_calls: 36
+          total_tokens: 967164
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01/0f9b6994-c5de-4c6a-a632-afc1a32e0e7a
+          score: 0.055555555556
+          answer: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01/answer.json
+          answer_sha256: ee203be297c9db5b0ba6d4f812babe6eabab2c5410bda842ff7cd5d33e0ac035
+          score_file: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01/score.yaml
+          score_file_sha256: d730f2e992180af96f0d8f6815bbbb85e07989dc0f8421c851ba24206b44c0fb
+          evaluator_output_sha256: 5a740615f72c8462c2d72c8ac9b8815aada56405ce4522754487cc56ba91bfd9
+          completed_at: '2026-07-30T03:15:57.097931Z'
+          provenance:
+            source: recovery
+            recovery_layer: bounded_logical_retry_v1
+            logical_retry: logical_retry_01
+            first_pass_status: agent_failed
+        attempt_03:
+          logical_slot: naive/test_001/attempt_03
+          agent_run_id: 824725cb-b7de-4930-850b-253e53d0865d
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 9e9c62745984cbf1e9eb8001617204276b5f6dfd3f962b2ed3a6ffc8f3ad4329
+          status: complete
+          started_at: '2026-07-29T18:32:10.668756Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          network_subnet: 10.202.61.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 27
+          cached_input_tokens: 2090240
+          input_tokens: 2203946
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 27457
+          portability_warnings: []
+          reasoning_output_tokens: 13864
+          tool_calls: 32
+          total_tokens: 2231403
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03
+          score: 0.055555555556
+          answer: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03/answer.json
+          score_file: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03/score.yaml
+          completed_at: '2026-07-29T18:42:50.604290Z'
+          provenance:
+            source: first_pass_untouched
+      acc_at_3: 0.09259259259300001
+      std_at_3: 0.05237828008784003
+      input_tokens_avg_3: 2092879.6666666667
+      cached_input_tokens_avg_3: 2004480.0
+      output_tokens_avg_3: 45077.333333333336
+      reasoning_output_tokens_avg_3: 20213.333333333332
+      cost_usd_avg_3: null
+      rounds_avg_3: 34.0
+      tool_calls_avg_3: 43.333333333333336
+    test_002:
+      status: complete
+      scores:
+      - 0.588235294118
+      - 0.588235294118
+      - 0.588235294118
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_002/attempt_01
+          agent_run_id: 0697bdb9-80d4-423d-905c-561b95d2bf38
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 0609321ce9189510837e276ad86ee1f6115b221e59763e5c69772f81f872b2f6
+          status: complete
+          started_at: '2026-07-29T17:13:50.729805Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          network_subnet: 10.202.52.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 25
+          cached_input_tokens: 1323520
+          input_tokens: 1402144
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 32283
+          portability_warnings: []
+          reasoning_output_tokens: 11682
+          tool_calls: 36
+          total_tokens: 1434427
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01
+          score: 0.588235294118
+          answer: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/answer.json
+          score_file: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/score.yaml
+          completed_at: '2026-07-29T17:30:17.651259Z'
+          provenance:
+            source: first_pass_untouched
+        attempt_02:
+          logical_slot: naive/test_002/attempt_02
+          recovery_layer: bounded_logical_retry_v1
+          logical_retry: logical_retry_01
+          physical_uuid: cc51d124-efa1-4b3d-a06f-0bea88861d87
+          agent_run_id: cc51d124-efa1-4b3d-a06f-0bea88861d87
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: d282ca5cfbc7491040a7b55144d3b03f5e32ab51016a4c440294b93488f644fe
+          status: complete
+          started_at: '2026-07-30T02:58:42.945021Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+          first_pass_status: invalid_missing_answer
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02
+          input_hashes:
+            model_catalog:
+              path: configs/models/deepseek_v4_pro_catalog.json
+              sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+            environment_access:
+              path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+              sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+            test_input_dir:
+              path: task_group/task_group_022/test_tasks/002/input
+              sha256: 0e096ad1ff66ddcd73d6c0f26db771decd4277b257f67b64af301341ee1ff66c
+            skill_dir:
+              path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+              sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+            evaluator:
+              path: task_group/task_group_022/test_tasks/002/eval/eval.sh
+              sha256: 845e7a833eed9d41ed64b523815761ea4956d07c5f5c8911d4e3a833ead6ac66
+          physical_executions:
+          - physical_ordinal: 1
+            physical_uuid: cc51d124-efa1-4b3d-a06f-0bea88861d87
+            agent_run_id: cc51d124-efa1-4b3d-a06f-0bea88861d87
+            started_at: '2026-07-30T02:58:42.945021Z'
+            status: complete
+            work_dir: scratch/bounded_logical_retry_v1/logical_retry_01/attempts/solver/test_002/attempt_02/logical_retry_01/cc51d124-efa1-4b3d-a06f-0bea88861d87/work
+            prompt_template_id: fewshot_test_solver
+            prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+            rendered_prompt_sha256: d282ca5cfbc7491040a7b55144d3b03f5e32ab51016a4c440294b93488f644fe
+            input_hashes:
+              model_catalog:
+                path: configs/models/deepseek_v4_pro_catalog.json
+                sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+              environment_access:
+                path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+                sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+              test_input_dir:
+                path: task_group/task_group_022/test_tasks/002/input
+                sha256: 0e096ad1ff66ddcd73d6c0f26db771decd4277b257f67b64af301341ee1ff66c
+              skill_dir:
+                path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+                sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+              evaluator:
+                path: task_group/task_group_022/test_tasks/002/eval/eval.sh
+                sha256: 845e7a833eed9d41ed64b523815761ea4956d07c5f5c8911d4e3a833ead6ac66
+            network_subnet: 10.202.81.0/24
+            exit_code: 0
+            timed_out: false
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 45
+            cached_input_tokens: 1896960
+            input_tokens: 1981095
+            observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+            output_tokens: 54972
+            portability_warnings: []
+            reasoning_output_tokens: 25244
+            tool_calls: 69
+            total_tokens: 2036067
+            usage_source: final_token_count.info.total_token_usage
+            trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_01/cc51d124-efa1-4b3d-a06f-0bea88861d87
+            completed_at: '2026-07-30T03:23:12.752567Z'
+          network_subnet: 10.202.81.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 45
+          cached_input_tokens: 1896960
+          input_tokens: 1981095
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 54972
+          portability_warnings: []
+          reasoning_output_tokens: 25244
+          tool_calls: 69
+          total_tokens: 2036067
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_01/cc51d124-efa1-4b3d-a06f-0bea88861d87
+          score: 0.588235294118
+          answer: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_01/answer.json
+          answer_sha256: 3da92b33a76583d295d4b6edf471f7670f2a8bfa149278f1ad13cc907788ffda
+          score_file: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_01/score.yaml
+          score_file_sha256: 1d96942d98e161740991f479d233251ee2630aedabad1fd89e8ad71c7fe7d13a
+          evaluator_output_sha256: 8c25a9f26dd33a57dddfa5e130749042733a604a00aeccf5a73d536a0f35b6d8
+          completed_at: '2026-07-30T03:23:12.752567Z'
+          provenance:
+            source: recovery
+            recovery_layer: bounded_logical_retry_v1
+            logical_retry: logical_retry_01
+            first_pass_status: invalid_missing_answer
+        attempt_03:
+          logical_slot: naive/test_002/attempt_03
+          agent_run_id: 9d7fc8fb-680d-42f9-9bc3-96169572fce7
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 4b13eb92cb332c0867d67961985694e88b93e175abd66db4a02f5895ccf8c01f
+          status: complete
+          started_at: '2026-07-29T18:32:10.671971Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          network_subnet: 10.202.62.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 54
+          cached_input_tokens: 2584320
+          input_tokens: 2656933
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 54784
+          portability_warnings: []
+          reasoning_output_tokens: 30661
+          tool_calls: 66
+          total_tokens: 2711717
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03
+          score: 0.588235294118
+          answer: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/answer.json
+          score_file: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/score.yaml
+          completed_at: '2026-07-29T18:53:49.509754Z'
+          provenance:
+            source: first_pass_untouched
+      acc_at_3: 0.588235294118
+      std_at_3: 0.0
+      input_tokens_avg_3: 2013390.6666666667
+      cached_input_tokens_avg_3: 1934933.3333333333
+      output_tokens_avg_3: 47346.333333333336
+      reasoning_output_tokens_avg_3: 22529.0
+      cost_usd_avg_3: null
+      rounds_avg_3: 41.333333333333336
+      tool_calls_avg_3: 57.0
+    test_003:
+      status: complete
+      scores:
+      - 0.42105263157894735
+      - 0.631578947368421
+      - 0.5263157894736842
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_003/attempt_01
+          recovery_layer: bounded_logical_retry_v1
+          logical_retry: logical_retry_01
+          physical_uuid: fea7a81c-3f30-42d1-8560-ce825a073dba
+          agent_run_id: fea7a81c-3f30-42d1-8560-ce825a073dba
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: cd4a1ce22c3965518f22acbff5d2e6e638fc42c96d85beb403a6d9aecb2698dd
+          status: complete
+          started_at: '2026-07-30T02:58:42.943250Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          skill_bundle_sha256: 57d24d68ed46634c0993751f83b435c5f281eadd671db6bf690d4c6b602b1839
+          first_pass_status: timeout
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/run_metadata.yaml
+          first_pass_trace_dir: null
+          input_hashes:
+            model_catalog:
+              path: configs/models/deepseek_v4_pro_catalog.json
+              sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+            environment_access:
+              path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+              sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+            test_input_dir:
+              path: task_group/task_group_022/test_tasks/003/input
+              sha256: 7db12e283a7c817d7409813e3a23a98a58188336b52b16280438ead367988f04
+            skill_dir:
+              path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+              sha256: 57d24d68ed46634c0993751f83b435c5f281eadd671db6bf690d4c6b602b1839
+            evaluator:
+              path: task_group/task_group_022/test_tasks/003/eval/eval.sh
+              sha256: f9e266809159ac0ffabbdaefceb4611aaa860e219c5f3027c0f33264567fb3f2
+          physical_executions:
+          - physical_ordinal: 1
+            physical_uuid: fea7a81c-3f30-42d1-8560-ce825a073dba
+            agent_run_id: fea7a81c-3f30-42d1-8560-ce825a073dba
+            started_at: '2026-07-30T02:58:42.943250Z'
+            status: complete
+            work_dir: scratch/bounded_logical_retry_v1/logical_retry_01/attempts/solver/test_003/attempt_01/logical_retry_01/fea7a81c-3f30-42d1-8560-ce825a073dba/work
+            prompt_template_id: fewshot_test_solver
+            prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+            rendered_prompt_sha256: cd4a1ce22c3965518f22acbff5d2e6e638fc42c96d85beb403a6d9aecb2698dd
+            input_hashes:
+              model_catalog:
+                path: configs/models/deepseek_v4_pro_catalog.json
+                sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+              environment_access:
+                path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+                sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+              test_input_dir:
+                path: task_group/task_group_022/test_tasks/003/input
+                sha256: 7db12e283a7c817d7409813e3a23a98a58188336b52b16280438ead367988f04
+              skill_dir:
+                path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+                sha256: 57d24d68ed46634c0993751f83b435c5f281eadd671db6bf690d4c6b602b1839
+              evaluator:
+                path: task_group/task_group_022/test_tasks/003/eval/eval.sh
+                sha256: f9e266809159ac0ffabbdaefceb4611aaa860e219c5f3027c0f33264567fb3f2
+            network_subnet: 10.202.61.0/24
+            exit_code: 0
+            timed_out: false
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 75
+            cached_input_tokens: 5840640
+            input_tokens: 5958080
+            observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+            output_tokens: 73074
+            portability_warnings: []
+            reasoning_output_tokens: 39945
+            tool_calls: 85
+            total_tokens: 6031154
+            usage_source: final_token_count.info.total_token_usage
+            trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/logical_retry_01/fea7a81c-3f30-42d1-8560-ce825a073dba
+            completed_at: '2026-07-30T03:31:32.215907Z'
+          network_subnet: 10.202.61.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 75
+          cached_input_tokens: 5840640
+          input_tokens: 5958080
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 73074
+          portability_warnings: []
+          reasoning_output_tokens: 39945
+          tool_calls: 85
+          total_tokens: 6031154
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/logical_retry_01/fea7a81c-3f30-42d1-8560-ce825a073dba
+          score: 0.42105263157894735
+          answer: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/logical_retry_01/answer.json
+          answer_sha256: 53ddd6a1c63648ffe6f13e3aa8c181aae2501ff6ea047a9ca46d5717a7ee0f5e
+          score_file: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/logical_retry_01/score.yaml
+          score_file_sha256: 74f710aeb1846b2f397f43581a43c809b20d9b85c31ea1c87ef72d048c16b068
+          evaluator_output_sha256: 1abd75ed6b2839f4845adaa013fa521036d3f65a4df4c2ae24c16b64c20624ff
+          completed_at: '2026-07-30T03:31:32.215907Z'
+          provenance:
+            source: recovery
+            recovery_layer: bounded_logical_retry_v1
+            logical_retry: logical_retry_01
+            first_pass_status: timeout
+        attempt_02:
+          logical_slot: naive/test_003/attempt_02
+          recovery_layer: bounded_logical_retry_v2
+          logical_retry: logical_retry_02
+          physical_uuid: 74d27dd4-fcef-416d-99a9-f889cce05cae
+          agent_run_id: 74d27dd4-fcef-416d-99a9-f889cce05cae
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 1b3b57b2489ccafe9bc03b5c19c9fa5340ef22c0e5a90a8b79b52e32233ae143
+          status: complete
+          started_at: '2026-07-30T08:00:16.111081Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+          first_pass_status: invalid_missing_answer
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02
+          input_hashes:
+            model_catalog:
+              path: configs/models/deepseek_v4_pro_catalog.json
+              sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+            environment_access:
+              path: scratch/bounded_logical_retry_v2/logical_retry_02/static_inputs/environment_access.logical_retry_02.md
+              sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+            test_input_dir:
+              path: task_group/task_group_022/test_tasks/003/input
+              sha256: 7db12e283a7c817d7409813e3a23a98a58188336b52b16280438ead367988f04
+            skill_dir:
+              path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+              sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+            evaluator:
+              path: task_group/task_group_022/test_tasks/003/eval/eval.sh
+              sha256: f9e266809159ac0ffabbdaefceb4611aaa860e219c5f3027c0f33264567fb3f2
+          physical_executions:
+          - physical_ordinal: 1
+            physical_uuid: 74d27dd4-fcef-416d-99a9-f889cce05cae
+            agent_run_id: 74d27dd4-fcef-416d-99a9-f889cce05cae
+            started_at: '2026-07-30T08:00:16.111081Z'
+            status: complete
+            work_dir: scratch/bounded_logical_retry_v2/logical_retry_02/attempts/solver/test_003/attempt_02/logical_retry_02/74d27dd4-fcef-416d-99a9-f889cce05cae/work
+            prompt_template_id: fewshot_test_solver
+            prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+            rendered_prompt_sha256: 1b3b57b2489ccafe9bc03b5c19c9fa5340ef22c0e5a90a8b79b52e32233ae143
+            input_hashes:
+              model_catalog:
+                path: configs/models/deepseek_v4_pro_catalog.json
+                sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+              environment_access:
+                path: scratch/bounded_logical_retry_v2/logical_retry_02/static_inputs/environment_access.logical_retry_02.md
+                sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+              test_input_dir:
+                path: task_group/task_group_022/test_tasks/003/input
+                sha256: 7db12e283a7c817d7409813e3a23a98a58188336b52b16280438ead367988f04
+              skill_dir:
+                path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+                sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+              evaluator:
+                path: task_group/task_group_022/test_tasks/003/eval/eval.sh
+                sha256: f9e266809159ac0ffabbdaefceb4611aaa860e219c5f3027c0f33264567fb3f2
+            network_subnet: 10.202.51.0/24
+            exit_code: 0
+            timed_out: false
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 81
+            cached_input_tokens: 5571584
+            input_tokens: 5695471
+            observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+            output_tokens: 88336
+            portability_warnings: []
+            reasoning_output_tokens: 44438
+            tool_calls: 89
+            total_tokens: 5783807
+            usage_source: final_token_count.info.total_token_usage
+            trace_dir: supplemental/bounded_logical_retry_v2/logical_retry_02/original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_02/74d27dd4-fcef-416d-99a9-f889cce05cae
+            completed_at: '2026-07-30T08:39:25.926505Z'
+          network_subnet: 10.202.51.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 81
+          cached_input_tokens: 5571584
+          input_tokens: 5695471
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 88336
+          portability_warnings: []
+          reasoning_output_tokens: 44438
+          tool_calls: 89
+          total_tokens: 5783807
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: supplemental/bounded_logical_retry_v2/logical_retry_02/original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_02/74d27dd4-fcef-416d-99a9-f889cce05cae
+          score: 0.631578947368421
+          answer: supplemental/bounded_logical_retry_v2/logical_retry_02/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_02/answer.json
+          answer_sha256: 7bd9e1e599d4fab1b37fd631fab292703c53eeb82c326ede406d053f0221d1c1
+          score_file: supplemental/bounded_logical_retry_v2/logical_retry_02/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_02/score.yaml
+          score_file_sha256: 07c3a1162fddf703e4629fe85999c36b3d2601e06f4806b35f6cc706eb8fd15e
+          evaluator_output_sha256: 7edbf065b8c96b6edaa4fd287f5da0e43f6514d8fb7a1dec682efc455d2af73c
+          completed_at: '2026-07-30T08:39:25.926505Z'
+          v1_status: timeout
+          v1_recovery_layer: bounded_logical_retry_v1
+          v1_logical_retry: logical_retry_01
+          v1_physical_uuid: 7b983267-da89-4fe4-8691-a1f032d8cef3
+          v1_run_metadata: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_01/run_metadata.yaml
+          prior_recovery_provenance:
+            first_pass_status: invalid_missing_answer
+            v1_status: timeout
+            v1_report: supplemental/bounded_logical_retry_v1/logical_retry_01/report/deepseek_v4_max_preview/task_group_022.naive_recovery.logical_retry_01.yaml
+          provenance:
+            source: recovery
+            recovery_layer: bounded_logical_retry_v2
+            logical_retry: logical_retry_02
+            first_pass_status: invalid_missing_answer
+            v1_status: timeout
+        attempt_03:
+          logical_slot: naive/test_003/attempt_03
+          agent_run_id: f663e1f1-6125-4a31-86c2-4eba3bc27d3b
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 7c9ef08a6bc319fa793a4dd36bdd02f0594f611c2fd704b0d19828a0b34080a6
+          status: complete
+          started_at: '2026-07-29T18:32:10.672476Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          network_subnet: 10.202.63.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 81
+          cached_input_tokens: 6438144
+          input_tokens: 6564681
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 117997
+          portability_warnings: []
+          reasoning_output_tokens: 70574
+          tool_calls: 91
+          total_tokens: 6682678
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03
+          score: 0.5263157894736842
+          answer: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03/answer.json
+          score_file: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03/score.yaml
+          completed_at: '2026-07-29T19:17:16.811954Z'
+          provenance:
+            source: first_pass_untouched
+      acc_at_3: 0.5263157894736842
+      std_at_3: 0.085947008518708
+      input_tokens_avg_3: 6072744.0
+      cached_input_tokens_avg_3: 5950122.666666667
+      output_tokens_avg_3: 93135.66666666667
+      reasoning_output_tokens_avg_3: 51652.333333333336
+      cost_usd_avg_3: null
+      rounds_avg_3: 79.0
+      tool_calls_avg_3: 88.33333333333333
+    test_004:
+      status: complete
+      scores:
+      - 0.5263157894736842
+      - 0.42105263157894735
+      - 0.42105263157894735
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_004/attempt_01
+          agent_run_id: e138720a-96b6-408f-9fe8-e414aa33ec69
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: ed6d7ebef6bafd2703165f28f33d0ae27bb96a6e9abe98ba7ef18a33a9c84252
+          status: complete
+          started_at: '2026-07-29T17:13:50.741643Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          network_subnet: 10.202.54.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 52
+          cached_input_tokens: 6360320
+          input_tokens: 6520498
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 80402
+          portability_warnings: []
+          reasoning_output_tokens: 37784
+          tool_calls: 74
+          total_tokens: 6600900
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01
+          score: 0.5263157894736842
+          answer: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/answer.json
+          score_file: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/score.yaml
+          completed_at: '2026-07-29T17:52:19.804144Z'
+          provenance:
+            source: first_pass_untouched
+        attempt_02:
+          logical_slot: naive/test_004/attempt_02
+          recovery_layer: bounded_logical_retry_v1
+          logical_retry: logical_retry_01
+          physical_uuid: ebb6f8a5-3f90-4dbf-bbef-05ca42748765
+          agent_run_id: ebb6f8a5-3f90-4dbf-bbef-05ca42748765
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: d1c1bb492b27bf2003a716cc6354a317552678ba51d85ed8aaffef0faf8427f2
+          status: complete
+          started_at: '2026-07-30T02:58:42.948486Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+          first_pass_status: agent_failed
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02
+          input_hashes:
+            model_catalog:
+              path: configs/models/deepseek_v4_pro_catalog.json
+              sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+            environment_access:
+              path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+              sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+            test_input_dir:
+              path: task_group/task_group_022/test_tasks/004/input
+              sha256: dabb837eca9757130d09d4869f7b1d1ee39fc967e0bd8629e2e934183c35ef44
+            skill_dir:
+              path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+              sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+            evaluator:
+              path: task_group/task_group_022/test_tasks/004/eval/eval.sh
+              sha256: d105a57d1cbc29f3febddb02bf6aabf0ec89cd19345b404371d5f09d44853086
+          physical_executions:
+          - physical_ordinal: 1
+            physical_uuid: ebb6f8a5-3f90-4dbf-bbef-05ca42748765
+            agent_run_id: ebb6f8a5-3f90-4dbf-bbef-05ca42748765
+            started_at: '2026-07-30T02:58:42.948486Z'
+            status: complete
+            work_dir: scratch/bounded_logical_retry_v1/logical_retry_01/attempts/solver/test_004/attempt_02/logical_retry_01/ebb6f8a5-3f90-4dbf-bbef-05ca42748765/work
+            prompt_template_id: fewshot_test_solver
+            prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+            rendered_prompt_sha256: d1c1bb492b27bf2003a716cc6354a317552678ba51d85ed8aaffef0faf8427f2
+            input_hashes:
+              model_catalog:
+                path: configs/models/deepseek_v4_pro_catalog.json
+                sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+              environment_access:
+                path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+                sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+              test_input_dir:
+                path: task_group/task_group_022/test_tasks/004/input
+                sha256: dabb837eca9757130d09d4869f7b1d1ee39fc967e0bd8629e2e934183c35ef44
+              skill_dir:
+                path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+                sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+              evaluator:
+                path: task_group/task_group_022/test_tasks/004/eval/eval.sh
+                sha256: d105a57d1cbc29f3febddb02bf6aabf0ec89cd19345b404371d5f09d44853086
+            network_subnet: 10.202.101.0/24
+            exit_code: 0
+            timed_out: false
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 49
+            cached_input_tokens: 2497536
+            input_tokens: 2591418
+            observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+            output_tokens: 107923
+            portability_warnings: []
+            reasoning_output_tokens: 74924
+            tool_calls: 87
+            total_tokens: 2699341
+            usage_source: final_token_count.info.total_token_usage
+            trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_01/ebb6f8a5-3f90-4dbf-bbef-05ca42748765
+            completed_at: '2026-07-30T03:46:31.608341Z'
+          network_subnet: 10.202.101.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 49
+          cached_input_tokens: 2497536
+          input_tokens: 2591418
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 107923
+          portability_warnings: []
+          reasoning_output_tokens: 74924
+          tool_calls: 87
+          total_tokens: 2699341
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_01/ebb6f8a5-3f90-4dbf-bbef-05ca42748765
+          score: 0.42105263157894735
+          answer: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_01/answer.json
+          answer_sha256: 4e2aa2a8a9e0d5c4a0ff59b3086d0bf048905402f925a57a6012ff6cef29e0d6
+          score_file: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_01/score.yaml
+          score_file_sha256: 314501b84b82050418d68e7e7b15d5c7cac3ddd312e5cfd86e33392a0928f6a3
+          evaluator_output_sha256: 0584bce779b00258bf6386cd91cf50a93cf90aea22018dbd5730394a81e4a60b
+          completed_at: '2026-07-30T03:46:31.608341Z'
+          provenance:
+            source: recovery
+            recovery_layer: bounded_logical_retry_v1
+            logical_retry: logical_retry_01
+            first_pass_status: agent_failed
+        attempt_03:
+          logical_slot: naive/test_004/attempt_03
+          agent_run_id: 527afef6-e039-45cb-b3bd-9e117cfb08ef
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: e2bee827b273c766aa1b9a869a0fcb1e75d6fe09e5f811226322c2f1609c61bf
+          status: complete
+          started_at: '2026-07-29T18:32:10.672846Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          network_subnet: 10.202.64.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 57
+          cached_input_tokens: 3588096
+          input_tokens: 3691417
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 87174
+          portability_warnings: []
+          reasoning_output_tokens: 55272
+          tool_calls: 63
+          total_tokens: 3778591
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03
+          score: 0.42105263157894735
+          answer: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/answer.json
+          score_file: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/score.yaml
+          completed_at: '2026-07-29T19:05:20.390192Z'
+          provenance:
+            source: first_pass_untouched
+      acc_at_3: 0.4561403508771929
+      std_at_3: 0.04962152850431912
+      input_tokens_avg_3: 4267777.666666667
+      cached_input_tokens_avg_3: 4148650.6666666665
+      output_tokens_avg_3: 91833.0
+      reasoning_output_tokens_avg_3: 55993.333333333336
+      cost_usd_avg_3: null
+      rounds_avg_3: 52.666666666666664
+      tool_calls_avg_3: 74.66666666666667
+    test_005:
+      status: complete
+      scores:
+      - 0.6111111111111112
+      - 0.2222222222222222
+      - 0.05555555555555555
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_005/attempt_01
+          agent_run_id: c928dbb8-0655-441c-b89a-02cdbc4e3d1b
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: a7e0136c7231427287ff4e40d9a69c268f65bf4f1650a69b1387798de365c3c9
+          status: complete
+          started_at: '2026-07-29T17:13:50.734061Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          network_subnet: 10.202.55.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 28
+          cached_input_tokens: 1113856
+          input_tokens: 1185543
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 53748
+          portability_warnings: []
+          reasoning_output_tokens: 23299
+          tool_calls: 34
+          total_tokens: 1239291
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01
+          score: 0.6111111111111112
+          answer: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01/answer.json
+          score_file: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01/score.yaml
+          completed_at: '2026-07-29T17:39:33.545619Z'
+          provenance:
+            source: first_pass_untouched
+        attempt_02:
+          logical_slot: naive/test_005/attempt_02
+          recovery_layer: bounded_logical_retry_v1
+          logical_retry: logical_retry_01
+          physical_uuid: e472880c-d272-488d-a53f-e843053c56fd
+          agent_run_id: e472880c-d272-488d-a53f-e843053c56fd
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: f368f20004ba16d8dc6bc5413d04d9cf9afba0b1773879456241f4c585654e43
+          status: complete
+          started_at: '2026-07-30T03:59:01.679270Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+          first_pass_status: agent_failed
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02
+          input_hashes:
+            model_catalog:
+              path: configs/models/deepseek_v4_pro_catalog.json
+              sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+            environment_access:
+              path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+              sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+            test_input_dir:
+              path: task_group/task_group_022/test_tasks/005/input
+              sha256: 65ea14b88a1aa0c33d7b62b82bc7b5426ba380c7f71dcfa4bb4183a6682250f0
+            skill_dir:
+              path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+              sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+            evaluator:
+              path: task_group/task_group_022/test_tasks/005/eval/eval.sh
+              sha256: f9e266809159ac0ffabbdaefceb4611aaa860e219c5f3027c0f33264567fb3f2
+          physical_executions:
+          - physical_ordinal: 1
+            physical_uuid: e472880c-d272-488d-a53f-e843053c56fd
+            agent_run_id: e472880c-d272-488d-a53f-e843053c56fd
+            started_at: '2026-07-30T03:59:01.679270Z'
+            status: complete
+            work_dir: scratch/bounded_logical_retry_v1/logical_retry_01/attempts/solver/test_005/attempt_02/logical_retry_01/e472880c-d272-488d-a53f-e843053c56fd/work
+            prompt_template_id: fewshot_test_solver
+            prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+            rendered_prompt_sha256: f368f20004ba16d8dc6bc5413d04d9cf9afba0b1773879456241f4c585654e43
+            input_hashes:
+              model_catalog:
+                path: configs/models/deepseek_v4_pro_catalog.json
+                sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+              environment_access:
+                path: scratch/bounded_logical_retry_v1/logical_retry_01/static_inputs/environment_access.logical_retry_01.md
+                sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+              test_input_dir:
+                path: task_group/task_group_022/test_tasks/005/input
+                sha256: 65ea14b88a1aa0c33d7b62b82bc7b5426ba380c7f71dcfa4bb4183a6682250f0
+              skill_dir:
+                path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+                sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+              evaluator:
+                path: task_group/task_group_022/test_tasks/005/eval/eval.sh
+                sha256: f9e266809159ac0ffabbdaefceb4611aaa860e219c5f3027c0f33264567fb3f2
+            network_subnet: 10.202.111.0/24
+            exit_code: 0
+            timed_out: false
+            assistant_turn_source: response_item.message.role=assistant
+            assistant_turns: 27
+            cached_input_tokens: 871680
+            input_tokens: 928538
+            observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+            output_tokens: 36655
+            portability_warnings: []
+            reasoning_output_tokens: 11397
+            tool_calls: 51
+            total_tokens: 965193
+            usage_source: final_token_count.info.total_token_usage
+            trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/logical_retry_01/e472880c-d272-488d-a53f-e843053c56fd
+            completed_at: '2026-07-30T04:12:41.871606Z'
+          network_subnet: 10.202.111.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 27
+          cached_input_tokens: 871680
+          input_tokens: 928538
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 36655
+          portability_warnings: []
+          reasoning_output_tokens: 11397
+          tool_calls: 51
+          total_tokens: 965193
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: supplemental/bounded_logical_retry_v1/logical_retry_01/original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/logical_retry_01/e472880c-d272-488d-a53f-e843053c56fd
+          score: 0.2222222222222222
+          answer: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/logical_retry_01/answer.json
+          answer_sha256: 5897f96c37a1c498ee2754257bc4cf81f100e8cc854990ffc440fe17b8f48417
+          score_file: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/logical_retry_01/score.yaml
+          score_file_sha256: 0efbb19a4d6a9271cd844f1d21d704153dc48d6f4a0c06e33b9e34b561d4c5d7
+          evaluator_output_sha256: db661eb808df57cb187e879e5e91576d23037c91a95f7d1dc21082f3b57478a9
+          completed_at: '2026-07-30T04:12:41.871606Z'
+          provenance:
+            source: recovery
+            recovery_layer: bounded_logical_retry_v1
+            logical_retry: logical_retry_01
+            first_pass_status: agent_failed
+        attempt_03:
+          logical_slot: naive/test_005/attempt_03
+          agent_run_id: 1ac242ff-3b88-4944-b803-783f96d51d2f
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 69ecfd1230fa88166d801f1bdee38e41e30163245899f59f9518ffb0beb352a5
+          status: complete
+          started_at: '2026-07-29T18:32:10.680319Z'
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          network_subnet: 10.202.65.0/24
+          exit_code: 0
+          timed_out: false
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 24
+          cached_input_tokens: 866048
+          input_tokens: 926007
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          output_tokens: 54415
+          portability_warnings: []
+          reasoning_output_tokens: 32966
+          tool_calls: 31
+          total_tokens: 980422
+          usage_source: final_token_count.info.total_token_usage
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03
+          score: 0.05555555555555555
+          answer: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/answer.json
+          score_file: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/score.yaml
+          completed_at: '2026-07-29T18:52:18.138265Z'
+          provenance:
+            source: first_pass_untouched
+      acc_at_3: 0.29629629629629634
+      std_at_3: 0.23277416833289882
+      input_tokens_avg_3: 1013362.6666666666
+      cached_input_tokens_avg_3: 950528.0
+      output_tokens_avg_3: 48272.666666666664
+      reasoning_output_tokens_avg_3: 22554.0
+      cost_usd_avg_3: null
+      rounds_avg_3: 26.333333333333332
+      tool_calls_avg_3: 38.666666666666664
+recovery_logical_retries:
+  generation: []
+  dependent_solver_slots_after_valid_generation: []
+  solver:
+  - logical_slot: naive/test_003/attempt_02
+    recovery_layer: bounded_logical_retry_v2
+    logical_retry: logical_retry_02
+    physical_uuid: 74d27dd4-fcef-416d-99a9-f889cce05cae
+    agent_run_id: 74d27dd4-fcef-416d-99a9-f889cce05cae
+    prompt_template_id: fewshot_test_solver
+    prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+    rendered_prompt_sha256: 1b3b57b2489ccafe9bc03b5c19c9fa5340ef22c0e5a90a8b79b52e32233ae143
+    status: complete
+    started_at: '2026-07-30T08:00:16.111081Z'
+    skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+    skill_bundle_sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+    first_pass_status: invalid_missing_answer
+    first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/run_metadata.yaml
+    first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02
+    input_hashes:
+      model_catalog:
+        path: configs/models/deepseek_v4_pro_catalog.json
+        sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+      environment_access:
+        path: scratch/bounded_logical_retry_v2/logical_retry_02/static_inputs/environment_access.logical_retry_02.md
+        sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+      test_input_dir:
+        path: task_group/task_group_022/test_tasks/003/input
+        sha256: 7db12e283a7c817d7409813e3a23a98a58188336b52b16280438ead367988f04
+      skill_dir:
+        path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+        sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+      evaluator:
+        path: task_group/task_group_022/test_tasks/003/eval/eval.sh
+        sha256: f9e266809159ac0ffabbdaefceb4611aaa860e219c5f3027c0f33264567fb3f2
+    physical_executions:
+    - physical_ordinal: 1
+      physical_uuid: 74d27dd4-fcef-416d-99a9-f889cce05cae
+      agent_run_id: 74d27dd4-fcef-416d-99a9-f889cce05cae
+      started_at: '2026-07-30T08:00:16.111081Z'
+      status: complete
+      work_dir: scratch/bounded_logical_retry_v2/logical_retry_02/attempts/solver/test_003/attempt_02/logical_retry_02/74d27dd4-fcef-416d-99a9-f889cce05cae/work
+      prompt_template_id: fewshot_test_solver
+      prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+      rendered_prompt_sha256: 1b3b57b2489ccafe9bc03b5c19c9fa5340ef22c0e5a90a8b79b52e32233ae143
+      input_hashes:
+        model_catalog:
+          path: configs/models/deepseek_v4_pro_catalog.json
+          sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+        environment_access:
+          path: scratch/bounded_logical_retry_v2/logical_retry_02/static_inputs/environment_access.logical_retry_02.md
+          sha256: a94fccc43a333655f6bd644c09a4f60f4e780815514f542339e00544352e1cb2
+        test_input_dir:
+          path: task_group/task_group_022/test_tasks/003/input
+          sha256: 7db12e283a7c817d7409813e3a23a98a58188336b52b16280438ead367988f04
+        skill_dir:
+          path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          sha256: d822d4ca60c50af02977c985b4547fb97bddd2fdd4750ea22f5d1bc12723efdd
+        evaluator:
+          path: task_group/task_group_022/test_tasks/003/eval/eval.sh
+          sha256: f9e266809159ac0ffabbdaefceb4611aaa860e219c5f3027c0f33264567fb3f2
+      network_subnet: 10.202.51.0/24
+      exit_code: 0
+      timed_out: false
+      assistant_turn_source: response_item.message.role=assistant
+      assistant_turns: 81
+      cached_input_tokens: 5571584
+      input_tokens: 5695471
+      observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+      output_tokens: 88336
+      portability_warnings: []
+      reasoning_output_tokens: 44438
+      tool_calls: 89
+      total_tokens: 5783807
+      usage_source: final_token_count.info.total_token_usage
+      trace_dir: supplemental/bounded_logical_retry_v2/logical_retry_02/original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_02/74d27dd4-fcef-416d-99a9-f889cce05cae
+      completed_at: '2026-07-30T08:39:25.926505Z'
+    network_subnet: 10.202.51.0/24
+    exit_code: 0
+    timed_out: false
+    assistant_turn_source: response_item.message.role=assistant
+    assistant_turns: 81
+    cached_input_tokens: 5571584
+    input_tokens: 5695471
+    observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+    output_tokens: 88336
+    portability_warnings: []
+    reasoning_output_tokens: 44438
+    tool_calls: 89
+    total_tokens: 5783807
+    usage_source: final_token_count.info.total_token_usage
+    trace_dir: supplemental/bounded_logical_retry_v2/logical_retry_02/original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_02/74d27dd4-fcef-416d-99a9-f889cce05cae
+    score: 0.631578947368421
+    answer: supplemental/bounded_logical_retry_v2/logical_retry_02/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_02/answer.json
+    answer_sha256: 7bd9e1e599d4fab1b37fd631fab292703c53eeb82c326ede406d053f0221d1c1
+    score_file: supplemental/bounded_logical_retry_v2/logical_retry_02/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_02/score.yaml
+    score_file_sha256: 07c3a1162fddf703e4629fe85999c36b3d2601e06f4806b35f6cc706eb8fd15e
+    evaluator_output_sha256: 7edbf065b8c96b6edaa4fd287f5da0e43f6514d8fb7a1dec682efc455d2af73c
+    completed_at: '2026-07-30T08:39:25.926505Z'
+    v1_status: timeout
+    v1_recovery_layer: bounded_logical_retry_v1
+    v1_logical_retry: logical_retry_01
+    v1_physical_uuid: 7b983267-da89-4fe4-8691-a1f032d8cef3
+    v1_run_metadata: supplemental/bounded_logical_retry_v1/logical_retry_01/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_01/run_metadata.yaml
+    prior_recovery_provenance:
+      first_pass_status: invalid_missing_answer
+      v1_status: timeout
+      v1_report: supplemental/bounded_logical_retry_v1/logical_retry_01/report/deepseek_v4_max_preview/task_group_022.naive_recovery.logical_retry_01.yaml
+recovery_infrastructure_replacements: []
+notes:
+- combined_merge_deferred_parent_incomplete
+- first_pass_artifacts_preserved_without_overwrite
+- valid_first_pass_slots_not_rerun
+- bounded_logical_retry_v2_follow_up_only_authorized_slot
+- v1_effective_slots_preserved_without_overwrite
+prior_recovery_v1:
+  report: supplemental/bounded_logical_retry_v1/logical_retry_01/report/deepseek_v4_max_preview/task_group_022.naive_recovery.logical_retry_01.yaml
+  report_sha256: 5acafdc78196ef7a0f40563c21573d8b4d0534825889c2dc608f2fd555350307
+  status: incomplete
+  preserved_without_overwrite: true
+  infrastructure_replacements: []
