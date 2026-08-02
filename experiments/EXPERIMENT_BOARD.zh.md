@@ -23,14 +23,14 @@ task group 的 `overall_std_at_3` 的算术平均，沿用此前的分层 popula
 ## Skill generation 开销
 
 下表仅统计一次性的 skill-generation 阶段，不计入上方汇总结果中的 test-time
-cost。每个数值先在同一 task group 的 3 次独立生成尝试间取算术平均，再在已有
-task-group generation 记录间取算术平均。费用单位为美元，tokens 单位为百万；
+cost。每个数值先在同一 task group 的 3 次独立生成尝试间取算术平均，再在
+task groups 001–024 间取算术平均。费用单位为美元，tokens 单位为百万；
 `base` 不包含 skill-generation 阶段。
 
 | 评测框架 | 模型 | `fewshot` 费用 | `fewshot` tokens | `self` 费用 | `self` tokens | `reflect-3` 费用 | `reflect-3` tokens |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Codex | GPT-5.5 | $1.36 | 1.02M | $1.17 | 0.82M | $3.08 | 2.61M |
-| Claude Code | Opus 4.8 | $2.16 | 2.03M | $1.52 | 1.29M | $3.34 | 3.45M |
+| Claude Code | Opus 4.8 | $2.56 | 2.25M | $1.66 | 1.31M | $5.41 | 5.03M |
 | Claude Code | GLM-5.2 | $0.45 | 1.11M | $0.38 | 0.95M | $2.16 | 6.04M |
 | Claude Code | DeepSeek V4 Pro Preview | $0.03 | 0.52M | $0.02 | 0.38M | $0.10 | 4.70M |
 

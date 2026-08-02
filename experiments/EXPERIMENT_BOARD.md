@@ -25,14 +25,14 @@ shape. Cost change and lift are relative to the same run's `base` aggregate.
 
 This table reports the one-time skill-generation stage, which is excluded from
 the test-time costs above. Each value is averaged first over three independent
-generation attempts within a task group and then across the available task-group
-generation records. Costs are in USD and tokens are in millions; `base` has no
+generation attempts within a task group and then across task groups 001–024.
+Costs are in USD and tokens are in millions; `base` has no
 skill-generation stage.
 
 | Harness | Model | `fewshot` cost | `fewshot` tokens | `self` cost | `self` tokens | `reflect-3` cost | `reflect-3` tokens |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Codex | GPT-5.5 | $1.36 | 1.02M | $1.17 | 0.82M | $3.08 | 2.61M |
-| Claude Code | Opus 4.8 | $2.16 | 2.03M | $1.52 | 1.29M | $3.34 | 3.45M |
+| Claude Code | Opus 4.8 | $2.56 | 2.25M | $1.66 | 1.31M | $5.41 | 5.03M |
 | Claude Code | GLM-5.2 | $0.45 | 1.11M | $0.38 | 0.95M | $2.16 | 6.04M |
 | Claude Code | DeepSeek V4 Pro Preview | $0.03 | 0.52M | $0.02 | 0.38M | $0.10 | 4.70M |
 
