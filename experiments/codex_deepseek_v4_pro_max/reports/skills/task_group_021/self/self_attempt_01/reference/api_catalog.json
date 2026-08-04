@@ -1,0 +1,103 @@
+ {
+   "base_url_template": "<TASK_ENV_BASE_URL>",
+   "default_base_url": "http://task-env:9021",
+   "auth": {
+     "header": "Authorization",
+     "value": "Bearer asteria-read-021"
+   },
+   "endpoints": {
+     "get": [
+       {
+         "path": "/api/catalog/collections",
+         "method": "GET",
+         "description": "List available data collections.",
+         "response_shape": "Array of objects with collection_id, display_name, description, record_count, last_updated."
+       },
+       {
+         "path": "/api/catalog/schema",
+         "method": "GET",
+         "description": "Column definitions for collections.",
+         "response_shape": "Object keyed by collection_id; each value is an array of column definitions (name, type, nullable, description)."
+       },
+       {
+         "path": "/api/contacts",
+         "method": "GET",
+         "description": "Person/partner contact records from HR Directory, Dispatch, and Identity Registry sources.",
+         "query_params": ["snapshot_id", "limit", "offset"],
+         "response_shape": "Array of contact objects with row_id, source_system, name, email, phone, region, consent_status, record_status, and other fields per schema."
+       },
+       {
+         "path": "/api/transactions/fuel",
+         "method": "GET",
+         "description": "Fuel purchase transactions.",
+         "query_params": ["snapshot_id", "limit", "offset"],
+         "response_shape": "Array of fuel transaction objects with transaction_id, asset_id, merchant_id, fuel_type, description, volume_l, spend, currency, timestamp, and other fields per schema."
+       },
+       {
+         "path": "/api/transactions/freight",
+         "method": "GET",
+         "description": "Freight charge transactions.",
+         "query_params": ["snapshot_id", "limit", "offset"],
+         "response_shape": "Array of freight charge objects with charge_id, carrier_id, service_class, description, billed_weight_kg, distance_km, spend, currency, timestamp, and other fields per schema."
+       },
+       {
+         "path": "/api/maintenance/events",
+         "method": "GET",
+         "description": "Maintenance event log records.",
+         "query_params": ["snapshot_id", "limit", "offset"],
+         "response_shape": "Array of maintenance event objects with event_id, asset_id, event_type, odometer_reading, timestamp, source_system, and other fields per schema."
+       },
+       {
+         "path": "/api/reference/aliases",
+         "method": "GET",
+         "description": "Fuel and freight alias/category reference tables mapping raw descriptions to canonical categories.",
+         "response_shape": "Array of alias objects with alias_id, raw_description, canonical_category, status (ACTIVE/DEPRECATED)."
+       },
+       {
+         "path": "/api/reference/conversions",
+         "method": "GET",
+         "description": "Unit-of-measure conversion factors.",
+         "response_shape": "Array of conversion objects with from_unit, to_unit, factor."
+       },
+       {
+         "path": "/api/reference/fx",
+         "method": "GET",
+         "description": "Foreign-exchange rates against the base currency.",
+         "response_shape": "Array of FX objects with from_currency, to_currency, rate, effective_date."
+       },
+       {
+         "path": "/api/source-snapshots",
+         "method": "GET",
+         "description": "Snapshot metadata for all collections.",
+         "response_shape": "Array of snapshot objects with snapshot_id, collection_id, recorded_at, row_count, status (CERTIFIED/PROVISIONAL/STALE)."
+       }
+     ],
+     "post": [
+       {
+         "path": "/api/query",
+         "method": "POST",
+         "content_type": "application/json",
+         "description": "Execute a read-only SQL query against public views.",
+         "request_body": {
+           "query": "SELECT or WITH SQL statement"
+         },
+         "response_shape": "Object with columns (array of column names) and rows (array of arrays of values).",
+         "notes": [
+           "May return paginated results for large queries.",
+           "Public views include v_source_snapshots and published collection views.",
+           "Use LIMIT/OFFSET for pagination with ORDER BY a stable key."
+         ]
+       }
+     ]
+   },
+   "pagination_convention": {
+     "method": "limit_offset",
+     "params": ["limit", "offset"],
+     "default_limit": 100,
+     "strategy": "Increment offset by limit until fewer than limit rows are returned."
+   },
+   "snapshot_status_priority": {
+     "ordering": ["CERTIFIED", "PROVISIONAL", "STALE"],
+     "rule": "Select CERTIFIED when available; fall back to PROVISIONAL; never use STALE as authoritative."
+   }
+ }

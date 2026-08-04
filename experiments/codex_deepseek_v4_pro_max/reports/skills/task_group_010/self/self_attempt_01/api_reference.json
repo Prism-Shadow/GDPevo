@@ -1,0 +1,134 @@
+{
+  "environment": {
+    "base_url": "http://task-env:9010/",
+    "auth": "none",
+    "mode": "read_only_http_get"
+  },
+  "endpoints": [
+    {"path": "/", "description": "Service health / root"},
+    {"path": "/api/portfolios", "description": "All portfolio records"},
+    {"path": "/api/portfolios/{portfolio_id}/holdings", "description": "Current holdings for a portfolio"},
+    {"path": "/api/instruments/bonds", "description": "Bond instrument master data"},
+    {"path": "/api/issuers", "description": "Issuer records (ratings, watchlist status, sector)"},
+    {"path": "/api/market/energy", "description": "Energy market data"},
+    {"path": "/api/indices", "description": "Index universe metadata"},
+    {"path": "/api/index-levels", "description": "Monthly index level history"},
+    {"path": "/api/index-levels/{index_id}", "description": "Level history for a specific index"},
+    {"path": "/api/allocation/opportunity-sets", "description": "Opportunity set taxonomy"},
+    {"path": "/api/allocation/prior-views", "description": "Prior quarter allocation views"},
+    {"path": "/api/macro-signals", "description": "Current macro signal scores"}
+  ],
+  "enums": {
+    "trade_action": ["BUY", "SELL", "HOLD", "NO_TRADE"],
+    "sleeve_action": ["trim", "add", "hold", "hedge", "monitor", "rotate"],
+    "allocation_view": ["UW", "N", "OW"],
+    "view_change": ["UP", "DOWN", "UNCHANGED"],
+    "conviction": ["LOW", "MEDIUM", "HIGH"],
+    "rationale_code": [
+      "GROWTH_IMPROVES",
+      "RATE_CUT_SUPPORT",
+      "CREDIT_SPREAD_RISK",
+      "DOLLAR_DEFENSIVE",
+      "CHINA_DEPENDENCE",
+      "LATAM_DIVERSIFIER",
+      "INDIA_OFFSET",
+      "DURATION_SUPPORT",
+      "HY_VALUATION_RISK",
+      "EUROPE_RECOVERY",
+      "JAPAN_POLICY_RISK",
+      "NEUTRAL_BALANCE"
+    ],
+    "sales_segment": [
+      "insurance_general_account",
+      "pension_liability_matching",
+      "multi_asset_income",
+      "private_bank_income",
+      "endowment_opportunistic"
+    ],
+    "sales_theme": [
+      "lng_export_tailwind",
+      "oil_oversupply_caution",
+      "midstream_stability",
+      "transition_bond_selectivity",
+      "avoid_watchlist_yield_trap"
+    ],
+    "risk_overlay": [
+      {"code": "DURATION_QUALITY_TILT", "action": "tilt_to_duration_quality"},
+      {"code": "CREDIT_RISK_REDUCTION", "action": "trim_credit_beta"},
+      {"code": "EQUITY_BETA_EXTENSION", "action": "add_cyclical_equity_beta"},
+      {"code": "CURRENCY_DEFENSIVE_HEDGE", "action": "add_currency_hedge"},
+      {"code": "NO_OVERLAY", "action": "hold_policy_weights"}
+    ],
+    "rebalance_trigger": [
+      "correlation_cap_breach",
+      "hy_cap_pressure",
+      "duration_drift",
+      "watchlist_concentration",
+      "committee_review"
+    ],
+    "next_step": [
+      "approve_rotation",
+      "defer_pending_risk_review",
+      "approve_with_monitoring",
+      "reject_constraint_breach"
+    ],
+    "risk_note_code": [
+      "hy_cap_pressure",
+      "watchlist_concentration",
+      "duration_preservation",
+      "carry_tradeoff",
+      "no_action"
+    ],
+    "concentration_code": [
+      "CHINA_ASIA_DEPENDENCE",
+      "GLOBAL_DEVELOPED_OVERLAP",
+      "NO_MATERIAL_CONCENTRATION"
+    ],
+    "data_precedence": [
+      "current_environment_over_stale_payload",
+      "local_payload_over_current_environment",
+      "no_conflict_found"
+    ]
+  },
+  "conventions": {
+    "correlation_method": "Pearson correlation of monthly simple returns",
+    "simple_return_formula": "(level_t - level_{t-1}) / level_{t-1}",
+    "correlation_precision": 3,
+    "pair_ordering": "ascending alphabetical by index id",
+    "index_ids": [
+      "IDX_ACWI_IMI",
+      "IDX_AC_ASIA_PAC_EX_JP",
+      "IDX_CHINA",
+      "IDX_EAFE",
+      "IDX_EM",
+      "IDX_EM_EX_CHINA",
+      "IDX_INDIA",
+      "IDX_LATAM",
+      "IDX_WORLD"
+    ],
+    "opportunity_sets": [
+      "Europe",
+      "Japan",
+      "Emerging Markets",
+      "India",
+      "Latin America",
+      "U.S. Treasuries",
+      "Corporate High Yield",
+      "EUR",
+      "USD"
+    ],
+    "asset_classes": [
+      "Equities",
+      "Duration",
+      "Credit",
+      "Currency"
+    ],
+    "date_format": "YYYY-MM-DD",
+    "quarters": {
+      "Q1": "January - March",
+      "Q2": "April - June",
+      "Q3": "July - September",
+      "Q4": "October - December"
+    }
+  }
+}

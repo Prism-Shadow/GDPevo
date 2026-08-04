@@ -1,0 +1,66 @@
+{
+  "_description": "ProcureOps API record schemas — reference only. The live API is authoritative.",
+  "suppliers": {
+    "keys": ["supplier_id"],
+    "fields": ["name", "status", "region", "risk_rating", "payment_terms"]
+  },
+  "items": {
+    "keys": ["sku"],
+    "fields": ["description", "category", "preferred_supplier_id", "standard_cost", "uom", "active"]
+  },
+  "programs": {
+    "keys": ["program_id"],
+    "fields": ["name", "owner", "budget_cap", "committed_amount", "cost_center", "priority", "region", "status"]
+  },
+  "contracts": {
+    "keys": ["contract_id"],
+    "fields": ["supplier_id", "program_id", "sku", "buyer", "ceiling_amount", "unit_price", "price_type", "effective_date", "expiry_date", "status"]
+  },
+  "purchase_requisitions": {
+    "keys": ["requisition_id"],
+    "fields": ["program_id", "sku", "quantity", "requester", "need_by", "priority", "status"]
+  },
+  "purchase_orders": {
+    "keys": ["po_id"],
+    "fields": ["supplier_id", "program_id", "contract_id", "requisition_id", "buyer", "ship_to", "status", "currency", "order_date", "due_date", "subtotal", "tax", "total"],
+    "nested": {
+      "lines": [
+        { "fields": ["line_id", "sku", "description", "quantity", "unit_price"] }
+      ]
+    }
+  },
+  "receipts": {
+    "keys": ["receipt_id"],
+    "fields": ["po_id", "supplier_id", "warehouse_id", "receipt_date", "receiver", "packing_slip", "status"],
+    "nested": {
+      "lines": [
+        { "fields": ["po_line_id", "sku", "quantity_received", "quantity_rejected", "inspection_status"] }
+      ]
+    }
+  },
+  "ap_invoices": {
+    "keys": ["invoice_id"],
+    "fields": ["po_id", "receipt_id", "supplier_id", "status", "hold_code", "currency", "invoice_date", "subtotal", "freight", "tax", "total"],
+    "nested": {
+      "lines": [
+        { "fields": ["po_line_id", "sku", "quantity_billed", "unit_price"] }
+      ]
+    }
+  },
+  "ap_payments": {
+    "keys": ["payment_id"],
+    "fields": ["invoice_id", "supplier_id", "amount", "currency", "scheduled_date", "status"]
+  },
+  "approvals": {
+    "keys": ["event_id"],
+    "fields": ["object_id", "object_type", "action", "actor", "event_date", "note_code"]
+  },
+  "budget_snapshots": {
+    "keys": ["snapshot_id"],
+    "fields": ["program_id", "snapshot_date", "budget_cap", "committed_amount", "pending_invoice_amount", "currency"]
+  },
+  "vendor_risk_events": {
+    "keys": ["event_id"],
+    "fields": ["supplier_id", "event_type", "severity", "status", "event_date", "related_object_id"]
+  }
+}
