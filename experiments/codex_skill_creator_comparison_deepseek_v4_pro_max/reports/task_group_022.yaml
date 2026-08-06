@@ -1,0 +1,1329 @@
+schema: bounded_logical_retry_v2_report
+experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_022
+scenario_id: SCN_022_sql_database_analytics
+model_profile: deepseek_v4_max_preview
+harness: codex
+status: complete
+base_policy: <redacted_host_workspace>/deepseek_v4_pro_max/control/bounded_logical_retry_v1_policy.md
+owner_authorization: task_group_022 bounded_logical_retry_v2 supplemental layer
+strict_first_pass:
+  report: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/report_deepseek_v4_max_preview/task_group_022.yaml
+  report_sha256: d891830229c05e419df2ade7832b06b75c9deaf7b706dba9b64808bd2bc7f8da
+  status: incomplete
+  logical_failures_and_not_runnable_count_as_zero: true
+  generation_valid: 10
+  generation_denominator: 12
+  solver_valid: 61
+  solver_denominator: 75
+bounded_logical_retry_v1_provenance:
+  report: supplemental/bounded_logical_retry_v1/report/deepseek_v4_max_preview/task_group_022.yaml
+  report_sha256: 5755850527de9a07acf0500d348962bd72e7261c520d32087211e07ef7504a3e
+  ledger: scratch/bounded_logical_retry_v1/ledger.yaml
+  ledger_sha256: 8ba8e14f87d7f8056a48b4b6503f6ef9b8dd3e7000c49f2cf9389043827a42f4
+  hard_block: scratch/bounded_logical_retry_v1/hard_block.yaml
+  hard_block_sha256: 31dae8c7238065167cf56cd4750cee573db071e2865dba0438815959ad365f5b
+  status: incomplete_hard_block
+  hard_block_reason: supplemental infrastructure replacement budget exhausted during
+    generation logical_retry_01 provider 503 failures
+  selected_valid_generation: 0
+  dependent_solvers_started: 0
+  infrastructure_failure_physical_runs: 8
+bounded_retry_v2:
+  status: complete_with_failed_outcomes
+  failed_outcomes_count_as_zero: true
+  authorized_scope:
+    generation_slots:
+    - fewshot/codex/generation/attempt_03
+    - fewshot/opencode/generation/attempt_03
+    dependent_solver_slots:
+    - fewshot/codex/test_001/attempt_03
+    - fewshot/codex/test_002/attempt_03
+    - fewshot/codex/test_003/attempt_03
+    - fewshot/codex/test_004/attempt_03
+    - fewshot/codex/test_005/attempt_03
+    - fewshot/opencode/test_001/attempt_03
+    - fewshot/opencode/test_002/attempt_03
+    - fewshot/opencode/test_003/attempt_03
+    - fewshot/opencode/test_004/attempt_03
+    - fewshot/opencode/test_005/attempt_03
+    direct_solver_slots: []
+    attempt_04_created: false
+  base:
+    status: complete
+    solver_denominator: 15
+    valid_solver_slots: 13
+    failed_solver_slots: 2
+    overall_acc_at_3: 0.4381148950809989
+    overall_std_at_3: 0.15863640267714854
+    tasks:
+      test_001:
+        status: complete
+        scores:
+        - 0.055555555556
+        - 0.055555555556
+        - 0.055555555556
+        acc_at_3: 0.055555555556
+        std_at_3: 0.0
+        attempts:
+          attempt_01:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.055555555556
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_001/attempt_01
+            agent_run_id: 77860c9f-3515-4347-a3bf-32e2acb1e3c5
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_001/attempt_01/rollout-2026-07-27T10-12-24-019fa30f-ba2f-7672-9554-548f89eafb3e.jsonl
+            evaluator_output: null
+          attempt_02:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.055555555556
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_001/attempt_02
+            agent_run_id: cfbb5cfd-c031-4ab3-90b2-a35abe95b657
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_001/attempt_02/rollout-2026-07-27T18-44-00-019fa4e4-1d59-7591-8844-198a181e9529.jsonl
+            evaluator_output: null
+          attempt_03:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.055555555556
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_001/attempt_03
+            agent_run_id: b57a4629-f3eb-4e74-ac9d-e7f9ad313ab9
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_001/attempt_03/rollout-2026-07-28T01-56-05-019fa66f-b232-72c1-b7f4-90be0b6863b3.jsonl
+            evaluator_output: null
+      test_002:
+        status: complete
+        scores:
+        - 0.588235294118
+        - 0.588235294118
+        - 0.588235294118
+        acc_at_3: 0.588235294118
+        std_at_3: 0.0
+        attempts:
+          attempt_01:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.588235294118
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_002/attempt_01
+            agent_run_id: dd230d41-b200-4538-897d-fe1d9a23250d
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_002/attempt_01/rollout-2026-07-27T11-12-23-019fa346-a346-7941-9e5a-992c08be2f1a.jsonl
+            evaluator_output: null
+          attempt_02:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.588235294118
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_002/attempt_02
+            agent_run_id: 9834f9a3-08d2-4454-a641-8ff571cf0fb6
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_002/attempt_02/rollout-2026-07-27T19-50-02-019fa520-8e74-73e3-acca-462e9ca0d522.jsonl
+            evaluator_output: null
+          attempt_03:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.588235294118
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_002/attempt_03
+            agent_run_id: a79ac222-ba39-47a6-bb68-dcce63d608aa
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_002/attempt_03/rollout-2026-07-28T02-24-07-019fa689-5be2-7a02-ad59-efc77b4ecd71.jsonl
+            evaluator_output: null
+      test_003:
+        status: complete
+        scores:
+        - 0.8947368421052632
+        - 0.8947368421052632
+        - 0.0
+        acc_at_3: 0.5964912280701754
+        std_at_3: 0.42178299228671257
+        attempts:
+          attempt_01:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.8947368421052632
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_003/attempt_01
+            agent_run_id: c64c1e6e-ff60-4f88-81bd-9406ddcde783
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_003/attempt_01/rollout-2026-07-27T13-12-29-019fa3b4-967f-7260-8a6c-099252db1e55.jsonl
+            evaluator_output: null
+          attempt_02:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.8947368421052632
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_003/attempt_02
+            agent_run_id: c67368e6-cc93-4093-801a-532c88cc8351
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_003/attempt_02/rollout-2026-07-27T21-12-36-019fa56c-2742-7c21-b37f-5c4583158c99.jsonl
+            evaluator_output: null
+          attempt_03:
+            source: failed_without_v2_retry
+            status: missing
+            score_status: null
+            score: 0.0
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_003/attempt_03
+            agent_run_id: null
+            trace_file: null
+            evaluator_output: null
+      test_004:
+        status: complete
+        scores:
+        - 0.42105263157894735
+        - 0.0
+        - 0.2631578947368421
+        acc_at_3: 0.22807017543859645
+        std_at_3: 0.17367534976511692
+        attempts:
+          attempt_01:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.42105263157894735
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_004/attempt_01
+            agent_run_id: 31b889fd-1b0f-4f92-b7f5-fe0b9e63996d
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_004/attempt_01/rollout-2026-07-27T15-12-29-019fa422-764b-7490-b716-857b89074a2f.jsonl
+            evaluator_output: null
+          attempt_02:
+            source: failed_without_v2_retry
+            status: missing
+            score_status: null
+            score: 0.0
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_004/attempt_02
+            agent_run_id: null
+            trace_file: null
+            evaluator_output: null
+          attempt_03:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.2631578947368421
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_004/attempt_03
+            agent_run_id: fc1a00a5-b822-4a25-8720-eee9cd19cb79
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_004/attempt_03/rollout-2026-07-28T03-49-52-019fa6d7-dd77-75c2-8b79-1876a44a20c2.jsonl
+            evaluator_output: null
+      test_005:
+        status: complete
+        scores:
+        - 0.6111111111111112
+        - 1.0
+        - 0.5555555555555556
+        acc_at_3: 0.7222222222222223
+        std_at_3: 0.19772367133391316
+        attempts:
+          attempt_01:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.6111111111111112
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_005/attempt_01
+            agent_run_id: 1fbeb50e-e033-4633-be5b-9ea39f5363b6
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_005/attempt_01/rollout-2026-07-27T17-12-31-019fa490-5945-7951-b88d-055f4463465f.jsonl
+            evaluator_output: null
+          attempt_02:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 1.0
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_005/attempt_02
+            agent_run_id: 0183b53e-d180-422e-981c-d93f2fa4b25c
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_005/attempt_02/rollout-2026-07-28T00-15-39-019fa613-bfb6-7513-b0f4-4092a563bb94.jsonl
+            evaluator_output: null
+          attempt_03:
+            source: first_pass_valid
+            status: valid
+            score_status: valid
+            score: 0.5555555555555556
+            metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/base/test_005/attempt_03
+            agent_run_id: d65a6978-7e60-4541-84c9-21b43e71475f
+            trace_file: original_traces/deepseek_v4_max_preview/base/test_005/attempt_03/rollout-2026-07-28T05-04-29-019fa71c-2e55-7e50-9c36-eefa7715c7a4.jsonl
+            evaluator_output: null
+    failure_reasons:
+    - logical_slot: base/test_003/attempt_03
+      source: failed_without_v2_retry
+      status: missing
+      score_status: null
+      reason: null
+    - logical_slot: base/test_004/attempt_02
+      source: failed_without_v2_retry
+      status: missing
+      score_status: null
+      reason: null
+    physical_run_ids:
+    - 77860c9f-3515-4347-a3bf-32e2acb1e3c5
+    - cfbb5cfd-c031-4ab3-90b2-a35abe95b657
+    - b57a4629-f3eb-4e74-ac9d-e7f9ad313ab9
+    - dd230d41-b200-4538-897d-fe1d9a23250d
+    - 9834f9a3-08d2-4454-a641-8ff571cf0fb6
+    - a79ac222-ba39-47a6-bb68-dcce63d608aa
+    - c64c1e6e-ff60-4f88-81bd-9406ddcde783
+    - c67368e6-cc93-4093-801a-532c88cc8351
+    - 31b889fd-1b0f-4f92-b7f5-fe0b9e63996d
+    - fc1a00a5-b822-4a25-8720-eee9cd19cb79
+    - 1fbeb50e-e033-4633-be5b-9ea39f5363b6
+    - 0183b53e-d180-422e-981c-d93f2fa4b25c
+    - d65a6978-7e60-4541-84c9-21b43e71475f
+  fewshot:
+    creators:
+      codex:
+        status: complete
+        generation:
+          generation_denominator: 3
+          valid_generation_slots: 3
+          valid_generation_rate: 1.0
+          attempts:
+            attempt_01:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/codex/attempt_01
+              agent_run_id: 91a65042-458a-4e7d-9d4f-7163375f9bdc
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_01
+              skill_bundle_sha256: b6ee84057e24e317c5b25b9fd93e79ecd363d85eff8867a7ccf6f1ece79d7f59
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_01/rollout-2026-07-27T08-40-50-019fa2bb-e2c8-74e2-9863-25366f529026.jsonl
+            attempt_02:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/codex/attempt_02
+              agent_run_id: 5b20be76-2027-40cd-8faa-1f5e0f8b0960
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_02
+              skill_bundle_sha256: 1ef88b920642f0944532ed4afb2806508bf76042bd0283c8bd7f0bff0643fdeb
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_02/rollout-2026-07-27T09-04-28-019fa2d1-8639-7492-9452-25aa962c1659.jsonl
+            attempt_03:
+              source: bounded_retry_v2
+              status: valid
+              validation_status: valid
+              metadata: supplemental/bounded_logical_retry_v2/scratch/skill_generation/deepseek_v4_max_preview/codex/attempt_03/logical_retry_02
+              agent_run_id: fd4bed5f-09a0-4a71-b819-365f63003afa
+              skill_dir: supplemental/bounded_logical_retry_v2/skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_03/logical_retry_02
+              skill_bundle_sha256: ac46af71ae2a0913f32a9dfa30462045c4772f5970b4f75b6407e3abb87940d7
+              trace_file: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_03/logical_retry_02/rollout-2026-07-29T08-48-08-019fad0f-49e9-7293-92c0-88398523d36b.jsonl
+          failure_reasons: []
+          physical_run_ids:
+          - 91a65042-458a-4e7d-9d4f-7163375f9bdc
+          - 5b20be76-2027-40cd-8faa-1f5e0f8b0960
+          - fd4bed5f-09a0-4a71-b819-365f63003afa
+        solver:
+          status: complete
+          solver_denominator: 15
+          valid_solver_slots: 12
+          failed_solver_slots: 3
+          overall_acc_at_3: 0.38798302946920393
+          overall_std_at_3: 0.3039763025662086
+          tasks:
+            test_001:
+              status: complete
+              scores:
+              - 0.5
+              - 0.055555555556
+              - 0.055555555556
+              acc_at_3: 0.203703703704
+              std_at_3: 0.2095131203513601
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_01
+                  agent_run_id: 062d5076-98b1-482f-ac4d-f6b54a8f375f
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_01/rollout-2026-07-27T10-12-24-019fa30f-ba34-7c41-8d58-3ce78fbb3183.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.055555555556
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_02
+                  agent_run_id: 4a8e7d30-d159-4df6-b0bc-d4ea8939d245
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_02/rollout-2026-07-27T19-12-33-019fa4fe-3f24-7fa3-830c-66fbe047a043.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: bounded_retry_v2
+                  status: valid
+                  score_status: valid
+                  score: 0.055555555556
+                  metadata: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_03/logical_retry_02
+                  agent_run_id: bb7e64b5-c16e-4dc7-b6b3-8ad841918666
+                  trace_file: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_03/logical_retry_02/rollout-2026-07-29T09-05-55-019fad1f-91b5-7030-b1ea-2eef74ae2ae6.jsonl
+                  evaluator_output: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_03/logical_retry_02/evaluator_output.json
+            test_002:
+              status: complete
+              scores:
+              - 0.588235294118
+              - 0.588235294118
+              - 0.0
+              acc_at_3: 0.39215686274533335
+              std_at_3: 0.2772967769360674
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.588235294118
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_01
+                  agent_run_id: b58ffc5e-4fe6-4b3b-ac2d-213f66e86a9e
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_01/rollout-2026-07-27T11-17-58-019fa34b-c0ce-74a0-ad0e-3dc841ee17c0.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.588235294118
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_02
+                  agent_run_id: a05c01e2-c455-4d36-b09e-347643f3eb81
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_02/rollout-2026-07-27T20-12-34-019fa535-31ff-7283-9544-392019a88b27.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: bounded_retry_v2
+                  status: logical_failure
+                  score_status: logical_failure
+                  score: 0.0
+                  metadata: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_03/logical_retry_02
+                  agent_run_id: dcd26c6b-6e20-4a7b-8065-6e0eef9b263b
+                  trace_file: scratch/bounded_logical_retry_v2/physical_runs/solver/fewshot__codex__test_002__attempt_03/logical_retry_02/dcd26c6b-6e20-4a7b-8065-6e0eef9b263b/trace/rollout-2026-07-29T09-05-48-019fad1f-775c-7df2-bccf-de32b9673004.jsonl
+                  evaluator_output: null
+            test_003:
+              status: complete
+              scores:
+              - 0.8947368421052632
+              - 0.42105263157894735
+              - 0.0
+              acc_at_3: 0.4385964912280702
+              std_at_3: 0.36548537992981855
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.8947368421052632
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01
+                  agent_run_id: d81310e0-468d-45c2-ad82-9decdeb2f16d
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/rollout-2026-07-27T13-12-29-019fa3b4-967e-7962-9724-769e33feac6b.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_02
+                  agent_run_id: dd97c064-2bb4-47a5-83e8-4387692bbc9f
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_02/rollout-2026-07-27T21-00-51-019fa561-663c-7bb1-87fd-b1236a15041c.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: bounded_retry_v2
+                  status: logical_failure
+                  score_status: logical_failure
+                  score: 0.0
+                  metadata: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_03/logical_retry_02
+                  agent_run_id: 4127d815-78c0-4548-9a9a-bf6e18890cd0
+                  trace_file: scratch/bounded_logical_retry_v2/physical_runs/solver/fewshot__codex__test_003__attempt_03/logical_retry_02/4127d815-78c0-4548-9a9a-bf6e18890cd0/trace/rollout-2026-07-29T09-05-52-019fad1f-8902-7e82-a79a-a7074c24d06d.jsonl
+                  evaluator_output: null
+            test_004:
+              status: complete
+              scores:
+              - 0.42105263157894735
+              - 0.6842105263157895
+              - 0.0
+              acc_at_3: 0.3684210526315789
+              std_at_3: 0.28179611235454405
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_01
+                  agent_run_id: 776bac59-e22a-40d3-8cd8-44e18e02fd9d
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_01/rollout-2026-07-27T15-12-29-019fa422-7646-7970-bdc3-72c591161033.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.6842105263157895
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_02
+                  agent_run_id: d03df809-e0cb-434f-8e4c-b967f960d21c
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_02/rollout-2026-07-27T22-49-56-019fa5c5-4338-7c52-aa9a-2c6289c33296.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: bounded_retry_v2
+                  status: logical_failure
+                  score_status: logical_failure
+                  score: 0.0
+                  metadata: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_03/logical_retry_02
+                  agent_run_id: 1529b967-8b42-416e-823f-cee8c8994d62
+                  trace_file: scratch/bounded_logical_retry_v2/physical_runs/solver/fewshot__codex__test_004__attempt_03/logical_retry_02/1529b967-8b42-416e-823f-cee8c8994d62/trace/rollout-2026-07-29T09-05-49-019fad1f-7c27-7853-8b8d-326a00824fd5.jsonl
+                  evaluator_output: null
+            test_005:
+              status: complete
+              scores:
+              - 0.5555555555555556
+              - 1.0
+              - 0.05555555555555555
+              acc_at_3: 0.5370370370370371
+              std_at_3: 0.38579012325925294
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5555555555555556
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_01
+                  agent_run_id: 69068493-692b-42a1-a768-63311dbdae32
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_01/rollout-2026-07-27T17-38-27-019fa4a8-192f-7152-bbb6-30e8d110d07d.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 1.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_02
+                  agent_run_id: 94588a3d-d61b-47b3-8405-21ddc0f9c099
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_02/rollout-2026-07-28T01-12-57-019fa648-34e5-7790-8aae-f1e7c5e72b61.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: bounded_retry_v2
+                  status: valid
+                  score_status: valid
+                  score: 0.05555555555555555
+                  metadata: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_03/logical_retry_02
+                  agent_run_id: b5c51a1a-bbd6-4718-be97-7544720fc51f
+                  trace_file: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_03/logical_retry_02/rollout-2026-07-29T09-05-51-019fad1f-82ca-79c1-a9b1-a8655d6a5533.jsonl
+                  evaluator_output: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_03/logical_retry_02/evaluator_output.json
+          failure_reasons:
+          - logical_slot: fewshot/codex/test_002/attempt_03
+            source: bounded_retry_v2
+            status: logical_failure
+            score_status: logical_failure
+            reason: answer_json_missing
+          - logical_slot: fewshot/codex/test_003/attempt_03
+            source: bounded_retry_v2
+            status: logical_failure
+            score_status: logical_failure
+            reason: timed_out
+          - logical_slot: fewshot/codex/test_004/attempt_03
+            source: bounded_retry_v2
+            status: logical_failure
+            score_status: logical_failure
+            reason: answer_json_missing
+          physical_run_ids:
+          - 062d5076-98b1-482f-ac4d-f6b54a8f375f
+          - 4a8e7d30-d159-4df6-b0bc-d4ea8939d245
+          - bb7e64b5-c16e-4dc7-b6b3-8ad841918666
+          - b58ffc5e-4fe6-4b3b-ac2d-213f66e86a9e
+          - a05c01e2-c455-4d36-b09e-347643f3eb81
+          - dcd26c6b-6e20-4a7b-8065-6e0eef9b263b
+          - d81310e0-468d-45c2-ad82-9decdeb2f16d
+          - dd97c064-2bb4-47a5-83e8-4387692bbc9f
+          - 4127d815-78c0-4548-9a9a-bf6e18890cd0
+          - 776bac59-e22a-40d3-8cd8-44e18e02fd9d
+          - d03df809-e0cb-434f-8e4c-b967f960d21c
+          - 1529b967-8b42-416e-823f-cee8c8994d62
+          - 69068493-692b-42a1-a768-63311dbdae32
+          - 94588a3d-d61b-47b3-8405-21ddc0f9c099
+          - b5c51a1a-bbd6-4718-be97-7544720fc51f
+        overall_acc_at_3: 0.38798302946920393
+        overall_std_at_3: 0.3039763025662086
+        lift_over_strict_base: -0.050131865611794946
+      cc:
+        status: complete
+        generation:
+          generation_denominator: 3
+          valid_generation_slots: 3
+          valid_generation_rate: 1.0
+          attempts:
+            attempt_01:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/cc/attempt_01
+              agent_run_id: 0f3192b6-5369-498e-a8c8-6c4b7de6a94e
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_01
+              skill_bundle_sha256: eccf8781f56a105b7a9b28cfc96d94ae07661baf27d1a556a1a35fc5ae8f8081
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_01/rollout-2026-07-27T08-40-49-019fa2bb-df4b-7c52-a9c9-12b321feb8f6.jsonl
+            attempt_02:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/cc/attempt_02
+              agent_run_id: 33394bed-a824-4da2-94c6-9cb051f7b76c
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_02
+              skill_bundle_sha256: 1c44d34fb95a56332748aa2b991b1caf42f2d977758a76a7d9ad1f4220e576de
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_02/rollout-2026-07-27T09-15-19-019fa2db-7592-71e3-b449-e5342d666274.jsonl
+            attempt_03:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/cc/attempt_03
+              agent_run_id: 7f248293-06d2-4119-a63b-62c223271a0a
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_03
+              skill_bundle_sha256: ca1df25a18cf9b948a38b1173a1c538c912ee1f02b9f7fb90171a5339ab61d28
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_03/rollout-2026-07-27T09-46-24-019fa2f7-ebb0-7d21-a076-6d4c7e16eef8.jsonl
+          failure_reasons: []
+          physical_run_ids:
+          - 0f3192b6-5369-498e-a8c8-6c4b7de6a94e
+          - 33394bed-a824-4da2-94c6-9cb051f7b76c
+          - 7f248293-06d2-4119-a63b-62c223271a0a
+        solver:
+          status: complete
+          solver_denominator: 15
+          valid_solver_slots: 15
+          failed_solver_slots: 0
+          overall_acc_at_3: 0.4506019951841688
+          overall_std_at_3: 0.13396492899637516
+          tasks:
+            test_001:
+              status: complete
+              scores:
+              - 0.5
+              - 0.166666666667
+              - 0.055555555556
+              acc_at_3: 0.24074074074100002
+              std_at_3: 0.18885257457732169
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_01
+                  agent_run_id: 6110c4ab-db6e-4c17-9832-5a79c39df3d1
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_01/rollout-2026-07-27T10-27-59-019fa31d-fe80-7862-9b5e-451fcf1ccbaa.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.166666666667
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_02
+                  agent_run_id: cf1db352-b212-4494-8189-b58b8e2b202d
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_02/rollout-2026-07-27T19-02-22-019fa4f4-ede8-7bd1-813b-4f6dfe980042.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.055555555556
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_03
+                  agent_run_id: e8afe182-8dc7-46f0-a968-c6439fc4e0c5
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_03/rollout-2026-07-28T02-13-03-019fa67f-3953-7792-a66b-028916320f6d.jsonl
+                  evaluator_output: null
+            test_002:
+              status: complete
+              scores:
+              - 0.117647058824
+              - 0.588235294118
+              - 0.588235294118
+              acc_at_3: 0.43137254902
+              std_at_3: 0.22183742154866531
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.117647058824
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_01
+                  agent_run_id: 67c767e6-93e1-4431-92ce-3b29a821b45d
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_01/rollout-2026-07-27T11-48-57-019fa368-1cf3-7e11-a075-8c2802bf125b.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.588235294118
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02
+                  agent_run_id: ca855a0e-7c62-451b-83ef-7a411999f5ef
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02/rollout-2026-07-27T20-12-34-019fa535-3201-7cd0-a8b6-641da97a9786.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.588235294118
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_03
+                  agent_run_id: 387c1189-7a2b-4312-b3dd-544454b47f95
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_03/rollout-2026-07-28T02-25-24-019fa68a-87d3-7522-85d2-205975df9217.jsonl
+                  evaluator_output: null
+            test_003:
+              status: complete
+              scores:
+              - 0.42105263157894735
+              - 0.42105263157894735
+              - 0.5263157894736842
+              acc_at_3: 0.4561403508771929
+              std_at_3: 0.049621528504319126
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_01
+                  agent_run_id: 09618560-007b-4edd-9a74-5f7583d1cc2d
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_01/rollout-2026-07-27T14-02-08-019fa3e2-0d97-7fd3-8f50-233631f98cd8.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_02
+                  agent_run_id: e16df9a5-e37f-474c-87e4-bb7899657be3
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_02/rollout-2026-07-27T22-12-38-019fa5a3-1eec-7061-8893-25886d19b110.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5263157894736842
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_03
+                  agent_run_id: 0e904e95-c75b-4c97-8bda-63c4bbde4685
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_03/rollout-2026-07-28T03-08-08-019fa6b1-a81b-7d13-a8d1-8ff278e09655.jsonl
+                  evaluator_output: null
+            test_004:
+              status: complete
+              scores:
+              - 0.42105263157894735
+              - 0.42105263157894735
+              - 0.42105263157894735
+              acc_at_3: 0.42105263157894735
+              std_at_3: 0.0
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_01
+                  agent_run_id: 2fa20b1d-f6f6-4fda-93fb-7c919b629711
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_01/rollout-2026-07-27T16-12-32-019fa459-6deb-7e81-a652-4a24fad3e249.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_02
+                  agent_run_id: b1751565-97cf-4591-aff7-c22fc126b0b0
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_02/rollout-2026-07-27T23-17-46-019fa5de-bfe9-75c2-be6a-7a0f7382a2b3.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_03
+                  agent_run_id: ee104d03-f444-4ee1-a7dd-6621d6793db4
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_03/rollout-2026-07-28T04-13-12-019fa6ed-385d-7121-a054-858d0ca4401a.jsonl
+                  evaluator_output: null
+            test_005:
+              status: complete
+              scores:
+              - 0.5555555555555556
+              - 0.5555555555555556
+              - 1.0
+              acc_at_3: 0.7037037037037037
+              std_at_3: 0.20951312035156963
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5555555555555556
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_01
+                  agent_run_id: dafbc63d-5622-42f2-85a5-4488bcad8378
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_01/rollout-2026-07-27T17-49-38-019fa4b2-53d2-72f1-bae0-92aaed4ee097.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5555555555555556
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_02
+                  agent_run_id: a3ffc872-706e-4d29-b488-d9d16c09417e
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_02/rollout-2026-07-28T00-48-41-019fa631-fa58-77b1-a886-47cd193cfc70.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 1.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_03
+                  agent_run_id: 84859e69-b3d9-43bd-ba57-557e26c3590e
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_03/rollout-2026-07-28T05-25-23-019fa72f-500d-7262-9b75-475ab6be11ef.jsonl
+                  evaluator_output: null
+          failure_reasons: []
+          physical_run_ids:
+          - 6110c4ab-db6e-4c17-9832-5a79c39df3d1
+          - cf1db352-b212-4494-8189-b58b8e2b202d
+          - e8afe182-8dc7-46f0-a968-c6439fc4e0c5
+          - 67c767e6-93e1-4431-92ce-3b29a821b45d
+          - ca855a0e-7c62-451b-83ef-7a411999f5ef
+          - 387c1189-7a2b-4312-b3dd-544454b47f95
+          - 09618560-007b-4edd-9a74-5f7583d1cc2d
+          - e16df9a5-e37f-474c-87e4-bb7899657be3
+          - 0e904e95-c75b-4c97-8bda-63c4bbde4685
+          - 2fa20b1d-f6f6-4fda-93fb-7c919b629711
+          - b1751565-97cf-4591-aff7-c22fc126b0b0
+          - ee104d03-f444-4ee1-a7dd-6621d6793db4
+          - dafbc63d-5622-42f2-85a5-4488bcad8378
+          - a3ffc872-706e-4d29-b488-d9d16c09417e
+          - 84859e69-b3d9-43bd-ba57-557e26c3590e
+        overall_acc_at_3: 0.4506019951841688
+        overall_std_at_3: 0.13396492899637516
+        lift_over_strict_base: 0.012487100103169946
+      deepagents:
+        status: complete
+        generation:
+          generation_denominator: 3
+          valid_generation_slots: 3
+          valid_generation_rate: 1.0
+          attempts:
+            attempt_01:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/deepagents/attempt_01
+              agent_run_id: deb11299-695a-4ffd-9730-f382d331e80b
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_01
+              skill_bundle_sha256: 4eb70483d00a3a5a711d2078c39087441c48c84251d1e24343feb9ff1887d28a
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_01/rollout-2026-07-27T08-52-38-019fa2c6-b15d-7e00-a7b7-7a7c3d766814.jsonl
+            attempt_02:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/deepagents/attempt_02
+              agent_run_id: 2e71117b-7d2f-4e27-bd6b-c93c9c2c4527
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_02
+              skill_bundle_sha256: e920cf3cbb935eabcdb18c2ff63d51b6ef5b99076eefe09905bbadff1559675c
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_02/rollout-2026-07-27T09-16-38-019fa2dc-aa65-7403-bacc-6b0901174f76.jsonl
+            attempt_03:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/deepagents/attempt_03
+              agent_run_id: d52b2310-9b91-4111-9b58-7f42efc58b54
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_03
+              skill_bundle_sha256: 7aa28370653318ac984163f3b685c6cdfb5036cedaae002760f36bd0d7502544
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_03/rollout-2026-07-27T09-56-54-019fa301-8946-71f1-af41-4aafb2f91bd7.jsonl
+          failure_reasons: []
+          physical_run_ids:
+          - deb11299-695a-4ffd-9730-f382d331e80b
+          - 2e71117b-7d2f-4e27-bd6b-c93c9c2c4527
+          - d52b2310-9b91-4111-9b58-7f42efc58b54
+        solver:
+          status: complete
+          solver_denominator: 15
+          valid_solver_slots: 14
+          failed_solver_slots: 1
+          overall_acc_at_3: 0.41667239995426353
+          overall_std_at_3: 0.18920330288051876
+          tasks:
+            test_001:
+              status: complete
+              scores:
+              - 0.5
+              - 0.055555555556
+              - 0.055555555556
+              acc_at_3: 0.203703703704
+              std_at_3: 0.2095131203513601
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_01
+                  agent_run_id: fd780f29-4ff5-45f0-a7f6-609c0de464af
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_01/rollout-2026-07-27T10-28-10-019fa31e-2762-7a12-a0b7-09430b965a33.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.055555555556
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_02
+                  agent_run_id: c3c7f0c3-c40c-4b0e-b97b-0948c026ac41
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_02/rollout-2026-07-27T19-28-24-019fa50c-c171-7b92-ab0a-6dd89f7735bd.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.055555555556
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_03
+                  agent_run_id: ba1ac69e-ffd1-43b7-82ca-7f841afae69d
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_03/rollout-2026-07-28T02-13-03-019fa67f-396d-7662-9253-5ada062c00d9.jsonl
+                  evaluator_output: null
+            test_002:
+              status: complete
+              scores:
+              - 0.588235294118
+              - 0.588235294118
+              - 0.588235294118
+              acc_at_3: 0.588235294118
+              std_at_3: 0.0
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.588235294118
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_01
+                  agent_run_id: a98b264c-b2f4-4380-a67b-6443fcdc4c3e
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_01/rollout-2026-07-27T12-12-26-019fa37d-9f62-7521-9053-d2af84091731.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.588235294118
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_02
+                  agent_run_id: ddcbc8b3-3d77-4eaa-abc3-c03cf7d4310f
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_02/rollout-2026-07-27T20-33-07-019fa548-0231-7d71-a8d0-dbb47b403907.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.588235294118
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_03
+                  agent_run_id: 644f83ca-7229-44a8-b1b6-0d0e424e97f0
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_03/rollout-2026-07-28T03-13-05-019fa6b6-3116-7791-a32b-d2c20e5ef1bc.jsonl
+                  evaluator_output: null
+            test_003:
+              status: complete
+              scores:
+              - 0.631578947368421
+              - 0.0
+              - 0.5263157894736842
+              acc_at_3: 0.3859649122807018
+              std_at_3: 0.2762809780355021
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.631578947368421
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_01
+                  agent_run_id: fe799776-0153-418a-a7df-f07c044c8339
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_01/rollout-2026-07-27T14-12-27-019fa3eb-7ff1-7e12-97c3-7b001b61b896.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: failed_without_v2_retry
+                  status: missing
+                  score_status: null
+                  score: 0.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_02
+                  agent_run_id: null
+                  trace_file: null
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5263157894736842
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_03
+                  agent_run_id: 1960f3a2-d028-4085-91c7-e1be8307c889
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_03/rollout-2026-07-28T04-13-12-019fa6ed-3858-70a0-8791-c5051d2eea70.jsonl
+                  evaluator_output: null
+            test_004:
+              status: complete
+              scores:
+              - 0.42105263157894735
+              - 0.42105263157894735
+              - 0.2631578947368421
+              acc_at_3: 0.3684210526315789
+              std_at_3: 0.07443229275647868
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_01
+                  agent_run_id: 1a7867b9-6180-4af2-aa30-471a64accdcf
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_01/rollout-2026-07-27T16-12-32-019fa459-6dee-7c71-83ef-0515cbb02fa0.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_02
+                  agent_run_id: 02657960-bd30-4002-9912-8b03c70b6039
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_02/rollout-2026-07-27T23-40-57-019fa5f3-f775-7870-bf1e-14ddbf962fbf.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.2631578947368421
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_03
+                  agent_run_id: 880e57bc-b757-4009-b42c-7106d0f9a0ca
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_03/rollout-2026-07-28T04-52-36-019fa711-4d7e-78a3-b222-d7ee272eec4f.jsonl
+                  evaluator_output: null
+            test_005:
+              status: complete
+              scores:
+              - 0.05555555555555555
+              - 0.5555555555555556
+              - 1.0
+              acc_at_3: 0.5370370370370371
+              std_at_3: 0.38579012325925294
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.05555555555555555
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_01
+                  agent_run_id: 7ba5e5cd-e8a2-456c-970b-15642e03e081
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_01/rollout-2026-07-27T18-12-33-019fa4c7-4f54-7d52-930a-75fe3c4b6a4d.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5555555555555556
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_02
+                  agent_run_id: cecfb593-edc9-4a91-9849-6310570762fe
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_02/rollout-2026-07-28T01-12-56-019fa648-3161-7d31-bb06-f205aa736e67.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 1.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_03
+                  agent_run_id: 3e5e7fea-96c9-4e50-adf8-fce696f6308e
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_03/rollout-2026-07-28T05-29-42-019fa733-43ac-76e0-a340-880529040024.jsonl
+                  evaluator_output: null
+          failure_reasons:
+          - logical_slot: fewshot/deepagents/test_003/attempt_02
+            source: failed_without_v2_retry
+            status: missing
+            score_status: null
+            reason: null
+          physical_run_ids:
+          - fd780f29-4ff5-45f0-a7f6-609c0de464af
+          - c3c7f0c3-c40c-4b0e-b97b-0948c026ac41
+          - ba1ac69e-ffd1-43b7-82ca-7f841afae69d
+          - a98b264c-b2f4-4380-a67b-6443fcdc4c3e
+          - ddcbc8b3-3d77-4eaa-abc3-c03cf7d4310f
+          - 644f83ca-7229-44a8-b1b6-0d0e424e97f0
+          - fe799776-0153-418a-a7df-f07c044c8339
+          - 1960f3a2-d028-4085-91c7-e1be8307c889
+          - 1a7867b9-6180-4af2-aa30-471a64accdcf
+          - 02657960-bd30-4002-9912-8b03c70b6039
+          - 880e57bc-b757-4009-b42c-7106d0f9a0ca
+          - 7ba5e5cd-e8a2-456c-970b-15642e03e081
+          - cecfb593-edc9-4a91-9849-6310570762fe
+          - 3e5e7fea-96c9-4e50-adf8-fce696f6308e
+        overall_acc_at_3: 0.41667239995426353
+        overall_std_at_3: 0.18920330288051876
+        lift_over_strict_base: -0.02144249512673535
+      opencode:
+        status: complete
+        generation:
+          generation_denominator: 3
+          valid_generation_slots: 2
+          valid_generation_rate: 0.6666666666666666
+          attempts:
+            attempt_01:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/opencode/attempt_01
+              agent_run_id: 620d13ab-1485-474a-8c86-5a14e448e0bc
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_01
+              skill_bundle_sha256: f447cf49660a95cda3b36403a9ae56dabb1744a4daee545abf0dbfff1fa76844
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_01/rollout-2026-07-27T08-59-12-019fa2cc-b337-7e71-a792-1582ffa25a3d.jsonl
+            attempt_02:
+              source: first_pass_valid
+              status: valid
+              validation_status: valid
+              metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/scratch/skill_generation/deepseek_v4_max_preview/opencode/attempt_02
+              agent_run_id: 202de360-443b-49a2-9fe7-f68d6f18227d
+              skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_02
+              skill_bundle_sha256: 60b1c85cac9523a5bb1a28cad04c8edade93f9fd1fb16838fa21da11263f8fd0
+              trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_02/rollout-2026-07-27T09-34-45-019fa2ed-3fcd-7ad0-8bc5-d27180c62164.jsonl
+            attempt_03:
+              source: bounded_retry_v2
+              status: logical_failure
+              validation_status: missing
+              metadata: supplemental/bounded_logical_retry_v2/scratch/skill_generation/deepseek_v4_max_preview/opencode/attempt_03/logical_retry_02
+              agent_run_id: 99cd5634-fcbd-4bad-9556-e443ddfaec5c
+              skill_dir: null
+              skill_bundle_sha256: null
+              trace_file: scratch/bounded_logical_retry_v2/physical_runs/skill_generation/fewshot__opencode__generation__attempt_03/logical_retry_02/99cd5634-fcbd-4bad-9556-e443ddfaec5c/trace/rollout-2026-07-29T10-06-02-019fad56-9d48-7af3-ba3d-adf95c99b435.jsonl
+          failure_reasons:
+          - logical_slot: fewshot/opencode/generation/attempt_03
+            source: bounded_retry_v2
+            status: logical_failure
+            validation_status: missing
+          physical_run_ids:
+          - 620d13ab-1485-474a-8c86-5a14e448e0bc
+          - 202de360-443b-49a2-9fe7-f68d6f18227d
+          - 99cd5634-fcbd-4bad-9556-e443ddfaec5c
+        solver:
+          status: complete
+          solver_denominator: 15
+          valid_solver_slots: 9
+          failed_solver_slots: 6
+          overall_acc_at_3: 0.2809310858846994
+          overall_std_at_3: 0.27060887903188635
+          tasks:
+            test_001:
+              status: complete
+              scores:
+              - 0.055555555556
+              - 0.5
+              - 0.0
+              acc_at_3: 0.18518518518533333
+              std_at_3: 0.22376011062203588
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.055555555556
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_01
+                  agent_run_id: c117fa31-130b-44f6-bfd6-e39407cf202a
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_01/rollout-2026-07-27T10-56-38-019fa338-37cb-7a80-adf0-79d949f5ee57.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.5
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_02
+                  agent_run_id: ac753e04-c321-4288-8741-bd44f25e25a5
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_02/rollout-2026-07-27T19-40-22-019fa517-b786-73a0-9176-36a941bd7561.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: failed_without_v2_retry
+                  status: missing
+                  score_status: null
+                  score: 0.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_03
+                  agent_run_id: null
+                  trace_file: null
+                  evaluator_output: null
+            test_002:
+              status: complete
+              scores:
+              - 0.588235294118
+              - 0.0
+              - 0.0
+              acc_at_3: 0.19607843137266667
+              std_at_3: 0.2772967769360674
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.588235294118
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_01
+                  agent_run_id: 40e947ad-ea83-494c-a96d-0336c2d74880
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_01/rollout-2026-07-27T12-12-26-019fa37d-9fbc-7030-967c-db74e9735026.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: failed_without_v2_retry
+                  status: missing
+                  score_status: null
+                  score: 0.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02
+                  agent_run_id: null
+                  trace_file: null
+                  evaluator_output: null
+                attempt_03:
+                  source: failed_without_v2_retry
+                  status: missing
+                  score_status: null
+                  score: 0.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_03
+                  agent_run_id: null
+                  trace_file: null
+                  evaluator_output: null
+            test_003:
+              status: complete
+              scores:
+              - 0.631578947368421
+              - 0.42105263157894735
+              - 0.0
+              acc_at_3: 0.3508771929824561
+              std_at_3: 0.2625724481946625
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.631578947368421
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_01
+                  agent_run_id: 8f4cac52-9008-477b-a138-2e2e2d669047
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_01/rollout-2026-07-27T14-48-08-019fa40c-2b33-7090-9583-ade5e47ef09c.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_02
+                  agent_run_id: 48b7d2e8-6b67-40f8-a382-0e7acd2183d3
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_02/rollout-2026-07-27T22-02-30-019fa599-d71a-7771-be53-a56267f8bcfb.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: failed_without_v2_retry
+                  status: missing
+                  score_status: null
+                  score: 0.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_03
+                  agent_run_id: null
+                  trace_file: null
+                  evaluator_output: null
+            test_004:
+              status: complete
+              scores:
+              - 0.42105263157894735
+              - 0.2631578947368421
+              - 0.0
+              acc_at_3: 0.22807017543859645
+              std_at_3: 0.17367534976511692
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.42105263157894735
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_01
+                  agent_run_id: be745414-8b77-40a6-85cc-289dead725a7
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_01/rollout-2026-07-27T17-12-31-019fa490-594a-7d82-9956-ad8c9803c4c9.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.2631578947368421
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_02
+                  agent_run_id: 620bf6d3-7f0f-415f-a1a4-7d8cd0e5e94a
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_02/rollout-2026-07-27T23-48-40-019fa5fb-0861-7633-8767-e12c913e9af3.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: failed_without_v2_retry
+                  status: missing
+                  score_status: null
+                  score: 0.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_03
+                  agent_run_id: null
+                  trace_file: null
+                  evaluator_output: null
+            test_005:
+              status: complete
+              scores:
+              - 1.0
+              - 0.3333333333333333
+              - 0.0
+              acc_at_3: 0.4444444444444444
+              std_at_3: 0.41573970964154905
+              attempts:
+                attempt_01:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 1.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_01
+                  agent_run_id: 93cd0543-0374-4ba2-9791-84c71cc2a0c6
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_01/rollout-2026-07-27T18-12-33-019fa4c7-4f54-7c52-8953-89a8f6aff527.jsonl
+                  evaluator_output: null
+                attempt_02:
+                  source: first_pass_valid
+                  status: valid
+                  score_status: valid
+                  score: 0.3333333333333333
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_02
+                  agent_run_id: 4de84b08-efa7-44cc-9add-dcf43590a3e3
+                  trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_02/rollout-2026-07-28T01-46-23-019fa666-cf45-7700-a273-c05dd90dcd93.jsonl
+                  evaluator_output: null
+                attempt_03:
+                  source: failed_without_v2_retry
+                  status: missing
+                  score_status: null
+                  score: 0.0
+                  metadata: scratch/logical_recovery/deepseek_v4_max_preview/first_pass/runs/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_03
+                  agent_run_id: null
+                  trace_file: null
+                  evaluator_output: null
+          failure_reasons:
+          - logical_slot: fewshot/opencode/test_001/attempt_03
+            source: failed_without_v2_retry
+            status: missing
+            score_status: null
+            reason: null
+          - logical_slot: fewshot/opencode/test_002/attempt_02
+            source: failed_without_v2_retry
+            status: missing
+            score_status: null
+            reason: null
+          - logical_slot: fewshot/opencode/test_002/attempt_03
+            source: failed_without_v2_retry
+            status: missing
+            score_status: null
+            reason: null
+          - logical_slot: fewshot/opencode/test_003/attempt_03
+            source: failed_without_v2_retry
+            status: missing
+            score_status: null
+            reason: null
+          - logical_slot: fewshot/opencode/test_004/attempt_03
+            source: failed_without_v2_retry
+            status: missing
+            score_status: null
+            reason: null
+          - logical_slot: fewshot/opencode/test_005/attempt_03
+            source: failed_without_v2_retry
+            status: missing
+            score_status: null
+            reason: null
+          physical_run_ids:
+          - c117fa31-130b-44f6-bfd6-e39407cf202a
+          - ac753e04-c321-4288-8741-bd44f25e25a5
+          - 40e947ad-ea83-494c-a96d-0336c2d74880
+          - 8f4cac52-9008-477b-a138-2e2e2d669047
+          - 48b7d2e8-6b67-40f8-a382-0e7acd2183d3
+          - be745414-8b77-40a6-85cc-289dead725a7
+          - 620bf6d3-7f0f-415f-a1a4-7d8cd0e5e94a
+          - 93cd0543-0374-4ba2-9791-84c71cc2a0c6
+          - 4de84b08-efa7-44cc-9add-dcf43590a3e3
+        overall_acc_at_3: 0.2809310858846994
+        overall_std_at_3: 0.27060887903188635
+        lift_over_strict_base: -0.15718380919629948
+  available_after_v2:
+    generation_valid: 11
+    generation_denominator: 12
+    solver_valid: 63
+    solver_denominator: 75
+  hard_block: null
+retry_counts:
+  generation_logical_retry_02_authorized: 2
+  generation_logical_retry_02_started: 2
+  generation_logical_retry_02_selected_valid: 1
+  dependent_solver_logical_retry_02_started: 5
+  solver_logical_retry_02_selected_valid: 2
+  infrastructure_failure_physical_runs: 0
+  infrastructure_replacements_allowed_per_logical_slot: 3
+infrastructure_replacements: []
+hash_evidence:
+  pre_paid_snapshot: scratch/bounded_logical_retry_v2/pre_paid_hash_snapshot.yaml
+  pre_paid_snapshot_sha256: ac7e0e28e30166111d3ddf43206aaba14708d09a8bb83c5f38c10012ebf45ea9
+  manifest: scratch/bounded_logical_retry_v2/manifest.yaml
+  manifest_sha256: c1e56ab881f4adbdb1e47e29f52ae5ed9ba554f4463b6705d229aa68dc6d3513
+  ledger: scratch/bounded_logical_retry_v2/ledger.yaml
+notes:
+- bounded_logical_retry_v2 is an independent supplemental layer and is not the original
+  strict experiment.
+- first-pass canonical and bounded_logical_retry_v1 artifacts are referenced read-only
+  and remain incomplete where originally hard-blocked.
+- No attempt_04 slots are created; original valid first-pass slots are referenced
+  only.

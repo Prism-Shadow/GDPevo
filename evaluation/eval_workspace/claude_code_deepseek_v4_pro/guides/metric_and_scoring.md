@@ -26,10 +26,10 @@ manual counting inside the agent prompt.
 
 ### Token accounting (read carefully — easy to get wrong)
 
-This workspace runs Claude Code with DeepSeek V4 Pro through the DeepSeek
+This workspace runs Claude Code with DeepSeek V4 Pro Preview through the DeepSeek
 Anthropic API. The authoritative efficiency and cost source is the preserved
 Dockerized `claude -p` run trace, not surrounding orchestration output. Use the
-DeepSeek V4 Pro rate card defined below for both solver and evolve cost.
+DeepSeek V4 Pro Preview rate card defined below for both solver and evolve cost.
 
 Each solver attempt should preserve these audit files under
 `original_traces/<condition>/<task_id>/attempt_<nn>/`:

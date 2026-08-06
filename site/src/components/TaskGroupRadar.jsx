@@ -20,8 +20,7 @@ const seriesColors = [
 ];
 const methodLabels = {
   none: "—",
-  "skill-creator": "Skill Creator",
-  "agent-training": "Agent Training"
+  "skill-creator": "Skill Creator"
 };
 const filterProperties = {
   runIds: "runId",
@@ -33,7 +32,7 @@ const filterProperties = {
 const copy = {
   en: {
     title: "Task-group performance explorer",
-    subtitle: "Compare ACC profiles across task groups 001–012",
+    subtitle: "Compare ACC profiles across task groups 001–024",
     builder: "Comparison filters",
     builderHint: "Select any combination. Empty groups mean no restriction.",
     model: "Model",
@@ -49,15 +48,17 @@ const copy = {
     allFewshot: "All models · fewshot",
     allReflect: "All models · reflect-3",
     active: "Lines on chart",
+    colorHint: "Click a swatch to change color",
     clear: "Clear",
     empty: "Choose conditions or use a quick comparison to add radar lines.",
     average: "ACC",
+    changeColor: "Change line color",
     remove: "Remove comparison line",
     accuracy: "ACC"
   },
   zh: {
     title: "任务组表现对比",
-    subtitle: "比较任务组 001–012 上的 ACC 分布",
+    subtitle: "比较任务组 001–024 上的 ACC 分布",
     builder: "对比条件",
     builderHint: "可以同时勾选多个条件；某组未勾选时表示不限。",
     model: "模型",
@@ -73,9 +74,11 @@ const copy = {
     allFewshot: "全部模型 · fewshot",
     allReflect: "全部模型 · reflect-3",
     active: "当前曲线",
+    colorHint: "点击色块可改色",
     clear: "清空",
     empty: "请选择实验条件，或使用快捷比较添加雷达曲线。",
     average: "ACC",
+    changeColor: "调整曲线颜色",
     remove: "移除对比曲线",
     accuracy: "ACC"
   }
@@ -98,6 +101,7 @@ const experimentColorMap = new Map(experiments.map((experiment, index) => [
   experiment.key,
   seriesColors[index % seriesColors.length]
 ]));
+const radarMethods = [...new Set(experiments.map((experiment) => experiment.method))];
 
 function mean(values) {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -208,6 +212,7 @@ export function TaskGroupRadar({ lang = "en" }) {
   const [selectedKeys, setSelectedKeys] = useState(
     leaderboardModes.map((mode) => `${defaultRun.id}:${mode}`)
   );
+  const [colorOverrides, setColorOverrides] = useState({});
   const [focusedKey, setFocusedKey] = useState(null);
   const seriesRowRefs = useRef(new Map());
 
@@ -230,7 +235,7 @@ export function TaskGroupRadar({ lang = "en" }) {
     {
       field: "methods",
       label: t.method,
-      options: ["none", "skill-creator", "agent-training"].map((method) => ({
+      options: radarMethods.map((method) => ({
         value: method,
         label: method === "none" ? t.noMethod : methodLabels[method]
       }))
@@ -244,7 +249,7 @@ export function TaskGroupRadar({ lang = "en" }) {
   const selectedSeries = selectedKeys.map((key) => experimentMap.get(key)).filter(Boolean);
   const styledSeries = selectedSeries.map((series, index) => ({
     ...series,
-    color: experimentColorMap.get(series.key),
+    color: colorOverrides[series.key] ?? experimentColorMap.get(series.key),
     dataKey: `series_${index}`,
     label: seriesName(series)
   }));
@@ -252,7 +257,7 @@ export function TaskGroupRadar({ lang = "en" }) {
   const renderedSeries = focusedKey
     ? [...styledSeries.filter((series) => series.key !== focusedKey), ...styledSeries.filter((series) => series.key === focusedKey)]
     : styledSeries;
-  const chartData = taskGroups.slice(0, 12).map((group, groupIndex) => {
+  const chartData = taskGroups.map((group, groupIndex) => {
     const row = { axis: `TG${group.id}`, enName: group.en, zhName: group.zh };
     styledSeries.forEach((series) => {
       row[series.dataKey] = series.scores[groupIndex];
@@ -279,6 +284,9 @@ export function TaskGroupRadar({ lang = "en" }) {
     setFilters({ runIds: [], harnesses: [], modes: [mode], methods: [] });
   };
   const removeSeries = (key) => setSelectedKeys((current) => current.filter((item) => item !== key));
+  const changeSeriesColor = (key, color) => {
+    setColorOverrides((current) => ({ ...current, [key]: color }));
+  };
   const toggleFocusedSeries = (key) => setFocusedKey((current) => current === key ? null : key);
 
   useEffect(() => {
@@ -367,7 +375,10 @@ export function TaskGroupRadar({ lang = "en" }) {
       <div className="radar-body">
         <aside className="radar-active">
           <div className="radar-active-head">
-            <strong>{t.active}</strong>
+            <span className="radar-active-title">
+              <strong>{t.active}</strong>
+              <small>{t.colorHint}</small>
+            </span>
             <button type="button" onClick={() => setSelectedKeys([])} disabled={!selectedKeys.length}>{t.clear}</button>
           </div>
           <div className="radar-series-list">
@@ -380,13 +391,24 @@ export function TaskGroupRadar({ lang = "en" }) {
                   else seriesRowRefs.current.delete(series.key);
                 }}
               >
+                <label
+                  className="radar-color-picker"
+                  title={`${t.changeColor}: ${series.label}`}
+                >
+                  <input
+                    aria-label={`${t.changeColor}: ${series.label}`}
+                    onInput={(event) => changeSeriesColor(series.key, event.currentTarget.value)}
+                    type="color"
+                    value={series.color}
+                  />
+                  <i aria-hidden="true" style={{ background: series.color }} />
+                </label>
                 <button
                   aria-pressed={focusedKey === series.key}
                   className="radar-series-select"
                   onClick={() => toggleFocusedSeries(series.key)}
                   type="button"
                 >
-                  <i style={{ background: series.color }} />
                   <span>
                     <strong>{series.model} · {series.mode}</strong>
                     <small>{series.harness} · {methodLabels[series.method]} · {t.average} {mean(series.scores).toFixed(2)}%</small>

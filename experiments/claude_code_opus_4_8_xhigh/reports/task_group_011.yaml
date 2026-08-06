@@ -2,6 +2,101 @@ task_group_id: task_group_011
 scenario_id: SCN_011_bank_branch_credit_risk_lending_committee
 model: claude-opus-4-8, xhigh
 harness: claude_code
+evolve:
+  pricing:
+    basis: claude_opus_4_8_api
+    input_usd_per_million: 5.0
+    cache_creation_usd_per_million: 6.25
+    cache_read_usd_per_million: 0.5
+    output_usd_per_million: 25.0
+  conditions:
+    fewshot:
+      attempts:
+        attempt_01:
+          input_tokens: 2854
+          cache_creation_tokens: 98014
+          cache_read_tokens: 2480037
+          output_tokens: 31782
+          total_tokens: 2612687
+          cost_usd: 2.661426
+        attempt_02:
+          input_tokens: 2874
+          cache_creation_tokens: 104971
+          cache_read_tokens: 3462879
+          output_tokens: 36054
+          total_tokens: 3606778
+          cost_usd: 3.30322825
+        attempt_03:
+          input_tokens: 2890
+          cache_creation_tokens: 97116
+          cache_read_tokens: 3685550
+          output_tokens: 32748
+          total_tokens: 3818304
+          cost_usd: 3.2829
+      summary:
+        input_tokens_avg_3: 2872.67
+        cache_creation_tokens_avg_3: 100033.67
+        cache_read_tokens_avg_3: 3209488.67
+        output_tokens_avg_3: 33528.0
+        cost_usd_avg_3: 3.08251808
+    self:
+      attempts:
+        attempt_01:
+          input_tokens: 4451
+          cache_creation_tokens: 74464
+          cache_read_tokens: 1607106
+          output_tokens: 23056
+          total_tokens: 1709077
+          cost_usd: 1.867608
+        attempt_02:
+          input_tokens: 4168
+          cache_creation_tokens: 83564
+          cache_read_tokens: 1401601
+          output_tokens: 26706
+          total_tokens: 1516039
+          cost_usd: 1.9115655
+        attempt_03:
+          input_tokens: 4746
+          cache_creation_tokens: 77753
+          cache_read_tokens: 2415428
+          output_tokens: 26443
+          total_tokens: 2524370
+          cost_usd: 2.37847525
+      summary:
+        input_tokens_avg_3: 4455.0
+        cache_creation_tokens_avg_3: 78593.67
+        cache_read_tokens_avg_3: 1808045.0
+        output_tokens_avg_3: 25401.67
+        cost_usd_avg_3: 2.05254958
+    reflect-3:
+      attempts:
+        attempt_01:
+          input_tokens: 5866
+          cache_creation_tokens: 145506
+          cache_read_tokens: 5380518
+          output_tokens: 77867
+          total_tokens: 5609757
+          cost_usd: 5.5756765
+        attempt_02:
+          input_tokens: 5581
+          cache_creation_tokens: 116573
+          cache_read_tokens: 4125258
+          output_tokens: 58196
+          total_tokens: 4305608
+          cost_usd: 4.27401525
+        attempt_03:
+          input_tokens: 5571
+          cache_creation_tokens: 149378
+          cache_read_tokens: 4565462
+          output_tokens: 66457
+          total_tokens: 4786868
+          cost_usd: 4.9056235
+      summary:
+        input_tokens_avg_3: 5672.67
+        cache_creation_tokens_avg_3: 137152.33
+        cache_read_tokens_avg_3: 4690412.67
+        output_tokens_avg_3: 67506.67
+        cost_usd_avg_3: 4.91843842
 conditions:
   base:
     overall_acc_at_3: 0.4156

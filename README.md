@@ -3,6 +3,7 @@
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
 [![Blog](https://img.shields.io/badge/Blog-Read%20the%20blog-0f7b5f?style=flat&logo=readthedocs&logoColor=white)](https://prism-shadow.github.io/GDPevo/blog.html)
+[![Paper](https://img.shields.io/badge/arXiv-2608.03764-b31b1b?style=flat&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.03764)
 
 **GDPevo** is a public benchmark for evaluating agent self-evolution on real business work. The data release contains 240 tasks across 24 task groups spanning CRM, ERP, finance, healthcare, legal, data analysis, and engineering operations; each group has one shared business environment, 5 train tasks, and 5 held-out test tasks. For the full motivation, construction pipeline, and findings, read the [project blog](https://prism-shadow.github.io/GDPevo/blog.html).
 
@@ -10,31 +11,34 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 Each experiment is run 3 times. Values in parentheses are standard deviations; all other values are means. Accuracy is reported as `acc`. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt. Cost is reported in USD; lift and cost change are relative to `base`.
 
-The released runs compare four modes:
+The primary released runs compare four modes. Separate controlled
+skill-creator comparisons hold the Codex harness and solver model fixed while
+varying the creator used for the few-shot skill: [GPT-5.5 xhigh](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/)
+and [DeepSeek V4 Pro Preview max](experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/).
 
 - **base**: run the test tasks directly, without any evolution step.
 - **self**: evolve its own working strategy from train inputs and the environment, without train answers.
 - **fewshot**: learn from train inputs plus gold answers as demonstrations.
 - **reflect-3**: iterate with train-only judge feedback, then consolidate the evolved workflow.
 
-| Harness | Model | Thinking level | `base` acc | `fewshot` acc | `self` acc | `reflect-3` acc | `base` rounds | `base` tool calls | `fewshot` rounds | `fewshot` tool calls | `self` rounds | `self` tool calls | `reflect-3` rounds | `reflect-3` tool calls | `fewshot` cost change | `self` cost change | `reflect-3` cost change | `fewshot` lift | `self` lift | `reflect-3` lift |
+The primary leaderboard uses task groups 001–024. To match the paper, the current leaderboard and task-group radar include only the four complete 24-group v2 runs listed below. V1-only 12-group runs remain archived under `experiments/` but are excluded from current comparisons.
+
+| Harness | Model | Thinking | `base` acc | `fewshot` acc | `self` acc | `reflect-3` acc | `base` rounds | `base` tool calls | `fewshot` rounds | `fewshot` tool calls | `self` rounds | `self` tool calls | `reflect-3` rounds | `reflect-3` tool calls | `fewshot` cost change | `self` cost change | `reflect-3` cost change | `fewshot` lift | `self` lift | `reflect-3` lift |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Codex | GPT-5.5 | xhigh | 46.72% (±5.13%) | 64.91% (±6.36%) | 54.99% (±8.73%) | 57.45% (±7.62%) | 14.91 | 35.89 | 11.58 | 26.70 | 9.71 | 22.74 | 10.83 | 24.42 | -29.24% | -32.18% | -25.74% | +18.19 pp | +8.27 pp | +10.73 pp |
-| Claude Code | Opus 4.8 | xhigh | 49.11% (±5.25%) | 70.90% (±6.38%) | 57.37% (±6.79%) | 62.72% (±6.68%) | 14.62 | 17.17 | 11.10 | 15.02 | 11.78 | 15.84 | 12.15 | 16.26 | -9.61% | +0.53% | -0.34% | +21.79 pp | +8.26 pp | +13.62 pp |
-| Panofy | Opus 4.6 | high | 50.40% (±6.99%) | 71.47% (±4.93%) | 58.39% (±5.74%) | 59.82% (±7.31%) | 15.16 | 19.53 | 13.48 | 16.84 | 12.51 | 16.32 | 14.37 | 17.79 | +8.27% | -6.00% | +1.99% | +21.07 pp | +7.99 pp | +9.41 pp |
-| Claude Code | GLM-5.2 | max | 47.73% (±5.21%) | 69.55% (±8.85%) | 55.91% (±7.84%) | 63.35% (±7.51%) | 17.57 | 26.01 | 15.49 | 22.81 | 15.98 | 23.87 | 15.36 | 22.67 | -12.28% | -10.23% | -16.50% | +21.83 pp | +8.18 pp | +15.62 pp |
-| Claude Code | Kimi K2.6 | enabled | 25.14% (±12.15%) | 30.48% (±13.22%) | 29.16% (±14.18%) | 32.68% (±14.25%) | 46.24 | 67.31 | 37.87 | 56.65 | 32.67 | 49.53 | 31.68 | 45.31 | -14.79% | -26.18% | -17.19% | +5.34 pp | +4.02 pp | +7.54 pp |
-| Claude Code | DeepSeek V4 Pro | max | 46.06% (±6.90%) | 54.80% (±9.65%) | 48.69% (±8.75%) | 49.22% (±8.67%) | 13.22 | 24.51 | 11.46 | 21.02 | 10.53 | 19.21 | 10.26 | 19.13 | +2.15% | +1.19% | -1.91% | +8.74 pp | +2.63 pp | +3.16 pp |
+| Codex | GPT-5.5 | xhigh | 49.37% (±5.51%) | 64.51% (±6.31%) | 55.80% (±7.63%) | 57.82% (±7.38%) | 14.96 | 36.19 | 12.04 | 28.02 | 11.45 | 26.77 | 11.85 | 27.88 | -20.88% | -22.87% | -17.23% | +15.14 pp | +6.42 pp | +8.45 pp |
+| Claude Code | Opus 4.8 | xhigh | 50.63% (±5.37%) | 67.07% (±6.22%) | 55.05% (±6.96%) | 59.27% (±7.01%) | 17.06 | 19.30 | 14.46 | 18.16 | 15.57 | 19.33 | 15.58 | 19.43 | -0.57% | +9.06% | +4.77% | +16.44 pp | +4.42 pp | +8.64 pp |
+| Claude Code | GLM-5.2 | max | 46.12% (±5.82%) | 60.09% (±7.90%) | 50.96% (±8.32%) | 55.49% (±8.28%) | 22.94 | 30.60 | 22.63 | 31.26 | 21.93 | 30.84 | 20.65 | 28.67 | +5.74% | -0.92% | -7.07% | +13.97 pp | +4.84 pp | +9.37 pp |
+| Claude Code | DeepSeek V4 Pro Preview | max | 43.58% (±7.77%) | 48.79% (±9.05%) | 46.17% (±7.89%) | 47.15% (±8.18%) | 15.65 | 27.31 | 14.73 | 25.35 | 14.29 | 24.45 | 12.68 | 21.90 | +2.58% | +2.52% | -4.77% | +5.21 pp | +2.59 pp | +3.57 pp |
 
 See the full experiment board in [`experiments/EXPERIMENT_BOARD.md`](experiments/EXPERIMENT_BOARD.md).
 
 Per-task reports are under:
 
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
+- [`experiments/codex_skill_creator_comparison_gpt5_5_xhigh/`](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/) — controlled comparison of five few-shot skill creators, including a minimal naive control, with the Codex harness and GPT-5.5 xhigh
+- [`experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/`](experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/) — the same five-creator comparison with the Codex harness and DeepSeek V4 Pro Preview max
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
-- [`experiments/panofy_claude_opus_4_6_high/`](experiments/panofy_claude_opus_4_6_high/)
 - [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
-- [`experiments/claude_code_kimi2_6_enabled/`](experiments/claude_code_kimi2_6_enabled/)
 - [`experiments/claude_code_deepseek_v4_pro_max/`](experiments/claude_code_deepseek_v4_pro_max/)
 
 ## Repository Layout
@@ -79,7 +83,7 @@ These workspaces are agent-ready folders for building, reviewing, and evaluating
 
 - **Score Evaluation**: [`evaluation/eval_workspace/`](evaluation/eval_workspace/)
 
-  - **Purpose**: Run formal `acc`, population `std`, turn-count, token, and cost evaluation for one released task group. It includes Codex, Claude Code, Panofy, and Chinese mirror workspaces.
+  - **Purpose**: Run formal `acc`, population `std`, turn-count, token, and cost evaluation for one released task group. It includes Codex, Claude Code, and Chinese mirror workspaces.
   - **Input data**: one released task group copied into the selected evaluator workspace, plus the credentials or config required by that workspace.
   - **Prompt**: `Read README.md and guides/, run score evaluation for the staged task group, and write report/<task_group_id>.yaml.`
 
@@ -87,9 +91,12 @@ These workspaces are agent-ready folders for building, reviewing, and evaluating
 
 ```bibtex
 @misc{gdpevo2026,
-  title  = {GDPevo: Measuring agent self-evolution on real business work},
-  author = {PrismShadow Team},
-  year   = {2026},
-  url    = {https://github.com/Prism-Shadow/GDPevo}
+  title         = {{GDPevo}: Evaluating Agent Self-Evolution on Real Business Tasks},
+  author        = {Zhou, Leijun and Liu, Zhihao and Qu, Xiang and Liu, Chenxu and Liu, Yifei and Yu, Yanke and Xu, Jingzhe and Wu, Xuejun and Qian, Buyue and Chen, Xi and Zheng, Yaowei and Hu, Junhao},
+  year          = {2026},
+  eprint        = {2608.03764},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2608.03764}
 }
 ```

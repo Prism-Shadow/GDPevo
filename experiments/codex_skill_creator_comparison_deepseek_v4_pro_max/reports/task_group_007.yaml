@@ -1,0 +1,1454 @@
+experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_007
+scenario_id: SCN_007_erp_inventory_order_fulfillment
+model_profile: deepseek_v4_max_preview
+policy: bounded_logical_retry_v1
+status: complete
+model:
+  generator_model: deepseek-ai/DeepSeek-V4-Pro
+  solver_model: deepseek-ai/DeepSeek-V4-Pro
+  reasoning_effort: max
+  provider_id: siliconflow_bridge
+  provider_wire_api: responses
+first_pass_boundary:
+  snapshot: scratch/bounded_logical_retry_v1/audit/first_pass_final_hash_snapshot_after_drift.json
+  verified_at: '2026-07-29T11:17:19+00:00'
+  file_count: 16808
+  unchanged: true
+  mismatch_count: 0
+  missing_count: 0
+  sample_mismatches: []
+  sample_missing: []
+  initial_snapshot_drift:
+    audit_file: scratch/bounded_logical_retry_v1/audit/first_pass_hash_drift_after_paid.json
+    changed_count: 2
+    missing_count: 0
+    new_count: 103
+strict_first_pass:
+  report_ref: report/deepseek_v4_max_preview/task_group_007.yaml
+  base:
+    denominator: 15
+    overall_acc_zero_filled: 0.2903637333333334
+    tasks:
+      test_001:
+        attempts:
+        - source: first_pass
+          status: valid
+          score: 0.0625
+          physical_run_id: 7a62e3c4-d4b7-413b-8f58-d56236e47c2a
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_001/attempt_01/rollout-2026-07-28T06-02-36-019fa751-63e7-78d0-9d53-a57efb6e3865.jsonl
+        - source: first_pass
+          status: valid
+          score: 0.3125
+          physical_run_id: 6584ebc2-a862-4786-9a73-c3b3df4b5f6d
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_001/attempt_02/rollout-2026-07-28T10-37-20-019fa84c-e881-70d1-8f20-5399bb6bb8fa.jsonl
+        - source: first_pass
+          status: valid
+          score: 0.0625
+          physical_run_id: c8cab279-30d9-4c55-af46-eaecddd46308
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_001/attempt_03/rollout-2026-07-29T05-25-21-019fac55-a356-7f51-9878-7a556fbb1c54.jsonl
+        acc_at_3_zero_filled: 0.14583333333333334
+      test_002:
+        attempts:
+        - source: first_pass
+          status: valid
+          score: 0.105263
+          physical_run_id: d485cf0b-cd9f-41b9-8d11-3d027723e02d
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_002/attempt_01/rollout-2026-07-28T06-27-11-019fa767-e51b-7e12-a529-8e7b9985b807.jsonl
+        - source: first_pass
+          status: valid
+          score: 0.105263
+          physical_run_id: 758c683f-e8c1-4252-9e80-9522c805bd5a
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_002/attempt_02/rollout-2026-07-28T10-49-59-019fa858-7e56-7f13-8cd4-932d44349186.jsonl
+        - source: first_pass
+          status: valid
+          score: 0.105263
+          physical_run_id: aed03865-4499-4494-85d5-8c03e5bafe46
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_002/attempt_03/rollout-2026-07-29T06-46-41-019faca0-19cf-7c51-84b9-e60580f9bfee.jsonl
+        acc_at_3_zero_filled: 0.105263
+      test_003:
+        attempts:
+        - source: first_pass
+          status: valid
+          score: 1.0
+          physical_run_id: 681c49e7-0bd8-47fa-b83f-d35c342e4569
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_003/attempt_01/rollout-2026-07-28T07-53-08-019fa7b6-944a-7351-a933-e50ccd66ec8b.jsonl
+        - source: first_pass
+          status: valid
+          score: 0.631579
+          physical_run_id: 8388f0ab-d017-4c5a-8963-d13e05643df6
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_003/attempt_02/rollout-2026-07-28T11-02-31-019fa863-f873-7742-9bf4-7ab0986ef346.jsonl
+        - source: first_pass
+          status: valid
+          score: 1.0
+          physical_run_id: 817f9ff3-fae5-4f5c-9a00-7015b37af19a
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_003/attempt_03/rollout-2026-07-29T07-45-28-019facd5-ed75-7a01-b577-1a4c08c534d7.jsonl
+        acc_at_3_zero_filled: 0.877193
+      test_004:
+        attempts:
+        - source: first_pass
+          status: logical_failure
+          score: 0.0
+          physical_run_id: 7328de5d-e494-4a40-b838-f66eac9e6557
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_004/attempt_01/rollout-2026-07-28T08-32-56-019fa7db-064e-7690-8a1c-ba59bff9447b.jsonl
+        - source: first_pass
+          status: valid
+          score: 0.235294
+          physical_run_id: bf65bf42-4c99-4b6a-ae63-bb99ac6b9ec7
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_004/attempt_02/rollout-2026-07-28T11-08-58-019fa869-dedb-7370-8a6c-8ecdeb919654.jsonl
+        - source: first_pass
+          status: valid
+          score: 0.235294
+          physical_run_id: 9c378e16-1324-4c78-9e3b-9d145cb92cf3
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_004/attempt_03/rollout-2026-07-29T07-45-29-019facd5-ef69-7362-b982-9ed4836fad65.jsonl
+        acc_at_3_zero_filled: 0.15686266666666668
+      test_005:
+        attempts:
+        - source: first_pass
+          status: valid
+          score: 0.16666666666666666
+          physical_run_id: e7e4372e-6806-4e67-a878-d3f8b6b21ebb
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_005/attempt_01/rollout-2026-07-28T10-37-20-019fa84c-e746-7811-b177-18f4ea6ff0d4.jsonl
+        - source: first_pass
+          status: valid
+          score: 0.16666666666666666
+          physical_run_id: 256f105b-2779-4795-82be-126301bff780
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_005/attempt_02/rollout-2026-07-28T11-28-02-019fa87b-52d9-7150-89cb-95ad45364a53.jsonl
+        - source: first_pass
+          status: valid
+          score: 0.16666666666666666
+          physical_run_id: dcca9bd7-d564-4354-9608-c62dd345c5a1
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_005/attempt_03/rollout-2026-07-29T08-38-16-019fad06-43b4-7691-b7b5-cebae1a651bc.jsonl
+        acc_at_3_zero_filled: 0.16666666666666666
+  fewshot:
+    codex:
+      generation:
+        denominator: 3
+        valid_count: 3
+        valid_generation_rate: 1.0
+        attempts:
+        - attempt: 1
+          source: first_pass
+          status: valid
+          physical_run_id: 4419ce4f-25bb-4985-b366-7ace8cf0b239
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_01
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_01/rollout-2026-07-28T05-23-37-019fa72d-b34d-7361-9263-a1bb0c8febab.jsonl
+        - attempt: 2
+          source: first_pass
+          status: valid
+          physical_run_id: 74a483f2-f06b-4219-87f2-a32960bf974b
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_02
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_02/rollout-2026-07-28T05-23-37-019fa72d-b33a-7f63-8550-b16435b77b5f.jsonl
+        - attempt: 3
+          source: first_pass
+          status: valid
+          physical_run_id: 41310af1-4943-436d-bf56-a11f9e6fcb82
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_03
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_03/rollout-2026-07-28T05-36-58-019fa739-eaad-7153-b376-d2a3b5bacd33.jsonl
+      solver:
+        denominator: 15
+        overall_acc_zero_filled: 0.3497849777777778
+        tasks:
+          test_001:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 348e258d-af96-40f0-abb8-4afd7bb4ae8d
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_01/rollout-2026-07-28T06-47-21-019fa77a-5944-7cb2-8f2b-2e174efea0e0.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.0
+              physical_run_id: 2329dd07-ac12-41b0-ac98-a79a5245483c
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_02/rollout-2026-07-28T10-37-20-019fa84c-e8d5-7af1-8f63-48838a706c09.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 9b09b832-eed2-429a-8b5d-514257c90e54
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_03/rollout-2026-07-29T05-25-21-019fac55-a39a-76d0-91ae-5c5d80fcac18.jsonl
+            acc_at_3_zero_filled: 0.041666666666666664
+          test_002:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: 7c4cd516-c1b2-4fd8-a91a-48691951f997
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_01/rollout-2026-07-28T06-02-36-019fa751-63d5-7f83-a240-053e06fccb87.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.894737
+              physical_run_id: 8995ce9e-61c0-474c-9824-f0f0143f0d71
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_02/rollout-2026-07-29T06-28-21-019fac8f-5364-7b31-b9e9-8f0fb2e644e1.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.631579
+              physical_run_id: bbf8b2aa-9ac6-4c5c-a99e-619c2f173545
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_03/rollout-2026-07-29T07-13-26-019facb8-9706-7330-964c-0d20ba91e95f.jsonl
+            acc_at_3_zero_filled: 0.5438596666666666
+          test_003:
+            attempts:
+            - source: first_pass
+              status: logical_failure
+              score: 0.0
+              physical_run_id: a1b9cfa0-5a4c-4830-9552-ceec9333af2a
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/rollout-2026-07-28T08-01-34-019fa7be-4d68-7ff3-874c-81e71c0adb57.jsonl
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 6b31b2ea-1ace-4d47-a217-47e54de4db47
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_02/rollout-2026-07-28T11-04-22-019fa865-a818-7822-aec1-95227decd5f5.jsonl
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: a2df5f84-1ac5-478c-9271-1e66ced160d4
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_03/rollout-2026-07-29T07-45-29-019facd5-eeb9-7392-baa9-c6d2ba0970f5.jsonl
+            acc_at_3_zero_filled: 0.6666666666666666
+          test_004:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: aef039a9-c082-42e4-8f4e-c63994ea1c99
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_01/rollout-2026-07-28T09-33-27-019fa812-6e33-7460-8a83-8b1244bc35c3.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 83052819-d18a-4a68-9289-9da79f5e5038
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_02/rollout-2026-07-28T11-16-57-019fa871-2e21-7b71-8462-079f5b372f25.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.352941
+              physical_run_id: 516a3855-219a-4b52-ab52-22892d111544
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_03/rollout-2026-07-29T07-48-47-019facd8-f3ef-7630-b3ab-4015acad2f83.jsonl
+            acc_at_3_zero_filled: 0.27450966666666665
+          test_005:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 2cfc2904-ce77-4d0c-bd38-fd188c9e1393
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_01/rollout-2026-07-28T10-37-20-019fa84c-e77d-7391-a11f-ad1bd058ed63.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.4444444444444444
+              physical_run_id: 8d752384-29fc-43d8-a91a-5f10a32cd4aa
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_02/rollout-2026-07-29T05-25-20-019fac55-9fb3-75f1-ab1a-c98265334cd0.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.05555555555555555
+              physical_run_id: 9ff98936-9a14-4197-ae98-3d9a491e16d1
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_03/rollout-2026-07-29T08-38-16-019fad06-439e-7753-8fa4-6f2d8b759010.jsonl
+            acc_at_3_zero_filled: 0.2222222222222222
+    cc:
+      generation:
+        denominator: 3
+        valid_count: 3
+        valid_generation_rate: 1.0
+        attempts:
+        - attempt: 1
+          source: first_pass
+          status: valid
+          physical_run_id: d62a9c61-8ccf-4402-95cd-ad5b8ad183af
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_01
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_01/rollout-2026-07-28T05-23-37-019fa72d-b348-7461-87c5-767903bdccc8.jsonl
+        - attempt: 2
+          source: first_pass
+          status: valid
+          physical_run_id: 728a8080-51e2-4cd2-b0ff-97f188496405
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_02
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_02/rollout-2026-07-28T05-23-37-019fa72d-b349-7060-a543-6c45aecb9c87.jsonl
+        - attempt: 3
+          source: first_pass
+          status: valid
+          physical_run_id: f327a08e-2775-4ca0-baa1-6c80b9f7d398
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_03
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_03/rollout-2026-07-28T05-42-09-019fa73e-a935-7350-a87c-c462c520a147.jsonl
+      solver:
+        denominator: 15
+        overall_acc_zero_filled: 0.2092420148148148
+        tasks:
+          test_001:
+            attempts:
+            - source: first_pass
+              status: logical_failure
+              score: 0.0
+              physical_run_id: c85a180c-1e9d-4468-a425-03416f715009
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_01/rollout-2026-07-28T06-02-36-019fa751-63cc-7681-8619-e7eacf5b3c56.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.0
+              physical_run_id: 4ec547d8-e7ee-4513-b55c-5fcbeaf02273
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_02/rollout-2026-07-28T10-37-20-019fa84c-e931-7712-afe9-eda068fe4f9d.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.0
+              physical_run_id: a45d8c7b-4ae7-40ba-8570-cadc6b83bd6b
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_03/rollout-2026-07-29T05-25-21-019fac55-a39d-72f1-8625-6ba2494b6c4e.jsonl
+            acc_at_3_zero_filled: 0.0
+          test_002:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: 81bd8ba3-45fe-44b6-b548-73fdd5ba6b54
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_01/rollout-2026-07-28T06-13-11-019fa75b-12d5-7df2-9f04-fbc2b78c319d.jsonl
+            - source: first_pass
+              status: logical_failure
+              score: 0.0
+              physical_run_id: 27696f60-7247-4a31-ba9e-1ce07328337f
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02/rollout-2026-07-28T10-56-42-019fa85e-a221-79b3-862c-c5c6046c2878.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: a2870cdf-0b48-4cca-acfd-5bbd806b2632
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_03/rollout-2026-07-29T07-36-08-019faccd-606b-7980-bcc4-d840a682b889.jsonl
+            acc_at_3_zero_filled: 0.07017533333333333
+          test_003:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: e93e3358-d18d-4c7a-b8c3-6fbb703d87f6
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_01/rollout-2026-07-28T08-13-18-019fa7c9-0a33-7691-ba25-992b57706d56.jsonl
+            - source: first_pass
+              status: logical_failure
+              score: 0.0
+              physical_run_id: af5aed4d-9cbe-407b-8993-89dbcb3771bd
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_02/rollout-2026-07-28T11-05-18-019fa866-829b-7380-ae02-3bd7d828f8dd.jsonl
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 4e022d70-cdb7-4d7f-bac4-5ec1c58bba28
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_03/rollout-2026-07-29T07-45-29-019facd5-eef1-7142-b340-b1b879405831.jsonl
+            acc_at_3_zero_filled: 0.6666666666666666
+          test_004:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 6af50621-35cd-4f49-bc0e-9d0225eacc15
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_01/rollout-2026-07-28T10-14-47-019fa838-4399-76b2-8839-0af1061660ae.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 6ccddc33-1d2e-4eaf-83c7-750b80e56c9e
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_02/rollout-2026-07-28T11-16-57-019fa871-2e6d-7081-9957-5a04c6e9ff81.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: e4829a5b-bb02-4f39-b7a8-efe68e5f067f
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_03/rollout-2026-07-29T07-54-34-019facde-4242-7123-8ec3-43db3fd90028.jsonl
+            acc_at_3_zero_filled: 0.235294
+          test_005:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 4766ac84-8d2f-4a06-b046-dcd9c40b5425
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_01/rollout-2026-07-28T10-37-20-019fa84c-e7ac-7f82-bc0e-5cb1eae54048.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.05555555555555555
+              physical_run_id: 19c2f876-3810-4dd0-a9e8-9e12a7c3c7a1
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_02/rollout-2026-07-29T05-25-20-019fac55-9fff-7472-93d4-17fd277e21dc.jsonl
+            - source: first_pass
+              status: logical_failure
+              score: 0.0
+              physical_run_id: bbb7fe5b-5a32-467c-945a-22ac99fc2eed
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_03/rollout-2026-07-29T08-03-50-019face6-bdb3-7522-98ab-685eb2333802.jsonl
+            acc_at_3_zero_filled: 0.07407407407407407
+    deepagents:
+      generation:
+        denominator: 3
+        valid_count: 2
+        valid_generation_rate: 0.6666666666666666
+        attempts:
+        - attempt: 1
+          source: first_pass
+          status: logical_failure
+          physical_run_id: 2067650d-a627-4943-b7a4-ae42d1c80795
+          skill_dir: null
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_01/rollout-2026-07-28T05-23-37-019fa72d-b33a-7d63-8140-3ad47178b6e6.jsonl
+        - attempt: 2
+          source: first_pass
+          status: valid
+          physical_run_id: b1823b86-b0e4-451a-aefe-001b6fed832c
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_02
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_02/rollout-2026-07-28T05-34-36-019fa737-be68-7cb0-a493-9ade319833ca.jsonl
+        - attempt: 3
+          source: first_pass
+          status: valid
+          physical_run_id: 54acb3e6-751a-4f34-b948-d6610db4be13
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_03
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_03/rollout-2026-07-28T05-42-10-019fa73e-aeaa-73d0-805c-354ede0b61f3.jsonl
+      solver:
+        denominator: 15
+        overall_acc_zero_filled: 0.2092964888888889
+        tasks:
+          test_001:
+            attempts:
+            - source: first_pass
+              status: not_runnable
+              score: 0.0
+              physical_run_id: 113e6d80-bfa7-4346-a863-74a104fb715f
+              trace_file: null
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 4ca941e0-d8f6-4436-8ca6-cde908ba8091
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_02/rollout-2026-07-28T10-37-20-019fa84c-e933-7e20-943e-a4acbb39a7da.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 81cb122d-81a0-4fd2-9477-69a6782bf97a
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_03/rollout-2026-07-29T05-25-21-019fac55-a3c6-7ab0-be66-721c48b1d095.jsonl
+            acc_at_3_zero_filled: 0.041666666666666664
+          test_002:
+            attempts:
+            - source: first_pass
+              status: not_runnable
+              score: 0.0
+              physical_run_id: 46e910e9-f061-4880-9332-1bfce3ccabec
+              trace_file: null
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: c8942c57-2dd8-4d32-8bab-b5001a0652cc
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_02/rollout-2026-07-28T10-57-26-019fa85f-500c-7c22-ba8b-917612f7eba3.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: 53366415-5eb2-441f-af7e-61c382a6039e
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_03/rollout-2026-07-29T07-45-28-019facd5-ed06-72c3-baca-de51ff2fd088.jsonl
+            acc_at_3_zero_filled: 0.07017533333333333
+          test_003:
+            attempts:
+            - source: first_pass
+              status: not_runnable
+              score: 0.0
+              physical_run_id: 02f29af1-d987-4d21-bbd5-4dd9a2419a2f
+              trace_file: null
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 19813a80-c04f-453c-8f76-1cbd65f949c3
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_02/rollout-2026-07-28T11-16-57-019fa871-2c5a-73c0-8099-16a02a01e929.jsonl
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: a22d6c70-8faa-43e1-8187-1fc9c4af8912
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_03/rollout-2026-07-29T07-45-29-019facd5-eef7-7aa1-b480-a1542da884fe.jsonl
+            acc_at_3_zero_filled: 0.6666666666666666
+          test_004:
+            attempts:
+            - source: first_pass
+              status: not_runnable
+              score: 0.0
+              physical_run_id: f6fa10bc-7dcd-44bf-b167-290494c0354d
+              trace_file: null
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 481f8fba-e799-4a3b-8501-b7d05d11980f
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_02/rollout-2026-07-28T11-16-57-019fa871-2e7c-7370-8aee-4852b6970c07.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 97517b6f-de31-4dcf-a3db-ceb928d90529
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_03/rollout-2026-07-29T07-55-49-019facdf-675b-7bc1-8a33-9e1022172af5.jsonl
+            acc_at_3_zero_filled: 0.15686266666666668
+          test_005:
+            attempts:
+            - source: first_pass
+              status: not_runnable
+              score: 0.0
+              physical_run_id: 55733fb0-a921-4006-8694-a47722c40dfa
+              trace_file: null
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 3651a6bf-0037-40d0-be58-df3589493f74
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_02/rollout-2026-07-29T05-25-20-019fac55-a01e-77e2-b546-0c5322d60bbd.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 71cab284-f9c2-4ba5-af19-6216551c1278
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_03/rollout-2026-07-29T08-38-16-019fad06-43b5-73f2-b488-be84b6aa8632.jsonl
+            acc_at_3_zero_filled: 0.1111111111111111
+    opencode:
+      generation:
+        denominator: 3
+        valid_count: 3
+        valid_generation_rate: 1.0
+        attempts:
+        - attempt: 1
+          source: first_pass
+          status: valid
+          physical_run_id: 04bd8c2c-0861-4bfb-b0d3-1278949b0ba0
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_01
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_01/rollout-2026-07-28T05-23-37-019fa72d-b346-78b2-9fa6-16bd17944d1e.jsonl
+        - attempt: 2
+          source: first_pass
+          status: valid
+          physical_run_id: 7d0211c1-f153-4e76-8bfa-4079a7e422ff
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_02
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_02/rollout-2026-07-28T05-36-20-019fa739-57d7-7321-bd35-3f591e173ebd.jsonl
+        - attempt: 3
+          source: first_pass
+          status: valid
+          physical_run_id: fa52a20c-b869-463c-8a0f-435d4f705e95
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_03
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_03/rollout-2026-07-28T05-44-46-019fa741-0eca-7ea0-bb64-66188c76191f.jsonl
+      solver:
+        denominator: 15
+        overall_acc_zero_filled: 0.3595588
+        tasks:
+          test_001:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 08186c36-414d-4a78-8412-5b180208d8b5
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_01/rollout-2026-07-28T07-13-12-019fa792-0531-7c90-bff0-dfd3579bf23d.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 04e1735a-ee34-4bb8-a730-7b108170e896
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_02/rollout-2026-07-28T10-46-29-019fa855-4952-7740-b8b8-946bd91e93de.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 9716a25a-b5af-4d68-83d3-0048a39dbe5c
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_03/rollout-2026-07-29T05-36-55-019fac60-3aea-7ae2-a787-6d9efa728559.jsonl
+            acc_at_3_zero_filled: 0.0625
+          test_002:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.894737
+              physical_run_id: 2dab4df9-ed7c-4026-860a-c0f93bd7c0e2
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_01/rollout-2026-07-28T07-39-11-019fa7a9-cd24-7d92-a6a3-19b1ba7d7178.jsonl
+            - source: first_pass
+              status: logical_failure
+              score: 0.0
+              physical_run_id: 7bb6bfaf-eeec-4772-866b-238bf7caaa7f
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02/rollout-2026-07-28T11-16-57-019fa871-2dfb-7a63-a9f6-1e4d9d9dd6f9.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: 71c1e06b-7195-426b-ae82-8d6ed0d452cd
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_03/rollout-2026-07-29T07-45-28-019facd5-ed4f-7982-b196-710a69411cdd.jsonl
+            acc_at_3_zero_filled: 0.3333333333333333
+          test_003:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 7539b2f7-45fc-4f74-90ea-0cdb8606d994
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_01/rollout-2026-07-28T08-22-24-019fa7d1-5f3e-7780-a901-1db62730ef6a.jsonl
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 0d28d5f8-8fd1-4e5b-b6fd-9e54f561379c
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_02/rollout-2026-07-28T11-08-58-019fa869-deaf-7a01-bfb9-68e2e2b1f057.jsonl
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: e35d022a-ea88-4a46-977b-90973a5f1051
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_03/rollout-2026-07-29T07-45-29-019facd5-ef3b-7da2-9213-1a292834cba5.jsonl
+            acc_at_3_zero_filled: 1.0
+          test_004:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 6936d993-26ed-4cf3-9b24-14ff5db2ae62
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_01/rollout-2026-07-28T10-25-25-019fa842-0078-7583-9078-83409896b58b.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: ab0019b8-8490-4e76-9472-fd334af32366
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_02/rollout-2026-07-28T11-28-02-019fa87b-52d4-7063-a1b5-e7e6fa8aa2fb.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 070bd0aa-5245-4c62-ac5d-95dc9d5a089f
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_03/rollout-2026-07-29T08-38-16-019fad06-4337-7373-8353-e76268436e37.jsonl
+            acc_at_3_zero_filled: 0.235294
+          test_005:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 38663953-93fa-45b2-a990-7bdbf0fb610d
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_01/rollout-2026-07-28T10-37-20-019fa84c-e82b-7260-be8f-5c754174cc2e.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 9bc5666c-8968-4a3b-91f4-5e9b17a97066
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_02/rollout-2026-07-29T05-25-20-019fac55-a077-7392-b287-d49df3943f91.jsonl
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 20df99c5-c8a6-4c94-a603-d2d6fa8f425b
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_03/rollout-2026-07-29T08-38-16-019fad06-4488-7631-bb3c-dd0251113120.jsonl
+            acc_at_3_zero_filled: 0.16666666666666666
+bounded_retry_v1:
+  base:
+    denominator: 15
+    overall_acc_zero_filled: 0.30605
+    tasks:
+      test_001:
+        attempts:
+        - source: first_pass
+          status: valid
+          score: 0.0625
+          physical_run_id: 7a62e3c4-d4b7-413b-8f58-d56236e47c2a
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_001/attempt_01/rollout-2026-07-28T06-02-36-019fa751-63e7-78d0-9d53-a57efb6e3865.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 0.3125
+          physical_run_id: 6584ebc2-a862-4786-9a73-c3b3df4b5f6d
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_001/attempt_02/rollout-2026-07-28T10-37-20-019fa84c-e881-70d1-8f20-5399bb6bb8fa.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 0.0625
+          physical_run_id: c8cab279-30d9-4c55-af46-eaecddd46308
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_001/attempt_03/rollout-2026-07-29T05-25-21-019fac55-a356-7f51-9878-7a556fbb1c54.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        acc_at_3_zero_filled: 0.14583333333333334
+      test_002:
+        attempts:
+        - source: first_pass
+          status: valid
+          score: 0.105263
+          physical_run_id: d485cf0b-cd9f-41b9-8d11-3d027723e02d
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_002/attempt_01/rollout-2026-07-28T06-27-11-019fa767-e51b-7e12-a529-8e7b9985b807.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 0.105263
+          physical_run_id: 758c683f-e8c1-4252-9e80-9522c805bd5a
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_002/attempt_02/rollout-2026-07-28T10-49-59-019fa858-7e56-7f13-8cd4-932d44349186.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 0.105263
+          physical_run_id: aed03865-4499-4494-85d5-8c03e5bafe46
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_002/attempt_03/rollout-2026-07-29T06-46-41-019faca0-19cf-7c51-84b9-e60580f9bfee.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        acc_at_3_zero_filled: 0.105263
+      test_003:
+        attempts:
+        - source: first_pass
+          status: valid
+          score: 1.0
+          physical_run_id: 681c49e7-0bd8-47fa-b83f-d35c342e4569
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_003/attempt_01/rollout-2026-07-28T07-53-08-019fa7b6-944a-7351-a933-e50ccd66ec8b.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 0.631579
+          physical_run_id: 8388f0ab-d017-4c5a-8963-d13e05643df6
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_003/attempt_02/rollout-2026-07-28T11-02-31-019fa863-f873-7742-9bf4-7ab0986ef346.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 1.0
+          physical_run_id: 817f9ff3-fae5-4f5c-9a00-7015b37af19a
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_003/attempt_03/rollout-2026-07-29T07-45-28-019facd5-ed75-7a01-b577-1a4c08c534d7.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        acc_at_3_zero_filled: 0.877193
+      test_004:
+        attempts:
+        - source: supplemental
+          status: valid
+          score: 0.235294
+          physical_run_id: aff80a3c-8165-45fa-baa0-a8f429262c91
+          trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/base/test_004/attempt_01/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-bf9f-73f2-8c1d-193aa3b9d663.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 0.235294
+          physical_run_id: bf65bf42-4c99-4b6a-ae63-bb99ac6b9ec7
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_004/attempt_02/rollout-2026-07-28T11-08-58-019fa869-dedb-7370-8a6c-8ecdeb919654.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 0.235294
+          physical_run_id: 9c378e16-1324-4c78-9e3b-9d145cb92cf3
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_004/attempt_03/rollout-2026-07-29T07-45-29-019facd5-ef69-7362-b982-9ed4836fad65.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        acc_at_3_zero_filled: 0.235294
+      test_005:
+        attempts:
+        - source: first_pass
+          status: valid
+          score: 0.16666666666666666
+          physical_run_id: e7e4372e-6806-4e67-a878-d3f8b6b21ebb
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_005/attempt_01/rollout-2026-07-28T10-37-20-019fa84c-e746-7811-b177-18f4ea6ff0d4.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 0.16666666666666666
+          physical_run_id: 256f105b-2779-4795-82be-126301bff780
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_005/attempt_02/rollout-2026-07-28T11-28-02-019fa87b-52d9-7150-89cb-95ad45364a53.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        - source: first_pass
+          status: valid
+          score: 0.16666666666666666
+          physical_run_id: dcca9bd7-d564-4354-9608-c62dd345c5a1
+          trace_file: original_traces/deepseek_v4_max_preview/base/test_005/attempt_03/rollout-2026-07-29T08-38-16-019fad06-43b4-7691-b7b5-cebae1a651bc.jsonl
+          evaluator_stdout_file: evaluator_stdout.txt
+          evaluator_stderr_file: evaluator_stderr.txt
+        acc_at_3_zero_filled: 0.16666666666666666
+  fewshot:
+    codex:
+      generation:
+        denominator: 3
+        valid_count: 3
+        valid_generation_rate: 1.0
+        attempts:
+        - attempt: 1
+          source: first_pass
+          status: valid
+          physical_run_id: 4419ce4f-25bb-4985-b366-7ace8cf0b239
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_01
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_01/rollout-2026-07-28T05-23-37-019fa72d-b34d-7361-9263-a1bb0c8febab.jsonl
+        - attempt: 2
+          source: first_pass
+          status: valid
+          physical_run_id: 74a483f2-f06b-4219-87f2-a32960bf974b
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_02
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_02/rollout-2026-07-28T05-23-37-019fa72d-b33a-7f63-8550-b16435b77b5f.jsonl
+        - attempt: 3
+          source: first_pass
+          status: valid
+          physical_run_id: 41310af1-4943-436d-bf56-a11f9e6fcb82
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_03
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_03/rollout-2026-07-28T05-36-58-019fa739-eaad-7153-b376-d2a3b5bacd33.jsonl
+      solver:
+        denominator: 15
+        overall_acc_zero_filled: 0.4164516444444445
+        tasks:
+          test_001:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 348e258d-af96-40f0-abb8-4afd7bb4ae8d
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_01/rollout-2026-07-28T06-47-21-019fa77a-5944-7cb2-8f2b-2e174efea0e0.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.0
+              physical_run_id: 2329dd07-ac12-41b0-ac98-a79a5245483c
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_02/rollout-2026-07-28T10-37-20-019fa84c-e8d5-7af1-8f63-48838a706c09.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 9b09b832-eed2-429a-8b5d-514257c90e54
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_03/rollout-2026-07-29T05-25-21-019fac55-a39a-76d0-91ae-5c5d80fcac18.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.041666666666666664
+          test_002:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: 7c4cd516-c1b2-4fd8-a91a-48691951f997
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_01/rollout-2026-07-28T06-02-36-019fa751-63d5-7f83-a240-053e06fccb87.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.894737
+              physical_run_id: 8995ce9e-61c0-474c-9824-f0f0143f0d71
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_02/rollout-2026-07-29T06-28-21-019fac8f-5364-7b31-b9e9-8f0fb2e644e1.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.631579
+              physical_run_id: bbf8b2aa-9ac6-4c5c-a99e-619c2f173545
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_03/rollout-2026-07-29T07-13-26-019facb8-9706-7330-964c-0d20ba91e95f.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.5438596666666666
+          test_003:
+            attempts:
+            - source: supplemental
+              status: valid
+              score: 1.0
+              physical_run_id: 968c241d-3e2d-480b-9978-6821e8ef29ac
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-be97-78a3-8065-cfbab821c1f4.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 6b31b2ea-1ace-4d47-a217-47e54de4db47
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_02/rollout-2026-07-28T11-04-22-019fa865-a818-7822-aec1-95227decd5f5.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: a2df5f84-1ac5-478c-9271-1e66ced160d4
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_03/rollout-2026-07-29T07-45-29-019facd5-eeb9-7392-baa9-c6d2ba0970f5.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 1.0
+          test_004:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: aef039a9-c082-42e4-8f4e-c63994ea1c99
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_01/rollout-2026-07-28T09-33-27-019fa812-6e33-7460-8a83-8b1244bc35c3.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 83052819-d18a-4a68-9289-9da79f5e5038
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_02/rollout-2026-07-28T11-16-57-019fa871-2e21-7b71-8462-079f5b372f25.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.352941
+              physical_run_id: 516a3855-219a-4b52-ab52-22892d111544
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_03/rollout-2026-07-29T07-48-47-019facd8-f3ef-7630-b3ab-4015acad2f83.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.27450966666666665
+          test_005:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 2cfc2904-ce77-4d0c-bd38-fd188c9e1393
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_01/rollout-2026-07-28T10-37-20-019fa84c-e77d-7391-a11f-ad1bd058ed63.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.4444444444444444
+              physical_run_id: 8d752384-29fc-43d8-a91a-5f10a32cd4aa
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_02/rollout-2026-07-29T05-25-20-019fac55-9fb3-75f1-ab1a-c98265334cd0.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.05555555555555555
+              physical_run_id: 9ff98936-9a14-4197-ae98-3d9a491e16d1
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_03/rollout-2026-07-29T08-38-16-019fad06-439e-7753-8fa4-6f2d8b759010.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.2222222222222222
+    cc:
+      generation:
+        denominator: 3
+        valid_count: 3
+        valid_generation_rate: 1.0
+        attempts:
+        - attempt: 1
+          source: first_pass
+          status: valid
+          physical_run_id: d62a9c61-8ccf-4402-95cd-ad5b8ad183af
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_01
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_01/rollout-2026-07-28T05-23-37-019fa72d-b348-7461-87c5-767903bdccc8.jsonl
+        - attempt: 2
+          source: first_pass
+          status: valid
+          physical_run_id: 728a8080-51e2-4cd2-b0ff-97f188496405
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_02
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_02/rollout-2026-07-28T05-23-37-019fa72d-b349-7060-a543-6c45aecb9c87.jsonl
+        - attempt: 3
+          source: first_pass
+          status: valid
+          physical_run_id: f327a08e-2775-4ca0-baa1-6c80b9f7d398
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_03
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_03/rollout-2026-07-28T05-42-09-019fa73e-a935-7350-a87c-c462c520a147.jsonl
+      solver:
+        denominator: 15
+        overall_acc_zero_filled: 0.30785312592592595
+        tasks:
+          test_001:
+            attempts:
+            - source: supplemental
+              status: valid
+              score: 0.3125
+              physical_run_id: 472bd7ca-83d6-4d90-a9ca-7f016070f333
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_01/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-be94-7701-bfb1-4e3ec779b675.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.0
+              physical_run_id: 4ec547d8-e7ee-4513-b55c-5fcbeaf02273
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_02/rollout-2026-07-28T10-37-20-019fa84c-e931-7712-afe9-eda068fe4f9d.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.0
+              physical_run_id: a45d8c7b-4ae7-40ba-8570-cadc6b83bd6b
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_03/rollout-2026-07-29T05-25-21-019fac55-a39d-72f1-8625-6ba2494b6c4e.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.10416666666666667
+          test_002:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: 81bd8ba3-45fe-44b6-b548-73fdd5ba6b54
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_01/rollout-2026-07-28T06-13-11-019fa75b-12d5-7df2-9f04-fbc2b78c319d.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: supplemental
+              status: logical_failure
+              score: 0.0
+              physical_run_id: e0d484f2-60fd-4362-bfb2-57c9163379d4
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-bf9c-7491-8ee7-ee1858e9938e.jsonl
+              evaluator_stdout_file: null
+              evaluator_stderr_file: null
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: a2870cdf-0b48-4cca-acfd-5bbd806b2632
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_03/rollout-2026-07-29T07-36-08-019faccd-606b-7980-bcc4-d840a682b889.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.07017533333333333
+          test_003:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: e93e3358-d18d-4c7a-b8c3-6fbb703d87f6
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_01/rollout-2026-07-28T08-13-18-019fa7c9-0a33-7691-ba25-992b57706d56.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: supplemental
+              status: valid
+              score: 1.0
+              physical_run_id: ce826d20-976a-4208-97c7-0756302e171f
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_02/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-c062-7cb1-8997-d27f9ade2c70.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 4e022d70-cdb7-4d7f-bac4-5ec1c58bba28
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_03/rollout-2026-07-29T07-45-29-019facd5-eef1-7142-b340-b1b879405831.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 1.0
+          test_004:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 6af50621-35cd-4f49-bc0e-9d0225eacc15
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_01/rollout-2026-07-28T10-14-47-019fa838-4399-76b2-8839-0af1061660ae.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 6ccddc33-1d2e-4eaf-83c7-750b80e56c9e
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_02/rollout-2026-07-28T11-16-57-019fa871-2e6d-7081-9957-5a04c6e9ff81.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: e4829a5b-bb02-4f39-b7a8-efe68e5f067f
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_03/rollout-2026-07-29T07-54-34-019facde-4242-7123-8ec3-43db3fd90028.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.235294
+          test_005:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 4766ac84-8d2f-4a06-b046-dcd9c40b5425
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_01/rollout-2026-07-28T10-37-20-019fa84c-e7ac-7f82-bc0e-5cb1eae54048.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.05555555555555555
+              physical_run_id: 19c2f876-3810-4dd0-a9e8-9e12a7c3c7a1
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_02/rollout-2026-07-29T05-25-20-019fac55-9fff-7472-93d4-17fd277e21dc.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: supplemental
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 0fdc2cfe-5b20-4385-be54-16c7755753a0
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_03/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-c061-7933-b7e7-338ae6cff7ce.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.12962962962962962
+    deepagents:
+      generation:
+        denominator: 3
+        valid_count: 3
+        valid_generation_rate: 1.0
+        attempts:
+        - attempt: 1
+          source: supplemental
+          status: valid
+          physical_run_id: 640d9277-14b5-4f8c-8612-7c94f55288f1
+          skill_dir: supplemental/bounded_logical_retry_v1/skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_01_logical_retry_01
+          trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_01/logical_retry_01/rollout-2026-07-29T08-36-45-019fad04-ddbc-7001-b2ef-5cdbb7f226c2.jsonl
+        - attempt: 2
+          source: first_pass
+          status: valid
+          physical_run_id: b1823b86-b0e4-451a-aefe-001b6fed832c
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_02
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_02/rollout-2026-07-28T05-34-36-019fa737-be68-7cb0-a493-9ade319833ca.jsonl
+        - attempt: 3
+          source: first_pass
+          status: valid
+          physical_run_id: 54acb3e6-751a-4f34-b948-d6610db4be13
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_03
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_03/rollout-2026-07-28T05-42-10-019fa73e-aeaa-73d0-805c-354ede0b61f3.jsonl
+      solver:
+        denominator: 15
+        overall_acc_zero_filled: 0.31116695555555557
+        tasks:
+          test_001:
+            attempts:
+            - source: supplemental
+              status: valid
+              score: 0.1875
+              physical_run_id: 5865dc81-c1e6-4750-a084-e3faa57632db
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_01/logical_retry_01/rollout-2026-07-29T10-23-49-019fad66-e6e9-7190-8bea-eb65fac614b6.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 4ca941e0-d8f6-4436-8ca6-cde908ba8091
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_02/rollout-2026-07-28T10-37-20-019fa84c-e933-7e20-943e-a4acbb39a7da.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 81cb122d-81a0-4fd2-9477-69a6782bf97a
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_03/rollout-2026-07-29T05-25-21-019fac55-a3c6-7ab0-be66-721c48b1d095.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.10416666666666667
+          test_002:
+            attempts:
+            - source: supplemental
+              status: valid
+              score: 0.105263
+              physical_run_id: 11505009-57ee-439b-8b87-08f9aa26f0df
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_01/logical_retry_01/rollout-2026-07-29T10-04-36-019fad55-4d53-7790-a8f8-797c7319af2c.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: c8942c57-2dd8-4d32-8bab-b5001a0652cc
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_02/rollout-2026-07-28T10-57-26-019fa85f-500c-7c22-ba8b-917612f7eba3.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: 53366415-5eb2-441f-af7e-61c382a6039e
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_03/rollout-2026-07-29T07-45-28-019facd5-ed06-72c3-baca-de51ff2fd088.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.105263
+          test_003:
+            attempts:
+            - source: supplemental
+              status: valid
+              score: 1.0
+              physical_run_id: 2f7dbf6a-63e1-4ebf-a61c-e87e1e5704b9
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_01/logical_retry_01/rollout-2026-07-29T10-04-36-019fad55-4d53-77c0-bbfe-d299c338ff6f.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 19813a80-c04f-453c-8f76-1cbd65f949c3
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_02/rollout-2026-07-28T11-16-57-019fa871-2c5a-73c0-8099-16a02a01e929.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: a22d6c70-8faa-43e1-8187-1fc9c4af8912
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_03/rollout-2026-07-29T07-45-29-019facd5-eef7-7aa1-b480-a1542da884fe.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 1.0
+          test_004:
+            attempts:
+            - source: supplemental
+              status: valid
+              score: 0.235294
+              physical_run_id: 72e121e6-29fe-4a79-b0c8-c9c96d3fc9ff
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_01/logical_retry_01/rollout-2026-07-29T10-04-35-019fad55-4b09-7ff0-9e07-fd6788d834ea.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 481f8fba-e799-4a3b-8501-b7d05d11980f
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_02/rollout-2026-07-28T11-16-57-019fa871-2e7c-7370-8aee-4852b6970c07.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 97517b6f-de31-4dcf-a3db-ceb928d90529
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_03/rollout-2026-07-29T07-55-49-019facdf-675b-7bc1-8a33-9e1022172af5.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.235294
+          test_005:
+            attempts:
+            - source: supplemental
+              status: logical_failure
+              score: 0.0
+              physical_run_id: cf842f1d-d87f-4029-968a-2956071666fb
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_01/logical_retry_01/rollout-2026-07-29T10-04-37-019fad55-517e-76e0-83ef-263ab0bc9837.jsonl
+              evaluator_stdout_file: null
+              evaluator_stderr_file: null
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 3651a6bf-0037-40d0-be58-df3589493f74
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_02/rollout-2026-07-29T05-25-20-019fac55-a01e-77e2-b546-0c5322d60bbd.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 71cab284-f9c2-4ba5-af19-6216551c1278
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_03/rollout-2026-07-29T08-38-16-019fad06-43b5-73f2-b488-be84b6aa8632.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.1111111111111111
+    opencode:
+      generation:
+        denominator: 3
+        valid_count: 3
+        valid_generation_rate: 1.0
+        attempts:
+        - attempt: 1
+          source: first_pass
+          status: valid
+          physical_run_id: 04bd8c2c-0861-4bfb-b0d3-1278949b0ba0
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_01
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_01/rollout-2026-07-28T05-23-37-019fa72d-b346-78b2-9fa6-16bd17944d1e.jsonl
+        - attempt: 2
+          source: first_pass
+          status: valid
+          physical_run_id: 7d0211c1-f153-4e76-8bfa-4079a7e422ff
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_02
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_02/rollout-2026-07-28T05-36-20-019fa739-57d7-7321-bd35-3f591e173ebd.jsonl
+        - attempt: 3
+          source: first_pass
+          status: valid
+          physical_run_id: fa52a20c-b869-463c-8a0f-435d4f705e95
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_03
+          trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_03/rollout-2026-07-28T05-44-46-019fa741-0eca-7ea0-bb64-66188c76191f.jsonl
+      solver:
+        denominator: 15
+        overall_acc_zero_filled: 0.3595588
+        tasks:
+          test_001:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 08186c36-414d-4a78-8412-5b180208d8b5
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_01/rollout-2026-07-28T07-13-12-019fa792-0531-7c90-bff0-dfd3579bf23d.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 04e1735a-ee34-4bb8-a730-7b108170e896
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_02/rollout-2026-07-28T10-46-29-019fa855-4952-7740-b8b8-946bd91e93de.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.0625
+              physical_run_id: 9716a25a-b5af-4d68-83d3-0048a39dbe5c
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_03/rollout-2026-07-29T05-36-55-019fac60-3aea-7ae2-a787-6d9efa728559.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.0625
+          test_002:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.894737
+              physical_run_id: 2dab4df9-ed7c-4026-860a-c0f93bd7c0e2
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_01/rollout-2026-07-28T07-39-11-019fa7a9-cd24-7d92-a6a3-19b1ba7d7178.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: supplemental
+              status: logical_failure
+              score: 0.0
+              physical_run_id: 441e4cf5-7bd1-4396-adaa-ced8825d94f0
+              trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-bf9f-7c01-b4ed-9e34322baadc.jsonl
+              evaluator_stdout_file: null
+              evaluator_stderr_file: null
+            - source: first_pass
+              status: valid
+              score: 0.105263
+              physical_run_id: 71c1e06b-7195-426b-ae82-8d6ed0d452cd
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_03/rollout-2026-07-29T07-45-28-019facd5-ed4f-7982-b196-710a69411cdd.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.3333333333333333
+          test_003:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 7539b2f7-45fc-4f74-90ea-0cdb8606d994
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_01/rollout-2026-07-28T08-22-24-019fa7d1-5f3e-7780-a901-1db62730ef6a.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: 0d28d5f8-8fd1-4e5b-b6fd-9e54f561379c
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_02/rollout-2026-07-28T11-08-58-019fa869-deaf-7a01-bfb9-68e2e2b1f057.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 1.0
+              physical_run_id: e35d022a-ea88-4a46-977b-90973a5f1051
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_03/rollout-2026-07-29T07-45-29-019facd5-ef3b-7da2-9213-1a292834cba5.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 1.0
+          test_004:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 6936d993-26ed-4cf3-9b24-14ff5db2ae62
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_01/rollout-2026-07-28T10-25-25-019fa842-0078-7583-9078-83409896b58b.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: ab0019b8-8490-4e76-9472-fd334af32366
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_02/rollout-2026-07-28T11-28-02-019fa87b-52d4-7063-a1b5-e7e6fa8aa2fb.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.235294
+              physical_run_id: 070bd0aa-5245-4c62-ac5d-95dc9d5a089f
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_03/rollout-2026-07-29T08-38-16-019fad06-4337-7373-8353-e76268436e37.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.235294
+          test_005:
+            attempts:
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 38663953-93fa-45b2-a990-7bdbf0fb610d
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_01/rollout-2026-07-28T10-37-20-019fa84c-e82b-7260-be8f-5c754174cc2e.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 9bc5666c-8968-4a3b-91f4-5e9b17a97066
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_02/rollout-2026-07-29T05-25-20-019fac55-a077-7392-b287-d49df3943f91.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            - source: first_pass
+              status: valid
+              score: 0.16666666666666666
+              physical_run_id: 20df99c5-c8a6-4c94-a603-d2d6fa8f425b
+              trace_file: original_traces/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_03/rollout-2026-07-29T08-38-16-019fad06-4488-7631-bb3c-dd0251113120.jsonl
+              evaluator_stdout_file: evaluator_stdout.txt
+              evaluator_stderr_file: evaluator_stderr.txt
+            acc_at_3_zero_filled: 0.16666666666666666
+retry_counts:
+  generation_logical_retry: 1
+  solver_logical_retry: 7
+  missing_or_infrastructure_retry: 0
+  conditional_dependent_solver_retry: 5
+  supplemental_infrastructure_replacements: 1
+retries:
+- kind: generation
+  path: supplemental/bounded_logical_retry_v1/skill_generation/deepseek_v4_max_preview/deepagents/attempt_01/logical_retry_01/evolve_metadata.yaml
+  slot: skill_generation/deepagents/attempt_01
+  retry_label: logical_retry_01
+  status: valid
+  physical_run_id: 640d9277-14b5-4f8c-8612-7c94f55288f1
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_01/logical_retry_01/rollout-2026-07-29T08-36-45-019fad04-ddbc-7001-b2ef-5cdbb7f226c2.jsonl
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/base/test_004/attempt_01/logical_retry_01/run_metadata.yaml
+  slot: base/test_004/attempt_01
+  retry_label: logical_retry_01
+  status: valid
+  normalized_score: 0.235294
+  physical_run_id: aff80a3c-8165-45fa-baa0-a8f429262c91
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/base/test_004/attempt_01/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-bf9f-73f2-8c1d-193aa3b9d663.jsonl
+  evaluator_stdout_file: evaluator_stdout.txt
+  evaluator_stderr_file: evaluator_stderr.txt
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_01/logical_retry_01/run_metadata.yaml
+  slot: fewshot/cc/test_001/attempt_01
+  retry_label: logical_retry_01
+  status: valid
+  normalized_score: 0.3125
+  physical_run_id: 472bd7ca-83d6-4d90-a9ca-7f016070f333
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_01/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-be94-7701-bfb1-4e3ec779b675.jsonl
+  evaluator_stdout_file: evaluator_stdout.txt
+  evaluator_stderr_file: evaluator_stderr.txt
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02/logical_retry_01/run_metadata.yaml
+  slot: fewshot/cc/test_002/attempt_02
+  retry_label: logical_retry_01
+  status: logical_failure
+  normalized_score: null
+  physical_run_id: e0d484f2-60fd-4362-bfb2-57c9163379d4
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-bf9c-7491-8ee7-ee1858e9938e.jsonl
+  evaluator_stdout_file: null
+  evaluator_stderr_file: null
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_02/logical_retry_01/run_metadata.yaml
+  slot: fewshot/cc/test_003/attempt_02
+  retry_label: logical_retry_01
+  status: valid
+  normalized_score: 1.0
+  physical_run_id: ce826d20-976a-4208-97c7-0756302e171f
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_02/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-c062-7cb1-8997-d27f9ade2c70.jsonl
+  evaluator_stdout_file: evaluator_stdout.txt
+  evaluator_stderr_file: evaluator_stderr.txt
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_03/logical_retry_01/run_metadata.yaml
+  slot: fewshot/cc/test_005/attempt_03
+  retry_label: logical_retry_01
+  status: valid
+  normalized_score: 0.16666666666666666
+  physical_run_id: 0fdc2cfe-5b20-4385-be54-16c7755753a0
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_005/attempt_03/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-c061-7933-b7e7-338ae6cff7ce.jsonl
+  evaluator_stdout_file: evaluator_stdout.txt
+  evaluator_stderr_file: evaluator_stderr.txt
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/logical_retry_01/run_metadata.yaml
+  slot: fewshot/codex/test_003/attempt_01
+  retry_label: logical_retry_01
+  status: valid
+  normalized_score: 1.0
+  physical_run_id: 968c241d-3e2d-480b-9978-6821e8ef29ac
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-be97-78a3-8065-cfbab821c1f4.jsonl
+  evaluator_stdout_file: evaluator_stdout.txt
+  evaluator_stderr_file: evaluator_stderr.txt
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_01/logical_retry_01/run_metadata.yaml
+  slot: fewshot/deepagents/test_001/attempt_01
+  retry_label: logical_retry_01
+  status: valid
+  normalized_score: 0.1875
+  physical_run_id: 5865dc81-c1e6-4750-a084-e3faa57632db
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_01/logical_retry_01/rollout-2026-07-29T10-23-49-019fad66-e6e9-7190-8bea-eb65fac614b6.jsonl
+  evaluator_stdout_file: evaluator_stdout.txt
+  evaluator_stderr_file: evaluator_stderr.txt
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_01/logical_retry_01/run_metadata.yaml
+  slot: fewshot/deepagents/test_002/attempt_01
+  retry_label: logical_retry_01
+  status: valid
+  normalized_score: 0.105263
+  physical_run_id: 11505009-57ee-439b-8b87-08f9aa26f0df
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_01/logical_retry_01/rollout-2026-07-29T10-04-36-019fad55-4d53-7790-a8f8-797c7319af2c.jsonl
+  evaluator_stdout_file: evaluator_stdout.txt
+  evaluator_stderr_file: evaluator_stderr.txt
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_01/logical_retry_01/run_metadata.yaml
+  slot: fewshot/deepagents/test_003/attempt_01
+  retry_label: logical_retry_01
+  status: valid
+  normalized_score: 1.0
+  physical_run_id: 2f7dbf6a-63e1-4ebf-a61c-e87e1e5704b9
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_01/logical_retry_01/rollout-2026-07-29T10-04-36-019fad55-4d53-77c0-bbfe-d299c338ff6f.jsonl
+  evaluator_stdout_file: evaluator_stdout.txt
+  evaluator_stderr_file: evaluator_stderr.txt
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_01/logical_retry_01/run_metadata.yaml
+  slot: fewshot/deepagents/test_004/attempt_01
+  retry_label: logical_retry_01
+  status: valid
+  normalized_score: 0.235294
+  physical_run_id: 72e121e6-29fe-4a79-b0c8-c9c96d3fc9ff
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_01/logical_retry_01/rollout-2026-07-29T10-04-35-019fad55-4b09-7ff0-9e07-fd6788d834ea.jsonl
+  evaluator_stdout_file: evaluator_stdout.txt
+  evaluator_stderr_file: evaluator_stderr.txt
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_01/logical_retry_01/run_metadata.yaml
+  slot: fewshot/deepagents/test_005/attempt_01
+  retry_label: logical_retry_01
+  status: logical_failure
+  normalized_score: null
+  physical_run_id: cf842f1d-d87f-4029-968a-2956071666fb
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_01/logical_retry_01/rollout-2026-07-29T10-04-37-019fad55-517e-76e0-83ef-263ab0bc9837.jsonl
+  evaluator_stdout_file: null
+  evaluator_stderr_file: null
+- kind: solver
+  path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02/logical_retry_01/run_metadata.yaml
+  slot: fewshot/opencode/test_002/attempt_02
+  retry_label: logical_retry_01
+  status: logical_failure
+  normalized_score: null
+  physical_run_id: 441e4cf5-7bd1-4396-adaa-ced8825d94f0
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02/logical_retry_01/rollout-2026-07-29T09-09-23-019fad22-bf9f-7c01-b4ed-9e34322baadc.jsonl
+  evaluator_stdout_file: null
+  evaluator_stderr_file: null
+infrastructure_replacements:
+- logical_slot: fewshot/deepagents/test_001/attempt_01
+  retry_label: logical_retry_01
+  physical_run_id: e21c81e3-3096-427b-b19f-7b090b5acba2
+  failure_type: provider_failure
+  evidence_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_01/logical_retry_01/e21c81e3-3096-427b-b19f-7b090b5acba2
+ledger: scratch/bounded_logical_retry_v1/ledger.jsonl

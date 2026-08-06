@@ -1,0 +1,676 @@
+task_group_id: task_group_022
+scenario_id: SCN_022_sql_database_analytics
+model: deepseek-v4-pro[1m]
+model_config:
+  provider: deepseek
+  anthropic_base_url: https://api.deepseek.com/anthropic
+  primary_model: deepseek-v4-pro[1m]
+  opus_model: deepseek-v4-pro[1m]
+  sonnet_model: deepseek-v4-pro[1m]
+  haiku_model: deepseek-v4-pro[1m]
+  subagent_model: deepseek-v4-pro[1m]
+  claude_code_effort: max
+  permission_mode: bypassPermissions
+  observed_response_model_labels:
+  - deepseek-v4-pro
+harness: claude_code_deepseek_v4_pro
+evolve:
+  pricing:
+    basis: deepseek_v4_pro_api
+    input_usd_per_million: 0.435
+    cache_creation_usd_per_million: 0.0
+    cache_read_usd_per_million: 0.003625
+    output_usd_per_million: 0.87
+  conditions:
+    fewshot:
+      attempts:
+        attempt_01:
+          input_tokens: 49396
+          cache_creation_tokens: 0
+          cache_read_tokens: 434816
+          output_tokens: 7292
+          total_tokens: 491504
+          cost_usd: 0.029407508
+        attempt_02:
+          input_tokens: 44372
+          cache_creation_tokens: 0
+          cache_read_tokens: 594560
+          output_tokens: 7657
+          total_tokens: 646589
+          cost_usd: 0.02811869
+        attempt_03:
+          input_tokens: 32276
+          cache_creation_tokens: 0
+          cache_read_tokens: 147200
+          output_tokens: 3902
+          total_tokens: 183378
+          cost_usd: 0.017968400000000002
+      summary:
+        input_tokens_avg_3: 42014.666667
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 392192.0
+        output_tokens_avg_3: 6283.666667
+        cost_usd_avg_3: 0.025165
+    self:
+      attempts:
+        attempt_01:
+          input_tokens: 35681
+          cache_creation_tokens: 0
+          cache_read_tokens: 557312
+          output_tokens: 9493
+          total_tokens: 602486
+          cost_usd: 0.025800401
+        attempt_02:
+          input_tokens: 34768
+          cache_creation_tokens: 0
+          cache_read_tokens: 173952
+          output_tokens: 6004
+          total_tokens: 214724
+          cost_usd: 0.020978135999999998
+        attempt_03:
+          input_tokens: 31578
+          cache_creation_tokens: 0
+          cache_read_tokens: 195328
+          output_tokens: 4978
+          total_tokens: 231884
+          cost_usd: 0.018775354
+      summary:
+        input_tokens_avg_3: 34009.0
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 308864.0
+        output_tokens_avg_3: 6825.0
+        cost_usd_avg_3: 0.021851
+    reflect-3:
+      attempts:
+        attempt_01:
+          input_tokens: 103248
+          cache_creation_tokens: 0
+          cache_read_tokens: 25101440
+          output_tokens: 112888
+          total_tokens: 25317576
+          cost_usd: 0.23411816
+        attempt_02:
+          input_tokens: 80192
+          cache_creation_tokens: 0
+          cache_read_tokens: 8891776
+          output_tokens: 107938
+          total_tokens: 9079906
+          cost_usd: 0.16102226799999997
+        attempt_03:
+          input_tokens: 112565
+          cache_creation_tokens: 0
+          cache_read_tokens: 14632704
+          output_tokens: 94840
+          total_tokens: 14840109
+          cost_usd: 0.184520127
+      summary:
+        input_tokens_avg_3: 98668.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 16208640.0
+        output_tokens_avg_3: 105222.0
+        cost_usd_avg_3: 0.19322
+conditions:
+  base:
+    overall_acc_at_3: 0.4381
+    overall_std_at_3: 0.0835
+    efficiency:
+      input_tokens_avg_3: 65231.133333
+      cache_creation_tokens_avg_3: 0.0
+      cache_read_tokens_avg_3: 2041770.666667
+      output_tokens_avg_3: 30425.2
+      cost_usd_avg_3: 0.062247
+      rounds_avg_3: 34.466667
+      tool_calls_avg_3: 49.666666
+    tasks:
+      test_001:
+        scores:
+        - 0.055556
+        - 0.055556
+        - 0.055556
+        acc_at_3: 0.0556
+        std_at_3: 0.0
+        input_tokens_avg_3: 52409.666667
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 1098026.666667
+        output_tokens_avg_3: 21326.333333
+        cost_usd_avg_3: 0.045332
+        rounds_avg_3: 24.0
+        tool_calls_avg_3: 33.333333
+      test_002:
+        scores:
+        - 0.588235
+        - 0.588235
+        - 0.588235
+        acc_at_3: 0.5882
+        std_at_3: 0.0
+        input_tokens_avg_3: 57117.666667
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 2197674.666667
+        output_tokens_avg_3: 26533.0
+        cost_usd_avg_3: 0.055896
+        rounds_avg_3: 38.333333
+        tool_calls_avg_3: 57.333333
+      test_003:
+        scores:
+        - 1.0
+        - 0.526316
+        - 1.0
+        acc_at_3: 0.8421
+        std_at_3: 0.2233
+        input_tokens_avg_3: 63133.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 2618069.333333
+        output_tokens_avg_3: 32302.0
+        cost_usd_avg_3: 0.065056
+        rounds_avg_3: 41.666667
+        tool_calls_avg_3: 48.333333
+      test_004:
+        scores:
+        - 0.263158
+        - 0.421053
+        - 0.263158
+        acc_at_3: 0.3158
+        std_at_3: 0.0744
+        input_tokens_avg_3: 90967.0
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 2519680.0
+        output_tokens_avg_3: 36554.333333
+        cost_usd_avg_3: 0.080507
+        rounds_avg_3: 35.333333
+        tool_calls_avg_3: 63.0
+      test_005:
+        scores:
+        - 0.333333
+        - 0.555556
+        - 0.277778
+        acc_at_3: 0.3889
+        std_at_3: 0.12
+        input_tokens_avg_3: 62528.0
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 1775402.666667
+        output_tokens_avg_3: 35410.333333
+        cost_usd_avg_3: 0.064443
+        rounds_avg_3: 33.0
+        tool_calls_avg_3: 46.333333
+  fewshot:
+    skill_dirs:
+      attempt_01: ../skills/fewshot/fewshot_attempt_01
+      attempt_02: ../skills/fewshot/fewshot_attempt_02
+      attempt_03: ../skills/fewshot/fewshot_attempt_03
+    overall_acc_at_3: 0.3749
+    overall_std_at_3: 0.0912
+    efficiency:
+      input_tokens_avg_3: 58803.733333
+      cache_creation_tokens_avg_3: 0.0
+      cache_read_tokens_avg_3: 2308608.0
+      output_tokens_avg_3: 30544.4
+      cost_usd_avg_3: 0.060522
+      rounds_avg_3: 40.0
+      tool_calls_avg_3: 54.933333
+    tasks:
+      test_001:
+        scores:
+        - 0.166667
+        - 0.055556
+        - 0.055556
+        acc_at_3: 0.0926
+        std_at_3: 0.0524
+        input_tokens_avg_3: 55024.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 1502933.333333
+        output_tokens_avg_3: 27526.0
+        cost_usd_avg_3: 0.053331
+        rounds_avg_3: 29.666667
+        tool_calls_avg_3: 37.666667
+      test_002:
+        scores:
+        - 0.588235
+        - 0.823529
+        - 0.588235
+        acc_at_3: 0.6667
+        std_at_3: 0.1109
+        input_tokens_avg_3: 52548.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 2471637.333333
+        output_tokens_avg_3: 28811.333333
+        cost_usd_avg_3: 0.056884
+        rounds_avg_3: 46.333333
+        tool_calls_avg_3: 63.333333
+      test_003:
+        scores:
+        - 0.526316
+        - 0.526316
+        - 0.526316
+        acc_at_3: 0.5263
+        std_at_3: 0.0
+        input_tokens_avg_3: 59348.0
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 3267200.0
+        output_tokens_avg_3: 39079.0
+        cost_usd_avg_3: 0.071659
+        rounds_avg_3: 50.333333
+        tool_calls_avg_3: 58.333333
+      test_004:
+        scores:
+        - 0.684211
+        - 0.263158
+        - 0.263158
+        acc_at_3: 0.4035
+        std_at_3: 0.1985
+        input_tokens_avg_3: 65695.666667
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 1968938.666667
+        output_tokens_avg_3: 28786.666667
+        cost_usd_avg_3: 0.060759
+        rounds_avg_3: 33.0
+        tool_calls_avg_3: 59.333333
+      test_005:
+        scores:
+        - 0.055556
+        - 0.277778
+        - 0.222222
+        acc_at_3: 0.1852
+        std_at_3: 0.0944
+        input_tokens_avg_3: 61402.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 2332330.666667
+        output_tokens_avg_3: 28519.0
+        cost_usd_avg_3: 0.059976
+        rounds_avg_3: 40.666667
+        tool_calls_avg_3: 56.0
+    acc_improvement_over_base: -0.0632
+  self:
+    skill_dirs:
+      attempt_01: ../skills/self/self_attempt_01
+      attempt_02: ../skills/self/self_attempt_02
+      attempt_03: ../skills/self/self_attempt_03
+    overall_acc_at_3: 0.4264
+    overall_std_at_3: 0.1
+    efficiency:
+      input_tokens_avg_3: 63330.466667
+      cache_creation_tokens_avg_3: 0.0
+      cache_read_tokens_avg_3: 2485188.266667
+      output_tokens_avg_3: 33149.933333
+      cost_usd_avg_3: 0.065398
+      rounds_avg_3: 39.066667
+      tool_calls_avg_3: 53.666667
+    tasks:
+      test_001:
+        scores:
+        - 0.333333
+        - 0.055556
+        - 0.055556
+        acc_at_3: 0.1481
+        std_at_3: 0.1309
+        input_tokens_avg_3: 54597.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 1249920.0
+        output_tokens_avg_3: 21904.0
+        cost_usd_avg_3: 0.047337
+        rounds_avg_3: 25.0
+        tool_calls_avg_3: 37.333333
+      test_002:
+        scores:
+        - 0.588235
+        - 0.588235
+        - 1.0
+        acc_at_3: 0.7255
+        std_at_3: 0.1941
+        input_tokens_avg_3: 52264.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 2301909.333333
+        output_tokens_avg_3: 27336.333333
+        cost_usd_avg_3: 0.054862
+        rounds_avg_3: 42.333333
+        tool_calls_avg_3: 58.666667
+      test_003:
+        scores:
+        - 0.263158
+        - 0.421053
+        - 0.421053
+        acc_at_3: 0.3684
+        std_at_3: 0.0744
+        input_tokens_avg_3: 68476.0
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 3467562.666667
+        output_tokens_avg_3: 38433.333333
+        cost_usd_avg_3: 0.075794
+        rounds_avg_3: 47.0
+        tool_calls_avg_3: 56.0
+      test_004:
+        scores:
+        - 0.263158
+        - 0.263158
+        - 0.421053
+        acc_at_3: 0.3158
+        std_at_3: 0.0744
+        input_tokens_avg_3: 82383.0
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 2184149.333333
+        output_tokens_avg_3: 40269.333333
+        cost_usd_avg_3: 0.078788
+        rounds_avg_3: 31.666667
+        tool_calls_avg_3: 50.0
+      test_005:
+        scores:
+        - 0.611111
+        - 0.555556
+        - 0.555556
+        acc_at_3: 0.5741
+        std_at_3: 0.0262
+        input_tokens_avg_3: 58931.666667
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 3222400.0
+        output_tokens_avg_3: 37806.666667
+        cost_usd_avg_3: 0.070208
+        rounds_avg_3: 49.333333
+        tool_calls_avg_3: 66.333333
+    acc_improvement_over_base: -0.0117
+  reflect-3:
+    skill_dirs:
+      attempt_01: ../skills/reflect-3/reflect-3_attempt_01
+      attempt_02: ../skills/reflect-3/reflect-3_attempt_02
+      attempt_03: ../skills/reflect-3/reflect-3_attempt_03
+    overall_acc_at_3: 0.5849
+    overall_std_at_3: 0.2151
+    efficiency:
+      input_tokens_avg_3: 62992.266667
+      cache_creation_tokens_avg_3: 0.0
+      cache_read_tokens_avg_3: 1408187.733333
+      output_tokens_avg_3: 24031.933333
+      cost_usd_avg_3: 0.053414
+      rounds_avg_3: 25.466666
+      tool_calls_avg_3: 36.8
+    tasks:
+      test_001:
+        scores:
+        - 0.5
+        - 0.055556
+        - 0.5
+        acc_at_3: 0.3519
+        std_at_3: 0.2095
+        input_tokens_avg_3: 59242.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 1331456.0
+        output_tokens_avg_3: 18952.0
+        cost_usd_avg_3: 0.047085
+        rounds_avg_3: 26.0
+        tool_calls_avg_3: 34.333333
+      test_002:
+        scores:
+        - 1.0
+        - 0.588235
+        - 0.588235
+        acc_at_3: 0.7255
+        std_at_3: 0.1941
+        input_tokens_avg_3: 63861.666667
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 1008853.333333
+        output_tokens_avg_3: 17700.333333
+        cost_usd_avg_3: 0.046836
+        rounds_avg_3: 19.333333
+        tool_calls_avg_3: 37.333333
+      test_003:
+        scores:
+        - 0.526316
+        - 1.0
+        - 0.526316
+        acc_at_3: 0.6842
+        std_at_3: 0.2233
+        input_tokens_avg_3: 54383.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 1429546.666667
+        output_tokens_avg_3: 20817.333333
+        cost_usd_avg_3: 0.04695
+        rounds_avg_3: 25.333333
+        tool_calls_avg_3: 34.333333
+      test_004:
+        scores:
+        - 0.526316
+        - 0.421053
+        - 0.263158
+        acc_at_3: 0.4035
+        std_at_3: 0.1081
+        input_tokens_avg_3: 71669.333333
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 1240234.666667
+        output_tokens_avg_3: 29382.333333
+        cost_usd_avg_3: 0.061235
+        rounds_avg_3: 22.333333
+        tool_calls_avg_3: 33.0
+      test_005:
+        scores:
+        - 1.0
+        - 1.0
+        - 0.277778
+        acc_at_3: 0.7593
+        std_at_3: 0.3405
+        input_tokens_avg_3: 65804.666667
+        cache_creation_tokens_avg_3: 0.0
+        cache_read_tokens_avg_3: 2030848.0
+        output_tokens_avg_3: 33307.666667
+        cost_usd_avg_3: 0.064965
+        rounds_avg_3: 34.333333
+        tool_calls_avg_3: 45.0
+    acc_improvement_over_base: 0.1468
+analysis:
+  acc_improvement_over_base:
+    fewshot: -0.0632
+    self: -0.0117
+    reflect-3: 0.1468
+  task_acc_deltas_over_base:
+    fewshot:
+      test_001: 0.037
+      test_002: 0.0785
+      test_003: -0.3158
+      test_004: 0.0877
+      test_005: -0.2037
+    self:
+      test_001: 0.0925
+      test_002: 0.1373
+      test_003: -0.4737
+      test_004: 0.0
+      test_005: 0.1852
+    reflect-3:
+      test_001: 0.2963
+      test_002: 0.1373
+      test_003: -0.1579
+      test_004: 0.0877
+      test_005: 0.3704
+  clearly_improved_tasks:
+    fewshot:
+    - test_001
+    - test_002
+    - test_004
+    self:
+    - test_001
+    - test_002
+    - test_005
+    reflect-3:
+    - test_001
+    - test_002
+    - test_004
+    - test_005
+  not_improved_tasks:
+    fewshot:
+    - test_003
+    - test_005
+    self:
+    - test_003
+    - test_004
+    reflect-3:
+    - test_003
+  aggregation_note: Efficiency metrics count only matched Dockerized Claude Code test-solver
+    traces. Evolve usage is reported separately.
+  environment_contract_risks:
+  - 'The implemented train judge response omits the documented scope: train_only field;
+    reflect generators were instructed to use only score and correct, so scoring behavior
+    was unaffected.'
+evaluation_audit:
+  official_solver_attempts_expected: 60
+  official_solver_traces_matched: 60
+  official_solver_token_records_populated: 60
+  skill_generation_attempts_expected: 9
+  skill_generation_traces_matched: 9
+  skill_generation_token_records_populated: 9
+  invalid_or_retried_official_runs:
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_01/invalid_20260722T101034Z_post_audit_8771139b/failure_reason.txt
+    reason: Post-run audit found that successful judge feedback was not exactly three
+      rounds for every train task.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_01/invalid_20260722T103443Z_retry0_4c27d94f/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 2, "train_002": 0, "train_003":
+      1, "train_004": 0, "train_005": 0}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_01/invalid_20260722T111239Z_retry0_ee072c68/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 3, "train_002": 3, "train_003":
+      3, "train_004": 3, "train_005": 2}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_02/invalid_20260722T101034Z_post_audit_453274fe/failure_reason.txt
+    reason: Post-run audit found that successful judge feedback was not exactly three
+      rounds for every train task.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_02/invalid_20260722T104318Z_retry0_8086084f/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 5, "train_002": 2, "train_003":
+      7, "train_004": 3, "train_005": 4}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_02/invalid_20260722T110756Z_retry0_772e5087/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 3, "train_002": 3, "train_003":
+      3, "train_004": 3, "train_005": 1}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_02/invalid_20260722T112706Z_retry1_b4be8840/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 5, "train_002": 2, "train_003":
+      3, "train_004": 3, "train_005": 2}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_02/invalid_20260722T115337Z_retry2_148ac4fc/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 24, "train_002": 49,
+      "train_003": 30, "train_004": 3, "train_005": 3}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_02/invalid_20260722T121307Z_retry0_d21a91c9/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 7 successful
+      judge feedback responses for train_001, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T101034Z_post_audit_ce0c8939/failure_reason.txt
+    reason: Post-run audit found that successful judge feedback was not exactly three
+      rounds for every train task.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T104024Z_retry0_b41e7067/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 3, "train_002": 3, "train_003":
+      3, "train_004": 3, "train_005": 2}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T111027Z_retry0_a57651f6/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 24, "train_002": 9, "train_003":
+      6, "train_004": 2, "train_005": 2}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T113617Z_retry1_f2c1cf8e/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 3, "train_002": 3, "train_003":
+      3, "train_004": 0, "train_005": 0}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T120301Z_retry2_16382c6f/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 4, "train_002": 3, "train_003":
+      3, "train_004": 1, "train_005": 3}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T122713Z_retry0_cc2ac938/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 3, "train_002": 3, "train_003":
+      3, "train_004": 2, "train_005": 2}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T123927Z_retry1_558b9f27/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 4 successful
+      judge feedback responses for train_001, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T124821Z_retry2_b82ade90/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 4 successful
+      judge feedback responses for train_001, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T131214Z_retry3_35da39cc/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 3, "train_002": 1, "train_003":
+      3, "train_004": 3, "train_005": 3}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T131846Z_retry4_c1e86d99/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 13 successful
+      judge feedback responses for train_001, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T133126Z_retry5_e2d879bd/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 5 successful
+      judge feedback responses for train_001, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T134006Z_retry6_4475cf53/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 4 successful
+      judge feedback responses for train_001, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T135301Z_retry7_566ffc48/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 4 successful
+      judge feedback responses for train_001, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T140045Z_retry8_71ba8c2c/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 5 successful
+      judge feedback responses for train_001, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T140820Z_retry9_8210e434/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 4 successful
+      judge feedback responses for train_001, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T143727Z_retry0_0d96aecb/failure_reason.txt
+    reason: 'reflect feedback contract failed: {"train_001": 3, "train_002": 1, "train_003":
+      3, "train_004": 2, "train_005": 3}'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T145429Z_retry1_48aaa54d/failure_reason.txt
+    reason: Agent exit code 1 after the native trace recorded an upstream API connection
+      closing mid-response.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T145734Z_retry2_61891883/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T150038Z_retry3_96e48963/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T150342Z_retry4_02def78c/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T150649Z_retry5_4a4fca73/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T150953Z_retry6_5e14f37d/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T151256Z_retry7_18bb855f/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T151610Z_retry8_6d86f17b/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T151913Z_retry9_f5268747/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T152226Z_retry10_fb6e6f1d/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T152527Z_retry11_f234eadd/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T152827Z_retry12_01b69dec/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T153133Z_retry13_f2cbf908/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T153436Z_retry14_aa2d9011/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T153744Z_retry15_81fe322a/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T154044Z_retry16_e19cefc3/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T154352Z_retry17_54e18367/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T154654Z_retry18_ac811ead/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260722T155003Z_retry19_30ec1e32/failure_reason.txt
+    reason: 'Agent exit code 1 after the native trace recorded `API Error: Unable
+      to connect to API (ENOTIMP)`.'
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260723T042831Z_retry0_031e9a46/failure_reason.txt
+    reason: Agent exit code 1 after the native trace recorded an upstream API connection
+      closing mid-response.
+  - reason_file: scratch/invalid_attempts/skill_generation/reflect-3/attempt_03/invalid_20260723T045213Z_retry1_a498af0e/failure_reason.txt
+    reason: Early termination after a read-only live trace audit found 4 successful
+      judge feedback responses for train_003, irreversibly exceeding the exact-three
+      contract; the orchestrator stop produced agent exit code 137.
+  trace_coverage: 1.0
+  token_coverage: 1.0
+  skill_trace_coverage: 1.0
+  skill_token_coverage: 1.0
+  non_scored_probe_note: The initial CLI probe failed because bypass permissions cannot
+    run as root; the orchestrator switched to the image's non-root node user and the
+    replacement probe passed.
+  artifact_paths:
+    runs: ../runs
+    skills: ../skills
+    original_traces: ../original_traces
+    environment_audit: ../scratch/environment.yaml

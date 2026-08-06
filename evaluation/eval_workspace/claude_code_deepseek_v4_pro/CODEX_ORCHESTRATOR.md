@@ -1,4 +1,4 @@
-# Codex Orchestrator Guide for DeepSeek V4 Pro Claude Code Evaluation
+# Codex Orchestrator Guide for DeepSeek V4 Pro Preview Claude Code Evaluation
 
 You are the evaluation orchestrator for one task group. Claude Code is only a
 Dockerized `claude -p` subprocess used to generate skills or solve a single
@@ -25,8 +25,8 @@ Read `README.md` and `guides/` first. Start the task environment outside the
 agent container and use `.env` for its container-visible URL.
 
 Before running any Claude Code command, confirm the active Claude Code
-configuration is DeepSeek V4 Pro via the DeepSeek Anthropic API with Claude
-Code `max` effort, DeepSeek V4 Pro for Haiku/subagent defaults, and bypass
+configuration is DeepSeek V4 Pro Preview via the DeepSeek Anthropic API with Claude
+Code `max` effort, DeepSeek V4 Pro Preview for Haiku/subagent defaults, and bypass
 permissions:
 
 ```text
@@ -121,7 +121,7 @@ directory, rather than a path blacklist in the prompt, enforces file isolation.
 
 ## Running Claude Code
 
-For this DeepSeek V4 Pro rerun, Claude Code must run with Docker isolation unless the
+For this DeepSeek V4 Pro Preview rerun, Claude Code must run with Docker isolation unless the
 user explicitly approves a fallback later. Do not start any scored or
 skill-generation Claude run with direct host `claude -p` fallback.
 
