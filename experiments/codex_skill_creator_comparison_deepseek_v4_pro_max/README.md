@@ -69,5 +69,8 @@ The source workspace report remains unchanged.
   `task_group_024.yaml` contain the naive-only supplement results.
 
 Generated skills and raw traces are not included in this report repository.
-The selected primary traces, metadata, manifests, and audit artifacts are
-published separately in `Prism-Shadow/GDPevo_rawdata`.
+The publication copies preserve the canonical metrics, recovery labels, and
+audit structure while replacing host-specific absolute path prefixes and
+provider bridge addresses with explicit redaction placeholders. The original
+byte-identical reports, selected primary traces, metadata, manifests, and audit
+artifacts are published separately in `Prism-Shadow/GDPevo_rawdata`.

@@ -52,11 +52,10 @@ that the minimal prompt will dominate on other models or task distributions.
   `task_group_024.yaml` are the naive-only supplement results. The 019 file
   retains its bounded-recovery labels and provenance.
 
-The original 24 report files remain byte-identical copies of their final
-canonical workspace reports. The naive supplement files are likewise
-byte-identical copies of the corresponding final supplement reports, including
-the labelled 019 recovery report. Their paths therefore remain
-workspace-relative audit provenance. Generated skill packages and raw naive
-traces are not included in this report-only publication. Task groups 001 and
-009 in the original layer use the selected logical-recovery results recorded by
-their final canonical reports.
+The publication copies preserve the canonical metrics, recovery labels, and
+audit structure while replacing host-specific absolute path prefixes and
+provider bridge addresses with explicit redaction placeholders. The original
+byte-identical reports and raw traces remain in `Prism-Shadow/GDPevo_rawdata`.
+Generated skill packages and raw traces are not included in this report-only
+publication. Task groups 001 and 009 in the original layer use the selected
+logical-recovery results recorded by their final canonical reports.

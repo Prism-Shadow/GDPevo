@@ -35,6 +35,7 @@ Per-task reports are under:
 
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
 - [`experiments/codex_skill_creator_comparison_gpt5_5_xhigh/`](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/) — controlled comparison of five few-shot skill creators, including a minimal naive control, with the Codex harness and GPT-5.5 xhigh
+- [`experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/`](experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/) — the same five-creator comparison with the Codex harness and DeepSeek V4 Pro Preview max
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
 - [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
 - [`experiments/claude_code_deepseek_v4_pro_max/`](experiments/claude_code_deepseek_v4_pro_max/)

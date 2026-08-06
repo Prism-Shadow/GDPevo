@@ -35,6 +35,7 @@ Codex harness 与 solver model，只改变 few-shot skill 所使用的 creator�
 
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
 - [`experiments/codex_skill_creator_comparison_gpt5_5_xhigh/`](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/) —— 固定 Codex harness 与 GPT-5.5 xhigh，对比五种 few-shot skill creator（含最小 naive 对照）
+- [`experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/`](experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/) —— 固定 Codex harness 与 DeepSeek V4 Pro Preview max，进行相同的五种 creator 对比
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
 - [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
 - [`experiments/claude_code_deepseek_v4_pro_max/`](experiments/claude_code_deepseek_v4_pro_max/)

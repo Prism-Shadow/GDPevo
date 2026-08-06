@@ -6,4 +6,4 @@
 
 本目录包含 [`eval_workspace/`](eval_workspace/)，其中提供四个主运行的可复用评测工作区：Codex / GPT-5.5、Claude Code / Opus 4.8、Claude Code / GLM-5.2，以及 Claude Code / DeepSeek V4 Pro Preview。每个工作区都会说明如何放置任务组、运行多次尝试、收集 `acc`、population `std`、trace 可用时的轮次、token、费用和耗时指标，并写出最终 report YAML。
 
-[`codex_skill_creator_comparison/`](eval_workspace/codex_skill_creator_comparison/) 是一个专门的 Codex 对比工作区：每个模型配置只运行一组共享 `base`，并分别运行 Codex、Claude Code、Deep Agents 和 OpenCode 四种 skill creator 对应的 `fewshot` 分支。
+[`codex_skill_creator_comparison/`](eval_workspace/codex_skill_creator_comparison/) 是一个专门的 Codex 对比工作区：每个模型配置只运行一组共享 `base`，并分别运行 Codex、Claude Code、Deep Agents、OpenCode 以及最小 prompt-only naive 对照这五种 creator 对应的 `fewshot` 分支。
