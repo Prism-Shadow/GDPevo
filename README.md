@@ -3,6 +3,7 @@
 Languages: [English](README.md) | [Chinese](README.zh.md)
 
 [![Blog](https://img.shields.io/badge/Blog-Read%20the%20blog-0f7b5f?style=flat&logo=readthedocs&logoColor=white)](https://prism-shadow.github.io/GDPevo/blog.html)
+[![Paper](https://img.shields.io/badge/arXiv-2608.03764-b31b1b?style=flat&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.03764)
 
 **GDPevo** is a public benchmark for evaluating agent self-evolution on real business work. The data release contains 240 tasks across 24 task groups spanning CRM, ERP, finance, healthcare, legal, data analysis, and engineering operations; each group has one shared business environment, 5 train tasks, and 5 held-out test tasks. For the full motivation, construction pipeline, and findings, read the [project blog](https://prism-shadow.github.io/GDPevo/blog.html).
 
@@ -20,7 +21,7 @@ and [DeepSeek V4 Pro Preview max](experiments/codex_skill_creator_comparison_dee
 - **fewshot**: learn from train inputs plus gold answers as demonstrations.
 - **reflect-3**: iterate with train-only judge feedback, then consolidate the evolved workflow.
 
-The primary leaderboard uses task groups 001–024.
+The primary leaderboard uses task groups 001–024. To match the paper, the current leaderboard and task-group radar include only the four complete 24-group v2 runs listed below. V1-only 12-group runs remain archived under `experiments/` but are excluded from current comparisons.
 
 | Harness | Model | Thinking | `base` acc | `fewshot` acc | `self` acc | `reflect-3` acc | `base` rounds | `base` tool calls | `fewshot` rounds | `fewshot` tool calls | `self` rounds | `self` tool calls | `reflect-3` rounds | `reflect-3` tool calls | `fewshot` cost change | `self` cost change | `reflect-3` cost change | `fewshot` lift | `self` lift | `reflect-3` lift |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -90,9 +91,12 @@ These workspaces are agent-ready folders for building, reviewing, and evaluating
 
 ```bibtex
 @misc{gdpevo2026,
-  title  = {GDPevo: Measuring agent self-evolution on real business work},
-  author = {PrismShadow Team},
-  year   = {2026},
-  url    = {https://github.com/Prism-Shadow/GDPevo}
+  title         = {{GDPevo}: Evaluating Agent Self-Evolution on Real Business Tasks},
+  author        = {Zhou, Leijun and Liu, Zhihao and Qu, Xiang and Liu, Chenxu and Liu, Yifei and Yu, Yanke and Xu, Jingzhe and Wu, Xuejun and Qian, Buyue and Chen, Xi and Zheng, Yaowei and Hu, Junhao},
+  year          = {2026},
+  eprint        = {2608.03764},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2608.03764}
 }
 ```

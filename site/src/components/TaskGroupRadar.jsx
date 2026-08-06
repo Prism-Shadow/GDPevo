@@ -20,8 +20,7 @@ const seriesColors = [
 ];
 const methodLabels = {
   none: "—",
-  "skill-creator": "Skill Creator",
-  "agent-training": "Agent Training"
+  "skill-creator": "Skill Creator"
 };
 const filterProperties = {
   runIds: "runId",
@@ -33,7 +32,7 @@ const filterProperties = {
 const copy = {
   en: {
     title: "Task-group performance explorer",
-    subtitle: "Compare ACC profiles across task groups 001–012",
+    subtitle: "Compare ACC profiles across task groups 001–024",
     builder: "Comparison filters",
     builderHint: "Select any combination. Empty groups mean no restriction.",
     model: "Model",
@@ -59,7 +58,7 @@ const copy = {
   },
   zh: {
     title: "任务组表现对比",
-    subtitle: "比较任务组 001–012 上的 ACC 分布",
+    subtitle: "比较任务组 001–024 上的 ACC 分布",
     builder: "对比条件",
     builderHint: "可以同时勾选多个条件；某组未勾选时表示不限。",
     model: "模型",
@@ -102,6 +101,7 @@ const experimentColorMap = new Map(experiments.map((experiment, index) => [
   experiment.key,
   seriesColors[index % seriesColors.length]
 ]));
+const radarMethods = [...new Set(experiments.map((experiment) => experiment.method))];
 
 function mean(values) {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -235,7 +235,7 @@ export function TaskGroupRadar({ lang = "en" }) {
     {
       field: "methods",
       label: t.method,
-      options: ["none", "skill-creator", "agent-training"].map((method) => ({
+      options: radarMethods.map((method) => ({
         value: method,
         label: method === "none" ? t.noMethod : methodLabels[method]
       }))
@@ -257,7 +257,7 @@ export function TaskGroupRadar({ lang = "en" }) {
   const renderedSeries = focusedKey
     ? [...styledSeries.filter((series) => series.key !== focusedKey), ...styledSeries.filter((series) => series.key === focusedKey)]
     : styledSeries;
-  const chartData = taskGroups.slice(0, 12).map((group, groupIndex) => {
+  const chartData = taskGroups.map((group, groupIndex) => {
     const row = { axis: `TG${group.id}`, enName: group.en, zhName: group.zh };
     styledSeries.forEach((series) => {
       row[series.dataKey] = series.scores[groupIndex];

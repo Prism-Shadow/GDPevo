@@ -125,8 +125,8 @@ export const homeContent = {
   },
   results: {
     leaderboardCaption: {
-      en: "Each metric is the mean across task groups 001–024, with each task averaged over 3 runs",
-      zh: "各指标为任务组 001–024 的均值，每个任务跑 3 遍后取平均"
+      en: "Paper-aligned results over task groups 001–024; only complete 24-group v2 runs are shown, with each task averaged over 3 runs",
+      zh: "与论文一致的 task groups 001–024 结果；仅展示具有完整 24 组数据的 v2 实验，每个任务跑 3 遍后取平均"
     },
     heading: {
       en: "Self-evolution makes agents more accurate, often while spending **fewer** tokens.",

@@ -3,6 +3,7 @@
 语言：[English](README.md) | [中文](README.zh.md)
 
 [![Blog](https://img.shields.io/badge/Blog-Read%20the%20blog-0f7b5f?style=flat&logo=readthedocs&logoColor=white)](https://prism-shadow.github.io/GDPevo/blog.html)
+[![Paper](https://img.shields.io/badge/arXiv-2608.03764-b31b1b?style=flat&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.03764)
 
 **GDPevo** 是一个公开基准，用来评估智能体在真实企业任务上的自进化能力。当前数据版本包含 240 个任务，共 24 个任务组，覆盖 CRM、ERP、金融、医疗、法律、数据分析和工程运营等业务场景；每个任务组都有一个共享业务环境、5 个训练任务和 5 个保留测试任务。完整动机、构建流程和结果分析见[项目博客](https://prism-shadow.github.io/GDPevo/blog.html)。
 
@@ -20,7 +21,7 @@ Codex harness 与 solver model，只改变 few-shot skill 所使用的 creator�
 - **fewshot**：从训练输入和标准答案组成的示例中学习。
 - **reflect-3**：通过仅限训练阶段的 judge 反馈迭代，再沉淀进化后的工作流程。
 
-主榜单使用 task groups 001–024。
+主榜单使用 task groups 001–024。为与论文保持一致，当前榜单和任务组雷达图仅纳入下列四组具有完整 24 个任务组数据的 v2 实验。仅包含 V1 的 12 组旧实验仍归档在 `experiments/` 下，但不进入当前对比。
 
 | 评测框架 | 模型 | 思考强度 | `base` acc | `fewshot` acc | `self` acc | `reflect-3` acc | `base` 轮次 | `base` 工具调用 | `fewshot` 轮次 | `fewshot` 工具调用 | `self` 轮次 | `self` 工具调用 | `reflect-3` 轮次 | `reflect-3` 工具调用 | `fewshot` 费用变化 | `self` 费用变化 | `reflect-3` 费用变化 | `fewshot` 提升 | `self` 提升 | `reflect-3` 提升 |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -90,9 +91,12 @@ Codex harness 与 solver model，只改变 few-shot skill 所使用的 creator�
 
 ```bibtex
 @misc{gdpevo2026,
-  title  = {GDPevo: Measuring agent self-evolution on real business work},
-  author = {PrismShadow Team},
-  year   = {2026},
-  url    = {https://github.com/Prism-Shadow/GDPevo}
+  title         = {{GDPevo}: Evaluating Agent Self-Evolution on Real Business Tasks},
+  author        = {Zhou, Leijun and Liu, Zhihao and Qu, Xiang and Liu, Chenxu and Liu, Yifei and Yu, Yanke and Xu, Jingzhe and Wu, Xuejun and Qian, Buyue and Chen, Xi and Zheng, Yaowei and Hu, Junhao},
+  year          = {2026},
+  eprint        = {2608.03764},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2608.03764}
 }
 ```
