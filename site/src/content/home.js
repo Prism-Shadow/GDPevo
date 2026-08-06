@@ -125,8 +125,8 @@ export const homeContent = {
   },
   results: {
     leaderboardCaption: {
-      en: "Results for the four agents evaluated in the paper across all 24 V2 task groups. Each task is averaged over three runs.",
-      zh: "论文所评测的四个 Agent 在全部 24 个 V2 任务组上的结果。每个任务运行三次后取平均。"
+      en: "Results for the four agents evaluated in the paper across all 24 task groups. Each task is averaged over three runs.",
+      zh: "论文所评测的四个 Agent 在全部 24 个任务组上的结果。每个任务运行三次后取平均。"
     },
     heading: {
       en: "Self-evolution makes agents more accurate, often while spending **fewer** tokens.",
