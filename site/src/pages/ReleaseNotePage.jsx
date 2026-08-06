@@ -15,7 +15,7 @@ const release = {
     tldrColumns: ["Axis", "Before", "After"],
     tldrRows: [
       ["① Width — business domains", "3 domains · 12 task groups · 120 tasks", "6 domains · 24 task groups · 240 tasks"],
-      ["② Depth — models under test", "3 agents", "more agents, incl. Claude Code × DeepSeek V4 Pro, Kimi K2.6, and GLM-5.2"],
+      ["② Depth — models under test", "3 agents", "more agents, incl. Claude Code × DeepSeek V4 Pro Preview, Kimi K2.6, and GLM-5.2"],
       ["③ Lens — evaluation metrics", "accuracy · tokens · cost", "+ turn count, plus heatmaps, score breakdowns, and radar views"]
     ],
     widthTitle: "① Width — the benchmark got wider",
@@ -30,7 +30,7 @@ const release = {
     ],
     depthTitle: "② Depth — we tested more models, more thoroughly",
     depthIntro: "Beyond the previous agents (Codex · GPT-5.5, Claude Code · Opus 4.8, Panofy · Opus 4.6), this release evaluates more agents and reports both their overall scores and per-group breakdowns, so readers can compare agents apples-to-apples:",
-    newAgents: ["Claude Code × DeepSeek V4 Pro", "Claude Code × Kimi K2.6", "Claude Code × GLM-5.2", "…and more"],
+    newAgents: ["Claude Code × DeepSeek V4 Pro Preview", "Claude Code × Kimi K2.6", "Claude Code × GLM-5.2", "…and more"],
     modeIntro: "Each agent is evaluated under four modes:",
     evolutionModes: [
       ["base", "run the test tasks directly, without any evolution step."],
@@ -51,7 +51,7 @@ const release = {
       ["3", "Claude Code · GLM-5.2", "fewshot", "Skill Creator", "69.55%", "+21.83", "$0.34", "15.49", "606.3k"],
       ["4", "Codex · GPT-5.5", "fewshot", "Skill Creator", "64.91%", "+18.19", "$0.81", "11.58", "451.7k"],
       ["⋮", "", "", "", "", "", "", "", ""],
-      ["13", "Claude Code · DeepSeek V4 Pro", "fewshot", "Skill Creator", "54.80%", "+8.74", "$0.032", "11.46", "439.9k"],
+      ["13", "Claude Code · DeepSeek V4 Pro Preview", "fewshot", "Skill Creator", "54.80%", "+8.74", "$0.032", "11.46", "439.9k"],
       ["16", "Claude Code · Opus 4.8", "base", "—", "49.11%", "—", "$0.61", "14.62", "385.8k"],
       ["19", "Codex · GPT-5.5", "base", "—", "46.72%", "—", "$1.14", "14.91", "735.3k"],
       ["⋮", "", "", "", "", "", "", "", ""],
@@ -60,7 +60,7 @@ const release = {
     ],
     findings: (
       <>
-        <strong>Findings.</strong> Self-evolution pays off for every agent — the <strong>fewshot</strong> mode lifts tests ACC by <strong>+18 to +22 pp</strong> over <strong>base</strong>. The lever is high enough to leapfrog model tiers: <strong>DeepSeek V4 Pro</strong> with <strong>fewshot</strong> reaches <strong>54.8%</strong>, above the <strong>base</strong> (no-evolution) scores of flagship agents like <strong>Opus 4.8</strong> (49.1%) and <strong>GPT-5.5</strong> (46.7%) — so evolving a cheaper model can beat running a flagship one as-is. At the bottom, <strong>Kimi K2.6</strong> is both the weakest (25–33%) and by far the most interaction-heavy, burning 30–46 rounds and up to 1.2M tokens per task.
+        <strong>Findings.</strong> Self-evolution pays off for every agent — the <strong>fewshot</strong> mode lifts tests ACC by <strong>+18 to +22 pp</strong> over <strong>base</strong>. The lever is high enough to leapfrog model tiers: <strong>DeepSeek V4 Pro Preview</strong> with <strong>fewshot</strong> reaches <strong>54.8%</strong>, above the <strong>base</strong> (no-evolution) scores of flagship agents like <strong>Opus 4.8</strong> (49.1%) and <strong>GPT-5.5</strong> (46.7%) — so evolving a cheaper model can beat running a flagship one as-is. At the bottom, <strong>Kimi K2.6</strong> is both the weakest (25–33%) and by far the most interaction-heavy, burning 30–46 rounds and up to 1.2M tokens per task.
       </>
     ),
     lensTitle: "③ Lens — more ways to read the results",
@@ -104,7 +104,7 @@ const release = {
     tldrColumns: ["维度", "之前", "之后"],
     tldrRows: [
       ["① 宽度 — 业务领域", "3 个领域 · 12 个任务组 · 120 个任务", "6 个领域 · 24 个任务组 · 240 个任务"],
-      ["② 深度 — 受测模型", "3 个 Agent", "更多 Agent，包括 Claude Code × DeepSeek V4 Pro、Kimi K2.6、GLM-5.2"],
+      ["② 深度 — 受测模型", "3 个 Agent", "更多 Agent，包括 Claude Code × DeepSeek V4 Pro Preview、Kimi K2.6、GLM-5.2"],
       ["③ 视角 — 评测指标", "准确率 · token · 成本", "新增 turn 数量，以及热力图、分数 breakdown、雷达图"]
     ],
     widthTitle: "① 宽度 —— Benchmark 变宽了",
@@ -119,7 +119,7 @@ const release = {
     ],
     depthTitle: "② 深度 —— 我们评测了更多模型，也更彻底理解 Agent 的行为",
     depthIntro: "在原有的 Agent（Codex · GPT-5.5、Claude Code · Opus 4.8、Panofy · Opus 4.6）之外，本次更新评测了更多 Agent，并同时给出它们的总体分数与分组 breakdown，方便读者做同口径对比：",
-    newAgents: ["Claude Code × DeepSeek V4 Pro", "Claude Code × Kimi K2.6", "Claude Code × GLM-5.2", "……以及更多"],
+    newAgents: ["Claude Code × DeepSeek V4 Pro Preview", "Claude Code × Kimi K2.6", "Claude Code × GLM-5.2", "……以及更多"],
     modeIntro: "每个 Agent 都在四种 mode 下运行：",
     evolutionModes: [
       ["base", "直接完成测试任务，不经过进化过程。"],
@@ -140,7 +140,7 @@ const release = {
       ["3", "Claude Code · GLM-5.2", "fewshot", "Skill Creator", "69.55%", "+21.83", "$0.34", "15.49", "606.3k"],
       ["4", "Codex · GPT-5.5", "fewshot", "Skill Creator", "64.91%", "+18.19", "$0.81", "11.58", "451.7k"],
       ["⋮", "", "", "", "", "", "", "", ""],
-      ["13", "Claude Code · DeepSeek V4 Pro", "fewshot", "Skill Creator", "54.80%", "+8.74", "$0.032", "11.46", "439.9k"],
+      ["13", "Claude Code · DeepSeek V4 Pro Preview", "fewshot", "Skill Creator", "54.80%", "+8.74", "$0.032", "11.46", "439.9k"],
       ["16", "Claude Code · Opus 4.8", "base", "—", "49.11%", "—", "$0.61", "14.62", "385.8k"],
       ["19", "Codex · GPT-5.5", "base", "—", "46.72%", "—", "$1.14", "14.91", "735.3k"],
       ["⋮", "", "", "", "", "", "", "", ""],
@@ -149,7 +149,7 @@ const release = {
     ],
     findings: (
       <>
-        <strong>发现。</strong>自进化对每个 Agent 都奏效——<strong>fewshot</strong> 模式相比 <strong>base</strong> 把测试集 ACC 抬高了 <strong>+18 到 +22 pp</strong>。而这个杠杆高到可以跨越模型档位：<strong>DeepSeek V4 Pro</strong> 配上 <strong>fewshot</strong> 达到 <strong>54.8%</strong>，超过了 <strong>Opus 4.8</strong>（49.1%）、<strong>GPT-5.5</strong>（46.7%）这些旗舰 Agent 在 <strong>base</strong>（无进化）下的分数——也就是说，让一个更便宜的模型自进化，能打过原样跑的旗舰模型。另一端，<strong>Kimi K2.6</strong> 既最弱（25–33%），交互也最重，每个任务要烧掉 30–46 轮、最多 120 万 token。
+        <strong>发现。</strong>自进化对每个 Agent 都奏效——<strong>fewshot</strong> 模式相比 <strong>base</strong> 把测试集 ACC 抬高了 <strong>+18 到 +22 pp</strong>。而这个杠杆高到可以跨越模型档位：<strong>DeepSeek V4 Pro Preview</strong> 配上 <strong>fewshot</strong> 达到 <strong>54.8%</strong>，超过了 <strong>Opus 4.8</strong>（49.1%）、<strong>GPT-5.5</strong>（46.7%）这些旗舰 Agent 在 <strong>base</strong>（无进化）下的分数——也就是说，让一个更便宜的模型自进化，能打过原样跑的旗舰模型。另一端，<strong>Kimi K2.6</strong> 既最弱（25–33%），交互也最重，每个任务要烧掉 30–46 轮、最多 120 万 token。
       </>
     ),
     lensTitle: "③ 视角 —— 更多解读结果的方式",

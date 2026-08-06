@@ -1,0 +1,507 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+parent_experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_016
+model_profile: deepseek_v4_max_preview
+harness: codex
+status: complete
+model:
+  generator_model: deepseek-ai/DeepSeek-V4-Pro
+  solver_model: deepseek-ai/DeepSeek-V4-Pro
+  reasoning_effort: max
+  provider_id: siliconflow_bridge
+  observed_identity: deepseek-ai/DeepSeek-V4-Pro
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:b0e4d80adf2f5f8286219894e7b772deca5629e107d35ad6f7263e350c03d3f7
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/deepseek_v4_max_preview/task_group_016.yaml
+  report_sha256: b4c594954b6a4d3ebeed26b138c9a9a02c7e3b6cab132ce2ea27c9951cf1fbb6
+  status: complete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:b0e4d80adf2f5f8286219894e7b772deca5629e107d35ad6f7263e350c03d3f7
+execution:
+  started_at: '2026-07-29T16:30:24Z'
+  completed_at: '2026-07-29T17:22:12Z'
+  run_manifest: scratch/run_manifest/deepseek_v4_max_preview.yaml
+  run_manifest_sha256: f8e6a58e38d29b8febe7cbe40135cae5d99e7af316df3c26d899718b8e6bc1fa
+  run_plan_sha256: 9282a11d6858c26e482db004e120269ad6b01b6601114de0f74e6f48133d2577
+  helper_sha256: f097a232246987544fb1e72e0b979974b0fa3b97d313245f1a2170ef96d6cdbc
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  generation_trace_root: original_traces/deepseek_v4_max_preview/skill_generation/naive
+  solver_trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        status: valid
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: 8920236e395c1e3035365d7216dc18af9b6f0c2875f4c8167be4fcd5160ebcea
+        input_tokens: 980172
+        cached_input_tokens: 937984
+        output_tokens: 24869
+        reasoning_output_tokens: 13804
+        total_tokens: 1005041
+        cost_usd: null
+        duration_seconds: 695.1819413360208
+        assistant_turns: 29
+        tool_calls: 64
+        file_count: 1
+        bytes: 12128
+        portability_warnings: []
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        trace_root: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_01
+        primary_trace: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_01/primary_trace.jsonl
+        agent_run_id: a52b0c09-7dd0-4c8b-b813-d51f077020df
+        prompt_template_id: fewshot_skill_generation
+        rendered_prompt_sha256: 50298cea38b6f489a9c3f566295b698f5013fe9340254c221d9e7aa9a7f25602
+      attempt_02:
+        status: valid
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+        skill_bundle_sha256: 33e8bce0883eab5fc448c3d2400c93bbae29fa12161bdcc975ea8b7881e71f63
+        input_tokens: 960870
+        cached_input_tokens: 915968
+        output_tokens: 23543
+        reasoning_output_tokens: 8402
+        total_tokens: 984413
+        cost_usd: null
+        duration_seconds: 677.8633160842583
+        assistant_turns: 29
+        tool_calls: 45
+        file_count: 2
+        bytes: 23054
+        portability_warnings: []
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        trace_root: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_02
+        primary_trace: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_02/primary_trace.jsonl
+        agent_run_id: 3abbd31e-e3f0-48ae-bd47-62a00bb07d2b
+        prompt_template_id: fewshot_skill_generation
+        rendered_prompt_sha256: c79eecd4289d8075c0fc1ac0756cc77d41eea434a3801c781ad7b1a6722cb613
+      attempt_03:
+        status: valid
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: a4938d96ee15bbef4ecf67ca11a3d97a8162341b40179b2eca45cc90c00ada1e
+        input_tokens: 1072266
+        cached_input_tokens: 1007104
+        output_tokens: 16039
+        reasoning_output_tokens: 5676
+        total_tokens: 1088305
+        cost_usd: null
+        duration_seconds: 565.4246677765623
+        assistant_turns: 22
+        tool_calls: 69
+        file_count: 2
+        bytes: 15565
+        portability_warnings: []
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        trace_root: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_03
+        primary_trace: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_03/primary_trace.jsonl
+        agent_run_id: 73e80885-b9d7-45a0-a082-3f433c53a2bd
+        prompt_template_id: fewshot_skill_generation
+        rendered_prompt_sha256: 2b561c5b3c7f4792c62ea2a33a0155c8d1be813a35e5f5dae6b90b4c2195e6ec
+    valid_generation_rate: 1.0
+  overall_acc_at_3: 0.6012254901999999
+  overall_std_at_3: 0.06254597390602952
+  lift_over_shared_base: 0.010620915033333289
+  efficiency:
+    input_tokens_avg_3: 150414.26666666666
+    cached_input_tokens_avg_3: 134109.86666666667
+    output_tokens_avg_3: 12739.333333333334
+    reasoning_output_tokens_avg_3: 10357.0
+    rounds_avg_3: 8.8
+    tool_calls_avg_3: 14.0
+    cost_usd_avg_3: null
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.625
+      - 0.5625
+      - 0.6875
+      acc_at_3: 0.625
+      std_at_3: 0.05103103630798288
+      input_tokens_avg_3: 125831.33333333333
+      cached_input_tokens_avg_3: 110250.66666666667
+      output_tokens_avg_3: 12032.0
+      reasoning_output_tokens_avg_3: 9979.666666666666
+      rounds_avg_3: 7.666666666666667
+      tool_calls_avg_3: 12.333333333333334
+      cost_usd_avg_3: null
+      attempts:
+        attempt_01:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          skill_bundle_sha256: 8920236e395c1e3035365d7216dc18af9b6f0c2875f4c8167be4fcd5160ebcea
+          input_tokens: 95069
+          cached_input_tokens: 79872
+          output_tokens: 5775
+          reasoning_output_tokens: 4164
+          total_tokens: 100844
+          duration_seconds: 192.76372481882572
+          assistant_turns: 6
+          tool_calls: 10
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/primary_trace.jsonl
+          agent_run_id: 10019136-f080-48dd-a331-9eb99e854677
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: c3eaca7ef7ac0794e22f236cdf341e2facf6a9cd654add2e1e58d476399bd255
+          cost_usd: null
+        attempt_02:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: 33e8bce0883eab5fc448c3d2400c93bbae29fa12161bdcc975ea8b7881e71f63
+          input_tokens: 186183
+          cached_input_tokens: 166656
+          output_tokens: 19900
+          reasoning_output_tokens: 17522
+          total_tokens: 206083
+          duration_seconds: 577.7254828456789
+          assistant_turns: 10
+          tool_calls: 15
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/primary_trace.jsonl
+          agent_run_id: 0df8adb7-9833-458d-ae27-4120e7547150
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: b046302489bbaf19ea88dccfae6ab2db0084cdb01e6ee4f3f49b2075e357263c
+          cost_usd: null
+        attempt_03:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          skill_bundle_sha256: a4938d96ee15bbef4ecf67ca11a3d97a8162341b40179b2eca45cc90c00ada1e
+          input_tokens: 96242
+          cached_input_tokens: 84224
+          output_tokens: 10421
+          reasoning_output_tokens: 8253
+          total_tokens: 106663
+          duration_seconds: 306.4102525021881
+          assistant_turns: 7
+          tool_calls: 12
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03/primary_trace.jsonl
+          agent_run_id: 5603460d-65fd-438e-8943-7df085030cbb
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: eb4cc2b7b83196b643edef3e59b66acb1160dbdb74cf26f1af81c5e83f735996
+          cost_usd: null
+    test_002:
+      status: complete
+      scores:
+      - 0.25
+      - 0.5
+      - 0.25
+      acc_at_3: 0.3333333333333333
+      std_at_3: 0.11785113019775792
+      input_tokens_avg_3: 183396.0
+      cached_input_tokens_avg_3: 166144.0
+      output_tokens_avg_3: 20117.333333333332
+      reasoning_output_tokens_avg_3: 17663.666666666668
+      rounds_avg_3: 10.333333333333334
+      tool_calls_avg_3: 15.666666666666666
+      cost_usd_avg_3: null
+      attempts:
+        attempt_01:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          skill_bundle_sha256: 8920236e395c1e3035365d7216dc18af9b6f0c2875f4c8167be4fcd5160ebcea
+          input_tokens: 137795
+          cached_input_tokens: 122624
+          output_tokens: 18544
+          reasoning_output_tokens: 16462
+          total_tokens: 156339
+          duration_seconds: 523.3634913321584
+          assistant_turns: 9
+          tool_calls: 13
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/primary_trace.jsonl
+          agent_run_id: aa6290dd-1bd0-4215-8306-d7596e2c0201
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: 1b912bae21512acabb3f97f40493c55158e6dc82dc282d4051ec239ad51774b2
+          cost_usd: null
+        attempt_02:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: 33e8bce0883eab5fc448c3d2400c93bbae29fa12161bdcc975ea8b7881e71f63
+          input_tokens: 251046
+          cached_input_tokens: 230912
+          output_tokens: 24099
+          reasoning_output_tokens: 21130
+          total_tokens: 275145
+          duration_seconds: 631.2609140928835
+          assistant_turns: 13
+          tool_calls: 19
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/primary_trace.jsonl
+          agent_run_id: b5937d91-72ac-4b44-ab5a-7716b5d83393
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: 0e3c591b5e230d7f2e50edc249da676871fd037b76250b17a425542ce7cec164
+          cost_usd: null
+        attempt_03:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          skill_bundle_sha256: a4938d96ee15bbef4ecf67ca11a3d97a8162341b40179b2eca45cc90c00ada1e
+          input_tokens: 161347
+          cached_input_tokens: 144896
+          output_tokens: 17709
+          reasoning_output_tokens: 15399
+          total_tokens: 179056
+          duration_seconds: 517.7457134313881
+          assistant_turns: 9
+          tool_calls: 15
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/primary_trace.jsonl
+          agent_run_id: 88d28496-65a7-4f90-9d14-edd1d8f23fce
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: 2d3f414212044ab8db80daa269a93ba03dda8accfbc4a7c33a1ccf3026496c03
+          cost_usd: null
+    test_003:
+      status: complete
+      scores:
+      - 0.6666666667
+      - 0.6666666667
+      - 0.6666666667
+      acc_at_3: 0.6666666667
+      std_at_3: 0.0
+      input_tokens_avg_3: 117188.33333333333
+      cached_input_tokens_avg_3: 100949.33333333333
+      output_tokens_avg_3: 6952.333333333333
+      reasoning_output_tokens_avg_3: 4878.666666666667
+      rounds_avg_3: 7.0
+      tool_calls_avg_3: 12.333333333333334
+      cost_usd_avg_3: null
+      attempts:
+        attempt_01:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          skill_bundle_sha256: 8920236e395c1e3035365d7216dc18af9b6f0c2875f4c8167be4fcd5160ebcea
+          input_tokens: 128990
+          cached_input_tokens: 113920
+          output_tokens: 8302
+          reasoning_output_tokens: 6579
+          total_tokens: 137292
+          duration_seconds: 267.72939351852983
+          assistant_turns: 8
+          tool_calls: 12
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/primary_trace.jsonl
+          agent_run_id: 18bd6372-3d04-4f1d-bb11-6e73941885ed
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: 0928ad756b6baa2f1dad990f5d6a103bec94ef96ae3aeb8b794b3c474a274634
+          cost_usd: null
+        attempt_02:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: 33e8bce0883eab5fc448c3d2400c93bbae29fa12161bdcc975ea8b7881e71f63
+          input_tokens: 125070
+          cached_input_tokens: 107776
+          output_tokens: 6836
+          reasoning_output_tokens: 4955
+          total_tokens: 131906
+          duration_seconds: 189.53928464651108
+          assistant_turns: 7
+          tool_calls: 13
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/primary_trace.jsonl
+          agent_run_id: 9da48e00-9b97-4403-a961-f3badc9fb0ad
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: b37cc06bcb8d0c410af1fb5b91e0f56974f688394dd60266168e3990b36c44f6
+          cost_usd: null
+        attempt_03:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          skill_bundle_sha256: a4938d96ee15bbef4ecf67ca11a3d97a8162341b40179b2eca45cc90c00ada1e
+          input_tokens: 97505
+          cached_input_tokens: 81152
+          output_tokens: 5719
+          reasoning_output_tokens: 3102
+          total_tokens: 103224
+          duration_seconds: 196.58698346372694
+          assistant_turns: 6
+          tool_calls: 12
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03/primary_trace.jsonl
+          agent_run_id: 4264a8a6-1978-4bad-a107-0e438856ead4
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: 9ee0b3c18ece27119849ebada157074285429df8fbd7f60bb44904ea05f737be
+          cost_usd: null
+    test_004:
+      status: complete
+      scores:
+      - 0.5294117647
+      - 0.6470588235
+      - 0.5294117647
+      acc_at_3: 0.5686274509666666
+      std_at_3: 0.05545935537608834
+      input_tokens_avg_3: 187964.66666666666
+      cached_input_tokens_avg_3: 169728.0
+      output_tokens_avg_3: 14098.333333333334
+      reasoning_output_tokens_avg_3: 11122.333333333334
+      rounds_avg_3: 10.0
+      tool_calls_avg_3: 15.0
+      cost_usd_avg_3: null
+      attempts:
+        attempt_01:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          skill_bundle_sha256: 8920236e395c1e3035365d7216dc18af9b6f0c2875f4c8167be4fcd5160ebcea
+          input_tokens: 98338
+          cached_input_tokens: 81920
+          output_tokens: 6616
+          reasoning_output_tokens: 4963
+          total_tokens: 104954
+          duration_seconds: 212.41198023688048
+          assistant_turns: 6
+          tool_calls: 10
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/primary_trace.jsonl
+          agent_run_id: 51abbf05-6d83-42df-8c1e-ea176a463030
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: c0d3df09ee12bf8ecbce628953758e7d23f5b1054e030bee275c9fd3b6379977
+          cost_usd: null
+        attempt_02:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: 33e8bce0883eab5fc448c3d2400c93bbae29fa12161bdcc975ea8b7881e71f63
+          input_tokens: 313543
+          cached_input_tokens: 294144
+          output_tokens: 24561
+          reasoning_output_tokens: 19726
+          total_tokens: 338104
+          duration_seconds: 753.995473808609
+          assistant_turns: 16
+          tool_calls: 21
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/primary_trace.jsonl
+          agent_run_id: 31e99347-7dc8-4309-8519-d0ff199ece09
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: d06eed9a3d00c1ceaa929191d3707b43bf1eab15cdc2c6e7a10eaa060e0b5898
+          cost_usd: null
+        attempt_03:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          skill_bundle_sha256: a4938d96ee15bbef4ecf67ca11a3d97a8162341b40179b2eca45cc90c00ada1e
+          input_tokens: 152013
+          cached_input_tokens: 133120
+          output_tokens: 11118
+          reasoning_output_tokens: 8678
+          total_tokens: 163131
+          duration_seconds: 377.1881099808961
+          assistant_turns: 8
+          tool_calls: 14
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/primary_trace.jsonl
+          agent_run_id: 42d91421-1ecf-4e34-82e9-73e13692b437
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: e9c4d19d448ade66a0e90e3e2b7918dfdc922eaf22084593f4c64b0b1d200242
+          cost_usd: null
+    test_005:
+      status: complete
+      scores:
+      - 0.875
+      - 0.875
+      - 0.6875
+      acc_at_3: 0.8125
+      std_at_3: 0.08838834764831845
+      input_tokens_avg_3: 137691.0
+      cached_input_tokens_avg_3: 123477.33333333333
+      output_tokens_avg_3: 10496.666666666666
+      reasoning_output_tokens_avg_3: 8140.666666666667
+      rounds_avg_3: 9.0
+      tool_calls_avg_3: 14.666666666666666
+      cost_usd_avg_3: null
+      attempts:
+        attempt_01:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          skill_bundle_sha256: 8920236e395c1e3035365d7216dc18af9b6f0c2875f4c8167be4fcd5160ebcea
+          input_tokens: 104342
+          cached_input_tokens: 93696
+          output_tokens: 11238
+          reasoning_output_tokens: 9475
+          total_tokens: 115580
+          duration_seconds: 320.22429867554456
+          assistant_turns: 8
+          tool_calls: 11
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01/primary_trace.jsonl
+          agent_run_id: 95c4b12d-55e2-4f30-8987-0b15eb3cf247
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: 41d37e87883b13a217884e1e7bb656db63c96416e5b78f8555f7eaf0a62cea55
+          cost_usd: null
+        attempt_02:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: 33e8bce0883eab5fc448c3d2400c93bbae29fa12161bdcc975ea8b7881e71f63
+          input_tokens: 127024
+          cached_input_tokens: 109312
+          output_tokens: 7508
+          reasoning_output_tokens: 5449
+          total_tokens: 134532
+          duration_seconds: 236.34763708803803
+          assistant_turns: 7
+          tool_calls: 14
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/primary_trace.jsonl
+          agent_run_id: 20d8b12d-ddc9-4f6e-877e-2a79e6105ca8
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: 4cc77128d37d2df0acb67df1cc4683cf1b08ef9995a21da3d8f08d3ed788c938
+          cost_usd: null
+        attempt_03:
+          status: complete
+          skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          skill_bundle_sha256: a4938d96ee15bbef4ecf67ca11a3d97a8162341b40179b2eca45cc90c00ada1e
+          input_tokens: 181707
+          cached_input_tokens: 167424
+          output_tokens: 12744
+          reasoning_output_tokens: 9498
+          total_tokens: 194451
+          duration_seconds: 435.52595731895417
+          assistant_turns: 12
+          tool_calls: 19
+          portability_warnings: []
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03
+          primary_trace: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/primary_trace.jsonl
+          agent_run_id: 7c867ae6-5e6c-4e0a-8be8-490bdfa8c423
+          prompt_template_id: fewshot_test_solver
+          rendered_prompt_sha256: 8807c294a2d1d5775deb68b3820492c1aa5cfdc70438e69aa81a5f1e0469b522
+          cost_usd: null
+infrastructure_replacements: []
+notes: []

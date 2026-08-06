@@ -1,0 +1,1476 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+parent_experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_008
+model_profile: deepseek_v4_max_preview
+harness: codex
+status: complete
+model:
+  generator_model: deepseek-ai/DeepSeek-V4-Pro
+  solver_model: deepseek-ai/DeepSeek-V4-Pro
+  reasoning_effort: max
+  provider_id: siliconflow_bridge
+  observed_identity: deepseek-ai/DeepSeek-V4-Pro
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:c503939f88e3849e0c2ca4a9c10c2fb5670d93503bb3c5b8b8e8e991751476d6
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/deepseek_v4_max_preview/task_group_008.yaml
+  report_sha256: d1ead7770a5b59614a3135d9cf55bd4f0ba2657848e7efa8597dc796291a791d
+  status: complete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:c503939f88e3849e0c2ca4a9c10c2fb5670d93503bb3c5b8b8e8e991751476d6
+execution:
+  started_at: '2026-07-29T13:50:02Z'
+  completed_at: '2026-07-29T13:56:45Z'
+  run_manifest: scratch/run_manifest/deepseek_v4_max_preview.yaml
+  run_manifest_sha256: 8c13eb39789e35fb4d288211f70465baef1dd8c896501173bdc30cdb28543ca5
+  run_plan_sha256: 9282a11d6858c26e482db004e120269ad6b01b6601114de0f74e6f48133d2577
+  helper_sha256: f20ea98d38f9caa3294fe6811f528005eb94d6dbff3a9bb752fa3e9f237a2483
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  generation_trace_root: original_traces/deepseek_v4_max_preview/skill_generation/naive
+  solver_trace_root: original_traces/deepseek_v4_max_preview/fewshot/naive
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        status: valid
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 9f4422aa3e959e79593b17448d3406d6c4fbb7eaab4205fe95169321e8fcba1e
+        agent_run_id: 10d7f8c4-6d0b-4c9c-9259-9f615dae7e99
+        physical_attempt: 1
+        duration_seconds: null
+        return_code: 0
+        timed_out: false
+        environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_01
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: f792824087f16bbb61b81f166095d64f7da15d7d45f67816040b1cc90ece732f
+        cost_usd: null
+        incomplete_reason: null
+        recovered_after_infrastructure_restart: true
+        input_tokens: 2154376
+        cached_input_tokens: 2046976
+        output_tokens: 55821
+        reasoning_output_tokens: 27507
+        total_tokens: 2210197
+        assistant_turns: 27
+        tool_calls: 44
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        portability_warnings: []
+        primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__attempt_01/physical_01/trace/primary_trace.jsonl
+        file_count: 3
+        bytes: 21581
+        loaded_from_existing_metadata: scratch/formal_runs/deepseek_v4_max_preview/naive__attempt_01/physical_01/run_metadata.yaml
+      attempt_02:
+        status: valid
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 58b275edb2a504a6d87f01c67235e91855af1ee4672a0e990752b1144a5bb572
+        agent_run_id: 30c9de93-61d4-40a9-987f-c2017e4cf9e5
+        physical_attempt: 2
+        duration_seconds: 716.768
+        return_code: 0
+        timed_out: false
+        environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_02
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+        skill_bundle_sha256: ec9d20481487b3a0a179d82c4659f2a64670aa5404c410962abd491df4f32bb2
+        cost_usd: null
+        incomplete_reason: null
+        input_tokens: 761848
+        cached_input_tokens: 678912
+        output_tokens: 27120
+        reasoning_output_tokens: 13942
+        total_tokens: 788968
+        assistant_turns: 14
+        tool_calls: 43
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        portability_warnings: []
+        primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__attempt_02/physical_02/trace/primary_trace.jsonl
+        file_count: 1
+        bytes: 18854
+        loaded_from_existing_metadata: scratch/formal_runs/deepseek_v4_max_preview/naive__attempt_02/physical_02/run_metadata.yaml
+      attempt_03:
+        status: valid
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 0be0c3fa2310905209f2dea6ffb515711f6ec01581c90b780733992e67584811
+        agent_run_id: 43edbc84-d2f9-4f38-9d44-45d2bd64525f
+        physical_attempt: 1
+        duration_seconds: 2417.655
+        return_code: 0
+        timed_out: false
+        environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_03
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: cb3ada0ec266406b37304e5a0a4125408896b77cbf6dddb043256820761ec7c6
+        cost_usd: null
+        incomplete_reason: null
+        input_tokens: 3737035
+        cached_input_tokens: 3602944
+        output_tokens: 97038
+        reasoning_output_tokens: 51717
+        total_tokens: 3834073
+        assistant_turns: 39
+        tool_calls: 70
+        observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+        portability_warnings: []
+        primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__attempt_03/physical_01/trace/primary_trace.jsonl
+        file_count: 2
+        bytes: 30490
+        loaded_from_existing_metadata: scratch/formal_runs/deepseek_v4_max_preview/naive__attempt_03/physical_01/run_metadata.yaml
+    valid_generation_rate: 1.0
+  overall_acc_at_3: 0.839702
+  overall_std_at_3: 0.116909
+  lift_over_shared_base: 0.312489
+  efficiency:
+    input_tokens_avg_3: 416410.4
+    cached_input_tokens_avg_3: 360567.466667
+    output_tokens_avg_3: 14102.133333
+    reasoning_output_tokens_avg_3: 9922.866667
+    cost_usd_avg_3: null
+    rounds_avg_3: 9.8
+    tool_calls_avg_3: 20.466667
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 1.0
+      - 0.666667
+      - 1.0
+      acc_at_3: 0.888889
+      std_at_3: 0.157135
+      input_tokens_avg_3: 510033.666667
+      cached_input_tokens_avg_3: 448170.666667
+      output_tokens_avg_3: 17763.666667
+      reasoning_output_tokens_avg_3: 12685.333333
+      cost_usd_avg_3: null
+      rounds_avg_3: 10.333333
+      tool_calls_avg_3: 21.666667
+      attempts:
+        attempt_01:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 082c06c19a78358ebd83b680c5a28dd1a0e3a0a6d5c900a1874f1011f1fe7110
+          agent_run_id: c92f3046-80a6-46f6-b669-8d2106719d55
+          physical_attempt: 1
+          duration_seconds: 257.309
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/answer.json
+          score: 1.0
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 246484
+          cached_input_tokens: 201216
+          output_tokens: 8449
+          reasoning_output_tokens: 3881
+          total_tokens: 254933
+          assistant_turns: 9
+          tool_calls: 21
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_001__attempt_01/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 1.0
+            raw_evaluator_json:
+              score: 1.0
+              raw_earned: 18
+              raw_total: 18
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and Roth conversion recommendation.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct conversion window and annual conversion amount from
+                  the controlling profile and bracket target.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct total converted and conversion tax.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct first RMD year using client age and RMD start age.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct baseline RMD tax through the task horizon.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct conversion-case RMD tax and tax savings through the
+                  task horizon.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct projected Roth and traditional balances at the horizon.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for profile and account evidence.
+                weight: 2
+                passed: true
+                mismatches: []
+          loaded_from_existing_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/run_metadata.yaml
+        attempt_02:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 76335f27c3cfc9427896ebfd3c31c53b7d6367ba9fbb50e1f6b52c9889fdd62e
+          agent_run_id: 5bb47e75-0ebb-4fd1-b856-3fba9aabbb7d
+          physical_attempt: 1
+          duration_seconds: 719.514
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/answer.json
+          score: 0.666667
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 388568
+          cached_input_tokens: 340736
+          output_tokens: 29324
+          reasoning_output_tokens: 23570
+          total_tokens: 417892
+          assistant_turns: 10
+          tool_calls: 19
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_001__attempt_02/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 0.666667
+            raw_evaluator_json:
+              score: 0.666667
+              raw_earned: 12
+              raw_total: 18
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and Roth conversion recommendation.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct conversion window and annual conversion amount from
+                  the controlling profile and bracket target.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct total converted and conversion tax.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct first RMD year using client age and RMD start age.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct baseline RMD tax through the task horizon.
+                weight: 3
+                passed: false
+                mismatches:
+                - path: rmd_projection.baseline_rmd_tax_through_horizon
+                  expected: 1656039.99
+                  actual: 1771962.79
+              - id: SP006
+                goal: Correct conversion-case RMD tax and tax savings through the
+                  task horizon.
+                weight: 3
+                passed: false
+                mismatches:
+                - path: rmd_projection.conversion_rmd_tax_through_horizon
+                  expected: 1074549.5
+                  actual: 1149767.96
+                - path: rmd_projection.rmd_tax_savings_through_horizon
+                  expected: 581490.49
+                  actual: 622194.83
+              - id: SP007
+                goal: Correct projected Roth and traditional balances at the horizon.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for profile and account evidence.
+                weight: 2
+                passed: true
+                mismatches: []
+          loaded_from_existing_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/run_metadata.yaml
+        attempt_03:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 118bb873209d281c52f0e912aa178b087d441acd57bf4b94fe5ab53f259b3cd9
+          agent_run_id: 9ae5dab1-36ad-4ba1-abaa-c8fec7540521
+          physical_attempt: 1
+          duration_seconds: 359.659
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03/answer.json
+          score: 1.0
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 895049
+          cached_input_tokens: 802560
+          output_tokens: 15518
+          reasoning_output_tokens: 10605
+          total_tokens: 910567
+          assistant_turns: 12
+          tool_calls: 25
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_001__attempt_03/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 1.0
+            raw_evaluator_json:
+              score: 1.0
+              raw_earned: 18
+              raw_total: 18
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and Roth conversion recommendation.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct conversion window and annual conversion amount from
+                  the controlling profile and bracket target.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct total converted and conversion tax.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct first RMD year using client age and RMD start age.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct baseline RMD tax through the task horizon.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct conversion-case RMD tax and tax savings through the
+                  task horizon.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct projected Roth and traditional balances at the horizon.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for profile and account evidence.
+                weight: 2
+                passed: true
+                mismatches: []
+    test_002:
+      status: complete
+      scores:
+      - 0.875
+      - 0.875
+      - 0.8125
+      acc_at_3: 0.854167
+      std_at_3: 0.029463
+      input_tokens_avg_3: 378310.333333
+      cached_input_tokens_avg_3: 327594.666667
+      output_tokens_avg_3: 13006.0
+      reasoning_output_tokens_avg_3: 10068.666667
+      cost_usd_avg_3: null
+      rounds_avg_3: 9.0
+      tool_calls_avg_3: 19.333333
+      attempts:
+        attempt_01:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 3c405e1d85f182462199f5ee62a469b8da250a77c04dcd9150da651fbe9c3291
+          agent_run_id: a0d92b6e-ed07-4244-b845-812b542782f1
+          physical_attempt: 1
+          duration_seconds: 575.809
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/answer.json
+          score: 0.875
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 772209
+          cached_input_tokens: 695808
+          output_tokens: 18664
+          reasoning_output_tokens: 14949
+          total_tokens: 790873
+          assistant_turns: 13
+          tool_calls: 26
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_002__attempt_01/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 0.875
+            raw_evaluator_json:
+              score: 0.875
+              raw_earned: 14
+              raw_total: 16
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and implementation recommendation.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct annual exclusion per beneficiary and beneficiary count.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct annual exclusion capacity, premium, and premium gap.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct Crummey notice count and contribution date.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct notice due date, withdrawal end date, and earliest premium
+                  payment date.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct dedicated bank account requirement.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct death benefit, estate inclusion risk, and outside-estate
+                  projection.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for beneficiaries and policy
+                  evidence.
+                weight: 2
+                passed: false
+                mismatches:
+                - path: source_resolution.controlling_policy_source
+                  expected: ATTORNEY_MEMO
+                  actual: SIGNED_PROFILE
+          loaded_from_existing_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/run_metadata.yaml
+        attempt_02:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 62d20e2a3a42dd1fc96edbe1b07eb3e5ccb53edabf1286ab0e49af59fdf3fa8d
+          agent_run_id: 537357cd-8994-499b-b935-313b023dbfaa
+          physical_attempt: 1
+          duration_seconds: 381.606
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/answer.json
+          score: 0.875
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 133679
+          cached_input_tokens: 116224
+          output_tokens: 15527
+          reasoning_output_tokens: 12283
+          total_tokens: 149206
+          assistant_turns: 8
+          tool_calls: 16
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_002__attempt_02/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 0.875
+            raw_evaluator_json:
+              score: 0.875
+              raw_earned: 14
+              raw_total: 16
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and implementation recommendation.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct annual exclusion per beneficiary and beneficiary count.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct annual exclusion capacity, premium, and premium gap.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct Crummey notice count and contribution date.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct notice due date, withdrawal end date, and earliest premium
+                  payment date.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct dedicated bank account requirement.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct death benefit, estate inclusion risk, and outside-estate
+                  projection.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for beneficiaries and policy
+                  evidence.
+                weight: 2
+                passed: false
+                mismatches:
+                - path: source_resolution.controlling_policy_source
+                  expected: ATTORNEY_MEMO
+                  actual: SIGNED_PROFILE
+        attempt_03:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 6a7e70afdf468e861ddef1f95d281c38cc9987a4a19c3d95fa78d04177151e90
+          agent_run_id: 2d0b7036-ab57-4196-b1cc-7d6af0b7d2d9
+          physical_attempt: 1
+          duration_seconds: 115.589
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/answer.json
+          score: 0.8125
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 229043
+          cached_input_tokens: 170752
+          output_tokens: 4827
+          reasoning_output_tokens: 2974
+          total_tokens: 233870
+          assistant_turns: 6
+          tool_calls: 16
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_002__attempt_03/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 0.8125
+            raw_evaluator_json:
+              score: 0.8125
+              raw_earned: 13
+              raw_total: 16
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and implementation recommendation.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct annual exclusion per beneficiary and beneficiary count.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct annual exclusion capacity, premium, and premium gap.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct Crummey notice count and contribution date.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct notice due date, withdrawal end date, and earliest premium
+                  payment date.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct dedicated bank account requirement.
+                weight: 1
+                passed: false
+                mismatches:
+                - path: administration.dedicated_bank_account_required
+                  expected: true
+                  actual: false
+              - id: SP007
+                goal: Correct death benefit, estate inclusion risk, and outside-estate
+                  projection.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for beneficiaries and policy
+                  evidence.
+                weight: 2
+                passed: false
+                mismatches:
+                - path: source_resolution.controlling_policy_source
+                  expected: ATTORNEY_MEMO
+                  actual: SIGNED_PROFILE
+    test_003:
+      status: complete
+      scores:
+      - 1.0
+      - 0.647059
+      - 1.0
+      acc_at_3: 0.882353
+      std_at_3: 0.166378
+      input_tokens_avg_3: 369035.0
+      cached_input_tokens_avg_3: 320426.666667
+      output_tokens_avg_3: 9140.0
+      reasoning_output_tokens_avg_3: 6071.333333
+      cost_usd_avg_3: null
+      rounds_avg_3: 8.666667
+      tool_calls_avg_3: 19.333333
+      attempts:
+        attempt_01:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 24ade28503b2e4ce426e508e062e1f2968b8d543497daa6df0de4d36ed3ab902
+          agent_run_id: b9867548-3ee6-4255-abf9-08eeda0b9513
+          physical_attempt: 1
+          duration_seconds: 204.794
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/answer.json
+          score: 1.0
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 211461
+          cached_input_tokens: 171008
+          output_tokens: 8048
+          reasoning_output_tokens: 5562
+          total_tokens: 219509
+          assistant_turns: 7
+          tool_calls: 15
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_003__attempt_01/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 1.0
+            raw_evaluator_json:
+              score: 1.0
+              raw_earned: 17
+              raw_total: 17
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and preferred trust strategy.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct recommendation rationale and role for the alternate
+                  trust.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct taxable estate and estate-tax exposure.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct liquidity gap before planning.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct GRAT term, projected heir remainder, and estate-tax
+                  reduction.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct GRAT mortality inclusion risk.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct CRAT term, charitable remainder, and income-tax deduction.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for goal and asset evidence.
+                weight: 2
+                passed: true
+                mismatches: []
+          loaded_from_existing_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/run_metadata.yaml
+        attempt_02:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: b172f278b2d3dbc9b58af611d4b8a678b6bf7f02871d0f94fe87321b7b119361
+          agent_run_id: 92aa32fe-168b-4916-a7b8-bc3bb9880d15
+          physical_attempt: 1
+          duration_seconds: 201.408
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/answer.json
+          score: 0.647059
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 137907
+          cached_input_tokens: 119552
+          output_tokens: 7995
+          reasoning_output_tokens: 4607
+          total_tokens: 145902
+          assistant_turns: 8
+          tool_calls: 17
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_003__attempt_02/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 0.647059
+            raw_evaluator_json:
+              score: 0.647059
+              raw_earned: 11
+              raw_total: 17
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and preferred trust strategy.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct recommendation rationale and role for the alternate
+                  trust.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct taxable estate and estate-tax exposure.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct liquidity gap before planning.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct GRAT term, projected heir remainder, and estate-tax
+                  reduction.
+                weight: 3
+                passed: false
+                mismatches:
+                - path: grat.projected_remainder_to_heirs
+                  expected: 6133849.62
+                  actual: 5980679.72
+                - path: grat.estimated_estate_tax_reduction
+                  expected: 2453539.85
+                  actual: 2392271.89
+              - id: SP006
+                goal: Correct GRAT mortality inclusion risk.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct CRAT term, charitable remainder, and income-tax deduction.
+                weight: 3
+                passed: false
+                mismatches:
+                - path: crat.projected_charitable_remainder
+                  expected: 12043908.93
+                  actual: 6820763.91
+                - path: crat.estimated_income_tax_deduction
+                  expected: 4215368.13
+                  actual: 2387267.37
+              - id: SP008
+                goal: Correct source-resolution fields for goal and asset evidence.
+                weight: 2
+                passed: true
+                mismatches: []
+        attempt_03:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 54bb792f619dfe66256165d65bda1d165715627702507fabbaead73538263fb1
+          agent_run_id: 7b73803d-566a-40bc-bfa3-144a6e8a7df8
+          physical_attempt: 1
+          duration_seconds: 263.455
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03/answer.json
+          score: 1.0
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 757737
+          cached_input_tokens: 670720
+          output_tokens: 11377
+          reasoning_output_tokens: 8045
+          total_tokens: 769114
+          assistant_turns: 11
+          tool_calls: 26
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_003__attempt_03/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 1.0
+            raw_evaluator_json:
+              score: 1.0
+              raw_earned: 17
+              raw_total: 17
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and preferred trust strategy.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct recommendation rationale and role for the alternate
+                  trust.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct taxable estate and estate-tax exposure.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct liquidity gap before planning.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct GRAT term, projected heir remainder, and estate-tax
+                  reduction.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct GRAT mortality inclusion risk.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct CRAT term, charitable remainder, and income-tax deduction.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for goal and asset evidence.
+                weight: 2
+                passed: true
+                mismatches: []
+    test_004:
+      status: complete
+      scores:
+      - 0.789474
+      - 0.631579
+      - 0.631579
+      acc_at_3: 0.684211
+      std_at_3: 0.074432
+      input_tokens_avg_3: 456355.0
+      cached_input_tokens_avg_3: 380330.666667
+      output_tokens_avg_3: 14309.666667
+      reasoning_output_tokens_avg_3: 10558.0
+      cost_usd_avg_3: null
+      rounds_avg_3: 8.666667
+      tool_calls_avg_3: 19.666667
+      attempts:
+        attempt_01:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 214deba459b4795b5b0b53a620d5759b9fbfc57cf7e6e179f198a29cb6c687d2
+          agent_run_id: 123642c3-c7f3-4f4f-bd2a-765366d3ffd1
+          physical_attempt: 1
+          duration_seconds: 471.525
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/answer.json
+          score: 0.789474
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 483688
+          cached_input_tokens: 413952
+          output_tokens: 15181
+          reasoning_output_tokens: 12253
+          total_tokens: 498869
+          assistant_turns: 10
+          tool_calls: 22
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_004__attempt_01/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 0.789474
+            raw_evaluator_json:
+              score: 0.789474
+              raw_earned: 15
+              raw_total: 19
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, primary action, and sequencing.
+                weight: 2
+                passed: false
+                mismatches:
+                - path: recommendation.primary_action
+                  expected: ILIT_WITH_EXEMPTION_REVIEW
+                  actual: COMBINE_ILIT_AND_GRAT
+                - path: recommendation.sequencing
+                  expected: ILIT_FIRST_THEN_ATTORNEY_REVIEW
+                  actual: ILIT_FIRST_THEN_GRAT
+              - id: SP002
+                goal: Correct estate taxable amount and estate-tax exposure.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct liquidity gap before planning.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct ILIT annual exclusion capacity and premium gap.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct ILIT estate-inclusion risk and outside-estate projection.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct trust strategy and projected heir remainder.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct estimated estate-tax reduction and charitable remainder
+                  context.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct sorted action set and source-resolution fields.
+                weight: 2
+                passed: false
+                mismatches:
+                - path: action_set
+                  expected:
+                  - ATTORNEY_DRAFT_REVIEW
+                  - GRAT_FOR_APPRECIATING_SHARES
+                  - ILIT_CRUMMEY_NOTICE_CYCLE
+                  - LIFETIME_EXEMPTION_ALLOCATION
+                  actual:
+                  - ATTORNEY_DRAFT_REVIEW
+                  - GRAT_FOR_APPRECIATING_SHARES
+                  - ILIT_CRUMMEY_NOTICE_CYCLE
+          loaded_from_existing_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/run_metadata.yaml
+        attempt_02:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 21b92c834f809f997343f5fb2c0b68d735eb9fa3a76740e0869c76c802426fe2
+          agent_run_id: 669e2a99-984e-40a8-a02d-bf2aefeda9d8
+          physical_attempt: 1
+          duration_seconds: 399.69
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/answer.json
+          score: 0.631579
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 469400
+          cached_input_tokens: 400640
+          output_tokens: 16406
+          reasoning_output_tokens: 11458
+          total_tokens: 485806
+          assistant_turns: 9
+          tool_calls: 18
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_004__attempt_02/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 0.631579
+            raw_evaluator_json:
+              score: 0.631579
+              raw_earned: 12
+              raw_total: 19
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, primary action, and sequencing.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct estate taxable amount and estate-tax exposure.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct liquidity gap before planning.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct ILIT annual exclusion capacity and premium gap.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct ILIT estate-inclusion risk and outside-estate projection.
+                weight: 3
+                passed: false
+                mismatches:
+                - path: ilit.projected_outside_estate_if_implemented
+                  expected: 7500000.0
+                  actual: 7317073.17
+              - id: SP006
+                goal: Correct trust strategy and projected heir remainder.
+                weight: 2
+                passed: false
+                mismatches:
+                - path: trust_transfer.projected_remainder_to_heirs
+                  expected: 16751852.31
+                  actual: 15904326.15
+              - id: SP007
+                goal: Correct estimated estate-tax reduction and charitable remainder
+                  context.
+                weight: 2
+                passed: false
+                mismatches:
+                - path: trust_transfer.estimated_estate_tax_reduction
+                  expected: 6700740.92
+                  actual: 6361730.46
+                - path: trust_transfer.projected_charitable_remainder
+                  expected: 55621683.68
+                  actual: 34644155.39
+              - id: SP008
+                goal: Correct sorted action set and source-resolution fields.
+                weight: 2
+                passed: true
+                mismatches: []
+        attempt_03:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 85c5041f0f5fd4b51edf0734edf52bb4cc17bd1d940f0b6000db62302d45393d
+          agent_run_id: 280e0f0d-76e5-4780-aef5-a42dd09c5e3a
+          physical_attempt: 1
+          duration_seconds: 263.919
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/answer.json
+          score: 0.631579
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 415977
+          cached_input_tokens: 326400
+          output_tokens: 11342
+          reasoning_output_tokens: 7963
+          total_tokens: 427319
+          assistant_turns: 7
+          tool_calls: 19
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_004__attempt_03/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 0.631579
+            raw_evaluator_json:
+              score: 0.631579
+              raw_earned: 12
+              raw_total: 19
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, primary action, and sequencing.
+                weight: 2
+                passed: false
+                mismatches:
+                - path: recommendation.sequencing
+                  expected: ILIT_FIRST_THEN_ATTORNEY_REVIEW
+                  actual: ILIT_FIRST_THEN_GRAT
+              - id: SP002
+                goal: Correct estate taxable amount and estate-tax exposure.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct liquidity gap before planning.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct ILIT annual exclusion capacity and premium gap.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct ILIT estate-inclusion risk and outside-estate projection.
+                weight: 3
+                passed: false
+                mismatches:
+                - path: ilit.projected_outside_estate_if_implemented
+                  expected: 7500000.0
+                  actual: 0.0
+              - id: SP006
+                goal: Correct trust strategy and projected heir remainder.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct estimated estate-tax reduction and charitable remainder
+                  context.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct sorted action set and source-resolution fields.
+                weight: 2
+                passed: false
+                mismatches:
+                - path: action_set
+                  expected:
+                  - ATTORNEY_DRAFT_REVIEW
+                  - GRAT_FOR_APPRECIATING_SHARES
+                  - ILIT_CRUMMEY_NOTICE_CYCLE
+                  - LIFETIME_EXEMPTION_ALLOCATION
+                  actual:
+                  - ATTORNEY_DRAFT_REVIEW
+                  - GRAT_FOR_APPRECIATING_SHARES
+                  - LIFETIME_EXEMPTION_ALLOCATION
+    test_005:
+      status: complete
+      scores:
+      - 1.0
+      - 0.666667
+      - 1.0
+      acc_at_3: 0.888889
+      std_at_3: 0.157135
+      input_tokens_avg_3: 368318.0
+      cached_input_tokens_avg_3: 326314.666667
+      output_tokens_avg_3: 16291.333333
+      reasoning_output_tokens_avg_3: 10231.0
+      cost_usd_avg_3: null
+      rounds_avg_3: 12.333333
+      tool_calls_avg_3: 22.333333
+      attempts:
+        attempt_01:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: a97ee227fb95d3059f6bb48c774a21fe178c45606a49f8d032c2e711eae753fc
+          agent_run_id: 7cf3fc0b-9060-466a-ab22-3df6941d0c6e
+          physical_attempt: 1
+          duration_seconds: 257.961
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01/answer.json
+          score: 1.0
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 409426
+          cached_input_tokens: 361216
+          output_tokens: 8255
+          reasoning_output_tokens: 4038
+          total_tokens: 417681
+          assistant_turns: 13
+          tool_calls: 22
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_005__attempt_01/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 1.0
+            raw_evaluator_json:
+              score: 1.0
+              raw_earned: 18
+              raw_total: 18
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and Roth conversion recommendation.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct conversion window and annual conversion amount from
+                  the controlling profile and bracket target.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct total converted and conversion tax.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct first RMD year using client age and RMD start age.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct baseline RMD tax through the task horizon.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct conversion-case RMD tax and tax savings through the
+                  task horizon.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct projected Roth and traditional balances at the horizon.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for profile and account evidence.
+                weight: 2
+                passed: true
+                mismatches: []
+          loaded_from_existing_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01/run_metadata.yaml
+        attempt_02:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 272a848639f615d01971afbdf2fc2cb3cc58204c84245b7ff326b276944b4e7e
+          agent_run_id: 9fa8f99b-33db-4307-ae95-ea725351e012
+          physical_attempt: 1
+          duration_seconds: 708.38
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/answer.json
+          score: 0.666667
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 285602
+          cached_input_tokens: 238592
+          output_tokens: 22458
+          reasoning_output_tokens: 17578
+          total_tokens: 308060
+          assistant_turns: 8
+          tool_calls: 17
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_005__attempt_02/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 0.666667
+            raw_evaluator_json:
+              score: 0.666667
+              raw_earned: 12
+              raw_total: 18
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and Roth conversion recommendation.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct conversion window and annual conversion amount from
+                  the controlling profile and bracket target.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct total converted and conversion tax.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct first RMD year using client age and RMD start age.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct baseline RMD tax through the task horizon.
+                weight: 3
+                passed: false
+                mismatches:
+                - path: rmd_projection.baseline_rmd_tax_through_horizon
+                  expected: 1434058.64
+                  actual: 1520102.16
+              - id: SP006
+                goal: Correct conversion-case RMD tax and tax savings through the
+                  task horizon.
+                weight: 3
+                passed: false
+                mismatches:
+                - path: rmd_projection.conversion_rmd_tax_through_horizon
+                  expected: 1080384.12
+                  actual: 1145207.17
+                - path: rmd_projection.rmd_tax_savings_through_horizon
+                  expected: 353674.52
+                  actual: 374894.99
+              - id: SP007
+                goal: Correct projected Roth and traditional balances at the horizon.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for profile and account evidence.
+                weight: 2
+                passed: true
+                mismatches: []
+          loaded_from_existing_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/run_metadata.yaml
+        attempt_03:
+          status: complete
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: dd7ceb7f9bb2528d892fc51d725150da8f80efd7c983604b725034dc3362269f
+          agent_run_id: 424ab92f-8b65-4bee-8c94-248fcd61c4f8
+          physical_attempt: 1
+          duration_seconds: 605.38
+          return_code: 0
+          timed_out: false
+          environment_access_sha256: 28879661f6895a26b94b360932b7f1c2bb2ade7f0afbe8754c5179b963e9af9b
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/answer.json
+          score: 1.0
+          cost_usd: null
+          incomplete_reason: null
+          input_tokens: 409926
+          cached_input_tokens: 379136
+          output_tokens: 18161
+          reasoning_output_tokens: 9077
+          total_tokens: 428087
+          assistant_turns: 16
+          tool_calls: 28
+          observed_model_identity: deepseek-ai/DeepSeek-V4-Pro
+          portability_warnings: []
+          primary_trace: scratch/formal_runs/deepseek_v4_max_preview/naive__test_005__attempt_03/physical_01/trace/primary_trace.jsonl
+          evaluator:
+            score: 1.0
+            raw_evaluator_json:
+              score: 1.0
+              raw_earned: 18
+              raw_total: 18
+              points:
+              - id: SP001
+                goal: Correct client, analysis type, and Roth conversion recommendation.
+                weight: 1
+                passed: true
+                mismatches: []
+              - id: SP002
+                goal: Correct conversion window and annual conversion amount from
+                  the controlling profile and bracket target.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP003
+                goal: Correct total converted and conversion tax.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP004
+                goal: Correct first RMD year using client age and RMD start age.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP005
+                goal: Correct baseline RMD tax through the task horizon.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP006
+                goal: Correct conversion-case RMD tax and tax savings through the
+                  task horizon.
+                weight: 3
+                passed: true
+                mismatches: []
+              - id: SP007
+                goal: Correct projected Roth and traditional balances at the horizon.
+                weight: 2
+                passed: true
+                mismatches: []
+              - id: SP008
+                goal: Correct source-resolution fields for profile and account evidence.
+                weight: 2
+                passed: true
+                mismatches: []
+          loaded_from_existing_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/run_metadata.yaml
+infrastructure_replacements:
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__attempt_02/physical_01_b31235fc
+  reason: agent infrastructure rc=1
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_001__attempt_01/physical_01_5fbe1688
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_001__attempt_02/physical_01_52c91303
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_001__attempt_03/physical_01_e8302971
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_002__attempt_01/physical_01_e9c2666b
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_002__attempt_02/physical_01_a0230ef4
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_002__attempt_03/physical_01_d4df50ff
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_003__attempt_01/physical_01_487c49d6
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_003__attempt_02/physical_01_2837d162
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_003__attempt_03/physical_01_020cfd7d
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_004__attempt_01/physical_01_333af50b
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_004__attempt_02/physical_01_f903cdc8
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_004__attempt_03/physical_01_4a1cd3b3
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+- path: scratch/infrastructure_failures/deepseek_v4_max_preview/naive__test_005__attempt_01/physical_01_65f9d3e5
+  reason: 'reclassified existing solver metadata as infrastructure failure: agent_exit_1'
+notes: []

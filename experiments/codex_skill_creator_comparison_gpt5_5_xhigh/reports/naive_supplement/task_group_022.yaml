@@ -1,0 +1,1252 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+parent_experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_022
+model_profile: gpt5_5_xhigh
+harness: codex
+status: complete
+model:
+  generator_model: gpt-5.5
+  solver_model: gpt-5.5
+  reasoning_effort: xhigh
+  provider_id: openai
+  observed_identity: gpt-5.5
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:d7042f421d43c503166bd2b7b969b09d90359df71521f2c293fad4c426cffac5
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/gpt5_5_xhigh/task_group_022.yaml
+  report_sha256: 6c4ac740433fa84859d21102938759e8ac456786fd32f75920986b8fec8563d4
+  status: complete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:d7042f421d43c503166bd2b7b969b09d90359df71521f2c293fad4c426cffac5
+execution:
+  started_at: '2026-07-28T10:46:19Z'
+  completed_at: '2026-07-29T05:23:19Z'
+  run_manifest: scratch/run_manifest/gpt5_5_xhigh/gpt5_5_xhigh.yaml
+  run_manifest_sha256: 654039a4d19fb0c42b354d9be248fc83d9e88b2184db2767273c105d8123f35d
+  run_plan_sha256: d302876c01c2e0ed1c5da069d5a4f421265efdf7bb00ebae80016b0206d1f14e
+  helper_sha256: 90129660bde82b25020efb6effee8a17b0c7f2db8bda8f98bb372dea7b26186a
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  generation_trace_root: original_traces/gpt5_5_xhigh/skill_generation/naive
+  solver_trace_root: original_traces/gpt5_5_xhigh/fewshot/naive
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: ba6520fde805eb4d8f8348131c85be22cf7cb788cf5077b6722d56bc25db0437
+        agent_run_id: 804ab88e-40d3-4934-a162-824e3498d57a
+        logical_slot: naive/attempt_01
+        physical_run_id: 8064fe2e4353
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 78641c9150eac47133261f84d6619b341fc372525103514e499e476a63cb942c
+        started_at: '2026-07-28T10:46:19Z'
+        completed_at: '2026-07-28T10:55:10Z'
+        duration_seconds: 530.952
+        exit_code: 0
+        incomplete_reason: null
+        input_tokens: 1703343
+        cached_input_tokens: 1625984
+        output_tokens: 22353
+        reasoning_output_tokens: 8772
+        total_tokens: 1725696
+        cost_usd: 1.870377
+        rounds: 33
+        tool_calls: 78
+        file_count: 3
+        bytes: 16230
+        portability_warnings: []
+        trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01/codex_sessions/2026/07/28/rollout-2026-07-28T10-46-28-019fa855-4742-7a13-8762-63f9a56a4726.jsonl
+        cli_json_stream: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01/codex_stdout.jsonl
+        trace_root: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01
+        stderr_log: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01/codex_stderr.log
+        observed_model_identity: gpt-5.5
+      attempt_02:
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_02
+        skill_bundle_sha256: 871a123d6cd7267736ed34b34f50823b44ce89ea7020883a087181b0cd2483df
+        agent_run_id: 9997754b-b70b-454e-a968-7ff845dad36c
+        logical_slot: naive/attempt_02
+        physical_run_id: d7a0e029e702
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 587d8f8846fa22d3ca9a78ee9240e79ebbe5cf9e0f6032eb023f14e9a5af379a
+        started_at: '2026-07-28T10:55:10Z'
+        completed_at: '2026-07-28T11:02:10Z'
+        duration_seconds: 420.386
+        exit_code: 0
+        incomplete_reason: null
+        input_tokens: 1454340
+        cached_input_tokens: 1369216
+        output_tokens: 16937
+        reasoning_output_tokens: 6380
+        total_tokens: 1471277
+        cost_usd: 1.618338
+        rounds: 25
+        tool_calls: 80
+        file_count: 1
+        bytes: 10743
+        portability_warnings: []
+        trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02/codex_sessions/2026/07/28/rollout-2026-07-28T10-55-21-019fa85d-6623-7532-8147-a3892c4ae098.jsonl
+        cli_json_stream: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02/codex_stdout.jsonl
+        trace_root: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02
+        stderr_log: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02/codex_stderr.log
+        observed_model_identity: gpt-5.5
+      attempt_03:
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: 237e92f9dc74bf36a5f26fe2bb70a2c38bfc80b0b2105ee0d46c8ebd06b984e2
+        agent_run_id: ef8227d8-dc3e-4270-9c95-56e647c8f432
+        logical_slot: naive/attempt_03
+        physical_run_id: e3465feffa9e
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 87e79bbae46d09042d7921711e7d60b0381adbbeda2ae47d1a73c12aa0609164
+        started_at: '2026-07-28T11:02:11Z'
+        completed_at: '2026-07-28T11:11:02Z'
+        duration_seconds: 530.932
+        exit_code: 0
+        incomplete_reason: null
+        input_tokens: 1457533
+        cached_input_tokens: 1378560
+        output_tokens: 20383
+        reasoning_output_tokens: 9855
+        total_tokens: 1477916
+        cost_usd: 1.695635
+        rounds: 26
+        tool_calls: 75
+        file_count: 3
+        bytes: 17823
+        portability_warnings: []
+        trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03/codex_sessions/2026/07/28/rollout-2026-07-28T11-02-20-019fa863-cd67-7d02-b139-a905cba36b64.jsonl
+        cli_json_stream: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03/codex_stdout.jsonl
+        trace_root: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03
+        stderr_log: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03/codex_stderr.log
+        observed_model_identity: gpt-5.5
+    valid_generation_rate: 1.0
+  overall_acc_at_3: 0.6330466689600819
+  overall_std_at_3: 0.08242687234879931
+  lift_over_shared_base: 0.0786607040477122
+  efficiency:
+    input_tokens_avg_3: 2001950.2666666666
+    cached_input_tokens_avg_3: 1910997.3333333333
+    output_tokens_avg_3: 29833.066666666666
+    reasoning_output_tokens_avg_3: 9273.0
+    cost_usd_avg_3: 2.305255333333333
+    rounds_avg_3: 31.2
+    tool_calls_avg_3: 81.86666666666666
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.055555555556
+      - 0.5
+      - 0.5
+      acc_at_3: 0.35185185185199996
+      std_at_3: 0.20951312035136013
+      input_tokens_avg_3: 1209304.0
+      cached_input_tokens_avg_3: 1126357.3333333333
+      output_tokens_avg_3: 25300.333333333332
+      reasoning_output_tokens_avg_3: 7838.666666666667
+      cost_usd_avg_3: 1.7369219999999999
+      rounds_avg_3: 22.666666666666668
+      tool_calls_avg_3: 62.0
+      attempts:
+        attempt_01:
+          status: complete
+          task_id: test_001
+          attempt: 1
+          agent_run_id: 4689d25e-482b-45bd-a2fe-6135f5a0731f
+          logical_slot: naive/test_001/attempt_01
+          physical_run_id: 3e1837bb80c0
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 47f829b4e61ecad0f026707e0c9ed01f3ee5526910da8179326294daa5acdc28
+          started_at: '2026-07-28T11:11:03Z'
+          completed_at: '2026-07-28T11:25:26Z'
+          duration_seconds: 863.281
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: cabe05313e6fd84f4f498314d5a7a44a84ccabed9974f605210079e18fe7274b
+            skill: ba6520fde805eb4d8f8348131c85be22cf7cb788cf5077b6722d56bc25db0437
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/score.yaml
+          score: 0.055555555556
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/codex_sessions/2026/07/28/rollout-2026-07-28T11-11-16-019fa86b-fa13-79a3-a155-bb9d3b75e04b.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 23
+          cached_input_tokens: 982784
+          input_tokens: 1054257
+          output_tokens: 23861
+          portability_warnings: []
+          reasoning_output_tokens: 7153
+          tool_calls: 70
+          total_tokens: 1078118
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 23
+          cost_usd: 1.564587
+        attempt_02:
+          status: complete
+          task_id: test_001
+          attempt: 2
+          agent_run_id: e82a6317-0263-46fe-af7d-cc5c303aa5bc
+          logical_slot: naive/test_001/attempt_02
+          physical_run_id: fd63bcee9b65
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 228d8c284bd5de92e9d20b68d621471d93410972081b4b72f5de7491a3ff1db0
+          started_at: '2026-07-28T11:11:03Z'
+          completed_at: '2026-07-28T11:27:52Z'
+          duration_seconds: 1009.184
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: cabe05313e6fd84f4f498314d5a7a44a84ccabed9974f605210079e18fe7274b
+            skill: 871a123d6cd7267736ed34b34f50823b44ce89ea7020883a087181b0cd2483df
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/score.yaml
+          score: 0.5
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/codex_sessions/2026/07/28/rollout-2026-07-28T11-11-16-019fa86b-fa36-7c23-9f9e-7ed47545c3f3.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 28
+          cached_input_tokens: 1223808
+          input_tokens: 1329296
+          output_tokens: 29478
+          portability_warnings: []
+          reasoning_output_tokens: 10948
+          tool_calls: 58
+          total_tokens: 1358774
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 28
+          cost_usd: 2.023684
+        attempt_03:
+          status: complete
+          task_id: test_001
+          attempt: 3
+          agent_run_id: 6c9277b0-3a68-4d9c-a8fb-83f7b694f174
+          logical_slot: naive/test_001/attempt_03
+          physical_run_id: 6fcb2acec120
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 4528a84e00df2f9419775384ba37fa5190ae67fe08b3d583ae55bc610a2c787b
+          started_at: '2026-07-29T04:56:51Z'
+          completed_at: '2026-07-29T05:05:57Z'
+          duration_seconds: 546.278
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: cabe05313e6fd84f4f498314d5a7a44a84ccabed9974f605210079e18fe7274b
+            skill: 237e92f9dc74bf36a5f26fe2bb70a2c38bfc80b0b2105ee0d46c8ebd06b984e2
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/score.yaml
+          score: 0.5
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/codex_sessions/2026/07/29/rollout-2026-07-29T04-57-01-019fac3b-b34b-7e50-81df-841829230ed7.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 17
+          cached_input_tokens: 1172480
+          input_tokens: 1244359
+          output_tokens: 22562
+          portability_warnings: []
+          reasoning_output_tokens: 5415
+          tool_calls: 58
+          total_tokens: 1266921
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 17
+          cost_usd: 1.622495
+    test_002:
+      status: complete
+      scores:
+      - 0.588235294118
+      - 0.588235294118
+      - 0.588235294118
+      acc_at_3: 0.588235294118
+      std_at_3: 0.0
+      input_tokens_avg_3: 838335.0
+      cached_input_tokens_avg_3: 763008.0
+      output_tokens_avg_3: 18660.0
+      reasoning_output_tokens_avg_3: 5963.333333333333
+      cost_usd_avg_3: 1.317939
+      rounds_avg_3: 19.0
+      tool_calls_avg_3: 57.333333333333336
+      attempts:
+        attempt_01:
+          status: complete
+          task_id: test_002
+          attempt: 1
+          agent_run_id: fc7c1d65-da14-4fb2-9c3e-c7c6baa65858
+          logical_slot: naive/test_002/attempt_01
+          physical_run_id: d3326d1cbb87
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 3da012b669b9d78f695edd31b2d1397d6036b24d150d46e0efd59ac74af6c235
+          started_at: '2026-07-28T11:11:03Z'
+          completed_at: '2026-07-28T11:24:51Z'
+          duration_seconds: 828.077
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: 0e096ad1ff66ddcd73d6c0f26db771decd4277b257f67b64af301341ee1ff66c
+            skill: ba6520fde805eb4d8f8348131c85be22cf7cb788cf5077b6722d56bc25db0437
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/score.yaml
+          score: 0.588235294118
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/codex_sessions/2026/07/28/rollout-2026-07-28T11-11-16-019fa86b-fa3f-7373-89ce-2b7b88141479.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 24
+          cached_input_tokens: 1046656
+          input_tokens: 1121126
+          output_tokens: 20963
+          portability_warnings: []
+          reasoning_output_tokens: 5446
+          tool_calls: 64
+          total_tokens: 1142089
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 24
+          cost_usd: 1.524568
+        attempt_02:
+          status: complete
+          task_id: test_002
+          attempt: 2
+          agent_run_id: eae22c54-e57b-4140-9d64-70aa46bd26b4
+          logical_slot: naive/test_002/attempt_02
+          physical_run_id: 591ca2b62b4c
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: ee58d5492f47d3acb6f16bf726012da5d4b436c317319bc19f4fbc2309141314
+          started_at: '2026-07-28T11:24:51Z'
+          completed_at: '2026-07-28T11:32:26Z'
+          duration_seconds: 455.36
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: 0e096ad1ff66ddcd73d6c0f26db771decd4277b257f67b64af301341ee1ff66c
+            skill: 871a123d6cd7267736ed34b34f50823b44ce89ea7020883a087181b0cd2483df
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/score.yaml
+          score: 0.588235294118
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/codex_sessions/2026/07/28/rollout-2026-07-28T11-25-00-019fa878-8d1e-7e22-b54c-a45b7ac0da9d.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 16
+          cached_input_tokens: 665472
+          input_tokens: 766298
+          output_tokens: 20447
+          portability_warnings: []
+          reasoning_output_tokens: 8010
+          tool_calls: 57
+          total_tokens: 786745
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 16
+          cost_usd: 1.450276
+        attempt_03:
+          status: complete
+          task_id: test_002
+          attempt: 3
+          agent_run_id: 4e87b823-8232-4749-870a-14fdf84e76e6
+          logical_slot: naive/test_002/attempt_03
+          physical_run_id: 4df657446fb1
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 48092fac016989cfca2532a927ce1c70a5103013587a85b8c08bfbca6a31ddf3
+          started_at: '2026-07-29T04:56:51Z'
+          completed_at: '2026-07-29T05:02:36Z'
+          duration_seconds: 345.15
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: 0e096ad1ff66ddcd73d6c0f26db771decd4277b257f67b64af301341ee1ff66c
+            skill: 237e92f9dc74bf36a5f26fe2bb70a2c38bfc80b0b2105ee0d46c8ebd06b984e2
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/score.yaml
+          score: 0.588235294118
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/codex_sessions/2026/07/29/rollout-2026-07-29T04-57-01-019fac3b-b4a9-7580-aba8-e97208ef0821.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 17
+          cached_input_tokens: 576896
+          input_tokens: 627581
+          output_tokens: 14570
+          portability_warnings: []
+          reasoning_output_tokens: 4434
+          tool_calls: 51
+          total_tokens: 642151
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 17
+          cost_usd: 0.978973
+    test_003:
+      status: complete
+      scores:
+      - 0.5263157894736842
+      - 0.5263157894736842
+      - 0.5263157894736842
+      acc_at_3: 0.5263157894736842
+      std_at_3: 0.0
+      input_tokens_avg_3: 5497107.666666667
+      cached_input_tokens_avg_3: 5351594.666666667
+      output_tokens_avg_3: 50878.333333333336
+      reasoning_output_tokens_avg_3: 13799.666666666666
+      cost_usd_avg_3: 4.929712333333334
+      rounds_avg_3: 72.33333333333333
+      tool_calls_avg_3: 160.0
+      attempts:
+        attempt_01:
+          status: complete
+          task_id: test_003
+          attempt: 1
+          agent_run_id: d9948c53-45cf-4fea-aa28-d5d52128bd1e
+          logical_slot: naive/test_003/attempt_01
+          physical_run_id: dbd76ed2b5d2
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 6b9e6fd1a0c81daa469762eb07fb4140f355c60b754c0fdd7b43b1de07cc724d
+          started_at: '2026-07-29T04:56:51Z'
+          completed_at: '2026-07-29T05:14:40Z'
+          duration_seconds: 1069.504
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: 7db12e283a7c817d7409813e3a23a98a58188336b52b16280438ead367988f04
+            skill: ba6520fde805eb4d8f8348131c85be22cf7cb788cf5077b6722d56bc25db0437
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/score.yaml
+          score: 0.5263157894736842
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/codex_sessions/2026/07/29/rollout-2026-07-29T04-57-01-019fac3b-b39f-7b90-904e-4468dffbd810.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 66
+          cached_input_tokens: 3721984
+          input_tokens: 3829471
+          output_tokens: 42917
+          portability_warnings: []
+          reasoning_output_tokens: 11606
+          tool_calls: 132
+          total_tokens: 3872388
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 66
+          cost_usd: 3.685937
+        attempt_02:
+          status: complete
+          task_id: test_003
+          attempt: 2
+          agent_run_id: 467c475f-be4c-484a-904d-fc59b74d5449
+          logical_slot: naive/test_003/attempt_02
+          physical_run_id: 33173429e3db
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: a516caf74ee6065a4de71ba365efa993d8a6bd310d7b1d997460a52b5e71d32a
+          started_at: '2026-07-28T11:25:26Z'
+          completed_at: '2026-07-28T11:44:31Z'
+          duration_seconds: 1145.206
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: 7db12e283a7c817d7409813e3a23a98a58188336b52b16280438ead367988f04
+            skill: 871a123d6cd7267736ed34b34f50823b44ce89ea7020883a087181b0cd2483df
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/score.yaml
+          score: 0.5263157894736842
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/codex_sessions/2026/07/28/rollout-2026-07-28T11-25-39-019fa879-2443-7d02-95d6-3ba10ec0dba5.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 79
+          cached_input_tokens: 6425216
+          input_tokens: 6598829
+          output_tokens: 47798
+          portability_warnings: []
+          reasoning_output_tokens: 13368
+          tool_calls: 157
+          total_tokens: 6646627
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 79
+          cost_usd: 5.514613
+        attempt_03:
+          status: complete
+          task_id: test_003
+          attempt: 3
+          agent_run_id: 2405e0ef-d48e-4956-9136-d1a85662e0cb
+          logical_slot: naive/test_003/attempt_03
+          physical_run_id: 602ec1027de9
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: f5171072c9822ac8169e616813282d5ed8757e9a941f27807f4927d56fc07d17
+          started_at: '2026-07-29T04:56:51Z'
+          completed_at: '2026-07-29T05:23:19Z'
+          duration_seconds: 1587.762
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: 7db12e283a7c817d7409813e3a23a98a58188336b52b16280438ead367988f04
+            skill: 237e92f9dc74bf36a5f26fe2bb70a2c38bfc80b0b2105ee0d46c8ebd06b984e2
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/score.yaml
+          score: 0.5263157894736842
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/codex_sessions/2026/07/29/rollout-2026-07-29T04-57-00-019fac3b-afca-7481-8466-96638ac7830f.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 72
+          cached_input_tokens: 5907584
+          input_tokens: 6063023
+          output_tokens: 61920
+          portability_warnings: []
+          reasoning_output_tokens: 16425
+          tool_calls: 191
+          total_tokens: 6124943
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 72
+          cost_usd: 5.588587
+    test_004:
+      status: complete
+      scores:
+      - 0.5789473684210527
+      - 0.8421052631578947
+      - 0.8421052631578947
+      acc_at_3: 0.7543859649122807
+      std_at_3: 0.12405382126079778
+      input_tokens_avg_3: 991977.3333333334
+      cached_input_tokens_avg_3: 917248.0
+      output_tokens_avg_3: 24677.333333333332
+      reasoning_output_tokens_avg_3: 8221.0
+      cost_usd_avg_3: 1.5725906666666667
+      rounds_avg_3: 16.0
+      tool_calls_avg_3: 53.666666666666664
+      attempts:
+        attempt_01:
+          status: complete
+          task_id: test_004
+          attempt: 1
+          agent_run_id: 93859338-2265-46df-9855-40c67a3e3f51
+          logical_slot: naive/test_004/attempt_01
+          physical_run_id: 2d59170ac3ab
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: a5511fcdea51863fde36c3e57c38ba1a7f9f4d3685d00ae6178cd6ea301b3ac1
+          started_at: '2026-07-28T11:11:03Z'
+          completed_at: '2026-07-28T11:26:11Z'
+          duration_seconds: 908.43
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: dabb837eca9757130d09d4869f7b1d1ee39fc967e0bd8629e2e934183c35ef44
+            skill: ba6520fde805eb4d8f8348131c85be22cf7cb788cf5077b6722d56bc25db0437
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/score.yaml
+          score: 0.5789473684210527
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/codex_sessions/2026/07/28/rollout-2026-07-28T11-11-16-019fa86b-fa10-7e21-84d1-4b402d70c756.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 22
+          cached_input_tokens: 994688
+          input_tokens: 1079482
+          output_tokens: 26583
+          portability_warnings: []
+          reasoning_output_tokens: 7271
+          tool_calls: 73
+          total_tokens: 1106065
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 22
+          cost_usd: 1.718804
+        attempt_02:
+          status: complete
+          task_id: test_004
+          attempt: 2
+          agent_run_id: d2094a08-fe53-4b6d-9cec-e581f998746a
+          logical_slot: naive/test_004/attempt_02
+          physical_run_id: 94b07ed9481f
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: dcf3ab53dce37b0ca46230f0fb1c3b6b164ef1e7bdf6966478a27dfdcadb27b4
+          started_at: '2026-07-28T11:26:11Z'
+          completed_at: '2026-07-28T11:34:17Z'
+          duration_seconds: 485.694
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: dabb837eca9757130d09d4869f7b1d1ee39fc967e0bd8629e2e934183c35ef44
+            skill: 871a123d6cd7267736ed34b34f50823b44ce89ea7020883a087181b0cd2483df
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/score.yaml
+          score: 0.8421052631578947
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/codex_sessions/2026/07/28/rollout-2026-07-28T11-26-21-019fa879-c846-7910-a427-56a84b6e7c56.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 14
+          cached_input_tokens: 662656
+          input_tokens: 717953
+          output_tokens: 23137
+          portability_warnings: []
+          reasoning_output_tokens: 7201
+          tool_calls: 36
+          total_tokens: 741090
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 14
+          cost_usd: 1.301923
+        attempt_03:
+          status: complete
+          task_id: test_004
+          attempt: 3
+          agent_run_id: 11ae3c2c-8e6c-4282-8654-ea3964ec4b50
+          logical_slot: naive/test_004/attempt_03
+          physical_run_id: 830992c5d093
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: fa34e47c6e4df8ae73a596dee576da45b1c9a858afe9beff1a7270d7dc2b15bc
+          started_at: '2026-07-29T04:56:51Z'
+          completed_at: '2026-07-29T05:06:37Z'
+          duration_seconds: 586.507
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: dabb837eca9757130d09d4869f7b1d1ee39fc967e0bd8629e2e934183c35ef44
+            skill: 237e92f9dc74bf36a5f26fe2bb70a2c38bfc80b0b2105ee0d46c8ebd06b984e2
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/score.yaml
+          score: 0.8421052631578947
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/codex_sessions/2026/07/29/rollout-2026-07-29T04-57-02-019fac3b-b537-70e1-bb9a-f6ecaaade6ca.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 12
+          cached_input_tokens: 1094400
+          input_tokens: 1178497
+          output_tokens: 24312
+          portability_warnings: []
+          reasoning_output_tokens: 10191
+          tool_calls: 52
+          total_tokens: 1202809
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 12
+          cost_usd: 1.697045
+    test_005:
+      status: complete
+      scores:
+      - 1.0
+      - 0.8333333333333334
+      - 1.0
+      acc_at_3: 0.9444444444444445
+      std_at_3: 0.0785674201318386
+      input_tokens_avg_3: 1473027.3333333333
+      cached_input_tokens_avg_3: 1396778.6666666667
+      output_tokens_avg_3: 29649.333333333332
+      reasoning_output_tokens_avg_3: 10542.333333333334
+      cost_usd_avg_3: 1.9691126666666667
+      rounds_avg_3: 26.0
+      tool_calls_avg_3: 76.33333333333333
+      attempts:
+        attempt_01:
+          status: complete
+          task_id: test_005
+          attempt: 1
+          agent_run_id: 7b0d052b-5b22-4ebf-8e64-f22521d85d2c
+          logical_slot: naive/test_005/attempt_01
+          physical_run_id: 00e73a408172
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: cc04e1d86865495ed8425304456d43a0d619263c714c06d46e47f06d69824a1b
+          started_at: '2026-07-29T04:56:51Z'
+          completed_at: '2026-07-29T05:05:32Z'
+          duration_seconds: 521.138
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: 65ea14b88a1aa0c33d7b62b82bc7b5426ba380c7f71dcfa4bb4183a6682250f0
+            skill: ba6520fde805eb4d8f8348131c85be22cf7cb788cf5077b6722d56bc25db0437
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/score.yaml
+          score: 1.0
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/codex_sessions/2026/07/29/rollout-2026-07-29T04-57-01-019fac3b-b2ee-7910-a706-c3ff5a9e1926.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 19
+          cached_input_tokens: 757888
+          input_tokens: 829599
+          output_tokens: 25130
+          portability_warnings: []
+          reasoning_output_tokens: 11417
+          tool_calls: 60
+          total_tokens: 854729
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 19
+          cost_usd: 1.491399
+        attempt_02:
+          status: complete
+          task_id: test_005
+          attempt: 2
+          agent_run_id: c72edce6-1dc4-41af-8064-5ee16d6bfb0a
+          logical_slot: naive/test_005/attempt_02
+          physical_run_id: 13de11a15a1c
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: d5ef833a98a7ebd7f864119a51823dc6148cadca2d87d5d10052bc8162e82870
+          started_at: '2026-07-28T11:27:52Z'
+          completed_at: '2026-07-28T11:40:39Z'
+          duration_seconds: 767.268
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: 65ea14b88a1aa0c33d7b62b82bc7b5426ba380c7f71dcfa4bb4183a6682250f0
+            skill: 871a123d6cd7267736ed34b34f50823b44ce89ea7020883a087181b0cd2483df
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/score.yaml
+          score: 0.8333333333333334
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/codex_sessions/2026/07/28/rollout-2026-07-28T11-28-02-019fa87b-5293-7b82-9edb-9daa37caac7c.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 35
+          cached_input_tokens: 1830272
+          input_tokens: 1914069
+          output_tokens: 36092
+          portability_warnings: []
+          reasoning_output_tokens: 10256
+          tool_calls: 104
+          total_tokens: 1950161
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 35
+          cost_usd: 2.416881
+        attempt_03:
+          status: complete
+          task_id: test_005
+          attempt: 3
+          agent_run_id: 75b63b01-a499-4929-bad0-338e1bc668b5
+          logical_slot: naive/test_005/attempt_03
+          physical_run_id: 35b1664c25fb
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: d04e0d22120fdf1d0ef3a321335fc4be93fbff97cd392ca98591b99f06e72ae4
+          started_at: '2026-07-29T05:02:36Z'
+          completed_at: '2026-07-29T05:12:58Z'
+          duration_seconds: 621.621
+          exit_code: 0
+          incomplete_reason: null
+          staged_hashes:
+            input: 65ea14b88a1aa0c33d7b62b82bc7b5426ba380c7f71dcfa4bb4183a6682250f0
+            skill: 237e92f9dc74bf36a5f26fe2bb70a2c38bfc80b0b2105ee0d46c8ebd06b984e2
+            environment_access: ddf60b88aaf2560270d923714431d9a21f5eeca8763f3404cac7727c76279af0
+          answer_json: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/answer.json
+          score_yaml: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/score.yaml
+          score: 1.0
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/codex_sessions/2026/07/29/rollout-2026-07-29T05-02-46-019fac40-f8c1-7280-a752-d33c8021c260.jsonl
+          cli_json_stream: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/codex_stdout.jsonl
+          trace_root: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03
+          stderr_log: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/codex_stderr.log
+          observed_model_identity: gpt-5.5
+          run_root: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03
+          work_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/work
+          assistant_turn_source: response_item.message.role=assistant
+          assistant_turns: 24
+          cached_input_tokens: 1602176
+          input_tokens: 1675414
+          output_tokens: 27726
+          portability_warnings: []
+          reasoning_output_tokens: 9954
+          tool_calls: 65
+          total_tokens: 1703140
+          usage_source: final_token_count.info.total_token_usage
+          rounds: 24
+          cost_usd: 1.999058
+infrastructure_replacements:
+- logical_slot: naive/test_003/attempt_01
+  kind: solver
+  retry_index: 1
+  physical_run_id: 019511350ede
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:11:16.532777Z ERROR codex_models_manager::manager: failed to refresh
+    available models: timeout waiting for child process to exit
+
+    2026-07-28T11:11:16.539159Z ERROR codex_models_manager::manager: failed to refresh
+    available models: timeout waiting for child proces'
+  archived_at: '2026-07-28T11:29:38Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_01/replacement_01_019511350ede/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_01/replacement_01_019511350ede/trace_root
+- logical_slot: naive/test_003/attempt_01
+  kind: solver
+  retry_index: 2
+  physical_run_id: 0cab63e03227
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:29:49.408133Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:29:49.832480Z ERROR co'
+  archived_at: '2026-07-28T11:30:36Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_01/replacement_02_0cab63e03227/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_01/replacement_02_0cab63e03227/trace_root
+- logical_slot: naive/test_005/attempt_01
+  kind: solver
+  retry_index: 1
+  physical_run_id: faf10c79313e
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:11:16.469968Z ERROR codex_models_manager::manager: failed to refresh
+    available models: timeout waiting for child process to exit
+
+    2026-07-28T11:11:16.529956Z ERROR codex_models_manager::manager: failed to refresh
+    available models: timeout waiting for child proces'
+  archived_at: '2026-07-28T11:29:43Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_01/replacement_01_faf10c79313e/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_01/replacement_01_faf10c79313e/trace_root
+- logical_slot: naive/test_005/attempt_01
+  kind: solver
+  retry_index: 2
+  physical_run_id: bf441aad231e
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:29:55.206674Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:29:55.419698Z ERROR rm'
+  archived_at: '2026-07-28T11:30:41Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_01/replacement_02_bf441aad231e/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_01/replacement_02_bf441aad231e/trace_root
+- logical_slot: naive/test_001/attempt_03
+  kind: solver
+  retry_index: 1
+  physical_run_id: bf5ff1c32b24
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:31:45.910380Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:31:46.143626Z ERROR rm'
+  archived_at: '2026-07-28T11:32:32Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_001_attempt_03/replacement_01_bf5ff1c32b24/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_001_attempt_03/replacement_01_bf5ff1c32b24/trace_root
+- logical_slot: naive/test_001/attempt_03
+  kind: solver
+  retry_index: 2
+  physical_run_id: 642a459c43ee
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:32:44.302608Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:32:44.537247Z ERROR co'
+  archived_at: '2026-07-28T11:33:31Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_001_attempt_03/replacement_02_642a459c43ee/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_001_attempt_03/replacement_02_642a459c43ee/trace_root
+- logical_slot: naive/test_002/attempt_03
+  kind: solver
+  retry_index: 1
+  physical_run_id: af7dc27066d0
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:31:46.915464Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:31:47.044882Z ERROR co'
+  archived_at: '2026-07-28T11:32:33Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_002_attempt_03/replacement_01_af7dc27066d0/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_002_attempt_03/replacement_01_af7dc27066d0/trace_root
+- logical_slot: naive/test_002/attempt_03
+  kind: solver
+  retry_index: 2
+  physical_run_id: 96c0d447c4fe
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:32:45.181233Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:32:45.270405Z ERROR co'
+  archived_at: '2026-07-28T11:33:31Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_002_attempt_03/replacement_02_96c0d447c4fe/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_002_attempt_03/replacement_02_96c0d447c4fe/trace_root
+- logical_slot: naive/test_003/attempt_03
+  kind: solver
+  retry_index: 1
+  physical_run_id: a3e10e59af9e
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:32:39.391119Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:32:39.471026Z ERROR co'
+  archived_at: '2026-07-28T11:33:25Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_03/replacement_01_a3e10e59af9e/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_03/replacement_01_a3e10e59af9e/trace_root
+- logical_slot: naive/test_003/attempt_03
+  kind: solver
+  retry_index: 2
+  physical_run_id: f26c95ac8b3d
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:33:36.525945Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:33:36.552377Z ERROR co'
+  archived_at: '2026-07-28T11:34:23Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_03/replacement_02_f26c95ac8b3d/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_03/replacement_02_f26c95ac8b3d/trace_root
+- logical_slot: naive/test_005/attempt_03
+  kind: solver
+  retry_index: 1
+  physical_run_id: c278d48ca962
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:34:40.975128Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:34:41.276487Z ERROR co'
+  archived_at: '2026-07-28T11:35:27Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_03/replacement_01_c278d48ca962/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_03/replacement_01_c278d48ca962/trace_root
+- logical_slot: naive/test_005/attempt_03
+  kind: solver
+  retry_index: 2
+  physical_run_id: 8c3618674d70
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:35:39.262316Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:35:39.268165Z ERROR co'
+  archived_at: '2026-07-28T11:36:25Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_03/replacement_02_8c3618674d70/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_03/replacement_02_8c3618674d70/trace_root
+- logical_slot: naive/test_004/attempt_03
+  kind: solver
+  retry_index: 1
+  physical_run_id: a7aeb02d49ea
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:34:29.189427Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:34:29.331823Z ERROR co'
+  archived_at: '2026-07-28T11:36:16Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_004_attempt_03/replacement_01_a7aeb02d49ea/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_004_attempt_03/replacement_01_a7aeb02d49ea/trace_root
+- logical_slot: naive/test_004/attempt_03
+  kind: solver
+  retry_index: 2
+  physical_run_id: 90cb76292732
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:36:28.035017Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:36:28.252880Z ERROR co'
+  archived_at: '2026-07-28T11:37:14Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_004_attempt_03/replacement_02_90cb76292732/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_004_attempt_03/replacement_02_90cb76292732/trace_root
+- logical_slot: naive/test_003/attempt_01
+  kind: solver
+  retry_index: 3
+  physical_run_id: 0e45f9f58b7d
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:30:47.898681Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:30:47.997212Z ERROR co'
+  archived_at: '2026-07-29T04:56:51Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_01/replacement_03_0e45f9f58b7d/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_01/replacement_03_0e45f9f58b7d/trace_root
+- logical_slot: naive/test_005/attempt_01
+  kind: solver
+  retry_index: 3
+  physical_run_id: 904172ed8511
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:30:53.414675Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:30:53.700038Z ERROR rm'
+  archived_at: '2026-07-29T04:56:51Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_01/replacement_03_904172ed8511/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_01/replacement_03_904172ed8511/trace_root
+- logical_slot: naive/test_001/attempt_03
+  kind: solver
+  retry_index: 3
+  physical_run_id: f8297586ff00
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:33:42.643725Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:33:42.689442Z ERROR co'
+  archived_at: '2026-07-29T04:56:51Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_001_attempt_03/replacement_03_f8297586ff00/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_001_attempt_03/replacement_03_f8297586ff00/trace_root
+- logical_slot: naive/test_002/attempt_03
+  kind: solver
+  retry_index: 3
+  physical_run_id: 42ac6ffe88ed
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:33:43.013371Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:33:43.022942Z ERROR co'
+  archived_at: '2026-07-29T04:56:51Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_002_attempt_03/replacement_03_42ac6ffe88ed/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_002_attempt_03/replacement_03_42ac6ffe88ed/trace_root
+- logical_slot: naive/test_003/attempt_03
+  kind: solver
+  retry_index: 3
+  physical_run_id: 0b19365caf77
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:34:34.947323Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:34:34.986190Z ERROR co'
+  archived_at: '2026-07-29T04:56:51Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_03/replacement_03_0b19365caf77/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_003_attempt_03/replacement_03_0b19365caf77/trace_root
+- logical_slot: naive/test_004/attempt_03
+  kind: solver
+  retry_index: 3
+  physical_run_id: 2126822a0248
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:37:25.683879Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:37:25.702248Z ERROR co'
+  archived_at: '2026-07-29T04:56:51Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_004_attempt_03/replacement_03_2126822a0248/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_004_attempt_03/replacement_03_2126822a0248/trace_root
+- logical_slot: naive/test_005/attempt_03
+  kind: solver
+  retry_index: 3
+  physical_run_id: e6ece1edd2f7
+  incomplete_reason: 'codex exec exited 1: WARNING: proceeding, even though we could
+    not create PATH aliases: Refusing to create helper binaries under temporary dir
+    "/tmp" (codex_home: AbsolutePathBuf("/tmp/gdpevo-codex-home"))
+
+    Reading additional input from stdin...
+
+    2026-07-28T11:36:37.305974Z ERROR codex_models_manager::manager: failed to refresh
+    available models: stream disconnected before completion: error sending request
+    for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.6)
+
+    2026-07-28T11:36:37.658886Z ERROR co'
+  archived_at: '2026-07-29T04:56:51Z'
+  moved:
+    run_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_03/replacement_03_e6ece1edd2f7/run_root
+    trace_root: scratch/infrastructure_failures/gpt5_5_xhigh/solver/naive_test_005_attempt_03/replacement_03_e6ece1edd2f7/trace_root
+notes:
+- resume_report_archive:
+    report/gpt5_5_xhigh/task_group_022.naive_supplement.yaml: scratch/infrastructure_failures/gpt5_5_xhigh/report_replacements/resume_20260729T045651Z/report/gpt5_5_xhigh/task_group_022.naive_supplement.yaml
+    report/gpt5_5_xhigh/task_group_022.yaml: scratch/infrastructure_failures/gpt5_5_xhigh/report_replacements/resume_20260729T045651Z/report/gpt5_5_xhigh/task_group_022.yaml
+    scratch/run_manifest/gpt5_5_xhigh/gpt5_5_xhigh.yaml.previous_copy: scratch/infrastructure_failures/gpt5_5_xhigh/report_replacements/resume_20260729T045651Z/scratch/run_manifest/gpt5_5_xhigh/gpt5_5_xhigh.yaml

@@ -1,0 +1,1979 @@
+experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_023
+scenario_id: SCN_023_public_health_statistical_modeling_audit
+model_profile: deepseek_v4_max_preview
+harness: codex
+policy: bounded_logical_retry_v1
+status: complete
+supplemental_run_id: 20260729074008-aaf651a4
+created_at_utc: '2026-07-29T11:30:09.283433+00:00'
+model:
+  generator_model: deepseek-ai/DeepSeek-V4-Pro
+  solver_model: deepseek-ai/DeepSeek-V4-Pro
+  reasoning_effort: max
+  provider_id: siliconflow_bridge
+  provider_wire_api: responses
+  observed_identity: deepseek-ai/DeepSeek-V4-Pro
+  identity_consistent: true
+strict_first_pass:
+  source_report: report/deepseek_v4_max_preview/task_group_023.yaml
+  source_report_sha256: 41d811620811ff211056a70bcc2d209750c2a6df69b1f5c226c885ac29b9114b
+  failure_policy: logical_failure_not_runnable_missing_count_as_zero
+  metrics:
+    base:
+      status: complete_fixed_denominator
+      overall_acc_at_3: 0.2705096073546286
+      overall_std_at_3: 0.03752783572620262
+      tasks:
+        test_001:
+          scores:
+          - 0.14285714285714285
+          - 0.14285714285714285
+          - 0.14285714285714285
+          acc_at_3: 0.14285714285714285
+          std_at_3: 0.0
+          selected_sources:
+          - first_pass
+          - first_pass
+          - first_pass
+          selected_statuses:
+          - valid
+          - valid
+          - valid
+        test_002:
+          scores:
+          - 0.0
+          - 0.0
+          - 0.047619047619
+          acc_at_3: 0.015873015873
+          std_at_3: 0.022447834323360016
+          selected_sources:
+          - first_pass_failed_or_missing
+          - first_pass_failed_or_missing
+          - first_pass
+          selected_statuses:
+          - logical_failure
+          - missing
+          - valid
+        test_003:
+          scores:
+          - 0.368421052632
+          - 0.368421052632
+          - 0.368421052632
+          acc_at_3: 0.368421052632
+          std_at_3: 0.0
+          selected_sources:
+          - first_pass
+          - first_pass
+          - first_pass
+          selected_statuses:
+          - valid
+          - valid
+          - valid
+        test_004:
+          scores:
+          - 0.4285714286
+          - 0.2857142857
+          - 0.4285714286
+          acc_at_3: 0.38095238096666667
+          std_at_3: 0.06734350299035044
+          selected_sources:
+          - first_pass
+          - first_pass
+          - first_pass
+          selected_statuses:
+          - valid
+          - valid
+          - valid
+        test_005:
+          scores:
+          - 0.428571428571
+          - 0.333333333333
+          - 0.571428571429
+          acc_at_3: 0.44444444444433334
+          std_at_3: 0.09784784131730263
+          selected_sources:
+          - first_pass
+          - first_pass
+          - first_pass
+          selected_statuses:
+          - valid
+          - valid
+          - valid
+    creators:
+      codex:
+        status: complete_fixed_denominator
+        overall_acc_at_3: 0.22907268170429207
+        overall_std_at_3: 0.14762823937425842
+        tasks:
+          test_001:
+            scores:
+            - 0.42857142857142855
+            - 0.2857142857142857
+            - 0.6666666666666666
+            acc_at_3: 0.4603174603174603
+            std_at_3: 0.15713484026367722
+            selected_sources:
+            - first_pass
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+          test_002:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.0
+            acc_at_3: 0.0
+            std_at_3: 0.0
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - missing
+            - missing
+            - missing
+          test_003:
+            scores:
+            - 0.0
+            - 0.21052631579
+            - 0.368421052632
+            acc_at_3: 0.19298245614066667
+            std_at_3: 0.15091798714128227
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - logical_failure
+            - valid
+            - valid
+          test_004:
+            scores:
+            - 0.0
+            - 0.7142857143
+            - 0.2857142857
+            acc_at_3: 0.3333333333333333
+            std_at_3: 0.293543523957856
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - logical_failure
+            - valid
+            - valid
+          test_005:
+            scores:
+            - 0.142857142857
+            - 0.0
+            - 0.333333333333
+            acc_at_3: 0.15873015873
+            std_at_3: 0.1365448455084766
+            selected_sources:
+            - first_pass
+            - first_pass_failed_or_missing
+            - first_pass
+            selected_statuses:
+            - valid
+            - logical_failure
+            - valid
+        generation_valid_rate: 1.0
+        generation_attempts:
+          attempt_01:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 266dd3a1-1697-42e1-8b2b-03fb879f14ba
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_01
+            skill_bundle_sha256: c799c6cfbe8094bca3dabd5831e3b80029cf45fcb378ffec14b16ba8743c4428
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_01/rollout-2026-07-27T08-33-05-019fa2b4-cc6c-7d43-b5c9-308787bb72cc.jsonl
+            failure_reason: &id001 []
+          attempt_02:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 1bb5a55b-8a11-48c5-8ad4-5eb5d42f6bad
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_02
+            skill_bundle_sha256: 6e1a3def1947ca61bc5953fdef19d8223118b46a16127f74adfad6d605301116
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_02/rollout-2026-07-27T09-08-23-019fa2d5-1f34-7b50-8d70-6521fb32cc28.jsonl
+            failure_reason: &id002 []
+          attempt_03:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: eb1d155f-fbed-4222-905e-d74d6f744f2f
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_03
+            skill_bundle_sha256: 4b5341736843e5366d07750757398024436b48e1b192bef9c2b3b260b9121adc
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_03/rollout-2026-07-27T09-43-42-019fa2f5-7471-75e2-86fe-fc1761acdb0d.jsonl
+            failure_reason: &id003 []
+        lift_over_shared_base: -0.04143692565033652
+      cc:
+        status: complete_fixed_denominator
+        overall_acc_at_3: 0.18329156223798732
+        overall_std_at_3: 0.12005252526301077
+        tasks:
+          test_001:
+            scores:
+            - 0.2857142857142857
+            - 0.5238095238095237
+            - 0.0
+            acc_at_3: 0.2698412698412698
+            std_at_3: 0.21413869147987366
+            selected_sources:
+            - first_pass
+            - first_pass
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - valid
+            - valid
+            - missing
+          test_002:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.0
+            acc_at_3: 0.0
+            std_at_3: 0.0
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - logical_failure
+            - missing
+            - missing
+          test_003:
+            scores:
+            - 0.368421052632
+            - 0.0
+            - 0.0
+            acc_at_3: 0.12280701754399999
+            std_at_3: 0.17367534976531543
+            selected_sources:
+            - first_pass
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - valid
+            - logical_failure
+            - logical_failure
+          test_004:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.2857142857
+            acc_at_3: 0.09523809523333333
+            std_at_3: 0.13468700593356042
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            - first_pass
+            selected_statuses:
+            - logical_failure
+            - missing
+            - valid
+          test_005:
+            scores:
+            - 0.52380952381
+            - 0.428571428571
+            - 0.333333333333
+            acc_at_3: 0.42857142857133335
+            std_at_3: 0.07776157913630438
+            selected_sources:
+            - first_pass
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+        generation_valid_rate: 1.0
+        generation_attempts:
+          attempt_01:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 79dec0f7-e3ae-494b-853e-129f43074e27
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_01
+            skill_bundle_sha256: 31414e4f0560f9047e3e1cc1c20e6d6e9816c0f635ce2e6dfede7748461dac0b
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_01/rollout-2026-07-27T08-33-05-019fa2b4-cd90-7ce1-8a82-4f5e53f9c41d.jsonl
+            failure_reason: &id004 []
+          attempt_02:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 006fbd84-0157-4f98-9d73-fff04d0821ab
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_02
+            skill_bundle_sha256: c995c6bf3b5b2e458847a7d1ad191770a02adf9a4c777e72294cb960bd06eca0
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_02/rollout-2026-07-27T09-15-27-019fa2db-9749-7b71-bf8d-61dc4b92a01a.jsonl
+            failure_reason: &id005 []
+          attempt_03:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 96776d46-381e-448e-a429-e9a62dcd0e4c
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_03
+            skill_bundle_sha256: 0670df5aac4cafa3d9467d59d125ea51fcece2bab0a55b200150f92ab68069be
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_03/rollout-2026-07-27T09-53-57-019fa2fe-d6e6-7b12-b7b7-d8fb8560bb2c.jsonl
+            failure_reason: &id006 []
+        lift_over_shared_base: -0.08721804511664127
+      deepagents:
+        status: complete_fixed_denominator
+        overall_acc_at_3: 0.17276524644953015
+        overall_std_at_3: 0.14060277926449366
+        tasks:
+          test_001:
+            scores:
+            - 0.42857142857142855
+            - 0.5238095238095237
+            - 0.0
+            acc_at_3: 0.31746031746031744
+            std_at_3: 0.22782063641916386
+            selected_sources:
+            - first_pass
+            - first_pass
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - valid
+            - valid
+            - missing
+          test_002:
+            scores:
+            - 0.142857142857
+            - 0.0
+            - 0.0
+            acc_at_3: 0.047619047618999995
+            std_at_3: 0.06734350297008003
+            selected_sources:
+            - first_pass
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - valid
+            - logical_failure
+            - logical_failure
+          test_003:
+            scores:
+            - 0.21052631579
+            - 0.0
+            - 0.0
+            acc_at_3: 0.07017543859666667
+            std_at_3: 0.09924305700888636
+            selected_sources:
+            - first_pass
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - valid
+            - logical_failure
+            - missing
+          test_004:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.0
+            acc_at_3: 0.0
+            std_at_3: 0.0
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - logical_failure
+            - missing
+            - logical_failure
+          test_005:
+            scores:
+            - 0.0
+            - 0.714285714286
+            - 0.571428571429
+            acc_at_3: 0.4285714285716667
+            std_at_3: 0.30860669992433815
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - missing
+            - valid
+            - valid
+        generation_valid_rate: 1.0
+        generation_attempts:
+          attempt_01:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 131b4889-cc07-4ddc-97a8-cf976f45d618
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_01
+            skill_bundle_sha256: 330386d24ccd60ee65cd9d90372c35b4aab09893ea9c3ea79798e8c838848b61
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_01/rollout-2026-07-27T08-52-22-019fa2c6-7295-7872-a376-5d891854ee02.jsonl
+            failure_reason: &id007 []
+          attempt_02:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 5e70848f-37dc-40af-8813-8387e968129c
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_02
+            skill_bundle_sha256: e366d62df0b1fba2e782c58221d09c17d4689bbfa0088dc00a5ad579b8954790
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_02/rollout-2026-07-27T09-26-49-019fa2e5-fbc7-79b2-866c-506cd0f03f52.jsonl
+            failure_reason: &id008 []
+          attempt_03:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: f52df1e2-3739-4294-80f5-52d1ee7fc251
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_03
+            skill_bundle_sha256: fa2a491501e01f4e6390a58b095a9089ecce50dbb78b2f3267546386707e5aa9
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_03/rollout-2026-07-27T10-07-15-019fa30b-0335-7c51-99e4-2f6476f03426.jsonl
+            failure_reason: &id009 []
+        lift_over_shared_base: -0.09774436090509844
+      opencode:
+        status: complete_fixed_denominator
+        overall_acc_at_3: 0.13650793650695237
+        overall_std_at_3: 0.1442746049442049
+        tasks:
+          test_001:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.2857142857142857
+            acc_at_3: 0.09523809523809523
+            std_at_3: 0.13468700594029476
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            - first_pass
+            selected_statuses:
+            - logical_failure
+            - not_runnable
+            - valid
+          test_002:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.428571428571
+            acc_at_3: 0.142857142857
+            std_at_3: 0.20203050891024013
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            - first_pass
+            selected_statuses:
+            - logical_failure
+            - not_runnable
+            - valid
+          test_003:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.0
+            acc_at_3: 0.0
+            std_at_3: 0.0
+            selected_sources:
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - logical_failure
+            - not_runnable
+            - logical_failure
+          test_004:
+            scores:
+            - 0.2857142857
+            - 0.0
+            - 0.0
+            acc_at_3: 0.09523809523333333
+            std_at_3: 0.13468700593356042
+            selected_sources:
+            - first_pass
+            - first_pass_failed_or_missing
+            - first_pass_failed_or_missing
+            selected_statuses:
+            - valid
+            - not_runnable
+            - missing
+          test_005:
+            scores:
+            - 0.47619047619
+            - 0.0
+            - 0.571428571429
+            acc_at_3: 0.3492063492063333
+            std_at_3: 0.24996850393692926
+            selected_sources:
+            - first_pass
+            - first_pass_failed_or_missing
+            - first_pass
+            selected_statuses:
+            - valid
+            - not_runnable
+            - valid
+        generation_valid_rate: 0.6666666666666666
+        generation_attempts:
+          attempt_01:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 48c6185f-a8bd-467b-a404-2bbc2995a0aa
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_01
+            skill_bundle_sha256: 890d1f2f87bf24d61ddd1be6818bc59133c2eb3d30ff24fa061c045b35774818
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_01/rollout-2026-07-27T08-55-28-019fa2c9-49a3-7bc0-a8b1-c15eaca613c6.jsonl
+            failure_reason: &id010 []
+          attempt_02:
+            source: first_pass
+            status: logical_failure
+            validation_status: invalid
+            agent_run_id: 352069d8-3aee-45ae-a7fa-92604c11c656
+            original_agent_run_id: null
+            skill_dir: null
+            skill_bundle_sha256: null
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_02/rollout-2026-07-27T09-37-14-019fa2ef-8563-7683-a39c-734828c4bc9e.jsonl
+            failure_reason:
+            - 'SKILL.md frontmatter parse error: ScannerError'
+          attempt_03:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 2b347f3f-3669-4647-aad5-677baf803a84
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_03
+            skill_bundle_sha256: bfae24f5982233f45f625640ec348e33e189386e8b35d1003b9634e8ce9a645c
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_03/rollout-2026-07-27T10-09-40-019fa30d-370f-7220-b666-53f73275b07c.jsonl
+            failure_reason: &id011 []
+        lift_over_shared_base: -0.13400167084767622
+    creator_pairwise_deltas:
+      codex_minus_cc:
+        overall_delta: 0.045781119466304754
+        tasks:
+          test_001: 0.19047619047619047
+          test_002: 0.0
+          test_003: 0.07017543859666668
+          test_004: 0.2380952381
+          test_005: -0.2698412698413334
+      codex_minus_deepagents:
+        overall_delta: 0.05630743525476192
+        tasks:
+          test_001: 0.14285714285714285
+          test_002: -0.047619047618999995
+          test_003: 0.122807017544
+          test_004: 0.3333333333333333
+          test_005: -0.2698412698416667
+      codex_minus_opencode:
+        overall_delta: 0.0925647451973397
+        tasks:
+          test_001: 0.36507936507936506
+          test_002: -0.142857142857
+          test_003: 0.19298245614066667
+          test_004: 0.2380952381
+          test_005: -0.19047619047633332
+      cc_minus_deepagents:
+        overall_delta: 0.010526315788457169
+        tasks:
+          test_001: -0.047619047619047616
+          test_002: -0.047619047618999995
+          test_003: 0.05263157894733332
+          test_004: 0.09523809523333333
+          test_005: -3.3334446314370325e-13
+      cc_minus_opencode:
+        overall_delta: 0.04678362573103495
+        tasks:
+          test_001: 0.1746031746031746
+          test_002: -0.142857142857
+          test_003: 0.12280701754399999
+          test_004: 0.0
+          test_005: 0.07936507936500004
+      deepagents_minus_opencode:
+        overall_delta: 0.03625730994257778
+        tasks:
+          test_001: 0.2222222222222222
+          test_002: -0.095238095238
+          test_003: 0.07017543859666667
+          test_004: -0.09523809523333333
+          test_005: 0.07936507936533338
+bounded_retry_v1:
+  selection_policy: first_pass_valid_else_single_authorized_supplemental_retry_else_zero
+  metrics:
+    base:
+      status: complete_fixed_denominator
+      overall_acc_at_3: 0.2705096073546286
+      overall_std_at_3: 0.03752783572620262
+      tasks:
+        test_001:
+          scores:
+          - 0.14285714285714285
+          - 0.14285714285714285
+          - 0.14285714285714285
+          acc_at_3: 0.14285714285714285
+          std_at_3: 0.0
+          selected_sources:
+          - first_pass
+          - first_pass
+          - first_pass
+          selected_statuses:
+          - valid
+          - valid
+          - valid
+        test_002:
+          scores:
+          - 0.0
+          - 0.0
+          - 0.047619047619
+          acc_at_3: 0.015873015873
+          std_at_3: 0.022447834323360016
+          selected_sources:
+          - failed_or_missing
+          - failed_or_missing
+          - first_pass
+          selected_statuses:
+          - logical_failure
+          - logical_failure
+          - valid
+        test_003:
+          scores:
+          - 0.368421052632
+          - 0.368421052632
+          - 0.368421052632
+          acc_at_3: 0.368421052632
+          std_at_3: 0.0
+          selected_sources:
+          - first_pass
+          - first_pass
+          - first_pass
+          selected_statuses:
+          - valid
+          - valid
+          - valid
+        test_004:
+          scores:
+          - 0.4285714286
+          - 0.2857142857
+          - 0.4285714286
+          acc_at_3: 0.38095238096666667
+          std_at_3: 0.06734350299035044
+          selected_sources:
+          - first_pass
+          - first_pass
+          - first_pass
+          selected_statuses:
+          - valid
+          - valid
+          - valid
+        test_005:
+          scores:
+          - 0.428571428571
+          - 0.333333333333
+          - 0.571428571429
+          acc_at_3: 0.44444444444433334
+          std_at_3: 0.09784784131730263
+          selected_sources:
+          - first_pass
+          - first_pass
+          - first_pass
+          selected_statuses:
+          - valid
+          - valid
+          - valid
+    creators:
+      codex:
+        status: complete_fixed_denominator
+        overall_acc_at_3: 0.24310776942362539
+        overall_std_at_3: 0.13233110049728777
+        tasks:
+          test_001:
+            scores:
+            - 0.42857142857142855
+            - 0.2857142857142857
+            - 0.6666666666666666
+            acc_at_3: 0.4603174603174603
+            std_at_3: 0.15713484026367722
+            selected_sources:
+            - first_pass
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+          test_002:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.0
+            acc_at_3: 0.0
+            std_at_3: 0.0
+            selected_sources:
+            - failed_or_missing
+            - failed_or_missing
+            - failed_or_missing
+            selected_statuses:
+            - logical_failure
+            - logical_failure
+            - logical_failure
+          test_003:
+            scores:
+            - 0.21052631579
+            - 0.21052631579
+            - 0.368421052632
+            acc_at_3: 0.26315789473733336
+            std_at_3: 0.07443229275642906
+            selected_sources:
+            - supplemental_retry
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+          test_004:
+            scores:
+            - 0.0
+            - 0.7142857143
+            - 0.2857142857
+            acc_at_3: 0.3333333333333333
+            std_at_3: 0.293543523957856
+            selected_sources:
+            - failed_or_missing
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - logical_failure
+            - valid
+            - valid
+          test_005:
+            scores:
+            - 0.142857142857
+            - 0.0
+            - 0.333333333333
+            acc_at_3: 0.15873015873
+            std_at_3: 0.1365448455084766
+            selected_sources:
+            - first_pass
+            - failed_or_missing
+            - first_pass
+            selected_statuses:
+            - valid
+            - logical_failure
+            - valid
+        generation_valid_rate: 1.0
+        generation_attempts:
+          attempt_01:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 266dd3a1-1697-42e1-8b2b-03fb879f14ba
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_01
+            skill_bundle_sha256: c799c6cfbe8094bca3dabd5831e3b80029cf45fcb378ffec14b16ba8743c4428
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_01/rollout-2026-07-27T08-33-05-019fa2b4-cc6c-7d43-b5c9-308787bb72cc.jsonl
+            failure_reason: *id001
+          attempt_02:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 1bb5a55b-8a11-48c5-8ad4-5eb5d42f6bad
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_02
+            skill_bundle_sha256: 6e1a3def1947ca61bc5953fdef19d8223118b46a16127f74adfad6d605301116
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_02/rollout-2026-07-27T09-08-23-019fa2d5-1f34-7b50-8d70-6521fb32cc28.jsonl
+            failure_reason: *id002
+          attempt_03:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: eb1d155f-fbed-4222-905e-d74d6f744f2f
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_03
+            skill_bundle_sha256: 4b5341736843e5366d07750757398024436b48e1b192bef9c2b3b260b9121adc
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/codex/attempt_03/rollout-2026-07-27T09-43-42-019fa2f5-7471-75e2-86fe-fc1761acdb0d.jsonl
+            failure_reason: *id003
+        lift_over_shared_base: -0.027401837931003203
+      cc:
+        status: complete_fixed_denominator
+        overall_acc_at_3: 0.2459482038420254
+        overall_std_at_3: 0.10222163736072432
+        tasks:
+          test_001:
+            scores:
+            - 0.2857142857142857
+            - 0.5238095238095237
+            - 0.5714285714285714
+            acc_at_3: 0.4603174603174603
+            std_at_3: 0.12498425196844143
+            selected_sources:
+            - first_pass
+            - first_pass
+            - supplemental_retry
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+          test_002:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.0
+            acc_at_3: 0.0
+            std_at_3: 0.0
+            selected_sources:
+            - failed_or_missing
+            - failed_or_missing
+            - failed_or_missing
+            selected_statuses:
+            - logical_failure
+            - logical_failure
+            - infrastructure_failure
+          test_003:
+            scores:
+            - 0.368421052632
+            - 0.0
+            - 0.368421052632
+            acc_at_3: 0.24561403508799998
+            std_at_3: 0.1736753497653154
+            selected_sources:
+            - first_pass
+            - failed_or_missing
+            - supplemental_retry
+            selected_statuses:
+            - valid
+            - logical_failure
+            - valid
+          test_004:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.2857142857
+            acc_at_3: 0.09523809523333333
+            std_at_3: 0.13468700593356042
+            selected_sources:
+            - failed_or_missing
+            - failed_or_missing
+            - first_pass
+            selected_statuses:
+            - infrastructure_failure
+            - logical_failure
+            - valid
+          test_005:
+            scores:
+            - 0.52380952381
+            - 0.428571428571
+            - 0.333333333333
+            acc_at_3: 0.42857142857133335
+            std_at_3: 0.07776157913630438
+            selected_sources:
+            - first_pass
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+        generation_valid_rate: 1.0
+        generation_attempts:
+          attempt_01:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 79dec0f7-e3ae-494b-853e-129f43074e27
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_01
+            skill_bundle_sha256: 31414e4f0560f9047e3e1cc1c20e6d6e9816c0f635ce2e6dfede7748461dac0b
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_01/rollout-2026-07-27T08-33-05-019fa2b4-cd90-7ce1-8a82-4f5e53f9c41d.jsonl
+            failure_reason: *id004
+          attempt_02:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 006fbd84-0157-4f98-9d73-fff04d0821ab
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_02
+            skill_bundle_sha256: c995c6bf3b5b2e458847a7d1ad191770a02adf9a4c777e72294cb960bd06eca0
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_02/rollout-2026-07-27T09-15-27-019fa2db-9749-7b71-bf8d-61dc4b92a01a.jsonl
+            failure_reason: *id005
+          attempt_03:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 96776d46-381e-448e-a429-e9a62dcd0e4c
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_03
+            skill_bundle_sha256: 0670df5aac4cafa3d9467d59d125ea51fcece2bab0a55b200150f92ab68069be
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/cc/attempt_03/rollout-2026-07-27T09-53-57-019fa2fe-d6e6-7b12-b7b7-d8fb8560bb2c.jsonl
+            failure_reason: *id006
+        lift_over_shared_base: -0.02456140351260319
+      deepagents:
+        status: complete_fixed_denominator
+        overall_acc_at_3: 0.2579782790281968
+        overall_std_at_3: 0.1207541678627164
+        tasks:
+          test_001:
+            scores:
+            - 0.42857142857142855
+            - 0.5238095238095237
+            - 0.0
+            acc_at_3: 0.31746031746031744
+            std_at_3: 0.22782063641916386
+            selected_sources:
+            - first_pass
+            - first_pass
+            - supplemental_retry
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+          test_002:
+            scores:
+            - 0.142857142857
+            - 0.0
+            - 0.0
+            acc_at_3: 0.047619047618999995
+            std_at_3: 0.06734350297008003
+            selected_sources:
+            - first_pass
+            - failed_or_missing
+            - failed_or_missing
+            selected_statuses:
+            - valid
+            - logical_failure
+            - logical_failure
+          test_003:
+            scores:
+            - 0.21052631579
+            - 0.21052631579
+            - 0.21052631579
+            acc_at_3: 0.21052631579
+            std_at_3: 0.0
+            selected_sources:
+            - first_pass
+            - supplemental_retry
+            - supplemental_retry
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+          test_004:
+            scores:
+            - 0.2857142857
+            - 0.2857142857
+            - 0.2857142857
+            acc_at_3: 0.2857142857
+            std_at_3: 0.0
+            selected_sources:
+            - supplemental_retry
+            - supplemental_retry
+            - supplemental_retry
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+          test_005:
+            scores:
+            - 0.0
+            - 0.714285714286
+            - 0.571428571429
+            acc_at_3: 0.4285714285716667
+            std_at_3: 0.30860669992433815
+            selected_sources:
+            - failed_or_missing
+            - first_pass
+            - first_pass
+            selected_statuses:
+            - logical_failure
+            - valid
+            - valid
+        generation_valid_rate: 1.0
+        generation_attempts:
+          attempt_01:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 131b4889-cc07-4ddc-97a8-cf976f45d618
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_01
+            skill_bundle_sha256: 330386d24ccd60ee65cd9d90372c35b4aab09893ea9c3ea79798e8c838848b61
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_01/rollout-2026-07-27T08-52-22-019fa2c6-7295-7872-a376-5d891854ee02.jsonl
+            failure_reason: *id007
+          attempt_02:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 5e70848f-37dc-40af-8813-8387e968129c
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_02
+            skill_bundle_sha256: e366d62df0b1fba2e782c58221d09c17d4689bbfa0088dc00a5ad579b8954790
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_02/rollout-2026-07-27T09-26-49-019fa2e5-fbc7-79b2-866c-506cd0f03f52.jsonl
+            failure_reason: *id008
+          attempt_03:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: f52df1e2-3739-4294-80f5-52d1ee7fc251
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_03
+            skill_bundle_sha256: fa2a491501e01f4e6390a58b095a9089ecce50dbb78b2f3267546386707e5aa9
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/deepagents/attempt_03/rollout-2026-07-27T10-07-15-019fa30b-0335-7c51-99e4-2f6476f03426.jsonl
+            failure_reason: *id009
+        lift_over_shared_base: -0.012531328326431779
+      opencode:
+        status: complete_fixed_denominator
+        overall_acc_at_3: 0.23692564745290476
+        overall_std_at_3: 0.10698073899197184
+        tasks:
+          test_001:
+            scores:
+            - 0.2857142857142857
+            - 0.0
+            - 0.2857142857142857
+            acc_at_3: 0.19047619047619047
+            std_at_3: 0.13468700594029476
+            selected_sources:
+            - supplemental_retry
+            - failed_or_missing
+            - first_pass
+            selected_statuses:
+            - valid
+            - logical_failure
+            - valid
+          test_002:
+            scores:
+            - 0.0
+            - 0.0
+            - 0.428571428571
+            acc_at_3: 0.142857142857
+            std_at_3: 0.20203050891024013
+            selected_sources:
+            - failed_or_missing
+            - supplemental_retry
+            - first_pass
+            selected_statuses:
+            - logical_failure
+            - valid
+            - valid
+          test_003:
+            scores:
+            - 0.21052631579
+            - 0.105263157895
+            - 0.0
+            acc_at_3: 0.105263157895
+            std_at_3: 0.08594700851892287
+            selected_sources:
+            - supplemental_retry
+            - supplemental_retry
+            - supplemental_retry
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+          test_004:
+            scores:
+            - 0.2857142857
+            - 0.2857142857
+            - 0.1428571429
+            acc_at_3: 0.23809523810000002
+            std_at_3: 0.06734350294320998
+            selected_sources:
+            - first_pass
+            - supplemental_retry
+            - supplemental_retry
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+          test_005:
+            scores:
+            - 0.47619047619
+            - 0.47619047619
+            - 0.571428571429
+            acc_at_3: 0.5079365079363334
+            std_at_3: 0.04489566864719146
+            selected_sources:
+            - first_pass
+            - supplemental_retry
+            - first_pass
+            selected_statuses:
+            - valid
+            - valid
+            - valid
+        generation_valid_rate: 1.0
+        generation_attempts:
+          attempt_01:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 48c6185f-a8bd-467b-a404-2bbc2995a0aa
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_01
+            skill_bundle_sha256: 890d1f2f87bf24d61ddd1be6818bc59133c2eb3d30ff24fa061c045b35774818
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_01/rollout-2026-07-27T08-55-28-019fa2c9-49a3-7bc0-a8b1-c15eaca613c6.jsonl
+            failure_reason: *id010
+          attempt_02:
+            source: supplemental_retry
+            status: valid
+            validation_status: valid
+            agent_run_id: b99e7f60-0a5e-4e92-a224-4e1342164bbe
+            original_agent_run_id: 352069d8-3aee-45ae-a7fa-92604c11c656
+            skill_dir: supplemental/bounded_logical_retry_v1/skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_02_logical_retry_01
+            skill_bundle_sha256: 0928ffa38bede4408334c02000ca51df514a79ad557eb772f6ca80ddca9ca94a
+            trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_02/logical_retry_01/rollout-2026-07-29T07-40-13-019facd1-1da4-72a0-ab2d-603a401521e4.jsonl
+            failure_reason: []
+          attempt_03:
+            source: first_pass
+            status: valid
+            validation_status: valid
+            agent_run_id: 2b347f3f-3669-4647-aad5-677baf803a84
+            original_agent_run_id: null
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_03
+            skill_bundle_sha256: bfae24f5982233f45f625640ec348e33e189386e8b35d1003b9634e8ce9a645c
+            trace_file: original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_03/rollout-2026-07-27T10-09-40-019fa30d-370f-7220-b666-53f73275b07c.jsonl
+            failure_reason: *id011
+        lift_over_shared_base: -0.03358395990172383
+    creator_pairwise_deltas:
+      codex_minus_cc:
+        overall_delta: -0.002840434418400012
+        tasks:
+          test_001: 0.0
+          test_002: 0.0
+          test_003: 0.017543859649333388
+          test_004: 0.2380952381
+          test_005: -0.2698412698413334
+      codex_minus_deepagents:
+        overall_delta: -0.014870509604571425
+        tasks:
+          test_001: 0.14285714285714285
+          test_002: -0.047619047618999995
+          test_003: 0.05263157894733336
+          test_004: 0.0476190476333333
+          test_005: -0.2698412698416667
+      codex_minus_opencode:
+        overall_delta: 0.006182121970720628
+        tasks:
+          test_001: 0.2698412698412698
+          test_002: -0.142857142857
+          test_003: 0.15789473684233335
+          test_004: 0.09523809523333329
+          test_005: -0.3492063492063334
+      cc_minus_deepagents:
+        overall_delta: -0.012030075186171413
+        tasks:
+          test_001: 0.14285714285714285
+          test_002: -0.047619047618999995
+          test_003: 0.035087719297999975
+          test_004: -0.1904761904666667
+          test_005: -3.3334446314370325e-13
+      cc_minus_opencode:
+        overall_delta: 0.00902255638912064
+        tasks:
+          test_001: 0.2698412698412698
+          test_002: -0.142857142857
+          test_003: 0.140350877193
+          test_004: -0.14285714286666668
+          test_005: -0.07936507936500004
+      deepagents_minus_opencode:
+        overall_delta: 0.021052631575292052
+        tasks:
+          test_001: 0.12698412698412698
+          test_002: -0.095238095238
+          test_003: 0.105263157895
+          test_004: 0.04761904759999999
+          test_005: -0.07936507936466669
+retry_counts:
+  generation_retry_records: 1
+  solver_retry_records: 35
+  infrastructure_replacements: 46
+retry_attempt_records:
+- kind: generation
+  logical_slot: skill_generation/opencode/attempt_02
+  retry_name: logical_retry_01
+  agent_run_id: b99e7f60-0a5e-4e92-a224-4e1342164bbe
+  original_agent_run_id: 352069d8-3aee-45ae-a7fa-92604c11c656
+  status: valid
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/skill_generation/opencode/attempt_02/logical_retry_01/rollout-2026-07-29T07-40-13-019facd1-1da4-72a0-ab2d-603a401521e4.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/skill_generation/deepseek_v4_max_preview/opencode/attempt_02/logical_retry_01/evolve_metadata.yaml
+  skill_dir: supplemental/bounded_logical_retry_v1/skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_02_logical_retry_01
+- kind: solver
+  logical_slot: base/test_002/attempt_01
+  retry_name: logical_retry_01
+  agent_run_id: 9479d337-7d94-416c-b21a-6143acea5fca
+  original_agent_run_id: 7b6592be-7213-44ff-b996-238dc81b7497
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/base/test_002/attempt_01/retry_01/rollout-2026-07-29T08-11-52-019facee-16be-7ab2-a52d-dc31637e5f8b.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/base/test_002/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/base/test_002/attempt_01/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: base/test_002/attempt_02
+  retry_name: retry_01
+  agent_run_id: 0db65848-6532-4ba5-920b-414d0bea9236
+  original_agent_run_id: null
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/base/test_002/attempt_02/retry_01/rollout-2026-07-29T09-14-09-019fad27-1c43-7b80-8d74-95d348249ec4.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/base/test_002/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/base/test_002/attempt_02/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/cc/test_001/attempt_03
+  retry_name: retry_01
+  agent_run_id: 10c05528-7d20-4380-8195-701221297574
+  original_agent_run_id: null
+  status: valid
+  normalized_score: 0.5714285714285714
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_03/retry_01/rollout-2026-07-29T09-14-02-019fad26-ffa2-7501-af56-6201062bd239.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_03/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_001/attempt_03/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/cc/test_002/attempt_01
+  retry_name: logical_retry_01
+  agent_run_id: 2523266c-0667-4dbb-b5d4-9abac1eb1db7
+  original_agent_run_id: e5b537b8-3230-4dbe-92f9-d0f995dbda60
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_01/retry_01/rollout-2026-07-29T08-12-03-019facee-4236-73d3-9d10-9815ae97b133.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_01/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/cc/test_002/attempt_02
+  retry_name: retry_01
+  agent_run_id: 91c3aa8e-7967-4207-b88f-a645b5511d37
+  original_agent_run_id: null
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02/retry_01/rollout-2026-07-29T08-13-20-019facef-6dc2-7851-a6fe-9b96ef632333.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/cc/test_002/attempt_03
+  retry_name: retry_01
+  agent_run_id: d2a8701e-caad-48f4-b164-80634a6bcd76
+  original_agent_run_id: null
+  status: infrastructure_failure
+  normalized_score: null
+  trace_file: null
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_03/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/cc/test_003/attempt_02
+  retry_name: logical_retry_01
+  agent_run_id: c015604b-795a-4193-aa19-142d70516738
+  original_agent_run_id: 4782a456-4c2f-47c8-b313-a88f8387f956
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_02/retry_01/rollout-2026-07-29T09-12-20-019fad25-7254-7702-99af-181dfd6a612b.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_02/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/cc/test_003/attempt_03
+  retry_name: logical_retry_01
+  agent_run_id: 02bec271-79d0-48e5-a540-91a5b25a5478
+  original_agent_run_id: 810c3720-bf94-45af-99dc-01625f49c4a7
+  status: valid
+  normalized_score: 0.368421052632
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_03/retry_01/rollout-2026-07-29T09-18-28-019fad2b-100f-7a22-98e6-5ee516767f71.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_03/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_03/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/cc/test_004/attempt_01
+  retry_name: logical_retry_01
+  agent_run_id: 9aab2b75-158c-4877-9683-0d3c528ed763
+  original_agent_run_id: bc32748a-fa58-4d16-90c9-dc3237e8cc1a
+  status: infrastructure_failure
+  normalized_score: null
+  trace_file: null
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_01/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/cc/test_004/attempt_02
+  retry_name: retry_01
+  agent_run_id: e5b85af8-c172-417f-bf6b-8f65f26b5297
+  original_agent_run_id: null
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_02/retry_01/rollout-2026-07-29T09-00-27-019fad1a-93ac-7f11-b64f-07fc59ce1645.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_02/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/codex/test_002/attempt_01
+  retry_name: retry_01
+  agent_run_id: 8b64c0ea-66f1-4c33-aa0e-5e9995be20c6
+  original_agent_run_id: null
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_01/retry_01/rollout-2026-07-29T07-59-19-019face2-98d3-7693-8266-f7ef4a24520d.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_01/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/codex/test_002/attempt_02
+  retry_name: retry_01
+  agent_run_id: 0435b9bf-3510-40f9-8850-8ef306024f80
+  original_agent_run_id: null
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_02/retry_01/rollout-2026-07-29T08-13-20-019facef-6f33-77e1-ab8a-2f24f0fba52d.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_02/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/codex/test_002/attempt_03
+  retry_name: retry_01
+  agent_run_id: 5f6d9c8e-fb12-43e2-9778-d39b1d4cb70d
+  original_agent_run_id: null
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_03/retry_01/rollout-2026-07-29T10-24-02-019fad67-199e-7e51-8527-9aa2df8800c8.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_03/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/codex/test_003/attempt_01
+  retry_name: logical_retry_01
+  agent_run_id: de78b717-efc4-4f80-9fb0-36e2a7f16bab
+  original_agent_run_id: ae5efc31-25a2-4ace-89a7-2eec3379d130
+  status: valid
+  normalized_score: 0.21052631579
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/retry_01/rollout-2026-07-29T10-24-01-019fad67-141b-7150-999e-5fa7159cf106.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/codex/test_004/attempt_01
+  retry_name: logical_retry_01
+  agent_run_id: b5d72ccc-92a6-428e-9a7e-55f2fdaf0a56
+  original_agent_run_id: 5ccfe643-386d-4b22-b492-793049402cb5
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_01/retry_01/rollout-2026-07-29T07-59-32-019face2-cb08-7f51-b20e-1f3115c77e67.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_004/attempt_01/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/codex/test_005/attempt_02
+  retry_name: logical_retry_01
+  agent_run_id: 5f2b3fc9-9220-4244-a5c7-59d54b828fb2
+  original_agent_run_id: 6f809761-d79b-4afd-9889-4cfb23782ea6
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_02/retry_01/rollout-2026-07-29T09-12-17-019fad25-66fe-7283-8196-e2fe33c48e2f.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/codex/test_005/attempt_02/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/deepagents/test_001/attempt_03
+  retry_name: retry_01
+  agent_run_id: d22bb05d-468d-48b3-8c11-09416396192b
+  original_agent_run_id: null
+  status: valid
+  normalized_score: 0.0
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_03/retry_01/rollout-2026-07-29T10-24-03-019fad67-1c20-79c0-8fa1-d74fddecbc67.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_03/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_03/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/deepagents/test_002/attempt_02
+  retry_name: logical_retry_01
+  agent_run_id: de3276ac-560b-4136-a1bb-ca099a53c58b
+  original_agent_run_id: 0db914a1-512c-4238-a1d2-9c50a218a691
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_02/retry_01/rollout-2026-07-29T08-13-20-019facef-70d7-7fc1-9849-497930f38f17.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_02/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/deepagents/test_002/attempt_03
+  retry_name: logical_retry_01
+  agent_run_id: 9787d285-7241-4a65-a0cd-f7703e5b0534
+  original_agent_run_id: 48fa4f11-11a7-42b9-8b49-abf3173c4f27
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_03/retry_01/rollout-2026-07-29T10-24-02-019fad67-16a8-7f93-9a87-e6cb7d79a156.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_03/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/deepagents/test_003/attempt_02
+  retry_name: logical_retry_01
+  agent_run_id: a5df23b7-e7fe-4a12-b689-db66a006c086
+  original_agent_run_id: 6dba090c-64d4-40ed-a2ea-81aa348ab93b
+  status: valid
+  normalized_score: 0.21052631579
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_02/retry_01/rollout-2026-07-29T10-24-03-019fad67-1ae9-7792-a655-d8cc7e75e3ad.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_02/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_02/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/deepagents/test_003/attempt_03
+  retry_name: retry_01
+  agent_run_id: feb94b5f-0a80-43a2-b958-f1692dcb7e66
+  original_agent_run_id: null
+  status: valid
+  normalized_score: 0.21052631579
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_03/retry_01/rollout-2026-07-29T09-14-15-019fad27-35e5-7911-9dd2-f04f690cfea3.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_03/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_03/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/deepagents/test_004/attempt_01
+  retry_name: logical_retry_01
+  agent_run_id: 2c9bb22a-cb40-4b1d-bd9d-11f71207fcbf
+  original_agent_run_id: 82d8b551-8950-4872-b57b-9fba7ffdaccc
+  status: valid
+  normalized_score: 0.2857142857
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_01/retry_01/rollout-2026-07-29T08-50-05-019fad11-141c-7830-88d7-25902fc87f92.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_01/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_01/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/deepagents/test_004/attempt_02
+  retry_name: retry_01
+  agent_run_id: 8d15d1d5-dfda-4315-9dd1-7db7fd94eec3
+  original_agent_run_id: null
+  status: valid
+  normalized_score: 0.2857142857
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_02/retry_01/rollout-2026-07-29T09-05-04-019fad1e-ca32-7e83-9277-1fe8ee986668.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_02/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_02/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/deepagents/test_004/attempt_03
+  retry_name: logical_retry_01
+  agent_run_id: 06acea27-4ca7-43b3-819e-dff1c1f6ca24
+  original_agent_run_id: aff89e81-13bd-408a-9aed-cd207a431259
+  status: valid
+  normalized_score: 0.2857142857
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_03/retry_01/rollout-2026-07-29T10-55-00-019fad83-6fe6-7fd2-b053-05cb660ba759.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_03/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_03/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/deepagents/test_005/attempt_01
+  retry_name: retry_01
+  agent_run_id: 8219c8f2-bb0d-40bf-aa8a-a218cc190f62
+  original_agent_run_id: null
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_01/retry_01/rollout-2026-07-29T09-00-24-019fad1a-86b5-7581-bb73-3ce714268c98.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_01/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/opencode/test_001/attempt_01
+  retry_name: logical_retry_01
+  agent_run_id: 5af041fa-6abf-4da5-b6b6-46b221c7ef2f
+  original_agent_run_id: f03fcf57-ef7d-4ccd-9732-d99e5f074814
+  status: valid
+  normalized_score: 0.2857142857142857
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_01/retry_01/rollout-2026-07-29T10-24-01-019fad67-12b8-7550-a02e-64dd004064eb.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_01/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_01/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/opencode/test_001/attempt_02
+  retry_name: retry_01
+  agent_run_id: 51bb9738-a349-4b7b-a2bf-72870d18ae13
+  original_agent_run_id: b4e52390-6878-42ed-8f02-2be306c16e6d
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_02/retry_01/rollout-2026-07-29T10-01-00-019fad52-02a8-7b61-905b-3ad99d437129.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_001/attempt_02/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/opencode/test_002/attempt_01
+  retry_name: logical_retry_01
+  agent_run_id: 5a63dd07-ea4c-4309-a641-855f0feab99c
+  original_agent_run_id: c3b6dcf2-84f0-47c1-a007-a04f6acfdaaa
+  status: logical_failure
+  normalized_score: null
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_01/retry_01/rollout-2026-07-29T08-11-51-019facee-1402-7660-9cc4-9d0037575633.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_01/retry_01/score.yaml
+  score_raw_path: null
+- kind: solver
+  logical_slot: fewshot/opencode/test_002/attempt_02
+  retry_name: retry_01
+  agent_run_id: b6afe834-23b4-444b-b8ed-9b8f61e1fd9c
+  original_agent_run_id: cadc872a-4a30-42fa-b684-e6cafa6677a9
+  status: valid
+  normalized_score: 0.0
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02/retry_01/rollout-2026-07-29T10-24-02-019fad67-180a-7b70-ae70-151e156bf112.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/opencode/test_003/attempt_01
+  retry_name: logical_retry_01
+  agent_run_id: 51dc43ad-05b2-4609-85b5-bcd1d980f3fa
+  original_agent_run_id: 804f2fe5-4be3-42a9-a9dd-79f3494f1c16
+  status: valid
+  normalized_score: 0.21052631579
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_01/retry_01/rollout-2026-07-29T10-24-04-019fad67-1eca-7f02-a8e2-76d826e6abb0.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_01/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_01/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_01/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/opencode/test_003/attempt_02
+  retry_name: retry_01
+  agent_run_id: 4fdf5a34-5f67-452c-9ab5-f6b086b5a232
+  original_agent_run_id: 88a6ff97-a7b0-4491-8a63-b0d49bd8972e
+  status: valid
+  normalized_score: 0.105263157895
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_02/retry_01/rollout-2026-07-29T10-43-14-019fad78-aa70-7bd2-99fd-f4b2910fbbee.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_02/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_02/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/opencode/test_003/attempt_03
+  retry_name: logical_retry_01
+  agent_run_id: 16b98367-299f-45d6-b855-2920262f1688
+  original_agent_run_id: 1a2477b5-c760-4c2f-8a3a-ef49be3380a4
+  status: valid
+  normalized_score: 0.0
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_03/retry_01/rollout-2026-07-29T09-18-30-019fad2b-179f-7cf0-ab0a-c18585b32241.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_03/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_03/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/opencode/test_004/attempt_02
+  retry_name: retry_01
+  agent_run_id: 6b9774a2-dc3d-4850-93e5-c365062a171b
+  original_agent_run_id: f1ed0daf-922e-428b-a164-bbf99e2525d1
+  status: valid
+  normalized_score: 0.2857142857
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_02/retry_01/rollout-2026-07-29T10-24-03-019fad67-1d68-7af2-af81-29ab2b1dd417.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_02/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_02/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/opencode/test_004/attempt_03
+  retry_name: retry_01
+  agent_run_id: 25f4d0de-1bda-4046-b230-aa498c141ce1
+  original_agent_run_id: null
+  status: valid
+  normalized_score: 0.1428571429
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_03/retry_01/rollout-2026-07-29T09-55-56-019fad4d-5fba-7471-8836-ed2bb7a85182.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_03/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_03/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_004/attempt_03/retry_01/score_raw.json
+- kind: solver
+  logical_slot: fewshot/opencode/test_005/attempt_02
+  retry_name: retry_01
+  agent_run_id: 1cc1895f-083e-4d4b-b62c-bb0f2ffda3be
+  original_agent_run_id: af6c808b-0e44-4ea6-8fbb-506881c68f15
+  status: valid
+  normalized_score: 0.47619047619
+  trace_file: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_02/retry_01/rollout-2026-07-29T08-11-54-019facee-1ef8-7182-b9f4-5bc0aea6bde1.jsonl
+  metadata_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_02/retry_01/run_metadata.yaml
+  score_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_02/retry_01/score.yaml
+  score_raw_path: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/opencode/test_005/attempt_02/retry_01/score_raw.json
+infrastructure_replacements:
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_004/attempt_01/logical_retry_01
+  agent_run_id: 9b8f839a-d86d-4141-a3b4-83af5a124acd
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:05:27.963733+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_004_attempt_01_logical_retry_01/9b8f839a-d86d-4141-a3b4-83af5a124acd
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_003/attempt_01/logical_retry_01
+  agent_run_id: 949394a4-5bd0-4207-8d5f-4de45cca9a19
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:06:09.435227+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_003_attempt_01_logical_retry_01/949394a4-5bd0-4207-8d5f-4de45cca9a19
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_002/attempt_01/logical_retry_01
+  agent_run_id: 6d1a5c22-5ac6-4a03-8c51-044299745877
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:06:12.201152+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_002_attempt_01_logical_retry_01/6d1a5c22-5ac6-4a03-8c51-044299745877
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/codex/test_003/attempt_01/logical_retry_01
+  agent_run_id: 83c6bd9d-0336-482f-8962-e3a7b12f4ac6
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:06:13.228360+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_codex_test_003_attempt_01_logical_retry_01/83c6bd9d-0336-482f-8962-e3a7b12f4ac6
+- policy: bounded_logical_retry_v1
+  logical_slot: base/test_002/attempt_01/logical_retry_01
+  agent_run_id: 805934d3-a0aa-46b3-9894-22425d1bb182
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:06:14.263597+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/base_test_002_attempt_01_logical_retry_01/805934d3-a0aa-46b3-9894-22425d1bb182
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_001/attempt_01/logical_retry_01
+  agent_run_id: 16b31666-a3ad-45ab-b4e5-67bc01f66dc1
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:06:22.658465+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_001_attempt_01_logical_retry_01/16b31666-a3ad-45ab-b4e5-67bc01f66dc1
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_002/attempt_01/logical_retry_01
+  agent_run_id: 103d5a5d-be44-4424-83c9-c0f768ff5cc4
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:06:23.544478+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_002_attempt_01_logical_retry_01/103d5a5d-be44-4424-83c9-c0f768ff5cc4
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/codex/test_002/attempt_02/retry_01
+  agent_run_id: 4ec1d2a6-1161-41a5-b5d9-c39c0d93380e
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:07:30.919577+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_codex_test_002_attempt_02_retry_01/4ec1d2a6-1161-41a5-b5d9-c39c0d93380e
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_002/attempt_02/logical_retry_01
+  agent_run_id: e5ce959d-7d77-45f3-8d67-02e94c5c98e5
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:07:34.530995+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_002_attempt_02_logical_retry_01/e5ce959d-7d77-45f3-8d67-02e94c5c98e5
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_002/attempt_02/retry_01
+  agent_run_id: 3852fe99-2784-4eee-aefb-df68d3ead972
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:07:35.382945+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_002_attempt_02_retry_01/3852fe99-2784-4eee-aefb-df68d3ead972
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_004/attempt_01/logical_retry_01
+  agent_run_id: 79f48acc-6db5-4160-8678-fa2444c6e9e8
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:07:36.266207+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_004_attempt_01_logical_retry_01/79f48acc-6db5-4160-8678-fa2444c6e9e8
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_003/attempt_02/logical_retry_01
+  agent_run_id: 6c1afdce-40d3-4fe9-b00d-5f8c0b36dad8
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:07:43.798421+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_003_attempt_02_logical_retry_01/6c1afdce-40d3-4fe9-b00d-5f8c0b36dad8
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_005/attempt_01/retry_01
+  agent_run_id: 47c269e5-0d53-4daf-98d7-d227d6bf00de
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:07:46.658980+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_005_attempt_01_retry_01/47c269e5-0d53-4daf-98d7-d227d6bf00de
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_004/attempt_02/retry_01
+  agent_run_id: 06f1a5fb-58c5-40e5-a191-fccfed43a117
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:07:50.281514+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_004_attempt_02_retry_01/06f1a5fb-58c5-40e5-a191-fccfed43a117
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_004/attempt_02/retry_01
+  agent_run_id: 0d299b97-a0b2-4350-8982-0cf6ec18cd91
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:07:52.842056+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_004_attempt_02_retry_01/0d299b97-a0b2-4350-8982-0cf6ec18cd91
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/codex/test_005/attempt_02/logical_retry_01
+  agent_run_id: 7f78a3dc-51d7-4096-ae91-81ff21fdb26f
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:07:59.684157+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_codex_test_005_attempt_02_logical_retry_01/7f78a3dc-51d7-4096-ae91-81ff21fdb26f
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_003/attempt_02/logical_retry_01
+  agent_run_id: e91f1c9d-c6f4-4f9c-b9dd-6a61d5e3ed7e
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:08:06.702660+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_003_attempt_02_logical_retry_01/e91f1c9d-c6f4-4f9c-b9dd-6a61d5e3ed7e
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_001/attempt_03/retry_01
+  agent_run_id: f40985db-7a9d-4cc3-9f61-a1b3b9d0c65a
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:08:15.787968+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_001_attempt_03_retry_01/f40985db-7a9d-4cc3-9f61-a1b3b9d0c65a
+- policy: bounded_logical_retry_v1
+  logical_slot: base/test_002/attempt_02/retry_01
+  agent_run_id: 2e3b20ae-0292-4d3c-8398-7a7703b19213
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:08:39.627261+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/base_test_002_attempt_02_retry_01/2e3b20ae-0292-4d3c-8398-7a7703b19213
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_003/attempt_03/retry_01
+  agent_run_id: 3c5b0ea7-9e13-4789-98bf-84b753ebb18b
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:09:48.415429+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_003_attempt_03_retry_01/3c5b0ea7-9e13-4789-98bf-84b753ebb18b
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_003/attempt_03/logical_retry_01
+  agent_run_id: 5ff734d7-210f-4024-86e8-3d70f3108664
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:09:51.824485+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_003_attempt_03_logical_retry_01/5ff734d7-210f-4024-86e8-3d70f3108664
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_003/attempt_03/logical_retry_01
+  agent_run_id: 5cbb61d2-1cd4-48e6-9e81-13e1d7845674
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:09:52.773886+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_003_attempt_03_logical_retry_01/5cbb61d2-1cd4-48e6-9e81-13e1d7845674
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/codex/test_002/attempt_03/retry_01
+  agent_run_id: c1eccca3-5a6e-408e-a2e0-103ce02c21d7
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:09:58.138981+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_codex_test_002_attempt_03_retry_01/c1eccca3-5a6e-408e-a2e0-103ce02c21d7
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_001/attempt_03/retry_01
+  agent_run_id: 3587027b-a740-46b3-942a-d2bd1e66ad36
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:09:59.132712+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_001_attempt_03_retry_01/3587027b-a740-46b3-942a-d2bd1e66ad36
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_004/attempt_03/retry_01
+  agent_run_id: 387c8255-4fbe-4770-9813-c7cd592fc0b6
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:10:08.954670+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_004_attempt_03_retry_01/387c8255-4fbe-4770-9813-c7cd592fc0b6
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_002/attempt_02/retry_01
+  agent_run_id: 7a502a76-e7b4-4a06-9626-3412cca75c40
+  replacement_count: 1
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:10:11.679298+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_002_attempt_02_retry_01/7a502a76-e7b4-4a06-9626-3412cca75c40
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_001/attempt_02/retry_01
+  agent_run_id: d9790361-55a5-4006-b82a-ce583cbf1c46
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:10:14.749147+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_001_attempt_02_retry_01/d9790361-55a5-4006-b82a-ce583cbf1c46
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_004/attempt_03/logical_retry_01
+  agent_run_id: 47fd4298-0d59-4688-b6e5-5b9386463dd9
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:10:15.648958+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_004_attempt_03_logical_retry_01/47fd4298-0d59-4688-b6e5-5b9386463dd9
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_002/attempt_03/logical_retry_01
+  agent_run_id: 44b11229-4341-4b4f-a267-fc54a9534292
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:10:20.225386+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_002_attempt_03_logical_retry_01/44b11229-4341-4b4f-a267-fc54a9534292
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_002/attempt_03/retry_01
+  agent_run_id: 04d7b046-8024-4ce3-a5c8-bf1309c14505
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:10:22.855574+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_002_attempt_03_retry_01/04d7b046-8024-4ce3-a5c8-bf1309c14505
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_003/attempt_02/retry_01
+  agent_run_id: 05bfa388-b86d-412e-b68c-76442c99e378
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:10:50.061640+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_003_attempt_02_retry_01/05bfa388-b86d-412e-b68c-76442c99e378
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_004/attempt_01/logical_retry_01
+  agent_run_id: ee5d652d-ff84-4b84-b502-1f5bc1bd15be
+  replacement_count: 2
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:11:57.106319+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_004_attempt_01_logical_retry_01/ee5d652d-ff84-4b84-b502-1f5bc1bd15be
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_003/attempt_01/logical_retry_01
+  agent_run_id: 2bb77fa5-f461-47d3-bc1f-17d108ad19e2
+  replacement_count: 2
+  reason: trace extraction status=matched_metrics_failed
+  preserved_at_utc: '2026-07-29T08:12:00.581578+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_003_attempt_01_logical_retry_01/2bb77fa5-f461-47d3-bc1f-17d108ad19e2
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_004/attempt_02/retry_01
+  agent_run_id: 8aaf01ee-fb1a-4a21-a93e-2a9e5d7c3d7a
+  replacement_count: 1
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:12:07.582174+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_004_attempt_02_retry_01/8aaf01ee-fb1a-4a21-a93e-2a9e5d7c3d7a
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_001/attempt_01/logical_retry_01
+  agent_run_id: a594ca00-0308-4e34-b898-2a4724bb39bb
+  replacement_count: 2
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:12:14.203217+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_001_attempt_01_logical_retry_01/a594ca00-0308-4e34-b898-2a4724bb39bb
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/codex/test_003/attempt_01/logical_retry_01
+  agent_run_id: 7aa040ee-ad04-4a02-ae51-c4b4bb9bd77a
+  replacement_count: 2
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T08:12:19.646246+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_codex_test_003_attempt_01_logical_retry_01/7aa040ee-ad04-4a02-ae51-c4b4bb9bd77a
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_003/attempt_02/logical_retry_01
+  agent_run_id: 88c5899c-df29-4b3d-b91d-7b952ee3378a
+  replacement_count: 2
+  reason: "DeepSeek bridge health check failed: en\n    result = self._call_chain(self.handle_open,\
+    \ protocol, protocol +\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/usr/local/lib/python3.12/urllib/request.py\", line 492, in _call_chain\n\
+    \    result = func(*args)\n             ^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\"\
+    , line 1373, in http_open\n    return self.do_open(http.client.HTTPConnection,\
+    \ req)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\"\
+    , line 1348, in do_open\n    r = h.getresponse()\n        ^^^^^^^^^^^^^^^\n  File\
+    \ \"/usr/local/lib/python3.12/http/client.py\", line 1450, in getresponse\n  \
+    \  response.begin()\n  File \"/usr/local/lib/python3.12/http/client.py\", line\
+    \ 336, in begin\n    version, status, reason = self._read_status()\n         \
+    \                     ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/http/client.py\"\
+    , line 297, in _read_status\n    line = str(self.fp.readline(_MAXLINE + 1), \"\
+    iso-8859-1\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/socket.py\"\
+    , line 720, in readinto\n    return self._sock.recv_into(b)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n\
+    TimeoutError: timed out\n"
+  preserved_at_utc: '2026-07-29T09:00:17.627452+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_003_attempt_02_logical_retry_01/88c5899c-df29-4b3d-b91d-7b952ee3378a
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_002/attempt_02/retry_01
+  agent_run_id: 418c37bd-21fd-4be2-bc10-088c65bdd6cf
+  replacement_count: 2
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T10:22:46.989595+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_002_attempt_02_retry_01/418c37bd-21fd-4be2-bc10-088c65bdd6cf
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_002/attempt_03/logical_retry_01
+  agent_run_id: 626540e9-4422-47c1-8737-b487bf0547ab
+  replacement_count: 2
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T10:22:53.870046+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_002_attempt_03_logical_retry_01/626540e9-4422-47c1-8737-b487bf0547ab
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/codex/test_002/attempt_03/retry_01
+  agent_run_id: 60758889-da2c-4da1-8906-17bde1d27d4d
+  replacement_count: 2
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T10:22:54.864762+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_codex_test_002_attempt_03_retry_01/60758889-da2c-4da1-8906-17bde1d27d4d
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_001/attempt_03/retry_01
+  agent_run_id: 99551bc6-5e82-4006-8cb2-18e9fc2032a6
+  replacement_count: 2
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T10:22:55.860130+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_001_attempt_03_retry_01/99551bc6-5e82-4006-8cb2-18e9fc2032a6
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/opencode/test_003/attempt_02/retry_01
+  agent_run_id: 70774610-bae5-45d2-a14d-ccbdfc18285e
+  replacement_count: 2
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T10:22:56.873196+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_opencode_test_003_attempt_02_retry_01/70774610-bae5-45d2-a14d-ccbdfc18285e
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_002/attempt_03/retry_01
+  agent_run_id: 7fa2f421-e2d4-4e51-a439-a1ea60a4f660
+  replacement_count: 2
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T10:22:58.866215+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_002_attempt_03_retry_01/7fa2f421-e2d4-4e51-a439-a1ea60a4f660
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_004/attempt_01/logical_retry_01
+  agent_run_id: 5617dfef-9ed6-44ce-b336-8dfa75e52973
+  replacement_count: 3
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T10:22:59.846041+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_004_attempt_01_logical_retry_01/5617dfef-9ed6-44ce-b336-8dfa75e52973
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/deepagents/test_004/attempt_03/logical_retry_01
+  agent_run_id: 8590121f-2334-4b3a-b2d4-b67c2c98bd21
+  replacement_count: 2
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T10:23:00.816719+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_deepagents_test_004_attempt_03_logical_retry_01/8590121f-2334-4b3a-b2d4-b67c2c98bd21
+- policy: bounded_logical_retry_v1
+  logical_slot: fewshot/cc/test_002/attempt_03/retry_01
+  agent_run_id: 60673149-51f1-43ff-aa7e-910b219e881d
+  replacement_count: 3
+  reason: provider/protocol failure exit_code=1
+  preserved_at_utc: '2026-07-29T11:22:51.663133+00:00'
+  replacement_policy: same logical attempt, new physical UUID, unchanged prompt template/model/evidence/timeout
+  preserved_dir: scratch/bounded_logical_retry_v1/infrastructure_failures/deepseek_v4_max_preview/fewshot_cc_test_002_attempt_03_retry_01/60673149-51f1-43ff-aa7e-910b219e881d
+hash_evidence:
+  first_pass_hash_snapshot: scratch/bounded_logical_retry_v1/first_pass_hash_snapshot.yaml
+  first_pass_file_hashes: scratch/bounded_logical_retry_v1/first_pass_file_hashes.tsv
+  first_pass_hash_verification: scratch/bounded_logical_retry_v1/first_pass_hash_verification.yaml
+  first_pass_unchanged: true
+plan: scratch/bounded_logical_retry_v1/supplemental_run_plan.yaml
+ledger: scratch/bounded_logical_retry_v1/supplemental_ledger.yaml

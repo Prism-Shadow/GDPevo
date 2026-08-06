@@ -1,0 +1,351 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+parent_experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_001
+model_profile: gpt5_5_xhigh
+harness: codex
+status: complete
+model:
+  generator_model: gpt-5.5
+  solver_model: gpt-5.5
+  reasoning_effort: xhigh
+  provider_id: openai
+  observed_identity: gpt-5.5
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:ce8fa42e6a045881515b257f97457ffd841cf1b5eaab0b2996184d44ae787775
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/gpt5_5_xhigh/task_group_001.yaml
+  report_sha256: dfa47ab1a784942d53389beb3eff75a0e8ebc9064fa94e155675b6fb6bde5901
+  status: complete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:ce8fa42e6a045881515b257f97457ffd841cf1b5eaab0b2996184d44ae787775
+execution:
+  started_at: '2026-07-28T10:20:02Z'
+  completed_at: '2026-07-28T10:36:14Z'
+  run_manifest: scratch/run_manifest/gpt5_5_xhigh.yaml
+  run_manifest_sha256: 74fd5b29a98ee0c4adbdd44ad6563edfe979b68f21f329f33a7eb0b0074c4449
+  run_plan_sha256: d302876c01c2e0ed1c5da069d5a4f421265efdf7bb00ebae80016b0206d1f14e
+  helper_sha256: ab3244a0a5ae83a445fe11d1b4edd89c50e749cc808d9cbf2538f4f97be64454
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  generation_trace_root: original_traces/gpt5_5_xhigh/skill_generation/naive
+  solver_trace_root: original_traces/gpt5_5_xhigh/fewshot/naive
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        status: valid
+        incomplete_reason: null
+        logical_slot: naive/attempt_01
+        agent_run_id: 78f6798d-47ab-45a2-a9f2-b82df1b17d8c
+        started_at: '2026-07-28T10:20:02Z'
+        completed_at: '2026-07-28T10:25:48Z'
+        duration_seconds: 344.3614884214476
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 88579152adf44e846addc80f2bce306e05d5ae6b332c675d5f33d4cc31d75d4c
+        staged_input_sha256:
+          creator: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          creator_contract.md: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          train_tasks: 544b43d853022178278cbce941d43511a24ccaddbaa1e0675d96e9d807a20589
+          train_answers: 3d9a9afd9a35728eb4bc5356ae69ea78d26edf83d32675cb335d22810fcf4ebf
+          environment_access.md: 705ca08c005eaa06e083579e2f3cc0a2b5e3dc964eefe656d0cfc056e18db710
+        codex_exit_code: 0
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: 7a39ef1780162d52b41637202bccabefc5c04147253d9e4b134cd70bfd7c57ce
+        file_count: 1
+        bytes: 11273
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 17
+        cached_input_tokens: 548736
+        input_tokens: 607336
+        observed_model_identity: gpt-5.5
+        output_tokens: 11031
+        portability_warnings: []
+        reasoning_output_tokens: 4790
+        tool_calls: 55
+        total_tokens: 618367
+        usage_source: final_token_count.info.total_token_usage
+        primary_trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01/primary.jsonl
+        cost_usd: 0.898298
+      attempt_02:
+        status: valid
+        incomplete_reason: null
+        logical_slot: naive/attempt_02
+        agent_run_id: aca04623-0dff-4b00-9030-b1e69f81454d
+        started_at: '2026-07-28T10:20:02Z'
+        completed_at: '2026-07-28T10:25:18Z'
+        duration_seconds: 314.95488007273525
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 623e140eab4df1e017a592dffddd742c31e62b2eec3c08141a3386ba260b067a
+        staged_input_sha256:
+          creator: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          creator_contract.md: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          train_tasks: 544b43d853022178278cbce941d43511a24ccaddbaa1e0675d96e9d807a20589
+          train_answers: 3d9a9afd9a35728eb4bc5356ae69ea78d26edf83d32675cb335d22810fcf4ebf
+          environment_access.md: 705ca08c005eaa06e083579e2f3cc0a2b5e3dc964eefe656d0cfc056e18db710
+        codex_exit_code: 0
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_02
+        skill_bundle_sha256: e242c3fadee7f74f78b31e6275823938baa8078c4eec146f5e31183e9603bc24
+        file_count: 1
+        bytes: 10926
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 17
+        cached_input_tokens: 497792
+        input_tokens: 549494
+        observed_model_identity: gpt-5.5
+        output_tokens: 9949
+        portability_warnings: []
+        reasoning_output_tokens: 3592
+        tool_calls: 58
+        total_tokens: 559443
+        usage_source: final_token_count.info.total_token_usage
+        primary_trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02/primary.jsonl
+        cost_usd: 0.805876
+      attempt_03:
+        status: valid
+        incomplete_reason: null
+        logical_slot: naive/attempt_03
+        agent_run_id: 8bb810d1-7dc3-4972-b65b-a5c4adf60809
+        started_at: '2026-07-28T10:20:02Z'
+        completed_at: '2026-07-28T10:25:07Z'
+        duration_seconds: 304.16383358463645
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: e25d7c7285138417d3b70377dd2c77e96031d16f21bab4a7c2867d97b56ace21
+        staged_input_sha256:
+          creator: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+          creator_contract.md: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+          train_tasks: 544b43d853022178278cbce941d43511a24ccaddbaa1e0675d96e9d807a20589
+          train_answers: 3d9a9afd9a35728eb4bc5356ae69ea78d26edf83d32675cb335d22810fcf4ebf
+          environment_access.md: 705ca08c005eaa06e083579e2f3cc0a2b5e3dc964eefe656d0cfc056e18db710
+        codex_exit_code: 0
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: 9144417cbd0097f13d79e05e8c0130004f281496af68686c55da232b22047d0d
+        file_count: 1
+        bytes: 12148
+        assistant_turn_source: response_item.message.role=assistant
+        assistant_turns: 11
+        cached_input_tokens: 408192
+        input_tokens: 450663
+        observed_model_identity: gpt-5.5
+        output_tokens: 11551
+        portability_warnings: []
+        reasoning_output_tokens: 5930
+        tool_calls: 46
+        total_tokens: 462214
+        usage_source: final_token_count.info.total_token_usage
+        primary_trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03/primary.jsonl
+        cost_usd: 0.762981
+    valid_generation_rate: 1.0
+  overall_acc_at_3: 0.6965116666666666
+  overall_std_at_3: 0.020235207922372857
+  lift_over_shared_base: 0.1594030666666666
+  efficiency:
+    input_tokens_avg_3: 262380.2
+    cached_input_tokens_avg_3: 224503.46666666667
+    output_tokens_avg_3: 10770.066666666668
+    reasoning_output_tokens_avg_3: 7156.4
+    cost_usd_avg_3: 0.6247374000000001
+    rounds_avg_3: 10.933333333333334
+    tool_calls_avg_3: 29.0
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.875
+      - 0.875
+      - 0.875
+      acc_at_3: 0.875
+      std_at_3: 0.0
+      input_tokens_avg_3: 254042.66666666666
+      cached_input_tokens_avg_3: 213888.0
+      output_tokens_avg_3: 11181.333333333334
+      reasoning_output_tokens_avg_3: 7331.333333333333
+      cost_usd_avg_3: 0.6431573333333334
+      rounds_avg_3: 10.333333333333334
+      tool_calls_avg_3: 29.0
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.875
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/primary.jsonl
+          agent_run_id: e1900b85-fd88-40bb-880b-d02d17b39e43
+          incomplete_reason: null
+        attempt_02:
+          status: complete
+          score: 0.875
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/primary.jsonl
+          agent_run_id: 819d6396-c55a-4fbc-aa65-1c45a01930f7
+          incomplete_reason: null
+        attempt_03:
+          status: complete
+          score: 0.875
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/primary.jsonl
+          agent_run_id: 9f4a1ff7-f1a8-42af-9815-412b1f310512
+          incomplete_reason: null
+    test_002:
+      status: complete
+      scores:
+      - 0.681818
+      - 0.590909
+      - 0.681818
+      acc_at_3: 0.651515
+      std_at_3: 0.04285491358059191
+      input_tokens_avg_3: 300960.6666666667
+      cached_input_tokens_avg_3: 258090.66666666666
+      output_tokens_avg_3: 9850.333333333334
+      reasoning_output_tokens_avg_3: 6214.666666666667
+      cost_usd_avg_3: 0.6389053333333333
+      rounds_avg_3: 12.0
+      tool_calls_avg_3: 31.666666666666668
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.681818
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/primary.jsonl
+          agent_run_id: bad32b10-eaac-4f87-83a6-52bf51d89ec4
+          incomplete_reason: null
+        attempt_02:
+          status: complete
+          score: 0.590909
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/primary.jsonl
+          agent_run_id: 86c04ca1-37e4-4ef9-96a0-33faa03805cc
+          incomplete_reason: null
+        attempt_03:
+          status: complete
+          score: 0.681818
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/primary.jsonl
+          agent_run_id: 78aaca87-7c9c-41da-a441-489b71886182
+          incomplete_reason: null
+    test_003:
+      status: complete
+      scores:
+      - 0.384615
+      - 0.384615
+      - 0.384615
+      acc_at_3: 0.384615
+      std_at_3: 0.0
+      input_tokens_avg_3: 171397.0
+      cached_input_tokens_avg_3: 144042.66666666666
+      output_tokens_avg_3: 6514.0
+      reasoning_output_tokens_avg_3: 3951.6666666666665
+      cost_usd_avg_3: 0.404213
+      rounds_avg_3: 7.666666666666667
+      tool_calls_avg_3: 20.666666666666668
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.384615
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/primary.jsonl
+          agent_run_id: 3d0f3cd7-c277-4c62-aee8-0e7ab012b45a
+          incomplete_reason: null
+        attempt_02:
+          status: complete
+          score: 0.384615
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/primary.jsonl
+          agent_run_id: 970f146c-fce5-41d2-8e99-bcf33b14f34f
+          incomplete_reason: null
+        attempt_03:
+          status: complete
+          score: 0.384615
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/primary.jsonl
+          agent_run_id: 25058dac-39e0-48ea-95c5-0bf303c62569
+          incomplete_reason: null
+    test_004:
+      status: complete
+      scores:
+      - 0.785714
+      - 0.857143
+      - 0.714286
+      acc_at_3: 0.7857143333333333
+      std_at_3: 0.058321126031272374
+      input_tokens_avg_3: 297934.6666666667
+      cached_input_tokens_avg_3: 254549.33333333334
+      output_tokens_avg_3: 15899.0
+      reasoning_output_tokens_avg_3: 11205.0
+      cost_usd_avg_3: 0.8211713333333334
+      rounds_avg_3: 11.666666666666666
+      tool_calls_avg_3: 34.0
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.785714
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/primary.jsonl
+          agent_run_id: 059482c9-bee5-48c8-b397-cc5563afe391
+          incomplete_reason: null
+        attempt_02:
+          status: complete
+          score: 0.857143
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/primary.jsonl
+          agent_run_id: 3289ddd7-14a0-4532-85fe-6aec0d11fcfe
+          incomplete_reason: null
+        attempt_03:
+          status: complete
+          score: 0.714286
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/primary.jsonl
+          agent_run_id: 6b65ff4e-1d62-4439-a0cb-cb0c4ef755eb
+          incomplete_reason: null
+    test_005:
+      status: complete
+      scores:
+      - 0.785714
+      - 0.785714
+      - 0.785714
+      acc_at_3: 0.785714
+      std_at_3: 0.0
+      input_tokens_avg_3: 287566.0
+      cached_input_tokens_avg_3: 251946.66666666666
+      output_tokens_avg_3: 10405.666666666666
+      reasoning_output_tokens_avg_3: 7079.333333333333
+      cost_usd_avg_3: 0.61624
+      rounds_avg_3: 13.0
+      tool_calls_avg_3: 29.666666666666668
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.785714
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/primary.jsonl
+          agent_run_id: c7703959-1e4b-4b01-9a26-b790acf50f24
+          incomplete_reason: null
+        attempt_02:
+          status: complete
+          score: 0.785714
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/primary.jsonl
+          agent_run_id: eb680b13-fde3-43a7-9942-29e8a8ebe1af
+          incomplete_reason: null
+        attempt_03:
+          status: complete
+          score: 0.785714
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03
+          trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/primary.jsonl
+          agent_run_id: bc7ec04c-b6d3-4107-8a0e-98841ee67d08
+          incomplete_reason: null
+infrastructure_replacements: []
+notes: []

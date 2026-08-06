@@ -85,7 +85,11 @@ function ResultsSection({ lang }) {
         <p className="lead">
           <LocalizedMarkdown copy={results.lead} />
         </p>
-        <BenchmarkFigure className="results-benchmark-figure" variant="leaderboard" />
+        <BenchmarkFigure
+          className="results-benchmark-figure"
+          variant="leaderboard"
+          caption={results.leaderboardCaption}
+        />
         <TaskGroupRadar lang={lang} />
         {results.notes.map((note) => (
           <p className="note" key={note.key}>

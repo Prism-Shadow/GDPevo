@@ -87,7 +87,7 @@ export const homeContent = {
       },
       {
         key: "accuracy",
-        value: "+18.19",
+        value: "+15.14",
         unit: "pp",
         positive: true,
         label: {
@@ -97,7 +97,7 @@ export const homeContent = {
       },
       {
         key: "cost",
-        value: "−29.20",
+        value: "−29.18",
         unit: "%",
         positive: true,
         label: {
@@ -124,9 +124,13 @@ export const homeContent = {
     }
   },
   results: {
+    leaderboardCaption: {
+      en: "Results for the four agents evaluated in the paper across all 24 task groups. Each task is averaged over three runs.",
+      zh: "论文所评测的四个 Agent 在全部 24 个任务组上的结果。每个任务运行三次后取平均。"
+    },
     heading: {
-      en: "Self-evolution makes agents more accurate while spending **fewer** tokens.",
-      zh: "自进化让 Agent 更准，同时花**更少**的 token。"
+      en: "Self-evolution makes agents more accurate, often while spending **fewer** tokens.",
+      zh: "自进化让 Agent 更准，并且往往花**更少**的 token。"
     },
     lead: {
       en: "Each task group has 5 training samples and 5 test samples. Released evaluations compare `base` with three evolution settings: `fewshot`, `self`, and `reflect-3`. The measurement is the agent's improvement on tasks it has never seen.",
@@ -135,18 +139,18 @@ export const homeContent = {
     notes: [
       {
         key: "acc",
-        en: "**ACC** = test-set accuracy averaged over 3 attempts per task. The current released leaderboard covers Codex GPT-5.5, Claude Code Opus 4.8 / GLM-5.2 / Kimi K2.6 / DeepSeek V4 Pro, and Panofy Opus 4.6.",
-        zh: "**ACC** = 每个测试任务跑 3 次后取平均的准确率。当前 released leaderboard 覆盖 Codex GPT-5.5、Claude Code Opus 4.8 / GLM-5.2 / Kimi K2.6 / DeepSeek V4 Pro，以及 Panofy Opus 4.6。"
+        en: "**ACC** = test-set accuracy averaged over 3 attempts per task. The task-group 001–024 leaderboard covers Codex GPT-5.5 and Claude Code Opus 4.8 / GLM-5.2 / DeepSeek V4 Pro Preview.",
+        zh: "**ACC** = 每个测试任务跑 3 次后取平均的准确率。任务组 001–024 榜单覆盖 Codex GPT-5.5，以及 Claude Code Opus 4.8 / GLM-5.2 / DeepSeek V4 Pro Preview。"
       },
       {
         key: "lift",
-        en: "Best evolved setting per released run (accuracy lift / cost change): **+21.83 pp / −12.28%** (GLM-5.2) · **+21.79 pp / −9.61%** (Opus 4.8) · **+21.07 pp / +8.27%** (Panofy) · **+18.19 pp / −29.24%** (Codex) · **+8.74 pp / +2.15%** (DeepSeek) · **+7.54 pp / −17.19%** (Kimi).",
-        zh: "每个 released run 中表现最好的进化设置（准确率提升 / 成本变化）：**+21.83 pp / −12.28%**（GLM-5.2）· **+21.79 pp / −9.61%**（Opus 4.8）· **+21.07 pp / +8.27%**（Panofy）· **+18.19 pp / −29.24%**（Codex）· **+8.74 pp / +2.15%**（DeepSeek）· **+7.54 pp / −17.19%**（Kimi）。"
+        en: "Best evolved setting per complete run (accuracy lift / cost change): **+16.44 pp / −0.57%** (Opus 4.8) · **+15.14 pp / −20.88%** (GPT-5.5) · **+13.97 pp / +5.74%** (GLM-5.2) · **+5.21 pp / +2.58%** (DeepSeek V4 Pro Preview).",
+        zh: "每个完整运行中表现最好的进化设置（准确率提升 / 成本变化）：**+16.44 pp / −0.57%**（Opus 4.8）· **+15.14 pp / −20.88%**（GPT-5.5）· **+13.97 pp / +5.74%**（GLM-5.2）· **+5.21 pp / +2.58%**（DeepSeek V4 Pro Preview）。"
       },
       {
         key: "reports",
-        en: "Full per-task reports are under [`experiments/codex_gpt5_5_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh), [`experiments/claude_code_opus_4_8_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_opus_4_8_xhigh), [`experiments/panofy_claude_opus_4_6_high/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/panofy_claude_opus_4_6_high), [`experiments/claude_code_glm_5_2_max/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_glm_5_2_max), [`experiments/claude_code_kimi2_6_enabled/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_kimi2_6_enabled), and [`experiments/claude_code_deepseek_v4_pro_max/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_deepseek_v4_pro_max).",
-        zh: "完整的逐个任务报告见 [`experiments/codex_gpt5_5_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh)、[`experiments/claude_code_opus_4_8_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_opus_4_8_xhigh)、[`experiments/panofy_claude_opus_4_6_high/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/panofy_claude_opus_4_6_high)、[`experiments/claude_code_glm_5_2_max/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_glm_5_2_max)、[`experiments/claude_code_kimi2_6_enabled/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_kimi2_6_enabled) 和 [`experiments/claude_code_deepseek_v4_pro_max/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_deepseek_v4_pro_max)。"
+        en: "Per-task reports are under [`experiments/codex_gpt5_5_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh), [`experiments/claude_code_opus_4_8_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_opus_4_8_xhigh), [`experiments/claude_code_glm_5_2_max/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_glm_5_2_max), and [`experiments/claude_code_deepseek_v4_pro_max/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_deepseek_v4_pro_max).",
+        zh: "逐个任务报告见 [`experiments/codex_gpt5_5_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/codex_gpt5_5_xhigh)、[`experiments/claude_code_opus_4_8_xhigh/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_opus_4_8_xhigh)、[`experiments/claude_code_glm_5_2_max/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_glm_5_2_max) 和 [`experiments/claude_code_deepseek_v4_pro_max/`](https://github.com/Prism-Shadow/GDPevo/tree/main/experiments/claude_code_deepseek_v4_pro_max)。"
       }
     ],
     blogLink: {
