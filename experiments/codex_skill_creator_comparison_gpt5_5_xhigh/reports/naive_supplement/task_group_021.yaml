@@ -1,0 +1,2599 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+parent_experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_021
+model_profile: gpt5_5_xhigh
+harness: codex
+status: complete
+model:
+  generator_model: gpt-5.5
+  solver_model: gpt-5.5
+  reasoning_effort: xhigh
+  provider_id: openai
+  observed_identity: gpt-5.5
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:0fbd4a82bc7ab915a55b9122f3f31048047326dc0c0ad3c5a9371ade14b55398
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/gpt5_5_xhigh/task_group_021.yaml
+  report_sha256: a5b1debf6ea8d209d4512c258e7e291d3d64ab1f7cc9c67e034633a6f2d6dacc
+  status: complete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:0fbd4a82bc7ab915a55b9122f3f31048047326dc0c0ad3c5a9371ade14b55398
+execution:
+  started_at: '2026-07-29T05:02:05Z'
+  completed_at: '2026-07-29T05:23:49Z'
+  run_manifest: scratch/run_manifest/gpt5_5_xhigh.yaml
+  run_manifest_sha256: cbe0a9319ff649bed4e96796e41827b94ee7588089fd9681d80147b3f4c2cb8f
+  run_plan_sha256: d302876c01c2e0ed1c5da069d5a4f421265efdf7bb00ebae80016b0206d1f14e
+  helper_sha256: bcca2178293ce7d2c5edaffc9373f7d15afe417a3878affa67ab9475a6c776d2
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  generation_trace_root: original_traces/gpt5_5_xhigh/skill_generation/naive
+  solver_trace_root: original_traces/gpt5_5_xhigh/fewshot/naive
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        logical_slot: naive/attempt_01
+        agent_run_id: 0c4e425f-e686-4aa9-89d8-95ccf0ab8baf
+        started_at: '2026-07-28T10:36:43Z'
+        completed_at: '2026-07-28T10:50:38Z'
+        run_dir: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z/gpt5_5_xhigh/generation/naive__attempt_01
+        trace_dir: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01
+        primary_trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_01/stdout.jsonl
+        trace_metrics: null
+        trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+          was found'
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 6c87cb5e19eef594bc82c379d58070e3e1a752b72dbe42056b0b30adc6e17c8b
+        exit_code: 0
+        timed_out: false
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: 8ba45894312198aded2ca0463b59453bd9c8b768c56fde3476df29afe1c36f6c
+        recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+      attempt_02:
+        logical_slot: naive/attempt_02
+        agent_run_id: 8da45dcf-9a50-4002-b2a1-ce40bc59b437
+        started_at: '2026-07-28T10:50:38Z'
+        completed_at: '2026-07-28T10:58:07Z'
+        run_dir: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z/gpt5_5_xhigh/generation/naive__attempt_02
+        trace_dir: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02
+        primary_trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_02/stdout.jsonl
+        trace_metrics: null
+        trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+          was found'
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: cf2d9b89dd91e6a9777408b5805bb9d2299687d442ed3d0cc4a77b89f66a34b1
+        exit_code: 0
+        timed_out: false
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_02
+        skill_bundle_sha256: 761ba1cfd33d4350706c80de82ffd11125239d078a4343757eb2334925ad679d
+        recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+      attempt_03:
+        logical_slot: naive/attempt_03
+        agent_run_id: 199598a0-528b-46b9-8f42-1b12cba07a85
+        started_at: '2026-07-28T10:58:08Z'
+        completed_at: '2026-07-28T11:05:54Z'
+        run_dir: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z/gpt5_5_xhigh/generation/naive__attempt_03
+        trace_dir: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03
+        primary_trace: original_traces/gpt5_5_xhigh/skill_generation/naive/attempt_03/stdout.jsonl
+        trace_metrics: null
+        trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+          was found'
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: c5722f5ff8275c5040234bdd71c921812be3f1e6c80a45cf1a32dba81ed5de50
+        exit_code: 0
+        timed_out: false
+        status: valid
+        skill_dir: skills/gpt5_5_xhigh/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: b877edf9636f2a314b9fff58937955b3ecbb1117b32386ff23b9eb5f6aa25331
+        recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+    valid_generation_rate: 1.0
+    efficiency:
+      input_tokens: 0
+      cached_input_tokens: 0
+      output_tokens: 0
+      reasoning_output_tokens: 0
+      total_tokens: 0
+      assistant_turns: 0
+      tool_calls: 0
+  overall_acc_at_3: 0.7112487100103199
+  overall_std_at_3: 0.09724807526625709
+  lift_over_shared_base: 0.25696410962045624
+  efficiency:
+    input_tokens: 0
+    cached_input_tokens: 0
+    output_tokens: 0
+    reasoning_output_tokens: 0
+    total_tokens: 0
+    assistant_turns: 0
+    tool_calls: 0
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.7777777777777777
+      - 0.611111111111111
+      - 0.611111111111111
+      acc_at_3: 0.6666666666666666
+      std_at_3: 0.0785674201318386
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_001/attempt_01
+          agent_run_id: e2e02e92-4622-45d3-a2d7-75ccf6078bef
+          started_at: '2026-07-28T11:05:55Z'
+          completed_at: '2026-07-28T11:18:32Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_001__attempt_01
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_01/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 197292ffcbbca4a094bb8e4566305c92c72f61a6b81ed64e5b3bc4cd5196ada4
+          exit_code: 0
+          timed_out: false
+          score: 0.7777777777777777
+          evaluator:
+            status: scored
+            score: 0.7777777777777777
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.16666666666666666
+                details:
+                  declared_paths:
+                  - quality_summary
+                  - quarantine_row_ids
+                  - country_rollup
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.16666666666666666
+                goal: Exact population quality accounting, quarantine population,
+                  and country rollup.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.1111111111111111
+                details:
+                  declared_paths:
+                  - focus_cases[].focus_case_id
+                  - focus_cases[].seed_row_id
+                  - focus_cases[].internal_controls.identity_code
+                  - focus_cases[].identity_resolution
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.1111111111111111
+                goal: Exact focus-case identity controls, evidence memberships, and
+                  master decisions.
+                passed: true
+                point_id: SP002
+                raw_weight: 2
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - focus_cases[].canonical_contact
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05555555555555555
+                goal: Exact canonical contact outcomes for all focus cases.
+                passed: true
+                point_id: SP003
+                raw_weight: 1
+              - assigned_score: 0.16666666666666666
+                details:
+                  declared_paths:
+                  - focus_cases[].internal_controls.field_provenance_code
+                  - focus_cases[].field_provenance
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.16666666666666666
+                goal: Exact field-provenance controls, selected sources, and precedence
+                  reasons.
+                passed: true
+                point_id: SP004
+                raw_weight: 3
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - focus_cases[].internal_controls.outreach_code
+                  - focus_cases[].renewal_readiness
+                  - renewal_ready_master_ids
+                  - certification_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05555555555555555
+                goal: Exact renewal-readiness controls, ready population, and certification
+                  action.
+                passed: true
+                point_id: SP005
+                raw_weight: 1
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - unsafe_identity_containment_robustness.policy_id
+                  - unsafe_identity_containment_robustness.original_graph
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_identity_containment_robustness.original_graph
+                earned_score: 0.0
+                goal: Exact unsafe-identity baseline graph.
+                passed: false
+                point_id: SP006
+                raw_weight: 1
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - unsafe_identity_containment_robustness.minimum_containment_repair
+                  - unsafe_identity_containment_robustness.source_withdrawal_checks
+                  - unsafe_identity_containment_robustness.summary
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_identity_containment_robustness.source_withdrawal_checks
+                earned_score: 0.0
+                goal: Exact minimum containment repair and source-withdrawal robustness
+                  results.
+                passed: false
+                point_id: SP007
+                raw_weight: 1
+              - assigned_score: 0.16666666666666666
+                details:
+                  declared_paths:
+                  - fx_budgeted_evidence_recovery.recovery_id
+                  - fx_budgeted_evidence_recovery.fx_basis
+                  - fx_budgeted_evidence_recovery.candidate_batches
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.16666666666666666
+                goal: Exact FX basis, candidate recovery batches, and batch costs.
+                passed: true
+                point_id: SP008
+                raw_weight: 3
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - fx_budgeted_evidence_recovery.initial_state
+                  - fx_budgeted_evidence_recovery.plan_search
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05555555555555555
+                goal: Exact initial-state assessment and selected two-stage evidence-recovery
+                  plan.
+                passed: true
+                point_id: SP009
+                raw_weight: 1
+              - assigned_score: 0.1111111111111111
+                details:
+                  declared_paths:
+                  - source_sequence_release_stability_audit.audit_id
+                  - source_sequence_release_stability_audit.order_results
+                  - source_sequence_release_stability_audit.summary
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - source_sequence_release_stability_audit.order_results
+                earned_score: 0.0
+                goal: Exact all-permutation source-sequence stability audit.
+                passed: false
+                point_id: SP010
+                raw_weight: 2
+              score: 0.7777777777777777
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+        attempt_02:
+          logical_slot: naive/test_001/attempt_02
+          agent_run_id: 7dcf24c6-034e-436d-abf7-3c8052cbaff5
+          started_at: '2026-07-28T11:05:55Z'
+          completed_at: '2026-07-28T11:22:26Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_001__attempt_02
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_02/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: a4b0e4e6aab5902eade0216e2b3f7236deb47d50772519d616c173737300b2ca
+          exit_code: 0
+          timed_out: false
+          score: 0.611111111111111
+          evaluator:
+            status: scored
+            score: 0.611111111111111
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.16666666666666666
+                details:
+                  declared_paths:
+                  - quality_summary
+                  - quarantine_row_ids
+                  - country_rollup
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.16666666666666666
+                goal: Exact population quality accounting, quarantine population,
+                  and country rollup.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.1111111111111111
+                details:
+                  declared_paths:
+                  - focus_cases[].focus_case_id
+                  - focus_cases[].seed_row_id
+                  - focus_cases[].internal_controls.identity_code
+                  - focus_cases[].identity_resolution
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - focus_cases[].internal_controls.identity_code
+                  - focus_cases[].identity_resolution
+                earned_score: 0.0
+                goal: Exact focus-case identity controls, evidence memberships, and
+                  master decisions.
+                passed: false
+                point_id: SP002
+                raw_weight: 2
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - focus_cases[].canonical_contact
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05555555555555555
+                goal: Exact canonical contact outcomes for all focus cases.
+                passed: true
+                point_id: SP003
+                raw_weight: 1
+              - assigned_score: 0.16666666666666666
+                details:
+                  declared_paths:
+                  - focus_cases[].internal_controls.field_provenance_code
+                  - focus_cases[].field_provenance
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.16666666666666666
+                goal: Exact field-provenance controls, selected sources, and precedence
+                  reasons.
+                passed: true
+                point_id: SP004
+                raw_weight: 3
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - focus_cases[].internal_controls.outreach_code
+                  - focus_cases[].renewal_readiness
+                  - renewal_ready_master_ids
+                  - certification_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05555555555555555
+                goal: Exact renewal-readiness controls, ready population, and certification
+                  action.
+                passed: true
+                point_id: SP005
+                raw_weight: 1
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - unsafe_identity_containment_robustness.policy_id
+                  - unsafe_identity_containment_robustness.original_graph
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_identity_containment_robustness.original_graph
+                earned_score: 0.0
+                goal: Exact unsafe-identity baseline graph.
+                passed: false
+                point_id: SP006
+                raw_weight: 1
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - unsafe_identity_containment_robustness.minimum_containment_repair
+                  - unsafe_identity_containment_robustness.source_withdrawal_checks
+                  - unsafe_identity_containment_robustness.summary
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_identity_containment_robustness.source_withdrawal_checks
+                earned_score: 0.0
+                goal: Exact minimum containment repair and source-withdrawal robustness
+                  results.
+                passed: false
+                point_id: SP007
+                raw_weight: 1
+              - assigned_score: 0.16666666666666666
+                details:
+                  declared_paths:
+                  - fx_budgeted_evidence_recovery.recovery_id
+                  - fx_budgeted_evidence_recovery.fx_basis
+                  - fx_budgeted_evidence_recovery.candidate_batches
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.16666666666666666
+                goal: Exact FX basis, candidate recovery batches, and batch costs.
+                passed: true
+                point_id: SP008
+                raw_weight: 3
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - fx_budgeted_evidence_recovery.initial_state
+                  - fx_budgeted_evidence_recovery.plan_search
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - fx_budgeted_evidence_recovery.initial_state
+                  - fx_budgeted_evidence_recovery.plan_search
+                earned_score: 0.0
+                goal: Exact initial-state assessment and selected two-stage evidence-recovery
+                  plan.
+                passed: false
+                point_id: SP009
+                raw_weight: 1
+              - assigned_score: 0.1111111111111111
+                details:
+                  declared_paths:
+                  - source_sequence_release_stability_audit.audit_id
+                  - source_sequence_release_stability_audit.order_results
+                  - source_sequence_release_stability_audit.summary
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - source_sequence_release_stability_audit.order_results
+                earned_score: 0.0
+                goal: Exact all-permutation source-sequence stability audit.
+                passed: false
+                point_id: SP010
+                raw_weight: 2
+              score: 0.611111111111111
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+        attempt_03:
+          logical_slot: naive/test_001/attempt_03
+          agent_run_id: 9ef045eb-823b-486a-a124-fca7116e47ff
+          started_at: '2026-07-29T05:02:12Z'
+          completed_at: '2026-07-29T05:17:29Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_001__attempt_03
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_001/attempt_03/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: c10b34b62914c361f10cfdf3f69596dadc46e9fea0c9350349a685ad7c260081
+          exit_code: 0
+          timed_out: false
+          score: 0.611111111111111
+          evaluator:
+            status: scored
+            score: 0.611111111111111
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.16666666666666666
+                details:
+                  declared_paths:
+                  - quality_summary
+                  - quarantine_row_ids
+                  - country_rollup
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.16666666666666666
+                goal: Exact population quality accounting, quarantine population,
+                  and country rollup.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.1111111111111111
+                details:
+                  declared_paths:
+                  - focus_cases[].focus_case_id
+                  - focus_cases[].seed_row_id
+                  - focus_cases[].internal_controls.identity_code
+                  - focus_cases[].identity_resolution
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - focus_cases[].identity_resolution
+                earned_score: 0.0
+                goal: Exact focus-case identity controls, evidence memberships, and
+                  master decisions.
+                passed: false
+                point_id: SP002
+                raw_weight: 2
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - focus_cases[].canonical_contact
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05555555555555555
+                goal: Exact canonical contact outcomes for all focus cases.
+                passed: true
+                point_id: SP003
+                raw_weight: 1
+              - assigned_score: 0.16666666666666666
+                details:
+                  declared_paths:
+                  - focus_cases[].internal_controls.field_provenance_code
+                  - focus_cases[].field_provenance
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.16666666666666666
+                goal: Exact field-provenance controls, selected sources, and precedence
+                  reasons.
+                passed: true
+                point_id: SP004
+                raw_weight: 3
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - focus_cases[].internal_controls.outreach_code
+                  - focus_cases[].renewal_readiness
+                  - renewal_ready_master_ids
+                  - certification_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05555555555555555
+                goal: Exact renewal-readiness controls, ready population, and certification
+                  action.
+                passed: true
+                point_id: SP005
+                raw_weight: 1
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - unsafe_identity_containment_robustness.policy_id
+                  - unsafe_identity_containment_robustness.original_graph
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_identity_containment_robustness.original_graph
+                earned_score: 0.0
+                goal: Exact unsafe-identity baseline graph.
+                passed: false
+                point_id: SP006
+                raw_weight: 1
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - unsafe_identity_containment_robustness.minimum_containment_repair
+                  - unsafe_identity_containment_robustness.source_withdrawal_checks
+                  - unsafe_identity_containment_robustness.summary
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_identity_containment_robustness.minimum_containment_repair
+                  - unsafe_identity_containment_robustness.source_withdrawal_checks
+                earned_score: 0.0
+                goal: Exact minimum containment repair and source-withdrawal robustness
+                  results.
+                passed: false
+                point_id: SP007
+                raw_weight: 1
+              - assigned_score: 0.16666666666666666
+                details:
+                  declared_paths:
+                  - fx_budgeted_evidence_recovery.recovery_id
+                  - fx_budgeted_evidence_recovery.fx_basis
+                  - fx_budgeted_evidence_recovery.candidate_batches
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.16666666666666666
+                goal: Exact FX basis, candidate recovery batches, and batch costs.
+                passed: true
+                point_id: SP008
+                raw_weight: 3
+              - assigned_score: 0.05555555555555555
+                details:
+                  declared_paths:
+                  - fx_budgeted_evidence_recovery.initial_state
+                  - fx_budgeted_evidence_recovery.plan_search
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - fx_budgeted_evidence_recovery.initial_state
+                  - fx_budgeted_evidence_recovery.plan_search
+                earned_score: 0.0
+                goal: Exact initial-state assessment and selected two-stage evidence-recovery
+                  plan.
+                passed: false
+                point_id: SP009
+                raw_weight: 1
+              - assigned_score: 0.1111111111111111
+                details:
+                  declared_paths:
+                  - source_sequence_release_stability_audit.audit_id
+                  - source_sequence_release_stability_audit.order_results
+                  - source_sequence_release_stability_audit.summary
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - source_sequence_release_stability_audit.order_results
+                earned_score: 0.0
+                goal: Exact all-permutation source-sequence stability audit.
+                passed: false
+                point_id: SP010
+                raw_weight: 2
+              score: 0.611111111111111
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+      efficiency:
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+    test_002:
+      status: complete
+      scores:
+      - 0.894736842105263
+      - 0.5789473684210527
+      - 0.8421052631578947
+      acc_at_3: 0.7719298245614035
+      std_at_3: 0.13814048901775103
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_002/attempt_01
+          agent_run_id: 66d8fc23-d6fe-449b-b4ff-7807bd026da8
+          started_at: '2026-07-28T11:05:55Z'
+          completed_at: '2026-07-28T11:13:26Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_002__attempt_01
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_01/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: c8c1d359c34d160d78b3990740300e10f0fa8f8b30ac5c280d55bf2a420f0be9
+          exit_code: 0
+          timed_out: false
+          score: 0.894736842105263
+          evaluator:
+            status: scored
+            score: 0.894736842105263
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.15789473684210525
+                details:
+                  declared_paths:
+                  - audit_summary.collection_id
+                  - audit_summary.cutoff_at
+                  - audit_summary.authoritative_snapshot_id
+                  - audit_summary.raw_row_count
+                  - audit_summary.logical_transaction_count
+                  - audit_summary.duplicate_raw_count
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.15789473684210525
+                goal: Exact authoritative source and scoped source-population counts.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.05263157894736842
+                details:
+                  declared_paths:
+                  - audit_summary.valid_transaction_count
+                  - audit_summary.mismatch_count
+                  - audit_summary.quarantine_count
+                  - audit_summary.quarantine_reason_counts
+                  - audit_summary.exception_transaction_count
+                  - mismatch_transaction_ids
+                  - quarantine_transaction_ids
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05263157894736842
+                goal: Exact exception accounting and mismatch and quarantine populations.
+                passed: true
+                point_id: SP002
+                raw_weight: 1
+              - assigned_score: 0.15789473684210525
+                details:
+                  declared_paths:
+                  - effective_reference_panel
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.15789473684210525
+                goal: Exact effective-reference decisions and reference-policy controls.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - transaction_decision_panel
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.10526315789473684
+                goal: Exact transaction source, recognition, ledger, and control decisions.
+                passed: true
+                point_id: SP004
+                raw_weight: 2
+              - assigned_score: 0.05263157894736842
+                details:
+                  declared_paths:
+                  - normalized_totals.valid_transaction_count
+                  - normalized_totals.total_volume_l
+                  - normalized_totals.fuel_type_totals[].fuel_type
+                  - normalized_totals.fuel_type_totals[].transaction_count
+                  - normalized_totals.fuel_type_totals[].volume_l
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05263157894736842
+                goal: Exact normalized volume totals by fuel type.
+                passed: true
+                point_id: SP005
+                raw_weight: 1
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - normalized_totals.total_spend_usd
+                  - normalized_totals.fuel_type_totals[].spend_usd
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - normalized_totals.total_spend_usd
+                  - normalized_totals.fuel_type_totals[].spend_usd
+                earned_score: 0.0
+                goal: Exact normalized spend totals by fuel type.
+                passed: false
+                point_id: SP006
+                raw_weight: 2
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - focus_assets
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.10526315789473684
+                goal: Exact focus-asset reconciliation results.
+                passed: true
+                point_id: SP007
+                raw_weight: 2
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - merchant_exception_ranking
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.10526315789473684
+                goal: Exact merchant exception ranking.
+                passed: true
+                point_id: SP008
+                raw_weight: 2
+              - assigned_score: 0.15789473684210525
+                details:
+                  declared_paths:
+                  - reconciliation_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.15789473684210525
+                goal: Exact reconciliation status and operational action.
+                passed: true
+                point_id: SP009
+                raw_weight: 3
+              score: 0.894736842105263
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+        attempt_02:
+          logical_slot: naive/test_002/attempt_02
+          agent_run_id: 73ef2821-4d1d-4369-b03a-91338306d539
+          started_at: '2026-07-28T11:13:26Z'
+          completed_at: '2026-07-28T11:23:53Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_002__attempt_02
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_02/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 8b83fde6bc40595d002e7472b970e3c0d9a84b3eab337d7d5d1599d97e895ad5
+          exit_code: 0
+          timed_out: false
+          score: 0.5789473684210527
+          evaluator:
+            status: scored
+            score: 0.5789473684210527
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.15789473684210525
+                details:
+                  declared_paths:
+                  - audit_summary.collection_id
+                  - audit_summary.cutoff_at
+                  - audit_summary.authoritative_snapshot_id
+                  - audit_summary.raw_row_count
+                  - audit_summary.logical_transaction_count
+                  - audit_summary.duplicate_raw_count
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.15789473684210525
+                goal: Exact authoritative source and scoped source-population counts.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.05263157894736842
+                details:
+                  declared_paths:
+                  - audit_summary.valid_transaction_count
+                  - audit_summary.mismatch_count
+                  - audit_summary.quarantine_count
+                  - audit_summary.quarantine_reason_counts
+                  - audit_summary.exception_transaction_count
+                  - mismatch_transaction_ids
+                  - quarantine_transaction_ids
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05263157894736842
+                goal: Exact exception accounting and mismatch and quarantine populations.
+                passed: true
+                point_id: SP002
+                raw_weight: 1
+              - assigned_score: 0.15789473684210525
+                details:
+                  declared_paths:
+                  - effective_reference_panel
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - effective_reference_panel
+                earned_score: 0.0
+                goal: Exact effective-reference decisions and reference-policy controls.
+                passed: false
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - transaction_decision_panel
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.10526315789473684
+                goal: Exact transaction source, recognition, ledger, and control decisions.
+                passed: true
+                point_id: SP004
+                raw_weight: 2
+              - assigned_score: 0.05263157894736842
+                details:
+                  declared_paths:
+                  - normalized_totals.valid_transaction_count
+                  - normalized_totals.total_volume_l
+                  - normalized_totals.fuel_type_totals[].fuel_type
+                  - normalized_totals.fuel_type_totals[].transaction_count
+                  - normalized_totals.fuel_type_totals[].volume_l
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - normalized_totals.fuel_type_totals[].volume_l
+                earned_score: 0.0
+                goal: Exact normalized volume totals by fuel type.
+                passed: false
+                point_id: SP005
+                raw_weight: 1
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - normalized_totals.total_spend_usd
+                  - normalized_totals.fuel_type_totals[].spend_usd
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - normalized_totals.total_spend_usd
+                  - normalized_totals.fuel_type_totals[].spend_usd
+                earned_score: 0.0
+                goal: Exact normalized spend totals by fuel type.
+                passed: false
+                point_id: SP006
+                raw_weight: 2
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - focus_assets
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - focus_assets
+                earned_score: 0.0
+                goal: Exact focus-asset reconciliation results.
+                passed: false
+                point_id: SP007
+                raw_weight: 2
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - merchant_exception_ranking
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.10526315789473684
+                goal: Exact merchant exception ranking.
+                passed: true
+                point_id: SP008
+                raw_weight: 2
+              - assigned_score: 0.15789473684210525
+                details:
+                  declared_paths:
+                  - reconciliation_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.15789473684210525
+                goal: Exact reconciliation status and operational action.
+                passed: true
+                point_id: SP009
+                raw_weight: 3
+              score: 0.5789473684210527
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+        attempt_03:
+          logical_slot: naive/test_002/attempt_03
+          agent_run_id: 2af3cd2c-9763-437a-ab73-65773abe9af9
+          started_at: '2026-07-28T11:23:54Z'
+          completed_at: '2026-07-28T11:31:44Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_002__attempt_03
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_002/attempt_03/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: e4f0ed5e1e02a1383b14bc649544de8aae3cf9ed5adb08ca44da432a81bd213c
+          exit_code: 0
+          timed_out: false
+          score: 0.8421052631578947
+          evaluator:
+            status: scored
+            score: 0.8421052631578947
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.15789473684210525
+                details:
+                  declared_paths:
+                  - audit_summary.collection_id
+                  - audit_summary.cutoff_at
+                  - audit_summary.authoritative_snapshot_id
+                  - audit_summary.raw_row_count
+                  - audit_summary.logical_transaction_count
+                  - audit_summary.duplicate_raw_count
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.15789473684210525
+                goal: Exact authoritative source and scoped source-population counts.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.05263157894736842
+                details:
+                  declared_paths:
+                  - audit_summary.valid_transaction_count
+                  - audit_summary.mismatch_count
+                  - audit_summary.quarantine_count
+                  - audit_summary.quarantine_reason_counts
+                  - audit_summary.exception_transaction_count
+                  - mismatch_transaction_ids
+                  - quarantine_transaction_ids
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.05263157894736842
+                goal: Exact exception accounting and mismatch and quarantine populations.
+                passed: true
+                point_id: SP002
+                raw_weight: 1
+              - assigned_score: 0.15789473684210525
+                details:
+                  declared_paths:
+                  - effective_reference_panel
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.15789473684210525
+                goal: Exact effective-reference decisions and reference-policy controls.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - transaction_decision_panel
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.10526315789473684
+                goal: Exact transaction source, recognition, ledger, and control decisions.
+                passed: true
+                point_id: SP004
+                raw_weight: 2
+              - assigned_score: 0.05263157894736842
+                details:
+                  declared_paths:
+                  - normalized_totals.valid_transaction_count
+                  - normalized_totals.total_volume_l
+                  - normalized_totals.fuel_type_totals[].fuel_type
+                  - normalized_totals.fuel_type_totals[].transaction_count
+                  - normalized_totals.fuel_type_totals[].volume_l
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - normalized_totals.fuel_type_totals[].volume_l
+                earned_score: 0.0
+                goal: Exact normalized volume totals by fuel type.
+                passed: false
+                point_id: SP005
+                raw_weight: 1
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - normalized_totals.total_spend_usd
+                  - normalized_totals.fuel_type_totals[].spend_usd
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - normalized_totals.total_spend_usd
+                  - normalized_totals.fuel_type_totals[].spend_usd
+                earned_score: 0.0
+                goal: Exact normalized spend totals by fuel type.
+                passed: false
+                point_id: SP006
+                raw_weight: 2
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - focus_assets
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.10526315789473684
+                goal: Exact focus-asset reconciliation results.
+                passed: true
+                point_id: SP007
+                raw_weight: 2
+              - assigned_score: 0.10526315789473684
+                details:
+                  declared_paths:
+                  - merchant_exception_ranking
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.10526315789473684
+                goal: Exact merchant exception ranking.
+                passed: true
+                point_id: SP008
+                raw_weight: 2
+              - assigned_score: 0.15789473684210525
+                details:
+                  declared_paths:
+                  - reconciliation_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.15789473684210525
+                goal: Exact reconciliation status and operational action.
+                passed: true
+                point_id: SP009
+                raw_weight: 3
+              score: 0.8421052631578947
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+      efficiency:
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+    test_003:
+      status: complete
+      scores:
+      - 0.7647058823529412
+      - 0.5294117647058824
+      - 0.7647058823529412
+      acc_at_3: 0.6862745098039216
+      std_at_3: 0.11091871077436043
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_003/attempt_01
+          agent_run_id: 2a24f095-6031-4586-a5c8-83cf1be6e41b
+          started_at: '2026-07-28T11:05:55Z'
+          completed_at: '2026-07-28T11:13:36Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_003__attempt_01
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_01/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 17f0bd5847d8cf47f26890284889484f628f34470dbc72304ecaccedf1d643d1
+          exit_code: 0
+          timed_out: false
+          score: 0.7647058823529412
+          evaluator:
+            status: scored
+            score: 0.7647058823529412
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - source_decision
+                  - edge_case_decisions[].source_choice_code
+                  - edge_case_decisions[].source_control_code
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact authoritative source decision and record-level source
+                  controls.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - issue_counts
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact maintenance integrity issue-class counts.
+                passed: true
+                point_id: SP002
+                raw_weight: 1
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - duplicate_groups
+                  - edge_case_decisions[].selected_snapshot_id
+                  - edge_case_decisions[].history_route_code
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact overlap duplicate retention and history-route controls.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - invalid_event_ids
+                  - edge_case_decisions[].event_id
+                  - edge_case_decisions[].integrity_class
+                  - edge_case_decisions[].primary_issue_code
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact invalid-event population and integrity classifications.
+                passed: true
+                point_id: SP004
+                raw_weight: 1
+              - assigned_score: 0.11764705882352941
+                details:
+                  declared_paths:
+                  - regression_cases
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - regression_cases
+                earned_score: 0.0
+                goal: Exact odometer-regression case measurements.
+                passed: false
+                point_id: SP005
+                raw_weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  declared_paths:
+                  - corrected_metrics
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - corrected_metrics
+                earned_score: 0.0
+                goal: Exact corrected continuity, Q2 coverage, and distance metrics.
+                passed: false
+                point_id: SP006
+                raw_weight: 2
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - edge_case_decisions[].prior_reliable_event_id
+                  - edge_case_decisions[].normalized_odometer_km
+                  - edge_case_decisions[].history_action
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact reliable-predecessor, normalized-reading, and history
+                  actions.
+                passed: true
+                point_id: SP007
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - asset_risk_ranking
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact highest-risk asset ranking.
+                passed: true
+                point_id: SP008
+                raw_weight: 1
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - certification_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact certification status and operational action.
+                passed: true
+                point_id: SP009
+                raw_weight: 3
+              score: 0.7647058823529412
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+        attempt_02:
+          logical_slot: naive/test_003/attempt_02
+          agent_run_id: 64591356-47d3-4bf0-862d-ea1e5d8588f3
+          started_at: '2026-07-28T11:13:37Z'
+          completed_at: '2026-07-28T11:26:42Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_003__attempt_02
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_02/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: ed691d83538e43dde6cc9b9884d548acf5a1ebbd970dfbd58801b89f42b67a42
+          exit_code: 0
+          timed_out: false
+          score: 0.5294117647058824
+          evaluator:
+            status: scored
+            score: 0.5294117647058824
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - source_decision
+                  - edge_case_decisions[].source_choice_code
+                  - edge_case_decisions[].source_control_code
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - edge_case_decisions[].source_control_code
+                earned_score: 0.0
+                goal: Exact authoritative source decision and record-level source
+                  controls.
+                passed: false
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - issue_counts
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact maintenance integrity issue-class counts.
+                passed: true
+                point_id: SP002
+                raw_weight: 1
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - duplicate_groups
+                  - edge_case_decisions[].selected_snapshot_id
+                  - edge_case_decisions[].history_route_code
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact overlap duplicate retention and history-route controls.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - invalid_event_ids
+                  - edge_case_decisions[].event_id
+                  - edge_case_decisions[].integrity_class
+                  - edge_case_decisions[].primary_issue_code
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact invalid-event population and integrity classifications.
+                passed: true
+                point_id: SP004
+                raw_weight: 1
+              - assigned_score: 0.11764705882352941
+                details:
+                  declared_paths:
+                  - regression_cases
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - regression_cases
+                earned_score: 0.0
+                goal: Exact odometer-regression case measurements.
+                passed: false
+                point_id: SP005
+                raw_weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  declared_paths:
+                  - corrected_metrics
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - corrected_metrics
+                earned_score: 0.0
+                goal: Exact corrected continuity, Q2 coverage, and distance metrics.
+                passed: false
+                point_id: SP006
+                raw_weight: 2
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - edge_case_decisions[].prior_reliable_event_id
+                  - edge_case_decisions[].normalized_odometer_km
+                  - edge_case_decisions[].history_action
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact reliable-predecessor, normalized-reading, and history
+                  actions.
+                passed: true
+                point_id: SP007
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - asset_risk_ranking
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - asset_risk_ranking
+                earned_score: 0.0
+                goal: Exact highest-risk asset ranking.
+                passed: false
+                point_id: SP008
+                raw_weight: 1
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - certification_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact certification status and operational action.
+                passed: true
+                point_id: SP009
+                raw_weight: 3
+              score: 0.5294117647058824
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+        attempt_03:
+          logical_slot: naive/test_003/attempt_03
+          agent_run_id: 834a1663-8d81-4609-8a19-198fd7d1f45b
+          started_at: '2026-07-29T05:02:12Z'
+          completed_at: '2026-07-29T05:09:35Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_003__attempt_03
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_003/attempt_03/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 0b396688c384c981b0015bd87755f74bce41fb2353a51fac426562fef33f137c
+          exit_code: 0
+          timed_out: false
+          score: 0.7647058823529412
+          evaluator:
+            status: scored
+            score: 0.7647058823529412
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - source_decision
+                  - edge_case_decisions[].source_choice_code
+                  - edge_case_decisions[].source_control_code
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact authoritative source decision and record-level source
+                  controls.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - issue_counts
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact maintenance integrity issue-class counts.
+                passed: true
+                point_id: SP002
+                raw_weight: 1
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - duplicate_groups
+                  - edge_case_decisions[].selected_snapshot_id
+                  - edge_case_decisions[].history_route_code
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact overlap duplicate retention and history-route controls.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - invalid_event_ids
+                  - edge_case_decisions[].event_id
+                  - edge_case_decisions[].integrity_class
+                  - edge_case_decisions[].primary_issue_code
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact invalid-event population and integrity classifications.
+                passed: true
+                point_id: SP004
+                raw_weight: 1
+              - assigned_score: 0.11764705882352941
+                details:
+                  declared_paths:
+                  - regression_cases
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - regression_cases
+                earned_score: 0.0
+                goal: Exact odometer-regression case measurements.
+                passed: false
+                point_id: SP005
+                raw_weight: 2
+              - assigned_score: 0.11764705882352941
+                details:
+                  declared_paths:
+                  - corrected_metrics
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - corrected_metrics
+                earned_score: 0.0
+                goal: Exact corrected continuity, Q2 coverage, and distance metrics.
+                passed: false
+                point_id: SP006
+                raw_weight: 2
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - edge_case_decisions[].prior_reliable_event_id
+                  - edge_case_decisions[].normalized_odometer_km
+                  - edge_case_decisions[].history_action
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact reliable-predecessor, normalized-reading, and history
+                  actions.
+                passed: true
+                point_id: SP007
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - asset_risk_ranking
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact highest-risk asset ranking.
+                passed: true
+                point_id: SP008
+                raw_weight: 1
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - certification_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact certification status and operational action.
+                passed: true
+                point_id: SP009
+                raw_weight: 3
+              score: 0.7647058823529412
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+      efficiency:
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+    test_004:
+      status: complete
+      scores:
+      - 0.6470588235294118
+      - 0.823529411764706
+      - 0.823529411764706
+      acc_at_3: 0.7647058823529412
+      std_at_3: 0.08318903308077032
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_004/attempt_01
+          agent_run_id: 32616187-5613-4faf-878a-5dbf58276324
+          started_at: '2026-07-28T11:05:55Z'
+          completed_at: '2026-07-28T11:26:51Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_004__attempt_01
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_01/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 225c559988ecb69ff10dca398dd23311964c0dfbd5217a8595e329841387c535
+          exit_code: 0
+          timed_out: false
+          score: 0.6470588235294118
+          evaluator:
+            status: scored
+            score: 0.6470588235294118
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - merge_summary.raw_row_count
+                  - merge_summary.canonical_owner_count
+                  - merge_summary.merged_duplicate_cluster_count
+                  - merge_summary.contested_identifier_case_count
+                  - merge_summary.outreach_ready_owner_count
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact baseline scope, canonical-owner, contested-case, and readiness
+                  counts.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - merge_summary.quarantine_row_count
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact quarantined-row count.
+                passed: true
+                point_id: SP002
+                raw_weight: 1
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - focus_owners[].focus_owner_id
+                  - focus_owners[].seed_row_id
+                  - focus_owners[].member_row_ids
+                  - focus_owners[].master_id
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact focus-owner memberships, master links, and seed identities.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - focus_owners[].canonical_name
+                  - focus_owners[].canonical_email
+                  - focus_owners[].canonical_phone_digits
+                  - focus_owners[].canonical_city
+                  - focus_owners[].canonical_region_code
+                  - focus_owners[].canonical_country_code
+                  - focus_owners[].canonical_consent_status
+                  - focus_owners[].canonical_record_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact canonical owner contact and policy-state fields.
+                passed: true
+                point_id: SP004
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - focus_owners[].readiness_decision
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - focus_owners[].readiness_decision
+                earned_score: 0.0
+                goal: Exact focus-owner readiness decisions and routes.
+                passed: false
+                point_id: SP005
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - identifier_case_decisions
+                  - contact_transfer_adjudications
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - identifier_case_decisions
+                  - contact_transfer_adjudications
+                earned_score: 0.0
+                goal: Exact unsafe-identifier and channel-transfer safety adjudications.
+                passed: false
+                point_id: SP006
+                raw_weight: 1
+              - assigned_score: 0.11764705882352941
+                details:
+                  declared_paths:
+                  - field_precedence_decisions
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - field_precedence_decisions
+                earned_score: 0.0
+                goal: Exact field-precedence controls, selected rows, values, and
+                  reasons.
+                passed: false
+                point_id: SP007
+                raw_weight: 2
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - snapshot_admission_replay
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - snapshot_admission_replay
+                earned_score: 0.0
+                goal: Exact ordered snapshot-admission replay and stage boundaries.
+                passed: false
+                point_id: SP008
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - unsafe_identity_rule_impacts
+                  - unsafe_household_outreach_counterfactual
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_identity_rule_impacts
+                  - unsafe_household_outreach_counterfactual
+                earned_score: 0.0
+                goal: Exact unsafe-identity graph impacts and household remediation
+                  portfolio.
+                passed: false
+                point_id: SP009
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - source_removal_stability_audit
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact source-removal restoration portfolio and recovered-owner
+                  population.
+                passed: true
+                point_id: SP010
+                raw_weight: 1
+              score: 0.6470588235294118
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+        attempt_02:
+          logical_slot: naive/test_004/attempt_02
+          agent_run_id: 3e25cefd-abad-4d36-bc5e-7d69b24dde1b
+          started_at: '2026-07-29T05:02:12Z'
+          completed_at: '2026-07-29T05:17:54Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_004__attempt_02
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_02/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 04a5bb7b40991acdcfdb762f97e4a4aaab1b91c9205af4d6803c954df7683c96
+          exit_code: 0
+          timed_out: false
+          score: 0.823529411764706
+          evaluator:
+            status: scored
+            score: 0.823529411764706
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - merge_summary.raw_row_count
+                  - merge_summary.canonical_owner_count
+                  - merge_summary.merged_duplicate_cluster_count
+                  - merge_summary.contested_identifier_case_count
+                  - merge_summary.outreach_ready_owner_count
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact baseline scope, canonical-owner, contested-case, and readiness
+                  counts.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - merge_summary.quarantine_row_count
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact quarantined-row count.
+                passed: true
+                point_id: SP002
+                raw_weight: 1
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - focus_owners[].focus_owner_id
+                  - focus_owners[].seed_row_id
+                  - focus_owners[].member_row_ids
+                  - focus_owners[].master_id
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact focus-owner memberships, master links, and seed identities.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - focus_owners[].canonical_name
+                  - focus_owners[].canonical_email
+                  - focus_owners[].canonical_phone_digits
+                  - focus_owners[].canonical_city
+                  - focus_owners[].canonical_region_code
+                  - focus_owners[].canonical_country_code
+                  - focus_owners[].canonical_consent_status
+                  - focus_owners[].canonical_record_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact canonical owner contact and policy-state fields.
+                passed: true
+                point_id: SP004
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - focus_owners[].readiness_decision
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact focus-owner readiness decisions and routes.
+                passed: true
+                point_id: SP005
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - identifier_case_decisions
+                  - contact_transfer_adjudications
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - identifier_case_decisions
+                  - contact_transfer_adjudications
+                earned_score: 0.0
+                goal: Exact unsafe-identifier and channel-transfer safety adjudications.
+                passed: false
+                point_id: SP006
+                raw_weight: 1
+              - assigned_score: 0.11764705882352941
+                details:
+                  declared_paths:
+                  - field_precedence_decisions
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.11764705882352941
+                goal: Exact field-precedence controls, selected rows, values, and
+                  reasons.
+                passed: true
+                point_id: SP007
+                raw_weight: 2
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - snapshot_admission_replay
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - snapshot_admission_replay
+                earned_score: 0.0
+                goal: Exact ordered snapshot-admission replay and stage boundaries.
+                passed: false
+                point_id: SP008
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - unsafe_identity_rule_impacts
+                  - unsafe_household_outreach_counterfactual
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_identity_rule_impacts
+                earned_score: 0.0
+                goal: Exact unsafe-identity graph impacts and household remediation
+                  portfolio.
+                passed: false
+                point_id: SP009
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - source_removal_stability_audit
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact source-removal restoration portfolio and recovered-owner
+                  population.
+                passed: true
+                point_id: SP010
+                raw_weight: 1
+              score: 0.823529411764706
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+        attempt_03:
+          logical_slot: naive/test_004/attempt_03
+          agent_run_id: 1a6fd199-cbbb-4d87-b2d5-c96a75dba055
+          started_at: '2026-07-29T05:02:12Z'
+          completed_at: '2026-07-29T05:23:49Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_004__attempt_03
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_004/attempt_03/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: e5ba2a9dc89f29ab54b61ca189f3d6163072fffb4a311704a38e82e4b3397300
+          exit_code: 0
+          timed_out: false
+          score: 0.823529411764706
+          evaluator:
+            status: scored
+            score: 0.823529411764706
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - merge_summary.raw_row_count
+                  - merge_summary.canonical_owner_count
+                  - merge_summary.merged_duplicate_cluster_count
+                  - merge_summary.contested_identifier_case_count
+                  - merge_summary.outreach_ready_owner_count
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact baseline scope, canonical-owner, contested-case, and readiness
+                  counts.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - merge_summary.quarantine_row_count
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact quarantined-row count.
+                passed: true
+                point_id: SP002
+                raw_weight: 1
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - focus_owners[].focus_owner_id
+                  - focus_owners[].seed_row_id
+                  - focus_owners[].member_row_ids
+                  - focus_owners[].master_id
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact focus-owner memberships, master links, and seed identities.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.17647058823529413
+                details:
+                  declared_paths:
+                  - focus_owners[].canonical_name
+                  - focus_owners[].canonical_email
+                  - focus_owners[].canonical_phone_digits
+                  - focus_owners[].canonical_city
+                  - focus_owners[].canonical_region_code
+                  - focus_owners[].canonical_country_code
+                  - focus_owners[].canonical_consent_status
+                  - focus_owners[].canonical_record_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.17647058823529413
+                goal: Exact canonical owner contact and policy-state fields.
+                passed: true
+                point_id: SP004
+                raw_weight: 3
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - focus_owners[].readiness_decision
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact focus-owner readiness decisions and routes.
+                passed: true
+                point_id: SP005
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - identifier_case_decisions
+                  - contact_transfer_adjudications
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - contact_transfer_adjudications
+                earned_score: 0.0
+                goal: Exact unsafe-identifier and channel-transfer safety adjudications.
+                passed: false
+                point_id: SP006
+                raw_weight: 1
+              - assigned_score: 0.11764705882352941
+                details:
+                  declared_paths:
+                  - field_precedence_decisions
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.11764705882352941
+                goal: Exact field-precedence controls, selected rows, values, and
+                  reasons.
+                passed: true
+                point_id: SP007
+                raw_weight: 2
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - snapshot_admission_replay
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - snapshot_admission_replay
+                earned_score: 0.0
+                goal: Exact ordered snapshot-admission replay and stage boundaries.
+                passed: false
+                point_id: SP008
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - unsafe_identity_rule_impacts
+                  - unsafe_household_outreach_counterfactual
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_identity_rule_impacts
+                  - unsafe_household_outreach_counterfactual
+                earned_score: 0.0
+                goal: Exact unsafe-identity graph impacts and household remediation
+                  portfolio.
+                passed: false
+                point_id: SP009
+                raw_weight: 1
+              - assigned_score: 0.058823529411764705
+                details:
+                  declared_paths:
+                  - source_removal_stability_audit
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.058823529411764705
+                goal: Exact source-removal restoration portfolio and recovered-owner
+                  population.
+                passed: true
+                point_id: SP010
+                raw_weight: 1
+              score: 0.823529411764706
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+      efficiency:
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+    test_005:
+      status: complete
+      scores:
+      - 0.72
+      - 0.5599999999999999
+      - 0.72
+      acc_at_3: 0.6666666666666666
+      std_at_3: 0.07542472332656508
+      attempts:
+        attempt_01:
+          logical_slot: naive/test_005/attempt_01
+          agent_run_id: 6649dce7-25be-42a9-9520-d7bb616ec4d1
+          started_at: '2026-07-28T11:05:55Z'
+          completed_at: '2026-07-28T11:18:59Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_005__attempt_01
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_01/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 719d790951c36de03218ca88a65600d1474d13efaac1269d1dd0e52affabc97c
+          exit_code: 0
+          timed_out: false
+          score: 0.72
+          evaluator:
+            status: scored
+            score: 0.72
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - audit_summary
+                  - duplicate_groups
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact source-scope accounting and duplicate-charge reconstruction.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.08
+                details:
+                  declared_paths:
+                  - alias_reference_cases
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.08
+                goal: Exact alias-reference policy and eligibility decisions.
+                passed: true
+                point_id: SP002
+                raw_weight: 2
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - charge_decisions[].charge_id
+                  - charge_decisions[].retained_snapshot_id
+                  - charge_decisions[].source_control_code
+                  - charge_decisions[].source_treatment
+                  - charge_decisions[].applicable_alias_ids
+                  - charge_decisions[].decisive_alias_ids
+                  - charge_decisions[].recognition_outcome
+                  - charge_decisions[].recognized_service_class
+                  - charge_decisions[].class_relation
+                  - charge_decisions[].accrual_disposition
+                  - charge_decisions[].quarantine_reason
+                  - charge_decisions[].weight_eligible
+                  - charge_decisions[].distance_eligible
+                  - charge_decisions[].selected_fx_status
+                  - charge_decisions[].selected_usd_per_unit
+                  - charge_decisions[].converted_weight_kg
+                  - charge_decisions[].converted_distance_km
+                  - charge_decisions[].converted_amount_usd
+                  - charge_decisions[].included_in_totals
+                  - charge_decisions[].included_spend_usd
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact charge-level source, recognition, conversion, and accrual
+                  decisions.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.08
+                details:
+                  declared_paths:
+                  - charge_decisions[].ledger_disposition_code
+                  - invoice_route_ledger_controls
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.08
+                goal: Exact charge and invoice-route ledger controls.
+                passed: true
+                point_id: SP004
+                raw_weight: 2
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - class_mismatch_charge_ids
+                  - quarantine_charge_ids
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact mismatch and quarantine charge populations.
+                passed: true
+                point_id: SP005
+                raw_weight: 3
+              - assigned_score: 0.04
+                details:
+                  declared_paths:
+                  - normalized_totals
+                  - focus_lanes
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - normalized_totals
+                earned_score: 0.0
+                goal: Exact normalized totals and focus-lane reconciliation.
+                passed: false
+                point_id: SP006
+                raw_weight: 1
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - carrier_ranking
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact carrier exposure ranking.
+                passed: true
+                point_id: SP007
+                raw_weight: 3
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - integrated_close_evidence_release_assessment
+                  - close_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - integrated_close_evidence_release_assessment
+                earned_score: 0.0
+                goal: Exact integrated close-evidence reconstruction and close routing.
+                passed: false
+                point_id: SP008
+                raw_weight: 3
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - unsafe_aggregation_containment_plan
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_aggregation_containment_plan
+                earned_score: 0.0
+                goal: Exact unsafe-union graph containment certificates.
+                passed: false
+                point_id: SP009
+                raw_weight: 3
+              - assigned_score: 0.08
+                details:
+                  declared_paths:
+                  - fx_certification_impact
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.08
+                goal: Exact certified-versus-provisional FX counterfactual exposure.
+                passed: true
+                point_id: SP010
+                raw_weight: 2
+              score: 0.72
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+        attempt_02:
+          logical_slot: naive/test_005/attempt_02
+          agent_run_id: af5a7d62-f3c7-42bf-b4ac-065fc0c34a5a
+          started_at: '2026-07-28T11:18:59Z'
+          completed_at: '2026-07-28T11:32:02Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_005__attempt_02
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_02/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 5fc4abe6230a8e0ec48906beff45eeb4acab712a0ec8d9fd483eda1feaf2ec8a
+          exit_code: 0
+          timed_out: false
+          score: 0.5599999999999999
+          evaluator:
+            status: scored
+            score: 0.5599999999999999
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - audit_summary
+                  - duplicate_groups
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact source-scope accounting and duplicate-charge reconstruction.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.08
+                details:
+                  declared_paths:
+                  - alias_reference_cases
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - alias_reference_cases
+                earned_score: 0.0
+                goal: Exact alias-reference policy and eligibility decisions.
+                passed: false
+                point_id: SP002
+                raw_weight: 2
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - charge_decisions[].charge_id
+                  - charge_decisions[].retained_snapshot_id
+                  - charge_decisions[].source_control_code
+                  - charge_decisions[].source_treatment
+                  - charge_decisions[].applicable_alias_ids
+                  - charge_decisions[].decisive_alias_ids
+                  - charge_decisions[].recognition_outcome
+                  - charge_decisions[].recognized_service_class
+                  - charge_decisions[].class_relation
+                  - charge_decisions[].accrual_disposition
+                  - charge_decisions[].quarantine_reason
+                  - charge_decisions[].weight_eligible
+                  - charge_decisions[].distance_eligible
+                  - charge_decisions[].selected_fx_status
+                  - charge_decisions[].selected_usd_per_unit
+                  - charge_decisions[].converted_weight_kg
+                  - charge_decisions[].converted_distance_km
+                  - charge_decisions[].converted_amount_usd
+                  - charge_decisions[].included_in_totals
+                  - charge_decisions[].included_spend_usd
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact charge-level source, recognition, conversion, and accrual
+                  decisions.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.08
+                details:
+                  declared_paths:
+                  - charge_decisions[].ledger_disposition_code
+                  - invoice_route_ledger_controls
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.08
+                goal: Exact charge and invoice-route ledger controls.
+                passed: true
+                point_id: SP004
+                raw_weight: 2
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - class_mismatch_charge_ids
+                  - quarantine_charge_ids
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact mismatch and quarantine charge populations.
+                passed: true
+                point_id: SP005
+                raw_weight: 3
+              - assigned_score: 0.04
+                details:
+                  declared_paths:
+                  - normalized_totals
+                  - focus_lanes
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - normalized_totals
+                  - focus_lanes
+                earned_score: 0.0
+                goal: Exact normalized totals and focus-lane reconciliation.
+                passed: false
+                point_id: SP006
+                raw_weight: 1
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - carrier_ranking
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact carrier exposure ranking.
+                passed: true
+                point_id: SP007
+                raw_weight: 3
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - integrated_close_evidence_release_assessment
+                  - close_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - integrated_close_evidence_release_assessment
+                earned_score: 0.0
+                goal: Exact integrated close-evidence reconstruction and close routing.
+                passed: false
+                point_id: SP008
+                raw_weight: 3
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - unsafe_aggregation_containment_plan
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_aggregation_containment_plan
+                earned_score: 0.0
+                goal: Exact unsafe-union graph containment certificates.
+                passed: false
+                point_id: SP009
+                raw_weight: 3
+              - assigned_score: 0.08
+                details:
+                  declared_paths:
+                  - fx_certification_impact
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - fx_certification_impact
+                earned_score: 0.0
+                goal: Exact certified-versus-provisional FX counterfactual exposure.
+                passed: false
+                point_id: SP010
+                raw_weight: 2
+              score: 0.5599999999999999
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+          recovered_from_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+        attempt_03:
+          logical_slot: naive/test_005/attempt_03
+          agent_run_id: ff8f35ef-4718-4afc-8a43-625851024fa9
+          started_at: '2026-07-29T05:02:12Z'
+          completed_at: '2026-07-29T05:12:51Z'
+          run_dir: runs/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03
+          physical_run_dir: scratch/formal_runs/gpt5_5_xhigh/solver/naive__test_005__attempt_03
+          trace_dir: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03
+          primary_trace: original_traces/gpt5_5_xhigh/fewshot/naive/test_005/attempt_03/stdout.jsonl
+          trace_metrics: null
+          prompt_template_id: fewshot_test_solver
+          prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+          rendered_prompt_sha256: 3b86ee5415601b3d1629168fb6e32324d56ef36f457e227ff2ba5bbad1017c59
+          exit_code: 0
+          timed_out: false
+          score: 0.72
+          evaluator:
+            status: scored
+            score: 0.72
+            evaluator_output:
+              correct: false
+              parse_error: null
+              points:
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - audit_summary
+                  - duplicate_groups
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact source-scope accounting and duplicate-charge reconstruction.
+                passed: true
+                point_id: SP001
+                raw_weight: 3
+              - assigned_score: 0.08
+                details:
+                  declared_paths:
+                  - alias_reference_cases
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.08
+                goal: Exact alias-reference policy and eligibility decisions.
+                passed: true
+                point_id: SP002
+                raw_weight: 2
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - charge_decisions[].charge_id
+                  - charge_decisions[].retained_snapshot_id
+                  - charge_decisions[].source_control_code
+                  - charge_decisions[].source_treatment
+                  - charge_decisions[].applicable_alias_ids
+                  - charge_decisions[].decisive_alias_ids
+                  - charge_decisions[].recognition_outcome
+                  - charge_decisions[].recognized_service_class
+                  - charge_decisions[].class_relation
+                  - charge_decisions[].accrual_disposition
+                  - charge_decisions[].quarantine_reason
+                  - charge_decisions[].weight_eligible
+                  - charge_decisions[].distance_eligible
+                  - charge_decisions[].selected_fx_status
+                  - charge_decisions[].selected_usd_per_unit
+                  - charge_decisions[].converted_weight_kg
+                  - charge_decisions[].converted_distance_km
+                  - charge_decisions[].converted_amount_usd
+                  - charge_decisions[].included_in_totals
+                  - charge_decisions[].included_spend_usd
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact charge-level source, recognition, conversion, and accrual
+                  decisions.
+                passed: true
+                point_id: SP003
+                raw_weight: 3
+              - assigned_score: 0.08
+                details:
+                  declared_paths:
+                  - charge_decisions[].ledger_disposition_code
+                  - invoice_route_ledger_controls
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.08
+                goal: Exact charge and invoice-route ledger controls.
+                passed: true
+                point_id: SP004
+                raw_weight: 2
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - class_mismatch_charge_ids
+                  - quarantine_charge_ids
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact mismatch and quarantine charge populations.
+                passed: true
+                point_id: SP005
+                raw_weight: 3
+              - assigned_score: 0.04
+                details:
+                  declared_paths:
+                  - normalized_totals
+                  - focus_lanes
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - normalized_totals
+                earned_score: 0.0
+                goal: Exact normalized totals and focus-lane reconciliation.
+                passed: false
+                point_id: SP006
+                raw_weight: 1
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - carrier_ranking
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.12
+                goal: Exact carrier exposure ranking.
+                passed: true
+                point_id: SP007
+                raw_weight: 3
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - integrated_close_evidence_release_assessment
+                  - close_status
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - integrated_close_evidence_release_assessment
+                earned_score: 0.0
+                goal: Exact integrated close-evidence reconstruction and close routing.
+                passed: false
+                point_id: SP008
+                raw_weight: 3
+              - assigned_score: 0.12
+                details:
+                  declared_paths:
+                  - unsafe_aggregation_containment_plan
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths:
+                  - unsafe_aggregation_containment_plan
+                earned_score: 0.0
+                goal: Exact unsafe-union graph containment certificates.
+                passed: false
+                point_id: SP009
+                raw_weight: 3
+              - assigned_score: 0.08
+                details:
+                  declared_paths:
+                  - fx_certification_impact
+                  evaluation_policy: all declared business-result paths must match
+                  failed_paths: []
+                earned_score: 0.08
+                goal: Exact certified-versus-provisional FX counterfactual exposure.
+                passed: true
+                point_id: SP010
+                raw_weight: 2
+              score: 0.72
+              structure_errors: []
+              structure_valid: true
+              valid_json: true
+          status: complete
+      efficiency:
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+infrastructure_replacements:
+- source_archive: scratch/infrastructure_failures/codex_network_retry_missing_20260728T113421Z
+  restored_complete_solver_slots:
+  - naive/test_001/attempt_01
+  - naive/test_001/attempt_02
+  - naive/test_002/attempt_01
+  - naive/test_002/attempt_02
+  - naive/test_002/attempt_03
+  - naive/test_003/attempt_01
+  - naive/test_003/attempt_02
+  - naive/test_004/attempt_01
+  - naive/test_005/attempt_01
+  - naive/test_005/attempt_02
+  rerun_solver_slots:
+  - naive/test_001/attempt_03
+  - naive/test_003/attempt_03
+  - naive/test_004/attempt_02
+  - naive/test_004/attempt_03
+  - naive/test_005/attempt_03
+  reason: provider/proxy/TLS transport interruption
+notes:
+- Creator file-mode digest policy could not be independently reproduced; source manifest
+  fields are preserved.
+- Codex trace_metrics extraction preserved the canonical tool error for Codex CLI
+  turn.completed usage traces; observed_identity is constrained by the fixed gpt-5.5
+  profile and parent identity.

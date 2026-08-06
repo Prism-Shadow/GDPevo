@@ -1,0 +1,843 @@
+experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_006
+scenario_id: SCN_006_erp_procurement_supplier_receiving
+model_profile: deepseek_v4_max_preview
+harness: codex
+status: complete
+model:
+  generator_model: deepseek-ai/DeepSeek-V4-Pro
+  solver_model: deepseek-ai/DeepSeek-V4-Pro
+  reasoning_effort: max
+  provider_id: siliconflow_bridge
+  provider_wire_api: responses
+  observed_identity: deepseek-ai/DeepSeek-V4-Pro
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:95631cb99173c32ecc75c263b00133e1bf68dafbda7fc5de12262e0eda3790e8
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+base:
+  status: complete
+  incomplete_reason: null
+  shared_across_creators: true
+  overall_acc_at_3: 0.5694443333333333
+  overall_std_at_3: 0.06651772901113692
+  efficiency:
+    input_tokens_avg_3: 570539.2
+    cached_input_tokens_avg_3: 516642.1333333333
+    output_tokens_avg_3: 32396.533333333333
+    reasoning_output_tokens_avg_3: 22293.533333333333
+    cost_usd_avg_3: null
+    rounds_avg_3: 14.533333333333335
+    tool_calls_avg_3: 29.0
+  tasks:
+    test_001:
+      status: complete
+      scores:
+      - 0.791667
+      - 0.875
+      - 0.791667
+      acc_at_3: 0.8194446666666666
+      std_at_3: 0.03928355293107904
+      input_tokens_avg_3: 425158.3333333333
+      cached_input_tokens_avg_3: 373248.0
+      output_tokens_avg_3: 20770.0
+      reasoning_output_tokens_avg_3: 14249.0
+      cost_usd_avg_3: null
+      rounds_avg_3: 11.666666666666666
+      tool_calls_avg_3: 26.333333333333332
+    test_002:
+      status: complete
+      scores:
+      - 0.333333
+      - 0.333333
+      - 0.333333
+      acc_at_3: 0.333333
+      std_at_3: 0.0
+      input_tokens_avg_3: 532590.6666666666
+      cached_input_tokens_avg_3: 479744.0
+      output_tokens_avg_3: 35984.0
+      reasoning_output_tokens_avg_3: 24824.333333333332
+      cost_usd_avg_3: null
+      rounds_avg_3: 13.0
+      tool_calls_avg_3: 24.333333333333332
+    test_003:
+      status: complete
+      scores:
+      - 0.833333
+      - 0.722222
+      - 0.611111
+      acc_at_3: 0.722222
+      std_at_3: 0.09072175160346058
+      input_tokens_avg_3: 626976.6666666666
+      cached_input_tokens_avg_3: 569770.6666666666
+      output_tokens_avg_3: 33295.666666666664
+      reasoning_output_tokens_avg_3: 25375.666666666668
+      cost_usd_avg_3: null
+      rounds_avg_3: 15.0
+      tool_calls_avg_3: 29.333333333333332
+    test_004:
+      status: complete
+      scores:
+      - 0.666667
+      - 0.666667
+      - 0.583333
+      acc_at_3: 0.6388889999999999
+      std_at_3: 0.03928402433559984
+      input_tokens_avg_3: 672380.6666666666
+      cached_input_tokens_avg_3: 619520.0
+      output_tokens_avg_3: 37708.0
+      reasoning_output_tokens_avg_3: 26289.666666666668
+      cost_usd_avg_3: null
+      rounds_avg_3: 16.333333333333332
+      tool_calls_avg_3: 27.0
+    test_005:
+      status: complete
+      scores:
+      - 0.133333
+      - 0.533333
+      - 0.333333
+      acc_at_3: 0.333333
+      std_at_3: 0.1632993161855452
+      input_tokens_avg_3: 595589.6666666666
+      cached_input_tokens_avg_3: 540928.0
+      output_tokens_avg_3: 34225.0
+      reasoning_output_tokens_avg_3: 20729.0
+      cost_usd_avg_3: null
+      rounds_avg_3: 16.666666666666668
+      tool_calls_avg_3: 38.0
+fewshot:
+  creators:
+    codex:
+      status: complete
+      incomplete_reason: null
+      source:
+        revision: 49f948faa9258a0c61caceaf225e179651397431
+        skill_md_sha256: a17383bfb1448637ac1f757ad891ddb9676fa30b0eff620200f0e1cbc0cc0d50
+        bundle_sha256: 57dae23b41cfc0091089e90545a3f3b88a0417998ae0379135531f849808943b
+        file_modes_sha256: ddf6e4179a70662974e309ec489b477b80053d4b6a9c58c5383956145377244e
+      generation:
+        attempts:
+          attempt_01:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_01
+            skill_bundle_sha256: f794385881ab43e7f88f589def92b05e23f4dc101f914b124b3cf0df37520c17
+            input_tokens: 2263263
+            cached_input_tokens: 2185216
+            output_tokens: 35639
+            reasoning_output_tokens: 10415
+            total_tokens: 2298902
+            cost_usd: null
+            duration_seconds: 1012.2614135742188
+            assistant_turns: 42
+            tool_calls: 71
+            file_count: 3
+            bytes: 20192
+            portability_warnings:
+            - creator_tool_dependency_missing:yaml
+          attempt_02:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_02
+            skill_bundle_sha256: 92a6c610fd9753ed34408e64305607bf44ee7a193a836bb68871edfd735b07bb
+            input_tokens: 1696534
+            cached_input_tokens: 1638144
+            output_tokens: 28923
+            reasoning_output_tokens: 9948
+            total_tokens: 1725457
+            cost_usd: null
+            duration_seconds: 728.4436635971069
+            assistant_turns: 39
+            tool_calls: 68
+            file_count: 5
+            bytes: 20943
+            portability_warnings:
+            - creator_tool_dependency_missing:yaml
+          attempt_03:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/codex/fewshot_attempt_03
+            skill_bundle_sha256: 374b99ff0588aa1023fa0574f9507dee8d53271e5ecd5639c0c0113cec41881b
+            input_tokens: 3515380
+            cached_input_tokens: 3438848
+            output_tokens: 39155
+            reasoning_output_tokens: 15003
+            total_tokens: 3554535
+            cost_usd: null
+            duration_seconds: 1033.0854179859161
+            assistant_turns: 62
+            tool_calls: 102
+            file_count: 5
+            bytes: 33496
+            portability_warnings:
+            - creator_tool_dependency_missing:yaml
+        valid_generation_rate: 1.0
+      overall_acc_at_3: 0.7035184666666666
+      overall_std_at_3: 0.07468577496976717
+      lift_over_shared_base: 0.1340741333333333
+      efficiency:
+        input_tokens_avg_3: 696123.3333333333
+        cached_input_tokens_avg_3: 632149.3333333333
+        output_tokens_avg_3: 41751.066666666666
+        reasoning_output_tokens_avg_3: 30766.06666666667
+        cost_usd_avg_3: null
+        rounds_avg_3: 14.933333333333334
+        tool_calls_avg_3: 31.133333333333333
+      tasks:
+        test_001:
+          status: complete
+          scores:
+          - 0.875
+          - 0.791667
+          - 0.791667
+          acc_at_3: 0.8194446666666666
+          std_at_3: 0.03928355293107904
+          input_tokens_avg_3: 911287.3333333334
+          cached_input_tokens_avg_3: 848896.0
+          output_tokens_avg_3: 41640.0
+          reasoning_output_tokens_avg_3: 28489.0
+          cost_usd_avg_3: null
+          rounds_avg_3: 19.666666666666668
+          tool_calls_avg_3: 34.666666666666664
+        test_002:
+          status: complete
+          scores:
+          - 0.611111
+          - 0.333333
+          - 0.5
+          acc_at_3: 0.48148133333333326
+          std_at_3: 0.11415591700924758
+          input_tokens_avg_3: 668221.6666666666
+          cached_input_tokens_avg_3: 607317.3333333334
+          output_tokens_avg_3: 51943.0
+          reasoning_output_tokens_avg_3: 40633.666666666664
+          cost_usd_avg_3: null
+          rounds_avg_3: 14.666666666666666
+          tool_calls_avg_3: 28.666666666666668
+        test_003:
+          status: complete
+          scores:
+          - 0.833333
+          - 0.833333
+          - 0.833333
+          acc_at_3: 0.833333
+          std_at_3: 0.0
+          input_tokens_avg_3: 842852.3333333334
+          cached_input_tokens_avg_3: 769450.6666666666
+          output_tokens_avg_3: 46781.666666666664
+          reasoning_output_tokens_avg_3: 35368.333333333336
+          cost_usd_avg_3: null
+          rounds_avg_3: 15.333333333333334
+          tool_calls_avg_3: 31.666666666666668
+        test_004:
+          status: complete
+          scores:
+          - 0.916667
+          - 0.583333
+          - 0.916667
+          acc_at_3: 0.8055556666666667
+          std_at_3: 0.15713515453335777
+          input_tokens_avg_3: 456465.6666666667
+          cached_input_tokens_avg_3: 397226.6666666667
+          output_tokens_avg_3: 31932.666666666668
+          reasoning_output_tokens_avg_3: 24009.666666666668
+          cost_usd_avg_3: null
+          rounds_avg_3: 11.333333333333334
+          tool_calls_avg_3: 29.0
+        test_005:
+          status: complete
+          scores:
+          - 0.666667
+          - 0.533333
+          - 0.533333
+          acc_at_3: 0.5777776666666666
+          std_at_3: 0.06285425037515145
+          input_tokens_avg_3: 601789.6666666666
+          cached_input_tokens_avg_3: 537856.0
+          output_tokens_avg_3: 36458.0
+          reasoning_output_tokens_avg_3: 25329.666666666668
+          cost_usd_avg_3: null
+          rounds_avg_3: 13.666666666666666
+          tool_calls_avg_3: 31.666666666666668
+    cc:
+      status: complete
+      incomplete_reason: null
+      source:
+        revision: 20a5a1f1a2b55b13e85dff5416613a796d089016
+        skill_md_sha256: dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf
+        bundle_sha256: ff54e8b9cd1be70ae5615d130e41d1c177cf4950760071eb8cb5dd25152a3cf0
+        file_modes_sha256: ee51cd3c88dd7674a41480777e8883794c4e48cf4d87ff905f2c50fcd10a9ab1
+      generation:
+        attempts:
+          attempt_01:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_01
+            skill_bundle_sha256: 3ad324ba513cf3be531bd6ce53f91ac7728fb5cd157ca9bb5f39e4aaef2ff5df
+            input_tokens: 1223624
+            cached_input_tokens: 1145600
+            output_tokens: 24154
+            reasoning_output_tokens: 7685
+            total_tokens: 1247778
+            cost_usd: null
+            duration_seconds: 650.3149373531342
+            assistant_turns: 25
+            tool_calls: 63
+            file_count: 3
+            bytes: 30461
+            portability_warnings: []
+          attempt_02:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_02
+            skill_bundle_sha256: 9d66352896cea860ca9ebf5da09cb8f2296d95a64a1be7f6b86056632303bdfd
+            input_tokens: 2089877
+            cached_input_tokens: 1997824
+            output_tokens: 43013
+            reasoning_output_tokens: 15437
+            total_tokens: 2132890
+            cost_usd: null
+            duration_seconds: 1068.597399711609
+            assistant_turns: 36
+            tool_calls: 75
+            file_count: 3
+            bytes: 24028
+            portability_warnings: []
+          attempt_03:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/cc/fewshot_attempt_03
+            skill_bundle_sha256: 9f389da629db6ab9cdccaa7cad40ba16a7c8a62b34376f55e0a11a27ccd12af6
+            input_tokens: 1836585
+            cached_input_tokens: 1761280
+            output_tokens: 33559
+            reasoning_output_tokens: 12307
+            total_tokens: 1870144
+            cost_usd: null
+            duration_seconds: 854.6419520378113
+            assistant_turns: 33
+            tool_calls: 69
+            file_count: 2
+            bytes: 22301
+            portability_warnings: []
+        valid_generation_rate: 1.0
+      overall_acc_at_3: 0.6864814666666667
+      overall_std_at_3: 0.041378946025995185
+      lift_over_shared_base: 0.11703713333333332
+      efficiency:
+        input_tokens_avg_3: 596486.8
+        cached_input_tokens_avg_3: 536029.8666666667
+        output_tokens_avg_3: 38422.066666666666
+        reasoning_output_tokens_avg_3: 29481.2
+        cost_usd_avg_3: null
+        rounds_avg_3: 12.666666666666668
+        tool_calls_avg_3: 30.133333333333333
+      tasks:
+        test_001:
+          status: complete
+          scores:
+          - 0.791667
+          - 0.791667
+          - 0.791667
+          acc_at_3: 0.791667
+          std_at_3: 0.0
+          input_tokens_avg_3: 391991.6666666667
+          cached_input_tokens_avg_3: 344064.0
+          output_tokens_avg_3: 26599.333333333332
+          reasoning_output_tokens_avg_3: 20121.666666666668
+          cost_usd_avg_3: null
+          rounds_avg_3: 11.333333333333334
+          tool_calls_avg_3: 26.666666666666668
+        test_002:
+          status: complete
+          scores:
+          - 0.333333
+          - 0.444444
+          - 0.333333
+          acc_at_3: 0.37037000000000003
+          std_at_3: 0.05237822770961233
+          input_tokens_avg_3: 566007.6666666666
+          cached_input_tokens_avg_3: 502954.6666666667
+          output_tokens_avg_3: 55062.0
+          reasoning_output_tokens_avg_3: 43563.333333333336
+          cost_usd_avg_3: null
+          rounds_avg_3: 12.333333333333334
+          tool_calls_avg_3: 30.0
+        test_003:
+          status: complete
+          scores:
+          - 0.833333
+          - 0.722222
+          - 0.722222
+          acc_at_3: 0.759259
+          std_at_3: 0.052378227709612306
+          input_tokens_avg_3: 911341.6666666666
+          cached_input_tokens_avg_3: 843349.3333333334
+          output_tokens_avg_3: 40868.666666666664
+          reasoning_output_tokens_avg_3: 31744.0
+          cost_usd_avg_3: null
+          rounds_avg_3: 16.0
+          tool_calls_avg_3: 34.0
+        test_004:
+          status: complete
+          scores:
+          - 0.833333
+          - 0.916667
+          - 0.916667
+          acc_at_3: 0.8888889999999999
+          std_at_3: 0.03928402433559984
+          input_tokens_avg_3: 413359.6666666667
+          cached_input_tokens_avg_3: 360533.3333333333
+          output_tokens_avg_3: 33943.333333333336
+          reasoning_output_tokens_avg_3: 26471.333333333332
+          cost_usd_avg_3: null
+          rounds_avg_3: 10.666666666666666
+          tool_calls_avg_3: 30.333333333333332
+        test_005:
+          status: complete
+          scores:
+          - 0.666667
+          - 0.666667
+          - 0.533333
+          acc_at_3: 0.6222223333333333
+          std_at_3: 0.06285425037515145
+          input_tokens_avg_3: 699733.3333333334
+          cached_input_tokens_avg_3: 629248.0
+          output_tokens_avg_3: 35637.0
+          reasoning_output_tokens_avg_3: 25505.666666666668
+          cost_usd_avg_3: null
+          rounds_avg_3: 13.0
+          tool_calls_avg_3: 29.666666666666668
+    deepagents:
+      status: complete
+      incomplete_reason: null
+      source:
+        revision: 7794b61a6e76230e8c7a49bdce808b3728305914
+        skill_md_sha256: 7c2189dfa8d64c38f9d131f92d8d0adbdf4de10147df7be4c278d8345802359d
+        bundle_sha256: de2f75fa273541160842e20364dfa374b899b2e459678afad433960aae7a099f
+        file_modes_sha256: d3fe0aea8b63fe55514e2a7ab91406947b4ed045a271e20856c2b400c9de1697
+      generation:
+        attempts:
+          attempt_01:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_01
+            skill_bundle_sha256: 5dabb1060347f993483a46e55fbd2af056887360bc44df711f9d108e0d310a0a
+            input_tokens: 2470788
+            cached_input_tokens: 2402560
+            output_tokens: 39616
+            reasoning_output_tokens: 17092
+            total_tokens: 2510404
+            cost_usd: null
+            duration_seconds: 1051.822663784027
+            assistant_turns: 53
+            tool_calls: 88
+            file_count: 3
+            bytes: 23118
+            portability_warnings:
+            - creator_tool_dependency_missing:yaml
+          attempt_02:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_02
+            skill_bundle_sha256: b01e9622959d42f1c8389a319e469f9e4a7829d4e62f7fcd647b66866546f6ea
+            input_tokens: 1838322
+            cached_input_tokens: 1776640
+            output_tokens: 28687
+            reasoning_output_tokens: 11165
+            total_tokens: 1867009
+            cost_usd: null
+            duration_seconds: 712.3308815956116
+            assistant_turns: 40
+            tool_calls: 83
+            file_count: 3
+            bytes: 23631
+            portability_warnings:
+            - creator_tool_dependency_missing:yaml
+          attempt_03:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/deepagents/fewshot_attempt_03
+            skill_bundle_sha256: a3c39e683884f96ee0bc5e1bee58de8a5428156bce90f271840c71dfcb9b6884
+            input_tokens: 1944927
+            cached_input_tokens: 1879808
+            output_tokens: 27574
+            reasoning_output_tokens: 8379
+            total_tokens: 1972501
+            cost_usd: null
+            duration_seconds: 708.3703033924103
+            assistant_turns: 41
+            tool_calls: 74
+            file_count: 4
+            bytes: 22151
+            portability_warnings:
+            - creator_tool_dependency_missing:yaml
+        valid_generation_rate: 1.0
+      overall_acc_at_3: 0.6749999333333333
+      overall_std_at_3: 0.07714783288640739
+      lift_over_shared_base: 0.10555559999999997
+      efficiency:
+        input_tokens_avg_3: 584319.4666666666
+        cached_input_tokens_avg_3: 526080.0
+        output_tokens_avg_3: 38343.53333333333
+        reasoning_output_tokens_avg_3: 26143.133333333335
+        cost_usd_avg_3: null
+        rounds_avg_3: 14.466666666666665
+        tool_calls_avg_3: 29.73333333333333
+      tasks:
+        test_001:
+          status: complete
+          scores:
+          - 0.875
+          - 0.791667
+          - 0.875
+          acc_at_3: 0.8472223333333333
+          std_at_3: 0.03928355293107904
+          input_tokens_avg_3: 562663.6666666666
+          cached_input_tokens_avg_3: 510549.3333333333
+          output_tokens_avg_3: 29846.333333333332
+          reasoning_output_tokens_avg_3: 20524.0
+          cost_usd_avg_3: null
+          rounds_avg_3: 15.666666666666666
+          tool_calls_avg_3: 33.0
+        test_002:
+          status: complete
+          scores:
+          - 0.333333
+          - 0.5
+          - 0.444444
+          acc_at_3: 0.42592566666666665
+          std_at_3: 0.06929006049130632
+          input_tokens_avg_3: 544267.0
+          cached_input_tokens_avg_3: 485888.0
+          output_tokens_avg_3: 55932.333333333336
+          reasoning_output_tokens_avg_3: 36273.0
+          cost_usd_avg_3: null
+          rounds_avg_3: 15.0
+          tool_calls_avg_3: 31.0
+        test_003:
+          status: complete
+          scores:
+          - 0.722222
+          - 0.833333
+          - 0.833333
+          acc_at_3: 0.796296
+          std_at_3: 0.052378227709612306
+          input_tokens_avg_3: 559020.0
+          cached_input_tokens_avg_3: 502186.6666666667
+          output_tokens_avg_3: 33970.333333333336
+          reasoning_output_tokens_avg_3: 23339.0
+          cost_usd_avg_3: null
+          rounds_avg_3: 13.333333333333334
+          tool_calls_avg_3: 26.666666666666668
+        test_004:
+          status: complete
+          scores:
+          - 1.0
+          - 0.916667
+          - 0.666667
+          acc_at_3: 0.8611113333333332
+          std_at_3: 0.14163932197976975
+          input_tokens_avg_3: 713637.6666666666
+          cached_input_tokens_avg_3: 647082.6666666666
+          output_tokens_avg_3: 34550.0
+          reasoning_output_tokens_avg_3: 23320.0
+          cost_usd_avg_3: null
+          rounds_avg_3: 14.666666666666666
+          tool_calls_avg_3: 29.666666666666668
+        test_005:
+          status: complete
+          scores:
+          - 0.466667
+          - 0.333333
+          - 0.533333
+          acc_at_3: 0.4444443333333333
+          std_at_3: 0.08314800132026959
+          input_tokens_avg_3: 542009.0
+          cached_input_tokens_avg_3: 484693.3333333333
+          output_tokens_avg_3: 37418.666666666664
+          reasoning_output_tokens_avg_3: 27259.666666666668
+          cost_usd_avg_3: null
+          rounds_avg_3: 13.666666666666666
+          tool_calls_avg_3: 28.333333333333332
+    opencode:
+      status: complete
+      incomplete_reason: null
+      source:
+        revision: 92f198512f770c1b91a1c987b0742c14cb9021bf
+        skill_md_sha256: 0546756bfbf1487a213a8bcef91ffcce061bdbb05e3b85b75069fc1329a3a4e6
+        bundle_sha256: c7f3bbf09e3d2f239a39a55c9d6f22f160f4e99f9bf021004b3da82293abdd14
+        file_modes_sha256: 79ba2ac24cea4ba01ed79c07a19912304c39b51c267cf384ddca850080bedb0a
+      generation:
+        attempts:
+          attempt_01:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_01
+            skill_bundle_sha256: ab7de8331da1a85fe73b7e3eb98ed9cf4492bed3b542a757678081b43b6ddcd2
+            input_tokens: 991295
+            cached_input_tokens: 934912
+            output_tokens: 25125
+            reasoning_output_tokens: 9236
+            total_tokens: 1016420
+            cost_usd: null
+            duration_seconds: 629.1710555553436
+            assistant_turns: 22
+            tool_calls: 50
+            file_count: 3
+            bytes: 21277
+            portability_warnings: []
+          attempt_02:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_02
+            skill_bundle_sha256: e29cfba1c6b1e8d95b500068bd86474480855c60ba9c23b2c6b16fce06842449
+            input_tokens: 1191367
+            cached_input_tokens: 1127936
+            output_tokens: 26834
+            reasoning_output_tokens: 12060
+            total_tokens: 1218201
+            cost_usd: null
+            duration_seconds: 635.8264787197113
+            assistant_turns: 26
+            tool_calls: 53
+            file_count: 3
+            bytes: 31317
+            portability_warnings: []
+          attempt_03:
+            status: valid
+            skill_dir: skills/deepseek_v4_max_preview/fewshot/opencode/fewshot_attempt_03
+            skill_bundle_sha256: a5b93e3c4fb6a33c232a330df7cefce4abcee1c17d58c69a26eeceb5b099b15a
+            input_tokens: 1352728
+            cached_input_tokens: 1282560
+            output_tokens: 33699
+            reasoning_output_tokens: 12966
+            total_tokens: 1386427
+            cost_usd: null
+            duration_seconds: 806.485113620758
+            assistant_turns: 24
+            tool_calls: 85
+            file_count: 2
+            bytes: 22470
+            portability_warnings: []
+        valid_generation_rate: 1.0
+      overall_acc_at_3: 0.6353703333333333
+      overall_std_at_3: 0.06547280820724144
+      lift_over_shared_base: 0.06592599999999993
+      efficiency:
+        input_tokens_avg_3: 768106.8
+        cached_input_tokens_avg_3: 703214.9333333333
+        output_tokens_avg_3: 42553.933333333334
+        reasoning_output_tokens_avg_3: 30286.666666666668
+        cost_usd_avg_3: null
+        rounds_avg_3: 14.466666666666665
+        tool_calls_avg_3: 32.266666666666666
+      tasks:
+        test_001:
+          status: complete
+          scores:
+          - 0.791667
+          - 0.791667
+          - 0.791667
+          acc_at_3: 0.791667
+          std_at_3: 0.0
+          input_tokens_avg_3: 381739.6666666667
+          cached_input_tokens_avg_3: 341674.6666666667
+          output_tokens_avg_3: 30840.0
+          reasoning_output_tokens_avg_3: 24286.0
+          cost_usd_avg_3: null
+          rounds_avg_3: 13.0
+          tool_calls_avg_3: 30.0
+        test_002:
+          status: complete
+          scores:
+          - 0.333333
+          - 0.333333
+          - 0.333333
+          acc_at_3: 0.333333
+          std_at_3: 0.0
+          input_tokens_avg_3: 637147.3333333334
+          cached_input_tokens_avg_3: 569600.0
+          output_tokens_avg_3: 62524.666666666664
+          reasoning_output_tokens_avg_3: 46943.0
+          cost_usd_avg_3: null
+          rounds_avg_3: 12.666666666666666
+          tool_calls_avg_3: 28.333333333333332
+        test_003:
+          status: complete
+          scores:
+          - 0.833333
+          - 0.833333
+          - 0.555556
+          acc_at_3: 0.7407406666666666
+          std_at_3: 0.13094533357177038
+          input_tokens_avg_3: 1115563.6666666667
+          cached_input_tokens_avg_3: 1033557.3333333334
+          output_tokens_avg_3: 50954.333333333336
+          reasoning_output_tokens_avg_3: 34103.0
+          cost_usd_avg_3: null
+          rounds_avg_3: 17.333333333333332
+          tool_calls_avg_3: 39.666666666666664
+        test_004:
+          status: complete
+          scores:
+          - 0.5
+          - 0.916667
+          - 0.916667
+          acc_at_3: 0.777778
+          std_at_3: 0.1964187074644368
+          input_tokens_avg_3: 497455.3333333333
+          cached_input_tokens_avg_3: 438528.0
+          output_tokens_avg_3: 30395.333333333332
+          reasoning_output_tokens_avg_3: 23959.666666666668
+          cost_usd_avg_3: null
+          rounds_avg_3: 11.333333333333334
+          tool_calls_avg_3: 27.333333333333332
+        test_005:
+          status: complete
+          scores:
+          - 0.533333
+          - 0.533333
+          - 0.533333
+          acc_at_3: 0.533333
+          std_at_3: 0.0
+          input_tokens_avg_3: 1208628.0
+          cached_input_tokens_avg_3: 1132714.6666666667
+          output_tokens_avg_3: 38055.333333333336
+          reasoning_output_tokens_avg_3: 22141.666666666668
+          cost_usd_avg_3: null
+          rounds_avg_3: 18.0
+          tool_calls_avg_3: 36.0
+creator_pairwise_deltas:
+  codex_minus_cc:
+    status: complete
+    overall_delta: 0.01703699999999997
+    tasks:
+      test_001: 0.02777766666666659
+      test_002: 0.11111133333333323
+      test_003: 0.07407399999999997
+      test_004: -0.08333333333333326
+      test_005: -0.04444466666666669
+  codex_minus_deepagents:
+    status: complete
+    overall_delta: 0.028518533333333318
+    tasks:
+      test_001: -0.0277776666666667
+      test_002: 0.055555666666666614
+      test_003: 0.03703699999999999
+      test_004: -0.05555566666666656
+      test_005: 0.13333333333333336
+  codex_minus_opencode:
+    status: complete
+    overall_delta: 0.06814813333333336
+    tasks:
+      test_001: 0.02777766666666659
+      test_002: 0.14814833333333327
+      test_003: 0.09259233333333339
+      test_004: 0.0277776666666667
+      test_005: 0.04444466666666669
+  cc_minus_deepagents:
+    status: complete
+    overall_delta: 0.01148153333333335
+    tasks:
+      test_001: -0.05555533333333329
+      test_002: -0.055555666666666614
+      test_003: -0.03703699999999999
+      test_004: 0.0277776666666667
+      test_005: 0.17777800000000005
+  cc_minus_opencode:
+    status: complete
+    overall_delta: 0.05111113333333339
+    tasks:
+      test_001: 0.0
+      test_002: 0.03703700000000004
+      test_003: 0.018518333333333414
+      test_004: 0.11111099999999996
+      test_005: 0.08888933333333338
+  deepagents_minus_opencode:
+    status: complete
+    overall_delta: 0.03962960000000004
+    tasks:
+      test_001: 0.05555533333333329
+      test_002: 0.09259266666666666
+      test_003: 0.0555553333333334
+      test_004: 0.08333333333333326
+      test_005: -0.08888866666666667
+infrastructure_replacements:
+- logical_slot: skill_generation/codex/attempt_02
+  agent_run_id: a3d804df-7e58-4ea2-80c1-296922917545
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/skill_generation/codex/attempt_02/a3d804df-7e58-4ea2-80c1-296922917545
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: base/test_002/attempt_01
+  agent_run_id: b7534a57-26eb-4a8c-a798-496a9082fd90
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/base/test_002/attempt_01/b7534a57-26eb-4a8c-a798-496a9082fd90
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/deepagents/test_002/attempt_01
+  agent_run_id: 22db9aca-c7e0-4dfb-b5fa-2a30e86033e2
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_01/22db9aca-c7e0-4dfb-b5fa-2a30e86033e2
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/codex/test_003/attempt_01
+  agent_run_id: 98a302b6-f3b0-4fdf-856b-27daa00f4bdc
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_01/98a302b6-f3b0-4fdf-856b-27daa00f4bdc
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/deepagents/test_003/attempt_01
+  agent_run_id: 5fe63f4b-9e50-4db8-8bee-78026a5a4b27
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/deepagents/test_003/attempt_01/5fe63f4b-9e50-4db8-8bee-78026a5a4b27
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/cc/test_004/attempt_01
+  agent_run_id: a209e9a3-908e-44ac-b24f-84fd304991f4
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/cc/test_004/attempt_01/a209e9a3-908e-44ac-b24f-84fd304991f4
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: base/test_005/attempt_01
+  agent_run_id: 49f6bf30-e5e8-46d2-b187-425dc3e4c4a6
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/base/test_005/attempt_01/49f6bf30-e5e8-46d2-b187-425dc3e4c4a6
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/deepagents/test_005/attempt_01
+  agent_run_id: d2624d2d-d52e-4493-a102-d1e6dd79fbda
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/deepagents/test_005/attempt_01/d2624d2d-d52e-4493-a102-d1e6dd79fbda
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/codex/test_001/attempt_02
+  agent_run_id: 59fe1f7f-f887-40e4-a1b1-6bdefaf78187
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_02/59fe1f7f-f887-40e4-a1b1-6bdefaf78187
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/codex/test_001/attempt_02
+  agent_run_id: 962865cd-eb94-4491-835c-a986aa0ecd23
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/codex/test_001/attempt_02/962865cd-eb94-4491-835c-a986aa0ecd23
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/deepagents/test_001/attempt_02
+  agent_run_id: 6bf3dd75-894e-40c8-81cf-5b0dffe9ba17
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_02/6bf3dd75-894e-40c8-81cf-5b0dffe9ba17
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/deepagents/test_001/attempt_02
+  agent_run_id: 23373fac-a757-40d6-b299-be856c5ba002
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/deepagents/test_001/attempt_02/23373fac-a757-40d6-b299-be856c5ba002
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/cc/test_002/attempt_02
+  agent_run_id: 56b2331a-1bc7-44d5-86c3-c66ce44b82db
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/cc/test_002/attempt_02/56b2331a-1bc7-44d5-86c3-c66ce44b82db
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/opencode/test_002/attempt_02
+  agent_run_id: 1b1bdbe2-83dc-44e0-a5de-02c05873929f
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/opencode/test_002/attempt_02/1b1bdbe2-83dc-44e0-a5de-02c05873929f
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: base/test_005/attempt_02
+  agent_run_id: 5096e26f-026a-413f-9dad-3d502a19cf5f
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/base/test_005/attempt_02/5096e26f-026a-413f-9dad-3d502a19cf5f
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/codex/test_002/attempt_03
+  agent_run_id: 08507caf-d7be-4e9e-a4f0-98a385d11d5f
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/codex/test_002/attempt_03/08507caf-d7be-4e9e-a4f0-98a385d11d5f
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/deepagents/test_002/attempt_03
+  agent_run_id: 07940734-eeb3-4e1d-9e95-ec4b9cc0fe58
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/deepagents/test_002/attempt_03/07940734-eeb3-4e1d-9e95-ec4b9cc0fe58
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/codex/test_003/attempt_03
+  agent_run_id: 547ff2e6-1f53-47da-a9b9-2cea8c47eb69
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/codex/test_003/attempt_03/547ff2e6-1f53-47da-a9b9-2cea8c47eb69
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/cc/test_003/attempt_03
+  agent_run_id: 1541e517-c651-483b-8063-27303e12dc09
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/cc/test_003/attempt_03/1541e517-c651-483b-8063-27303e12dc09
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/opencode/test_003/attempt_03
+  agent_run_id: b2f31928-38ee-440b-932e-d2f2ad85a20a
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/opencode/test_003/attempt_03/b2f31928-38ee-440b-932e-d2f2ad85a20a
+  reason: codex process failed before logical artifact, exit_code=1
+- logical_slot: fewshot/deepagents/test_004/attempt_03
+  agent_run_id: 6000e1ec-e0cc-40e8-9dad-e810406a948a
+  incident_path: scratch/infrastructure_failures/deepseek_v4_max_preview/fewshot/deepagents/test_004/attempt_03/6000e1ec-e0cc-40e8-9dad-e810406a948a
+  reason: codex process failed before logical artifact, exit_code=1
+notes:
+- Cost is null because profile pricing is excluded from primary score analysis.

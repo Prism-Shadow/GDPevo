@@ -1,0 +1,1112 @@
+experiment_id: codex_skill_creator_comparison_naive_supplement
+parent_experiment_id: codex_skill_creator_comparison
+task_group_id: task_group_023
+model_profile: deepseek_v4_max_preview
+harness: codex
+recovery_layer: bounded_logical_retry_v8
+logical_retry: logical_retry_08
+status: complete
+model:
+  generator_model: deepseek-ai/DeepSeek-V4-Pro
+  solver_model: deepseek-ai/DeepSeek-V4-Pro
+  reasoning_effort: max
+  provider_id: siliconflow_bridge
+  observed_identity: deepseek-ai/DeepSeek-V4-Pro
+  identity_consistent: true
+runtime:
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:2e282db8a9ce8e506448681299ba27c862435a6137e7910e235835509c48a85b
+  codex_version: codex-cli 0.144.6
+  agent_uid_gid: 1004:1004
+parent:
+  report: parent/deepseek_v4_max_preview/task_group_023.yaml
+  report_sha256: 41d811620811ff211056a70bcc2d209750c2a6df69b1f5c226c885ac29b9114b
+  status: incomplete
+  agent_image_id: sha256:d9d1114d6b425c07c6b33136014095349f51ca97d92963bc60fba8d6f73c05ab
+  task_image_id: sha256:2e282db8a9ce8e506448681299ba27c862435a6137e7910e235835509c48a85b
+first_pass:
+  report: report/deepseek_v4_max_preview/task_group_023.naive_supplement.yaml
+  report_sha256: 05608e6175620329e3ef08fcef7ff53c442d72a7c7814f639d862197af121bb3
+  status: incomplete
+  naive_status: incomplete
+  hash_inventory: supplemental/bounded_logical_retry_v1/preflight/first_pass_hash_inventory.yaml
+  hash_inventory_sha256: 7bbfb39fa2a06f702f9f17e47d1b46ea0ee857f9beeab4ebf359a03f3425fb71
+  run_manifest: scratch/run_manifest/deepseek_v4_max_preview.yaml
+  run_manifest_sha256: 83fcb8676161c1f035a86eb4130381d644a1f4207fe3415383d20db9e2ab6433
+  valid_generation_slots_preserved:
+  - naive/attempt_01
+  - naive/attempt_02
+  - naive/attempt_03
+previous_recoveries:
+  bounded_logical_retry_v1:
+    logical_retry: logical_retry_01
+    report: supplemental/bounded_logical_retry_v1/report/task_group_023.naive_recovery.yaml
+    report_sha256: 1a92d25fcd3dab332a0790ff2b6f7488ffad859f08828e48f600bdd7d67c508e
+    status: incomplete
+    naive_status: incomplete
+    run_manifest: supplemental/bounded_logical_retry_v1/run_manifest.yaml
+    run_manifest_sha256: 3296f651fce41bc263b7e6675efcc6b904619f98df62083a0f3a3857f1ddb74f
+    recovery_plan: supplemental/bounded_logical_retry_v1/preflight/recovery_plan.yaml
+    recovery_plan_sha256: 7e8fa545d94e06d58838891469e535048bceed7741e3a4ad6855210b00da54f2
+    valid_solver_slots_preserved_in_v1:
+    - naive/test_001/attempt_01
+    - naive/test_001/attempt_02
+    - naive/test_001/attempt_03
+    - naive/test_003/attempt_01
+    - naive/test_003/attempt_02
+    - naive/test_003/attempt_03
+    - naive/test_004/attempt_03
+    - naive/test_005/attempt_01
+    - naive/test_005/attempt_02
+    - naive/test_005/attempt_03
+  bounded_logical_retry_v2:
+    logical_retry: logical_retry_02
+    report: supplemental/bounded_logical_retry_v2/report/task_group_023.naive_recovery.yaml
+    report_sha256: 046a420950e063352bbee862b302459ccda7abff922cbafeba2915fb52ea64b1
+    status: incomplete
+    naive_status: incomplete
+    run_manifest: supplemental/bounded_logical_retry_v2/run_manifest.yaml
+    run_manifest_sha256: 4325a0802e9103e829db214800b076dc8a6de0cc4bec4ff481cb8b9a0116b76f
+    recovery_plan: supplemental/bounded_logical_retry_v2/preflight/recovery_plan.yaml
+    recovery_plan_sha256: 87addbf19428cc7effd2a5ac15e7bf08a4c9d367985a9da9a4041019be864851
+    valid_solver_slots_preserved_in_v2:
+    - naive/test_001/attempt_01
+    - naive/test_001/attempt_02
+    - naive/test_001/attempt_03
+    - naive/test_002/attempt_02
+    - naive/test_003/attempt_01
+    - naive/test_003/attempt_02
+    - naive/test_003/attempt_03
+    - naive/test_004/attempt_01
+    - naive/test_004/attempt_02
+    - naive/test_004/attempt_03
+    - naive/test_005/attempt_01
+    - naive/test_005/attempt_02
+    - naive/test_005/attempt_03
+    unresolved_slots_authorized_for_v3:
+    - naive/test_002/attempt_01
+    - naive/test_002/attempt_03
+  bounded_logical_retry_v3:
+    logical_retry: logical_retry_03
+    report: supplemental/bounded_logical_retry_v3/report/task_group_023.naive_recovery.yaml
+    report_sha256: 12dffe94416b4abc48cd67619fa6995e1ef3454f95dcaee34879e70d89cc8a2e
+    status: incomplete
+    naive_status: incomplete
+    run_manifest: supplemental/bounded_logical_retry_v3/run_manifest.yaml
+    run_manifest_sha256: 1b41f0ac580549c121b07db5c7ceef976d60e4c96622cbb0a3a102630fee2a00
+    physical_replacement_manifest: supplemental/bounded_logical_retry_v3/run_manifest.v3_infrastructure_physical_replacement.yaml
+    physical_replacement_manifest_sha256: 517d8f476368044332bc68f6385827c238ae19f89e3b20589f6f075824d3d058
+    valid_solver_slots_preserved_in_v4:
+    - naive/test_001/attempt_01
+    - naive/test_001/attempt_02
+    - naive/test_001/attempt_03
+    - naive/test_002/attempt_02
+    - naive/test_002/attempt_03
+    - naive/test_003/attempt_01
+    - naive/test_003/attempt_02
+    - naive/test_003/attempt_03
+    - naive/test_004/attempt_01
+    - naive/test_004/attempt_02
+    - naive/test_004/attempt_03
+    - naive/test_005/attempt_01
+    - naive/test_005/attempt_02
+    - naive/test_005/attempt_03
+    unresolved_slots_authorized_for_v4:
+    - naive/test_002/attempt_01
+  bounded_logical_retry_v4:
+    logical_retry: logical_retry_04
+    report: supplemental/bounded_logical_retry_v4/report/task_group_023.naive_recovery.yaml
+    report_sha256: 9e640875e09f2d454ca80b94c042257af71473fa084ddc7b2b42ad54704413f7
+    status: incomplete
+    naive_status: incomplete
+    run_manifest: supplemental/bounded_logical_retry_v4/run_manifest.yaml
+    run_manifest_sha256: e16b1c7d685dfefb8522d50dabeb4bbe360867825ac27ffd233beb70a54a3fe4
+    physical_execution_audit: supplemental/bounded_logical_retry_v4/postrun/physical_execution_audit.yaml
+    physical_execution_audit_sha256: 962252458606605ffc7def94b59c3418dde792b703c9b03e03fdd9e3692628f8
+    valid_solver_slots_preserved_in_v5:
+    - naive/test_001/attempt_01
+    - naive/test_001/attempt_02
+    - naive/test_001/attempt_03
+    - naive/test_002/attempt_02
+    - naive/test_002/attempt_03
+    - naive/test_003/attempt_01
+    - naive/test_003/attempt_02
+    - naive/test_003/attempt_03
+    - naive/test_004/attempt_01
+    - naive/test_004/attempt_02
+    - naive/test_004/attempt_03
+    - naive/test_005/attempt_01
+    - naive/test_005/attempt_02
+    - naive/test_005/attempt_03
+    unresolved_slots_authorized_for_v5:
+    - naive/test_002/attempt_01
+  bounded_logical_retry_v5:
+    logical_retry: logical_retry_05
+    report: supplemental/bounded_logical_retry_v5/report/task_group_023.naive_recovery.yaml
+    report_sha256: fd1ead3c0fef0fac9f5aae4ddc3d55eedd7442810aec462ccf9b5ad94139e686
+    status: incomplete
+    naive_status: incomplete
+    run_manifest: supplemental/bounded_logical_retry_v5/run_manifest.yaml
+    run_manifest_sha256: 5a72506cf61d2601f902f458360cf60b604b8b3e3d729a2641d02036bea0448a
+    postrun_artifact_hashes: supplemental/bounded_logical_retry_v5/postrun/artifact_hashes.yaml
+    postrun_artifact_hashes_sha256: 6b1f0245851819268a3caacaad93caef5f28fa9aee7fbaf8c5af383f075d847f
+    valid_solver_slots_preserved_in_v6:
+    - naive/test_001/attempt_01
+    - naive/test_001/attempt_02
+    - naive/test_001/attempt_03
+    - naive/test_002/attempt_02
+    - naive/test_002/attempt_03
+    - naive/test_003/attempt_01
+    - naive/test_003/attempt_02
+    - naive/test_003/attempt_03
+    - naive/test_004/attempt_01
+    - naive/test_004/attempt_02
+    - naive/test_004/attempt_03
+    - naive/test_005/attempt_01
+    - naive/test_005/attempt_02
+    - naive/test_005/attempt_03
+    unresolved_slots_authorized_for_v6:
+    - naive/test_002/attempt_01
+  bounded_logical_retry_v6:
+    logical_retry: logical_retry_06
+    report: supplemental/bounded_logical_retry_v6/report/task_group_023.naive_recovery.yaml
+    report_sha256: 5f133816d5f7fdb4a01c673306b7f7cfcb6e028df8707e4ff576519bbe22033d
+    status: incomplete
+    naive_status: incomplete
+    run_manifest: supplemental/bounded_logical_retry_v6/run_manifest.yaml
+    run_manifest_sha256: 537ee9f8e08efa1ed9808dd41644a8c1cd51334350b814e988c0bbfce14749e4
+    postrun_artifact_hashes: supplemental/bounded_logical_retry_v6/postrun/artifact_hashes.yaml
+    postrun_artifact_hashes_sha256: 4de16fbb3b2b64e3da6737a9c4fca4eb229a6659b083af0a929ecf58246ac7fd
+    valid_solver_slots_preserved_in_v7:
+    - naive/test_001/attempt_01
+    - naive/test_001/attempt_02
+    - naive/test_001/attempt_03
+    - naive/test_002/attempt_02
+    - naive/test_002/attempt_03
+    - naive/test_003/attempt_01
+    - naive/test_003/attempt_02
+    - naive/test_003/attempt_03
+    - naive/test_004/attempt_01
+    - naive/test_004/attempt_02
+    - naive/test_004/attempt_03
+    - naive/test_005/attempt_01
+    - naive/test_005/attempt_02
+    - naive/test_005/attempt_03
+    unresolved_slots_authorized_for_v7:
+    - naive/test_002/attempt_01
+  bounded_logical_retry_v7:
+    logical_retry: logical_retry_07
+    report: supplemental/bounded_logical_retry_v7/report/task_group_023.naive_recovery.yaml
+    report_sha256: 088ea54f2ebac94c1e100be20d5e11d71050a69c5ed8dc8efe0a9a9f59c26cee
+    status: incomplete
+    naive_status: incomplete
+    run_manifest: supplemental/bounded_logical_retry_v7/run_manifest.yaml
+    run_manifest_sha256: 600442fb0850ba80dec8690e09489e9ed4b70e0415ce5e6b2fdbb0af6572c567
+    postrun_artifact_hashes: supplemental/bounded_logical_retry_v7/postrun/artifact_hashes.yaml
+    postrun_artifact_hashes_sha256: 118eb72c5128341766a50b945f485704a8c3772c96d835cbb7bfd19dd578e2df
+    valid_solver_slots_preserved_in_v8:
+    - naive/test_001/attempt_01
+    - naive/test_001/attempt_02
+    - naive/test_001/attempt_03
+    - naive/test_002/attempt_02
+    - naive/test_002/attempt_03
+    - naive/test_003/attempt_01
+    - naive/test_003/attempt_02
+    - naive/test_003/attempt_03
+    - naive/test_004/attempt_01
+    - naive/test_004/attempt_02
+    - naive/test_004/attempt_03
+    - naive/test_005/attempt_01
+    - naive/test_005/attempt_02
+    - naive/test_005/attempt_03
+    unresolved_slots_authorized_for_v8:
+    - naive/test_002/attempt_01
+recovery_execution:
+  started_at: '2026-08-01T10:43:04Z'
+  completed_at: '2026-08-01T12:02:50Z'
+  run_manifest: supplemental/bounded_logical_retry_v8/run_manifest.yaml
+  run_manifest_sha256: 2f13d426d84b3bb23faabce5e2a1b4b6f351fbb23da18c2a3a7303d061f0714b
+  scratch_run_manifest: scratch/run_manifest/deepseek_v4_max_preview.logical_retry_08.yaml
+  scratch_run_manifest_sha256: 2f13d426d84b3bb23faabce5e2a1b4b6f351fbb23da18c2a3a7303d061f0714b
+  hash_inventory: supplemental/bounded_logical_retry_v8/preflight/hash_inventory.yaml
+  hash_inventory_sha256: 7b56d091ba2a384b52c4b3df424a63f53d90085063d52cee48f8ed97c518310f
+  failure_classification: supplemental/bounded_logical_retry_v8/preflight/failure_classification.yaml
+  failure_classification_sha256: a0244ad9beb298e26edcf0631559ffb8ec3c717efa9e79ebda7a341aff3e63ba
+  slot_plan: supplemental/bounded_logical_retry_v8/preflight/slot_plan.yaml
+  slot_plan_sha256: 50da4bc48f4f2f161f3e722255feadd137eb9f2d131ac896a437b371231d5ce0
+  recovery_plan: supplemental/bounded_logical_retry_v8/preflight/recovery_plan.yaml
+  recovery_plan_sha256: 02305bc0c1d6fdf8a2d2212e92cefe7ae99a9d905eed1da37577b218f59b6c32
+  helper_review: supplemental/bounded_logical_retry_v8/preflight/recovery_helper_review.yaml
+  helper_review_sha256: 8e3f1d8fde5890a87ea09815fb7201f702c3b28f91e6e3f13dca5418c409bba1
+  helper: scratch/bounded_logical_retry_v8/bounded_logical_retry_runner.py
+  helper_sha256: 65bdb0cab481c40e8242579eded29ae7fe72afc8fabf45d6755ebab1da7cd483
+  base_frozen_helper: scratch/frozen_helper/naive_supplement_runner.py
+  base_frozen_helper_sha256: b17f13f06a7e5e3d0cbca1a48d0d158875c1cf0afc6bb9c0dffdcff4f529596a
+  run_plan_sha256: 9282a11d6858c26e482db004e120269ad6b01b6601114de0f74e6f48133d2577
+  generation_prompt_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+  fewshot_solver_prompt_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+  common_contract_sha256: 8468aa32ab89d29e4b1abb2cd50fbcb2e12e1be47d8f9060f4bf9070abf3bd6e
+  solver_wall_timeout_seconds: 7200
+  host_runner_timeout_seconds: 8100
+  solver_trace_root: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive
+  solver_run_root: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive
+  source_v7_report: supplemental/bounded_logical_retry_v7/report/task_group_023.naive_recovery.yaml
+  source_v7_report_sha256: 088ea54f2ebac94c1e100be20d5e11d71050a69c5ed8dc8efe0a9a9f59c26cee
+  source_failure_status: timeout
+  source_failure_reason: agent_wall_timeout
+  source_failure_class: agent_wall_timeout_right_censored
+  current_status: complete
+  current_score: 0.0
+  current_incomplete_reason: null
+  capacity_observations:
+  - checked_at: '2026-08-01T10:43:06Z'
+    logical_slot: naive/test_002/attempt_01
+    logical_retry_label: logical_retry_08
+    physical_execution_ordinal: 1
+    task_group_active_model_agents: 0
+    global_active_deepseek_model_agents: 0
+    task_group_limit: 6
+    global_limit: 60
+    launch_permitted: true
+    waited_for_capacity: false
+naive:
+  status: complete
+  incomplete_reason: null
+  source:
+    revision: sha256:8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    skill_md_sha256: 8bd21d96b6649a727752a782768320e7c5672205183a788329586b9f3be1f65c
+    bundle_sha256: f8113587e7b9fcdc1a2fd861f44f5e46a0a93dd526dc3e166071be31152b3943
+    file_modes_sha256: 3019adeb7c4270793827e3c992ca3ec0a88d6084a7c0321201110e3a912f49ae
+  generation:
+    attempts:
+      attempt_01:
+        status: valid
+        incomplete_reason: null
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+        skill_bundle_sha256: a521e70c6a1cf1029490c4df556332a80280f002f40f279003919ea3959fbd7a
+        entrypoint: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01/SKILL.md
+        agent_run_id: a9fb2714-be0b-4489-8ab1-b2d76568b29f
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 0efa6eb4d6273730554aef260bc0eaa656a672d5f7fef429d5cff6ebb741b076
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_01
+        trace_metrics: null
+        trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+          was found'
+        started_at: '2026-07-29T16:47:33Z'
+        completed_at: '2026-07-29T17:02:20Z'
+      attempt_02:
+        status: valid
+        incomplete_reason: null
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+        skill_bundle_sha256: 462cd7a1ca77741abbc05845e52a9461d92b9925d89fa70e7095108be9c75d72
+        entrypoint: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02/SKILL.md
+        agent_run_id: 4172d99a-ce69-470e-9f1e-8a62e34cebfe
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 4822a2fe33336dcc6b73e39635afa34f85056ffef6eee912646929154bfbd74d
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_02
+        trace_metrics: null
+        trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+          was found'
+        started_at: '2026-07-29T16:47:33Z'
+        completed_at: '2026-07-29T17:01:53Z'
+      attempt_03:
+        status: valid
+        incomplete_reason: null
+        skill_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+        skill_bundle_sha256: c7a8735bc232be321b699d321571e1efc8e69bcd887b27fac1d613249af1a0ed
+        entrypoint: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03/SKILL.md
+        agent_run_id: 1b880212-6a92-452b-a59c-f11a94b33689
+        prompt_template_id: fewshot_skill_generation
+        prompt_template_sha256: 87fb7cc3107b87a3110d8f93117a74a743a204c1934502b6a7e2777f1b663949
+        rendered_prompt_sha256: 3eee60d7a10d73e968a787071f55550416c4c784831034be54e3c2b299e410c6
+        trace_dir: original_traces/deepseek_v4_max_preview/skill_generation/naive/attempt_03
+        trace_metrics: null
+        trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+          was found'
+        started_at: '2026-07-29T16:47:32Z'
+        completed_at: '2026-07-29T17:01:15Z'
+    valid_generation_rate: 1.0
+    efficiency:
+      counted_runs: 0
+      input_tokens: 0
+      cached_input_tokens: 0
+      output_tokens: 0
+      reasoning_output_tokens: 0
+      total_tokens: 0
+      assistant_turns: 0
+      tool_calls: 0
+  overall_acc_at_3: 0.3637426900575651
+  overall_std_at_3: 0.12532703328741962
+  lift_over_shared_base: null
+  efficiency:
+    counted_runs: 0
+    input_tokens: 0
+    cached_input_tokens: 0
+    output_tokens: 0
+    reasoning_output_tokens: 0
+    total_tokens: 0
+    assistant_turns: 0
+    tool_calls: 0
+  tasks:
+    test_001:
+      status: complete
+      incomplete_reason: null
+      scores:
+      - 0.38095238095238093
+      - 0.5238095238095237
+      - 0.5714285714285714
+      acc_at_3: 0.49206349206349204
+      std_at_3: 0.08093681767607594
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.38095238095238093
+          incomplete_reason: null
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/answer.json
+          score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/score.yaml
+          run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01/run_metadata.yaml
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_01
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+        attempt_02:
+          status: complete
+          score: 0.5238095238095237
+          incomplete_reason: null
+          answer_json: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01/answer.json
+          score_yaml: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01/score.yaml
+          run_metadata: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01/run_metadata.yaml
+          trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/logical_retry_01
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          recovery_layer: bounded_logical_retry_v1
+          logical_retry: logical_retry_01
+          first_pass_status: invalid
+          first_pass_incomplete_reason: codex_exit_1
+          first_pass_score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/score.yaml
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_02
+          physical_uuid: c72b8973297949039ab93e0fd9303cdc
+          skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: 462cd7a1ca77741abbc05845e52a9461d92b9925d89fa70e7095108be9c75d72
+        attempt_03:
+          status: complete
+          score: 0.5714285714285714
+          incomplete_reason: null
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03/answer.json
+          score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03/score.yaml
+          run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03/run_metadata.yaml
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_001/attempt_03
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+      efficiency:
+        counted_runs: 0
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+    test_002:
+      status: complete
+      incomplete_reason: null
+      scores:
+      - 0.0
+      - 0.380952380952
+      - 0.285714285714
+      acc_at_3: 0.22222222222199997
+      std_at_3: 0.16187363535199004
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.0
+          incomplete_reason: null
+          answer_json: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/answer.json
+          score_yaml: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/score.yaml
+          run_metadata: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/run_metadata.yaml
+          trace_dir: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          recovery_layer: bounded_logical_retry_v8
+          logical_retry: logical_retry_08
+          physical_uuid: 7810133ee4b542008e5393a0b51f0ed2
+          physical_execution_ordinal: 1
+          skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          skill_bundle_sha256: a521e70c6a1cf1029490c4df556332a80280f002f40f279003919ea3959fbd7a
+        attempt_02:
+          status: complete
+          score: 0.380952380952
+          incomplete_reason: null
+          answer_json: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_02/answer.json
+          score_yaml: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_02/score.yaml
+          run_metadata: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_02/run_metadata.yaml
+          trace_dir: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_02
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          recovery_layer: bounded_logical_retry_v2
+          logical_retry: logical_retry_02
+          first_pass_status: invalid
+          first_pass_incomplete_reason: missing_parseable_answer_json
+          first_pass_score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/score.yaml
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02
+          prior_v1_status: timeout
+          prior_v1_incomplete_reason: agent_wall_timeout
+          prior_v1_score_yaml: null
+          prior_v1_run_metadata: null
+          prior_v1_trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_02/logical_retry_01
+          physical_uuid: 9df1ab6287ac4696aa1929b895375f57
+          skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: 462cd7a1ca77741abbc05845e52a9461d92b9925d89fa70e7095108be9c75d72
+        attempt_03:
+          status: complete
+          score: 0.285714285714
+          incomplete_reason: null
+          answer_json: supplemental/bounded_logical_retry_v3/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/logical_retry_03/answer.json
+          score_yaml: supplemental/bounded_logical_retry_v3/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/logical_retry_03/score.yaml
+          run_metadata: supplemental/bounded_logical_retry_v3/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/logical_retry_03/run_metadata.yaml
+          trace_dir: supplemental/bounded_logical_retry_v3/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/logical_retry_03
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          recovery_layer: bounded_logical_retry_v3
+          logical_retry: logical_retry_03
+          first_pass_status: invalid
+          first_pass_incomplete_reason: codex_exit_1
+          first_pass_score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/score.yaml
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03
+          prior_v1_status: timeout
+          prior_v1_incomplete_reason: agent_wall_timeout
+          prior_v1_score_yaml: null
+          prior_v1_run_metadata: null
+          prior_v1_trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/logical_retry_01
+          prior_v2_status: invalid
+          prior_v2_incomplete_reason: missing_parseable_answer_json
+          prior_v2_score_yaml: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/logical_retry_02/score.yaml
+          prior_v2_run_metadata: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/logical_retry_02/run_metadata.yaml
+          prior_v2_trace_dir: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_03/logical_retry_02
+          physical_uuid: 454be39865864ac28ef4d4e3c2717ae1
+          skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_03
+          skill_bundle_sha256: c7a8735bc232be321b699d321571e1efc8e69bcd887b27fac1d613249af1a0ed
+      efficiency:
+        counted_runs: 0
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+    test_003:
+      status: complete
+      incomplete_reason: null
+      scores:
+      - 0.105263157895
+      - 0.473684210527
+      - 0.21052631579
+      acc_at_3: 0.26315789473733336
+      std_at_3: 0.1549431730936319
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.105263157895
+          incomplete_reason: null
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/answer.json
+          score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/score.yaml
+          run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01/run_metadata.yaml
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_01
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+        attempt_02:
+          status: complete
+          score: 0.473684210527
+          incomplete_reason: null
+          answer_json: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_01/answer.json
+          score_yaml: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_01/score.yaml
+          run_metadata: supplemental/bounded_logical_retry_v1/runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_01/run_metadata.yaml
+          trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/logical_retry_01
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          recovery_layer: bounded_logical_retry_v1
+          logical_retry: logical_retry_01
+          first_pass_status: invalid
+          first_pass_incomplete_reason: codex_exit_1
+          first_pass_score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/score.yaml
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_02
+          physical_uuid: 5389a7ea48414102aba4ccfc64f358c5
+          skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: 462cd7a1ca77741abbc05845e52a9461d92b9925d89fa70e7095108be9c75d72
+        attempt_03:
+          status: complete
+          score: 0.21052631579
+          incomplete_reason: null
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03/answer.json
+          score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03/score.yaml
+          run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03/run_metadata.yaml
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_003/attempt_03
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+      efficiency:
+        counted_runs: 0
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+    test_004:
+      status: complete
+      incomplete_reason: null
+      scores:
+      - 0.4285714286
+      - 0.2857142857
+      - 0.5714285714
+      acc_at_3: 0.4285714285666667
+      std_at_3: 0.11664236869812875
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.4285714286
+          incomplete_reason: null
+          answer_json: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/logical_retry_02/answer.json
+          score_yaml: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/logical_retry_02/score.yaml
+          run_metadata: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/logical_retry_02/run_metadata.yaml
+          trace_dir: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/logical_retry_02
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          recovery_layer: bounded_logical_retry_v2
+          logical_retry: logical_retry_02
+          first_pass_status: invalid
+          first_pass_incomplete_reason: codex_exit_1
+          first_pass_score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/score.yaml
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01
+          prior_v1_status: timeout
+          prior_v1_incomplete_reason: agent_wall_timeout
+          prior_v1_score_yaml: null
+          prior_v1_run_metadata: null
+          prior_v1_trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_01/logical_retry_01
+          physical_uuid: 25c5845c87504d9195ed626e6b49f775
+          skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          skill_bundle_sha256: a521e70c6a1cf1029490c4df556332a80280f002f40f279003919ea3959fbd7a
+        attempt_02:
+          status: complete
+          score: 0.2857142857
+          incomplete_reason: null
+          answer_json: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_02/answer.json
+          score_yaml: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_02/score.yaml
+          run_metadata: supplemental/bounded_logical_retry_v2/runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_02/run_metadata.yaml
+          trace_dir: supplemental/bounded_logical_retry_v2/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_02
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+          recovery_layer: bounded_logical_retry_v2
+          logical_retry: logical_retry_02
+          first_pass_status: invalid
+          first_pass_incomplete_reason: codex_exit_1
+          first_pass_score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/score.yaml
+          first_pass_run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/run_metadata.yaml
+          first_pass_trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02
+          prior_v1_status: timeout
+          prior_v1_incomplete_reason: agent_wall_timeout
+          prior_v1_score_yaml: null
+          prior_v1_run_metadata: null
+          prior_v1_trace_dir: supplemental/bounded_logical_retry_v1/original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_02/logical_retry_01
+          physical_uuid: 6dc68f3f74474ea6a2ca55cfe115b450
+          skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_02
+          skill_bundle_sha256: 462cd7a1ca77741abbc05845e52a9461d92b9925d89fa70e7095108be9c75d72
+        attempt_03:
+          status: complete
+          score: 0.5714285714
+          incomplete_reason: null
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/answer.json
+          score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/score.yaml
+          run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03/run_metadata.yaml
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_004/attempt_03
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+      efficiency:
+        counted_runs: 0
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+    test_005:
+      status: complete
+      incomplete_reason: null
+      scores:
+      - 0.333333333333
+      - 0.571428571429
+      - 0.333333333333
+      acc_at_3: 0.41269841269833335
+      std_at_3: 0.11223917161727148
+      attempts:
+        attempt_01:
+          status: complete
+          score: 0.333333333333
+          incomplete_reason: null
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01/answer.json
+          score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01/score.yaml
+          run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01/run_metadata.yaml
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_01
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+        attempt_02:
+          status: complete
+          score: 0.571428571429
+          incomplete_reason: null
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/answer.json
+          score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/score.yaml
+          run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02/run_metadata.yaml
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_02
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+        attempt_03:
+          status: complete
+          score: 0.333333333333
+          incomplete_reason: null
+          answer_json: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/answer.json
+          score_yaml: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/score.yaml
+          run_metadata: runs/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03/run_metadata.yaml
+          trace_dir: original_traces/deepseek_v4_max_preview/fewshot/naive/test_005/attempt_03
+          trace_metrics: null
+          trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+            was found'
+      efficiency:
+        counted_runs: 0
+        input_tokens: 0
+        cached_input_tokens: 0
+        output_tokens: 0
+        reasoning_output_tokens: 0
+        total_tokens: 0
+        assistant_turns: 0
+        tool_calls: 0
+recovery_slots:
+  naive/test_002/attempt_01:
+    logical_slot: naive/test_002/attempt_01
+    run_kind: solver
+    agent_run_id: 9a289344-f468-49f0-8584-9496ecf57d50
+    prompt_template_id: fewshot_test_solver
+    prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+    rendered_prompt_sha256: ba1c2fe3e8c0fde4cc3c406846ccaa7d1b940f58c202395e7a99062602bec493
+    physical_run_dir: scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2
+    trace_dir: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08
+    primary_trace: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/primary_trace.jsonl
+    container_name: liuzh_dsv4max_naive_729_023_agent_v8_7810133ee4b5
+    network_name: liuzh_dsv4max_naive_729_023_net_f35fd1a26d67
+    network_subnet: 10.203.1.0/24
+    started_at: '2026-08-01T10:43:04Z'
+    completed_at: '2026-08-01T12:02:50Z'
+    wall_timeout_at: null
+    solver_wall_timeout_seconds: 7200
+    host_runner_timeout_seconds: 8100
+    exit_code: 137
+    timed_out: false
+    task_env_ready: true
+    bridge_ready: true
+    bridge_identity: deepseek-ai/DeepSeek-V4-Pro
+    model_process_started: true
+    infrastructure_error: provider_bridge_503_system_busy
+    verified_failure_signature: provider_bridge_503_system_busy
+    trace_metrics: null
+    trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+      was found'
+    stage_manifest:
+      environment_access.md:
+        path: scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2/environment_access.md
+        sha256: 81bd76532e743ed687e37bc9f6ec15a682aac55791dc70b6219375753243f84f
+        kind: file
+      model_catalog:
+        path: configs/models/deepseek_v4_pro_catalog.json
+        sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+        kind: file
+      input:
+        path: task_group/task_group_023/test_tasks/002/input
+        sha256: 3b15a392fd518f570d1bf4d0afff1e1e23dff1b9cecbd3d3d7c518460159231f
+        kind: directory
+      skill:
+        path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+        sha256: a521e70c6a1cf1029490c4df556332a80280f002f40f279003919ea3959fbd7a
+        kind: directory
+    stage_manifest_file:
+      path: scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2/stage_manifest.yaml
+      sha256: 5d2696b6213cedcf0fb1524b449aec3d18de2a3e6c51a7d6a4176dce0c3fa1ed
+    status: complete
+    score: 0.0
+    incomplete_reason: null
+    answer_json: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/answer.json
+    score_yaml: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/score.yaml
+    run_metadata: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/run_metadata.yaml
+    answer_json_present: true
+    answer_files_found:
+    - scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2/work/answer.json
+    physical_execution_ordinal: 1
+    physical_uuid: 7810133ee4b542008e5393a0b51f0ed2
+    recovery_layer: bounded_logical_retry_v8
+    logical_retry: logical_retry_08
+    skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+    skill_bundle_sha256: a521e70c6a1cf1029490c4df556332a80280f002f40f279003919ea3959fbd7a
+    input_dir: task_group/task_group_023/test_tasks/002/input
+    input_sha256: 3b15a392fd518f570d1bf4d0afff1e1e23dff1b9cecbd3d3d7c518460159231f
+    capacity_observation:
+      checked_at: '2026-08-01T10:43:06Z'
+      logical_slot: naive/test_002/attempt_01
+      logical_retry_label: logical_retry_08
+      physical_execution_ordinal: 1
+      task_group_active_model_agents: 0
+      global_active_deepseek_model_agents: 0
+      task_group_limit: 6
+      global_limit: 60
+      launch_permitted: true
+      waited_for_capacity: false
+    evaluator_result: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_result.json
+    evidence:
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/primary_trace.jsonl
+      sha256: c80e4f4476998692ad49b351f94a15659c4d1c41b4abb0cb2fa7eae27e174fbc
+      bytes: 801700
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/codex_stderr.log
+      sha256: 26c95c6fe8aef57ae56e60d631655eddccb585cfb26efac470fa484b4491197d
+      bytes: 3947
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/stage_manifest.yaml
+      sha256: 5d2696b6213cedcf0fb1524b449aec3d18de2a3e6c51a7d6a4176dce0c3fa1ed
+      bytes: 773
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/agent_docker_inspect.json
+      sha256: 420b03a18139a59aa838502d7dc71e3decfd751e15cc05af5fecc01f307d6d74
+      bytes: 16399
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/answer.json
+      sha256: cd4fc3b86f0ad6559ec601f11f0a5081eaae8bcbcd9fbf38639aeb505316fe62
+      bytes: 69034
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_stdout.json
+      sha256: 83d8a803d77c06b15f07a4222b7180ec7922dd2b3c9a34855cdf7b250fe802dc
+      bytes: 9273
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_stderr.log
+      sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      bytes: 0
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_result.json
+      sha256: d20aa80e8d079bf7c70f12077eac84fbc2ffc60c511700e80680606f51454754
+      bytes: 9272
+    - kind: directory
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/codex_home
+      sha256: 5f2d2407bc276d5cd64fcb1639d1b13f111354279e62350c8c685a3c575fdeb7
+      file_count: 5355
+      bytes: 73058820
+      algorithm: sorted_relative_file_sha256_v1
+    infrastructure_replacements: []
+    physical_execution_records:
+    - logical_slot: naive/test_002/attempt_01
+      run_kind: solver
+      agent_run_id: 9a289344-f468-49f0-8584-9496ecf57d50
+      prompt_template_id: fewshot_test_solver
+      prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+      rendered_prompt_sha256: ba1c2fe3e8c0fde4cc3c406846ccaa7d1b940f58c202395e7a99062602bec493
+      physical_run_dir: scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2
+      trace_dir: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08
+      primary_trace: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/primary_trace.jsonl
+      container_name: liuzh_dsv4max_naive_729_023_agent_v8_7810133ee4b5
+      network_name: liuzh_dsv4max_naive_729_023_net_f35fd1a26d67
+      network_subnet: 10.203.1.0/24
+      started_at: '2026-08-01T10:43:04Z'
+      completed_at: '2026-08-01T12:02:50Z'
+      wall_timeout_at: null
+      solver_wall_timeout_seconds: 7200
+      host_runner_timeout_seconds: 8100
+      exit_code: 137
+      timed_out: false
+      task_env_ready: true
+      bridge_ready: true
+      bridge_identity: deepseek-ai/DeepSeek-V4-Pro
+      model_process_started: true
+      infrastructure_error: provider_bridge_503_system_busy
+      verified_failure_signature: provider_bridge_503_system_busy
+      trace_metrics: null
+      trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+        was found'
+      stage_manifest:
+        environment_access.md:
+          path: scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2/environment_access.md
+          sha256: 81bd76532e743ed687e37bc9f6ec15a682aac55791dc70b6219375753243f84f
+          kind: file
+        model_catalog:
+          path: configs/models/deepseek_v4_pro_catalog.json
+          sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+          kind: file
+        input:
+          path: task_group/task_group_023/test_tasks/002/input
+          sha256: 3b15a392fd518f570d1bf4d0afff1e1e23dff1b9cecbd3d3d7c518460159231f
+          kind: directory
+        skill:
+          path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+          sha256: a521e70c6a1cf1029490c4df556332a80280f002f40f279003919ea3959fbd7a
+          kind: directory
+      stage_manifest_file:
+        path: scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2/stage_manifest.yaml
+        sha256: 5d2696b6213cedcf0fb1524b449aec3d18de2a3e6c51a7d6a4176dce0c3fa1ed
+      status: complete
+      score: 0.0
+      incomplete_reason: null
+      answer_json: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/answer.json
+      score_yaml: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/score.yaml
+      run_metadata: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/run_metadata.yaml
+      answer_json_present: true
+      answer_files_found:
+      - scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2/work/answer.json
+      physical_execution_ordinal: 1
+      physical_uuid: 7810133ee4b542008e5393a0b51f0ed2
+      recovery_layer: bounded_logical_retry_v8
+      logical_retry: logical_retry_08
+      skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+      skill_bundle_sha256: a521e70c6a1cf1029490c4df556332a80280f002f40f279003919ea3959fbd7a
+      input_dir: task_group/task_group_023/test_tasks/002/input
+      input_sha256: 3b15a392fd518f570d1bf4d0afff1e1e23dff1b9cecbd3d3d7c518460159231f
+      capacity_observation:
+        checked_at: '2026-08-01T10:43:06Z'
+        logical_slot: naive/test_002/attempt_01
+        logical_retry_label: logical_retry_08
+        physical_execution_ordinal: 1
+        task_group_active_model_agents: 0
+        global_active_deepseek_model_agents: 0
+        task_group_limit: 6
+        global_limit: 60
+        launch_permitted: true
+        waited_for_capacity: false
+      evaluator_result: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_result.json
+      evidence:
+      - kind: file
+        path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/primary_trace.jsonl
+        sha256: c80e4f4476998692ad49b351f94a15659c4d1c41b4abb0cb2fa7eae27e174fbc
+        bytes: 801700
+      - kind: file
+        path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/codex_stderr.log
+        sha256: 26c95c6fe8aef57ae56e60d631655eddccb585cfb26efac470fa484b4491197d
+        bytes: 3947
+      - kind: file
+        path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/stage_manifest.yaml
+        sha256: 5d2696b6213cedcf0fb1524b449aec3d18de2a3e6c51a7d6a4176dce0c3fa1ed
+        bytes: 773
+      - kind: file
+        path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/agent_docker_inspect.json
+        sha256: 420b03a18139a59aa838502d7dc71e3decfd751e15cc05af5fecc01f307d6d74
+        bytes: 16399
+      - kind: file
+        path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/answer.json
+        sha256: cd4fc3b86f0ad6559ec601f11f0a5081eaae8bcbcd9fbf38639aeb505316fe62
+        bytes: 69034
+      - kind: file
+        path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_stdout.json
+        sha256: 83d8a803d77c06b15f07a4222b7180ec7922dd2b3c9a34855cdf7b250fe802dc
+        bytes: 9273
+      - kind: file
+        path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_stderr.log
+        sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        bytes: 0
+      - kind: file
+        path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_result.json
+        sha256: d20aa80e8d079bf7c70f12077eac84fbc2ffc60c511700e80680606f51454754
+        bytes: 9272
+      - kind: directory
+        path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/codex_home
+        sha256: 5f2d2407bc276d5cd64fcb1639d1b13f111354279e62350c8c685a3c575fdeb7
+        file_count: 5355
+        bytes: 73058820
+        algorithm: sorted_relative_file_sha256_v1
+infrastructure_replacements: []
+notes:
+- bounded logical recovery layer; first-pass artifacts preserved unchanged
+- bounded_logical_retry_v1 artifacts preserved unchanged
+- bounded_logical_retry_v2 artifacts preserved unchanged
+- bounded_logical_retry_v3 artifacts preserved unchanged except as prior source evidence
+- no generation slots retried
+- only authorized solver slots received logical_retry_04
+- no attempt_04 created
+- no best-of selection performed
+- v3 physical_02 superseded stream-failure trace preserved and excluded from effective
+  selection
+- combined five-creator report deferred because parent report is incomplete
+- v4 physical executions exhausted after provider/bridge infrastructure failures
+- postrun audit corrected helper path-exists artifact; no additional model calls made
+- bounded_logical_retry_v5 applied only to naive/test_002/attempt_01
+- source v4 report SHA256 verified before model calls
+- 3 valid generation slots and 14 valid solver slots preserved from v4 evidence
+- no generation slots retried
+- no valid solver rerun performed
+- no attempt_04 created
+- no best-of selection performed
+- combined five-creator report deferred because parent report is incomplete
+- bounded_logical_retry_v6 applied only to naive/test_002/attempt_01
+- source v5 report SHA256 verified before model calls
+- 3 valid generation slots and 14 valid solver slots preserved from v5 effective evidence
+- v5 timeout evidence preserved and used only as source failure for v6
+- no generation slots retried
+- no valid solver rerun performed
+- no attempt_04 created
+- no best-of selection performed
+- combined five-creator report deferred because parent report is incomplete
+- bounded_logical_retry_v7 applied only to naive/test_002/attempt_01
+- source v6 report SHA256 verified before model calls
+- 3 valid generation slots and 14 valid solver slots preserved from v6 effective evidence
+- v6 timeout evidence preserved and used only as source failure for v7
+- no generation slots retried
+- no valid solver rerun performed
+- no attempt_04 created
+- no best-of selection performed
+- combined five-creator report deferred because parent report is incomplete
+- bounded_logical_retry_v8 applied only to naive/test_002/attempt_01
+- source v7 report SHA256 verified before model calls
+- 3 valid generation slots and 14 valid solver slots preserved from v7 effective evidence
+- v7 timeout evidence preserved and used only as source failure for v8
+- solver wall timeout raised to 7200 seconds for final extended recovery
+- raw report score fields kept distinct from aggregation imputation
+- no generation slots retried
+- no valid solver rerun performed
+- no attempt_04 created
+- no best-of selection performed
+- combined five-creator report deferred because parent report is incomplete
+postrun_consistency_audit:
+  path: supplemental/bounded_logical_retry_v4/postrun/physical_execution_audit.yaml
+  sha256: 962252458606605ffc7def94b59c3418dde792b703c9b03e03fdd9e3692628f8
+infrastructure_physical_executions:
+  naive/test_002/attempt_01:
+  - logical_slot: naive/test_002/attempt_01
+    run_kind: solver
+    agent_run_id: 9a289344-f468-49f0-8584-9496ecf57d50
+    prompt_template_id: fewshot_test_solver
+    prompt_template_sha256: 50caa8405fafed326b10bc15ac8b29328dc7b030eacda0769f7f019c0e4731fe
+    rendered_prompt_sha256: ba1c2fe3e8c0fde4cc3c406846ccaa7d1b940f58c202395e7a99062602bec493
+    physical_run_dir: scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2
+    trace_dir: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08
+    primary_trace: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/primary_trace.jsonl
+    container_name: liuzh_dsv4max_naive_729_023_agent_v8_7810133ee4b5
+    network_name: liuzh_dsv4max_naive_729_023_net_f35fd1a26d67
+    network_subnet: 10.203.1.0/24
+    started_at: '2026-08-01T10:43:04Z'
+    completed_at: '2026-08-01T12:02:50Z'
+    wall_timeout_at: null
+    solver_wall_timeout_seconds: 7200
+    host_runner_timeout_seconds: 8100
+    exit_code: 137
+    timed_out: false
+    task_env_ready: true
+    bridge_ready: true
+    bridge_identity: deepseek-ai/DeepSeek-V4-Pro
+    model_process_started: true
+    infrastructure_error: provider_bridge_503_system_busy
+    verified_failure_signature: provider_bridge_503_system_busy
+    trace_metrics: null
+    trace_metrics_error: 'codex_trace_metrics: no event_msg.token_count.info.total_token_usage
+      was found'
+    stage_manifest:
+      environment_access.md:
+        path: scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2/environment_access.md
+        sha256: 81bd76532e743ed687e37bc9f6ec15a682aac55791dc70b6219375753243f84f
+        kind: file
+      model_catalog:
+        path: configs/models/deepseek_v4_pro_catalog.json
+        sha256: 5335eb55e813219054e781c3464230ff398c76f3e8e4491a60e85288b1620067
+        kind: file
+      input:
+        path: task_group/task_group_023/test_tasks/002/input
+        sha256: 3b15a392fd518f570d1bf4d0afff1e1e23dff1b9cecbd3d3d7c518460159231f
+        kind: directory
+      skill:
+        path: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+        sha256: a521e70c6a1cf1029490c4df556332a80280f002f40f279003919ea3959fbd7a
+        kind: directory
+    stage_manifest_file:
+      path: scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2/stage_manifest.yaml
+      sha256: 5d2696b6213cedcf0fb1524b449aec3d18de2a3e6c51a7d6a4176dce0c3fa1ed
+    status: complete
+    score: 0.0
+    incomplete_reason: null
+    answer_json: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/answer.json
+    score_yaml: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/score.yaml
+    run_metadata: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/run_metadata.yaml
+    answer_json_present: true
+    answer_files_found:
+    - scratch/bounded_logical_retry_v8/physical_runs/deepseek_v4_max_preview_20260801T104304Z/naive__test_002__attempt_01__7810133ee4b542008e5393a0b51f0ed2/work/answer.json
+    physical_execution_ordinal: 1
+    physical_uuid: 7810133ee4b542008e5393a0b51f0ed2
+    recovery_layer: bounded_logical_retry_v8
+    logical_retry: logical_retry_08
+    skill_source_dir: skills/deepseek_v4_max_preview/fewshot/naive/fewshot_attempt_01
+    skill_bundle_sha256: a521e70c6a1cf1029490c4df556332a80280f002f40f279003919ea3959fbd7a
+    input_dir: task_group/task_group_023/test_tasks/002/input
+    input_sha256: 3b15a392fd518f570d1bf4d0afff1e1e23dff1b9cecbd3d3d7c518460159231f
+    capacity_observation:
+      checked_at: '2026-08-01T10:43:06Z'
+      logical_slot: naive/test_002/attempt_01
+      logical_retry_label: logical_retry_08
+      physical_execution_ordinal: 1
+      task_group_active_model_agents: 0
+      global_active_deepseek_model_agents: 0
+      task_group_limit: 6
+      global_limit: 60
+      launch_permitted: true
+      waited_for_capacity: false
+    evaluator_result: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_result.json
+    evidence:
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/primary_trace.jsonl
+      sha256: c80e4f4476998692ad49b351f94a15659c4d1c41b4abb0cb2fa7eae27e174fbc
+      bytes: 801700
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/codex_stderr.log
+      sha256: 26c95c6fe8aef57ae56e60d631655eddccb585cfb26efac470fa484b4491197d
+      bytes: 3947
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/stage_manifest.yaml
+      sha256: 5d2696b6213cedcf0fb1524b449aec3d18de2a3e6c51a7d6a4176dce0c3fa1ed
+      bytes: 773
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/agent_docker_inspect.json
+      sha256: 420b03a18139a59aa838502d7dc71e3decfd751e15cc05af5fecc01f307d6d74
+      bytes: 16399
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/answer.json
+      sha256: cd4fc3b86f0ad6559ec601f11f0a5081eaae8bcbcd9fbf38639aeb505316fe62
+      bytes: 69034
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_stdout.json
+      sha256: 83d8a803d77c06b15f07a4222b7180ec7922dd2b3c9a34855cdf7b250fe802dc
+      bytes: 9273
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_stderr.log
+      sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      bytes: 0
+    - kind: file
+      path: supplemental/bounded_logical_retry_v8/runs/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/evaluator_result.json
+      sha256: d20aa80e8d079bf7c70f12077eac84fbc2ffc60c511700e80680606f51454754
+      bytes: 9272
+    - kind: directory
+      path: supplemental/bounded_logical_retry_v8/original_traces/deepseek_v4_max_preview/fewshot/naive/test_002/attempt_01/logical_retry_08/codex_home
+      sha256: 5f2d2407bc276d5cd64fcb1639d1b13f111354279e62350c8c685a3c575fdeb7
+      file_count: 5355
+      bytes: 73058820
+      algorithm: sorted_relative_file_sha256_v1

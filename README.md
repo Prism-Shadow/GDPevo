@@ -10,7 +10,10 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 
 Each experiment is run 3 times. Values in parentheses are standard deviations; all other values are means. Accuracy is reported as `acc`. `rounds` reports the average number of solver model-response rounds per attempt, and `tool calls` reports the average number of solver tool-call requests per attempt. Cost is reported in USD; lift and cost change are relative to `base`.
 
-The released runs compare four modes:
+The primary released runs compare four modes. Separate controlled
+skill-creator comparisons hold the Codex harness and solver model fixed while
+varying the creator used for the few-shot skill: [GPT-5.5 xhigh](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/)
+and [DeepSeek V4 Pro Preview max](experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/).
 
 - **base**: run the test tasks directly, without any evolution step.
 - **self**: evolve its own working strategy from train inputs and the environment, without train answers.
@@ -31,6 +34,8 @@ See the full experiment board in [`experiments/EXPERIMENT_BOARD.md`](experiments
 Per-task reports are under:
 
 - [`experiments/codex_gpt5_5_xhigh/`](experiments/codex_gpt5_5_xhigh/)
+- [`experiments/codex_skill_creator_comparison_gpt5_5_xhigh/`](experiments/codex_skill_creator_comparison_gpt5_5_xhigh/) — controlled comparison of five few-shot skill creators, including a minimal naive control, with the Codex harness and GPT-5.5 xhigh
+- [`experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/`](experiments/codex_skill_creator_comparison_deepseek_v4_pro_max/) — the same five-creator comparison with the Codex harness and DeepSeek V4 Pro Preview max
 - [`experiments/claude_code_opus_4_8_xhigh/`](experiments/claude_code_opus_4_8_xhigh/)
 - [`experiments/claude_code_glm_5_2_max/`](experiments/claude_code_glm_5_2_max/)
 - [`experiments/claude_code_deepseek_v4_pro_max/`](experiments/claude_code_deepseek_v4_pro_max/)
