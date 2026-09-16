@@ -1,0 +1,221 @@
+{
+    "schema_version": "atlas-commerce-1.0",
+    "tables": [
+        {
+            "name": "accounts",
+            "ddl": "CREATE TABLE accounts (\n    account_id TEXT PRIMARY KEY,\n    account_name TEXT NOT NULL,\n    segment TEXT NOT NULL CHECK (segment IN ('CONSUMER','SMB','ENTERPRISE','STRATEGIC')),\n    tier TEXT NOT NULL CHECK (tier IN ('STANDARD','SILVER','GOLD','PLATINUM')),\n    region TEXT NOT NULL,\n    currency TEXT NOT NULL,\n    is_internal INTEGER NOT NULL CHECK (is_internal IN (0,1)),\n    is_test INTEGER NOT NULL CHECK (is_test IN (0,1)),\n    created_at TEXT NOT NULL\n)"
+        },
+        {
+            "name": "campaigns",
+            "ddl": "CREATE TABLE campaigns (\n    campaign_id TEXT PRIMARY KEY,\n    campaign_name TEXT NOT NULL UNIQUE,\n    starts_at TEXT NOT NULL,\n    ends_at TEXT NOT NULL,\n    channel TEXT NOT NULL\n)"
+        },
+        {
+            "name": "carrier_scans",
+            "ddl": "CREATE TABLE carrier_scans (\n    scan_row_id TEXT PRIMARY KEY,\n    shipment_id TEXT NOT NULL REFERENCES shipments(shipment_id),\n    source_system TEXT NOT NULL,\n    external_event_id TEXT NOT NULL,\n    raw_status TEXT NOT NULL,\n    raw_event_at TEXT NOT NULL,\n    canonical_status TEXT NOT NULL,\n    canonical_event_at TEXT NOT NULL,\n    ingested_at TEXT NOT NULL,\n    import_batch_id TEXT NOT NULL REFERENCES source_import_batches(import_batch_id),\n    corrected_at TEXT,\n    correction_reason TEXT\n)"
+        },
+        {
+            "name": "case_events",
+            "ddl": "CREATE TABLE case_events (\n    case_event_id TEXT PRIMARY KEY,\n    case_id TEXT NOT NULL REFERENCES support_cases(case_id),\n    event_type TEXT NOT NULL,\n    event_at TEXT NOT NULL,\n    actor_type TEXT NOT NULL,\n    source_system TEXT NOT NULL,\n    external_event_id TEXT NOT NULL,\n    ingested_at TEXT NOT NULL\n)"
+        },
+        {
+            "name": "correction_audit",
+            "ddl": "CREATE TABLE correction_audit (\n    audit_id TEXT PRIMARY KEY,\n    correction_key TEXT NOT NULL UNIQUE,\n    entity_type TEXT NOT NULL,\n    entity_id TEXT NOT NULL,\n    source_row_id TEXT NOT NULL,\n    field_name TEXT NOT NULL,\n    old_value TEXT,\n    new_value TEXT,\n    reason_code TEXT NOT NULL,\n    corrected_at TEXT NOT NULL,\n    actor TEXT NOT NULL\n)"
+        },
+        {
+            "name": "employees",
+            "ddl": "CREATE TABLE employees (\n    employee_id TEXT PRIMARY KEY,\n    warehouse_id TEXT NOT NULL REFERENCES warehouses(warehouse_id),\n    team_id TEXT NOT NULL,\n    role TEXT NOT NULL,\n    active_from TEXT NOT NULL,\n    active_to TEXT\n)"
+        },
+        {
+            "name": "fx_rates",
+            "ddl": "CREATE TABLE fx_rates (\n    rate_date TEXT NOT NULL,\n    currency TEXT NOT NULL,\n    usd_per_unit REAL NOT NULL CHECK (usd_per_unit > 0),\n    PRIMARY KEY (rate_date, currency)\n)"
+        },
+        {
+            "name": "inventory_movements",
+            "ddl": "CREATE TABLE inventory_movements (\n    movement_row_id TEXT PRIMARY KEY,\n    movement_id TEXT NOT NULL,\n    warehouse_id TEXT NOT NULL REFERENCES warehouses(warehouse_id),\n    sku TEXT NOT NULL REFERENCES products(sku),\n    movement_type TEXT NOT NULL,\n    raw_quantity INTEGER NOT NULL,\n    raw_uom TEXT NOT NULL,\n    raw_uom_multiplier INTEGER NOT NULL CHECK (raw_uom_multiplier > 0),\n    canonical_quantity_each INTEGER NOT NULL,\n    canonical_uom_multiplier INTEGER NOT NULL CHECK (canonical_uom_multiplier > 0),\n    occurred_at TEXT NOT NULL,\n    source_system TEXT NOT NULL,\n    external_event_id TEXT NOT NULL,\n    ingested_at TEXT NOT NULL,\n    source_document_id TEXT NOT NULL,\n    corrected_at TEXT,\n    correction_reason TEXT\n)"
+        },
+        {
+            "name": "inventory_snapshots",
+            "ddl": "CREATE TABLE inventory_snapshots (\n    warehouse_id TEXT NOT NULL REFERENCES warehouses(warehouse_id),\n    sku TEXT NOT NULL REFERENCES products(sku),\n    snapshot_at TEXT NOT NULL,\n    on_hand_each INTEGER NOT NULL,\n    reserved_each INTEGER NOT NULL,\n    source_system TEXT NOT NULL,\n    PRIMARY KEY (warehouse_id, sku, snapshot_at)\n)"
+        },
+        {
+            "name": "order_events",
+            "ddl": "CREATE TABLE order_events (\n    event_id TEXT PRIMARY KEY,\n    order_id TEXT NOT NULL REFERENCES orders(order_id),\n    event_type TEXT NOT NULL,\n    event_at TEXT NOT NULL,\n    source_system TEXT NOT NULL,\n    external_event_id TEXT NOT NULL,\n    ingested_at TEXT NOT NULL,\n    metadata_json TEXT NOT NULL DEFAULT '{}'\n)"
+        },
+        {
+            "name": "order_lines",
+            "ddl": "CREATE TABLE order_lines (\n    order_id TEXT NOT NULL REFERENCES orders(order_id),\n    line_id INTEGER NOT NULL,\n    sku TEXT NOT NULL REFERENCES products(sku),\n    quantity_each INTEGER NOT NULL CHECK (quantity_each > 0),\n    PRIMARY KEY (order_id, line_id)\n)"
+        },
+        {
+            "name": "orders",
+            "ddl": "CREATE TABLE orders (\n    order_id TEXT PRIMARY KEY,\n    account_id TEXT NOT NULL REFERENCES accounts(account_id),\n    campaign_id TEXT REFERENCES campaigns(campaign_id),\n    warehouse_id TEXT NOT NULL REFERENCES warehouses(warehouse_id),\n    order_created_at TEXT NOT NULL,\n    promised_at TEXT NOT NULL,\n    currency TEXT NOT NULL,\n    current_status TEXT NOT NULL,\n    gross_amount_minor INTEGER NOT NULL CHECK (gross_amount_minor >= 0)\n)"
+        },
+        {
+            "name": "payment_events",
+            "ddl": "CREATE TABLE payment_events (\n    payment_event_id TEXT PRIMARY KEY,\n    order_id TEXT NOT NULL REFERENCES orders(order_id),\n    provider TEXT NOT NULL,\n    source_system TEXT NOT NULL,\n    external_event_id TEXT NOT NULL,\n    event_type TEXT NOT NULL,\n    amount_minor INTEGER NOT NULL,\n    currency TEXT NOT NULL,\n    event_at TEXT NOT NULL,\n    ingested_at TEXT NOT NULL,\n    linked_event_id TEXT\n)"
+        },
+        {
+            "name": "products",
+            "ddl": "CREATE TABLE products (\n    sku TEXT PRIMARY KEY,\n    product_family TEXT NOT NULL,\n    unit_weight_grams INTEGER NOT NULL CHECK (unit_weight_grams > 0),\n    units_per_case INTEGER NOT NULL CHECK (units_per_case > 0),\n    is_active INTEGER NOT NULL CHECK (is_active IN (0,1))\n)"
+        },
+        {
+            "name": "refund_attempts",
+            "ddl": "CREATE TABLE refund_attempts (\n    refund_row_id TEXT PRIMARY KEY,\n    refund_id TEXT NOT NULL,\n    order_id TEXT NOT NULL REFERENCES orders(order_id),\n    provider TEXT NOT NULL,\n    source_system TEXT NOT NULL,\n    external_event_id TEXT NOT NULL,\n    status TEXT NOT NULL,\n    reason_code TEXT NOT NULL,\n    amount_minor INTEGER NOT NULL CHECK (amount_minor >= 0),\n    currency TEXT NOT NULL,\n    service_date TEXT NOT NULL,\n    event_at TEXT NOT NULL,\n    ingested_at TEXT NOT NULL,\n    linked_refund_id TEXT\n)"
+        },
+        {
+            "name": "shipments",
+            "ddl": "CREATE TABLE shipments (\n    shipment_id TEXT PRIMARY KEY,\n    order_id TEXT NOT NULL REFERENCES orders(order_id),\n    carrier_code TEXT NOT NULL,\n    warehouse_id TEXT NOT NULL REFERENCES warehouses(warehouse_id),\n    shipped_at TEXT,\n    promised_delivery_at TEXT NOT NULL,\n    current_status TEXT NOT NULL\n)"
+        },
+        {
+            "name": "source_import_batches",
+            "ddl": "CREATE TABLE source_import_batches (\n    import_batch_id TEXT PRIMARY KEY,\n    source_system TEXT NOT NULL,\n    entity_type TEXT NOT NULL,\n    started_at TEXT NOT NULL,\n    completed_at TEXT NOT NULL,\n    record_count INTEGER NOT NULL CHECK (record_count >= 0),\n    status TEXT NOT NULL\n)"
+        },
+        {
+            "name": "support_cases",
+            "ddl": "CREATE TABLE support_cases (\n    case_id TEXT PRIMARY KEY,\n    account_id TEXT NOT NULL REFERENCES accounts(account_id),\n    order_id TEXT REFERENCES orders(order_id),\n    priority TEXT NOT NULL,\n    opened_at TEXT NOT NULL,\n    current_status TEXT NOT NULL,\n    current_owner_team TEXT NOT NULL\n)"
+        },
+        {
+            "name": "warehouse_task_events",
+            "ddl": "CREATE TABLE warehouse_task_events (\n    task_event_id TEXT PRIMARY KEY,\n    task_id TEXT NOT NULL REFERENCES warehouse_tasks(task_id),\n    event_type TEXT NOT NULL,\n    event_at TEXT NOT NULL,\n    units INTEGER NOT NULL CHECK (units >= 0),\n    productive_minutes INTEGER NOT NULL CHECK (productive_minutes >= 0),\n    source_system TEXT NOT NULL,\n    external_event_id TEXT NOT NULL,\n    ingested_at TEXT NOT NULL\n)"
+        },
+        {
+            "name": "warehouse_tasks",
+            "ddl": "CREATE TABLE warehouse_tasks (\n    task_id TEXT PRIMARY KEY,\n    warehouse_id TEXT NOT NULL REFERENCES warehouses(warehouse_id),\n    order_id TEXT REFERENCES orders(order_id),\n    sku TEXT REFERENCES products(sku),\n    assigned_employee_id TEXT NOT NULL REFERENCES employees(employee_id),\n    task_type TEXT NOT NULL,\n    work_class TEXT NOT NULL CHECK (work_class IN ('PRODUCTION','TRAINING')),\n    priority TEXT NOT NULL,\n    planned_units INTEGER NOT NULL CHECK (planned_units >= 0),\n    created_at TEXT NOT NULL,\n    due_at TEXT NOT NULL,\n    current_status TEXT NOT NULL\n)"
+        },
+        {
+            "name": "warehouses",
+            "ddl": "CREATE TABLE warehouses (\n    warehouse_id TEXT PRIMARY KEY,\n    warehouse_name TEXT NOT NULL,\n    region TEXT NOT NULL,\n    timezone TEXT NOT NULL,\n    daily_cutoff_local TEXT NOT NULL\n)"
+        }
+    ],
+    "indexes": [
+        {
+            "name": "idx_accounts_segment_region",
+            "table": "accounts",
+            "ddl": "CREATE INDEX idx_accounts_segment_region ON accounts(segment, region)"
+        },
+        {
+            "name": "idx_audit_entity",
+            "table": "correction_audit",
+            "ddl": "CREATE INDEX idx_audit_entity ON correction_audit(entity_type, entity_id, corrected_at)"
+        },
+        {
+            "name": "idx_case_events_dedupe",
+            "table": "case_events",
+            "ddl": "CREATE INDEX idx_case_events_dedupe ON case_events(source_system, external_event_id, ingested_at)"
+        },
+        {
+            "name": "idx_case_events_effective",
+            "table": "case_events",
+            "ddl": "CREATE INDEX idx_case_events_effective ON case_events(case_id, event_at, case_event_id)"
+        },
+        {
+            "name": "idx_cases_account_opened",
+            "table": "support_cases",
+            "ddl": "CREATE INDEX idx_cases_account_opened ON support_cases(account_id, opened_at)"
+        },
+        {
+            "name": "idx_movements_dedupe",
+            "table": "inventory_movements",
+            "ddl": "CREATE INDEX idx_movements_dedupe ON inventory_movements(source_system, external_event_id, ingested_at)"
+        },
+        {
+            "name": "idx_movements_warehouse_sku_time",
+            "table": "inventory_movements",
+            "ddl": "CREATE INDEX idx_movements_warehouse_sku_time ON inventory_movements(warehouse_id, sku, occurred_at)"
+        },
+        {
+            "name": "idx_order_events_dedupe",
+            "table": "order_events",
+            "ddl": "CREATE INDEX idx_order_events_dedupe ON order_events(source_system, external_event_id, ingested_at)"
+        },
+        {
+            "name": "idx_order_events_effective",
+            "table": "order_events",
+            "ddl": "CREATE INDEX idx_order_events_effective ON order_events(order_id, event_at, event_id)"
+        },
+        {
+            "name": "idx_orders_account_created",
+            "table": "orders",
+            "ddl": "CREATE INDEX idx_orders_account_created ON orders(account_id, order_created_at)"
+        },
+        {
+            "name": "idx_orders_campaign_created",
+            "table": "orders",
+            "ddl": "CREATE INDEX idx_orders_campaign_created ON orders(campaign_id, order_created_at)"
+        },
+        {
+            "name": "idx_orders_warehouse_promised",
+            "table": "orders",
+            "ddl": "CREATE INDEX idx_orders_warehouse_promised ON orders(warehouse_id, promised_at)"
+        },
+        {
+            "name": "idx_payments_dedupe",
+            "table": "payment_events",
+            "ddl": "CREATE INDEX idx_payments_dedupe ON payment_events(source_system, external_event_id, ingested_at)"
+        },
+        {
+            "name": "idx_payments_order_event",
+            "table": "payment_events",
+            "ddl": "CREATE INDEX idx_payments_order_event ON payment_events(order_id, event_at)"
+        },
+        {
+            "name": "idx_refunds_dedupe",
+            "table": "refund_attempts",
+            "ddl": "CREATE INDEX idx_refunds_dedupe ON refund_attempts(source_system, external_event_id, ingested_at)"
+        },
+        {
+            "name": "idx_refunds_order_service",
+            "table": "refund_attempts",
+            "ddl": "CREATE INDEX idx_refunds_order_service ON refund_attempts(order_id, service_date)"
+        },
+        {
+            "name": "idx_scans_batch",
+            "table": "carrier_scans",
+            "ddl": "CREATE INDEX idx_scans_batch ON carrier_scans(import_batch_id)"
+        },
+        {
+            "name": "idx_scans_dedupe",
+            "table": "carrier_scans",
+            "ddl": "CREATE INDEX idx_scans_dedupe ON carrier_scans(source_system, external_event_id, ingested_at)"
+        },
+        {
+            "name": "idx_scans_shipment_effective",
+            "table": "carrier_scans",
+            "ddl": "CREATE INDEX idx_scans_shipment_effective ON carrier_scans(shipment_id, canonical_event_at, scan_row_id)"
+        },
+        {
+            "name": "idx_shipments_order",
+            "table": "shipments",
+            "ddl": "CREATE INDEX idx_shipments_order ON shipments(order_id)"
+        },
+        {
+            "name": "idx_shipments_warehouse_promised",
+            "table": "shipments",
+            "ddl": "CREATE INDEX idx_shipments_warehouse_promised ON shipments(warehouse_id, promised_delivery_at)"
+        },
+        {
+            "name": "idx_snapshots_time",
+            "table": "inventory_snapshots",
+            "ddl": "CREATE INDEX idx_snapshots_time ON inventory_snapshots(snapshot_at, warehouse_id)"
+        },
+        {
+            "name": "idx_task_events_dedupe",
+            "table": "warehouse_task_events",
+            "ddl": "CREATE INDEX idx_task_events_dedupe ON warehouse_task_events(source_system, external_event_id, ingested_at)"
+        },
+        {
+            "name": "idx_task_events_effective",
+            "table": "warehouse_task_events",
+            "ddl": "CREATE INDEX idx_task_events_effective ON warehouse_task_events(task_id, event_at, task_event_id)"
+        },
+        {
+            "name": "idx_tasks_employee",
+            "table": "warehouse_tasks",
+            "ddl": "CREATE INDEX idx_tasks_employee ON warehouse_tasks(assigned_employee_id, created_at)"
+        },
+        {
+            "name": "idx_tasks_warehouse_due",
+            "table": "warehouse_tasks",
+            "ddl": "CREATE INDEX idx_tasks_warehouse_due ON warehouse_tasks(warehouse_id, due_at)"
+        }
+    ]
+}

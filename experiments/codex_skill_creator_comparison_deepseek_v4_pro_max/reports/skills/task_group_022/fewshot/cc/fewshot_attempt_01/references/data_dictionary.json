@@ -1,0 +1,1187 @@
+{
+    "schema_version": "atlas-commerce-1.0",
+    "conventions": {
+        "timestamps": "All stored timestamps use ISO-8601 UTC text ending in Z.",
+        "dates": "Calendar dates use YYYY-MM-DD text.",
+        "money": "Monetary minor fields use the smallest unit of the row currency; FX is USD per currency unit.",
+        "source_rows": "Raw fields preserve source values; canonical fields hold normalized operational values."
+    },
+    "tables": [
+        {
+            "name": "accounts",
+            "description": "Customer and company account master data, including production-exclusion flags.",
+            "columns": [
+                {
+                    "name": "account_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "account_name",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Account name."
+                },
+                {
+                    "name": "segment",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Segment."
+                },
+                {
+                    "name": "tier",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Tier."
+                },
+                {
+                    "name": "region",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Region."
+                },
+                {
+                    "name": "currency",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Currency."
+                },
+                {
+                    "name": "is_internal",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Integer boolean: 1 means true and 0 means false."
+                },
+                {
+                    "name": "is_test",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Integer boolean: 1 means true and 0 means false."
+                },
+                {
+                    "name": "created_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                }
+            ]
+        },
+        {
+            "name": "campaigns",
+            "description": "Marketing campaign names, active windows, and acquisition channels.",
+            "columns": [
+                {
+                    "name": "campaign_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "campaign_name",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Campaign name."
+                },
+                {
+                    "name": "starts_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "ends_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "channel",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Channel."
+                }
+            ]
+        },
+        {
+            "name": "carrier_scans",
+            "description": "Imported carrier observations with raw and normalized event values.",
+            "columns": [
+                {
+                    "name": "scan_row_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "shipment_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "source_system",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable identifier for the upstream system that supplied the row."
+                },
+                {
+                    "name": "external_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Upstream event identifier that can recur on import retries."
+                },
+                {
+                    "name": "raw_status",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Status text exactly as supplied by the carrier."
+                },
+                {
+                    "name": "raw_event_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Event timestamp exactly as supplied by the carrier, encoded in UTC."
+                },
+                {
+                    "name": "canonical_status",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Normalized carrier status used by operational analytics."
+                },
+                {
+                    "name": "canonical_event_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Normalized carrier event timestamp encoded in UTC."
+                },
+                {
+                    "name": "ingested_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "UTC timestamp when this copy reached the workplace database."
+                },
+                {
+                    "name": "import_batch_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "corrected_at",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "UTC timestamp of an approved canonical correction, or null."
+                },
+                {
+                    "name": "correction_reason",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Short reason recorded for an approved canonical correction, or null."
+                }
+            ]
+        },
+        {
+            "name": "case_events",
+            "description": "Imported append-only support case lifecycle events.",
+            "columns": [
+                {
+                    "name": "case_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "case_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "event_type",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Event type."
+                },
+                {
+                    "name": "event_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "actor_type",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Actor type."
+                },
+                {
+                    "name": "source_system",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable identifier for the upstream system that supplied the row."
+                },
+                {
+                    "name": "external_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Upstream event identifier that can recur on import retries."
+                },
+                {
+                    "name": "ingested_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "UTC timestamp when this copy reached the workplace database."
+                }
+            ]
+        },
+        {
+            "name": "correction_audit",
+            "description": "Public audit records appended for controlled canonical corrections.",
+            "columns": [
+                {
+                    "name": "audit_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "correction_key",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Caller-provided unique idempotency key for one correction audit record."
+                },
+                {
+                    "name": "entity_type",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Entity type."
+                },
+                {
+                    "name": "entity_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "source_row_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "field_name",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Field name."
+                },
+                {
+                    "name": "old_value",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Text representation of the value before correction."
+                },
+                {
+                    "name": "new_value",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Text representation of the value after correction."
+                },
+                {
+                    "name": "reason_code",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Reason code."
+                },
+                {
+                    "name": "corrected_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "UTC timestamp of an approved canonical correction, or null."
+                },
+                {
+                    "name": "actor",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Actor."
+                }
+            ]
+        },
+        {
+            "name": "employees",
+            "description": "Warehouse employees, team assignments, roles, and active periods.",
+            "columns": [
+                {
+                    "name": "employee_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "warehouse_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "team_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "role",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Role."
+                },
+                {
+                    "name": "active_from",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "active_to",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                }
+            ]
+        },
+        {
+            "name": "fx_rates",
+            "description": "Daily currency conversion rates expressed as USD per currency unit.",
+            "columns": [
+                {
+                    "name": "rate_date",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO calendar date in YYYY-MM-DD form."
+                },
+                {
+                    "name": "currency",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Currency."
+                },
+                {
+                    "name": "usd_per_unit",
+                    "type": "REAL",
+                    "nullable": false,
+                    "description": "USD value of one unit of the named currency for the rate date."
+                }
+            ]
+        },
+        {
+            "name": "inventory_movements",
+            "description": "Imported stock movements with source quantities and normalized each-unit values.",
+            "columns": [
+                {
+                    "name": "movement_row_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "movement_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "warehouse_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "sku",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "movement_type",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Movement type."
+                },
+                {
+                    "name": "raw_quantity",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Signed quantity exactly as supplied by the source."
+                },
+                {
+                    "name": "raw_uom",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Source unit of measure, such as EA or CASE."
+                },
+                {
+                    "name": "raw_uom_multiplier",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Source-declared number of each units per raw unit."
+                },
+                {
+                    "name": "canonical_quantity_each",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Normalized signed quantity measured in individual each units."
+                },
+                {
+                    "name": "canonical_uom_multiplier",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Normalized number of each units per raw unit."
+                },
+                {
+                    "name": "occurred_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "source_system",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable identifier for the upstream system that supplied the row."
+                },
+                {
+                    "name": "external_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Upstream event identifier that can recur on import retries."
+                },
+                {
+                    "name": "ingested_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "UTC timestamp when this copy reached the workplace database."
+                },
+                {
+                    "name": "source_document_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "corrected_at",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "UTC timestamp of an approved canonical correction, or null."
+                },
+                {
+                    "name": "correction_reason",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Short reason recorded for an approved canonical correction, or null."
+                }
+            ]
+        },
+        {
+            "name": "inventory_snapshots",
+            "description": "Periodic point-in-time stock and reservation observations.",
+            "columns": [
+                {
+                    "name": "warehouse_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "sku",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "snapshot_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "on_hand_each",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Integer unit quantity; fields ending in each are individual units."
+                },
+                {
+                    "name": "reserved_each",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Integer unit quantity; fields ending in each are individual units."
+                },
+                {
+                    "name": "source_system",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable identifier for the upstream system that supplied the row."
+                }
+            ]
+        },
+        {
+            "name": "order_events",
+            "description": "Imported append-only order lifecycle events.",
+            "columns": [
+                {
+                    "name": "event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "order_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "event_type",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Event type."
+                },
+                {
+                    "name": "event_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "source_system",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable identifier for the upstream system that supplied the row."
+                },
+                {
+                    "name": "external_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Upstream event identifier that can recur on import retries."
+                },
+                {
+                    "name": "ingested_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "UTC timestamp when this copy reached the workplace database."
+                },
+                {
+                    "name": "metadata_json",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Source event attributes encoded as a JSON object string."
+                }
+            ]
+        },
+        {
+            "name": "order_lines",
+            "description": "SKU quantities requested on each order.",
+            "columns": [
+                {
+                    "name": "order_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "line_id",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "sku",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "quantity_each",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Integer unit quantity; fields ending in each are individual units."
+                }
+            ]
+        },
+        {
+            "name": "orders",
+            "description": "Order headers and denormalized current status snapshots.",
+            "columns": [
+                {
+                    "name": "order_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "account_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "campaign_id",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "warehouse_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "order_created_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "promised_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "currency",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Currency."
+                },
+                {
+                    "name": "current_status",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Convenience snapshot that may lag append-only event history."
+                },
+                {
+                    "name": "gross_amount_minor",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Order gross value in the smallest unit of the order currency."
+                }
+            ]
+        },
+        {
+            "name": "payment_events",
+            "description": "Imported payment authorization, settlement, void, and reversal events.",
+            "columns": [
+                {
+                    "name": "payment_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "order_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "provider",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Provider."
+                },
+                {
+                    "name": "source_system",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable identifier for the upstream system that supplied the row."
+                },
+                {
+                    "name": "external_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Upstream event identifier that can recur on import retries."
+                },
+                {
+                    "name": "event_type",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Event type."
+                },
+                {
+                    "name": "amount_minor",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Monetary value in the smallest unit of the named currency."
+                },
+                {
+                    "name": "currency",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Currency."
+                },
+                {
+                    "name": "event_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "ingested_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "UTC timestamp when this copy reached the workplace database."
+                },
+                {
+                    "name": "linked_event_id",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                }
+            ]
+        },
+        {
+            "name": "products",
+            "description": "Sellable SKU master data and physical unit packaging.",
+            "columns": [
+                {
+                    "name": "sku",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "product_family",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Product family."
+                },
+                {
+                    "name": "unit_weight_grams",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Unit weight grams."
+                },
+                {
+                    "name": "units_per_case",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Units per case."
+                },
+                {
+                    "name": "is_active",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Integer boolean: 1 means true and 0 means false."
+                }
+            ]
+        },
+        {
+            "name": "refund_attempts",
+            "description": "Provider refund attempts, retries, outcomes, and linked reversals.",
+            "columns": [
+                {
+                    "name": "refund_row_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "refund_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "order_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "provider",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Provider."
+                },
+                {
+                    "name": "source_system",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable identifier for the upstream system that supplied the row."
+                },
+                {
+                    "name": "external_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Upstream event identifier that can recur on import retries."
+                },
+                {
+                    "name": "status",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Status."
+                },
+                {
+                    "name": "reason_code",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Reason code."
+                },
+                {
+                    "name": "amount_minor",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Monetary value in the smallest unit of the named currency."
+                },
+                {
+                    "name": "currency",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Currency."
+                },
+                {
+                    "name": "service_date",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO calendar date in YYYY-MM-DD form."
+                },
+                {
+                    "name": "event_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "ingested_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "UTC timestamp when this copy reached the workplace database."
+                },
+                {
+                    "name": "linked_refund_id",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                }
+            ]
+        },
+        {
+            "name": "shipments",
+            "description": "Physical shipment headers associated with orders.",
+            "columns": [
+                {
+                    "name": "shipment_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "order_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "carrier_code",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Carrier code."
+                },
+                {
+                    "name": "warehouse_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "shipped_at",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "promised_delivery_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "current_status",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Convenience snapshot that may lag append-only event history."
+                }
+            ]
+        },
+        {
+            "name": "source_import_batches",
+            "description": "Operational source-ingestion batches and their completion metadata.",
+            "columns": [
+                {
+                    "name": "import_batch_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "source_system",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable identifier for the upstream system that supplied the row."
+                },
+                {
+                    "name": "entity_type",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Entity type."
+                },
+                {
+                    "name": "started_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "completed_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "record_count",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Record count."
+                },
+                {
+                    "name": "status",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Status."
+                }
+            ]
+        },
+        {
+            "name": "support_cases",
+            "description": "Support case headers and denormalized current ownership/state.",
+            "columns": [
+                {
+                    "name": "case_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "account_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "order_id",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "priority",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Priority."
+                },
+                {
+                    "name": "opened_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "current_status",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Convenience snapshot that may lag append-only event history."
+                },
+                {
+                    "name": "current_owner_team",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Current owner team."
+                }
+            ]
+        },
+        {
+            "name": "warehouse_task_events",
+            "description": "Imported append-only execution events for warehouse work.",
+            "columns": [
+                {
+                    "name": "task_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "task_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "event_type",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Event type."
+                },
+                {
+                    "name": "event_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "units",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Integer unit quantity; fields ending in each are individual units."
+                },
+                {
+                    "name": "productive_minutes",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Productive work duration in whole minutes."
+                },
+                {
+                    "name": "source_system",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable identifier for the upstream system that supplied the row."
+                },
+                {
+                    "name": "external_event_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Upstream event identifier that can recur on import retries."
+                },
+                {
+                    "name": "ingested_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "UTC timestamp when this copy reached the workplace database."
+                }
+            ]
+        },
+        {
+            "name": "warehouse_tasks",
+            "description": "Operational warehouse work assignments and planning attributes.",
+            "columns": [
+                {
+                    "name": "task_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "warehouse_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "order_id",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "sku",
+                    "type": "TEXT",
+                    "nullable": true,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "assigned_employee_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "task_type",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Task type."
+                },
+                {
+                    "name": "work_class",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Work class."
+                },
+                {
+                    "name": "priority",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Priority."
+                },
+                {
+                    "name": "planned_units",
+                    "type": "INTEGER",
+                    "nullable": false,
+                    "description": "Integer unit quantity; fields ending in each are individual units."
+                },
+                {
+                    "name": "created_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "due_at",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "ISO-8601 UTC timestamp; nullable only where the schema permits."
+                },
+                {
+                    "name": "current_status",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Convenience snapshot that may lag append-only event history."
+                }
+            ]
+        },
+        {
+            "name": "warehouses",
+            "description": "Fulfillment facilities with regional business-clock attributes.",
+            "columns": [
+                {
+                    "name": "warehouse_id",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Stable textual business or row identifier; relationships are shown in the schema."
+                },
+                {
+                    "name": "warehouse_name",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Warehouse name."
+                },
+                {
+                    "name": "region",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Region."
+                },
+                {
+                    "name": "timezone",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Timezone."
+                },
+                {
+                    "name": "daily_cutoff_local",
+                    "type": "TEXT",
+                    "nullable": false,
+                    "description": "Daily cutoff local."
+                }
+            ]
+        }
+    ]
+}
