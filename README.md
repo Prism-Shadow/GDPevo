@@ -5,6 +5,14 @@ Languages: [English](README.md) | [Chinese](README.zh.md)
 [![Blog](https://img.shields.io/badge/Blog-Read%20the%20blog-0f7b5f?style=flat&logo=readthedocs&logoColor=white)](https://prism-shadow.github.io/GDPevo/blog.html)
 [![Paper](https://img.shields.io/badge/arXiv-2608.03764-b31b1b?style=flat&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.03764)
 
+## Our Paper
+
+**[GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks](https://arxiv.org/pdf/2608.03764)**
+
+<a href="assets/readme/paper-overview.svg">
+  <img src="assets/readme/paper-overview.svg" alt="GDPevo data construction pipeline: scenario seed discovery, task group generation with a shared environment and separate training and test tasks, and calibration and review." width="100%">
+</a>
+
 **GDPevo** is a public benchmark for evaluating agent self-evolution on real business work. The data release contains 240 tasks across 24 task groups spanning CRM, ERP, finance, healthcare, legal, data analysis, and engineering operations; each group has one shared business environment, 5 train tasks, and 5 held-out test tasks. For the full motivation, construction pipeline, and findings, read the [project blog](https://prism-shadow.github.io/GDPevo/blog.html).
 
 ## Evaluation Results
