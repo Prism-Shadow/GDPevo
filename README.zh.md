@@ -5,6 +5,10 @@
 [![Blog](https://img.shields.io/badge/Blog-Read%20the%20blog-0f7b5f?style=flat&logo=readthedocs&logoColor=white)](https://prism-shadow.github.io/GDPevo/blog.html)
 [![Paper](https://img.shields.io/badge/arXiv-2608.03764-b31b1b?style=flat&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.03764)
 
+## 我们的论文
+
+**[GDPevo: Evaluating Agent Self-Evolution on Real Business Tasks](https://arxiv.org/pdf/2608.03764)**
+
 **GDPevo** 是一个公开基准，用来评估智能体在真实企业任务上的自进化能力。当前数据版本包含 240 个任务，共 24 个任务组，覆盖 CRM、ERP、金融、医疗、法律、数据分析和工程运营等业务场景；每个任务组都有一个共享业务环境、5 个训练任务和 5 个保留测试任务。完整动机、构建流程和结果分析见[项目博客](https://prism-shadow.github.io/GDPevo/blog.html)。
 
 ## 评测结果
