@@ -55,6 +55,10 @@ export const homeContent = {
     },
     actions: {
       github: "GitHub",
+      paper: {
+        en: "Read the paper",
+        zh: "阅读论文"
+      },
       results: {
         en: "Results",
         zh: "结果"

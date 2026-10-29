@@ -37,6 +37,12 @@ function Hero() {
             <GitHubIcon size={17} />
             <span>{actions.github}</span>
           </a>
+          <a className="btn btn-ghost" href={links.paper} target="_blank" rel="noreferrer">
+            <NavIcon name="paper" />
+            <span>
+              <Lang {...actions.paper} />
+            </span>
+          </a>
           <a className="btn btn-ghost" href="#results">
             <NavIcon name="chart" />
             <span>
