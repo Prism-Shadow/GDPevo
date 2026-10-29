@@ -40,6 +40,24 @@ export const githubIcon = {
 };
 
 export const navIcons = {
+  paper: {
+    viewBox: "0 0 24 24",
+    width: 17,
+    height: 17,
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.9,
+    elements: [
+      {
+        tag: "path",
+        attrs: {
+          d: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8L14 2Zm0 0v6h6M8 12h8M8 16h8",
+          strokeLinecap: "round",
+          strokeLinejoin: "round"
+        }
+      }
+    ]
+  },
   chart: {
     viewBox: "0 0 24 24",
     width: 17,
